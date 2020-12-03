@@ -32,19 +32,19 @@ class ParamsController extends Controller {
      *
      * @return Response
      */
-    public function show (Param $param): Response {
-        return new Response($param);
+    public function show (Param $parameter): Response {
+        return new Response($parameter);
     }
 
     /**
      * @param Request $request
-     * @param Param   $param
+     * @param Param   $parameter
      *
      * @return Application|ResponseFactory|Response
      * @throws ValidationException
      */
-    public function update (Request $request, Param $param) {
-        if (Str::startsWith($param->format, "file:")) {
+    public function update (Request $request, Param $parameter) {
+        if (Str::startsWith($parameter->format, "file:")) {
             $file = $request->file("value");
 
             // Confirm upload success
@@ -56,7 +56,7 @@ class ParamsController extends Controller {
                     400);
             }
 
-            $fileType = explode(":", $param->format)[1];
+            $fileType = explode(":", $parameter->format)[1];
 
             // Validate the file
             $validator = Validator::make([ "value" => $file ], [ "value" => "file|mimes:{$fileType}" ]);
@@ -65,7 +65,7 @@ class ParamsController extends Controller {
             }
 
             // File is OK, store it properly
-            if ($param->slug === "tos") {
+            if ($parameter->slug === "tos") {
                 $fileName = "terms-of-service.pdf";
                 if (Storage::exists($fileName)) {
                     Storage::delete($fileName);
@@ -73,14 +73,14 @@ class ParamsController extends Controller {
 
                 Storage::putFile($fileName, $file, [ "visibility" => "public" ]);
 
-                $param->value = Storage::url($fileName);
+                $parameter->value = Storage::url($fileName);
             }
         } else {
-            $param->value = $request->get("value");
+            $parameter->value = $request->get("value");
         }
 
-        $param->save();
+        $parameter->save();
 
-        return new Response($param);
+        return new Response($parameter);
     }
 }

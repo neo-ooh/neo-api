@@ -22,7 +22,7 @@ class CreateSignupTokensTable extends Migration {
 	public function up(): void {
 		Schema::create('signup_tokens', function(Blueprint $table)
 		{
-            $table->id('actor_id');
+            $table->foreignId('actor_id')->constrained("actors")->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('token', 32);
             $table->timestamp('created_at');
         });

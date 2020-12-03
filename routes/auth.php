@@ -73,7 +73,7 @@ Route::prefix("v1/auth")->group(function () {
     | Terms of service
     |----------------------------------------------------------------------
     */
-    Route::middleware('secured')->group(function() {
+    Route::middleware('auth:basic-api')->group(function() {
         Route:: get('/terms-of-service', TermsOfServiceController::class . '@show'  )->name("auth.tos.show");
         Route::post('/terms-of-service', TermsOfServiceController::class . '@accept')->name("auth.tos.accept");
     });

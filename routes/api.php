@@ -280,8 +280,8 @@ Route::prefix("v1")->middleware("secured")->group(function () {
 
     Route::model("parameter", Param::class);
 
-    Route:: get("params/{parameter}", ParamsController::class . "@show"  )->name("params.show");
-    Route:: put("params/{parameter}", ParamsController::class . "@update")->name("params.update");
+    Route:: get("params/{parameter:slug}", ParamsController::class . "@show"  )->name("params.show");
+    Route:: put("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update");
 
 
     /*

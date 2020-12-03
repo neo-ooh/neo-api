@@ -50,7 +50,7 @@ Route::prefix("v1/auth")->group(function () {
     | Second Factor Authentication
     |----------------------------------------------------------------------
     */
-    Route::middleware('auth')->group(function() {
+    Route::middleware('auth:basic-api')->group(function() {
         Route::post('/two-fa-validation', TwoFactorAuthController::class . '@validateToken')->name('two-fa-validation');
     });
 

@@ -8,8 +8,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Container.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Container.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/SynchronizeLocations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/SynchronizeLocations.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Auth/LightJwtGuard.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/auth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/auth.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -175,7 +180,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/views/emails" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Auth" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -192,11 +197,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Auth" />
       <recent name="$PROJECT_DIR$/resources/views/emails" />
       <recent name="$PROJECT_DIR$/tests/Feature" />
       <recent name="$PROJECT_DIR$/app/Http/Requests" />
       <recent name="$PROJECT_DIR$/app/Mails" />
-      <recent name="$PROJECT_DIR$/app/Models" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/Http/Controllers" />
@@ -214,7 +219,7 @@
       <workItem from="1606498043870" duration="3407000" />
       <workItem from="1606592800850" duration="62435000" />
       <workItem from="1607012390072" duration="29000" />
-      <workItem from="1607017530207" duration="6474000" />
+      <workItem from="1607017530207" duration="8784000" />
     </task>
     <servers />
   </component>
@@ -228,6 +233,11 @@
           <url>file://$PROJECT_DIR$/tests/Feature/Login/LoginAuthTest.php</url>
           <line>95</line>
           <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/app/Http/Kernel.php</url>
+          <line>61</line>
+          <option name="timeStamp" value="24" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

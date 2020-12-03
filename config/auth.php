@@ -49,6 +49,11 @@ return [
             'provider' => 'actors',
             'hash'     => false,
         ],
+        'basic-api' => [
+            'driver'   => 'neo-jwt-light',
+            'provider' => 'actors',
+            'hash'     => false,
+        ],
         'test' => [
             'driver'   => 'test',
             'provider' => 'actors',

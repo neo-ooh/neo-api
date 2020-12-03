@@ -21,7 +21,7 @@ class CreateContainersTable extends Migration
      */
     public function up(): void {
         Schema::create('containers', function (Blueprint $table) {
-            $table->bigInteger('id')->unsigned()->primary();
+            $table->unsignedBigInteger('id')->unsigned()->primary();
             $table->foreignId('parent_id')->index()->nullable()->constrained('containers')->cascadeOnDelete();
             $table->string('name', 256);
         });

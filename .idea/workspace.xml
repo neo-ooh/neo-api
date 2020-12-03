@@ -1,0 +1,610 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="GROUP_BY_SEVERITY" value="true" />
+  </component>
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitattributes" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.htaccess" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/blade.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/codeStyleConfig.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/commandlinetools/Laravel_27_11_2020_12_27.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/commandlinetools/schemas/frameworkDescriptionVersion1.1.4.xsd" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copyright/Neo.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/copyright/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/laravel-idea.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/laravel-plugin.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/neo-api.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/php-test-framework.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/phpunit.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.styleci.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Auth/JwtGuard.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/BroadSignFacade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/BroadSignServiceProvider.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Endpoint.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Bundle.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Container.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Creative.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Criteria.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Format.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Frame.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Location.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/LoopPolicy.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/LoopSlot.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Player.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Schedule.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/SkinSlot.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Console/NetworkUpdate.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/BaseException.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/CannotOverwriteCreativeException.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/Handler.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/IncompatibleFrameAndFormat.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/InvalidCreativeDimensions.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/InvalidCreativeDuration.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/InvalidCreativeFileFormat.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/InvalidCreativeFrameRate.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/InvalidCreativeSize.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/InvalidVideoCodec.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Exceptions/LibraryStorageFullException.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsCapabilitiesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsLocationsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsRolesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsSharingsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/BrandingsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/BrandingsFilesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/CapabilitiesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ContainersController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/Controller.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/FramesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/LibrariesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/LibrariesSharesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/LocationsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ParamsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/PasswordRecoveryController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ReviewsTemplatesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/RolesActorsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/RolesCapabilitiesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/RolesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/TermsOfServiceController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/TwoFactorAuthController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/WelcomeController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Middleware/EncryptCookies.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Middleware/PreventRequestsDuringMaintenance.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Middleware/TrimStrings.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Middleware/TrustHosts.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Middleware/TrustProxies.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Middleware/VerifyCsrfToken.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/AcceptTermsOfServiceRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/DestroyActorsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/ListActorsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/StoreActorRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/UpdateActorRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsCapabilities/ListActorCapabilitiesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsCapabilities/SyncActorCapabilitiesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsLocations/ListActorLocationsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsLocations/SyncActorLocationsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsRoles/DestroyActorRoleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsRoles/ListActorRolesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsRoles/StoreActorRoleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsRoles/SyncActorRolesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsShares/DestroyShareRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsShares/StoreShareRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Auth/LoginRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Auth/TwoFactorValidationRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Brandings/DestroyBrandingRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Brandings/ListBrandingsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Brandings/StoreBrandingRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Brandings/UpdateBrandingRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BrandingsFiles/DestroyBrandingFileRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BrandingsFiles/ListBrandingFilesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BrandingsFiles/StoreBrandingFileRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/DestroyCampaignRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/ListCampaignsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/StoreCampaignRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/UpdateCampaignRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/CampaignsLocations/SyncCampaignLocationsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Capabilities/ListCapabilitiesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Capabilities/UpdateCapabilityRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Contents/DestroyContentRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Contents/StoreContentRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Contents/UpdateContentRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Creatives/DestroyCreativeRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Creatives/StoreCreativeRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Formats/ListFormatsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Formats/ShowFormatRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Formats/UpdateFormatRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Frames/DestroyFrameRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Frames/StoreFrameRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Frames/UpdateFrameRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Libraries/DestroyLibraryRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Libraries/ListLibrariesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Libraries/StoreLibraryRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Libraries/UpdateLibraryRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/LibrariesShares/DestroyLibraryShareRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/LibrariesShares/StoreLibraryShareRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Locations/ListLocationsRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Locations/ShowLocationRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Locations/UpdateLocationRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ParamUpdateRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/PasswordRecoveries/CheckRecoveryTokenRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/PasswordRecoveries/PasswordForgotRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/PasswordRecoveries/PasswordRecoveryRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Reviews/StoreReviewRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ReviewsTemplates/DestroyReviewTemplateRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ReviewsTemplates/ListReviewTemplatesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ReviewsTemplates/StoreReviewTemplateRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ReviewsTemplates/UpdateReviewTemplateRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Roles/DeleteRoleCapabilityRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Roles/StoreRoleCapabilityRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Roles/StoreRoleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Roles/UpdateRoleCapabilityRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Roles/UpdateRoleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/RolesActors/DestroyRoleActorRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/RolesActors/StoreRoleActorRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Schedules/DestroyScheduleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Schedules/InsertScheduleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Schedules/ListPendingSchedulesRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Schedules/ReorderScheduleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Schedules/StoreScheduleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Schedules/UpdateScheduleRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/SignupTokens/CheckSignupTokenRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/SignupTokens/SetNewAccountPasswordRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/AssociateAdCopyWithBundle.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/CreateBroadSignCampaign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/CreateBroadSignSchedule.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/CreateSignupToken.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/CreateUserLibrary.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/DisableBroadSignCampaign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/DisableBroadSignCreative.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/DisableBroadSignSchedule.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/ImportCreativeInBroadSign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/RequestScreenshotsBurst.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/SendWelcomeEmail.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/SynchronizeFormats.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/SynchronizeLocations.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/SynchronizePlayers.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/UpdateBroadSignCampaign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/UpdateBroadSignSchedule.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/UpdateBroadSignScheduleStatus.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Mails/ActorWelcomeEmail.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Mails/RecoverPasswordEmail.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Mails/TwoFactorTokenEmail.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/ActorCapability.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/ActorClosure.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/ActorRole.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Branding.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/BrandingFile.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Capability.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Container.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Content.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Creative.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/EditorTemplate.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Factories/ActorFactory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Factories/BrandingFactory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Factories/BrandingFileFactory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Factories/CampaignFactory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Factories/ContentFactory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Factories/CreativeFactory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Factories/LibraryFactory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Factories/RoleFactory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Format.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Frame.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Library.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Location.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Network.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Param.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Player.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/RecoveryToken.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Report.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Review.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/ReviewTemplate.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Role.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Schedule.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/SecuredModel.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/SignupToken.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/AccessValidation.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/HasCampaigns.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/HasHierarchy.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/HasLocations.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/HasRoles.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/WithPublicRelations.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/WithRelationCaching.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/TwoFactorToken.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Providers/AppServiceProvider.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Providers/EventServiceProvider.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Rules/AccessibleActor.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Rules/AccessibleCampaign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Rules/AccessibleContent.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Rules/AccessibleLibrary.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Rules/AccessibleLocation.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Rules/AccessibleReviewTemplate.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/artisan" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/app.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/auth.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/broadcasting.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/broadsign.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/cache.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/cors.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/database.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/ffmpeg.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/filesystems.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/hashing.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/logging.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/mail.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/queue.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/services.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/session.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/config/view.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000001_create_brandings_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000002_create_brandings_files_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000003_create_capabilities_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000004_create_roles_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000005_create_roles_capabilities_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000010_create_actors_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000011_create_actors_closures_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000015_create_password_resets_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000016_create_signup_tokens_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000017_create_actors_capabilities_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000018_create_actors_roles_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000019_create_two-factor-tokens_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000020_create_parameters_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000025_create_formats_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000026_create_containers_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000026_create_locations_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000030_create_actors_shares_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_100001_create_actors_locations_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_01_193014_create_libraries_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_05_191942_create_jobs_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_05_192913_create_failed_jobs_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_195559_create_library_shares_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_200420_create_frames_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_200554_create_contents_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_200912_create_creatives_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_201130_create_campaigns_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_201410_create_campaign_shares_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_201646_create_schedules_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_201922_create_reviews_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_07_202117_create_checksum_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_24_154142_create_review_templates_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_10_30_143319_create_campaign_locations_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_02_000000_create_players_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_02_000010_create_bursts_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_02_000020_create_reports_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_24_000010_create_actors_details_view.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_25_000000_create_editor_templates_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_25_000010_create_actors_editors_table.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/seeders/BoostrapSeeder.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/seeders/DatabaseSeeder.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/seeders/ParamsSeeder.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/phpunit.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/psalm.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/.htaccess" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/index.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/robots.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/public/web.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/emails/auth/password-recovery.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/emails/auth/two-fa-token.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/emails/welcome-text.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/resources/views/emails/welcome.blade.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/routes/auth.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/routes/console.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/server.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/CreatesApplication.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Actors/ListActorsTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Actors/ShowActorTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Actors/StoreActorTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Actors/UpdateActorTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/ActorsCapabilities/ListActorCapabilitiesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/ActorsCapabilities/SyncActorCapabilitiesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/ActorsRoles/DestroyActorRoleTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/ActorsRoles/ListActorRolesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/ActorsRoles/StoreActorRoleTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Brandings/DestroyBrandingTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Brandings/ListBrandingsTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Brandings/StoreBrandingTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Brandings/UpdateBrandingTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/DestroyCampaignTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/ListCampaignsTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/ShowCampaignTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/StoreCampaignTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/UpdateCampaignTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Contents/DestroyContentTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Contents/ListLibraryContentsTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Contents/StoreContentTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Contents/UpdateContentTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Creatives/DestroyCreativeTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Creatives/StoreCreativeTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Libraries/ListLibrariesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Libraries/ShowLibrariesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Libraries/StoreLibraryTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Libraries/UpdateLibraryTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Login/LoginAuthTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Login/TwoFactorAuthTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/PasswordRecovery/PasswordLostTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/PasswordRecovery/PasswordResetTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/PasswordRecovery/RecoveryTokenCheckTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Roles/DestroyRoleTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Roles/ListRolesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Roles/ShowRoleTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Roles/StoreRoleTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Roles/UpdateRoleTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/RolesCapabilities/DestroyRoleCapabilityTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/RolesCapabilities/ShowRoleCapabilitiesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/RolesCapabilities/StoreRoleCapabilityTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/RolesCapabilities/SyncRoleCapabilitiesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Schedules/StoreScheduleTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Schedules/UpdateScheduleTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Sharing/DestroyShareTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Sharing/ListSharesTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Sharing/StoreShareTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/TermsOfServiceTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Feature/Welcome/SignupTokenCheckTest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/TestCase.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tests/Unit/ActorsCapabilities/StoreDestroyActorCapabilitiesTest.php" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" doNotAsk="true" synchronizationState="DONT_SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PhpDebugGeneral" xdebug_debug_port="9003" />
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 7.4">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/neutron/temporary-filesystem" />
+      <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
+      <path value="$PROJECT_DIR$/vendor/symfony/process" />
+      <path value="$PROJECT_DIR$/vendor/hanneskod/classtools" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/vendor/dnoegel/php-xdg-base-dir" />
+      <path value="$PROJECT_DIR$/vendor/nunomaduro/collision" />
+      <path value="$PROJECT_DIR$/vendor/egulias/email-validator" />
+      <path value="$PROJECT_DIR$/vendor/bensampo/laravel-enum" />
+      <path value="$PROJECT_DIR$/vendor/alchemy/binary-driver" />
+      <path value="$PROJECT_DIR$/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/vendor/monolog/monolog" />
+      <path value="$PROJECT_DIR$/vendor/composer" />
+      <path value="$PROJECT_DIR$/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/collection" />
+      <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
+      <path value="$PROJECT_DIR$/vendor/vimeo/psalm" />
+      <path value="$PROJECT_DIR$/vendor/filp/whoops" />
+      <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/instantiator" />
+      <path value="$PROJECT_DIR$/vendor/swiftmailer/swiftmailer" />
+      <path value="$PROJECT_DIR$/vendor/psy/psysh" />
+      <path value="$PROJECT_DIR$/vendor/league/commonmark" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/inflector" />
+      <path value="$PROJECT_DIR$/vendor/nikic/php-parser" />
+      <path value="$PROJECT_DIR$/vendor/psr/simple-cache" />
+      <path value="$PROJECT_DIR$/vendor/league/mime-type-detection" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-message" />
+      <path value="$PROJECT_DIR$/vendor/asm89/stack-cors" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem" />
+      <path value="$PROJECT_DIR$/vendor/psr/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/psr/log" />
+      <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
+      <path value="$PROJECT_DIR$/vendor/brick/math" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/path-util" />
+      <path value="$PROJECT_DIR$/vendor/psr/container" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-client" />
+      <path value="$PROJECT_DIR$/vendor/graham-campbell/result-type" />
+      <path value="$PROJECT_DIR$/vendor/laravel/tinker" />
+      <path value="$PROJECT_DIR$/vendor/laravel/framework" />
+      <path value="$PROJECT_DIR$/vendor/felixfbecker/advanced-json-rpc" />
+      <path value="$PROJECT_DIR$/vendor/felixfbecker/language-server-protocol" />
+      <path value="$PROJECT_DIR$/vendor/opis/closure" />
+      <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
+      <path value="$PROJECT_DIR$/vendor/fideloper/proxy" />
+      <path value="$PROJECT_DIR$/vendor/voku/portable-ascii" />
+      <path value="$PROJECT_DIR$/vendor/facade/flare-client-php" />
+      <path value="$PROJECT_DIR$/vendor/facade/ignition" />
+      <path value="$PROJECT_DIR$/vendor/fruitcake/laravel-cors" />
+      <path value="$PROJECT_DIR$/vendor/facade/ignition-contracts" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/vendor/amphp/amp" />
+      <path value="$PROJECT_DIR$/vendor/amphp/byte-stream" />
+      <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/vendor/phpoption/phpoption" />
+      <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/vendor/openlss/lib-array2xml" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/vendor/netresearch/jsonmapper" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/psr7" />
+      <path value="$PROJECT_DIR$/vendor/firebase/php-jwt" />
+      <path value="$PROJECT_DIR$/vendor/guzzlehttp/guzzle" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/vendor/fakerphp/faker" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/vendor/php-ffmpeg/php-ffmpeg" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-eventmanager" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-zendframework-bridge" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/cache" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/vendor/laminas/laminas-code" />
+      <path value="$PROJECT_DIR$/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
+      <path value="$PROJECT_DIR$/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-normalizer" />
+      <path value="$PROJECT_DIR$/vendor/hamcrest/hamcrest-php" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
+      <path value="$PROJECT_DIR$/vendor/symfony/deprecation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/finder" />
+      <path value="$PROJECT_DIR$/vendor/symfony/routing" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-idn" />
+      <path value="$PROJECT_DIR$/vendor/symfony/console" />
+      <path value="$PROJECT_DIR$/vendor/symfony/mime" />
+      <path value="$PROJECT_DIR$/vendor/symfony/filesystem" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-ctype" />
+      <path value="$PROJECT_DIR$/vendor/symfony/error-handler" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php72" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/service-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/string" />
+      <path value="$PROJECT_DIR$/vendor/symfony/translation" />
+      <path value="$PROJECT_DIR$/vendor/vlucas/phpdotenv" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-iconv" />
+      <path value="$PROJECT_DIR$/vendor/symfony/event-dispatcher" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-foundation" />
+      <path value="$PROJECT_DIR$/vendor/tijsverkoyen/css-to-inline-styles" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-kernel" />
+      <path value="$PROJECT_DIR$/vendor/itsgoingd/clockwork" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem-aws-s3-v3" />
+      <path value="$PROJECT_DIR$/vendor/mtdowling/jmespath.php" />
+      <path value="$PROJECT_DIR$/vendor/aws/aws-sdk-php" />
+    </include_path>
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedIndex" value="1" />
+  </component>
+  <component name="ProjectId" id="1ksnCPVQp4bw80G0IajP0zqEtzk" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="compactDirectories" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="false" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="DatabaseDriversLRU" value="mysql" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/resources/views/emails" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.stylelint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.stylelint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.stylelint" value="" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.General" />
+    <property name="vue.rearranger.settings.migration" value="true" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/resources/views/emails" />
+      <recent name="$PROJECT_DIR$/tests/Feature" />
+      <recent name="$PROJECT_DIR$/app/Http/Requests" />
+      <recent name="$PROJECT_DIR$/app/Mails" />
+      <recent name="$PROJECT_DIR$/app/Models" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Controllers" />
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Brandings" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="" />
+      <created>1606498039666</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1606498039666</updated>
+      <workItem from="1606498043870" duration="3407000" />
+      <workItem from="1606592800850" duration="62435000" />
+      <workItem from="1607012390072" duration="29000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="php">
+          <url>file://$PROJECT_DIR$/tests/Feature/Login/LoginAuthTest.php</url>
+          <line>95</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>

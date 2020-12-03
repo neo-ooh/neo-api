@@ -1,0 +1,45 @@
+<?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - $file.filePath
+ */
+
+namespace Neo\Http\Controllers;
+
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Neo\Http\Requests\Reviews\StoreReviewRequest;
+use Neo\Jobs\UpdateBroadSignScheduleStatus;
+use Neo\Models\Review;
+use Neo\Models\Schedule;
+
+class ReviewsController extends Controller {
+    /**
+     * @param StoreReviewRequest $request
+     * @param Schedule            $schedule
+     *
+     * @return ResponseFactory|Response
+     */
+    public function store (StoreReviewRequest $request, Schedule $schedule) {
+        $review = new Review();
+        $review->schedule_id = $schedule->id;
+        $review->reviewer_id = Auth::id();
+        [
+            "approved" => $review->approved,
+            "message"  => $review->message,
+        ] = $request->validated();
+        $review->save();
+
+        $schedule->refresh();
+
+        // Update the schedule in BroadSign to reflect the new status
+        UpdateBroadSignScheduleStatus::dispatchAfterResponse($schedule->id);
+
+        return new Response($schedule->load("content"), 201);
+    }
+}

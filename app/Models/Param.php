@@ -1,0 +1,66 @@
+<?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - $file.filePath
+ */
+
+namespace Neo\Models;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Neo\Models\Param
+ *
+ * @property string slug
+ * @property string format
+ * @property string value
+ *
+ * @mixin Builder
+ */
+class Param extends Model {
+    /*
+    |--------------------------------------------------------------------------
+    | Table properties
+    |--------------------------------------------------------------------------
+    */
+
+    public $incrementing = false;
+    /**
+     * The connection name for the model.
+     *
+     * @var string
+     */
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table      = 'parameters';
+    protected $primaryKey = "slug";
+    protected $keyType    = 'string';
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'slug',
+        'format',
+        'value',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'approved' => 'boolean',
+    ];
+}

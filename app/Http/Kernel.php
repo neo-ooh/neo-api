@@ -1,0 +1,97 @@
+<?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - $file.filePath
+ */
+
+namespace Neo\Http;
+
+use Fruitcake\Cors\HandleCors;
+use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
+use Illuminate\Auth\Middleware\Authorize;
+use Illuminate\Auth\Middleware\EnsureEmailIsVerified;
+use Illuminate\Auth\Middleware\RequirePassword;
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
+use Illuminate\Foundation\Http\Middleware\ValidatePostSize;
+use Illuminate\Http\Middleware\SetCacheHeaders;
+use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Middleware\ValidateSignature;
+use Neo\Console\NetworkUpdate;
+use Neo\Http\Middleware\Authenticate;
+use Neo\Http\Middleware\PreventRequestsDuringMaintenance;
+use Neo\Http\Middleware\TrimStrings;
+use Neo\Http\Middleware\TrustProxies;
+
+class Kernel extends HttpKernel {
+    /**
+     * The application's global HTTP middleware stack.
+     *
+     * These middleware are run during every request to your application.
+     *
+     * @var array
+     */
+    protected $middleware = [
+        // \Neo\Http\Middleware\TrustHosts::class,
+        TrustProxies::class,
+        HandleCors::class,
+        PreventRequestsDuringMaintenance::class,
+        ValidatePostSize::class,
+        TrimStrings::class,
+        ConvertEmptyStringsToNull::class,
+    ];
+
+    /**
+     * The application's route middleware groups.
+     *
+     * @var array
+     */
+    protected $middlewareGroups = [
+        'api'     => [
+            'throttle:api',
+            SubstituteBindings::class,
+        ],
+        'secured' => [
+            'throttle:60,1',
+            SubstituteBindings::class,
+            'auth',
+        ],
+    ];
+
+    /**
+     * The application's route middleware.
+     *
+     * These middleware may be assigned to groups or used individually.
+     *
+     * @var array
+     */
+    protected $routeMiddleware = [
+        'auth'             => Authenticate::class,
+        'auth.basic'       => AuthenticateWithBasicAuth::class,
+        'bindings'         => SubstituteBindings::class,
+        'cache.headers'    => SetCacheHeaders::class,
+        'can'              => Authorize::class,
+        'password.confirm' => RequirePassword::class,
+        'signed'           => ValidateSignature::class,
+        'throttle'         => ThrottleRequests::class,
+        'verified'         => EnsureEmailIsVerified::class,
+    ];
+
+    /**
+     * Define the application's command schedule.
+     *
+     * @param Schedule $schedule
+     *
+     * @return void
+     */
+    protected function schedule(Schedule $schedule): void
+    {
+        $schedule->command(NetworkUpdate::class)->hourlyAt(30);
+    }
+}

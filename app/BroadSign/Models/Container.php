@@ -80,7 +80,7 @@ class Container extends BroadSignModel {
             "id" => $this->id,
         ],
             [
-                "parent_id" => $this->container_id,
+                "parent_id" => $this->container_id === 0 ? null : $this->container_id,
                 "name"      => $this->name,
             ]);
     }

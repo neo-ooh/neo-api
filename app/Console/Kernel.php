@@ -20,7 +20,7 @@ class Kernel extends ConsoleKernel
      *
      * @var array
      */
-    protected array $commands = [
+    protected $commands = [
         NetworkUpdate::class,
     ];
 
@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
      * @param Schedule $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule): void
+    protected function schedule(Schedule $schedule)
     {
         $schedule->command('network:update')->daily();
     }

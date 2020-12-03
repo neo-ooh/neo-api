@@ -76,7 +76,7 @@ class ParamsController extends Controller {
                 $param->value = Storage::url($fileName);
             }
         } else {
-            $param->value = $request->validated()["value"];
+            $param->value = $request->get("value");
         }
 
         $param->save();

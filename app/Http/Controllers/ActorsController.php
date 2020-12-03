@@ -115,11 +115,6 @@ class ActorsController extends Controller {
             $actor->addCapabilities($values['capabilities']);
             $actor->save();
 
-            // Create the user signup token
-            $signupToken           = new SignupToken();
-            $signupToken->actor_id = $actor->id;
-            $signupToken->save();
-
             // Execute the user's creation side effects
             CreateSignupToken::dispatch($actor->id);
             CreateUserLibrary::dispatch($actor->id);

@@ -41,10 +41,10 @@ class ActorWelcomeEmail extends Mailable {
         $this->actor = $signupToken->actor;
 
         // Add DKIM info
-//        $this->withSwiftMessage(function(Swift_Message $message) {
-//            $signer = new Swift_Signers_DKIMSigner(config('mail.dkim.private-key'), config('mail.dkim.domain'), config('mail.dkim.selector'));
-//            $message->attachSigner($signer);
-//        });
+        $this->withSwiftMessage(function(Swift_Message $message) {
+            $signer = new Swift_Signers_DKIMSigner(config('mail.dkim.private-key'), config('mail.dkim.domain'), config('mail.dkim.selector'));
+            $message->attachSigner($signer);
+        });
     }
 
     /**

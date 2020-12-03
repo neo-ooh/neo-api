@@ -8,8 +8,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_24_000010_create_actors_details_view.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_24_000010_create_actors_details_view.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,7 +215,7 @@
       <workItem from="1606498043870" duration="3407000" />
       <workItem from="1606592800850" duration="62435000" />
       <workItem from="1607012390072" duration="29000" />
-      <workItem from="1607017530207" duration="4548000" />
+      <workItem from="1607017530207" duration="5719000" />
     </task>
     <servers />
   </component>

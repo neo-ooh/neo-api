@@ -132,7 +132,8 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         /** @var Endpoint $action */
         $endpoint = static::actions()[$actionName];
         $params = [];
-        $headers = [ "Authorization" => "Bearer " . config('broadsign.api.key') ];
+        $headers = [];
+//        $headers = [ "Authorization" => "Bearer " . config('broadsign.api.key') ]; -- Broadsign HTTP Token Auth
         $path = $endpoint->path;
 
         if (count($args) >= 1) {
@@ -157,6 +158,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         Log::debug("Calling broadsign API: ({$endpoint->method}) {$path}", $params);
 
         $response = Http::withoutVerifying()
+                        ->withOptions(["cert" => storage_path('broadsign.pem')])
                         ->withHeaders($headers)
                         ->{$endpoint->method}(config('broadsign.api.url') . $path, $params);
 

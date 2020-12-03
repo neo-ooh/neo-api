@@ -2,11 +2,8 @@
 /public/storage
 
 /storage/*.key
-/storage/framework
-/storage/logs
 
 /vendor
-/bootstrap
 
 .env
 .env.local

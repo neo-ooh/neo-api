@@ -8,7 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/database/migrations/2020_09_01_000026_create_containers_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000026_create_containers_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_24_000010_create_actors_details_view.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_24_000010_create_actors_details_view.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,7 +187,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.General" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -213,7 +214,7 @@
       <workItem from="1606498043870" duration="3407000" />
       <workItem from="1606592800850" duration="62435000" />
       <workItem from="1607012390072" duration="29000" />
-      <workItem from="1607017530207" duration="4105000" />
+      <workItem from="1607017530207" duration="4548000" />
     </task>
     <servers />
   </component>

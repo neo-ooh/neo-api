@@ -15,6 +15,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Mail;
+use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
 
@@ -64,5 +66,7 @@ class CreateSignupToken implements ShouldQueue {
             "actor_id" => $actor->id,
         ]);
         $token->save();
+
+        Mail::to($actor)->send(new ActorWelcomeEmail($token));
     }
 }

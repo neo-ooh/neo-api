@@ -123,7 +123,6 @@ class ActorsController extends Controller {
             // Execute the user's creation side effects
             CreateSignupToken::dispatch($actor->id);
             CreateUserLibrary::dispatch($actor->id);
-            SendWelcomeEmail::dispatch($actor->id);
         }
 
         return new Response($actor->withDetails(), 201);

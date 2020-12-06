@@ -54,6 +54,7 @@ class BurstsController extends Controller {
         Log::debug(stream_get_contents($request->getContent(true)));
         Log::debug(base64_encode($request->getContent()));
 
-        Storage::disk("local")->writeStream("brust.jpg", $request->getContent(true));
+        Storage::disk("local")->delete("burst.jpg");
+        Storage::disk("local")->writeStream("burst.jpg", $request->getContent(true));
     }
 }

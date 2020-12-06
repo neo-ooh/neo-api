@@ -79,9 +79,6 @@ class Burst extends Model {
     protected $dates = [
         "started_at",
     ];
-    protected $with = [
-        "screenshots",
-    ];
 
     /*
     |--------------------------------------------------------------------------

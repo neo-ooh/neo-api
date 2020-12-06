@@ -150,9 +150,10 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::model("bursts", Burst::class);
+    Route::model("burst", Burst::class);
 
-    Route::   post("bursts", BurstsController::class . "@store")->name("bursts.store");
+    Route::   post("bursts"        , BurstsController::class . "@store")->name("bursts.store");
+    Route::    get("bursts/{burst}", BurstsController::class . "@show" )->name("bursts.show");
 
 
     /*

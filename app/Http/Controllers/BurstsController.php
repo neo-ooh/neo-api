@@ -54,4 +54,8 @@ class BurstsController extends Controller {
 
         $screenshot->store($request->getContent(true));
     }
+
+    public function show(Burst $burst): Response {
+        return new Response($burst->load('screenshots', 'player', 'player.location'));
+    }
 }

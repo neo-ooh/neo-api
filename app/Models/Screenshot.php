@@ -82,10 +82,7 @@ class Screenshot extends Model {
      * @param resource $screenshot
      */
     public function store($screenshot) {
-        // Make sure path is clean
-        Storage::delete($this->file_path);
-
         // And store the request
-        Storage::writeStream($this->file_path, $screenshot);
+        Storage::writeStream($this->file_path, $screenshot, ["visibility" => "public"]);
     }
 }

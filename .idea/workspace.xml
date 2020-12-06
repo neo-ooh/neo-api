@@ -8,8 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/TermsOfServiceTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/TermsOfServiceTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -226,7 +226,7 @@
       <workItem from="1607017530207" duration="12478000" />
       <workItem from="1607094998350" duration="5535000" />
       <workItem from="1607104339983" duration="19000" />
-      <workItem from="1607104372430" duration="3568000" />
+      <workItem from="1607104372430" duration="3944000" />
     </task>
     <servers />
   </component>

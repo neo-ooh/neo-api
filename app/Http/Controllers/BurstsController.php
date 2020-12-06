@@ -47,7 +47,10 @@ class BurstsController extends Controller {
 
     /** @noinspection PhpUnusedParameterInspection */
     public function receive(Request $request, Burst $burst): void {
+        Log::debug($request->method());
         Log::debug($request->headers);
         Log::debug(print_r($request->all(), true));
+        Log::debug(get_resource_type($request->getContent(true)));
+        Log::debug($request->getContent(true));
     }
 }

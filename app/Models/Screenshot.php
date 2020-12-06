@@ -75,7 +75,7 @@ class Screenshot extends Model {
     */
 
     public function getFilePathAttribute() {
-        return "/bursts/{$this->burst_id}/{$this->id}";
+        return "/bursts/{$this->burst_id}/{$this->id}.jpg";
     }
 
     /**

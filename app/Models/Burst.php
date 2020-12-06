@@ -16,6 +16,7 @@ namespace Neo\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon as Date;
 
 /**
@@ -78,6 +79,9 @@ class Burst extends Model {
     protected $dates = [
         "started_at",
     ];
+    protected $with = [
+        "screenshots",
+    ];
 
     /*
     |--------------------------------------------------------------------------
@@ -97,6 +101,13 @@ class Burst extends Model {
      */
     public function location (): BelongsTo {
         return $this->player->location();
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function screenshots (): HasMany {
+        return $this->hasMany(Screenshot::class);
     }
 
     /**

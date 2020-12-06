@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use Neo\BroadSign\Jobs\RequestScreenshotsBurst;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\Burst;
+use Neo\Models\Screenshot;
 
 class BurstsController extends Controller {
     public function store(StoreBurstRequest $request): Response {
@@ -46,12 +47,9 @@ class BurstsController extends Controller {
         return new Response($burst, 201);
     }
 
-    /** @noinspection PhpUnusedParameterInspection */
     public function receive(Request $request, Burst $burst): void {
-        Log::debug($request->method());
-        Log::debug($request->headers);
-
-        Storage::disk("local")->delete("burst.jpg");
-        Storage::disk("local")->writeStream("burst.jpg", $request->getContent(true));
+        $screenshot = new Screenshot();
+        $screenshot->burst_id = $burst->id;
+        $screenshot->save();
     }
 }

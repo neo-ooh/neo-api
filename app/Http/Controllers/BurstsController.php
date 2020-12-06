@@ -15,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Neo\BroadSign\Jobs\RequestScreenshotsBurst;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\Burst;
@@ -52,5 +53,7 @@ class BurstsController extends Controller {
         Log::debug(print_r($request->all(), true));
         Log::debug(stream_get_contents($request->getContent(true)));
         Log::debug(base64_encode($request->getContent()));
+
+        Storage::disk("local")->writeStream("brust.jpg", $request->getContent(true));
     }
 }

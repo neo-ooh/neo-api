@@ -50,7 +50,7 @@ class BurstsController extends Controller {
         Log::debug($request->method());
         Log::debug($request->headers);
         Log::debug(print_r($request->all(), true));
-        Log::debug(get_resource_type($request->getContent(true)));
+        Log::debug(stream_get_contents($request->getContent(true)));
         Log::debug($request->getContent(true));
     }
 }

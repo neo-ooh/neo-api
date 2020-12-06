@@ -14,8 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 use Neo\BroadSign\Jobs\RequestScreenshotsBurst;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\Burst;
@@ -48,7 +46,7 @@ class BurstsController extends Controller {
     }
 
     public function receive(Request $request, Burst $burst): void {
-        $screenshot = new Screenshot();
+        $screenshot           = new Screenshot();
         $screenshot->burst_id = $burst->id;
         $screenshot->save();
 

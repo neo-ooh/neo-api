@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - Schedule.php
  */
 
 namespace Neo\Models;
@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Neo\Jobs\DisableBroadSignSchedule;
+use Neo\BroadSign\Jobs\DisableBroadSignSchedule;
 
 /**
  * NeoModels\Branding

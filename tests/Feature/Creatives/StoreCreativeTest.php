@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - StoreCreativeTest.php
  */
 
 namespace Tests\Feature\Creatives;

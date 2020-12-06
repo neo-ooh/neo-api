@@ -5,11 +5,12 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - UpdateBroadSignScheduleStatus.php
  */
 
-namespace Neo\Jobs;
+namespace Neo\BroadSign\Jobs;
 
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,15 +20,13 @@ use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Schedule;
 
 /**
- * Class UpdateBroadSignSchedule
- * Update a BroadSign schedule to reflect the changes made to its counterpart in Access.
+ * Class UpdateBroadSignScheduleStatus
+ * Update a BroadSign schedule status to reflect the changes made to its counterpart in Access.
  *
  * @package Neo\Jobs
  *
- * @warning This does not update the broadcasting status of the schedule, only its properties.
- * @see     UpdateBroadSignScheduleStatus
  */
-class UpdateBroadSignSchedule implements ShouldQueue {
+class UpdateBroadSignScheduleStatus implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -51,6 +50,8 @@ class UpdateBroadSignSchedule implements ShouldQueue {
      * Execute the job.
      *
      * @return void
+     * @throws Exception
+     * @throws Exception
      */
     public function handle (): void {
         if(config("app.env") === "testing") {
@@ -64,13 +65,17 @@ class UpdateBroadSignSchedule implements ShouldQueue {
             return;
         }
 
-        // Get and update the schedule
+        // We update the broadsign schedule based on its Access counterpart's status
         $bsSchedule = BSSchedule::get($schedule->broadsign_schedule_id);
-        $bsSchedule->name = $schedule->content->name . " Schedules";
-        $bsSchedule->start_date = $schedule->start_date->toDateString();
-        $bsSchedule->start_time = $schedule->start_date->toTimeString();
-        $bsSchedule->end_date = $schedule->end_date->toDateString();
-        $bsSchedule->end_time = $schedule->end_date->toTimeString();
+        $bsSchedule->active = $schedule->is_approved;
         $bsSchedule->save();
+
+        $bsCampaign = $bsSchedule->campaign();
+
+        // If the schedule is active, but the campaign is not, we need to promote the campaign
+        if ($bsSchedule->active && $bsCampaign->state === 0) {
+            $bsCampaign->state = 1;
+            $bsCampaign->save();
+        }
     }
 }

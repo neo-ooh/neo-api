@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - Player.php
  */
 
 namespace Neo\BroadSign\Models;
@@ -74,11 +74,11 @@ class Player extends BroadSignModel {
     public function requestScreenshotsBurst (int $burstID, int $scale, int $duration, int $frequency): void {
         $this->sendRequest([
             "rc" => [
-                "version"            => "1",
+                "version"            => 1,
                 "id"                 => (string)$burstID,
                 "action"             => "screenshot_request",
-                "dest_url"           => config("ecosystem.neo-reports.host") . "/v1/burst_callback/" . $burstID,
-                "scale_factor"       => (string)$scale,
+                "dest_url"           => config("app.url") . "/v1/broadsign/burst_callback/" . $burstID,
+                "scale_factor"       => $scale,
                 "burst_duration_ms"  => $duration,
                 "burst_frequency_ms" => $frequency,
             ],

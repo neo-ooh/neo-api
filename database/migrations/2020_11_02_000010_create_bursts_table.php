@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - 2020_11_02_000010_create_bursts_table.php
  */
 
 use Illuminate\Database\Migrations\Migration;

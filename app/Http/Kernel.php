@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - Kernel.php
  */
 
 namespace Neo\Http;
@@ -23,7 +23,6 @@ use Illuminate\Http\Middleware\SetCacheHeaders;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
-use Neo\Console\NetworkUpdate;
 use Neo\Http\Middleware\Authenticate;
 use Neo\Http\Middleware\PreventRequestsDuringMaintenance;
 use Neo\Http\Middleware\TrimStrings;
@@ -38,7 +37,6 @@ class Kernel extends HttpKernel {
      * @var array
      */
     protected $middleware = [
-        // \Neo\Http\Middleware\TrustHosts::class,
         TrustProxies::class,
         HandleCors::class,
         PreventRequestsDuringMaintenance::class,
@@ -53,14 +51,24 @@ class Kernel extends HttpKernel {
      * @var array
      */
     protected $middlewareGroups = [
-        'api'     => [
+        'api'   => [
             'throttle:api',
             SubstituteBindings::class,
         ],
-        'secured' => [
-            'throttle:60,1',
+        'loa-4' => [
+            'auth:neo-loa-4', // login + unlocked + 2fa + tos
+        ],
+        'loa-3' => [
+            'auth:neo-loa-3', // login + unlocked + 2fa
+        ],
+        'loa-2' => [
+            'auth:neo-loa-2', // login + unlocked
+        ],
+        'loa-1' => [
+            'auth:neo-loa-1', // login
+        ],
+        'broadsign'   => [
             SubstituteBindings::class,
-            'auth',
         ],
     ];
 
@@ -90,8 +98,7 @@ class Kernel extends HttpKernel {
      *
      * @return void
      */
-    protected function schedule(Schedule $schedule): void
-    {
+    protected function schedule(Schedule $schedule): void {
 //        $schedule->command(NetworkUpdate::class)->hourlyAt(30);
     }
 }

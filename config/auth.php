@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - auth.php
  */
 
 return [
@@ -22,7 +22,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
+        'guard' => 'neo-loa-4',
         'passwords' => 'actor',
     ],
 
@@ -44,13 +44,23 @@ return [
     */
 
     'guards' => [
-        'api' => [
-            'driver'   => 'neo-jwt',
+        'neo-loa-4' => [
+            'driver'   => 'neo-loa-4',
             'provider' => 'actors',
             'hash'     => false,
         ],
-        'basic-api' => [
-            'driver'   => 'neo-jwt-light',
+        'neo-loa-3' => [
+            'driver'   => 'neo-loa-3',
+            'provider' => 'actors',
+            'hash'     => false,
+        ],
+        'neo-loa-2' => [
+            'driver'   => 'neo-loa-2',
+            'provider' => 'actors',
+            'hash'     => false,
+        ],
+        'neo-loa-1' => [
+            'driver'   => 'neo-loa-1',
             'provider' => 'actors',
             'hash'     => false,
         ],

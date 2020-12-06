@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - UpdateReviewTemplateRequest.php
  */
 
 namespace Neo\Http\Requests\ReviewsTemplates;

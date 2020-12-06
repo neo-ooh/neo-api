@@ -1,12 +1,12 @@
 <?php
-//------------------------------------------------------------------------------
-// Copyright 2020 (c) Neo-OOH - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// Written by Valentin Dufois <Valentin Dufois>
-//
-// neo-auth - PasswordResetTest.php
-//------------------------------------------------------------------------------
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - PasswordResetTest.php
+ */
 
 namespace Tests\Feature\PasswordRecovery;
 

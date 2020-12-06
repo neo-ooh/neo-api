@@ -1,12 +1,12 @@
 <?php
-//------------------------------------------------------------------------------
-// Copyright 2020 (c) Neo-OOH - All Rights Reserved
-// Unauthorized copying of this file, via any medium is strictly prohibited
-// Proprietary and confidential
-// Written by Valentin Dufois <Valentin Dufois>
-//
-// neo-auth - TwoFactorAuthTest.php
-//------------------------------------------------------------------------------
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - TwoFactorAuthTest.php
+ */
 
 namespace Tests\Feature\Login;
 
@@ -88,7 +88,7 @@ class TwoFactorAuthTest extends TestCase {
     public function testCorrectErrorOnMissingTwoFactorToken(): void {
         $response = $this->postJson("/v1/auth/two-fa-validation");
 
-        $response->assertStatus(422);
+        $response->assertStatus(401);
     }
 
     /**

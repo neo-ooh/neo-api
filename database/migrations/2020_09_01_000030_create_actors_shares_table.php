@@ -4,7 +4,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - 2020_09_01_000030_create_actors_shares_table.php
  */
 /** @noinspection PhpIllegalPsrClassPathInspection */
 

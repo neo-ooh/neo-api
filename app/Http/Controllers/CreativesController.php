@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - CreativesController.php
  */
 
 namespace Neo\Http\Controllers;
@@ -27,8 +27,8 @@ use Neo\Exceptions\InvalidCreativeSize;
 use Neo\Exceptions\InvalidVideoCodec;
 use Neo\Http\Requests\Creatives\DestroyCreativeRequest;
 use Neo\Http\Requests\Creatives\StoreCreativeRequest;
-use Neo\Jobs\DisableBroadSignCreative;
-use Neo\Jobs\ImportCreativeInBroadSign;
+use Neo\BroadSign\Jobs\DisableBroadSignCreative;
+use Neo\BroadSign\Jobs\ImportCreativeInBroadSign;
 use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Frame;

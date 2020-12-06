@@ -5,10 +5,10 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - DisableBroadSignCampaign.php
  */
 
-namespace Neo\Jobs;
+namespace Neo\BroadSign\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

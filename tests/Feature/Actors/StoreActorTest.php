@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - StoreActorTest.php
  */
 
 namespace Tests\Feature\Actors;
@@ -14,7 +14,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Queue;
 use Neo\Enums\Capability;
-use Neo\Jobs\SendWelcomeEmail;
+use Neo\Jobs\CreateSignupToken;
 use Neo\Models\Actor;
 use Tests\TestCase;
 
@@ -205,7 +205,7 @@ class StoreActorTest extends TestCase
                      "email",
                      "name",
                      "parent",
-                     "branding",
+                     "branding_id",
                  ]);
     }
 
@@ -237,7 +237,7 @@ class StoreActorTest extends TestCase
         $response->assertStatus(201);
 
         // Has the email been sent ?
-        Queue::assertPushed(SendWelcomeEmail::class);
+        Queue::assertPushed(CreateSignupToken::class);
     }
 
 

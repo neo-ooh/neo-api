@@ -5,35 +5,60 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - AuthServiceProvider.php
  */
 
 namespace Neo\Providers;
 
+use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
+use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Neo\Auth\JwtGuard;
-use Neo\Auth\LightJwtGuard;
+use Neo\Auth\FirstLoAGuard;
+use Neo\Auth\FourthLoAGuard;
+use Neo\Auth\SecondLoAGuard;
+use Neo\Auth\ThirdLoAGuard;
 use Neo\Enums\Capability;
+use Neo\Http\Controllers\CreativesController;
 use Neo\Models\Actor;
+use Neo\Models\Creative;
 
 class AuthServiceProvider extends ServiceProvider {
+    /**
+     * Register any application services.
+     *
+     * @return void
+     */
+    public function register(): void
+    {
+        // Register convenient FFMpeg initializer
+        $this->app->bind(UserProvider::class, Auth::createUserProvider());
+    }
 
     /**
      * Register any authentication / authorization services.
      *
      * @return void
      */
-    public function boot (): void {
-        // Register our JWT Authentication providers
-        Auth::extend('neo-jwt',
-            fn ($app, $name, array $config) => new JwtGuard(Auth::createUserProvider($config['provider'])));
-        Auth::extend('neo-jwt-light',
-            fn ($app, $name, array $config) => new LightJwtGuard(Auth::createUserProvider($config['provider'])));
+    public function boot(): void {
+        // Register our JWT Authentication= providers
+        Auth::extend('neo-loa-4', fn($app, $name, array $config) =>
+            new FourthLoAGuard(Auth::createUserProvider($config['provider'])));
+
+        Auth::extend('neo-loa-3', fn($app, $name, array $config) =>
+            new ThirdLoAGuard(Auth::createUserProvider($config['provider'])));
+
+        Auth::extend('neo-loa-2', fn($app, $name, array $config) =>
+            new SecondLoAGuard(Auth::createUserProvider($config['provider'])));
+
+        Auth::extend('neo-loa-1', fn($app, $name, array $config) =>
+            new FirstLoAGuard(Auth::createUserProvider($config['provider'])));
+
 
         // Register our gate authorization provider
         Gate::before(
-            fn (Actor $actor, string $capability) => $actor->hasCapability(Capability::coerce($capability)));
+            fn(Actor $actor, string $capability) => $actor->hasCapability(Capability::coerce($capability)));
     }
 }

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - CampaignsController.php
  */
 
 namespace Neo\Http\Controllers;
@@ -18,9 +18,9 @@ use Neo\Http\Requests\Campaigns\ListCampaignsRequest;
 use Neo\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Http\Requests\CampaignsLocations\SyncCampaignLocationsRequest;
-use Neo\Jobs\CreateBroadSignCampaign;
-use Neo\Jobs\DisableBroadSignCampaign;
-use Neo\Jobs\UpdateBroadSignCampaign;
+use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
+use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
+use Neo\BroadSign\Jobs\UpdateBroadSignCampaign;
 use Neo\Models\Campaign;
 
 class CampaignsController extends Controller

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - 2020_09_01_100001_create_actors_locations_table.php
  */
 
 /** @noinspection PhpIllegalPsrClassPathInspection */

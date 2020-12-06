@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - auth.php
  */
 
 use Illuminate\Support\Facades\Route;
@@ -50,7 +50,7 @@ Route::prefix("v1/auth")->group(function () {
     | Second Factor Authentication
     |----------------------------------------------------------------------
     */
-    Route::middleware('auth:basic-api')->group(function() {
+    Route::middleware('loa-2')->group(function() {
         Route::post('/two-fa-validation', TwoFactorAuthController::class . '@validateToken')->name('two-fa-validation');
     });
 
@@ -73,7 +73,7 @@ Route::prefix("v1/auth")->group(function () {
     | Terms of service
     |----------------------------------------------------------------------
     */
-    Route::middleware('auth:basic-api')->group(function() {
+    Route::middleware('loa-3')->group(function() {
         Route:: get('/terms-of-service', TermsOfServiceController::class . '@show'  )->name("auth.tos.show");
         Route::post('/terms-of-service', TermsOfServiceController::class . '@accept')->name("auth.tos.accept");
     });

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - LocationsController.php
  */
 
 namespace Neo\Http\Controllers;
@@ -18,6 +18,7 @@ use Neo\Enums\Capability;
 use Neo\Http\Requests\Locations\ListLocationsRequest;
 use Neo\Http\Requests\Locations\ShowLocationRequest;
 use Neo\Http\Requests\Locations\UpdateLocationRequest;
+use Neo\Models\Actor;
 use Neo\Models\Location;
 
 class LocationsController extends Controller {
@@ -29,6 +30,7 @@ class LocationsController extends Controller {
      * @return Response
      */
     public function index (ListLocationsRequest $request): Response {
+        /** @var Actor $actor */
         $actor = Auth::user();
 
         if (!$actor->hasCapability(Capability::locations_edit())) {

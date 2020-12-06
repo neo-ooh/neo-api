@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - AcceptTermsOfServiceRequest.php
+ */
 
 namespace Neo\Http\Requests;
 
@@ -13,7 +21,7 @@ class AcceptTermsOfServiceRequest extends FormRequest
      * @return bool
      */
     public function authorize(): bool {
-        return Auth::check();
+        return true;
     }
 
     /**

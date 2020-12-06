@@ -5,10 +5,10 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - AssociateAdCopyWithBundle.php
  */
 
-namespace Neo\Jobs;
+namespace Neo\BroadSign\Jobs;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Bus\Queueable;

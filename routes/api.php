@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - api.php
  */
 
 /** @noinspection GrazieInspection */
@@ -18,6 +18,7 @@ use Neo\Http\Controllers\ActorsRolesController;
 use Neo\Http\Controllers\ActorsSharingsController;
 use Neo\Http\Controllers\BrandingsController;
 use Neo\Http\Controllers\BrandingsFilesController;
+use Neo\Http\Controllers\BurstsController;
 use Neo\Http\Controllers\CampaignsController;
 use Neo\Http\Controllers\CapabilitiesController;
 use Neo\Http\Controllers\ContainersController;
@@ -36,6 +37,7 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Models\Actor;
+use Neo\Models\Burst;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
 use Neo\Models\Creative;
@@ -59,7 +61,7 @@ use Neo\Models\Schedule;
 |
 */
 
-Route::prefix("v1")->middleware("secured")->group(function () {
+Route::prefix("v1")->middleware("loa-4")->group(function () {
     /*
     |----------------------------------------------------------------------
     | Actors
@@ -140,6 +142,17 @@ Route::prefix("v1")->middleware("secured")->group(function () {
     Route::   get("brandings/{branding}/files", BrandingsFilesController::class . "@index")->name("brandings.files.index");
     Route::  post("brandings/{branding}/files", BrandingsFilesController::class . "@store")->name("brandings.files.store");
     Route::delete("brandings/{branding}/files", BrandingsFilesController::class . "@destroy")->name("brandings.files.destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Bursts
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("bursts", Burst::class);
+
+    Route::   post("bursts", BurstsController::class . "@store")->name("bursts.store");
 
 
     /*

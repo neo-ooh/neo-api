@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - 2020_11_24_000010_create_actors_details_view.php
  */
 
 use Illuminate\Database\Migrations\Migration;

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - 2020_11_25_000000_create_editor_templates_table.php
  */
 
 use Illuminate\Database\Migrations\Migration;

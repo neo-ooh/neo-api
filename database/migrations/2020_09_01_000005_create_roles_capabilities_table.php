@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - 2020_09_01_000005_create_roles_capabilities_table.php
  */
 
 use Illuminate\Database\Migrations\Migration;

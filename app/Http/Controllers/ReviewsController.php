@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - ReviewsController.php
  */
 
 namespace Neo\Http\Controllers;
@@ -14,7 +14,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Reviews\StoreReviewRequest;
-use Neo\Jobs\UpdateBroadSignScheduleStatus;
+use Neo\BroadSign\Jobs\UpdateBroadSignScheduleStatus;
 use Neo\Models\Review;
 use Neo\Models\Schedule;
 

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - SchedulesController.php
  */
 
 /** @noinspection PhpUnusedParameterInspection */
@@ -26,8 +26,8 @@ use Neo\Http\Requests\Schedules\ListPendingSchedulesRequest;
 use Neo\Http\Requests\Schedules\ReorderScheduleRequest;
 use Neo\Http\Requests\Schedules\StoreScheduleRequest;
 use Neo\Http\Requests\Schedules\UpdateScheduleRequest;
-use Neo\Jobs\CreateBroadSignSchedule;
-use Neo\Jobs\UpdateBroadSignSchedule;
+use Neo\BroadSign\Jobs\CreateBroadSignSchedule;
+use Neo\BroadSign\Jobs\UpdateBroadSignSchedule;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
 use Neo\Models\Schedule;

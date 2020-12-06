@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - ShowActorTest.php
  */
 
 namespace Tests\Feature\Actors;
@@ -135,7 +135,7 @@ class ShowActorTest extends TestCase {
                      "email",
                      "name",
                      "parent",
-                     "branding",
+                     "branding_id",
                      "is_locked",
                  ]);
     }

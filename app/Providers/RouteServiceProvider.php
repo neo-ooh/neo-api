@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - RouteServiceProvider.php
  */
 
 /** @noinspection GrazieInspection */
@@ -36,6 +36,8 @@ class RouteServiceProvider extends ServiceProvider {
             Route::middleware('api')->group(base_path('routes/api.php'));
 
             Route::middleware('api')->group(base_path('routes/auth.php'));
+
+            Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
         });
     }
 

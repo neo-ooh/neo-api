@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - 2020_11_02_000000_create_players_table.php
  */
 
 use Illuminate\Database\Migrations\Migration;

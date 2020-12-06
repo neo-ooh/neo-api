@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - JwtGuard.php
  */
 
 namespace Neo\Auth;
@@ -29,7 +29,7 @@ use Neo\Models\Actor;
  *
  * @package NeoServices\Auth
  */
-class JwtGuard implements Guard {
+abstract class JwtGuard implements Guard {
 
     /**
      * @var Actor|null Will store the user once it has been loaded at least once
@@ -48,6 +48,23 @@ class JwtGuard implements Guard {
      */
     protected UserProvider $provider;
 
+    /**
+     * Specify if a user who has not validated its two factor authentication is allowed by the guard
+     * @var bool
+     */
+    protected bool $allowNonValidated2FA;
+
+    /** Specify if a user who has not approved the terms of service is allowed by the guard
+     * @var bool
+     */
+    protected bool $allowNonApprovedTos;
+
+    /**
+     * Specify if a user who's account is disabled is allowed by the guard
+     * @var bool
+     */
+    protected bool $allowDisabledAccount;
+
 
     /**
      * JwtGuard constructor.
@@ -65,12 +82,7 @@ class JwtGuard implements Guard {
             return;
         }
 
-        // Validate the token
-        if (!$this->isTokenValid()) {
-            // Invalid token
-            return;
-        }
-
+        // Token is valid, use its `uid` property to get the matching user
         // Get the user
         /** @var Actor $actor */
         $actor = Actor::query()->find($this->token['uid']);
@@ -84,7 +96,12 @@ class JwtGuard implements Guard {
             return;
         }
 
-        // Token is valid, use its `uid` property to get the matching user
+        // Validate the token
+        if (!$this->validateUser($actor)) {
+            // Invalid token
+            return;
+        }
+
         $this->setUser($actor);
     }
 
@@ -108,13 +125,23 @@ class JwtGuard implements Guard {
         return (array)$data;
     }
 
-    private function isTokenValid (): bool {
-        if (is_null($this->token)) {
+    private function validateUser(Actor $actor): bool {
+        // Validate that the token has its two factor auth OR that the guard allows it to be missing
+        if(!$this->token['2fa'] && !$this->allowNonValidated2FA) {
             return false;
         }
 
-        // A token is valid if its 2fa and tos properties are true
-        return $this->token['2fa'] === true && $this->token['tos'] === true;
+        // Validate that the user has approved the Tos
+        if(!$actor->tos_accepted && !$this->allowNonApprovedTos) {
+            return false;
+        }
+
+        // Validate the the user account is not locked, OR that a locked account is allowed to log in
+        if($actor->is_locked && !$this->allowDisabledAccount) {
+            return false;
+        }
+
+        return true;
     }
 
     /**

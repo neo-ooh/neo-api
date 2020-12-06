@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - BroadSignServiceProvider.php
  */
 
 namespace Neo\BroadSign;
@@ -18,9 +18,5 @@ class BroadSignServiceProvider extends ServiceProvider {
 
         $this->app->bind('broadsign', fn () => new BroadSign());
         $this->app->alias('BroadSign', BroadSignFacade::class);
-
-        //        $this->commands([
-        //            NetworkUpdate::class,
-        //        ]);
     }
 }

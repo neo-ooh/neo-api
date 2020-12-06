@@ -5,10 +5,10 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - ImportCreativeInBroadSign.php
  */
 
-namespace Neo\Jobs;
+namespace Neo\BroadSign\Jobs;
 
 use DateInterval;
 use Exception;

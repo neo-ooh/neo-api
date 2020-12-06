@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - RolesCapabilitiesController.php
  */
 
 namespace Neo\Http\Controllers;

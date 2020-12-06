@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - ActorsController.php
  */
 
 namespace Neo\Http\Controllers;
@@ -14,15 +14,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Jobs\CreateUserLibrary;
-use Neo\Jobs\SendWelcomeEmail;
 use Neo\Models\Actor;
-use Neo\Models\SignupToken;
 
 /**
  * Class ActorsController
@@ -124,6 +123,14 @@ class ActorsController extends Controller {
     }
 
     public function update(UpdateActorRequest $request, Actor $actor): Response {
+        // Since all request properties are optional, make sure at least one was given
+        if(count($request->all()) === 0) {
+            return new Response([
+                "code" => "empty-request",
+                "message" => "You must pass at lease 1 parameter when calling this route"
+            ], 422);
+        }
+
         // The request handles input validation
         $actor->name        = $request->get("name", $actor->name);
         $actor->email       = $request->get("email", $actor->email);

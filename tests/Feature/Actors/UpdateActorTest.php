@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - UpdateActorTest.php
  */
 
 namespace Tests\Feature\Actors;
@@ -148,7 +148,7 @@ class UpdateActorTest extends TestCase {
                      "name",
                      "email",
                      "parent",
-                     "branding",
+                     "branding_id",
                      "is_locked",
                  ]);
     }
@@ -269,9 +269,7 @@ class UpdateActorTest extends TestCase {
 
         $response->assertOk()
                  ->assertJson([
-                     "branding" => [
-                         "id" => $branding->id,
-                     ],
+                     "branding_id" => $branding->id,
                  ]);
     }
 }

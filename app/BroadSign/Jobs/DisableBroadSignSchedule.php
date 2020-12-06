@@ -5,12 +5,11 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - DisableBroadSignSchedule.php
  */
 
-namespace Neo\Jobs;
+namespace Neo\BroadSign\Jobs;
 
-use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,17 +19,16 @@ use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Schedule;
 
 /**
- * Class UpdateBroadSignScheduleStatus
- * Update a BroadSign schedule status to reflect the changes made to its counterpart in Access.
+ * Class DisableBroadSignSchedule
+ * Disable a broadsign schedule, effectively stopping its broadcast
  *
  * @package Neo\Jobs
- *
  */
-class UpdateBroadSignScheduleStatus implements ShouldQueue {
+class DisableBroadSignSchedule implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var int ID of the updated schedule in Access
+     * @var int ID of the schedule in Access
      */
     protected int $scheduleID;
 
@@ -38,7 +36,7 @@ class UpdateBroadSignScheduleStatus implements ShouldQueue {
     /**
      * Create a new job instance.
      *
-     * @param int $scheduleID ID of the updated schedule in Access
+     * @param int $scheduleID ID of the schedule in Access
      *
      * @return void
      */
@@ -47,35 +45,27 @@ class UpdateBroadSignScheduleStatus implements ShouldQueue {
     }
 
     /**
-     * Execute the job.
+     * Execute the job
      *
      * @return void
-     * @throws Exception
-     * @throws Exception
      */
     public function handle (): void {
         if(config("app.env") === "testing") {
             return;
         }
 
-        $schedule = Schedule::query()->find($this->scheduleID);
+        // Get the campaign
+        $schedule = Schedule::query()->findOrFail($this->scheduleID);
 
         if (!$schedule->broadsign_schedule_id) {
             // This schedule doesn't have a BroadSign ID, do nothing.
             return;
         }
 
-        // We update the broadsign schedule based on its Access counterpart's status
+        // Update the broadsign campaign
         $bsSchedule = BSSchedule::get($schedule->broadsign_schedule_id);
-        $bsSchedule->active = $schedule->is_approved;
+        $bsSchedule->active = false;
+        $bsSchedule->weight = 0;
         $bsSchedule->save();
-
-        $bsCampaign = $bsSchedule->campaign();
-
-        // If the schedule is active, but the campaign is not, we need to promote the campaign
-        if ($bsSchedule->active && $bsCampaign->state === 0) {
-            $bsCampaign->state = 1;
-            $bsCampaign->save();
-        }
     }
 }

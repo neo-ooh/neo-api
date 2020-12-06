@@ -5,15 +5,15 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - NetworkUpdate.php
  */
 
 namespace Neo\Console;
 
 use Illuminate\Console\Command;
-use Neo\Jobs\SynchronizeFormats;
-use Neo\Jobs\SynchronizeLocations;
-use Neo\Jobs\SynchronizePlayers;
+use Neo\BroadSign\Jobs\SynchronizeFormats;
+use Neo\BroadSign\Jobs\SynchronizeLocations;
+use Neo\BroadSign\Jobs\SynchronizePlayers;
 
 class NetworkUpdate extends Command {
     /**

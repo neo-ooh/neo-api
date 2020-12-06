@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - app.php
  */
 
 return [
@@ -170,17 +170,14 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         /*
-         * Package Service Providers...
-         */
-
-        /*
          * Application Service Providers...
          */
         Neo\Providers\AppServiceProvider::class,
         Neo\Providers\AuthServiceProvider::class,
-        // Neo\Providers\BroadcastServiceProvider::class,
         Neo\Providers\EventServiceProvider::class,
         Neo\Providers\RouteServiceProvider::class,
+
+        Neo\BroadSign\BroadSignServiceProvider::class,
 
     ],
 

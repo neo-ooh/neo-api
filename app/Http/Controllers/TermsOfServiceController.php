@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - TermsOfServiceController.php
  */
 
 namespace Neo\Http\Controllers;
@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\AcceptTermsOfServiceRequest;
+use Neo\Models\Actor;
 use Neo\Models\Param;
 
 /**
@@ -29,6 +30,7 @@ class TermsOfServiceController extends Controller {
     }
 
     public function accept(AcceptTermsOfServiceRequest $request): Response {
+        /** @var Actor $actor */
         $actor               = Auth::user();
         $actor->tos_accepted = $request->validated()['accept'];
         $actor->save();

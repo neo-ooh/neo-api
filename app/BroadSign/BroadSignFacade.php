@@ -5,13 +5,19 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - $file.filePath
+ * @neo/api - BroadSignFacade.php
  */
 
 namespace Neo\BroadSign;
 
 use Illuminate\Support\Facades\Facade;
 
+/**
+ * Class BroadSignFacade
+ *
+ * @package Neo\BroadSign
+ * @mixin BroadSign
+ */
 class BroadSignFacade extends Facade {
     protected static function getFacadeAccessor (): string {
         return 'broadsign';

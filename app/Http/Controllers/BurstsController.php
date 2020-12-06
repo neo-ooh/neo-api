@@ -50,9 +50,6 @@ class BurstsController extends Controller {
     public function receive(Request $request, Burst $burst): void {
         Log::debug($request->method());
         Log::debug($request->headers);
-        Log::debug(print_r($request->all(), true));
-        Log::debug(stream_get_contents($request->getContent(true)));
-        Log::debug(base64_encode($request->getContent()));
 
         Storage::disk("local")->delete("burst.jpg");
         Storage::disk("local")->writeStream("burst.jpg", $request->getContent(true));

@@ -51,5 +51,7 @@ class BurstsController extends Controller {
         $screenshot = new Screenshot();
         $screenshot->burst_id = $burst->id;
         $screenshot->save();
+
+        $screenshot->store($request->getContent(true));
     }
 }

@@ -90,8 +90,7 @@ class Player extends BroadSignModel {
             [
                 "domain_id"    => BroadSign::getDefaults()['domain_id'],
                 "player_id"    => $this->id,
-                "request_json" => json_encode($payload,
-                    JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                "request_json" => $payload
             ]);
     }
 }

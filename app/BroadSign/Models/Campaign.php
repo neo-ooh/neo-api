@@ -15,6 +15,7 @@ use Neo\BroadSign\Endpoint;
 
 /**
  * Class Campaigns
+ *
  * @package Neo\BroadSign\Models
  *
  * @property bool   active
@@ -28,7 +29,7 @@ use Neo\BroadSign\Endpoint;
  * @property int    day_of_week_mask
  * @property string default_attributes
  * @property int    default_bundle_weight
- * @property int     default_category_id
+ * @property int    default_category_id
  * @property bool   default_fullscreen
  * @property int    default_interactivity_timeout
  * @property string default_interactivity_trigger_id
@@ -50,16 +51,18 @@ use Neo\BroadSign\Endpoint;
  * @property int    name
  * @property int    pacing_period
  * @property int    pacing_target
- * @property int    parent_id
+ * @property int    parent_id ID of the customer owning this campaign
  * @property int    promoter_user_id
  * @property string promotion_time
  * @property string reps_calculated_on
  * @property int    saturation
- * @property string  start_date
- * @property string  start_time
- * @property int     state
+ * @property string start_date
+ * @property string start_time
+ * @property int    state
  *
+ * @method static Collection all()
  * @method static Campaign get(int $broadsign_reservation_id)
+ * @method static Collection currents()
  * @method static int addSkinSlots(array $params)
  * @method static int dropSkinSlots(array $params)
  * @method static int addResourceCriteria(array $params)
@@ -95,9 +98,10 @@ class Campaign extends BroadSignModel {
         "state",
     ];
 
-    protected static function actions (): array {
+    protected static function actions(): array {
         return [
             "all"                 => Endpoint::get("/reservation/v21")->multiple(),
+            "currents"            => Endpoint::get("/reservation/v21?current_only=True")->multiple(),
             "create"              => Endpoint::post("/reservation/v21/add")->id(),
             "get"                 => Endpoint::get("/reservation/v21/{id}"),
             "update"              => Endpoint::put("/reservation/v21")->id(),
@@ -112,17 +116,18 @@ class Campaign extends BroadSignModel {
 
     /**
      * Get all locations (display_unit) associated with this campaign
+     *
      * @return Collection
      */
-    public function locations (): Collection {
+    public function locations(): Collection {
         return Location::byReservable(["reservable_id" => $this->id]);
     }
 
-    public function addLocations (Collection $display_units_ids): void {
+    public function addLocations(Collection $display_units_ids): void {
         static::addSkinSlots([
             "id"           => $this->id,
             "sub_elements" => [
-                "display_unit"      => $display_units_ids->map(fn ($du) => ["id" => $du])->toArray(),
+                "display_unit"      => $display_units_ids->map(fn($du) => ["id" => $du])->toArray(),
                 "frame_or_criteria" => [
                     ["id" => config("broadsign.advertising-criteria")],
                 ],
@@ -130,16 +135,17 @@ class Campaign extends BroadSignModel {
         ]);
 
         // Load the campaign skin slots
-        $skinSlots = SkinSlot::forCampaign(["reservable_id" => $this->id]);
-        $skinSlotsID = $skinSlots->filter(fn ($skinSlot) => (bool)$skinSlot->active)->map(fn($skinSlot) => $skinSlot->id);
+        $skinSlots   = SkinSlot::forCampaign(["reservable_id" => $this->id]);
+        $skinSlotsID = $skinSlots->filter(fn($skinSlot) => (bool)$skinSlot->active)
+                                 ->map(fn($skinSlot) => $skinSlot->id);
 
         static::promoteSkinSlots([
-            "id" => $this->id,
+            "id"            => $this->id,
             "skin_slot_ids" => $skinSlotsID->join(','),
         ]);
     }
 
-    public function addCriteria (int $criteriaID, int $type): void {
+    public function addCriteria(int $criteriaID, int $type): void {
         static::addResourceCriteria([
             "active"      => true,
             "criteria_id" => $criteriaID,
@@ -148,11 +154,11 @@ class Campaign extends BroadSignModel {
         ]);
     }
 
-    public function removeLocations (Collection $display_units_ids): void {
+    public function removeLocations(Collection $display_units_ids): void {
         static::dropSkinSlots([
             "id"           => $this->id,
             "sub_elements" => [
-                "display_unit" => $display_units_ids->map(fn ($du) => ["id" => $du])->toArray(),
+                "display_unit" => $display_units_ids->map(fn($du) => ["id" => $du])->toArray(),
             ],
         ]);
     }
@@ -164,7 +170,7 @@ class Campaign extends BroadSignModel {
     */
 
 
-    public function rebook (): void {
+    public function rebook(): void {
         $rebookableProperties = [
             "day_of_week_mask",
             "domain_id",
@@ -177,11 +183,11 @@ class Campaign extends BroadSignModel {
         ];
 
         $properties = array_filter($this->attributes,
-            static fn ($key) => in_array($key, $rebookableProperties, true),
+            static fn($key) => in_array($key, $rebookableProperties, true),
             ARRAY_FILTER_USE_KEY);
 
         $transactionID = $this->callAction("rebook", $properties);
-        $this->id = $this->callAction("confirm_rebook",
+        $this->id      = $this->callAction("confirm_rebook",
             [
                 "id"                  => $this->id,
                 "slot_transaction_id" => $transactionID,

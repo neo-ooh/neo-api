@@ -30,11 +30,13 @@ class StoreBurstRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "player_id"    => ["required", "integer", "exists:players,id"],
+            "report_id"    => ["required", "integer", "exists:reports,id"],
             "start_at"     => ["required", "date"],
             "scale_factor" => ["required", "integer", "min:1", "max:100"],
             "duration_ms"  => ["required", "integer"],
             "frequency_ms" => ["required", "integer"],
+            "locations"    => ["required", "array"],
+            "locations.*"  => ["integer", "exists:locations,id"]
         ];
     }
 }

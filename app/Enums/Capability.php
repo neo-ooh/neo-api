@@ -27,6 +27,8 @@ use BenSampo\Enum\Enum;
  * @method static self contents_review()
  * @method static self locations_edit()
  * @method static self bursts_request()
+ * @method static self reports_create()
+ * @method static self reports_edit()
  * @method static self tests()
  */
 final class Capability extends Enum {
@@ -63,6 +65,8 @@ final class Capability extends Enum {
     // Tests
     public const tests = "test.capability";
 
-    // Bursts
+    // Reports & bursts
+    public const reports_create = "reports.create";
+    public const reports_edit = "reports.edit";
     public const bursts_request = "bursts.request";
 }

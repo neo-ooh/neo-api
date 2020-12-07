@@ -8,8 +8,29 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/RequestScreenshotsBursts.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/Customer.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Reports/ShowReportRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Reports/StoreReportRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_02_000030_create_screenshots_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/RequestScreenshotsBurst.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Middleware/Authenticate.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Bursts/StoreBurstRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Bursts/StoreBurstRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Burst.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Report.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Report.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_02_000010_create_bursts_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_02_000020_create_bursts_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_02_000020_create_reports_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_02_000010_create_reports_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +42,11 @@
     <execution />
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="valentin-dufois &lt;19367658+valentin-dufois@users.noreply.github.com&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="PhpDebugGeneral" xdebug_debug_port="9003" />
@@ -172,7 +198,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Models" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/database/migrations" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -189,11 +215,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/database/migrations" />
+      <recent name="$PROJECT_DIR$/app/Http/Controllers" />
+      <recent name="$PROJECT_DIR$/app/BroadSign/Models" />
       <recent name="$PROJECT_DIR$/app/Models" />
       <recent name="$PROJECT_DIR$/app/Http/Requests" />
-      <recent name="$PROJECT_DIR$/app/Http/Controllers" />
-      <recent name="$PROJECT_DIR$/app/Auth" />
-      <recent name="$PROJECT_DIR$/resources/views/emails" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs" />
@@ -201,7 +227,7 @@
       <recent name="$PROJECT_DIR$/app/Http/Requests/Brandings" />
     </key>
   </component>
-  <component name="RunManager" selected="PHPUnit.TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn">
+  <component name="RunManager" selected="PHPUnit.All Tests">
     <configuration name="TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
       <TestRunner class="Tests\Feature\TermsOfServiceTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/TermsOfServiceTest.php" method="testTermsOfServiceCanBeRetrievedLoggedIn" scope="Method" />
       <method v="2" />
@@ -226,12 +252,24 @@
       <workItem from="1607017530207" duration="12478000" />
       <workItem from="1607094998350" duration="5535000" />
       <workItem from="1607104339983" duration="19000" />
-      <workItem from="1607104372430" duration="9385000" />
+      <workItem from="1607104372430" duration="23226000" />
     </task>
+    <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
+      <created>1607375484940</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1607375484940</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fix ReviewTemplatesController static typing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix ReviewTemplatesController static typing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

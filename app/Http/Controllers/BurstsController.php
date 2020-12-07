@@ -13,36 +13,40 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
-use Neo\BroadSign\Jobs\RequestScreenshotsBurst;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\Burst;
 use Neo\Models\Screenshot;
 
 class BurstsController extends Controller {
     public function store(StoreBurstRequest $request): Response {
-        // Create a new Burst
-        $burst               = new Burst();
-        $burst->requested_by = Auth::id();
-        $burst->is_manual    = true;
-        $burst->status       = "pending";
-
         [
-            "player_id"    => $burst->player_id,
-            "scale_factor" => $burst->scale_factor,
-            "duration_ms"  => $burst->duration_ms,
-            "frequency_ms" => $burst->frequency_ms,
-            "start_at"     => $burst->started_at
+            "locations"    => $locations,
+            "report_id"    => $reportId,
+            "start_at"     => $startAt,
+            "scale_factor" => $scaleFactor,
+            "duration_ms"  => $duration,
+            "frequency_ms" => $frequency,
         ] = $request->validated();
-        $burst->save();
 
-        // If the burst is set to start soon, create its job now
-        if ($burst->started_at->diff(Date::now())->i < 1) {
-            RequestScreenshotsBurst::dispatchAfterResponse($burst->id);
+        $bursts = [];
+
+        foreach ($locations as $locationId) {
+            $burst               = new Burst();
+            $burst->report_id    = $reportId;
+            $burst->location_id  = $locationId;
+            $burst->requested_by = Auth::id();
+            $burst->start_at     = $startAt;
+            $burst->started      = false;
+            $burst->scale_factor = $scaleFactor;
+            $burst->duration_ms  = $duration;
+            $burst->frequency_ms = $frequency;
+            $burst->save();
+
+            $bursts[] = $burst;
         }
 
         // And return the burst
-        return new Response($burst, 201);
+        return new Response($bursts, 201);
     }
 
     public function receive(Request $request, Burst $burst): void {
@@ -55,5 +59,14 @@ class BurstsController extends Controller {
 
     public function show(Burst $burst): Response {
         return new Response($burst->load('screenshots', 'player', 'player.location'));
+    }
+
+    public function destroy(Burst $burst): Response {
+        if(!$burst->started) {
+            $burst->delete();
+            return new Response();
+        }
+
+        return new Response(["Burst is already started"], 400);
     }
 }

@@ -99,6 +99,19 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         $this->dirty = true;
     }
 
+    /**
+     */
+    public function __toString (): string {
+        try {
+            /** @var string $serialized */
+            $serialized = json_encode($this->attributes, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
+        } catch(JsonException $e) {
+            return $e->getMessage();
+        }
+
+        return $serialized;
+    }
+
     public function create (): void {
         $this->id = $this->callAction("create", $this->attributes);
         $this->dirty = false;

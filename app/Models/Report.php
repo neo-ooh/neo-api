@@ -13,17 +13,21 @@ namespace Neo\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
+use Neo\BroadSign\Models\Customer;
+use Neo\BroadSign\Models\Location as BSLocation;
 
 /**
  * Neo\Models\ActorsLocations
  *
  * @property int    id
- * @property int    player_id
+ * @property int    customer_id
+ * @property int    reservation_id
  * @property string name
  * @property int    created_by
  *
- * @property Player player
- * @property Actor   creator
+ * @property Actor  creator
  *
  * @mixin Builder
  */
@@ -60,12 +64,16 @@ class Report extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function player (): BelongsTo {
+    public function player(): BelongsTo {
         return $this->belongsTo(Player::class);
     }
 
-    public function creator (): BelongsTo {
+    public function creator(): BelongsTo {
         return $this->belongsTo(Actor::class, 'created_by');
+    }
+
+    public function bursts(): HasMany {
+        return $this->hasMany(Burst::class, 'report_id');
     }
 
     /*
@@ -73,4 +81,13 @@ class Report extends Model {
     | ***
     |--------------------------------------------------------------------------
     */
+
+    public function getCustomerAttribute(): Customer {
+        return Customer::get($this->customer_id);
+    }
+
+    public function getAvailableLocationsAttribute(): Collection {
+        $bsLocations = BSLocation::byReservable(["reservable_id" => $this->reservation_id ])->pluck('id');
+        return Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
+    }
 }

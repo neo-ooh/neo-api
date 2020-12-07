@@ -24,12 +24,14 @@ use Neo\Http\Controllers\CapabilitiesController;
 use Neo\Http\Controllers\ContainersController;
 use Neo\Http\Controllers\ContentsController;
 use Neo\Http\Controllers\CreativesController;
+use Neo\Http\Controllers\CustomersController;
 use Neo\Http\Controllers\FormatsController;
 use Neo\Http\Controllers\FramesController;
 use Neo\Http\Controllers\InventoryController;
 use Neo\Http\Controllers\LibrariesController;
 use Neo\Http\Controllers\LocationsController;
 use Neo\Http\Controllers\ParamsController;
+use Neo\Http\Controllers\ReportsController;
 use Neo\Http\Controllers\ReviewsController;
 use Neo\Http\Controllers\ReviewsTemplatesController;
 use Neo\Http\Controllers\RolesActorsController;
@@ -46,6 +48,7 @@ use Neo\Models\Frame;
 use Neo\Models\Library;
 use Neo\Models\Location;
 use Neo\Models\Param;
+use Neo\Models\Report;
 use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
@@ -152,8 +155,9 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("burst", Burst::class);
 
-    Route::   post("bursts"        , BurstsController::class . "@store")->name("bursts.store");
-    Route::    get("bursts/{burst}", BurstsController::class . "@show" )->name("bursts.show");
+    Route::  post("bursts"        , BurstsController::class . "@store"  )->name("bursts.store");
+    Route::   get("bursts/{burst}", BurstsController::class . "@show"   )->name("bursts.show");
+    Route::delete("bursts/{burst}", BurstsController::class . "@destroy")->name("bursts.destroy");
 
 
     /*
@@ -217,6 +221,16 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::  post("contents/{content}"  , CreativesController::class . "@store"  )->name("creatives.store");
     Route::delete("creatives/{creative}", CreativesController::class . "@destroy")->name("creatives.destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Customers
+    |----------------------------------------------------------------------
+    */
+
+    Route::get("customers"           , CustomersController::class . "@index"  )->name("customers.index");
+    Route::get("customers/{customer}", CustomersController::class . "@show")->name("customers.show");
 
 
     /*
@@ -294,8 +308,20 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("parameter", Param::class);
 
-    Route:: get("params/{parameter:slug}", ParamsController::class . "@show"  )->name("params.show");
-    Route:: put("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update");
+    Route::  get("params/{parameter:slug}", ParamsController::class . "@show"  )->name("params.show");
+    Route::  put("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Reports
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("report", Report::class);
+
+    Route:: post("reports"         , ReportsController::class . "@store")->name("reports.store");
+    Route::  get("reports/{report}", ReportsController::class . "@show" )->name("reports.show");
 
 
     /*

@@ -99,6 +99,6 @@ class Kernel extends HttpKernel {
      * @return void
      */
     protected function schedule(Schedule $schedule): void {
-//        $schedule->command(NetworkUpdate::class)->hourlyAt(30);
+        //
     }
 }

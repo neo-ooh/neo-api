@@ -12,6 +12,7 @@ namespace Neo\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Neo\BroadSign\Jobs\RequestScreenshotsBursts;
 
 class Kernel extends ConsoleKernel
 {
@@ -33,6 +34,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('network:update')->daily();
+        $schedule->job(RequestScreenshotsBursts::class)->everyMinute();
     }
 
     /**

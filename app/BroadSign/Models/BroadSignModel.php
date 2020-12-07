@@ -21,7 +21,6 @@ use Illuminate\Support\Facades\Log;
 use JsonException;
 use JsonSerializable;
 use Neo\BroadSign\Endpoint;
-use RuntimeException;
 
 /**
  * Class BroadSignModel
@@ -30,11 +29,11 @@ use RuntimeException;
  */
 abstract class BroadSignModel implements JsonSerializable, Arrayable {
     protected static string $unwrapKey;
-    protected static array  $updatable;
-    protected array         $attributes;
+    protected static array $updatable;
+    protected array $attributes;
     protected bool $dirty = false;
 
-    final public function __construct (array $attributes = []) {
+    final public function __construct(array $attributes = []) {
         $this->attributes = $attributes;
     }
 
@@ -43,7 +42,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      *
      * @return static
      */
-    protected static function asSelf (array $responseBody): self {
+    protected static function asSelf(array $responseBody): self {
         return new static($responseBody[0]);
     }
 
@@ -52,7 +51,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      *
      * @return Collection
      */
-    protected static function asMultipleSelf (array $responseBody): Collection {
+    protected static function asMultipleSelf(array $responseBody): Collection {
         $elements = [];
 
         foreach ($responseBody as $rawEl) {
@@ -62,7 +61,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         return collect($elements);
     }
 
-    protected static function asID (array $responseBody): int {
+    protected static function asID(array $responseBody): int {
         return $responseBody[0]["id"];
     }
 
@@ -71,7 +70,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      *
      * @return mixed
      */
-    public function __get (string $name) {
+    public function __get(string $name) {
         // Check if a method with the specified name exists
         if (method_exists($this, $name)) {
             // Yes call it and return
@@ -87,7 +86,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      *
      * @return bool
      */
-    public function __isset (string $name): bool {
+    public function __isset(string $name): bool {
         return isset($this->attributes[$name]);
     }
 
@@ -95,26 +94,26 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      * @param string $name
      * @param        $value
      */
-    public function __set (string $name, $value) {
+    public function __set(string $name, $value) {
         $this->attributes[$name] = $value;
-        $this->dirty = true;
+        $this->dirty             = true;
     }
 
     /**
      */
-    public function __toString (): string {
+    public function __toString(): string {
         try {
             /** @var string $serialized */
             $serialized = json_encode($this->attributes, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-        } catch(JsonException $e) {
+        } catch (JsonException $e) {
             return $e->getMessage();
         }
 
         return $serialized;
     }
 
-    public function create (): void {
-        $this->id = $this->callAction("create", $this->attributes);
+    public function create(): void {
+        $this->id    = $this->callAction("create", $this->attributes);
         $this->dirty = false;
     }
 
@@ -126,8 +125,8 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      * @return array|mixed
      * @throws BadResponse
      */
-    public function callAction (string $action, array $body): array {
-        return static::__callStatic($action, [ $body ]);
+    public function callAction(string $action, array $body): array {
+        return static::__callStatic($action, [$body]);
     }
 
     /**
@@ -137,7 +136,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      * @return mixed
      * @throws BadResponse
      */
-    public static function __callStatic (string $actionName, $args) {
+    public static function __callStatic(string $actionName, $args) {
         if (!array_key_exists($actionName, static::actions())) {
             $className = static::class;
             throw new BadMethodCallException("Static method {$actionName} does not exist on model {$className}.");
@@ -145,8 +144,8 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
 
         /** @var Endpoint $action */
         $endpoint = static::actions()[$actionName];
-        $params = [];
-        $headers = [];
+        $params   = [];
+        $headers  = [];
 //        $headers = [ "Authorization" => "Bearer " . config('broadsign.api.key') ]; -- Broadsign HTTP Token Auth
         $path = $endpoint->path;
 
@@ -155,7 +154,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
 
             // A get query has no body, replace in URL
             if (($endpoint->method === 'get') && is_numeric($args[0])) {
-                $path = preg_replace("/{id}/", $args[0], $path);
+                $path   = preg_replace("/{id}/", $args[0], $path);
                 $params = [];
             }
         }
@@ -182,8 +181,6 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         }
 
         $responseBody = $response->json();
-        Log::debug("Received response from broadsign API");
-        Log::debug(print_r($response, true));
 
         // Execute post-request transformation if needed
         if (!is_null($endpoint->transformMethod)) {
@@ -198,11 +195,11 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         return $responseBody;
     }
 
-    abstract protected static function actions ();
+    abstract protected static function actions();
 
-    public function save (): self {
+    public function save(): self {
         $properties = array_filter($this->attributes,
-            static fn ($key) => in_array($key, static::$updatable, true),
+            static fn($key) => in_array($key, static::$updatable, true),
             ARRAY_FILTER_USE_KEY);
         $this->callAction("update", $properties);
 
@@ -216,7 +213,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      *
      * @return array
      */
-    public function jsonSerialize (): array {
+    public function jsonSerialize(): array {
         return $this->toArray();
     }
 
@@ -225,7 +222,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      *
      * @return array
      */
-    public function toArray (): array {
+    public function toArray(): array {
         return $this->attributes;
     }
 
@@ -238,7 +235,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      *
      * @throws JsonException
      */
-    public function toJson ($options = 0): string {
+    public function toJson($options = 0): string {
         $json = json_encode($this->attributes, JSON_THROW_ON_ERROR | $options);
 
         if (JSON_ERROR_NONE !== json_last_error()) {

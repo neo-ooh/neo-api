@@ -49,7 +49,7 @@ class Player extends BroadSignModel {
         return [
             "all"     => Endpoint::get("/host/v17")->multiple(),
             "get"     => Endpoint::get("/host/v17/{id}"),
-            "request" => Endpoint::post("/host/v17/push_request")->id(),
+            "request" => Endpoint::post("/host/v17/push_request")->customTransform(null),
         ];
     }
 

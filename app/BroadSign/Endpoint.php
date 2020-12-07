@@ -106,11 +106,11 @@ class Endpoint {
     /**
      * Specified the returned value of this endpoint should be ignored
      *
-     * @param string $method
+     * @param string|null $method
      *
      * @return $this
      */
-    public function customTransform (string $method): Endpoint {
+    public function customTransform (?string $method): Endpoint {
         $this->transformMethod = $method;
         return $this;
     }

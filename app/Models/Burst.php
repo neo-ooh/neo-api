@@ -96,6 +96,15 @@ class Burst extends Model {
         "expected_screenshots", "is_complete",
     ];
 
+    /**
+     * The relations count that should always be loaded
+     *
+     * @var array
+     */
+    protected $withCount = [
+        "screenshots"
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations

@@ -12,13 +12,14 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\ReviewsTemplates\DestroyReviewTemplateRequest;
 use Neo\Http\Requests\ReviewsTemplates\ListReviewTemplatesRequest;
 use Neo\Http\Requests\ReviewsTemplates\StoreReviewTemplateRequest;
 use Neo\Http\Requests\ReviewsTemplates\UpdateReviewTemplateRequest;
+use Neo\Models\Actor;
 use Neo\Models\ReviewTemplate;
 
 class ReviewsTemplatesController extends Controller
@@ -30,6 +31,7 @@ class ReviewsTemplatesController extends Controller
      */
     public function index(ListReviewTemplatesRequest $request)
     {
+        /** @var Actor $actor */
         $actor = Auth::user();
         return new Response(ReviewTemplate::query()
                                           ->where("owner_id", "=", $actor->id)

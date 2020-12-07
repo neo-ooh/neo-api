@@ -26,10 +26,6 @@ use Neo\Models\Player;
 class RequestScreenshotsBursts implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    // ID of the associated burst request
-
-    public function __construct (int $burstID) {}
-
     public function handle (): void {
         if(config("app.env") === "testing") {
             return;

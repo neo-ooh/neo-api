@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Log;
 use JsonException;
 use JsonSerializable;
 use Neo\BroadSign\Endpoint;
+use RuntimeException;
 
 /**
  * Class BroadSignModel
@@ -189,7 +190,12 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
                 $responseBody = $responseBody[static::$unwrapKey];
             }
 
-            $responseBody = static::{$endpoint->transformMethod}($responseBody);
+            try {
+                $responseBody = static::{$endpoint->transformMethod}($responseBody);
+            } catch (RuntimeException $e) {
+                Log::error("Could not parse Broadsign Response");
+                Log::debug(print_r($response, true));
+            }
         }
 
         return $responseBody;

@@ -138,11 +138,11 @@ class Burst extends Model {
 
 
     public function getExpectedScreenshotsAttribute() {
-        return floor($this->duration_ms / $this->frequency_ms) + 1;
+        return ceil($this->duration_ms / $this->frequency_ms) + 1;
     }
 
 
     public function getIsCompleteAttribute() {
-        return $this->expected_screenshots === $this->screenshots_count;
+        return $this->screenshots_count >= $this->expected_screenshots;
     }
 }

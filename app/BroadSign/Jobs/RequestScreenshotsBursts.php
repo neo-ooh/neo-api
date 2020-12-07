@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use JsonException;
 use Neo\BroadSign\Models\Player as BSPlayer;
 use Neo\Models\Burst;
 use Neo\Models\Player;
@@ -35,6 +36,7 @@ class RequestScreenshotsBursts implements ShouldQueue {
         /** @var Collection $bursts */
         $bursts = Burst::query()->where("started", "=", false)
                        ->whereDate("start_at", "<=", Date::now()->addMinute())
+                       ->distinct()
                        ->get();
 
         $bursts->each(fn($burst) => $this->sendRequest($burst));
@@ -42,7 +44,7 @@ class RequestScreenshotsBursts implements ShouldQueue {
 
     /**
      * @param Burst $burst
-     * @throws \JsonException
+     * @throws JsonException
      */
     protected function sendRequest(Burst $burst) {
         // Get one random player for the location of the burst

@@ -182,6 +182,8 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         }
 
         $responseBody = $response->json();
+        Log::debug("Received response from broadsign API");
+        Log::debug(print_r($response, true));
 
         // Execute post-request transformation if needed
         if (!is_null($endpoint->transformMethod)) {
@@ -190,12 +192,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
                 $responseBody = $responseBody[static::$unwrapKey];
             }
 
-            try {
-                $responseBody = static::{$endpoint->transformMethod}($responseBody);
-            } catch (RuntimeException $e) {
-                Log::error("Could not parse Broadsign Response");
-                Log::debug(print_r($response, true));
-            }
+            $responseBody = static::{$endpoint->transformMethod}($responseBody);
         }
 
         return $responseBody;

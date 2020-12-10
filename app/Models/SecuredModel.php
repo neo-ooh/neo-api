@@ -30,7 +30,7 @@ abstract class SecuredModel extends Model {
 
         // Can it access it ?
         if (!$accessible) {
-            throw new AuthorizationException("Your are not allowed to access this resource.", 403);
+            $this->onUnauthorized($value);
         }
 
         // Yes
@@ -47,9 +47,21 @@ abstract class SecuredModel extends Model {
     public function authorizeAccess(): bool
     {
         if (!$this->validateAccess($this->getKey())) {
-            throw new AuthorizationException("Your are not allowed to access this resource.", 403);
+            $this->onUnauthorized();
         }
 
         return true;
+    }
+
+    /**
+     * @param null $key
+     * @throws AuthorizationException
+     */
+    private function onUnauthorized($key = null) {
+        if(!$key) {
+            $key = $this->getKey();
+        }
+
+        throw new AuthorizationException("Your are not allowed to access this resource: " . static::class . "#{$key}.", 403);
     }
 }

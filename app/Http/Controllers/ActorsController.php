@@ -32,17 +32,17 @@ class ActorsController extends Controller {
     public function index(ListActorsRequest $request): Response {
         $params = $request->validated();
 
-        $query = Auth::user()->AccessibleActors()
-                     ->orderBy("name");
+        $query = Auth::user()->newQuery()->fromSub(Auth::user()->AccessibleActors(), 'acc_act')
+                     ->orderBy("acc_act.name");
 
         // We return all actors by default. If a groups query parameter is specified, let it decide
         if ($request->has("groups")) {
-            $query->where('is_group', '=', (bool)$request->query('groups'));
+            $query->where('acc_act.is_group', '=', (bool)$request->query('groups'));
         }
 
         // Exclude specific actors
         if ($request->has("exclude")) {
-            $query->whereNotIn("id", $params["exclude"]);
+            $query->whereNotIn("acc_act.id", $params["exclude"]);
         }
 
         // Execute the query

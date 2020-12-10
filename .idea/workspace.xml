@@ -8,8 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Burst.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsSharingsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsSharingsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/ActorCapability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/ActorCapability.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/SecuredModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/SecuredModel.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -232,7 +235,7 @@
       <workItem from="1607017530207" duration="12478000" />
       <workItem from="1607094998350" duration="5535000" />
       <workItem from="1607104339983" duration="19000" />
-      <workItem from="1607104372430" duration="25775000" />
+      <workItem from="1607104372430" duration="32935000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>
@@ -290,7 +293,14 @@
       <option name="project" value="LOCAL" />
       <updated>1607378858206</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="WiP 2020-12-07 Reports+Bursts+screenshots">
+      <created>1607379179154</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1607379179154</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

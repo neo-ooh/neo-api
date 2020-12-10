@@ -48,6 +48,18 @@ class ActorCapability extends Pivot {
         'capability_id',
     ];
 
+    /**
+     * The attributes that should be hidden
+     *
+     * @var array
+     */
+    protected $hidden = [
+        "default",
+        "standalone",
+        "created_at",
+        "updated_at",
+    ];
+
     public static function boot (): void {
         parent::boot();
     }

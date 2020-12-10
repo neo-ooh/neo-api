@@ -21,6 +21,7 @@ use Neo\Models\Actor;
 class ActorsSharingsController extends Controller {
     public function index (Actor $actor): Response {
         Gate::authorize(Capability::actors_edit);
+
         // Validate authenticated user has access to specified user
         if ($actor->isNot(Auth::user()) && !Auth::user()->hasAccessTo($actor)) {
             return new Response([ [

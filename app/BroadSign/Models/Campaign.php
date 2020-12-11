@@ -100,10 +100,10 @@ class Campaign extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all"                 => Endpoint::get("/reservation/v21")->multiple(),
-            "currents"            => Endpoint::get("/reservation/v21?current_only=True")->multiple(),
+            "all"                 => Endpoint::get("/reservation/v21")->multiple()->cache(3600),
+            "currents"            => Endpoint::get("/reservation/v21?current_only=True")->multiple()->cache(3600),
             "create"              => Endpoint::post("/reservation/v21/add")->id(),
-            "get"                 => Endpoint::get("/reservation/v21/{id}"),
+            "get"                 => Endpoint::get("/reservation/v21/{id}")->cache(3600),
             "update"              => Endpoint::put("/reservation/v21")->id(),
             "rebook"              => Endpoint::post("/reservation/v21/rebook")->id(),
             "confirm_rebook"      => Endpoint::post("/reservation/v21/rebook_confirm")->id(),

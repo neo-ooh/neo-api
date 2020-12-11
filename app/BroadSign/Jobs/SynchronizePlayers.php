@@ -53,8 +53,6 @@ class SynchronizePlayers implements ShouldQueue {
                 continue;
             }
 
-            Log::debug($bsPlayer->display_unit_id);
-
             /** @var Player $player */
             $player = Player::query()->firstOrCreate([
                 "broadsign_player_id" => $bsPlayer->id,

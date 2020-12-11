@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Neo\BroadSign\Models\Player;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\Burst;
 use Neo\Models\Screenshot;
@@ -55,6 +56,11 @@ class BurstsController extends Controller {
         $screenshot->save();
 
         $screenshot->store($request->getContent(true));
+
+        $player = new Player(["id" => $request->get("player_id")]);
+        $player->nowPlaying();
+
+        // Request information about the screenshot
     }
 
     public function show(Burst $burst): Response {

@@ -16,6 +16,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use JsonException;
@@ -135,6 +136,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      *
      * @return mixed
      * @throws BadResponse
+     * @throws JsonException
      */
     public static function __callStatic(string $actionName, $args) {
         if (!array_key_exists($actionName, static::actions())) {
@@ -142,7 +144,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
             throw new BadMethodCallException("Static method {$actionName} does not exist on model {$className}.");
         }
 
-        /** @var Endpoint $action */
+        /** @var Endpoint $endpoint */
         $endpoint = static::actions()[$actionName];
         $params   = [];
         $headers  = [];
@@ -167,6 +169,26 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
             $params["domain_id"] = config("broadsign.domain-id");
         }
 
+        if ($endpoint->cache === 0) {
+            return static::executeCallAndGetResponse($endpoint, $path, $headers, $params);
+        }
+
+        // Get the unique slug of the request
+        $slug = $endpoint->method . "@" . $path . "#" . json_encode($params, JSON_THROW_ON_ERROR);
+
+        // Check if the slug is in our database
+        return Cache::remember($slug, $endpoint->cache, fn() => static::executeCallAndGetResponse($endpoint, $path, $headers, $params));
+    }
+
+    /**
+     * @param Endpoint $endpoint
+     * @param          $path
+     * @param          $headers
+     * @param          $params
+     * @return array|BroadSignModel
+     * @throws BadResponse
+     */
+    protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, array $params) {
         /** @var Response $response */
         Log::debug("Calling broadsign API: ({$endpoint->method}) {$path}", $params);
 

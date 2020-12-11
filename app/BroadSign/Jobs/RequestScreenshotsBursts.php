@@ -12,13 +12,13 @@ namespace Neo\BroadSign\Jobs;
 
 
 use Carbon\Carbon as Date;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use JsonException;
 use Neo\BroadSign\Models\Player as BSPlayer;
 use Neo\Models\Burst;
 use Neo\Models\Player;
@@ -27,6 +27,9 @@ use Neo\Models\Player;
 class RequestScreenshotsBursts implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * @throws Exception
+     */
     public function handle (): void {
         if(config("app.env") === "testing") {
             return;
@@ -44,9 +47,9 @@ class RequestScreenshotsBursts implements ShouldQueue {
 
     /**
      * @param Burst $burst
-     * @throws JsonException
+     * @throws Exception
      */
-    protected function sendRequest(Burst $burst) {
+    protected function sendRequest(Burst $burst): void {
         // Get one random player for the location of the burst
         /** @var Player|null $player */
         $player = $burst->location->players()->inRandomOrder()->first();

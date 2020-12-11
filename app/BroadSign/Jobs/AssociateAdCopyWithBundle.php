@@ -70,7 +70,5 @@ class AssociateAdCopyWithBundle implements ShouldQueue {
 
         $bundle = new Bundle([ "id" => $this->bundleID ]);
         $bundle->associateCreative($this->adCopyID);
-
-        Log::debug("Creatives correctly associated with bundle");
     }
 }

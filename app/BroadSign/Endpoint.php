@@ -39,6 +39,14 @@ class Endpoint {
 
     public ?string $transformMethod = "asSelf";
 
+    /**
+     * Tell if the value should be cached, and for how long.
+     * A value of zero means no caching, other values will be used as the cache entry duration, units in seconds.
+     * Routes other that GET are never cached.
+     * @var int
+     */
+    public int $cache = 0;
+
     /*
     |--------------------------------------------------------------------------
     | *** Magic ***
@@ -52,6 +60,10 @@ class Endpoint {
 
     public static function __callStatic ($verb, $args): Endpoint {
         return new Endpoint($verb, ...$args);
+    }
+
+    public function __toString(): string {
+        return "Endpoint:{$this->method}@{$this->path}";
     }
 
     /*
@@ -98,7 +110,7 @@ class Endpoint {
      *
      * @return $this
      */
-    public function ignore (): Endpoint {
+    public function ignore (): self {
         $this->transformMethod = null;
         return $this;
     }
@@ -110,8 +122,18 @@ class Endpoint {
      *
      * @return $this
      */
-    public function customTransform (?string $method): Endpoint {
+    public function customTransform (?string $method): self {
         $this->transformMethod = $method;
+        return $this;
+    }
+
+    /**
+     * Enable caching by setting the cache duration in seconds
+     *
+     * @param int $duration
+     */
+    public function cache(int $duration): self {
+        $this->cache = $duration;
         return $this;
     }
 }

@@ -31,13 +31,13 @@ use Neo\BroadSign\Endpoint;
  * @property string geolocation
  * @property int    id
  * @property string name
- * @property int     nscreens
- * @property string  primary_mac_address
- * @property string  public_key_fingerprint
- * @property string  remote_clear_db_tm_utc
- * @property string  remote_reboot_tm_utc
- * @property string  secondary_mac_address
- * @property int     volume
+ * @property int    nscreens
+ * @property string primary_mac_address
+ * @property string public_key_fingerprint
+ * @property string remote_clear_db_tm_utc
+ * @property string remote_reboot_tm_utc
+ * @property string secondary_mac_address
+ * @property int    volume
  *
  * @method static Collection all()
  * @method static Player get(int $playerID)
@@ -45,7 +45,7 @@ use Neo\BroadSign\Endpoint;
 class Player extends BroadSignModel {
     protected static string $unwrapKey = "host";
 
-    protected static function actions (): array {
+    protected static function actions(): array {
         return [
             "all"     => Endpoint::get("/host/v17")->multiple(),
             "get"     => Endpoint::get("/host/v17/{id}"),
@@ -71,13 +71,13 @@ class Player extends BroadSignModel {
      *
      * @throws JsonException
      */
-    public function requestScreenshotsBurst (int $burstID, int $scale, int $duration, int $frequency): void {
+    public function requestScreenshotsBurst(int $burstID, int $scale, int $duration, int $frequency): void {
         $this->sendRequest([
             "rc" => [
                 "version"            => 1,
                 "id"                 => (string)$burstID,
                 "action"             => "screenshot_request",
-                "dest_url"           => config("app.url") . "/v1/broadsign/burst_callback/" . $burstID,
+                "dest_url"           => config("app.url") . "/v1/broadsign/burst_callback/" . $burstID . "?player_id=" . $this->id,
                 "scale_factor"       => $scale,
                 "burst_duration_ms"  => $duration,
                 "burst_frequency_ms" => $frequency,
@@ -85,7 +85,23 @@ class Player extends BroadSignModel {
         ]);
     }
 
-    public function sendRequest (array $payload): void {
+    /**
+     * Request the information about the current content being played by the player.
+     *
+     * @param int $frameId ID of the frame from which to request information
+     */
+    public function nowPlaying(int $frameId = 0): void {
+        $this->sendRequest([
+            "rc" => [
+                "version"  => 3,
+                "id"       => (string)$this->id,
+                "action"   => "now_playing",
+                "frame_id" => $frameId,
+            ],
+        ]);
+    }
+
+    public function sendRequest(array $payload): void {
         $this->callAction("request",
             [
                 "domain_id"    => BroadSign::getDefaults()['domain_id'],

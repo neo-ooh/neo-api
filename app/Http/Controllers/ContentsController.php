@@ -32,6 +32,7 @@ class ContentsController extends Controller
      */
     public function store(StoreContentRequest $request)
     {
+        /** @var Library $library */
         $library = Library::query()->find($request->validated()["library_id"]);
 
         // Check if the library has enough space available
@@ -59,7 +60,8 @@ class ContentsController extends Controller
      */
     public function show(Content $content)
     {
-        return new Response($content->load(["creatives",
+        return new Response($content->load([
+            "creatives",
             "schedules",
             "schedules.campaign:id,name",
             "format",
@@ -76,6 +78,7 @@ class ContentsController extends Controller
     public function update(UpdateContentRequest $request, Content $content)
     {
         if ($content->library_id !== $request->validated()["library_id"]) {
+            /** @var Library $library */
             $library = Library::query()->find($request->validated()["library_id"]);
 
             // Check if the new library has enough space available

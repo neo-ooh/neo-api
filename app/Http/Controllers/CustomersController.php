@@ -3,6 +3,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Neo\BroadSign\Models\Customer;
 use Neo\Models\Report;
 

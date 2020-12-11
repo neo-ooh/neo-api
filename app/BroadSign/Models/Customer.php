@@ -40,8 +40,8 @@ class Customer extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all" => Endpoint::get("/customer/v7")->multiple(),
-            "get" => Endpoint::get("/customer/v7/{id}"),
+            "all" => Endpoint::get("/customer/v7")->multiple()->cache(3600),
+            "get" => Endpoint::get("/customer/v7/{id}")->cache(3600),
         ];
     }
 

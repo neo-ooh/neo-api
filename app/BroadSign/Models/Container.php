@@ -37,7 +37,7 @@ class Container extends BroadSignModel {
 
     protected static function actions (): array {
         return [
-            "get" => Endpoint::get("/container/v9/{id}"),
+            "get" => Endpoint::get("/container/v9/{id}")->cache(3600*24),
         ];
     }
 

@@ -9,18 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Endpoint.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Endpoint.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/AssociateAdCopyWithBundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/AssociateAdCopyWithBundle.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/RequestScreenshotsBursts.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/RequestScreenshotsBursts.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizePlayers.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizePlayers.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Customer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Player.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Player.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/cache.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/cache.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Container.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Container.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -246,7 +236,7 @@
       <workItem from="1607017530207" duration="12478000" />
       <workItem from="1607094998350" duration="5535000" />
       <workItem from="1607104339983" duration="19000" />
-      <workItem from="1607104372430" duration="38878000" />
+      <workItem from="1607104372430" duration="41234000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

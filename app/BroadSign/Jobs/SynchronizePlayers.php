@@ -49,7 +49,7 @@ class SynchronizePlayers implements ShouldQueue {
 
             if($location === null) {
                 // Ignore player
-                Log::warning("Could not find display unit {$bsPlayer->display_unit_id}");
+                Log::warning("Could not find display unit {$bsPlayer->display_unit_id} for player {$bsPlayer->name} ($bsPlayer->name). Ignoring...");
                 continue;
             }
 

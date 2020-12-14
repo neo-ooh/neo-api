@@ -142,7 +142,7 @@ class Schedule extends Model {
         parent::boot();
 
         static::deleted(function (Schedule $schedule) {
-            DisableBroadSignSchedule::dispatchAfterResponse($schedule->id);
+            DisableBroadSignSchedule::dispatch($schedule->id);
         });
     }
 

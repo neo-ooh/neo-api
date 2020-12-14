@@ -42,6 +42,7 @@ class SynchronizePlayers implements ShouldQueue {
 
         /** @var BSPlayer $bsPlayer */
         foreach ($broadsignPlayers as $bsPlayer) {
+            $progressBar->advance();
             $progressBar->setMessage("{$bsPlayer->name} ($bsPlayer->id)");
 
             $location = Location::query()->where("broadsign_display_unit",
@@ -62,8 +63,6 @@ class SynchronizePlayers implements ShouldQueue {
             ]);
 
             $players[] = $player->id;
-
-            $progressBar->advance();
         }
 
         $progressBar->setMessage("Players syncing done!");

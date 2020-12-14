@@ -73,12 +73,15 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("actor", Actor::class);
 
-    Route::   get("actors"        , ActorsController::class . "@index"  )->name("actors.index");
-    Route::  post("actors"        , ActorsController::class . "@store"  )->name("actors.store");
+    Route::   get("actors", ActorsController::class . "@index")->name("actors.index");
+    Route::  post("actors", ActorsController::class . "@store")->name("actors.store");
 
-    Route::   get("actors/{actor}", ActorsController::class . "@show"   )->name("actors.show");
-    Route::   put("actors/{actor}", ActorsController::class . "@update" )->name("actors.update");
+    Route::   get("actors/{actor}", ActorsController::class . "@show")->name("actors.show");
+    Route::   put("actors/{actor}", ActorsController::class . "@update")->name("actors.update");
     Route::delete("actors/{actor}", ActorsController::class . "@destroy")->name("actors.destroy");
+
+    Route::post("actors/{actor}/re-send-signup-email", ActorsController::class . "@resendWelcomeEmail")
+         ->name("actors.re-send-signup-email");
 
 
     /*
@@ -87,8 +90,10 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::get("actors/{actor}/capabilities", ActorsCapabilitiesController::class . "@index")->name("actors.capabilities.index");
-    Route::put("actors/{actor}/capabilities", ActorsCapabilitiesController::class . "@sync" )->name("actors.capabilities.sync");
+    Route::get("actors/{actor}/capabilities", ActorsCapabilitiesController::class . "@index")
+         ->name("actors.capabilities.index");
+    Route::put("actors/{actor}/capabilities", ActorsCapabilitiesController::class . "@sync")
+         ->name("actors.capabilities.sync");
 
 
     /*
@@ -98,7 +103,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     */
 
     Route::get("actors/{actor}/locations", ActorsLocationsController::class . "@index")->name("actors.locations.index");
-    Route::put("actors/{actor}/locations", ActorsLocationsController::class . "@sync" )->name("actors.locations.sync");
+    Route::put("actors/{actor}/locations", ActorsLocationsController::class . "@sync")->name("actors.locations.sync");
 
 
     /*
@@ -108,7 +113,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     */
 
     Route::get("actors/{actor}/roles", ActorsRolesController::class . "@index")->name("actors.roles.index");
-    Route::put("actors/{actor}/roles", ActorsRolesController::class . "@sync" )->name("actors.roles.sync");
+    Route::put("actors/{actor}/roles", ActorsRolesController::class . "@sync")->name("actors.roles.sync");
 
 
     /*
@@ -117,8 +122,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::   get("actors/{actor}/shares", ActorsSharingsController::class . "@index"  )->name("actors.shares.index");
-    Route::  post("actors/{actor}/shares", ActorsSharingsController::class . "@store"  )->name("actors.shares.store");
+    Route::   get("actors/{actor}/shares", ActorsSharingsController::class . "@index")->name("actors.shares.index");
+    Route::  post("actors/{actor}/shares", ActorsSharingsController::class . "@store")->name("actors.shares.store");
     Route::delete("actors/{actor}/shares", ActorsSharingsController::class . "@destroy")->name("actors.shares.destroy");
 
 
@@ -128,11 +133,11 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::   get("brandings"           , BrandingsController::class . "@index"  )->name("brandings.index");
-    Route::  post("brandings"           , BrandingsController::class . "@store"  )->name("brandings.store");
+    Route::   get("brandings", BrandingsController::class . "@index")->name("brandings.index");
+    Route::  post("brandings", BrandingsController::class . "@store")->name("brandings.store");
 
-    Route::   get("brandings/{branding}", BrandingsController::class . "@show"   )->name("brandings.show");
-    Route::   put("brandings/{branding}", BrandingsController::class . "@update" )->name("brandings.update");
+    Route::   get("brandings/{branding}", BrandingsController::class . "@show")->name("brandings.show");
+    Route::   put("brandings/{branding}", BrandingsController::class . "@update")->name("brandings.update");
     Route::delete("brandings/{branding}", BrandingsController::class . "@destroy")->name("brandings.destroy");
 
 
@@ -142,9 +147,12 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::   get("brandings/{branding}/files", BrandingsFilesController::class . "@index")->name("brandings.files.index");
-    Route::  post("brandings/{branding}/files", BrandingsFilesController::class . "@store")->name("brandings.files.store");
-    Route::delete("brandings/{branding}/files", BrandingsFilesController::class . "@destroy")->name("brandings.files.destroy");
+    Route::   get("brandings/{branding}/files", BrandingsFilesController::class . "@index")
+         ->name("brandings.files.index");
+    Route::  post("brandings/{branding}/files", BrandingsFilesController::class . "@store")
+         ->name("brandings.files.store");
+    Route::delete("brandings/{branding}/files", BrandingsFilesController::class . "@destroy")
+         ->name("brandings.files.destroy");
 
 
     /*
@@ -155,8 +163,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("burst", Burst::class);
 
-    Route::  post("bursts"        , BurstsController::class . "@store"  )->name("bursts.store");
-    Route::   get("bursts/{burst}", BurstsController::class . "@show"   )->name("bursts.show");
+    Route::  post("bursts", BurstsController::class . "@store")->name("bursts.store");
+    Route::   get("bursts/{burst}", BurstsController::class . "@show")->name("bursts.show");
     Route::delete("bursts/{burst}", BurstsController::class . "@destroy")->name("bursts.destroy");
 
 
@@ -168,14 +176,15 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("campaign", Campaign::class);
 
-    Route::   get("campaigns"           , CampaignsController::class . "@index"  )->name("campaigns.index");
-    Route::  post("campaigns"           , CampaignsController::class . "@store"  )->name("campaigns.store");
+    Route::   get("campaigns", CampaignsController::class . "@index")->name("campaigns.index");
+    Route::  post("campaigns", CampaignsController::class . "@store")->name("campaigns.store");
 
-    Route::   get("campaigns/{campaign}", CampaignsController::class . "@show"   )->name("campaigns.show");
-    Route::   put("campaigns/{campaign}", CampaignsController::class . "@update" )->name("campaigns.update");
+    Route::   get("campaigns/{campaign}", CampaignsController::class . "@show")->name("campaigns.show");
+    Route::   put("campaigns/{campaign}", CampaignsController::class . "@update")->name("campaigns.update");
     Route::delete("campaigns/{campaign}", CampaignsController::class . "@destroy")->name("campaigns.destroy");
 
-    Route::   put("campaigns/{campaign}/locations", CampaignsController::class . "@syncLocations")->name("campaigns.locations.sync");
+    Route::   put("campaigns/{campaign}/locations", CampaignsController::class . "@syncLocations")
+         ->name("campaigns.locations.sync");
 
 
     /*
@@ -184,7 +193,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::get("capabilities"             , CapabilitiesController::class . "@index" )->name("capabilities.index");
+    Route::get("capabilities", CapabilitiesController::class . "@index")->name("capabilities.index");
     Route::put("capabilities/{capability}", CapabilitiesController::class . "@update")->name("capabilities.update");
 
 
@@ -194,7 +203,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::get("containers"             , ContainersController::class . "@index" )->name("containers.index");
+    Route::get("containers", ContainersController::class . "@index")->name("containers.index");
 
 
     /*
@@ -203,11 +212,11 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::bind("content", fn ($id) => Content::withTrashed()->find($id));
+    Route::bind("content", fn($id) => Content::withTrashed()->find($id));
 
-    Route::  post("contents"          , ContentsController::class . "@store"  )->name("contents.store");
-    Route::   get("contents/{content}", ContentsController::class . "@show"   )->name("contents.show");
-    Route::   put("contents/{content}", ContentsController::class . "@update" )->name("contents.update");
+    Route::  post("contents", ContentsController::class . "@store")->name("contents.store");
+    Route::   get("contents/{content}", ContentsController::class . "@show")->name("contents.show");
+    Route::   put("contents/{content}", ContentsController::class . "@update")->name("contents.update");
     Route::delete("contents/{content}", ContentsController::class . "@destroy")->name("contents.destroy");
 
 
@@ -219,7 +228,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("creative", Creative::class);
 
-    Route::  post("contents/{content}"  , CreativesController::class . "@store"  )->name("creatives.store");
+    Route::  post("contents/{content}", CreativesController::class . "@store")->name("creatives.store");
     Route::delete("creatives/{creative}", CreativesController::class . "@destroy")->name("creatives.destroy");
 
 
@@ -229,7 +238,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::get("customers"           , CustomersController::class . "@index"  )->name("customers.index");
+    Route::get("customers", CustomersController::class . "@index")->name("customers.index");
     Route::get("customers/{customer}", CustomersController::class . "@show")->name("customers.show");
 
 
@@ -241,8 +250,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("format", Format::class);
 
-    Route::get("formats"         , FormatsController::class . "@index" )->name("formats.index");
-    Route::get("formats/{format}", FormatsController::class . "@show"  )->name("formats.show");
+    Route::get("formats", FormatsController::class . "@index")->name("formats.index");
+    Route::get("formats/{format}", FormatsController::class . "@show")->name("formats.show");
     Route::put("formats/{format}", FormatsController::class . "@update")->name("formats.update");
 
 
@@ -254,8 +263,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("frame", Frame::class);
 
-    Route::  post("formats/{format}/frames"        , FramesController::class . "@store"  )->name("frames.index");
-    Route::   put("formats/{format}/frames/{frame}", FramesController::class . "@update" )->name("frames.update");
+    Route::  post("formats/{format}/frames", FramesController::class . "@store")->name("frames.index");
+    Route::   put("formats/{format}/frames/{frame}", FramesController::class . "@update")->name("frames.update");
     Route::delete("formats/{format}/frames/{frame}", FramesController::class . "@destroy")->name("frames.destroy");
 
 
@@ -277,12 +286,12 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("library", Library::class);
 
-    Route::   get("libraries"                   , LibrariesController::class . "@index"   )->name("libraries.index");
-    Route::  post("libraries"                   , LibrariesController::class . "@store"   )->name("libraries.store");
+    Route::   get("libraries", LibrariesController::class . "@index")->name("libraries.index");
+    Route::  post("libraries", LibrariesController::class . "@store")->name("libraries.store");
 
-    Route::   get("libraries/{library}"         , LibrariesController::class . "@show"    )->name("libraries.show");
-    Route::   put("libraries/{library}"         , LibrariesController::class . "@update"  )->name("libraries.update");
-    Route::delete("libraries/{library}"         , LibrariesController::class . "@destroy" )->name("libraries.destroy");
+    Route::   get("libraries/{library}", LibrariesController::class . "@show")->name("libraries.show");
+    Route::   put("libraries/{library}", LibrariesController::class . "@update")->name("libraries.update");
+    Route::delete("libraries/{library}", LibrariesController::class . "@destroy")->name("libraries.destroy");
 
     Route::   get('libraries/{library}/contents', LibrariesController::class . "@contents")->name("libraries.content");
 
@@ -295,8 +304,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("location", Location::class);
 
-    Route:: get("locations"           , LocationsController::class . "@index" )->name("locations.index");
-    Route:: get("locations/{location}", LocationsController::class . "@show"  )->name("locations.show");
+    Route:: get("locations", LocationsController::class . "@index")->name("locations.index");
+    Route:: get("locations/{location}", LocationsController::class . "@show")->name("locations.show");
     Route:: put("locations/{location}", LocationsController::class . "@update")->name("locations.update");
 
 
@@ -308,7 +317,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("parameter", Param::class);
 
-    Route::  get("params/{parameter:slug}", ParamsController::class . "@show"  )->name("params.show");
+    Route::  get("params/{parameter:slug}", ParamsController::class . "@show")->name("params.show");
     Route::  put("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update");
 
 
@@ -320,8 +329,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("report", Report::class);
 
-    Route:: post("reports"         , ReportsController::class . "@store")->name("reports.store");
-    Route::  get("reports/{report}", ReportsController::class . "@show" )->name("reports.show");
+    Route:: post("reports", ReportsController::class . "@store")->name("reports.store");
+    Route::  get("reports/{report}", ReportsController::class . "@show")->name("reports.show");
 
 
     /*
@@ -341,10 +350,12 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("template", ReviewTemplate::class);
 
-    Route::   get("review-templates"           , ReviewsTemplatesController::class . "@index"  )->name("reviews.templates.index");
-    Route::  post("review-templates"           , ReviewsTemplatesController::class . "@store"  )->name("reviews.templates.store");
-    Route::   put("review-templates/{template}", ReviewsTemplatesController::class . "@update" )->name("reviews.templates.update");
-    Route::delete("review-templates/{template}", ReviewsTemplatesController::class . "@destroy")->name("reviews.templates.destroy");
+    Route::   get("review-templates", ReviewsTemplatesController::class . "@index")->name("reviews.templates.index");
+    Route::  post("review-templates", ReviewsTemplatesController::class . "@store")->name("reviews.templates.store");
+    Route::   put("review-templates/{template}", ReviewsTemplatesController::class . "@update")
+         ->name("reviews.templates.update");
+    Route::delete("review-templates/{template}", ReviewsTemplatesController::class . "@destroy")
+         ->name("reviews.templates.destroy");
 
 
     /*
@@ -355,11 +366,11 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("role", Role::class);
 
-    Route::   get("roles"       , RolesController::class . "@index"  )->name("roles.index");
-    Route::  post("roles"       , RolesController::class . "@store"  )->name("roles.store");
+    Route::   get("roles", RolesController::class . "@index")->name("roles.index");
+    Route::  post("roles", RolesController::class . "@store")->name("roles.store");
 
-    Route::   get("roles/{role}", RolesController::class . "@show"   )->name("roles.show");
-    Route::   put("roles/{role}", RolesController::class . "@update" )->name("roles.update");
+    Route::   get("roles/{role}", RolesController::class . "@show")->name("roles.show");
+    Route::   put("roles/{role}", RolesController::class . "@update")->name("roles.update");
     Route::delete("roles/{role}", RolesController::class . "@destroy")->name("roles.destroy");
 
 
@@ -369,10 +380,14 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::   get("roles/{role}/capabilities", RolesCapabilitiesController::class . "@index"  )->name("roles.capabilities.index");
-    Route::  post("roles/{role}/capabilities", RolesCapabilitiesController::class . "@store"  )->name("roles.capabilities.store");
-    Route::   put("roles/{role}/capabilities", RolesCapabilitiesController::class . "@update" )->name("roles.capabilities.update");
-    Route::delete("roles/{role}/capabilities", RolesCapabilitiesController::class . "@destroy")->name("roles.capabilities.destroy");
+    Route::   get("roles/{role}/capabilities", RolesCapabilitiesController::class . "@index")
+         ->name("roles.capabilities.index");
+    Route::  post("roles/{role}/capabilities", RolesCapabilitiesController::class . "@store")
+         ->name("roles.capabilities.store");
+    Route::   put("roles/{role}/capabilities", RolesCapabilitiesController::class . "@update")
+         ->name("roles.capabilities.update");
+    Route::delete("roles/{role}/capabilities", RolesCapabilitiesController::class . "@destroy")
+         ->name("roles.capabilities.destroy");
 
 
     /*
@@ -381,8 +396,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::   get("roles/{role}/actors", RolesActorsController::class . "@index"  )->name("roles.actors.index");
-    Route::  post("roles/{role}/actors", RolesActorsController::class . "@store"  )->name("roles.actors.store");
+    Route::   get("roles/{role}/actors", RolesActorsController::class . "@index")->name("roles.actors.index");
+    Route::  post("roles/{role}/actors", RolesActorsController::class . "@store")->name("roles.actors.store");
     Route::delete("roles/{role}/actors", RolesActorsController::class . "@destroy")->name("roles.actors.destroy");
 
 
@@ -394,11 +409,11 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("schedule", Schedule::class);
 
-    Route::   get("schedules/pending"             , SchedulesController::class . "@pending")->name("schedules.pending");
-    Route::   put("schedules/{schedule}"          , SchedulesController::class . "@update" )->name("schedules.update");
-    Route::delete("schedules/{schedule}"          , SchedulesController::class . "@destroy")->name("schedules.destroy");
+    Route::   get("schedules/pending", SchedulesController::class . "@pending")->name("schedules.pending");
+    Route::   put("schedules/{schedule}", SchedulesController::class . "@update")->name("schedules.update");
+    Route::delete("schedules/{schedule}", SchedulesController::class . "@destroy")->name("schedules.destroy");
 
-    Route::  post("campaigns/{campaign}/reorder"  , SchedulesController::class . "@reorder")->name("schedules.reorder");
-    Route::  post("campaigns/{campaign}/schedules", SchedulesController::class . "@store"  )->name("schedules.store");
-    Route::  post("campaigns/{campaign}/insert"   , SchedulesController::class . "@insert" )->name("schedules.insert");
+    Route::  post("campaigns/{campaign}/reorder", SchedulesController::class . "@reorder")->name("schedules.reorder");
+    Route::  post("campaigns/{campaign}/schedules", SchedulesController::class . "@store")->name("schedules.store");
+    Route::  post("campaigns/{campaign}/insert", SchedulesController::class . "@insert")->name("schedules.insert");
 });

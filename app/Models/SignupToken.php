@@ -30,7 +30,6 @@ use Illuminate\Support\Str;
  * @method static Builder|SignupToken query()
  * @method static Builder|SignupToken whereCreatedAt($value)
  * @method static Builder|SignupToken whereToken($value)
- * @method static Builder|SignupToken whereUserId($value)
  */
 class SignupToken extends Model {
     /*

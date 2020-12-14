@@ -52,7 +52,7 @@ class Customer extends BroadSignModel {
      * @return Collection
      */
     public function getCampaigns(): Collection {
-        return Campaign::currents()
+        return Campaign::all()
                        ->filter(fn($campaign) => $campaign->parent_id === $this->id)
                         ->filter(fn($campaign) => Carbon::parse($campaign->end_date)->isAfter(Carbon::now()))
                        ->values();

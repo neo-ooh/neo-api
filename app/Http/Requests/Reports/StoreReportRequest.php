@@ -24,7 +24,7 @@ class StoreReportRequest extends FormRequest {
     public function rules(): array {
         return [
             "customer_id"    => ["required", "integer"],
-            "reservation_id" => ["required", "integer"],
+            "contract_id" => ["required", "string"],
             "name" => ["required", "string"],
         ];
     }

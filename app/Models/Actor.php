@@ -31,6 +31,9 @@ use Neo\Models\Traits\HasLocations;
 use Neo\Models\Traits\HasRoles;
 use Neo\Models\Traits\WithRelationCaching;
 use Neo\Rules\AccessibleActor;
+use Neo\Models\SignupToken;
+use Neo\Models\TwoFactorToken;
+use Neo\Models\RecoveryToken;
 
 /**
  * Class Actor
@@ -203,21 +206,21 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * Give the user who locked this user, if applicable
      */
     public function twoFactorToken(): HasOne {
-        return $this->hasOne("Neo\Models\TwoFactorToken");
+        return $this->hasOne(TwoFactorToken::class);
     }
 
     /**
      * Give the user who locked this user, if applicable
      */
     public function signupToken(): HasOne {
-        return $this->hasOne("Neo\Models\SignupToken");
+        return $this->hasOne(SignupToken::class);
     }
 
     /**
      * Give the user who locked this user, if applicable
      */
     public function recoveryToken(): HasOne {
-        return $this->hasOne("Neo\Models\RecoveryToken", "email", "email");
+        return $this->hasOne(RecoveryToken::class, "email", "email");
     }
 
 

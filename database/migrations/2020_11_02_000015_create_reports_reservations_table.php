@@ -12,20 +12,25 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateReportsTable extends Migration
-{
+class CreateReportsReservationsTable extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
     public function up(): void {
-        Schema::create('reports', function (Blueprint $table) {
+        Schema::create('reports_reservations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_id')->index();
-            $table->string('contract_id', 16);
-            $table->string('name');
-            $table->foreignId('created_by')->nullable()->constrained('actors')->nullOnDelete();
+            $table->foreignId("broadsign_reservation_id")->index();
+            $table->foreignId('report_id')
+                  ->index()
+                  ->constrained('reports')
+                  ->cascadeOnUpdate()
+                  ->cascadeOnDelete();
+            $table->string("name", 256);
+            $table->string("internal_name", 256);
+            $table->timestamp("start_date");
+            $table->timestamp("end_date");
             $table->timestamps();
         });
     }
@@ -36,6 +41,6 @@ class CreateReportsTable extends Migration
      * @return void
      */
     public function down(): void {
-        Schema::dropIfExists('reports');
+        Schema::dropIfExists('reports_reservations');
     }
 }

@@ -29,15 +29,15 @@ use Neo\BroadSign\Endpoint;
  * @property int  id
  * @property int  interactivity_timeout
  * @property int  interactivity_trigger_id
- * @property int     loop_category_id
- * @property int     loop_positions
- * @property int     loop_weight
- * @property int     max_duration_msec
- * @property int     name
- * @property int     parent_id
- * @property int     position
- * @property int     secondary_sep_category_ids
- * @property int     trigger_category_id
+ * @property int  loop_category_id
+ * @property int  loop_positions
+ * @property int  loop_weight
+ * @property int  max_duration_msec
+ * @property int  name
+ * @property int  parent_id
+ * @property int  position
+ * @property int  secondary_sep_category_ids
+ * @property int  trigger_category_id
  *
  * @static  int create(array $properties)
  */
@@ -45,12 +45,13 @@ class Bundle extends BroadSignModel {
 
     protected static string $unwrapKey = "bundle";
 
-    protected static function actions (): array {
+    protected static function actions(): array {
         return [
             "all"       => Endpoint::get("/bundle/v12")->multiple(),
             "create"    => Endpoint::post("/bundle/v12/add")->id(),
             "update"    => Endpoint::put("/bundle/v12"),
             "associate" => Endpoint::post("/bundle_content/v5/add")->ignore(),
+            "bySchedule" => Endpoint::get("/bundle/v12/by_schedule")->multiple()
         ];
     }
 
@@ -61,11 +62,15 @@ class Bundle extends BroadSignModel {
      * @throws BadResponse
      *
      */
-    public function associateCreative (int $creativeID): void {
+    public function associateCreative(int $creativeID): void {
         $this->callAction("associate",
             [
                 "content_id" => $creativeID,
                 "parent_id"  => $this->id,
             ]);
+    }
+
+    public static function bySchedule(int $scheduleId) {
+        return (new self())->callAction("bySchedule", ["schedule_id" => $scheduleId]);
     }
 }

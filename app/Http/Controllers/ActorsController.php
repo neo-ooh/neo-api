@@ -22,6 +22,7 @@ use Neo\Http\Requests\Actors\UpdateActorRequest;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Jobs\CreateUserLibrary;
 use Neo\Models\Actor;
+use Neo\Models\SignupToken;
 
 /**
  * Class ActorsController
@@ -86,6 +87,10 @@ class ActorsController extends Controller {
 
         if (in_array("direct_children", $with, true)) {
             $actor->append("direct_children");
+        }
+
+        if (!$actor->is_group) {
+            $actor->load("signupToken");
         }
 
         return new Response($actor->withDetails());
@@ -187,5 +192,14 @@ class ActorsController extends Controller {
         $actor->delete();
 
         return new Response([]);
+    }
+
+    public function resendWelcomeEmail(Actor $actor): Response {
+        // Remove leftover token
+        SignupToken::query()->where("actor_id", "=", $actor->id)->delete();
+
+        CreateSignupToken::dispatch();
+
+        return new Response();
     }
 }

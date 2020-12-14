@@ -140,7 +140,7 @@ class CreateBroadSignSchedule implements ShouldQueue {
                 $bundle->associateCreative($creative->broadsign_ad_copy_id);
             } catch (BadResponse $e) {
                 // Association failed, The creative / Ad-Copy may have not finished uploading, set a job to try again in a bit
-                AssociateAdCopyWithBundle::dispatchAfterResponse($bundle->id, $creative->broadsign_ad_copy_id);
+                AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id);
             }
         }
     }

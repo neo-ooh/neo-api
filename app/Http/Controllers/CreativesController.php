@@ -93,7 +93,7 @@ class CreativesController extends Controller
 
 
         // Import the creative in BroadSign
-        ImportCreativeInBroadSign::dispatchAfterResponse($creative->id);
+        ImportCreativeInBroadSign::dispatch($creative->id);
 
         return new Response($creative, 201);
     }
@@ -201,7 +201,7 @@ class CreativesController extends Controller
             $creative->delete();
         }
 
-        DisableBroadSignCreative::dispatchAfterResponse($creative->id);
+        DisableBroadSignCreative::dispatch($creative->id);
 
         return new Response([]);
     }

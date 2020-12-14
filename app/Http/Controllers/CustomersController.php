@@ -15,7 +15,6 @@ class CustomersController extends Controller {
     public function show(int $customerId) {
         $customer = Customer::get($customerId);
         $customer->reports = Report::where("customer_id", "=", $customer->id)->get();
-        $customer->campaigns = $customer->getCampaigns();
         return new Response($customer);
     }
 }

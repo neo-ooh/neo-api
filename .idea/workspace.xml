@@ -8,9 +8,32 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
+      <change afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/ReorderBroadSignSchedules.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/ReportReservation.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2020_11_02_000015_create_reports_reservations_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignSchedule.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizePlayers.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizePlayers.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Container.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Container.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Bundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Bundle.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Customer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Schedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Schedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Reports/StoreReportRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Reports/StoreReportRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Report.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Report.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Schedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Schedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/SignupToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/SignupToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_09_01_000020_create_parameters_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000020_create_parameters_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2020_11_02_000010_create_reports_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_11_02_000010_create_reports_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -164,9 +187,6 @@
       <path value="$PROJECT_DIR$/vendor/aws/aws-sdk-php" />
     </include_path>
   </component>
-  <component name="ProblemsViewState">
-    <option name="selectedIndex" value="1" />
-  </component>
   <component name="ProjectId" id="1ksnCPVQp4bw80G0IajP0zqEtzk" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -182,7 +202,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/database/migrations" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Models" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -199,10 +219,10 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Models" />
       <recent name="$PROJECT_DIR$/database/migrations" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Models" />
-      <recent name="$PROJECT_DIR$/app/Models" />
       <recent name="$PROJECT_DIR$/app/Http/Requests" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -236,7 +256,8 @@
       <workItem from="1607017530207" duration="12478000" />
       <workItem from="1607094998350" duration="5535000" />
       <workItem from="1607104339983" duration="19000" />
-      <workItem from="1607104372430" duration="41234000" />
+      <workItem from="1607104372430" duration="47170000" />
+      <workItem from="1607973375027" duration="5064000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>
@@ -320,6 +341,7 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />

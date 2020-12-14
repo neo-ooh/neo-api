@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Neo\BroadSign\Jobs\ReorderBroadSignSchedules;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Schedules\DestroyScheduleRequest;
 use Neo\Http\Requests\Schedules\InsertScheduleRequest;
@@ -72,7 +73,7 @@ class SchedulesController extends Controller
         $schedule->refresh();
 
         // Replicate the schedule in BroadSign
-        CreateBroadSignSchedule::dispatchAfterResponse($schedule->id, Auth::id());
+        CreateBroadSignSchedule::dispatch($schedule->id, Auth::id());
 
         // Return a response
         return new Response($schedule->loadMissing(["content"]), 201);
@@ -169,7 +170,7 @@ class SchedulesController extends Controller
         $schedule->refresh();
 
         // Replicate the schedule in BroadSign
-        CreateBroadSignSchedule::dispatchAfterResponse($schedule->id, Auth::id());
+        CreateBroadSignSchedule::dispatch($schedule->id, Auth::id());
 
         return new Response($schedule->loadMissing(["content", "reviews"]), 201);
     }
@@ -212,7 +213,7 @@ class SchedulesController extends Controller
         }
 
         // Propagate the update to the associated BroadSign Schedule
-        UpdateBroadSignSchedule::dispatchAfterResponse($schedule->id);
+        UpdateBroadSignSchedule::dispatch($schedule->id);
 
         $schedule->save();
         $schedule->refresh();
@@ -264,21 +265,15 @@ class SchedulesController extends Controller
                 $s->increment('order');
             }
 
-            $s->refresh();
+            $s->save();
         }
 
         $schedule->order = $order;
         $schedule->save();
 
-        return new Response($campaign->loadMissing([
-            "format",
-            "locations",
-            "owner",
-            "shares",
-            "schedules",
-            "schedules.content",
-            "trashedSchedules",
-            "trashedSchedules.content"])->append("related_campaigns"));
+        ReorderBroadSignSchedules::dispatch($campaign->id);
+
+        return (new CampaignsController())->show($campaign);
     }
 
     /**

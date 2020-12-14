@@ -57,7 +57,7 @@ class Schedule extends BroadSignModel {
             "all" => Endpoint::get("/schedule/v8")->multiple(),
             "create" => Endpoint::post("/schedule/v8/add")->id(),
             "get" => Endpoint::get("/schedule/v8/{id}"),
-            "update" => Endpoint::put("/schedule/v8")->id(),
+            "update" => Endpoint::put("/schedule/v8")->id()
         ];
     }
 
@@ -70,6 +70,4 @@ class Schedule extends BroadSignModel {
     public function campaign(): Campaign {
         return Campaign::get($this->reservable_id);
     }
-
-
 }

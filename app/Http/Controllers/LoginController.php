@@ -42,6 +42,16 @@ class LoginController extends Controller {
             ], 422);
         }
 
+        // Make sure the user is allowed to log in
+        if ($actor->password === '' || $actor->is_group || $actor->is_locked || !is_null($actor->signupToken)) {
+            // This user cannot be used directly.
+            return new Response([
+                "code"    => "auth.not-allowed",
+                "message" => "This user cannot be used",
+                "errors"  => ["email" => ["This user cannot be used"]],
+            ],
+                422);
+        }
 
         if (!Hash::check($credentials['password'], $actor->password)) {
             // Bad password
@@ -53,17 +63,6 @@ class LoginController extends Controller {
         }
 
         // Credentials are ok.
-
-        // Make sure the user is allowed to log in
-        if ($actor->is_group || $actor->is_locked || !is_null($actor->signupToken)) {
-            // This user cannot be used directly.
-            return new Response([
-                "code"    => "auth.not-allowed",
-                "message" => "This user cannot be used",
-                "errors"  => ["email" => ["This user cannot be used"]],
-            ],
-                422);
-        }
 
         // Log the user inside Laravel
         Auth::setUser($actor);

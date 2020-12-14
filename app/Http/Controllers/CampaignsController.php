@@ -103,17 +103,9 @@ class CampaignsController extends Controller
         $campaign->refresh();
 
         // Propagate the changes in BroadSign
-        UpdateBroadSignCampaign::dispatchAfterResponse($campaign->id);
+        UpdateBroadSignCampaign::dispatch($campaign->id);
 
-        return new Response($campaign->load(["format",
-            "locations",
-            "owner",
-            "shares",
-            "schedules",
-            "schedules.content",
-            "schedules.owner:id,name",
-            "trashedSchedules",
-            "trashedSchedules.content"])->append("related_campaigns"));
+        return $this->show($campaign);
     }
 
     /**
@@ -131,7 +123,7 @@ class CampaignsController extends Controller
         $campaign->refresh();
 
         // Propagate the changes in BroadSign
-        UpdateBroadSignCampaign::dispatchAfterResponse($campaign->id);
+        UpdateBroadSignCampaign::dispatch($campaign->id);
 
         return new Response($campaign->locations);
     }
@@ -142,6 +134,6 @@ class CampaignsController extends Controller
         $campaign->delete();
 
         // Propagate the changes in BroadSign
-        DisableBroadSignCampaign::dispatchAfterResponse($campaign->id);
+        DisableBroadSignCampaign::dispatch($campaign->id);
     }
 }

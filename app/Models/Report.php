@@ -21,13 +21,14 @@ use Neo\BroadSign\Models\Location as BSLocation;
 /**
  * Neo\Models\ActorsLocations
  *
- * @property int    id
- * @property int    customer_id
- * @property int    reservation_id
- * @property string name
- * @property int    created_by
+ * @property int      id
+ * @property int      customer_id
+ * @property string      contract_id
+ * @property string   name
+ * @property int      created_by
  *
- * @property Actor  creator
+ * @property Actor    creator
+ * @property Customer customer
  *
  * @mixin Builder
  */
@@ -52,7 +53,8 @@ class Report extends Model {
      * @var array
      */
     protected $fillable = [
-        "player_id",
+        "customer_id",
+        "contract_id",
         "name",
         "created_by",
     ];
@@ -76,6 +78,10 @@ class Report extends Model {
         return $this->hasMany(Burst::class, 'report_id');
     }
 
+    public function reservations(): HasMany {
+        return $this->hasMany(ReportReservation::class, 'report_id');
+    }
+
     /*
     |--------------------------------------------------------------------------
     | ***
@@ -87,7 +93,7 @@ class Report extends Model {
     }
 
     public function getAvailableLocationsAttribute(): Collection {
-        $bsLocations = BSLocation::byReservable(["reservable_id" => $this->reservation_id ])->pluck('id');
+        $bsLocations = BSLocation::byReservable(["reservable_id" => $this->reservation_id])->pluck('id');
         return Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
     }
 }

@@ -57,5 +57,7 @@ class CapabilitiesSeeder extends Seeder {
         Capability::where("slug", "=", "locations.edit")->update(["service" => "ACTORS"]);
 
         Capability::where("slug", "=", "bursts.request")->update(["service" => "REPORTS"]);
+        Capability::where("slug", "=", "reports.create")->update(["service" => "REPORTS"]);
+        Capability::where("slug", "=", "reports.edit")->update(["service" => "REPORTS"]);
     }
 }

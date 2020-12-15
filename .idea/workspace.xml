@@ -8,11 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change afterPath="$PROJECT_DIR$/app/BroadSign/Models/ReservablePerformance.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Report.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Report.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/emails/welcome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/welcome.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/app/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/app/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/app/public/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/storage/app/public/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,6 +176,7 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="ASKED_MARK_IGNORED_FILES_AS_EXCLUDED" value="true" />
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="DatabaseDriversLRU" value="mysql" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
@@ -205,6 +206,7 @@
       <recent name="$PROJECT_DIR$/app/Http/Requests" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/storage/app/public/images" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Brandings" />
@@ -236,7 +238,7 @@
       <workItem from="1607094998350" duration="5535000" />
       <workItem from="1607104339983" duration="19000" />
       <workItem from="1607104372430" duration="47170000" />
-      <workItem from="1607973375027" duration="10741000" />
+      <workItem from="1607973375027" duration="12629000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

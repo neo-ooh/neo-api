@@ -8,13 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change afterPath="$PROJECT_DIR$/.idea/webResources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/storage/app/public/images/main.dark.en.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/storage/app/public/images/main.dark.fr.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/auth/password-recovery.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/auth/password-recovery.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/auth/two-fa-token.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/auth/two-fa-token.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/welcome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/welcome.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/app/public/images/main.dark.en.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/main.dark.en.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/app/public/images/main.dark.fr.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/main.dark.fr.png" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -208,6 +203,7 @@
       <recent name="$PROJECT_DIR$/app/Http/Requests" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/storage/app/public/images" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers" />
@@ -240,7 +236,7 @@
       <workItem from="1607094998350" duration="5535000" />
       <workItem from="1607104339983" duration="19000" />
       <workItem from="1607104372430" duration="47170000" />
-      <workItem from="1607973375027" duration="16074000" />
+      <workItem from="1607973375027" duration="16506000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

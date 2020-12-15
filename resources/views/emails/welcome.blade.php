@@ -91,7 +91,7 @@
                     de votre compte.
                 </p>
                 <h3>
-                    <a href="https://auth.neo-ooh.info/welcome?token={{ $signupToken }}">
+                    <a href="https://access.neo-ooh.com/welcome?token={{ $signupToken }}">
                         Configurer mon compte
                     </a>
                 </h3>
@@ -107,7 +107,7 @@
                     Please click on the link below to complete your account configuration.
                 </p>
                 <h3>
-                    <a href="https://access.neo-ooh.info/welcome?token={{ $signupToken }}">
+                    <a href="https://access.neo-ooh.com/welcome?token={{ $signupToken }}">
                         Configure my account
                     </a>
                 </h3>

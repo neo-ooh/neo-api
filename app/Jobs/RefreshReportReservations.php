@@ -61,7 +61,7 @@ class RefreshReportReservations implements ShouldQueue {
         $report = Report::query()->findOrFail($this->reportId);
 
         // Get all the Broadsign Reservations matching the report's contract Id
-        $reservations = $report->customer->getCampaigns()->filter(fn(/** Campaign */$campaign) => str_starts_with($campaign->name, $report->contract_id));
+        $reservations = Campaign::all()->filter(fn(/** Campaign */$campaign) => str_starts_with($campaign->name, $report->contract_id));
 
         // Now make sure all reservations are properly associated with the report
         /** @var Campaign $reservation */

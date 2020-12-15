@@ -32,6 +32,10 @@ class ReportsController extends Controller {
             $report->append('customer');
         }
 
+        if(in_array("performances", $with, true)) {
+            $report->append('performances');
+        }
+
         if(in_array("reservations", $with, true)) {
             $report->load('reservations');
         }

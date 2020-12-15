@@ -15,20 +15,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Collection;
+use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\BroadSign\Models\Customer;
 use Neo\BroadSign\Models\Location as BSLocation;
+use Neo\BroadSign\Models\ReservablePerformance;
 
 /**
  * Neo\Models\ActorsLocations
  *
- * @property int      id
- * @property int      customer_id
- * @property string      contract_id
- * @property string   name
- * @property int      created_by
+ * @property int                                                  id
+ * @property int                                                  customer_id
+ * @property string                                               contract_id
+ * @property string                                               name
+ * @property int                                                  created_by
  *
- * @property Actor    creator
- * @property Customer customer
+ * @property Actor                                                creator
+ * @property Customer                                             customer
+ *
+ * @property \Illuminate\Database\Eloquent\Collection<BSCampaign> reservations
  *
  * @mixin Builder
  */
@@ -93,7 +97,27 @@ class Report extends Model {
     }
 
     public function getAvailableLocationsAttribute(): Collection {
-        $bsLocations = BSLocation::byReservable(["reservable_id" => $this->reservation_id])->pluck('id');
+        $bsLocations = new Collection();
+
+        foreach ($this->reservations as $reservation) {
+            $bsLocations->push(BSLocation::byReservable(["reservable_id" => $reservation->id])->pluck('id'));
+        }
+
         return Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
+    }
+
+    public function getPerformancesAttribute() {
+        $reservations = $this->reservations;
+        $performances = ReservablePerformance::byReservable($reservations->pluck('broadsign_reservation_id')->toArray());
+
+//        /** @var ReportReservation $reservation */
+//        foreach ($reservations as $reservation) {
+//            $reservation->performances = $performances
+//                ->where("reservable_id", "=", $reservation->broadsign_reservation_id)
+//                ->sortBy("played_on", SORT_NATURAL)
+//                ->values();
+//        }
+
+        return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
     }
 }

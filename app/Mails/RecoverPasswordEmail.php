@@ -16,7 +16,7 @@ use Illuminate\Queue\SerializesModels;
 use Neo\Models\RecoveryToken;
 use Neo\Models\TwoFactorToken;
 
-class RecoverPasswordEmail extends Mailable {
+class RecoverPasswordEmail extends ReliableEmail {
     use Queueable, SerializesModels;
 
     /**
@@ -30,6 +30,7 @@ class RecoverPasswordEmail extends Mailable {
      * @param RecoveryToken $recoveryToken
      */
     public function __construct (RecoveryToken $recoveryToken) {
+        parent::__construct();
         $this->recoveryToken = $recoveryToken->token;
     }
 

@@ -15,7 +15,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\TwoFactorToken;
 
-class TwoFactorTokenEmail extends Mailable {
+class TwoFactorTokenEmail extends ReliableEmail {
     use Queueable, SerializesModels;
 
     /**
@@ -29,6 +29,8 @@ class TwoFactorTokenEmail extends Mailable {
      * @param TwoFactorToken $token
      */
     public function __construct (TwoFactorToken $token) {
+        parent::__construct();
+
         $this->token = $token->token;
     }
 

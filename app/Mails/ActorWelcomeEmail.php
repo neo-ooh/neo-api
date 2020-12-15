@@ -11,14 +11,11 @@
 namespace Neo\Mails;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
-use Swift_Message;
-use Swift_Signers_DKIMSigner;
 
-class ActorWelcomeEmail extends Mailable {
+class ActorWelcomeEmail extends ReliableEmail {
     use Queueable, SerializesModels;
 
     /**
@@ -36,15 +33,11 @@ class ActorWelcomeEmail extends Mailable {
      *
      * @param SignupToken $signupToken
      */
-    public function __construct (SignupToken $signupToken) {
-        $this->signupToken = $signupToken->token;
-        $this->actor = $signupToken->actor;
+    public function __construct(SignupToken $signupToken) {
+        parent::__construct();
 
-        // Add DKIM info
-        $this->withSwiftMessage(function(Swift_Message $message) {
-            $signer = new Swift_Signers_DKIMSigner(config('mail.dkim.private-key'), config('mail.dkim.domain'), config('mail.dkim.selector'));
-            $message->attachSigner($signer);
-        });
+        $this->signupToken = $signupToken->token;
+        $this->actor       = $signupToken->actor;
     }
 
     /**
@@ -52,10 +45,10 @@ class ActorWelcomeEmail extends Mailable {
      *
      * @return $this
      */
-    public function build (): self {
+    public function build(): self {
         return $this->subject("Bienvenue — Welcome")
-            ->view('emails.welcome')
-            ->text('emails.welcome-text');
+                    ->view('emails.welcome')
+                    ->text('emails.welcome-text');
     }
 }
 

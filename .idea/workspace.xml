@@ -8,8 +8,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change beforePath="$PROJECT_DIR$/storage/app/public/images/main.dark.en.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/main.dark.en.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/app/public/images/main.dark.fr.png" beforeDir="false" afterPath="$PROJECT_DIR$/public/images/main.dark.fr.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Location.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Report.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Report.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -236,7 +238,7 @@
       <workItem from="1607094998350" duration="5535000" />
       <workItem from="1607104339983" duration="19000" />
       <workItem from="1607104372430" duration="47170000" />
-      <workItem from="1607973375027" duration="16506000" />
+      <workItem from="1607973375027" duration="19845000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

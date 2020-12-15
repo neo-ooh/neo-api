@@ -96,28 +96,17 @@ class Report extends Model {
         return Customer::get($this->customer_id);
     }
 
-    public function getAvailableLocationsAttribute(): Collection {
-        $bsLocations = new Collection();
-
-        foreach ($this->reservations as $reservation) {
-            $bsLocations->push(BSLocation::byReservable(["reservable_id" => $reservation->id])->pluck('id'));
-        }
-
-        return Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
-    }
-
-    public function getPerformancesAttribute() {
+    public function getPerformancesAttribute(): array {
         $reservations = $this->reservations;
         $performances = ReservablePerformance::byReservable($reservations->pluck('broadsign_reservation_id')->toArray());
 
-//        /** @var ReportReservation $reservation */
-//        foreach ($reservations as $reservation) {
-//            $reservation->performances = $performances
-//                ->where("reservable_id", "=", $reservation->broadsign_reservation_id)
-//                ->sortBy("played_on", SORT_NATURAL)
-//                ->values();
-//        }
-
         return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
+    }
+
+    public function loadReservationsLocations(): void {
+        foreach ($this->reservations as $reservation) {
+            $bsLocations = BSLocation::byReservable(["reservable_id" => $reservation->broadsign_reservation_id])->pluck('id');
+            $reservation->locations = Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
+        }
     }
 }

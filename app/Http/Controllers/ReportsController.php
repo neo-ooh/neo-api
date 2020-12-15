@@ -40,8 +40,8 @@ class ReportsController extends Controller {
             $report->load('reservations');
         }
 
-        if(in_array("available_locations", $with, true)) {
-            $report->append('available_locations');
+        if(in_array("reservations.locations", $with, true)) {
+            $report->loadReservationsLocations();
         }
 
         if(in_array("bursts", $with, true)) {

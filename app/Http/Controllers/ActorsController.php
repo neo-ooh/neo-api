@@ -54,7 +54,7 @@ class ActorsController extends Controller {
             $children = $children->push(Auth::user());
         }
 
-        return new Response($children);
+        return new Response($children->unique());
     }
 
     public function show(Request $request, Actor $actor): Response {

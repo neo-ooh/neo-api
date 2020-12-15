@@ -115,10 +115,10 @@
         </tr>
         <tr class="logos">
             <td align="center">
-                <img src="{{ asset('images/main.dark.fr.png') }}" alt="Neo-OOH Logo">
+                <img src="{{ secure_asset('images/main.dark.fr.png') }}" alt="Neo-OOH Logo">
             </td>
             <td align="center">
-                <img src="{{ asset('images/main.dark.en.png') }}" alt="Neo-OOH Logo">
+                <img src="{{ secure_asset('images/main.dark.en.png') }}" alt="Neo-OOH Logo">
             </td>
         </tr>
         <tr class="legals" align="center">

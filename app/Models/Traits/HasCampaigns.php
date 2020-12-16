@@ -97,7 +97,7 @@ trait HasCampaigns {
         $campaigns->push(...$this->shared_campaigns);
         $campaigns->push(...$this->group_campaigns);
         $campaigns->push(...$this->children_campaigns);
-        return $campaigns;
+        return $campaigns->unique();
     }
 
     /*

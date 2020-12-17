@@ -10,6 +10,6 @@ class ScreenshotsController extends Controller {
     public function destroy(DestroyScreenshotsRequest $request, Screenshot $screenshot) {
         $screenshot->delete();
 
-        return new Response();
+        return new Response([$screenshot->id]);
     }
 }

@@ -85,10 +85,10 @@
         <td colspan="2">
             <h1>Services web Neo-ooh</h1>
             <p>
-                Veuillez cliquer sur le lien ci-dessous pour reinitialiser le mot de passse associé à votre compte Neo.
+                Veuillez cliquer sur le lien ci-dessous pour reinitialiser le mot de passe associé à votre compte Neo.
             </p>
             <h3>
-                <a href="https://auth.neo-ooh.info/password-reset?token={{ $recoveryToken }}">
+                <a href="https://connect.neo-ooh.com/password-reset?token={{ $recoveryToken }}">
                     Réinitialiser mon mot de passe
                 </a>
             </h3>
@@ -103,7 +103,7 @@
                 Click on the link below to reset you Neo account's password
             </p>
             <h3>
-                <a href="https://auth.neo-ooh.info/password-reset?token={{ $recoveryToken }}">
+                <a href="https://connect.neo-ooh.com/password-reset?token={{ $recoveryToken }}">
                     Reset my password
                 </a>
             </h3>

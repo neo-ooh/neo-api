@@ -428,5 +428,5 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("screenshot", Screenshot::class);
 
-    Route::delete("screenshots/{screenshots}", ScreenshotsController::class . "@destroy")->name("screenshots.destroy");
+    Route::delete("screenshots/{screenshot}", ScreenshotsController::class . "@destroy")->name("screenshots.destroy");
 });

@@ -38,6 +38,7 @@ use Neo\Http\Controllers\RolesActorsController;
 use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
+use Neo\Http\Controllers\ScreenshotsController;
 use Neo\Models\Actor;
 use Neo\Models\Burst;
 use Neo\Models\Campaign;
@@ -52,6 +53,7 @@ use Neo\Models\Report;
 use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
+use Neo\Models\Screenshot;
 
 /*
 |--------------------------------------------------------------------------
@@ -416,4 +418,15 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route::  post("campaigns/{campaign}/reorder", SchedulesController::class . "@reorder")->name("schedules.reorder");
     Route::  post("campaigns/{campaign}/schedules", SchedulesController::class . "@store")->name("schedules.store");
     Route::  post("campaigns/{campaign}/insert", SchedulesController::class . "@insert")->name("schedules.insert");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Screenshots
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("screenshot", Screenshot::class);
+
+    Route::delete("screenshots/{screenshots}", ScreenshotsController::class . "@destroy")->name("screenshots.destroy");
 });

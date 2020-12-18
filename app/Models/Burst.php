@@ -31,6 +31,7 @@ use Illuminate\Support\Carbon as Date;
  * @property int      requested_by
  * @property Date     start_at
  * @property bool     started
+ * @property bool     is_finished
  * @property int      scale_factor
  * @property int      duration_ms
  * @property int      frequency_ms
@@ -151,7 +152,12 @@ class Burst extends Model {
     }
 
 
+    /**
+     * Tell if the burst has received all expected screenshots.
+     * @deprecated Use the `is_finished` property instead
+     * @return bool
+     */
     public function getIsCompleteAttribute() {
-        return $this->screenshots_count >= $this->expected_screenshots;
+        return $this->is_finished;
     }
 }

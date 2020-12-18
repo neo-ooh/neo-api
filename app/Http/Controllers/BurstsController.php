@@ -57,10 +57,11 @@ class BurstsController extends Controller {
 
         $screenshot->store($request->getContent(true));
 
-        $player = new Player(["id" => $request->get("player_id")]);
-        $player->nowPlaying();
-
-        // Request information about the screenshot
+        // Check if the burst is complete
+        if($burst->screenshots_count === $burst->expected_screenshots) {
+            $burst->is_finished = true;
+            $burst->save();
+        }
     }
 
     public function show(Burst $burst): Response {

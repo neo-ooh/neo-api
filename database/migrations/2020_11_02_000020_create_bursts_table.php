@@ -25,7 +25,8 @@ class CreateBurstsTable extends Migration {
             $table->foreignId("location_id")->constrained('locations')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId("requested_by")->nullable()->constrained('actors')->cascadeOnUpdate()->nullOnDelete();
             $table->timestamp('start_at')->nullable();
-            $table->boolean('started');
+            $table->boolean('started')->default("0");
+            $table->boolean('is_finished')->default("0");
             $table->tinyInteger('scale_factor');
             $table->integer('duration_ms');
             $table->integer('frequency_ms');

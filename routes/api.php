@@ -331,8 +331,9 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("report", Report::class);
 
-    Route:: post("reports", ReportsController::class . "@store")->name("reports.store");
-    Route::  get("reports/{report}", ReportsController::class . "@show")->name("reports.show");
+    Route::  post("reports", ReportsController::class . "@store")->name("reports.store");
+    Route::   get("reports/{report}", ReportsController::class . "@show")->name("reports.show");
+    Route::delete("reports/{report}", ReportsController::class . "@destroy")->name("reports.destroy");
 
 
     /*

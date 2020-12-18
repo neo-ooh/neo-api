@@ -33,6 +33,7 @@ use Neo\BroadSign\Models\ReservablePerformance;
  * @property Customer                                             customer
  *
  * @property \Illuminate\Database\Eloquent\Collection<BSCampaign> reservations
+ * @property \Illuminate\Database\Eloquent\Collection<Burst> bursts
  *
  * @mixin Builder
  */

@@ -15,7 +15,7 @@ class ReportsController extends Controller {
         // First, create the contract
         $report              = new Report();
         $report->customer_id = $request->get("customer_id");
-        $report->contract_id = $request->get("contract_id");
+        $report->contract_id = strtoupper($request->get("contract_id"));
         $report->name        = $request->get("name");
         $report->created_by  = Auth::id();
         $report->save();

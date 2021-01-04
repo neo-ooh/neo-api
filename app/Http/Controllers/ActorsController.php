@@ -14,7 +14,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
@@ -129,9 +128,9 @@ class ActorsController extends Controller {
 
     public function update(UpdateActorRequest $request, Actor $actor): Response {
         // Since all request properties are optional, make sure at least one was given
-        if(count($request->all()) === 0) {
+        if (count($request->all()) === 0) {
             return new Response([
-                "code" => "empty-request",
+                "code"    => "empty-request",
                 "message" => "You must pass at lease 1 parameter when calling this route"
             ], 422);
         }

@@ -67,7 +67,7 @@ class RefreshReportReservations implements ShouldQueue {
             // No campaigns where found, let's try again, replacing hyphens with hyphen-minus...
             $utfContract = str_replace('-', mb_chr(8208, 'UTF-8'), $report->contract_id);
 
-            $reservations = Campaign::all()->filter(fn(/** Campaign */$campaign) => str_starts_with(strtoupper($campaign->name), strtoupper($report->contract_id)));
+            $reservations = Campaign::all()->filter(fn(/** Campaign */$campaign) => str_starts_with(strtoupper($campaign->name), strtoupper($utfContract)));
         }
 
         // Now make sure all reservations are properly associated with the report

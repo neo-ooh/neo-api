@@ -125,7 +125,7 @@ trait HasRoles {
      */
     public function removeRoles (array $roles): self {
         $binds = implode(", ", array_fill(0, count($roles), "?"));
-        DB::delete("DELETE FROM `actors_roles` AS `ur` WHERE `actor_id` = ? AND `role_id` IN ({$binds})",
+        DB::delete("DELETE FROM `actors_roles` WHERE `actor_id` = ? AND `role_id` IN ({$binds})",
             [
                 $this->getKey(),
                 ...$roles

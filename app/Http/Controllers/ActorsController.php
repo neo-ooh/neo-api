@@ -171,6 +171,8 @@ class ActorsController extends Controller {
             $actor->moveTo($parent);
         }
 
+        $actor->refresh();
+
         return new Response($this->show($request, $actor)->original);
     }
 

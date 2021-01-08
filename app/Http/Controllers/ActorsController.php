@@ -16,6 +16,7 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
+use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
 use Neo\Jobs\CreateSignupToken;
@@ -202,5 +203,9 @@ class ActorsController extends Controller {
         CreateSignupToken::dispatch($actor->id);
 
         return new Response();
+    }
+
+    public function getToken(RequestActorTokenRequest $request) {
+        return new Response(["token" => Auth::user()->getJWT()]);
     }
 }

@@ -5,22 +5,27 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - AcceptTermsOfServiceRequest.php
+ * @neo/api - RequestActorTokenRequest.php
  */
 
-namespace Neo\Http\Requests;
+namespace Neo\Http\Requests\Actors;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class AcceptTermsOfServiceRequest extends FormRequest
-{
+/**
+ * Class ListActorsRequest
+ *
+ * @package Neo\Http\Requests
+ */
+class RequestActorTokenRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize(): bool {
+    public function authorize (): bool {
+        // A user can only request a token for itself
         return true;
     }
 
@@ -29,9 +34,7 @@ class AcceptTermsOfServiceRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(): array {
-        return [
-            "accept" => ["required", "boolean"]
-        ];
+    public function rules (): array {
+        return [];
     }
 }

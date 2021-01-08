@@ -157,7 +157,7 @@ class Burst extends Model {
      * @deprecated Use the `is_finished` property instead
      * @return bool
      */
-    public function getIsCompleteAttribute() {
+    public function getIsCompleteAttribute(): bool {
         return $this->is_finished;
     }
 }

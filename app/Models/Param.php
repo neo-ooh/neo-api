@@ -10,6 +10,7 @@
 
 namespace Neo\Models;
 
+use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,6 +20,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string slug
  * @property string format
  * @property string value
+ * @property Date   created_at
+ * @property Date   updated_at
  *
  * @mixin Builder
  */

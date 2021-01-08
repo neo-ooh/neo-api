@@ -62,6 +62,9 @@ final class Capability extends Enum {
     // Formats
     public const locations_edit = "locations.edit";
 
+    // Terms Of Services
+    public const tos_update = "tos.update";
+
     // Tests
     public const tests = "test.capability";
 

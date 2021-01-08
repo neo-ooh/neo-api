@@ -39,6 +39,7 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\ScreenshotsController;
+use Neo\Http\Controllers\TermsOfServiceController;
 use Neo\Models\Actor;
 use Neo\Models\Burst;
 use Neo\Models\Campaign;
@@ -320,7 +321,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route::model("parameter", Param::class);
 
     Route::  get("params/{parameter:slug}", ParamsController::class . "@show")->name("params.show");
-    Route::  put("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update");
+    Route::  post("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update");
 
 
     /*

@@ -20,14 +20,14 @@ class CapabilitiesSeeder extends Seeder {
      *
      * @return void
      */
-    public static function run (): void {
+    public static function run(): void {
         $allCapabilities = \Neo\Enums\Capability::asArray();
 
         /** @var Role $admin */
-        $admin = Role::query()->firstOrCreate([ "name" => "Admin" ]);
+        $admin = Role::query()->firstOrCreate(["name" => "Admin"]);
 
         foreach ($allCapabilities as $capability => $value) {
-            $cap = Capability::query()->firstOrCreate([ "slug" => $value, "standalone" => true ], ["service" => ""]);
+            $cap = Capability::query()->firstOrCreate(["slug" => $value], ["service" => "", "standalone" => true]);
             if (!$admin->capabilities->contains($cap)) {
                 $admin->capabilities()->attach($cap->id);
             }
@@ -51,6 +51,8 @@ class CapabilitiesSeeder extends Seeder {
 
         Capability::where("slug", "=", "contents.review")->update(["service" => "DIRECT"]);
         Capability::where("slug", "=", "formats.edit")->update(["service" => "DIRECT"]);
+
+        Capability::where("slug", "=", "tos.update")->update(["service" => "ACTORS"]);
 
         Capability::where("slug", "=", "test.capability")->update(["service" => "TEST"]);
 

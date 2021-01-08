@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\ActorsController;
 use Neo\Http\Controllers\LoginController;
 use Neo\Http\Controllers\PasswordRecoveryController;
 use Neo\Http\Controllers\TermsOfServiceController;
@@ -43,6 +44,16 @@ Route::prefix("v1/auth")->group(function () {
     |----------------------------------------------------------------------
     */
     Route::post('/login', LoginController::class . '@login')->name('auth.login');
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Token Refresh
+    |----------------------------------------------------------------------
+    */
+    Route::middleware('loa-1')->group(function() {
+        Route::get('/token-refresh', ActorsController::class . '@getToken')->name('user-token-refresh');
+    });
 
 
     /*

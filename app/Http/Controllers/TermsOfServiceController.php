@@ -12,7 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Neo\Http\Requests\AcceptTermsOfServiceRequest;
+use Neo\Http\Requests\TermsOfService\AcceptTermsOfServiceRequest;
 use Neo\Models\Actor;
 use Neo\Models\Param;
 
@@ -26,7 +26,7 @@ class TermsOfServiceController extends Controller {
         /** @var Param $tos */
         $tos = Param::find('tos');
 
-        return new Response(["url" => $tos->value]);
+        return new Response(["url" => $tos->value, "updated" => $tos->updated_at]);
     }
 
     public function accept(AcceptTermsOfServiceRequest $request): Response {

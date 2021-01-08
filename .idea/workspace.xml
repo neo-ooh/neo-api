@@ -8,9 +8,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/RequestActorTokenRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Traits/HasRoles.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Traits/HasRoles.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ParamsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ParamsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/TermsOfServiceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/TermsOfServiceController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/AcceptTermsOfServiceRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/TermsOfService/AcceptTermsOfServiceRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Burst.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Param.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Param.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/auth.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -216,11 +225,11 @@
       <recent name="$PROJECT_DIR$/database/migrations" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Requests/TermsOfService" />
+      <recent name="$PROJECT_DIR$/app/Http/Requests" />
       <recent name="$PROJECT_DIR$/public" />
       <recent name="$PROJECT_DIR$/storage/app/public/images" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs" />
-      <recent name="$PROJECT_DIR$/app/Http/Controllers" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/Brandings" />
     </key>
   </component>
   <component name="RunManager" selected="PHPUnit.All Tests">
@@ -251,7 +260,7 @@
       <workItem from="1607104372430" duration="47170000" />
       <workItem from="1607973375027" duration="29238000" />
       <workItem from="1608314790987" duration="2070000" />
-      <workItem from="1609768004246" duration="7779000" />
+      <workItem from="1609768004246" duration="19464000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

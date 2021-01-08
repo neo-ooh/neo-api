@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Neo\Models\Actor;
 use Neo\Models\Param;
 
 /**
@@ -71,9 +72,11 @@ class ParamsController extends Controller {
                     Storage::delete($fileName);
                 }
 
-                Storage::putFile($fileName, $file, [ "visibility" => "public" ]);
-
+                $file->storePubliclyAs('/', $fileName);
                 $parameter->value = Storage::url($fileName);
+
+                // Tos have been updated, now require everyone to accept it again
+                Actor::query()->update(['tos_accepted' => false]);
             }
         } else {
             $parameter->value = $request->get("value");

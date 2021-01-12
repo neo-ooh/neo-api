@@ -20,7 +20,7 @@ class StoreActorRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::actors_create);
     }
 
@@ -29,17 +29,18 @@ class StoreActorRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "is_group"       => [ "required", "boolean" ],
-            "name"           => [ "required", "string" ],
-            "email"          => [ "required_unless:is_group,true", "email", "unique:actors,email" ],
-            "parent_id"      => [ "required", "numeric", "exists:actors,id" ],
-            "branding_id"    => [ "sometimes", "numeric", "nullable", "exists:brandings,id" ],
-            "roles"          => [ "sometimes", "array", "distinct" ],
-            "roles.*"        => [ "integer", "exists:roles,id" ],
-            "capabilities"   => [ "sometimes", "array", "distinct" ],
-            "capabilities.*" => [ "integer", "exists:capabilities,id" ],
+            "is_group"       => ["required", "boolean"],
+            "name"           => ["required", "string"],
+            "email"          => ["required_unless:is_group,true", "email", "unique:actors,email"],
+            "parent_id"      => ["required", "numeric", "exists:actors,id"],
+            "branding_id"    => ["sometimes", "numeric", "nullable", "exists:brandings,id"],
+            "roles"          => ["sometimes", "array", "distinct"],
+            "roles.*"        => ["integer", "exists:roles,id"],
+            "capabilities"   => ["sometimes", "array", "distinct"],
+            "capabilities.*" => ["integer", "exists:capabilities,id"],
+            "make_library"   => ["required", "boolean"]
         ];
     }
 }

@@ -119,6 +119,10 @@ class ActorsController extends Controller {
 
             // Execute the user's creation side effects
             CreateSignupToken::dispatch($actor->id);
+        }
+
+        // Should we create a library for the user ?
+        if($values->make_library) {
             CreateUserLibrary::dispatch($actor->id);
         }
 

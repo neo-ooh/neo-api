@@ -223,9 +223,14 @@ class Library extends SecuredModel {
             return true;
         }
 
-        // Is the actor's parent a group and does the library belongs to it ?
-        if ($actor->parent_is_group && $actor->parent_id === $this->owner_id) {
-            return true;
+        // Is the actor's parent a group ?
+        if ($actor->parent_is_group) {
+            // Does the library belongs to it ?
+            if($actor->parent_id === $this->owner_id) {
+                return true;
+            }
+
+            //
         }
 
         // Is the library shared with the given actor ?
@@ -242,6 +247,8 @@ class Library extends SecuredModel {
         if ($actor->accessibleActors()->get("id")->pluck("id")->contains($this->owner_id)) {
             return true;
         }
+
+
 
         return false;
     }

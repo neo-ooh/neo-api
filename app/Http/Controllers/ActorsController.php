@@ -122,7 +122,7 @@ class ActorsController extends Controller {
         }
 
         // Should we create a library for the user ?
-        if($values->make_library) {
+        if($values['make_library']) {
             CreateUserLibrary::dispatch($actor->id);
         }
 

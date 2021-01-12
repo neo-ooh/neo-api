@@ -12,6 +12,7 @@ namespace Neo\Models;
 
 use Carbon\Carbon as Date;
 use Firebase\JWT\JWT;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -446,7 +447,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
         // Libraries of the parent of the user
         if($parent && $this->parent_is_group) {
-            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group));
+            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && \Illuminate\Support\Facades\Gate::allows(\Neo\Enums\Capability::libraries_edit)));
         }
 
         return $libraries->unique("id")->values();

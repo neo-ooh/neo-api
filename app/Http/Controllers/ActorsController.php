@@ -52,7 +52,7 @@ class ActorsController extends Controller {
             $actors = $actors->push(Auth::user());
         }
 
-        return new Response($actors->unique("id"));
+        return new Response($actors->unique("id")->values());
     }
 
     public function show(Request $request, Actor $actor): Response {

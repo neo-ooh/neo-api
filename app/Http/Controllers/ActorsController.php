@@ -21,7 +21,7 @@ use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
 use Neo\Jobs\CreateSignupToken;
-use Neo\Jobs\CreateUserLibrary;
+use Neo\Jobs\CreateActorLibrary;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
 
@@ -123,7 +123,7 @@ class ActorsController extends Controller {
 
         // Should we create a library for the user ?
         if($values['make_library']) {
-            CreateUserLibrary::dispatch($actor->id);
+            CreateActorLibrary::dispatch($actor->id);
         }
 
         return new Response($actor->withDetails(), 201);

@@ -25,7 +25,7 @@ use Neo\Models\Library;
  * @package Neo\Jobs
  *
  */
-class CreateUserLibrary implements ShouldQueue {
+class CreateActorLibrary implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -54,7 +54,7 @@ class CreateUserLibrary implements ShouldQueue {
         /** @var Actor $actor */
         $actor = Actor::query()->findOrFail($this->actorID);
 
-        if($actor->is_group || config("app.env") === "testing") {
+        if(config("app.env") === "testing") {
             return;
         }
 

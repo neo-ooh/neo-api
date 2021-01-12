@@ -260,7 +260,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     */
 
     /**
-     * Scope
+     * Scope to all actors the current user has access to. Use
      *
      * @return Builder
      */
@@ -279,8 +279,16 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @return Collection
      */
     public function getAccessibleActorsAttribute(): Collection {
-        // We have access to all our children and the descendants of all the items who shared their pool with us
-        return $this->newQuery()->AccessibleActors()->get();
+        // We have access to all our children and the descendants of all the items who shared their pool with us as well as all descendants of our parent if it is a group
+        /** @var Collection $selfAccessible */
+        $accessible = $this->newQuery()->AccessibleActors()->get();
+
+        if($this->parent_is_group) {
+            /** @var Collection $accessible */
+            $accessible = $accessible->union($this->parent->accessible_actors);
+        }
+
+        return $accessible->unique();
     }
 
     public function scopeSharedActors(Builder $query): Builder {
@@ -374,8 +382,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return true;
         }
 
-        // We are not a parent of the given actor, is it shared with us ?
-        return $this->shared_actors->pluck("id")->contains($node->id);
+        // We are not a parent of the given actor, is it shared with us or part of our parent hierarchy if its a group ?
+        return $this->accessible_actors->pluck("id")->contains($node->id);
     }
 
     /*

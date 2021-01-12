@@ -67,6 +67,7 @@ class SynchronizeLocations implements ShouldQueue {
 
             $locations[] = $location->id;
 
+            /** @noinspection DisconnectedForeachInstructionInspection */
             $progressBar->advance();
         }
 

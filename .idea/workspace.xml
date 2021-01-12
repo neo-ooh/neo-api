@@ -8,18 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/RequestActorTokenRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ParamsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ParamsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/TermsOfServiceController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/TermsOfServiceController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/AcceptTermsOfServiceRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/TermsOfService/AcceptTermsOfServiceRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Burst.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Param.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Param.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/auth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,6 +39,9 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php" root0="FORCE_HIGHLIGHTING" root1="SKIP_INSPECTION" />
   </component>
   <component name="PhpDebugGeneral" xdebug_debug_port="9003">
     <xdebug_debug_ports port="9003" />
@@ -232,13 +228,18 @@
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs" />
     </key>
   </component>
-  <component name="RunManager" selected="PHPUnit.All Tests">
+  <component name="RunManager" selected="PHPUnit.UpdateActorTest.testActorParentCanBeChanged">
     <configuration name="TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
       <TestRunner class="Tests\Feature\TermsOfServiceTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/TermsOfServiceTest.php" method="testTermsOfServiceCanBeRetrievedLoggedIn" scope="Method" />
       <method v="2" />
     </configuration>
+    <configuration name="UpdateActorTest.testActorParentCanBeChanged" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Tests\Feature\Actors\UpdateActorTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/Actors/UpdateActorTest.php" method="testActorParentCanBeChanged" scope="Method" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="PHPUnit.UpdateActorTest.testActorParentCanBeChanged" />
         <item itemvalue="PHPUnit.TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" />
       </list>
     </recent_temporary>
@@ -260,7 +261,7 @@
       <workItem from="1607104372430" duration="47170000" />
       <workItem from="1607973375027" duration="29238000" />
       <workItem from="1608314790987" duration="2070000" />
-      <workItem from="1609768004246" duration="19464000" />
+      <workItem from="1609768004246" duration="27431000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

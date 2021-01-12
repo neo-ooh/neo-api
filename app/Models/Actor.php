@@ -12,7 +12,6 @@ namespace Neo\Models;
 
 use Carbon\Carbon as Date;
 use Firebase\JWT\JWT;
-use Illuminate\Auth\Access\Gate;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -33,9 +32,6 @@ use Neo\Models\Traits\HasLocations;
 use Neo\Models\Traits\HasRoles;
 use Neo\Models\Traits\WithRelationCaching;
 use Neo\Rules\AccessibleActor;
-use Neo\Models\SignupToken;
-use Neo\Models\TwoFactorToken;
-use Neo\Models\RecoveryToken;
 
 /**
  * Class Actor
@@ -262,19 +258,19 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     public function getAccessibleActors($children = true, $shallow = false, $shared = true, $parent = true) {
         $actors = new Collection();
 
-        if($children && $shallow) {
+        if ($children && $shallow) {
             $actors = $actors->merge($this->direct_children);
         }
 
-        if($children && !$shallow) {
+        if ($children && !$shallow) {
             $actors = $actors->merge($this->children);
         }
 
-        if($shared) {
+        if ($shared) {
             $actors = $actors->merge($this->shared_actors);
         }
 
-        if($parent && $this->parent_is_group && !$this->is_group) {
+        if ($parent && $this->parent_is_group && !$this->is_group) {
             $actors = $actors->merge($this->parent->getAccessibleActors(true, false, true, false));
         }
 
@@ -309,7 +305,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $accessible = $this->newQuery()->AccessibleActors()->get();
 
         // A user can access its group actors, but a group cannot access its parent actors, even if it is a group.
-        if($this->parent_is_group && !$this->is_group) {
+        if ($this->parent_is_group && !$this->is_group) {
             /** @var Collection $accessible */
             $accessible = $accessible->merge($this->parent->children);
             $accessible = $accessible->merge($this->parent->shared_actors);
@@ -420,34 +416,37 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     */
 
     /**
-     * List all the libraries this actor has access to. The flags allow for specifying which type of related libraries are returned.
-     * @param bool $own True to list the actor's own libraries
-     * @param bool $shared True to list libraries shared with the actor
+     * List all the libraries this actor has access to. The flags allow for specifying which type of related libraries are
+     * returned.
+     *
+     * @param bool $own      True to list the actor's own libraries
+     * @param bool $shared   True to list libraries shared with the actor
      * @param bool $children True to list this actor's children's libraries
-     * @param bool $parent True to list the parent of the actor's libraries, libraries shared with it, and its parent library if its a group.
+     * @param bool $parent   True to list the parent of the actor's libraries, libraries shared with it, and its parent library
+     *                       if its a group.
      * @return Collection
      */
     public function getLibraries($own = true, $shared = true, $children = true, $parent = true): Collection {
         $libraries = new Collection();
 
         // Actor's own libraries
-        if($own) {
+        if ($own) {
             $libraries = $libraries->merge($this->own_libraries);
         }
 
         // Libraries shared with the actor
-        if($shared) {
+        if ($shared) {
             $libraries = $libraries->merge($this->shared_libraries);
         }
 
         // Libraries of children of this actor
-        if($children) {
+        if ($children) {
             $libraries = $libraries->merge($this->children_libraries);
         }
 
         // Libraries of the parent of the user
-        if($parent && $this->parent_is_group) {
-            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group));
+        if ($parent && $this->parent_is_group) {
+            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && \Illuminate\Support\Facades\Gate::allows(\Neo\Enums\Capability::libraries_edit)));
         }
 
         return $libraries->unique("id")->values();
@@ -455,6 +454,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * Give libraries directly owned by this actor
+     *
      * @return Collection
      */
     protected function getOwnLibrariesAttribute(): Collection {

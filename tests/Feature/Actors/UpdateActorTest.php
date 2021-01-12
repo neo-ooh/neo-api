@@ -85,6 +85,7 @@ class UpdateActorTest extends TestCase {
 
         $newActor->moveTo($actor);
 
+        $actor->unsetRelations();
         $actor->refresh();
 
         // Succeeds -> newActor is a child

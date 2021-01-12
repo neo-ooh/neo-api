@@ -27,17 +27,13 @@ trait WithRelationCaching {
      * everytime the method is called.
      *
      * @param string   $relation Name of the relation
-     * @param ?Closure $value
+     * @param Closure $value
      *
-     * @return mixed|null
+     * @return mixed
      */
-    protected function getCachedRelation (string $relation, ?Closure $value = null) {
+    protected function getCachedRelation (string $relation, Closure $value) {
         // Check if the relation is already loaded
         if (!$this->relationLoaded($relation)) {
-            if (is_null($value)) {
-                // The relation is not loaded, and no value is provided, we return null
-                return null;
-            }
 
             // Store the closure result
             $this->setRelation($relation, $value());

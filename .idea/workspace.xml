@@ -8,7 +8,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LibrariesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LibrariesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Library.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Library.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Traits/HasCampaigns.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Traits/HasCampaigns.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Traits/WithRelationCaching.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Traits/WithRelationCaching.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Actors/UpdateActorTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Actors/UpdateActorTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -205,7 +214,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -224,7 +233,7 @@
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs" />
     </key>
   </component>
-  <component name="RunManager" selected="PHPUnit.UpdateActorTest.testActorParentCanBeChanged">
+  <component name="RunManager" selected="PHPUnit.All Tests">
     <configuration name="TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
       <TestRunner class="Tests\Feature\TermsOfServiceTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/TermsOfServiceTest.php" method="testTermsOfServiceCanBeRetrievedLoggedIn" scope="Method" />
       <method v="2" />
@@ -257,7 +266,7 @@
       <workItem from="1607104372430" duration="47170000" />
       <workItem from="1607973375027" duration="29238000" />
       <workItem from="1608314790987" duration="2070000" />
-      <workItem from="1609768004246" duration="27674000" />
+      <workItem from="1609768004246" duration="31660000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

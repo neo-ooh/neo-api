@@ -213,7 +213,7 @@ class Library extends SecuredModel {
     }
 
     public function getAvailableFormatsAttribute () {
-        $formats = Auth::user()->campaigns->map(fn(Campaign $campaign) => $campaign->format);
+        $formats = Auth::user()->getCampaigns()->map(fn(Campaign $campaign) => $campaign->format);
         return $formats->unique();
     }
 

@@ -200,7 +200,7 @@ class Campaign extends SecuredModel {
         $location = $this->locations[0];
         $locationPrefix = explode("|", $location->name)[0];
 
-        return Auth::user()->getCampaignsAttribute()->filter(fn ($campaign) => $campaign->locations_count === 1
+        return Auth::user()->getCampaigns()->filter(fn ($campaign) => $campaign->locations_count === 1
             ? (Str::startsWith($campaign->locations[0]->name, $locationPrefix) && $campaign->id !== $this->id)
             : false
         )->values();

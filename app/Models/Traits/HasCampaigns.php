@@ -57,23 +57,30 @@ trait HasCampaigns {
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * List all the campaigns of the parent group for this entity. If this entity's parent is not a group, returns an
-     * empty collection
-     *
-     * @return Collection<Campaign>
-     */
-    public function getGroupCampaignsAttribute (): Collection {
-        if ($this->parent_id === null || !$this->parent->is_group) {
-            return new Collection();
+    public function getCampaigns($own = true, $shared = true, $children = true, $parent = true) {
+        $campaigns = new Collection();
+
+        // Actor's own campaigns
+        if($own) {
+            $campaigns = $campaigns->merge($this->own_campaigns);
         }
 
-        $group = $this->parent;
-        $campaigns = new Collection();
-        $campaigns->push(...$group->own_campaigns);
-        $campaigns->push(...$group->shared_campaigns);
-        $campaigns->push(...$group->group_campaigns);
-        return $campaigns;
+        // Campaigns shared with the actor
+        if($shared) {
+            $campaigns = $campaigns->merge($this->shared_campaigns);
+        }
+
+        // Actor's children's campaigns
+        if($children) {
+            $campaigns = $campaigns->merge($this->children_campaigns);
+        }
+
+        // Libraries of the parent of the user, if applicable
+        if($parent && $this->parent_is_group && !$this->is_group) {
+            $campaigns = $campaigns->merge($this->parent->getCampaigns(true, true, false, false));
+        }
+
+        return $campaigns->unique("id");
     }
 
     /**
@@ -82,22 +89,8 @@ trait HasCampaigns {
      * @return \Illuminate\Support\Collection
      */
     public function getChildrenCampaignsAttribute (): \Illuminate\Support\Collection {
-        $descendants = $this->accessible_actors->pluck('id');
+        $descendants = $this->getAccessibleActors(true, false, false, false)->pluck('id');
         return Campaign::whereIn("owner_id", $descendants)->get();
-    }
-
-    /**
-     * List ALL campaigns this user has access to
-     *
-     * @return Collection<Campaign>
-     */
-    public function getCampaignsAttribute (): Collection {
-        $campaigns = new Collection();
-        $campaigns->push(...$this->own_campaigns);
-        $campaigns->push(...$this->shared_campaigns);
-        $campaigns->push(...$this->group_campaigns);
-        $campaigns->push(...$this->children_campaigns);
-        return $campaigns->unique();
     }
 
     /*
@@ -112,6 +105,6 @@ trait HasCampaigns {
      * @return bool
      */
     public function canAccessCampaign (Campaign $campaign): bool {
-        return $this->campaigns->pluck('id')->contains($campaign->id);
+        return $this->getCampaigns()->pluck('id')->contains($campaign->id);
     }
 }

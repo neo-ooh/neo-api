@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Neo\Models\Traits\HasHierarchy;
@@ -71,9 +72,7 @@ use Neo\Models\RecoveryToken;
  *
  * @property Collection     own_libraries
  * @property Collection     shared_libraries
- * @property Collection     parent_libraries
  * @property Collection     children_libraries
- * @property Collection     libraries
  *
  *
  * @method Builder    accessibleActors()
@@ -259,6 +258,31 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     |--------------------------------------------------------------------------
     */
 
+    public function getAccessibleActors($children = true, $shallow = false, $shared = true, $parent = true) {
+        $actors = new Collection();
+
+        if($children && $shallow) {
+            $actors = $actors->merge($this->direct_children);
+        }
+
+        if($children && !$shallow) {
+            $actors = $actors->merge($this->children);
+        }
+
+        if($shared) {
+            $actors = $actors->merge($this->shared_actors);
+        }
+
+        if($parent && $this->parent_is_group && !$this->is_group) {
+            $actors = $actors->merge($this->parent->getAccessibleActors(true, true, true, false));
+        }
+
+        // By default, a user cannot see itself
+        $actors = $actors->filter(fn($actor) => $actor->id !== Auth::id());
+
+        return $actors->unique("id");
+    }
+
     /**
      * Scope to all actors the current user has access to. Use
      *
@@ -279,13 +303,15 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @return Collection
      */
     public function getAccessibleActorsAttribute(): Collection {
-        // We have access to all our children and the descendants of all the items who shared their pool with us as well as all descendants of our parent if it is a group
+        // We have access to all our children and the descendants of all the items who shared their pool with us as well as all descendants and accessible actors of our parent if it is a group. We do not use the parent `accessible users` property as we don't want to get recursive.
         /** @var Collection $selfAccessible */
         $accessible = $this->newQuery()->AccessibleActors()->get();
 
-        if($this->parent_is_group) {
+        // A user can access its group actors, but a group cannot access its parent actors, even if it is a group.
+        if($this->parent_is_group && !$this->is_group) {
             /** @var Collection $accessible */
-            $accessible = $accessible->merge($this->parent->accessible_actors);
+            $accessible = $accessible->merge($this->parent->children);
+            $accessible = $accessible->merge($this->parent->shared_actors);
         }
 
         return $accessible->unique();
@@ -383,7 +409,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // We are not a parent of the given actor, is it shared with us or part of our parent hierarchy if its a group ?
-        return $this->accessible_actors->pluck("id")->contains($node->id);
+        return $this->getAccessibleActors()->pluck("id")->contains($node->id);
     }
 
     /*
@@ -392,30 +418,50 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     |----------------------------------------------------------------|
     */
 
-    protected function getLibrariesAttribute(): Collection {
+    /**
+     * List all the libraries this actor has access to. The flags allow for specifying which type of related libraries are returned.
+     * @param bool $own True to list the actor's own libraries
+     * @param bool $shared True to list libraries shared with the actor
+     * @param bool $children True to list this actor's children's libraries
+     * @param bool $parent True to list the parent of the actor's libraries, libraries shared with it, and its parent library if its a group.
+     * @return Collection
+     */
+    public function getLibraries($own = true, $shared = true, $children = true, $parent = true): Collection {
         $libraries = new Collection();
-        $libraries = $libraries->merge($this->own_libraries);
-        $libraries = $libraries->merge($this->children_libraries);
-        $libraries = $libraries->merge($this->shared_libraries);
-        $libraries = $libraries->merge($this->parent_libraries);
-        $libraries = $libraries->unique("id");
-        return $libraries;
+
+        // Actor's own libraries
+        if($own) {
+            $libraries = $libraries->merge($this->own_libraries);
+        }
+
+        // Libraries shared with the actor
+        if($shared) {
+            $libraries = $libraries->merge($this->shared_libraries);
+        }
+
+        // Libraries of children of this actor
+        if($children) {
+            $libraries = $libraries->merge($this->children_libraries);
+        }
+
+        // Libraries of the parent of the user
+        if($parent && $this->parent_is_group) {
+            $libraries = $libraries->merge($this->parent->getLibraries(true, true, false));
+        }
+
+        return $libraries->unique("id");
     }
 
-    protected function getOwnLibrariesAttribute(): ?Collection {
+    /**
+     * Give libraries directly owned by this actor
+     * @return Collection
+     */
+    protected function getOwnLibrariesAttribute(): Collection {
         return $this->getCachedRelation("own_libraries", fn() => Library::of($this)->get());
     }
 
-    protected function getChildrenLibrariesAttribute(): ?Collection {
+    protected function getChildrenLibrariesAttribute(): Collection {
         return $this->getCachedRelation("children_libraries", fn() => Library::ofChildrenOf($this)->get());
-    }
-
-    public function getParentLibrariesAttribute(): ?Collection {
-        if ($this->parent_is_group) {
-            return $this->getCachedRelation("parent_libraries", fn() => Library::of($this->parent)->get());
-        }
-
-        return new Collection();
     }
 
     public function shared_libraries(): ?BelongsToMany {

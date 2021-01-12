@@ -30,7 +30,7 @@ class LibrariesController extends Controller
      */
     public function index(ListLibrariesRequest $request)
     {
-        $libraries = Auth::user()->libraries;
+        $libraries = Auth::user()->getLibraries();
 
         if ($request->has("withContent")) {
             $libraries->load("contents", "contents.format");

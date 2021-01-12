@@ -34,7 +34,7 @@ class CampaignsController extends Controller
     public function index(ListCampaignsRequest $request)
     {
         return new Response(Auth::user()->getCampaigns()->load("format:id,slug,name",
-            "owner:id,name,email",
+            "owner",
             "locations"));
     }
 

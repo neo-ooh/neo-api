@@ -227,11 +227,7 @@ class Library extends SecuredModel {
         // Is the actor's parent a group ?
         if ($actor->parent_is_group) {
             // Does the library belongs to it ?
-            if($actor->parent_id === $this->owner_id) {
-                return true;
-            }
-
-            //
+            return $this->isAccessibleBy($actor->parent);
         }
 
         // Is the library shared with the given actor ?

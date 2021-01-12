@@ -280,7 +280,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         // By default, a user cannot see itself
         $actors = $actors->filter(fn($actor) => $actor->id !== Auth::id());
 
-        return $actors->unique("id");
+        return $actors->unique("id")->values();
     }
 
     /**
@@ -449,7 +449,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             $libraries = $libraries->merge($this->parent->getLibraries(true, true, false));
         }
 
-        return $libraries->unique("id");
+        return $libraries->unique("id")->values();
     }
 
     /**

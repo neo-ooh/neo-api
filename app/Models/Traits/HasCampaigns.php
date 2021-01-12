@@ -80,7 +80,7 @@ trait HasCampaigns {
             $campaigns = $campaigns->merge($this->parent->getCampaigns(true, true, false, false));
         }
 
-        return $campaigns->unique("id");
+        return $campaigns->unique("id")->values();
     }
 
     /**

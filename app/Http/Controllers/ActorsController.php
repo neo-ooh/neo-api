@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -33,28 +34,25 @@ class ActorsController extends Controller {
     public function index(ListActorsRequest $request): Response {
         $params = $request->validated();
 
-        $query = Auth::user()->newQuery()->fromSub(Auth::user()->AccessibleActors(), 'acc_act')
-                     ->orderBy("acc_act.name");
+        /** @var Collection $actors */
+        $actors = Auth::user()->getAccessibleActors();
 
         // We return all actors by default. If a groups query parameter is specified, let it decide
         if ($request->has("groups")) {
-            $query->where('acc_act.is_group', '=', (bool)$request->query('groups'));
+            $actors = $actors->where("is_group", "=", (bool)$request->query('groups'));
         }
 
         // Exclude specific actors
         if ($request->has("exclude")) {
-            $query->whereNotIn("acc_act.id", $params["exclude"]);
+            $actors = $actors->whereNotIn("id", $params["exclude"]);
         }
-
-        // Execute the query
-        $children = $query->get();
 
         // If the user
         if ((bool)($params['withself'] ?? false)) {
-            $children = $children->push(Auth::user());
+            $actors = $actors->push(Auth::user());
         }
 
-        return new Response($children->unique());
+        return new Response($actors->unique("id"));
     }
 
     public function show(Request $request, Actor $actor): Response {

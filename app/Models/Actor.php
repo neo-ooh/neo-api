@@ -285,7 +285,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
         if($this->parent_is_group) {
             /** @var Collection $accessible */
-            $accessible = $accessible->union($this->parent->accessible_actors);
+            $accessible = $accessible->merge($this->parent->accessible_actors);
         }
 
         return $accessible->unique();

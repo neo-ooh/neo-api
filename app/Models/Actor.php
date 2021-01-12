@@ -446,7 +446,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         if($children && $this->is_group) {
-            $libraries = $libraries->merge($this->direct_children()->each(fn($child) => $child->getLibraries(true, false, true, false))->flatten());
+            $libraries = $libraries->merge($this->direct_children->each(fn($child) => $child->getLibraries(true, false, true, false))->flatten());
         }
 
         // Libraries of the parent of the user

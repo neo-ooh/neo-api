@@ -160,7 +160,8 @@ class Library extends SecuredModel {
      */
     public static function ofChildrenOf (Actor $actor): Builder {
         return static::selectLibraries()
-                     ->whereIn("l.owner_id", $actor->getAccessibleActors(true, false, false, false)->get("id")->pluck("id"));
+                     ->whereIn("l.owner_id", $actor->getAccessibleActors(true, false, false, false)
+                                                   ->pluck("id"));
     }
 
     protected static function boot (): void {

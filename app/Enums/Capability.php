@@ -68,6 +68,9 @@ final class Capability extends Enum {
     // Tests
     public const tests = "test.capability";
 
+    // Customers
+    public const customers_edit = "customers.edit";
+
     // Reports & bursts
     public const reports_create = "reports.create";
     public const reports_edit = "reports.edit";

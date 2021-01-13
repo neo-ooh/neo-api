@@ -17,4 +17,8 @@ class CustomersController extends Controller {
         $customer->reports = Report::where("customer_id", "=", $customer->id)->get();
         return new Response($customer);
     }
+
+    public function update() {
+
+    }
 }

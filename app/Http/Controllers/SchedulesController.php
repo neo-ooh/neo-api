@@ -29,6 +29,7 @@ use Neo\Http\Requests\Schedules\StoreScheduleRequest;
 use Neo\Http\Requests\Schedules\UpdateScheduleRequest;
 use Neo\BroadSign\Jobs\CreateBroadSignSchedule;
 use Neo\BroadSign\Jobs\UpdateBroadSignSchedule;
+use Neo\Jobs\SendReviewRequestEmail;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
 use Neo\Models\Schedule;
@@ -208,8 +209,13 @@ class SchedulesController extends Controller
         $schedule->start_date = $startDate;
         $schedule->end_date   = $endDate;
 
-        if ($request->has("locked")) {
-            $schedule->locked = $request->validated()["locked"];
+        if ($request->has("locked") && $request->validated()["locked"] === true) {
+            $schedule->locked = true;
+
+            if(!Gate::allows(Capability::contents_review)) {
+                SendReviewRequestEmail::dispatch($schedule->id);
+            }
+
         }
 
         // Propagate the update to the associated BroadSign Schedule

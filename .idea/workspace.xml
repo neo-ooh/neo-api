@@ -8,15 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change afterPath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Mails/ReviewRequestEmail.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/emails/review-schedule-text.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/emails/review-schedule.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Campaigns/StoreCampaignRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/StoreCampaignRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Actors/StoreActorTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Actors/StoreActorTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Campaigns/StoreCampaignTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/StoreCampaignTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -265,7 +261,7 @@
       <workItem from="1607104372430" duration="47170000" />
       <workItem from="1607973375027" duration="29238000" />
       <workItem from="1608314790987" duration="2070000" />
-      <workItem from="1609768004246" duration="48237000" />
+      <workItem from="1609768004246" duration="49218000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

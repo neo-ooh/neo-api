@@ -102,7 +102,6 @@ class StoreCampaignTest extends TestCase
                  ->assertJsonValidationErrors([
                      "owner_id",
                      "format_id",
-                     "name",
                      "display_duration",
                      "content_limit",
                      "start_date",

@@ -58,6 +58,7 @@ class StoreActorTest extends TestCase
             "branding_id" => null,
             "roles" => [],
             "capabilities" => [],
+            "make_library" => false
         ];
 
         // Fails because user is not authorized to create other users
@@ -90,6 +91,7 @@ class StoreActorTest extends TestCase
             "branding_id" => null,
             "roles" => [],
             "capabilities" => [],
+            "make_library" => false
         ];
 
         // Succeeds
@@ -116,6 +118,7 @@ class StoreActorTest extends TestCase
             "branding_id" => null,
             "roles" => [],
             "capabilities" => [],
+            "make_library" => false
         ];
 
         // Succeeds
@@ -142,6 +145,7 @@ class StoreActorTest extends TestCase
             "branding_id" => null,
             "roles" => [-1],
             "capabilities" => [],
+            "make_library" => false
         ];
 
         // Succeeds
@@ -168,6 +172,7 @@ class StoreActorTest extends TestCase
             "branding_id" => null,
             "roles" => [],
             "capabilities" => [-1],
+            "make_library" => false
         ];
 
         // Succeeds
@@ -194,6 +199,7 @@ class StoreActorTest extends TestCase
             "branding_id" => null,
             "roles" => [],
             "capabilities" => [],
+            "make_library" => false
         ];
 
         // Succeeds
@@ -230,6 +236,7 @@ class StoreActorTest extends TestCase
             "branding_id" => null,
             "roles" => [],
             "capabilities" => [],
+            "make_library" => false
         ];
 
         // Succeeds

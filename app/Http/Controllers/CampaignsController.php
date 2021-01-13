@@ -21,7 +21,9 @@ use Neo\Http\Requests\CampaignsLocations\SyncCampaignLocationsRequest;
 use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
 use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
 use Neo\BroadSign\Jobs\UpdateBroadSignCampaign;
+use Neo\Models\Actor;
 use Neo\Models\Campaign;
+use Neo\Models\Format;
 
 class CampaignsController extends Controller
 {
@@ -55,6 +57,11 @@ class CampaignsController extends Controller
             "start_date" => $campaign->start_date,
             "end_date" => $campaign->end_date,
         ] = $request->validated();
+
+        // If no name was specified for the campaign, we generate one
+        if($campaign->name === '') {
+            $campaign->name = Actor::query()->find($campaign->owner_id)->name . " - " . Format::query()->find($campaign->format_id)->name;
+        }
 
         $campaign->save();
 

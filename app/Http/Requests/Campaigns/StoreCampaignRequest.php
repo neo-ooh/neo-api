@@ -34,7 +34,7 @@ class StoreCampaignRequest extends FormRequest {
         return [
             "owner_id"         => ["required", "integer", new AccessibleActor()],
             "format_id"        => ["required", "integer", "exists:formats,id"],
-            "name"             => ["required", "string"],
+            "name"             => ["nullable", "string"],
             "display_duration" => ["required", "numeric", "min:1"],
             "content_limit"    => ["required", "numeric", "min:0"],
             "start_date"       => ["required", "date"],

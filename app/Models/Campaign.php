@@ -198,7 +198,7 @@ class Campaign extends SecuredModel {
         return $this->owner
             ->getCampaigns(true, false, false, false)
             ->filter(fn($campaign) => $campaign->id !== $this->id)
-            ->each(fn(/** Campaign */$campaign) => $campaign->unloadRelations())
+            ->each(fn(/** Campaign */$campaign) => $campaign->unsetRelations())
             ->each(fn(/** Campaign */$campaign) => $campaign->load('format'))
             ->values();
     }

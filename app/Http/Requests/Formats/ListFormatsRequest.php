@@ -29,7 +29,8 @@ class ListFormatsRequest extends FormRequest {
      */
     public function rules (): array {
         return [
-            "enabled" => ["sometimes", "boolean", "present"]
+            "enabled" => ["sometimes", "boolean", "present"],
+            "actor" => ["sometimes", "integer", "exists:actors,id"]
         ];
     }
 }

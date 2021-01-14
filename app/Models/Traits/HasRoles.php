@@ -55,13 +55,13 @@ trait HasRoles {
      *
      * @return bool
      */
-    public function hasCapability (CapabilityEnum $capability): bool {
+    public function hasCapability(CapabilityEnum $capability): bool {
         return $this->Capabilities()->where("slug", "=", $capability->value)->count() >= 1;
     }
 
-    public function addCapability (CapabilityEnum $capability): self {
+    public function addCapability(CapabilityEnum $capability): self {
         $cap = new ActorCapability([
-            "actor_id"       => $this->getKey(),
+            "actor_id"      => $this->getKey(),
             "capability_id" => Capability::bySlug($capability)->id,
         ]);
 
@@ -73,10 +73,10 @@ trait HasRoles {
         return $this;
     }
 
-    public function addCapabilities (array $capabilities): self {
+    public function addCapabilities(array $capabilities): self {
         foreach ($capabilities as $capability) {
             ActorCapability::create([
-                "actor_id"       => $this->getKey(),
+                "actor_id"      => $this->getKey(),
                 "capability_id" => $capability,
             ]);
         }
@@ -87,7 +87,7 @@ trait HasRoles {
         return $this;
     }
 
-    public function revokeCapability (CapabilityEnum $capability): self {
+    public function revokeCapability(CapabilityEnum $capability): self {
         DB::delete("DELETE FROM `actors_capabilities` WHERE `capability_id` = ? AND `actor_id` = ?",
             [
                 Capability::bySlug($capability)->id,
@@ -106,11 +106,11 @@ trait HasRoles {
      * @return HasRoles
      * @return HasRoles
      */
-    public function addRoles (array $roles): self {
+    public function addRoles(array $roles): self {
         foreach ($roles as $roleID) {
             ActorRole::create([
                 "actor_id" => $this->getKey(),
-                "role_id" => $roleID,
+                "role_id"  => $roleID,
             ]);
         }
 
@@ -123,7 +123,7 @@ trait HasRoles {
      * @return HasRoles
      * @return HasRoles
      */
-    public function removeRoles (array $roles): self {
+    public function removeRoles(array $roles): self {
         $binds = implode(", ", array_fill(0, count($roles), "?"));
         DB::delete("DELETE FROM `actors_roles` WHERE `actor_id` = ? AND `role_id` IN ({$binds})",
             [
@@ -138,21 +138,21 @@ trait HasRoles {
         // All good, update the roles
         $rolesID = $this->own_roles->pluck('id')->toArray();
 
-        $toAdd = array_diff($roles, $rolesID);
+        $toAdd    = array_diff($roles, $rolesID);
         $toRemove = array_diff($rolesID, $roles);
 
-        if(count($toAdd) > 0) {
+        if (count($toAdd) > 0) {
             $this->addRoles($toAdd);
         }
 
-        if(count($toRemove) > 0) {
+        if (count($toRemove) > 0) {
             $this->removeRoles($toRemove);
         }
 
         $this->unsetRelation("own_roles");
     }
 
-    protected function reloadCapabilities (): void {
+    protected function reloadCapabilities(): void {
         if ($this->relationLoaded("standalone_capabilities")) {
             $this->unsetRelation("standalone_capabilities");
         }
@@ -172,7 +172,7 @@ trait HasRoles {
      *
      * @return Builder
      */
-    public function scopeCapabilities (Builder $query): Builder {
+    public function scopeCapabilities(Builder $query): Builder {
         return $query->setModel(new Capability())
                      ->select("c.*")
                      ->from("capabilities", "c")
@@ -184,10 +184,11 @@ trait HasRoles {
 
     /**
      * List all capabilities applied directly to the user and through its roles
+     *
      * @return Collection|null
      */
-    public function getCapabilitiesAttribute () {
-        return $this->getCachedRelation("capabilities", fn () => $this->Capabilities()->get());
+    public function getCapabilitiesAttribute() {
+        return $this->getCachedRelation("capabilities", fn() => $this->Capabilities()->get());
     }
 
     /*
@@ -203,7 +204,7 @@ trait HasRoles {
      *
      * @return Builder
      */
-    public function scopeOwnStandaloneCapabilities (Builder $query): Builder {
+    public function scopeOwnStandaloneCapabilities(Builder $query): Builder {
         return $query->setModel(new Capability())
                      ->select("c.*")
                      ->from("capabilities", "c")
@@ -211,9 +212,9 @@ trait HasRoles {
                      ->where("uc.actor_id", "=", $this->getKey());
     }
 
-    public function getStandaloneCapabilitiesAttribute (): Collection {
+    public function getStandaloneCapabilitiesAttribute(): Collection {
         return $this->getCachedRelation("standalone_capabilities",
-            fn () => $this->OwnStandaloneCapabilities()->get());
+            fn() => $this->OwnStandaloneCapabilities()->get());
     }
 
 
@@ -227,7 +228,7 @@ trait HasRoles {
      *
      * @return Builder
      */
-    public function scopeRoles (Builder $query): Builder {
+    public function scopeRoles(Builder $query): Builder {
         return $query->OwnRoles()->union($this->InheritedRoles());
     }
 
@@ -236,8 +237,8 @@ trait HasRoles {
      *
      * @return Collection<Role>
      */
-    public function getRolesAttribute (): Collection {
-        return $this->getCachedRelation("roles", fn () => $this->Roles()->get());
+    public function getRolesAttribute(): Collection {
+        return $this->getCachedRelation("roles", fn() => $this->Roles()->get());
     }
 
     /*
@@ -253,7 +254,7 @@ trait HasRoles {
      *
      * @return Builder
      */
-    public function scopeOwnRoles (Builder $query): Builder {
+    public function scopeOwnRoles(Builder $query): Builder {
         return $query->setModel(new Role())
                      ->select("r.*")
                      ->from("roles", "r")
@@ -261,8 +262,8 @@ trait HasRoles {
                      ->where("ur.actor_id", "=", $this->getKey());
     }
 
-    public function getOwnRolesAttribute (): Collection {
-        return $this->getCachedRelation("own_roles", fn () => $this->OwnRoles()->get());
+    public function getOwnRolesAttribute(): Collection {
+        return $this->getCachedRelation("own_roles", fn() => $this->OwnRoles()->get());
     }
 
     /*
@@ -270,17 +271,20 @@ trait HasRoles {
     | Actor's Parent's Roles
     |--------------------------------------------------------------------------
     */
-    public function scopeInheritedRoles (Builder $query): Builder {
+    public function scopeInheritedRoles(Builder $query): Builder {
         // Select all roles of the parent if it's a group
         return $query->setModel(new Role())
-                     ->select("r.*")
-                     ->from("roles", "r")
-                     ->join("actors_roles AS ur", "ur.role_id", "=", "r.id")
-                     ->join("actors AS u", "u.id", "=", "ur.actor_id")
-                     ->join("actors_closures AS uc", "uc.ancestor_id", "=", "u.id")
-                     ->where("uc.descendant_id", "=", $this->getKey())
-                     ->where("uc.depth", "=", 1)
-                     ->where("u.is_group", "=", true);
+                     ->when(!$this->is_group, function (Builder $query) {
+                         $query->select("r.*")
+                               ->from("roles", "r")
+                               ->join("actors_roles AS ur", "ur.role_id", "=", "r.id")
+                               ->join("actors AS u", "u.id", "=", "ur.actor_id")
+                               ->join("actors_closures AS uc", "uc.ancestor_id", "=", "u.id")
+                               ->where("uc.descendant_id", "=", $this->getKey())
+                               ->where("uc.depth", "=", 1)
+                               ->where("u.is_group", "=", true);
+                     });
+
     }
 
     /**
@@ -289,7 +293,11 @@ trait HasRoles {
      *
      * @return Collection<Role>
      */
-    public function getInheritedRolesAttribute (): Collection {
-        return $this->getCachedRelation("inherited_roles", fn () => $this->InheritedRoles()->get());
+    public function getInheritedRolesAttribute(): Collection {
+        if (!$this->is_group && $this->parent_is_group) {
+            return $this->getCachedRelation("inherited_roles", fn() => $this->InheritedRoles()->get());
+        }
+
+        return new Collection();
     }
 }

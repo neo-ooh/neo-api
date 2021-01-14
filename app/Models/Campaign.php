@@ -116,8 +116,6 @@ class Campaign extends SecuredModel {
      * @var array
      */
     protected $withCount = [
-        "schedules",
-        "locations",
     ];
 
     protected $appends = [

@@ -24,45 +24,11 @@ use Neo\Models\Location;
  * @property Collection<Location> locations
  */
 trait HasLocations {
-
     /*
     |--------------------------------------------------------------------------
-    | Relations
+    | Accessors
     |--------------------------------------------------------------------------
     */
-
-    /**
-     * Returns all the locations directly associated to this entity
-     *
-     * @return BelongsToMany
-     */
-    public function own_locations (): BelongsToMany {
-        return $this->belongsToMany(Location::class, "actors_locations", "actor_id", "location_id");
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom Attributes
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * List all the locations of the parent group for this entity. If this entity's parent is not a group, returns an
-     * empty collection
-     *
-     * @return Collection<Location>
-     */
-    public function getGroupLocationsAttribute (): Collection {
-        if ($this->parent_id === null || !$this->parent->is_group) {
-            return new Collection();
-        }
-
-        $group = $this->parent;
-        $locations = new Collection();
-        $locations->push(...$group->own_locations);
-        $locations->push(...$group->group_locations);
-        return $locations;
-    }
 
     /**
      * List ALL locations this user has access to
@@ -76,9 +42,32 @@ trait HasLocations {
         return $locations->unique();
     }
 
+    /**
+     * Returns all the locations directly associated to this entity
+     *
+     * @return BelongsToMany
+     */
+    public function own_locations (): BelongsToMany {
+        return $this->belongsToMany(Location::class, "actors_locations", "actor_id", "location_id");
+    }
+
+    /**
+     * List all the locations of the parent group for this entity. If this entity's parent is not a group, returns an
+     * empty collection
+     *
+     * @return Collection<Location>
+     */
+    public function getGroupLocationsAttribute (): Collection {
+        if ($this->is_group || $this->parent_id === null || !$this->parent->is_group) {
+            return new Collection();
+        }
+
+        return $this->parent->own_locations;
+    }
+
     /*
     |--------------------------------------------------------------------------
-    | Custom Mechanisms
+    | Accessor
     |--------------------------------------------------------------------------
     */
 

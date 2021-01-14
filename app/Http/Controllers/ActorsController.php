@@ -87,6 +87,10 @@ class ActorsController extends Controller {
             $actor->append("direct_children");
         }
 
+        if (in_array("formats", $with, true)) {
+            $actor->setRelation("formats", $actor->locations->pluck("formats")->unique("id")->values());
+        }
+
         if (!$actor->is_group) {
             $actor->load("signupToken");
         }

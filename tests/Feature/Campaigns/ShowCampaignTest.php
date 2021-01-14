@@ -83,8 +83,6 @@ class ShowCampaignTest extends TestCase {
                      "content_limit",
                      "start_date",
                      "end_date",
-                     "schedules_count",
-                     "schedules",
                  ]);
     }
 

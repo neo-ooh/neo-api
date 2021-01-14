@@ -16,6 +16,7 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Http\Requests\Formats\ShowFormatRequest;
 use Neo\Http\Requests\Formats\UpdateFormatRequest;
+use Neo\Models\Actor;
 use Neo\Models\Format;
 
 class FormatsController extends Controller
@@ -27,6 +28,12 @@ class FormatsController extends Controller
      */
     public function index(ListFormatsRequest $request)
     {
+        if($request->has("actor")) {
+            // An actor is specified, we only return formats accessible by the user
+
+            return new Response(Actor::query()->findOrFail($request->query("actor"))->locations->pluck("formats")->unique("id")->values());
+        }
+
         return new Response(Format::query()
                                   ->when($request->has("enabled"),
                                       fn(Builder $query) => $query->where("is_enabled", "=", $request->get("enabled")))

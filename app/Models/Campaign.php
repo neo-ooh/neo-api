@@ -193,16 +193,8 @@ class Campaign extends SecuredModel {
      * @psalm-return Collection<Campaign>|array<empty, empty>
      */
     public function getRelatedCampaignsAttribute () {
-        if ($this->locations_count !== 1) {
-            return [];
-        }
-
-        $location = $this->locations[0];
-        $locationPrefix = explode("|", $location->name)[0];
-
-        return Auth::user()->getCampaigns()->filter(fn ($campaign) => $campaign->locations_count === 1
-            ? (Str::startsWith($campaign->locations[0]->name, $locationPrefix) && $campaign->id !== $this->id)
-            : false
-        )->values();
+        // I. Select campaigns owned by the same user
+        // II. Filter out the current one
+        return $this->owner()->campaigns->filter(fn($campaign) => $campaign->id !== $this->id);
     }
 }

@@ -195,6 +195,6 @@ class Campaign extends SecuredModel {
     public function getRelatedCampaignsAttribute () {
         // I. Select campaigns owned by the same user
         // II. Filter out the current one
-        return $this->owner()->campaigns->filter(fn($campaign) => $campaign->id !== $this->id);
+        return $this->owner->campaigns->filter(fn($campaign) => $campaign->id !== $this->id);
     }
 }

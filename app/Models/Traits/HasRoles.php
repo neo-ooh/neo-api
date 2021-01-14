@@ -229,7 +229,13 @@ trait HasRoles {
      * @return Builder
      */
     public function scopeRoles(Builder $query): Builder {
-        return $query->OwnRoles()->union($this->InheritedRoles());
+        $roles = $query->OwnRoles();
+
+        if(!$this->is_group && $this->parent_is_group) {
+            $roles->union($this->InheritedRoles());
+        }
+
+        return $roles;
     }
 
     /**

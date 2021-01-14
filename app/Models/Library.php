@@ -214,8 +214,7 @@ class Library extends SecuredModel {
     }
 
     public function getAvailableFormatsAttribute () {
-        $formats = Auth::user()->getCampaigns()->map(fn(Campaign $campaign) => $campaign->format);
-        return $formats->unique();
+        return Auth::user()->locations->pluck("formats")->unique("id")->values();
     }
 
     public function isAccessibleBy (Actor $actor): bool {

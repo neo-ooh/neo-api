@@ -38,7 +38,7 @@ class ListActorsRequest extends FormRequest {
             "exclude.*" => [ "integer", "exists:actors,id" ],
             "groups"    => [ "sometimes", "boolean" ],
             "withself"  => [ "sometimes", "boolean" ],
-            "light"  => [ "sometimes", "boolean" ],
+            "details"   => [ "sometimes", "boolean" ],
         ];
     }
 }

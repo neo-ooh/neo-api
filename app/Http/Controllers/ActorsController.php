@@ -52,6 +52,10 @@ class ActorsController extends Controller {
             $actors = $actors->push(Auth::user());
         }
 
+        if($request->has("details")) {
+            $actors->each->loadDetails();
+        }
+
         return new Response($actors->unique("id")->values());
     }
 
@@ -94,6 +98,8 @@ class ActorsController extends Controller {
         if (!$actor->is_group) {
             $actor->load("signupToken");
         }
+
+        $actor->loadDetails();
 
         return new Response($actor->withDetails());
     }

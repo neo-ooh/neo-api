@@ -31,7 +31,7 @@ class FormatsController extends Controller
         if($request->has("actor")) {
             // An actor is specified, we only return formats accessible by the user
 
-            return new Response(Actor::query()->findOrFail($request->query("actor"))->locations->pluck("formats")->unique("id")->values());
+            return new Response(Actor::query()->findOrFail($request->query("actor"))->locations->pluck("format")->unique("id")->values());
         }
 
         return new Response(Format::query()

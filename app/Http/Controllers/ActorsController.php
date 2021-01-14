@@ -53,7 +53,7 @@ class ActorsController extends Controller {
         }
 
         if($request->has("details")) {
-            $actors->each->loadDetails();
+            $actors->each(fn ($actor) => $actor->loadDetails());
         }
 
         return new Response($actors->unique("id")->values());

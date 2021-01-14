@@ -158,14 +158,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      */
     protected string $accessRule = AccessibleActor::class;
 
-    public static function boot(): void {
-        parent::boot();
-
-        static::retrieved(function (Actor $model) {
-            $model->loadDetails();
-        });
-    }
-
     protected static function newFactory(): Factories\ActorFactory {
         return Factories\ActorFactory::new();
     }
@@ -359,22 +351,38 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getParentIdAttribute(): ?int {
+        if(!isset($this->direct_children_count)) {
+            $this->loadDetails();
+        }
+
         return $this->parent_id;
     }
 
     public function getParentIsGroupAttribute(): bool {
+        if(!isset($this->direct_children_count)) {
+            $this->loadDetails();
+        }
         return $this->parent_is_group;
     }
 
     public function getDirectChildrenCountAttribute(): int {
+        if(!isset($this->direct_children_count)) {
+            $this->loadDetails();
+        }
         return $this->direct_children_count;
     }
 
     public function getPathNamesAttribute(): string {
+        if(!isset($this->direct_children_count)) {
+            $this->loadDetails();
+        }
         return $this->path_names;
     }
 
     public function getPathIdsAttribute(): string {
+        if(!isset($this->direct_children_count)) {
+            $this->loadDetails();
+        }
         return $this->path_ids;
     }
 

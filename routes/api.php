@@ -189,6 +189,9 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route::   put("campaigns/{campaign}/locations", CampaignsController::class . "@syncLocations")
          ->name("campaigns.locations.sync");
 
+    Route::delete("campaigns/{campaign}/locations/{location}", CampaignsController::class . "@removeLocation")
+         ->name("campaigns.locations.destroy");
+
 
     /*
     |----------------------------------------------------------------------

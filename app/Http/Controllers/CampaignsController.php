@@ -17,6 +17,7 @@ use Neo\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Http\Requests\Campaigns\ListCampaignsRequest;
 use Neo\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Http\Requests\Campaigns\UpdateCampaignRequest;
+use Neo\Http\Requests\CampaignsLocations\RemoveCampaignLocationRequest;
 use Neo\Http\Requests\CampaignsLocations\SyncCampaignLocationsRequest;
 use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
 use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
@@ -24,6 +25,7 @@ use Neo\BroadSign\Jobs\UpdateBroadSignCampaign;
 use Neo\Models\Actor;
 use Neo\Models\Campaign;
 use Neo\Models\Format;
+use Neo\Models\Location;
 
 class CampaignsController extends Controller
 {
@@ -133,10 +135,20 @@ class CampaignsController extends Controller
      */
     public function syncLocations(SyncCampaignLocationsRequest $request, Campaign $campaign)
     {
-        $roles = $request->validated()['locations'];
+        $locations = $request->validated()['locations'];
 
         // All good, add the capabilities
-        $campaign->locations()->sync($roles);
+        $campaign->locations()->sync($locations);
+        $campaign->refresh();
+
+        // Propagate the changes in BroadSign
+        UpdateBroadSignCampaign::dispatch($campaign->id);
+
+        return new Response($campaign->locations);
+    }
+
+    public function removeLocation(RemoveCampaignLocationRequest $request, Campaign $campaign, Location $location): Response {
+        $campaign->locations()->detach($location);
         $campaign->refresh();
 
         // Propagate the changes in BroadSign

@@ -79,16 +79,23 @@ class SendReviewRequestEmail implements ShouldQueue {
         $actor = $schedule->campaign->owner;
 
         do {
-            if($actor->hasCapability(Capability::contents_review())) {
-                if($actor->is_group) {
-                    // If the actor is a group, all its direct member who are not groups are returned
-                    return $actor->getAccessibleActors(true, true, false, false)
-                                         ->filter(fn($actor) => !$actor->is_group);
-                }
+            // Is this actor a group ?
+            if($actor->is_group) {
+                // Does this group has actor with the proper capability ?
+                $reviewers = $actor->getAccessibleActors(true, true, false, false)
+                                   ->filter(fn($actor) => !$actor->is_group && $actor->hasCapability(Capability::contents_review()));
 
+                if($reviewers->count() > 0) {
+                    return $reviewers;
+                }
+            }
+
+            if($actor->hasCapability(Capability::contents_review())) {
+                // This actor has the proper capability, use it
                 return (new Collection())->push($actor);
             }
 
+            // No match, go up
             $actor = $actor->parent;
         } while($actor !== null);
 

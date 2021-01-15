@@ -68,10 +68,10 @@ class SendReviewRequestEmail implements ShouldQueue {
         // We need to determine who is responsible for reviewing this schedule
         $reviewers = $this->getReviewers($schedule);
 
-        foreach($reviewers as $reviewer) {
-            Log::debug($reviewer);
-            Mail::to($reviewer)->send(new ReviewRequestEmail($schedule));
-        }
+        Log::error($reviewers);
+        $reviewers->each(fn($reviewer) =>
+            Mail::to($reviewer)->send(new ReviewRequestEmail($schedule))
+        );
     }
 
     public function getReviewers(Schedule $schedule): Collection {
@@ -83,7 +83,8 @@ class SendReviewRequestEmail implements ShouldQueue {
                 if($actor->is_group) {
                     // If the actor is a group, all its direct member who are not groups are returned
                     return $actor->getAccessibleActors(true, true, false, false)
-                                         ->filter(fn($actor) => !$actor->is_group)->values();
+                                         ->filter(fn($actor) => !$actor->is_group)
+                                         ->values();
                 }
 
                 return new Collection($actor);

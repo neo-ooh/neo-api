@@ -335,7 +335,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @return Actor|null
      */
     public function getGroupAttribute(): ?Actor {
-        if ($this->parent_is_group) {
+        if (($this->parent->is_group ?? false)) {
             return $this->parent;
         }
 
@@ -366,7 +366,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             $this->loadDetails();
         }
 
-        return $this->parent_is_group;
+        return ($this->parent->is_group ?? false);
     }
 
     public function getDirectChildrenCountAttribute(): int {
@@ -461,7 +461,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // Libraries of the parent of the user
-        if ($parent && $this->parent_is_group) {
+        if ($parent && ($this->parent->is_group ?? false)) {
             $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && Gate::allows(\Neo\Enums\Capability::libraries_edit)));
         }
 

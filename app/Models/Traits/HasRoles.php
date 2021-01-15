@@ -231,7 +231,7 @@ trait HasRoles {
     public function scopeRoles(Builder $query): Builder {
         $roles = $query->OwnRoles();
 
-        if(!$this->is_group && $this->parent_is_group) {
+        if(!$this->is_group && ($this->parent->is_group ?? false)) {
             $roles->union($this->InheritedRoles());
         }
 
@@ -300,7 +300,7 @@ trait HasRoles {
      * @return Collection<Role>
      */
     public function getInheritedRolesAttribute(): Collection {
-        if (!$this->is_group && $this->parent_is_group) {
+        if (!$this->is_group && ($this->parent->is_group ?? false)) {
             return $this->getCachedRelation("inherited_roles", fn() => $this->InheritedRoles()->get());
         }
 

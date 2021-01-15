@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Neo\Enums\Capability;
 use Neo\Mails\ReviewRequestEmail;
@@ -69,7 +70,8 @@ class SendReviewRequestEmail implements ShouldQueue {
 
         /** @var Actor $reviewer */
         foreach($reviewers as $reviewer) {
-            Mail::to($reviewer->email)->send(new ReviewRequestEmail($schedule));
+            Log::debug('reviewer');
+            Mail::to($reviewer)->send(new ReviewRequestEmail($schedule));
         }
     }
 

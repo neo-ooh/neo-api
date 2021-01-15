@@ -68,7 +68,6 @@ class SendReviewRequestEmail implements ShouldQueue {
         // We need to determine who is responsible for reviewing this schedule
         $reviewers = $this->getReviewers($schedule);
 
-        Log::error($reviewers);
         $reviewers->each(fn($reviewer) =>
             Mail::to($reviewer)->send(new ReviewRequestEmail($schedule))
         );
@@ -83,7 +82,8 @@ class SendReviewRequestEmail implements ShouldQueue {
             if($actor->is_group) {
                 // Does this group has actor with the proper capability ?
                 $reviewers = $actor->getAccessibleActors(true, true, false, false)
-                                   ->filter(fn($actor) => !$actor->is_group && $actor->hasCapability(Capability::contents_review()));
+                                   ->filter(fn($actor) => !$actor->is_group && $actor->hasCapability(Capability::contents_review()))
+                                   ->each(fn($actor) => $actor->unsetRelations());
 
                 if($reviewers->count() > 0) {
                     return $reviewers;

@@ -68,10 +68,9 @@ class SendReviewRequestEmail implements ShouldQueue {
         // We need to determine who is responsible for reviewing this schedule
         $reviewers = $this->getReviewers($schedule);
 
-        /** @var Actor $reviewer */
         foreach($reviewers as $reviewer) {
             Log::debug($reviewer);
-            Mail::to($reviewer)->send(new ReviewRequestEmail($schedule));
+            Mail::to(Actor::find($reviewer))->send(new ReviewRequestEmail($schedule));
         }
     }
 

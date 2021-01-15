@@ -86,7 +86,7 @@ class SendReviewRequestEmail implements ShouldQueue {
                                          ->filter(fn($actor) => !$actor->is_group);
                 }
 
-                return new Collection($actor);
+                return (new Collection())->push($actor);
             }
 
             $actor = $actor->parent;

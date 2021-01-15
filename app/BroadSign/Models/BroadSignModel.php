@@ -126,7 +126,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      * @return array|mixed
      * @throws BadResponse
      */
-    public function callAction(string $action, array $body): array {
+    public function callAction(string $action, array $body) {
         return static::__callStatic($action, [$body]);
     }
 

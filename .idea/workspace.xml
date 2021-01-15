@@ -8,7 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change beforePath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -257,7 +257,7 @@
       <workItem from="1607104372430" duration="47170000" />
       <workItem from="1607973375027" duration="29238000" />
       <workItem from="1608314790987" duration="2070000" />
-      <workItem from="1609768004246" duration="64443000" />
+      <workItem from="1609768004246" duration="64802000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

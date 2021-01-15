@@ -95,6 +95,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     public string $path_names = "";
     public string $path_ids = "";
 
+    public bool $details_loaded = false;
+
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -298,7 +300,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $accessible = $this->newQuery()->AccessibleActors()->get();
 
         // A user can access its group actors, but a group cannot access its parent actors, even if it is a group.
-        if ($this->parent_is_group && !$this->is_group) {
+        if (($this->parent->is_group ?? false) && !$this->is_group) {
             /** @var Collection $accessible */
             $accessible = $accessible->merge($this->parent->children);
             $accessible = $accessible->merge($this->parent->shared_actors);
@@ -348,10 +350,11 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $this->direct_children_count = $details->direct_children_count;
         $this->path_names            = $details->path_names;
         $this->path_ids              = $details->path_ids;
+        $this->details_loaded        = true;
     }
 
     public function getParentIdAttribute(): ?int {
-        if(!isset($this->direct_children_count)) {
+        if(!$this->details_loaded) {
             $this->loadDetails();
         }
 
@@ -359,30 +362,34 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getParentIsGroupAttribute(): bool {
-        if(!isset($this->direct_children_count)) {
+        if(!$this->details_loaded) {
             $this->loadDetails();
         }
+
         return $this->parent_is_group;
     }
 
     public function getDirectChildrenCountAttribute(): int {
-        if(!isset($this->direct_children_count)) {
+        if(!$this->details_loaded) {
             $this->loadDetails();
         }
+
         return $this->direct_children_count;
     }
 
     public function getPathNamesAttribute(): string {
-        if(!isset($this->direct_children_count)) {
+        if(!$this->details_loaded) {
             $this->loadDetails();
         }
+
         return $this->path_names;
     }
 
     public function getPathIdsAttribute(): string {
-        if(!isset($this->direct_children_count)) {
+        if(!$this->details_loaded) {
             $this->loadDetails();
         }
+
         return $this->path_ids;
     }
 

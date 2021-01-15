@@ -83,7 +83,7 @@ class SendReviewRequestEmail implements ShouldQueue {
                 if($actor->is_group) {
                     // If the actor is a group, all its direct member who are not groups are returned
                     return $actor->getAccessibleActors(true, true, false, false)
-                                         ->filter(fn($actor) => !$actor->is_group);
+                                         ->filter(fn($actor) => !$actor->is_group)->values();
                 }
 
                 return new Collection($actor);

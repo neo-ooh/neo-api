@@ -70,7 +70,7 @@ class SendReviewRequestEmail implements ShouldQueue {
 
         /** @var Actor $reviewer */
         foreach($reviewers as $reviewer) {
-            Log::debug('reviewer');
+            Log::debug($reviewer);
             Mail::to($reviewer)->send(new ReviewRequestEmail($schedule));
         }
     }

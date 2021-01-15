@@ -56,7 +56,7 @@ trait HasRoles {
      * @return bool
      */
     public function hasCapability(CapabilityEnum $capability): bool {
-        return $this->Capabilities()->where("slug", "=", $capability->value)->count() >= 1;
+        return $this->capabilities->pluck("slug")->contains($capability->value);
     }
 
     public function addCapability(CapabilityEnum $capability): self {

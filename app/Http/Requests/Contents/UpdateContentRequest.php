@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Rules\AccessibleLibrary;
 
-class UpdateContentRequest extends FormRequest {
+class ssUpdateContentRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *

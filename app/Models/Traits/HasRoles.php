@@ -156,6 +156,10 @@ trait HasRoles {
         if ($this->relationLoaded("standalone_capabilities")) {
             $this->unsetRelation("standalone_capabilities");
         }
+
+        if ($this->relationLoaded("capabilities")) {
+            $this->unsetRelation("capabilities");
+        }
     }
 
 

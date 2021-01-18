@@ -54,6 +54,7 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
+            "enabled" => true,
             "parent_id" => $actor->id,
             "branding_id" => null,
             "roles" => [],
@@ -87,6 +88,7 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $actor->email, // <- Already used email
+            "enabled" => true,
             "parent_id" => $actor->id,
             "branding_id" => null,
             "roles" => [],
@@ -114,6 +116,7 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
+            "enabled" => true,
             "parent_id" => -1, // <- Bad ID
             "branding_id" => null,
             "roles" => [],
@@ -141,7 +144,8 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
-            "parent_id" => $actor->id, // <- Bad ID
+            "enabled" => true,
+            "parent_id" => $actor->id,
             "branding_id" => null,
             "roles" => [-1],
             "capabilities" => [],
@@ -168,7 +172,8 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
-            "parent_id" => $actor->id, // <- Bad ID
+            "enabled" => true,
+            "parent_id" => $actor->id,
             "branding_id" => null,
             "roles" => [],
             "capabilities" => [-1],
@@ -195,6 +200,7 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
+            "enabled" => true,
             "parent_id" => $actor->id,
             "branding_id" => null,
             "roles" => [],
@@ -232,6 +238,7 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
+            "enabled" => true,
             "parent_id" => $actor->id, // <- Bad ID
             "branding_id" => null,
             "roles" => [],

@@ -129,7 +129,9 @@ class ActorsController extends Controller {
             $actor->save();
 
             // Execute the user's creation side effects
-            CreateSignupToken::dispatch($actor->id);
+            if($values["enabled"] === true) {
+                CreateSignupToken::dispatch($actor->id);
+            }
         }
 
         // Should we create a library for the user ?

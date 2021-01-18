@@ -53,7 +53,7 @@ class ActorsController extends Controller {
         }
 
         if($request->has("details")) {
-            $actors->each(fn ($actor) => $actor->loadDetails());
+            $actors->load("details");
         }
 
         return new Response($actors->unique("id")->values());
@@ -99,7 +99,7 @@ class ActorsController extends Controller {
             $actor->load("lockedBy");
         }
 
-        $actor->loadDetails();
+        $actor->promoteDetails();
         $actor->append(["parent", "registration_sent", "is_registered"]);
 
         return new Response($actor);
@@ -137,7 +137,7 @@ class ActorsController extends Controller {
             CreateActorLibrary::dispatch($actor->id);
         }
 
-        return new Response($actor->loadDetails(), 201);
+        return new Response($actor->promoteDetails(), 201);
     }
 
     public function update(UpdateActorRequest $request, Actor $actor): Response {

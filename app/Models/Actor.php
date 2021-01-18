@@ -218,6 +218,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->hasOne(RecoveryToken::class, "email", "email");
     }
 
+    public function details(): HasOne {
+        return $this->hasOne(ActorDetails::class, 'id', 'id');
+    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -346,57 +350,37 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return null;
     }
 
-    public function loadDetails(): self {
-        $details = DB::selectOne("SELECT * FROM `actors_details` WHERE `id` = ?", [$this->getKey()]);
+    public function promoteDetails(): self {
+        if($this->details_loaded) { return $this; }
 
-        $this->parent_id             = $details->parent_id;
-        $this->parent_is_group       = $details->parent_is_group;
-        $this->direct_children_count = $details->direct_children_count;
-        $this->path_names            = $details->path_names;
-        $this->path_ids              = $details->path_ids;
+        $this->parent_id             = $this->details->parent_id;
+        $this->parent_is_group       = $this->details->parent_is_group;
+        $this->direct_children_count = $this->details->direct_children_count;
+        $this->path_names            = $this->details->path_names;
+        $this->path_ids              = $this->details->path_ids;
         $this->details_loaded        = true;
 
         return $this;
     }
 
     public function getParentIdAttribute(): ?int {
-        if (!$this->details_loaded) {
-            $this->loadDetails();
-        }
-
-        return $this->parent_id;
+        return $this->details->parent_id;
     }
 
     public function getParentIsGroupAttribute(): bool {
-        if (!$this->details_loaded) {
-            $this->loadDetails();
-        }
-
-        return ($this->parent->is_group ?? false);
+        return $this->details->parent_is_group;
     }
 
     public function getDirectChildrenCountAttribute(): int {
-        if (!$this->details_loaded) {
-            $this->loadDetails();
-        }
-
-        return $this->direct_children_count;
+        return $this->details->direct_children_count;
     }
 
     public function getPathNamesAttribute(): string {
-        if (!$this->details_loaded) {
-            $this->loadDetails();
-        }
-
-        return $this->path_names;
+        return $this->details->path_names;
     }
 
     public function getPathIdsAttribute(): string {
-        if (!$this->details_loaded) {
-            $this->loadDetails();
-        }
-
-        return $this->path_ids;
+        return $this->details->path_ids;
     }
 
     /*

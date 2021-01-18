@@ -43,15 +43,20 @@ use Neo\Rules\AccessibleActor;
  * @property string         name
  * @property string         email
  * @property string         password
- * @property bool           is_group
- * @property bool           is_locked
- * @property int            locked_by
- * @property int|null       branding_id
- * @property bool           tos_accepted
+ * @property bool           is_group          Tell if the current actor is a group
+ * @property bool           is_locked         Tell if the current actor has been locked. A locked actor cannot login
+ * @property int|null       locked_by         Tell who locke this actor, if applicable
+ * @property int|null       branding_id       ID of the branding applied to this user
  *
  * @property Date           created_at
  * @property Date           updated_at
  * @property Date           last_login_at
+ *
+ * @property bool           registration_sent Tell if the registration email was sent to the actor. Not applicable to groups
+ * @property bool           is_registered     Tell if the user has registered its account. Not applicable to groups
+ * @property bool           tos_accepted      Tell if the actor has accepted the current version of the TOS. Not applicable to
+ *           groups
+ *
  *
  * @property TwoFactorToken twoFactorToken
  * @property RecoveryToken  recoveryToken
@@ -71,7 +76,6 @@ use Neo\Rules\AccessibleActor;
  * @property Collection     own_libraries
  * @property Collection     shared_libraries
  * @property Collection     children_libraries
- *
  *
  * @method Builder    accessibleActors()
  * @method Builder      SharedActors()
@@ -265,7 +269,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             $actors = $actors->merge($this->shared_actors);
         }
 
-        if ($parent&& !$this->is_group && ($this->parent->is_group ?? false)) {
+        if ($parent && !$this->is_group && ($this->parent->is_group ?? false)) {
             $actors = $actors->merge($this->parent->getAccessibleActors(true, false, true, false));
         }
 
@@ -334,7 +338,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      *
      * @return Actor|null
      */
-    public function getGroupAttribute(): ?Actor {
+    public function getGroupAttribute(): ?self {
         if (($this->parent->is_group ?? false)) {
             return $this->parent;
         }
@@ -342,7 +346,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return null;
     }
 
-    public function loadDetails(): void {
+    public function loadDetails(): self {
         $details = DB::selectOne("SELECT * FROM `actors_details` WHERE `id` = ?", [$this->getKey()]);
 
         $this->parent_id             = $details->parent_id;
@@ -351,10 +355,18 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $this->path_names            = $details->path_names;
         $this->path_ids              = $details->path_ids;
         $this->details_loaded        = true;
+
+        if ($this->is_locked) {
+            $this->load("lockedBy");
+        }
+
+        $this->append(["parent", "registration_sent", "is_registered"]);
+
+        return $this;
     }
 
     public function getParentIdAttribute(): ?int {
-        if(!$this->details_loaded) {
+        if (!$this->details_loaded) {
             $this->loadDetails();
         }
 
@@ -362,7 +374,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getParentIsGroupAttribute(): bool {
-        if(!$this->details_loaded) {
+        if (!$this->details_loaded) {
             $this->loadDetails();
         }
 
@@ -370,7 +382,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getDirectChildrenCountAttribute(): int {
-        if(!$this->details_loaded) {
+        if (!$this->details_loaded) {
             $this->loadDetails();
         }
 
@@ -378,7 +390,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getPathNamesAttribute(): string {
-        if(!$this->details_loaded) {
+        if (!$this->details_loaded) {
             $this->loadDetails();
         }
 
@@ -386,7 +398,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getPathIdsAttribute(): string {
-        if(!$this->details_loaded) {
+        if (!$this->details_loaded) {
             $this->loadDetails();
         }
 
@@ -500,13 +512,12 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $this->attributes["password"] = Hash::make($value);
     }
 
-    public function withDetails(): self {
-        if ($this->is_locked) {
-            $this->load("lockedBy");
-        }
+    public function getRegistrationSentAttribute() {
+        return $this->password !== '' || $this->signupToken !== null;
+    }
 
-        $this->append(["parent"]);
-        return $this;
+    public function getIsRegisteredAttribute() {
+        return $this->password !== '' && $this->signupToken === null;
     }
 
 

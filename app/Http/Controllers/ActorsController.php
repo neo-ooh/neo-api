@@ -101,7 +101,7 @@ class ActorsController extends Controller {
 
         $actor->loadDetails();
 
-        return new Response($actor->withDetails());
+        return new Response($actor);
     }
 
     public function store(StoreActorRequest $request): Response {
@@ -136,7 +136,7 @@ class ActorsController extends Controller {
             CreateActorLibrary::dispatch($actor->id);
         }
 
-        return new Response($actor->withDetails(), 201);
+        return new Response($actor->loadDetails(), 201);
     }
 
     public function update(UpdateActorRequest $request, Actor $actor): Response {

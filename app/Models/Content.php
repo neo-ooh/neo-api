@@ -30,15 +30,16 @@ use Neo\Rules\AccessibleContent;
  * @property int                       format_id
  * @property int                       broadsign_content_id
  * @property string                    name
- * @property double                    duration
- * @property int                       scheduling_duration
- * @property int                       scheduling_times
+ * @property double                    duration How long this content will display. Not applicable if the content only has static creatives
+ * @property bool                      is_approved Tell if the content has been pre-approved
+ * @property int                       scheduling_duration Maximum duration of a scheduling of this content.
+ * @property int                       scheduling_times How many times this content can be scheduled
  *
- * @property Actor                     owner
- * @property Library                   library
- * @property Format                    format
+ * @property Actor                     owner The actor who created this content
+ * @property Library                   library The library where this content resides
+ * @property Format                    format The format of the content
  *
- * @property-read Collection<Creative> creatives
+ * @property-read Collection<Creative> creatives The creatives of the content
  * @property-read int                  creatives_count
  *
  * @property-read Collection<Schedule> schedules
@@ -92,6 +93,7 @@ class Content extends SecuredModel {
      * @var array
      */
     protected $casts = [
+        'is_approved'         => 'boolean',
         'scheduling_duration' => 'integer',
         'scheduling_times'    => 'integer',
     ];
@@ -101,7 +103,7 @@ class Content extends SecuredModel {
      *
      * @var array
      */
-    protected $with = [ "creatives", "format:id,slug" ];
+    protected $with = ["creatives", "format:id,slug"];
 
     /**
      * The relationship counts that should always be loaded.
@@ -120,7 +122,7 @@ class Content extends SecuredModel {
      */
     protected string $accessRule = AccessibleContent::class;
 
-    public static function boot (): void {
+    public static function boot(): void {
         parent::boot();
 
         static::deleting(function (Content $content) {
@@ -140,7 +142,7 @@ class Content extends SecuredModel {
         });
     }
 
-    protected static function newFactory (): ContentFactory {
+    protected static function newFactory(): ContentFactory {
         return ContentFactory::new();
     }
 
@@ -155,28 +157,28 @@ class Content extends SecuredModel {
     /**
      * @return BelongsTo
      */
-    public function owner (): BelongsTo {
+    public function owner(): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
     }
 
     /**
      * @return BelongsTo
      */
-    public function library (): BelongsTo {
+    public function library(): BelongsTo {
         return $this->belongsTo(Library::class, 'library_id', 'id');
     }
 
     /**
      * @return HasMany
      */
-    public function creatives (): HasMany {
+    public function creatives(): HasMany {
         return $this->hasMany(Creative::class, 'content_id', 'id')->withTrashed();
     }
 
     /**
      * @return HasMany
      */
-    public function schedules (): HasMany {
+    public function schedules(): HasMany {
         return $this->hasMany(Schedule::class, 'content_id', 'id')->withTrashed();
     }
 
@@ -185,7 +187,7 @@ class Content extends SecuredModel {
     /**
      * @return BelongsTo
      */
-    public function format (): BelongsTo {
+    public function format(): BelongsTo {
         return $this->belongsTo(Format::class, 'format_id', 'id');
     }
 }

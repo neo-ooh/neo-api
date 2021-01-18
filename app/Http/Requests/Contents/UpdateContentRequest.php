@@ -21,7 +21,7 @@ class UpdateContentRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::contents_edit);
     }
 
@@ -30,13 +30,14 @@ class UpdateContentRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "owner_id"            => [ "required", "integer" ],
-            "library_id"          => [ "required", "integer", new AccessibleLibrary() ],
-            "name"                => [ "nullable", "string" ],
-            "scheduling_duration" => [ "sometimes", "numeric" ],
-            "scheduling_times"    => [ "sometimes", "integer" ],
+            "owner_id"            => ["required", "integer"],
+            "library_id"          => ["required", "integer", new AccessibleLibrary()],
+            "name"                => ["nullable", "string"],
+            "is_approved"         => ["sometimes", "boolean"],
+            "scheduling_duration" => ["sometimes", "numeric"],
+            "scheduling_times"    => ["sometimes", "integer"],
         ];
     }
 }

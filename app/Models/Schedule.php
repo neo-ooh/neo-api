@@ -114,14 +114,14 @@ class Schedule extends Model {
      *
      * @var array
      */
-    protected $with = [ "reviews" ];
+    protected $with = ["reviews"];
 
     /**
      * The relationships counts that should always be loaded.
      *
      * @var array
      */
-    protected $withCount = [ "reviews" ];
+    protected $withCount = ["reviews"];
 
     /**
      * The attributes that should always be loaded.
@@ -138,7 +138,7 @@ class Schedule extends Model {
     |--------------------------------------------------------------------------
     */
 
-    protected static function boot () {
+    protected static function boot() {
         parent::boot();
 
         static::deleted(function (Schedule $schedule) {
@@ -152,31 +152,37 @@ class Schedule extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function campaign (): BelongsTo {
+    public function campaign(): BelongsTo {
         return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
     }
 
     /**
      * @return mixed
      */
-    public function content () {
+    public function content() {
         return $this->belongsTo(Content::class, 'content_id', 'id')->withTrashed();
     }
 
-    public function owner (): BelongsTo {
+    public function owner(): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
     }
 
-    public function getStatusAttribute (): string {
+    public function getStatusAttribute(): string {
         $isTrashed = $this->trashed();
 
-        if (!$isTrashed) {
-            if (!$this->locked) {
-                return 'draft';
-            }
+        if ($isTrashed) {
+            return 'trashed';
+        }
 
-            // schedule is locked
-            // is their a review for it ?
+        if (!$this->locked) {
+            return 'draft';
+        }
+
+        // Schedule is locked
+        // Check reviews and its content pre-approval
+        if (!$this->content->is_approved) {
+            // Schedule's content is not pre-approved,
+            // Is their a review for it ?
             if ($this->reviews_count === 0) {
                 return 'pending';
             }
@@ -185,20 +191,17 @@ class Schedule extends Model {
             if (!$this->reviews()->first()->approved) {
                 return 'rejected';
             }
-
-            // The schedule is approved, has broadcasting started ?
-            if ($this->start_date > Date::now()) {
-                return 'approved'; // Not started
-            }
         }
+
+        // The schedule is approved, has broadcasting started ?
+        if ($this->start_date > Date::now()) {
+            return 'approved'; // Not started
+        }
+
 
         // Has broadcasting finished ?
         if ($this->end_date < Date::now()) {
             return 'expired'; // Finish
-        }
-
-        if ($isTrashed) {
-            return 'trashed';
         }
 
         // This schedule is live
@@ -212,13 +215,12 @@ class Schedule extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function reviews (): HasMany {
+    public function reviews(): HasMany {
         return $this->hasMany(Review::class, 'schedule_id', 'id')->orderByDesc("created_at");
     }
 
-    public function getIsApprovedAttribute (): bool {
+    public function getIsApprovedAttribute(): bool {
         $status = $this->status;
-
         return $status === 'approved' || $status === 'broadcasting';
     }
 }

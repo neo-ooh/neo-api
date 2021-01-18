@@ -212,10 +212,9 @@ class SchedulesController extends Controller
         if ($request->has("locked") && $request->validated()["locked"] === true) {
             $schedule->locked = true;
 
-            if(!Gate::allows(Capability::contents_review)) {
+            if(!$schedule->content->is_approved && !Gate::allows(Capability::contents_review)) {
                 SendReviewRequestEmail::dispatch($schedule->id);
             }
-
         }
 
         // Propagate the update to the associated BroadSign Schedule

@@ -93,8 +93,9 @@ class ContentsController extends Controller
             "name" => $content->name,
         ] = $request->validated();
 
-        // If the user is a review, it can fill additional fields
+        // If the user is a reviewer, it can fill additional fields
         if (Gate::allows(Capability::contents_review)) {
+            $content->is_approved = $request->get("is_approved", $content->is_approved);
             $content->scheduling_duration = $request->get("scheduling_duration", $content->scheduling_duration);
             $content->scheduling_times = $request->get("scheduling_times", $content->scheduling_times);
         }

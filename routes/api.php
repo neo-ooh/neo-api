@@ -325,6 +325,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::  get("params/{parameter:slug}", ParamsController::class . "@show")->name("params.show");
     Route::  post("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update");
+    Route::  put("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update-put");
 
 
     /*

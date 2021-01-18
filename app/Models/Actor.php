@@ -356,12 +356,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $this->path_ids              = $details->path_ids;
         $this->details_loaded        = true;
 
-        if ($this->is_locked) {
-            $this->load("lockedBy");
-        }
-
-        $this->append(["parent", "registration_sent", "is_registered"]);
-
         return $this;
     }
 
@@ -403,15 +397,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         return $this->path_ids;
-    }
-
-    public function summary(): array {
-        return ["id"          => $this->id,
-                "name"        => $this->name,
-                "email"       => $this->email,
-                "is_group"    => $this->is_group,
-                "branding_id" => $this->branding_id,
-        ];
     }
 
     /*

@@ -95,11 +95,12 @@ class ActorsController extends Controller {
             $actor->setRelation("formats", $actor->locations->pluck("format")->unique("id")->values());
         }
 
-        if (!$actor->is_group) {
-            $actor->load("signupToken");
+        if ($actor->is_locked) {
+            $actor->load("lockedBy");
         }
 
         $actor->loadDetails();
+        $actor->append(["parent", "registration_sent", "is_registered"]);
 
         return new Response($actor);
     }

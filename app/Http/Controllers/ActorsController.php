@@ -20,8 +20,8 @@ use Neo\Http\Requests\Actors\ListActorsRequest;
 use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
-use Neo\Jobs\CreateSignupToken;
 use Neo\Jobs\CreateActorLibrary;
+use Neo\Jobs\CreateSignupToken;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
 
@@ -52,7 +52,7 @@ class ActorsController extends Controller {
             $actors = $actors->push(Auth::user());
         }
 
-        if($request->has("details")) {
+        if ($request->has("details")) {
             $actors->load("details");
         }
 
@@ -129,13 +129,17 @@ class ActorsController extends Controller {
             $actor->save();
 
             // Execute the user's creation side effects
-            if($values["enabled"] === true) {
+            if ($values["enabled"] === true) {
                 CreateSignupToken::dispatch($actor->id);
+            } else {
+                $actor->is_locked = true;
+                $actor->locked_by = Auth::id();
+                $actor->save();
             }
         }
 
         // Should we create a library for the user ?
-        if($values['make_library']) {
+        if ($values['make_library']) {
             CreateActorLibrary::dispatch($actor->id);
         }
 

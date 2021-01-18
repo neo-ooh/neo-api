@@ -20,4 +20,4 @@ You can use the link below to access it directly.\r\n\r\n
 https://connect.neo-ooh.com/campaigns/{{ $schedule->campaign_id }}#{{ $schedule->id }}\r\n\r\n\r\n
 
 
-© 2020 Neo-OOH. Tous droit réservés. — All rights reserved.
+© {{ date("Y") }} Neo-OOH. Tous droits réservés. — All rights reserved.

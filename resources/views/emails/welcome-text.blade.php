@@ -22,4 +22,4 @@ Please click on the link below to complete your account configuration.\r\n\r\n
 https://connect.neo-ooh.com/welcome?token={{ $signupToken }}\r\n\r\n\r\n
 
 
-© 2020 Neo-OOH. Tous droit réservés. — All rights reserved.
+© {{ date("Y") }} Neo-OOH. Tous droits réservés. — All rights reserved.

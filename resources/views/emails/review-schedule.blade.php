@@ -119,7 +119,7 @@
             </td>
         </tr>
         <tr class="legals" align="center">
-            <td colspan="2">© 2021 Neo-OOH. Tous droit réservés. — All rights reserved.</td>
+            <td colspan="2">© {{ date("Y") }} Neo-OOH. Tous droits réservés. — All rights reserved.</td>
         </tr>
     </table>
 </body>

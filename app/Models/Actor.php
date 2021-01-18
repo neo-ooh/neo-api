@@ -482,11 +482,11 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getRegistrationSentAttribute() {
-        return $this->password !== '' || $this->signupToken !== null;
+        return $this->password !== null || $this->signupToken !== null;
     }
 
     public function getIsRegisteredAttribute() {
-        return $this->password !== '' && $this->signupToken === null;
+        return $this->password !== null && $this->signupToken === null;
     }
 
 

@@ -29,7 +29,7 @@ use Neo\Models\Creative;
 class DisableBroadSignCreative implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected int $creativeID;
+    protected int $adCopyID;
 
     /**
      * Create a new job instance.
@@ -38,8 +38,8 @@ class DisableBroadSignCreative implements ShouldQueue {
      *
      * @return void
      */
-    public function __construct (int $creativeID) {
-        $this->creativeID = $creativeID;
+    public function __construct (int $adCopyID) {
+        $this->adCopyID = $adCopyID;
     }
 
     /**
@@ -53,14 +53,7 @@ class DisableBroadSignCreative implements ShouldQueue {
             return;
         }
 
-        $creative = Creative::query()->findOrFail($this->creativeID);
-
-        if (!$creative->broadsign_ad_copy_id) {
-            // This creative has no broadsign ID, stop here.
-            return;
-        }
-
-        $bsCreative = BSCreative::get($creative->broadsign_ad_copy_id);
+        $bsCreative = BSCreative::get($this->adCopyID);
         $bsCreative->active = false;
         $bsCreative->save();
     }

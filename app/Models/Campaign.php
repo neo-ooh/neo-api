@@ -201,12 +201,9 @@ class Campaign extends SecuredModel {
             ->values();
     }
 
-    /**
-     * @return Collection
-     */
-    public function getRelatedLibrariesAttribute () {
+    public function getRelatedLibrariesAttribute (): \Illuminate\Support\Collection {
         // I. Select campaigns owned by the same user
         // II. Filter out the current one
-        return $this->owner->getLibraries(true, false, false, true);
+        return $this->owner->getLibraries(true, false, false, true)->pluck('id');
     }
 }

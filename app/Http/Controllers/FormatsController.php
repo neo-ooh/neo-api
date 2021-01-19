@@ -36,7 +36,7 @@ class FormatsController extends Controller
 
         return new Response(Format::query()
                                   ->when($request->has("enabled"),
-                                      fn(Builder $query) => $query->where("is_enabled", "=", $request->get("enabled")))
+                                      fn(Builder $query) => $query->where("is_enabled", "=", (bool)$request->get("enabled")))
                                   ->get());
     }
 

@@ -34,6 +34,7 @@ use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Frame;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
+use Symfony\Component\Mime\MimeTypes;
 
 class CreativesController extends Controller
 {
@@ -68,13 +69,9 @@ class CreativesController extends Controller
         // Control the uploaded creative
         // This methods returns only if the creative is valid
         try {
-            $validCreative = $this->validateCreative($file, $frame, $content);
+            $this->validateCreative($file, $frame, $content);
         } catch (BaseException $exc) {
             return $exc->asResponse();
-        }
-
-        if (!$validCreative) {
-            return (new InvalidCreativeFileFormat())->asResponse();
         }
 
         $content->refresh();
@@ -113,11 +110,9 @@ class CreativesController extends Controller
      */
     protected function validateCreative(UploadedFile $file, Frame $frame, Content $content): bool {
         // Execute additional media specific asserts
-        Log::debug($file->getMimeType());
         if ($file->getMimeType() === "image/jpeg") {
             // Static (Picture)
-
-            // Dimension
+            // Dimensions
             [$width, $height] = getimagesize($file);
             if ($width !== $frame->width || $height !== $frame->height) {
                 throw new InvalidCreativeDimensions();
@@ -127,6 +122,8 @@ class CreativesController extends Controller
             if ($file->getSize() > 1.049e+7) { //10 Mib
                 throw new InvalidCreativeSize();
             }
+
+            return true;
         }
 
         if ($file->getMimeType() === "video/mp4") {
@@ -154,7 +151,6 @@ class CreativesController extends Controller
                 throw new InvalidCreativeDimensions();
             }
 
-
             //Check framerate
             $framerate = $this->fracToFloat($videoStream->get("r_frame_rate"));
             if ($framerate < 23.9 || $framerate > 30) {
@@ -178,7 +174,7 @@ class CreativesController extends Controller
             return true;
         }
 
-        return false;
+        throw new InvalidCreativeFileFormat();
     }
 
     private function fracToFloat($frac): float

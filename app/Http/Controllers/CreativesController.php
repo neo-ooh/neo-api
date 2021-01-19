@@ -145,7 +145,6 @@ class CreativesController extends Controller
                 throw new InvalidVideoCodec();
             }
 
-
             //Check video dimensions
             if ((int)$videoStream->get("width") !== $frame->width || (int)$videoStream->get("height") !== $frame->height) {
                 throw new InvalidCreativeDimensions();

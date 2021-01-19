@@ -67,7 +67,6 @@ class CreativesController extends Controller
 
         // Control the uploaded creative
         // This methods returns only if the creative is valid
-        Log::debug($file->getMimeType());
         try {
             $validCreative = $this->validateCreative($file, $frame, $content);
         } catch (BaseException $exc) {
@@ -114,6 +113,7 @@ class CreativesController extends Controller
      */
     protected function validateCreative(UploadedFile $file, Frame $frame, Content $content): bool {
         // Execute additional media specific asserts
+        Log::debug($file->getMimeType());
         if ($file->getMimeType() === "image/jpeg") {
             // Static (Picture)
 

@@ -16,6 +16,7 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Neo\Exceptions\BaseException;
 use Neo\Exceptions\CannotOverwriteCreativeException;
 use Neo\Exceptions\IncompatibleFrameAndFormat;
@@ -73,7 +74,7 @@ class CreativesController extends Controller
         }
 
         if (!$validCreative) {
-            throw new InvalidCreativeFileFormat();
+            return (new InvalidCreativeFileFormat())->asResponse();
         }
 
         $content->refresh();
@@ -111,6 +112,7 @@ class CreativesController extends Controller
      * @throws InvalidVideoCodec
      */
     protected function validateCreative(UploadedFile $file, Frame $frame, Content $content): bool {
+        Log::debug($file->getMimeType());
         // Execute additional media specific asserts
         if ($file->getMimeType() === "image/jpeg") {
             // Static (Picture)

@@ -87,6 +87,10 @@ class ActorsController extends Controller {
             $actor->load("own_locations");
         }
 
+        if (in_array("locations", $with, true)) {
+            $actor->append("locations");
+        }
+
         if (in_array("direct_children", $with, true)) {
             $actor->append("direct_children");
         }

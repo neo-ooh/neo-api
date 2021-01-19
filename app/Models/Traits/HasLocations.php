@@ -24,7 +24,7 @@ use Neo\Models\Location;
  * @property Collection<Location> locations
  */
 trait HasLocations {
-    public function getLocations($own = true, $group = true, $children = true) {
+    public function getLocations($own = true, $group = true, $children = true): Collection {
         $locations = new Collection();
 
         if($group && !$this->is_group && $this->details->parent_is_group) {
@@ -38,6 +38,10 @@ trait HasLocations {
         }
 
         return $locations->unique("id")->values();
+    }
+
+    public function getLocationsAttribute(): Collection {
+        return $this->getLocations();
     }
 
     /**

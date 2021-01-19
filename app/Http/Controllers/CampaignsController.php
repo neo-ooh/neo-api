@@ -69,7 +69,7 @@ class CampaignsController extends Controller
         // Replicate the campaign in BroadSign
         CreateBroadSignCampaign::dispatch($campaign->id);
 
-        $locations = $campaign->owner->own_locations->where("format_id", "=", $campaign->format_id);
+        $locations = $campaign->owner->locations->where("format_id", "=", $campaign->format_id);
 
         // Copy over the locations of the campaign owner to the campaign itself
         if(count($locations) > 0) {

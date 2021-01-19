@@ -99,7 +99,7 @@ class CampaignsController extends Controller
             "schedules.content",
             "schedules.owner:id,name",
             "trashedSchedules",
-            "trashedSchedules.content"])->append("related_campaigns"));
+            "trashedSchedules.content"])->append("related_campaigns", "related_libraries"));
     }
 
     /**

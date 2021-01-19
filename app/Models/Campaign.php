@@ -186,7 +186,7 @@ class Campaign extends SecuredModel {
     }
 
     /**
-     * @return Collection|array
+     * @return Collection
      *
      * @psalm-return Collection<Campaign>|array<empty, empty>
      */
@@ -199,5 +199,14 @@ class Campaign extends SecuredModel {
             ->each(fn(/** Campaign */$campaign) => $campaign->unsetRelations())
             ->each(fn(/** Campaign */$campaign) => $campaign->load('format'))
             ->values();
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getRelatedLibrariesAttribute () {
+        // I. Select campaigns owned by the same user
+        // II. Filter out the current one
+        return $this->owner->getLibraries(true, false, false, true);
     }
 }

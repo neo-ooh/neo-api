@@ -198,7 +198,9 @@ class Creative extends Model {
             Storage::delete($this->thumbnail_path);
         }
 
+
         switch ($this->extension) {
+            case "jpg":
             case "jpeg":
                 $this->createImageThumbnail($file);
                 break;

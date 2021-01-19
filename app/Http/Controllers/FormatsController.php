@@ -31,13 +31,19 @@ class FormatsController extends Controller
         if($request->has("actor")) {
             // An actor is specified, we only return formats accessible by the user
 
-            return new Response(Actor::query()->findOrFail($request->query("actor"))->getLocations()->pluck("format")->unique("id")->values());
+            $formats = Actor::query()->findOrFail($request->query("actor"))->getLocations()->pluck("format")->unique("id")->values();
+
+            if($request->has('enabled')) {
+                $formats = $formats->filter(fn($format) => $format->is_enabled);
+            }
+        } else {
+            $formats = Format::query()
+                             ->when($request->has("enabled"),
+                                 fn(Builder $query) => $query->where("is_enabled", "=", (bool)$request->get("enabled")))
+                             ->get();
         }
 
-        return new Response(Format::query()
-                                  ->when($request->has("enabled"),
-                                      fn(Builder $query) => $query->where("is_enabled", "=", (bool)$request->get("enabled")))
-                                  ->get());
+        return new Response($formats);
     }
 
     /**

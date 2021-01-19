@@ -30,11 +30,10 @@ class FormatsController extends Controller
     {
         if($request->has("actor")) {
             // An actor is specified, we only return formats accessible by the user
-
             $formats = Actor::query()->findOrFail($request->query("actor"))->getLocations()->pluck("format")->unique("id")->values();
 
             if($request->has('enabled')) {
-                $formats = $formats->filter(fn($format) => $format->is_enabled);
+                $formats = $formats->filter(fn($format) => $format->is_enabled)->values();
             }
         } else {
             $formats = Format::query()

@@ -76,7 +76,7 @@ trait HasCampaigns {
         }
 
         // Libraries of the parent of the user, if applicable
-        if($parent && ($this->parent->is_group ?? false) && !$this->is_group) {
+        if($parent && ($this->details->parent_is_group ?? false) && !$this->is_group) {
             $campaigns = $campaigns->merge($this->parent->getCampaigns(true, true, true, false));
         }
 

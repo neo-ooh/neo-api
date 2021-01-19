@@ -214,7 +214,7 @@ class Library extends SecuredModel {
     }
 
     public function getAvailableFormatsAttribute () {
-        return $this->owner->locations->pluck("format")->unique("id")->values();
+        return $this->owner->getLocations()->pluck("format")->unique("id")->values();
     }
 
     public function isAccessibleBy (Actor $actor): bool {

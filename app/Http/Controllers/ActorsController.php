@@ -92,7 +92,7 @@ class ActorsController extends Controller {
         }
 
         if (in_array("formats", $with, true)) {
-            $actor->setRelation("formats", $actor->locations->pluck("format")->unique("id")->values());
+            $actor->setRelation("formats", $actor->getLocations()->pluck("format")->unique("id")->values());
         }
 
         if ($actor->is_locked) {

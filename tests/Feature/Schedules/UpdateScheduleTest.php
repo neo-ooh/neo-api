@@ -67,7 +67,7 @@ class UpdateScheduleTest extends TestCase {
 
         $this->actor->addCapability(Capability::contents_schedule());
         $response = $this->json("PUT", "/v1/schedules/" . $this->schedule->id);
-        $response->assertStatus(403);
+        $response->assertStatus(422);
     }
 
     /**

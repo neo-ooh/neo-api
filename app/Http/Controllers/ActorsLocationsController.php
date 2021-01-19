@@ -26,7 +26,7 @@ class ActorsLocationsController extends Controller {
             return new Response(Location::all());
         }
 
-        return new Response($actor->locations);
+        return new Response($actor->getLocations(true, true, true));
     }
 
     public function sync (SyncActorLocationsRequest $request, Actor $actor): Response {
@@ -37,8 +37,8 @@ class ActorsLocationsController extends Controller {
         $actor->refresh();
 
         return new Response([
-            "own_locations" => $actor->own_locations,
-            "locations"     => $actor->locations,
+            "own_locations" => $actor->getLocations(true, false, false),
+            "locations"     => $actor->getLocations(),
         ]);
     }
 }

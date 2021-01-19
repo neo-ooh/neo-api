@@ -24,22 +24,20 @@ use Neo\Models\Location;
  * @property Collection<Location> locations
  */
 trait HasLocations {
-    /*
-    |--------------------------------------------------------------------------
-    | Accessors
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * List ALL locations this user has access to
-     *
-     * @return Collection<Location>
-     */
-    public function getLocationsAttribute (): Collection {
+    public function getLocations($own = true, $group = true, $children = true) {
         $locations = new Collection();
-        $locations->push(...$this->own_locations);
-        $locations->push(...$this->group_locations);
-        return $locations->unique();
+
+        if($group && !$this->is_group && $this->details->parent_is_group) {
+            $locations = $locations->merge($this->parent->getLocations(true, false, true));
+        } else if($own) {
+            $locations = $locations->merge($this->own_locations);
+        }
+
+        if($children) {
+            $locations = $locations->merge($this->children->map(fn($child) => $child->getLocations(true, false, false))->flatten());
+        }
+
+        return $locations->unique("id")->values();
     }
 
     /**
@@ -72,6 +70,6 @@ trait HasLocations {
     */
 
     public function canAccessLocation (Location $location): bool {
-        return $this->locations->pluck('id')->contains($location->id);
+        return $this->getLocations()->contains("id", "=", $location->id);
     }
 }

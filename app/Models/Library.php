@@ -100,6 +100,26 @@ class Library extends SecuredModel {
      */
     protected string $accessRule = AccessibleLibrary::class;
 
+    protected static function boot (): void {
+        parent::boot();
+
+        /**
+         * On library deletion, also deletes all its contents
+         */
+        static::deleting(function (Library $library) {
+            /** @var Content $content */
+            foreach ($library->contents as $content) {
+                $content->delete();
+            }
+        });
+    }
+
+    protected static function newFactory (): LibraryFactory {
+        return LibraryFactory::new();
+    }
+
+
+
     /**
      * Gets all libraries owned by the given actor
      *
@@ -162,24 +182,6 @@ class Library extends SecuredModel {
         return static::selectLibraries()
                      ->whereIn("l.owner_id", $actor->getAccessibleActors(true, false, false, false)
                                                    ->pluck("id"));
-    }
-
-    protected static function boot (): void {
-        parent::boot();
-
-        /**
-         * On library deletion, also deletes all its contents
-         */
-        static::deleting(function (Library $library) {
-            /** @var Content $content */
-            foreach ($library->contents as $content) {
-                $content->delete();
-            }
-        });
-    }
-
-    protected static function newFactory (): LibraryFactory {
-        return LibraryFactory::new();
     }
 
 

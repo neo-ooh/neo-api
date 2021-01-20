@@ -121,7 +121,7 @@ class ContentsController extends Controller
     {
         $content->authorizeAccess();
 
-        if ($content->schedules_count >= 0) {
+        if ($content->schedules_count > 0) {
             $content->delete();
         } else {
             // If a content has no schedules, we remove it completely

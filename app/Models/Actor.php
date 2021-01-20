@@ -92,6 +92,14 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     use Traits\HasCampaigns;
     use WithRelationCaching;
 
+    // Details properties
+    public ?int $parent_id = null;
+    public bool $parent_is_group = false;
+    public int $direct_children_count = 0;
+    public string $path_names = "";
+    public string $path_ids = "";
+
+
     public bool $details_loaded = false;
 
     /*

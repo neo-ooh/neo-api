@@ -258,7 +258,7 @@
       <workItem from="1607104372430" duration="47170000" />
       <workItem from="1607973375027" duration="29238000" />
       <workItem from="1608314790987" duration="2070000" />
-      <workItem from="1609768004246" duration="89834000" />
+      <workItem from="1609768004246" duration="90394000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>
@@ -331,6 +331,16 @@
   </component>
   <component name="UpdateCopyrightCheckinHandler">
     <option name="UPDATE_COPYRIGHT" value="true" />
+  </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+      </list>
+    </option>
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">

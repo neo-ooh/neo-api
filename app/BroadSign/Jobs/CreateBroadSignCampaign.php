@@ -90,5 +90,8 @@ class CreateBroadSignCampaign implements ShouldQueue {
         // Save the BroadSign campaign ID with the Access campaign
         $campaign->broadsign_reservation_id = $bsCampaign->id;
         $campaign->save();
+
+        // Trigger an update to link the locations
+        UpdateBroadSignCampaign::dispatch($campaign->id);
     }
 }

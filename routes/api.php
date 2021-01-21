@@ -40,7 +40,6 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\ScreenshotsController;
-use Neo\Http\Controllers\TermsOfServiceController;
 use Neo\Models\Actor;
 use Neo\Models\Burst;
 use Neo\Models\Campaign;

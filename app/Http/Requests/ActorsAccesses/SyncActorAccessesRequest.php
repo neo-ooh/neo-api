@@ -41,7 +41,7 @@ class SyncActorAccessesRequest extends FormRequest {
      */
     public function rules (): array {
         return [
-            "actors" => ["required", "array"],
+            "actors" => ["nullable", "array"],
             "actors.*" => ["integer", "exists:actors,id"]
         ];
     }

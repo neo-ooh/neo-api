@@ -62,6 +62,14 @@ class ActorsController extends Controller {
     public function show(Request $request, Actor $actor): Response {
         $with = $request->get("with", []);
 
+        if ($actor->is_locked) {
+            $actor->load("lockedBy");
+        }
+
+        if (in_array("direct_children", $with, true)) {
+            $actor->append("direct_children");
+        }
+
         if (in_array("capabilities", $with, true)) {
             $actor->append("capabilities");
         }
@@ -91,16 +99,12 @@ class ActorsController extends Controller {
             $actor->append("locations");
         }
 
-        if (in_array("direct_children", $with, true)) {
-            $actor->append("direct_children");
-        }
-
         if (in_array("formats", $with, true)) {
             $actor->setRelation("formats", $actor->getLocations()->pluck("format")->unique("id")->values());
         }
 
-        if ($actor->is_locked) {
-            $actor->load("lockedBy");
+        if (in_array("shares", $with, true)) {
+            $actor->load("sharers");
         }
 
         $actor->promoteDetails();

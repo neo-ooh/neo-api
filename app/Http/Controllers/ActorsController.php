@@ -103,7 +103,7 @@ class ActorsController extends Controller {
             $actor->setRelation("formats", $actor->getLocations()->pluck("format")->unique("id")->values());
         }
 
-        if (in_array("shares", $with, true)) {
+        if (in_array("sharers", $with, true)) {
             $actor->load("sharers");
         }
 

@@ -11,6 +11,7 @@
 /** @noinspection GrazieInspection */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\ActorsAccessesController;
 use Neo\Http\Controllers\ActorsCapabilitiesController;
 use Neo\Http\Controllers\ActorsController;
 use Neo\Http\Controllers\ActorsLocationsController;
@@ -85,6 +86,16 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::post("actors/{actor}/re-send-signup-email", ActorsController::class . "@resendWelcomeEmail")
          ->name("actors.re-send-signup-email");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Actors Accesses
+    |----------------------------------------------------------------------
+    */
+
+    Route::post("actors/{actor}/accesses", ActorsAccessesController::class . "@sync")
+         ->name("actors.accesses.sync");
 
 
     /*

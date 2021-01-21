@@ -8,10 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsAccessesController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsAccesses/SyncActorAccessesRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Traits/HasCampaigns.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Traits/HasCampaigns.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -264,7 +262,7 @@
       <workItem from="1609768004246" duration="95664000" />
       <workItem from="1611242474597" duration="261000" />
       <workItem from="1611242749804" duration="906000" />
-      <workItem from="1611243685491" duration="1966000" />
+      <workItem from="1611243685491" duration="3258000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

@@ -13,6 +13,7 @@ namespace Neo\Models\Traits;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Models\Actor;
 use Neo\Models\Campaign;
 
 /**
@@ -68,6 +69,7 @@ trait HasCampaigns {
         // Campaigns shared with the actor
         if($shared) {
             $campaigns = $campaigns->merge($this->shared_campaigns);
+            $campaigns = $campaigns->merge($this->sharers->flatMap(fn(/** @var Actor $sharer */ $sharer) => $sharer->getCampaigns(true, false, true, false)));
         }
 
         // Actor's children's campaigns

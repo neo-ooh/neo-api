@@ -13,30 +13,28 @@ namespace Neo\Http\Controllers;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
+use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
+use Neo\BroadSign\Jobs\UpdateBroadSignCampaign;
 use Neo\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Http\Requests\Campaigns\ListCampaignsRequest;
 use Neo\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Http\Requests\CampaignsLocations\RemoveCampaignLocationRequest;
 use Neo\Http\Requests\CampaignsLocations\SyncCampaignLocationsRequest;
-use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
-use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
-use Neo\BroadSign\Jobs\UpdateBroadSignCampaign;
 use Neo\Models\Actor;
 use Neo\Models\Campaign;
 use Neo\Models\Format;
 use Neo\Models\Location;
 
-class CampaignsController extends Controller
-{
+class CampaignsController extends Controller {
     /**
      * @param ListCampaignsRequest $request
      *
      * @return ResponseFactory|Response
      * @noinspection PhpUnusedParameterInspection
      */
-    public function index(ListCampaignsRequest $request)
-    {
+    public function index(ListCampaignsRequest $request) {
         return new Response(Auth::user()->getCampaigns()->load("format:id,slug,name",
             "owner"));
     }
@@ -46,22 +44,23 @@ class CampaignsController extends Controller
      *
      * @return ResponseFactory|Response
      */
-    public function store(StoreCampaignRequest $request)
-    {
+    public function store(StoreCampaignRequest $request) {
         $campaign = new Campaign();
         [
-            "owner_id" => $campaign->owner_id,
-            "format_id" => $campaign->format_id,
-            "name" => $campaign->name,
+            "owner_id"         => $campaign->owner_id,
+            "format_id"        => $campaign->format_id,
+            "name"             => $campaign->name,
             "display_duration" => $campaign->display_duration,
-            "content_limit" => $campaign->content_limit,
-            "start_date" => $campaign->start_date,
-            "end_date" => $campaign->end_date,
+            "content_limit"    => $campaign->content_limit,
+            "start_date"       => $campaign->start_date,
+            "end_date"         => $campaign->end_date,
+            "loop_saturation"  => $campaign->loop_saturation,
         ] = $request->validated();
 
         // If no name was specified for the campaign, we generate one
-        if($campaign->name === null) {
-            $campaign->name = Actor::query()->find($campaign->owner_id)->name . " - " . Format::query()->find($campaign->format_id)->name;
+        if ($campaign->name === null) {
+            $campaign->name = Actor::query()->find($campaign->owner_id)->name . " - " . Format::query()
+                                                                                              ->find($campaign->format_id)->name;
         }
 
         $campaign->save();
@@ -72,7 +71,7 @@ class CampaignsController extends Controller
         $locations = $campaign->owner->locations->where("format_id", "=", $campaign->format_id);
 
         // Copy over the locations of the campaign owner to the campaign itself
-        if(count($locations) > 0) {
+        if (count($locations) > 0) {
             $campaign->locations()->attach($locations);
             $campaign->refresh();
 
@@ -88,8 +87,7 @@ class CampaignsController extends Controller
      *
      * @return ResponseFactory|Response
      */
-    public function show(Campaign $campaign)
-    {
+    public function show(Campaign $campaign) {
         return new Response($campaign->loadMissing([
             "format",
             "locations",
@@ -104,19 +102,19 @@ class CampaignsController extends Controller
 
     /**
      * @param UpdateCampaignRequest $request
-     * @param Campaign $campaign
+     * @param Campaign              $campaign
      *
      * @return ResponseFactory|Response
      */
-    public function update(UpdateCampaignRequest $request, Campaign $campaign)
-    {
+    public function update(UpdateCampaignRequest $request, Campaign $campaign) {
         [
-            "owner_id" => $campaign->owner_id,
-            "name" => $campaign->name,
+            "owner_id"         => $campaign->owner_id,
+            "name"             => $campaign->name,
             "display_duration" => $campaign->display_duration,
-            "content_limit" => $campaign->content_limit,
-            "start_date" => $campaign->start_date,
-            "end_date" => $campaign->end_date,
+            "content_limit"    => $campaign->content_limit,
+            "start_date"       => $campaign->start_date,
+            "end_date"         => $campaign->end_date,
+            "loop_saturation"  => $campaign->loop_saturation,
         ] = $request->validated();
         $campaign->save();
         $campaign->refresh();
@@ -129,12 +127,11 @@ class CampaignsController extends Controller
 
     /**
      * @param SyncCampaignLocationsRequest $request
-     * @param Campaign $campaign
+     * @param Campaign                     $campaign
      *
      * @return ResponseFactory|Response
      */
-    public function syncLocations(SyncCampaignLocationsRequest $request, Campaign $campaign)
-    {
+    public function syncLocations(SyncCampaignLocationsRequest $request, Campaign $campaign) {
         $locations = $request->validated()['locations'];
 
         // All good, add the capabilities
@@ -158,8 +155,7 @@ class CampaignsController extends Controller
     }
 
     /** @noinspection PhpUnusedParameterInspection */
-    public function destroy(DestroyCampaignRequest $request, Campaign $campaign): void
-    {
+    public function destroy(DestroyCampaignRequest $request, Campaign $campaign): void {
         $campaign->delete();
 
         // Propagate the changes in BroadSign

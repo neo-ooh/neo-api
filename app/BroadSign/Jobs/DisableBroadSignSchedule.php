@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\BroadSign\Models\Bundle as BSBundle;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Schedule;
 
@@ -62,10 +63,15 @@ class DisableBroadSignSchedule implements ShouldQueue {
             return;
         }
 
-        // Update the broadsign campaign
+        // Deactivate the schedule
         $bsSchedule = BSSchedule::get($schedule->broadsign_schedule_id);
         $bsSchedule->active = false;
         $bsSchedule->weight = 0;
         $bsSchedule->save();
+
+        // Deactivate the bundle
+        $bsBundle = BSBundle::bySchedule($this->scheduleID);
+        $bsBundle->active = false;
+        $bsBundle->save();
     }
 }

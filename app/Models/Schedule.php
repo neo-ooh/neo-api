@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\BroadSign\Jobs\DisableBroadSignSchedule;
 
 /**
- * NeoModels\Branding
+ * Neo\Models\Branding
  *
  * - Model Attributes
  *
@@ -28,6 +28,7 @@ use Neo\BroadSign\Jobs\DisableBroadSignSchedule;
  * @property int                campaign_id
  * @property int                content_id
  * @property int                owner_id
+ * @property int                broadsign_bundle_id
  * @property int                broadsign_schedule_id
  * @property Date               start_date
  * @property Date               end_date
@@ -87,6 +88,7 @@ class Schedule extends Model {
      */
     protected $hidden = [
         "broadsign_bundle_id",
+        "broadsign_schedule_id",
     ];
 
     /**

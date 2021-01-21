@@ -32,6 +32,7 @@ class ImportCreativeInBroadSign implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $creativeID;
+    protected $creativeName;
 
     /**
      * Create a new job instance.
@@ -40,8 +41,9 @@ class ImportCreativeInBroadSign implements ShouldQueue {
      *
      * @return void
      */
-    public function __construct (int $creativeID) {
+    public function __construct (int $creativeID, string $creativeName) {
         $this->creativeID = $creativeID;
+        $this->creativeName = $creativeName;
     }
 
     /**
@@ -75,7 +77,7 @@ class ImportCreativeInBroadSign implements ShouldQueue {
 
         $bsCreative = new BSCreative();
         $bsCreative->attributes = $attributes;
-        $bsCreative->name = $creative->owner->name . " <" . $creative->owner->email . "> - " . $creative->original_filename;
+        $bsCreative->name = $this->creativeName . " - " . $creative->content->library->name;
         $bsCreative->parent_id = $broadsign->getDefaults()["customer_id"];
         $bsCreative->url = $creative->file_url;
         $bsCreative->create();

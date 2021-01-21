@@ -91,7 +91,7 @@ class CreativesController extends Controller
 
 
         // Import the creative in BroadSign
-        ImportCreativeInBroadSign::dispatch($creative->id);
+        ImportCreativeInBroadSign::dispatch($creative->id, $file->getClientOriginalName());
 
         return new Response($creative, 201);
     }

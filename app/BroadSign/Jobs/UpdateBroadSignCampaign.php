@@ -56,12 +56,16 @@ class UpdateBroadSignCampaign implements ShouldQueue {
         }
 
         // Get the Access and Broadsign campaign
-        $campaign = Campaign::query()->findOrFail($this->campaignID);
+        /** @var Campaign $campaign */
+        $campaign   = Campaign::query()->findOrFail($this->campaignID);
         $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
 
         // Update the name of the campaign
         $bsCampaign->name = $campaign->name;
         $bsCampaign->save();
+
+        // Update the campaign saturation as needed
+        $bsCampaign->saturation = $campaign->loop_saturation > 0 ? $campaign->loop_saturation : $campaign->schedules_count;
 
         // Get the campaign locations
         $locations = $campaign->locations;

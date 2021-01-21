@@ -21,7 +21,7 @@ class UpdateCampaignRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::campaigns_edit);
     }
 
@@ -30,14 +30,15 @@ class UpdateCampaignRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "owner_id"         => [ "required", "integer", new AccessibleActor() ],
-            "name"             => [ "required", "string" ],
-            "display_duration" => [ "required", "numeric", "min:1" ],
-            "content_limit"    => [ "required", "numeric", "min:0" ],
-            "start_date"       => [ "required", "date" ],
-            "end_date"         => [ "required", "date" ],
+            "owner_id"         => ["required", "integer", new AccessibleActor()],
+            "name"             => ["required", "string"],
+            "display_duration" => ["required", "numeric", "min:1"],
+            "content_limit"    => ["required", "numeric", "min:0"],
+            "start_date"       => ["required", "date"],
+            "end_date"         => ["required", "date"],
+            "loop_saturation"  => ["required", "integer", "min:0"],
         ];
     }
 }

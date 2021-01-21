@@ -35,6 +35,7 @@ use Neo\Rules\AccessibleCampaign;
  * @property string                name
  * @property int                   display_duration
  * @property int                   content_limit
+ * @property int                   loop_saturation
  * @property Date                  start_date
  * @property Date                  end_date
  *

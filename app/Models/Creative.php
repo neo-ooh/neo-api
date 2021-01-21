@@ -31,11 +31,9 @@ use Neo\Models\Factories\CreativeFactory;
  * @property int     broadsign_ad_copy_id
  * @property int     owner_id
  * @property int     content_id
- * @property int     frame_id      -
- * @property int     "_id -
+ * @property int     frame_id
  * @property string  extension
  * @property string  status
- * @property string  original_filename
  * @property string  checksum
  * @property int     duration
  *

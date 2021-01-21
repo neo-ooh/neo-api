@@ -21,7 +21,7 @@ class StoreCampaignRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::campaigns_edit);
     }
 
@@ -30,7 +30,7 @@ class StoreCampaignRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
             "owner_id"         => ["required", "integer", new AccessibleActor()],
             "format_id"        => ["required", "integer", "exists:formats,id"],
@@ -39,6 +39,7 @@ class StoreCampaignRequest extends FormRequest {
             "content_limit"    => ["required", "numeric", "min:0"],
             "start_date"       => ["required", "date"],
             "end_date"         => ["required", "date"],
+            "loop_saturation"  => ["required", "integer", "min:0"],
         ];
     }
 }

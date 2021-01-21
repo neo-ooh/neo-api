@@ -81,6 +81,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
         $bsCampaign->parent_id = $broadsign->getDefaults()["customer_id"];
         $bsCampaign->start_date = $startDate->toDateString();
         $bsCampaign->start_time = "00:00:00";
+        $bsCampaign->saturation = $campaign->loop_saturation;
         $bsCampaign->create();
 
         // Add the advertising criteria to the campaign

@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Neo\Http\Requests\Auth\LoginRequest;
 use Neo\Models\Actor;
@@ -71,13 +72,17 @@ class LoginController extends Controller {
         $actor->last_login_at = $actor->freshTimestamp();
         $actor->save();
 
-        // Remove any token left in the db for the user
-        TwoFactorToken::destroy($actor->id);
+        // Check the two factor token of the user. If there is none or if it is two old, we create a new one
+        $twoFactorToken = $actor->twoFactorToken;
+        if($twoFactorToken === null || $twoFactorToken->created_at->isBefore(Date::now()->subMonth())) {
+            // Remove any token left in the db for the user
+            TwoFactorToken::destroy($actor->id);
 
-        // Create and save the token
-        $twoFactorToken = new TwoFactorToken();
-        $twoFactorToken->actor()->associate($actor->id);
-        $twoFactorToken->save();
+            // Create and save the token
+            $twoFactorToken = new TwoFactorToken();
+            $twoFactorToken->actor()->associate($actor->id);
+            $twoFactorToken->save();
+        }
 
         // Returns the new jwt token for this user
         return new Response([

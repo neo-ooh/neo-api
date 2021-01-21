@@ -327,7 +327,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                 $join->on($descendantColumn, "=", "actors.id");
             })
                      ->join("actors_shares as s",
-                         function (JoinClause $join) use ($descendantColumn, $ancestorColumn) {
+                         function (JoinClause $join) use ($ancestorColumn) {
                              $join->on("s.sharer_id", "=", $ancestorColumn);
 //                             $join->on("s.sharer_id", "<>", $descendantColumn);
                          })

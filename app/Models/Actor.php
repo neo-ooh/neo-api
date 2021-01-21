@@ -435,6 +435,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         // Libraries shared with the actor
         if ($shared) {
             $libraries = $libraries->merge($this->shared_libraries);
+            $libraries = $libraries->merge($this->sharers->flatMap(fn(/** @var Actor $sharer */ $sharer) => $sharer->getLibraries(true, false, true, false)));
         }
 
         // Libraries of children of this actor

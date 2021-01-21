@@ -58,6 +58,7 @@ class UpdateBroadSignScheduleStatus implements ShouldQueue {
             return;
         }
 
+        /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 
         if (!$schedule->broadsign_schedule_id) {
@@ -76,6 +77,11 @@ class UpdateBroadSignScheduleStatus implements ShouldQueue {
         if ($bsSchedule->active && $bsCampaign->state === 0) {
             $bsCampaign->state = 1;
             $bsCampaign->save();
+        }
+
+        // Finally, trigger an update of the campaign if its saturation is automatic
+        if($schedule->campaign->loop_saturation === 0) {
+            UpdateBroadSignCampaign::dispatch($schedule->campaign_id);
         }
     }
 }

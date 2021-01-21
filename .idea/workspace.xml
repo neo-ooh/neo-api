@@ -8,20 +8,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change afterPath="$PROJECT_DIR$/database/migrations/2021_01_21_202522_update_broadsign_stored_ids.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignSchedule.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignSchedule.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/ImportCreativeInBroadSign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/ImportCreativeInBroadSign.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Campaigns/StoreCampaignRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/StoreCampaignRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Campaigns/UpdateCampaignRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/UpdateCampaignRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Creative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Creative.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Schedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Schedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignScheduleStatus.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignScheduleStatus.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -274,7 +263,7 @@
       <workItem from="1609768004246" duration="95664000" />
       <workItem from="1611242474597" duration="261000" />
       <workItem from="1611242749804" duration="906000" />
-      <workItem from="1611243685491" duration="9066000" />
+      <workItem from="1611243685491" duration="11482000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

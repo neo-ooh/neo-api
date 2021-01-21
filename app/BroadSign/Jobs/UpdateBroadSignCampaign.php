@@ -65,7 +65,7 @@ class UpdateBroadSignCampaign implements ShouldQueue {
         $bsCampaign->save();
 
         // Update the campaign saturation as needed
-        $bsCampaign->saturation = $campaign->loop_saturation > 0 ? $campaign->loop_saturation : $campaign->schedules_count;
+        $bsCampaign->saturation = $campaign->loop_saturation > 0 ? $campaign->loop_saturation : $campaign->schedules->filter(fn($schedule) => $schedule->is_approved)->count();
 
         // Get the campaign locations
         $locations = $campaign->locations;

@@ -197,7 +197,6 @@ class Campaign extends SecuredModel {
         // II. Filter out the current one
         return $this->owner
             ->getCampaigns(true, $this->owner_id === Auth::user()->details->parent_id, false, false)
-            ->filter(fn($campaign) => $campaign->id !== $this->id)
             ->each(fn(/** Campaign */ $campaign) => $campaign->unsetRelations())
             ->each(fn(/** Campaign */ $campaign) => $campaign->load('format'))
             ->values();

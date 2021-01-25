@@ -65,6 +65,8 @@ class SynchronizeLocations implements ShouldQueue {
                 ]);
 
 
+            $location->container_id = $containerID;
+            $location->save();
             $locations[] = $location->id;
 
             /** @noinspection DisconnectedForeachInstructionInspection */

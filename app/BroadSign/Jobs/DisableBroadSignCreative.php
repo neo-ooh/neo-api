@@ -34,7 +34,7 @@ class DisableBroadSignCreative implements ShouldQueue {
     /**
      * Create a new job instance.
      *
-     * @param int $creativeID ID of the creative to disable
+     * @param int $adCopyID ID of the ad-copy to disable
      *
      * @return void
      */

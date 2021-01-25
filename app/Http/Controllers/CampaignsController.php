@@ -59,8 +59,7 @@ class CampaignsController extends Controller {
 
         // If no name was specified for the campaign, we generate one
         if ($campaign->name === null) {
-            $campaign->name = Actor::query()->find($campaign->owner_id)->name . " - " . Format::query()
-                                                                                              ->find($campaign->format_id)->name;
+            $campaign->name = Format::query()->find($campaign->format_id)->name;
         }
 
         $campaign->save();

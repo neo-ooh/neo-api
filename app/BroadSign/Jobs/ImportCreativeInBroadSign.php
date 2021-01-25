@@ -77,7 +77,7 @@ class ImportCreativeInBroadSign implements ShouldQueue {
 
         $bsCreative = new BSCreative();
         $bsCreative->attributes = $attributes;
-        $bsCreative->name = $this->creativeName . " - " . $creative->content->library->name;
+        $bsCreative->name = $creative->owner->email . " - " . $this->creativeName;
         $bsCreative->parent_id = $broadsign->getDefaults()["customer_id"];
         $bsCreative->url = $creative->file_url;
         $bsCreative->create();

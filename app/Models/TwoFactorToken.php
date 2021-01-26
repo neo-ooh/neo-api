@@ -85,6 +85,8 @@ class TwoFactorToken extends Model {
      */
     protected $dates = [
         'validated_at',
+        'updated_at',
+        'created_at',
     ];
 
     /**

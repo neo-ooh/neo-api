@@ -19,6 +19,6 @@ class ActorsCampaignsController extends Controller {
                                       "schedules.owner:id,name",
                                       "trashedSchedules",
                                       "trashedSchedules.content"])
-                                  ->append(["related_campaigns", "related_libraries"]));
+                                  ->append(["related_libraries"]));
     }
 }

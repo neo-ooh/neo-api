@@ -187,21 +187,11 @@ class Campaign extends SecuredModel {
         return "ready";
     }
 
-    /**
-     * @return Collection
-     *
-     * @psalm-return Collection<Campaign>|array<empty, empty>
-     */
-    public function getRelatedCampaignsAttribute() {
-        // I. Select campaigns owned by the same user
-        // II. Filter out the current one
-        return $this->owner
-            ->getCampaigns(true, $this->owner_id === Auth::user()->details->parent_id, false, false)
-            ->each(fn(/** Campaign */ $campaign) => $campaign->unsetRelations())
-            ->each(fn(/** Campaign */ $campaign) => $campaign->load('format'))
-            ->values();
-    }
 
+    /**
+     * List the libraries ID determined to be relevant for the campaign
+     * @return \Illuminate\Support\Collection
+     */
     public function getRelatedLibrariesAttribute(): \Illuminate\Support\Collection {
         // I. Select campaigns owned by the same user
         // II. Filter out the current one

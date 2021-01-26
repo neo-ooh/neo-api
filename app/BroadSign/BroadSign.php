@@ -33,12 +33,14 @@ class BroadSign {
      * - campaign_length
      * - advertising_criteria_id
      */
-    public static function getDefaults (): array {
+    public static function getDefaults(): array {
         return [
             "domain_id"               => config("broadsign.domain-id"),
             "customer_id"             => config("broadsign.customer-id"),
             "campaign_length"         => config("broadsign.default-campaign-length"),
             "advertising_criteria_id" => config("broadsign.advertising-criteria"),
+            "left_frame_criteria_id"  => config("broadsign.left-frame-criteria"),
+            "right_frame_criteria_id" => config("broadsign.right-frame-criteria"),
         ];
     }
 
@@ -54,7 +56,7 @@ class BroadSign {
      * @return Inventory[]
      *
      */
-    public function getInventoryReport (int $year): array {
-        return Inventory::all([ "year" => $year ]);
+    public function getInventoryReport(int $year): array {
+        return Inventory::all(["year" => $year]);
     }
 }

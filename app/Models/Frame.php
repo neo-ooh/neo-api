@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string               name
  * @property int                  width
  * @property int                  height
+ * @property string               type
  *
  * @property Format               format
  * @property Collection<Creative> creatives
@@ -58,6 +59,7 @@ class Frame extends Model {
         'name',
         'width',
         'height',
+        'type'
     ];
 
     /**

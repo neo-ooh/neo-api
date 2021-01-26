@@ -19,22 +19,21 @@ use Neo\Http\Requests\Frames\UpdateFrameRequest;
 use Neo\Models\Format;
 use Neo\Models\Frame;
 
-class FramesController extends Controller
-{
+class FramesController extends Controller {
     /**
      * @param StoreFrameRequest $request
-     * @param Format $format
+     * @param Format            $format
      *
      * @return ResponseFactory|Response
      */
-    public function store(StoreFrameRequest $request, Format $format)
-    {
-        $frame = new Frame();
+    public function store(StoreFrameRequest $request, Format $format) {
+        $frame            = new Frame();
         $frame->format_id = $format->id;
         [
-            "name" => $frame->name,
-            "width" => $frame->width,
+            "name"   => $frame->name,
+            "width"  => $frame->width,
             "height" => $frame->height,
+            "type"   => $frame->type,
         ] = $request->validated();
         $frame->save();
 
@@ -43,18 +42,18 @@ class FramesController extends Controller
 
     /**
      * @param UpdateFrameRequest $request
-     * @param Format $format
-     * @param Frame $frame
+     * @param Format             $format
+     * @param Frame              $frame
      *
      * @return ResponseFactory|Response
      * @noinspection PhpUnusedParameterInspection
      */
-    public function update(UpdateFrameRequest $request, Format $format, Frame $frame)
-    {
+    public function update(UpdateFrameRequest $request, Format $format, Frame $frame) {
         [
-            "name" => $frame->name,
-            "width" => $frame->width,
+            "name"   => $frame->name,
+            "width"  => $frame->width,
             "height" => $frame->height,
+            "type"   => $frame->type,
         ] = $request->validated();
         $frame->save();
 
@@ -63,15 +62,14 @@ class FramesController extends Controller
 
     /**
      * @param DestroyFrameRequest $request
-     * @param Format $format
-     * @param Frame $frame
+     * @param Format              $format
+     * @param Frame               $frame
      *
      * @return ResponseFactory|Response
      * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */
-    public function destroy(DestroyFrameRequest $request, Format $format, Frame $frame)
-    {
+    public function destroy(DestroyFrameRequest $request, Format $format, Frame $frame) {
         $frame->delete();
 
         return new Response([]);

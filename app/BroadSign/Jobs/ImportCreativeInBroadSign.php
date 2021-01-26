@@ -85,5 +85,23 @@ class ImportCreativeInBroadSign implements ShouldQueue {
         $creative->broadsign_ad_copy_id = $bsCreative->id;
         $creative->save();
     }
+
+
+    public function targetCreative(BSCreative $bsCreative, Creative $creative, BroadSign $broadsign) {
+        // We need to target the creative base on its format and frames
+        if($creative->frame->format->frames_count === 1) {
+            // Only one frame in the format, do nothing
+            return;
+        }
+
+        switch ($creative->frame->type) {
+            case "MAIN":
+                $bsCreative->addCriteria(BroadSign::getDefaults()['left_frame_criteria_id'], 4);
+                break;
+            case "RIGHT":
+                $bsCreative->addCriteria(BroadSign::getDefaults()['right_frame_criteria_id'], 4);
+                break;
+        }
+    }
 }
 

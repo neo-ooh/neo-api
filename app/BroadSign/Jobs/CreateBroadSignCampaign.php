@@ -19,6 +19,7 @@ use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\Models\Campaign;
+use Neo\Models\Frame;
 
 /**
  * Class CreateBroadSignCampaign
@@ -68,7 +69,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
 
         // Prepare the start and end date
         $startDate = Date::now();
-        $endDate = $startDate->copy()->addYears($broadsign->getDefaults()['campaign_length']);
+        $endDate = $startDate->copy()->addYears(BroadSign::getDefaults()['campaign_length']);
 
         // Create the campaign
         $bsCampaign = new BSCampaign();
@@ -84,8 +85,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
         $bsCampaign->saturation = $campaign->loop_saturation;
         $bsCampaign->create();
 
-        // Add the advertising criteria to the campaign
-        $bsCampaign->addCriteria($broadsign->getDefaults()["advertising_criteria_id"], 8);
+        // Target the campaign. Apply criteria to tell broadsign how to play this campaign.
 
         // Save the BroadSign campaign ID with the Access campaign
         $campaign->broadsign_reservation_id = $bsCampaign->id;
@@ -93,5 +93,29 @@ class CreateBroadSignCampaign implements ShouldQueue {
 
         // Trigger an update to link the locations
         UpdateBroadSignCampaign::dispatch($campaign->id);
+    }
+
+    protected function targetCampaign(BSCampaign $bsCampaign, Campaign $campaign, BroadSign $broadsign) {
+        // First apply the advertising criteria, this is mandatory for every campaign.
+        $bsCampaign->addCriteria(BroadSign::getDefaults()["advertising_criteria_id"], 8);
+
+        // Check the number of frames of the format. If only one, and its a main frame, then we are done.
+        if($campaign->format->frames_count === 1 && $campaign->format->frames[0]->type === 'MAIN') {
+            return;
+        }
+
+        // There is multiple frames for this format, we will have to give additional criteria to the campaign
+        /** @var Frame $frame */
+        foreach ($campaign->format->frames as $frame) {
+            // Apply the appropriate criteria based on the frame type
+            if($frame->type === 'MAIN') {
+                // Main frames are already targeted by the advertising criteria
+                continue;
+            }
+
+            if($frame->type === 'RIGHT') {
+                $bsCampaign->addCriteria($broadsign->getDefaults()["left_frame_criteria_id"], 8);
+            }
+        }
     }
 }

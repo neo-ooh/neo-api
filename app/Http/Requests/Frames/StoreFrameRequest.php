@@ -20,7 +20,7 @@ class StoreFrameRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::formats_edit);
     }
 
@@ -29,11 +29,12 @@ class StoreFrameRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
             "name"   => ["required", "string"],
             "width"  => ["required", "integer", "min:1"],
             "height" => ["required", "integer", "min:1"],
+            "type"   => ["required", "string", "min:1"],
         ];
     }
 }

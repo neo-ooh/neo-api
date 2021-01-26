@@ -71,7 +71,19 @@ class Creative extends BroadSignModel {
             "create" => Endpoint::post("/content/v11/import_from_url")->id(),
             "get" => Endpoint::get("/content/v11/{id}"),
             "update" => Endpoint::put("/content/v11"),
+            "addResourceCriteria" => Endpoint::post("/resource_criteria/v7/add")->ignore(),
         ];
+    }
+
+
+
+    public function addCriteria(int $criteriaID, int $type): void {
+        static::addResourceCriteria([
+            "active"      => true,
+            "criteria_id" => $criteriaID,
+            "parent_id"   => $this->id,
+            "type"        => $type,
+        ]);
     }
 
     public function approve(): void {

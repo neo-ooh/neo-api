@@ -510,8 +510,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return false;
         }
 
-        // Is the token validated and part of the current user session
-        if ($token->validated && $token->created_at >= $this->last_login_at) {
+        // Is the token validated and not too old
+        if ($token->validated && $token->created_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) < 1) {
             return true;
         }
 

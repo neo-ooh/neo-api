@@ -170,6 +170,7 @@ trait HasHierarchy {
         return $this->getCachedRelation("parent",
             fn () => $this->selectActors()
                           ->Parent()
+                          ->with('details')
                           ->first()
         );
     }

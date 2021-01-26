@@ -192,7 +192,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/ActorsAccesses" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
@@ -209,11 +209,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/ActorsAccesses" />
       <recent name="$PROJECT_DIR$/database/migrations" />
       <recent name="$PROJECT_DIR$/app/Models" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/CampaignsLocations" />
-      <recent name="$PROJECT_DIR$/resources/views/emails/auth" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/resources/views/emails" />
@@ -261,7 +261,7 @@
       <workItem from="1611242749804" duration="906000" />
       <workItem from="1611243685491" duration="16173000" />
       <workItem from="1611585237584" duration="5052000" />
-      <workItem from="1611671680675" duration="7170000" />
+      <workItem from="1611671680675" duration="8787000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

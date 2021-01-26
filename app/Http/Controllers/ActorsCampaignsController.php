@@ -2,13 +2,12 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Neo\Models\Actor;
+use Neo\Http\Requests\ActorsCampaigns\ListActorCampaignsRequest;
 
 class ActorsCampaignsController extends Controller {
-    public function index(Request $request, Actor $actor): Response {
-        return new Response($actor->getCampaigns(true, true, false, false)
+    public function index(ListActorCampaignsRequest $request): Response {
+        return new Response($request->route('actor')->getCampaigns(true, true, false, false)
                                   ->loadMissing([
                                       "format",
                                       "locations",

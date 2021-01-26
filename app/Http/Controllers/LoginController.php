@@ -72,7 +72,7 @@ class LoginController extends Controller {
         $actor->last_login_at = $actor->freshTimestamp();
         $actor->save();
 
-        // Check the two factor token of the user. If there is none or if it is two old, we create a new one
+        // Check the two factor token of the user. If there is none or if it is t0o old, we create a new one
         $twoFactorToken = $actor->twoFactorToken;
         if($twoFactorToken === null || $twoFactorToken->created_at->isBefore(Date::now()->subMonth())) {
             // Remove any token left in the db for the user

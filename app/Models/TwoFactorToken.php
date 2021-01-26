@@ -109,6 +109,7 @@ class TwoFactorToken extends Model {
         static::creating(function (TwoFactorToken $model) {
             $model->token = str_pad(random_int(1000, 999999), 6, '0', STR_PAD_LEFT);
             $model->created_at = $model->freshTimestamp();
+            $model->validated = false;
             Mail::to($model->actor)->send(new TwoFactorTokenEmail($model));
         });
     }

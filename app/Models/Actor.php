@@ -262,7 +262,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $actors = new Collection();
 
         if ($children && $shallow) {
-            $actors = $actors->merge($this->details->direct_children);
+            $actors = $actors->merge($this->direct_children);
         }
 
         if ($children && !$shallow) {

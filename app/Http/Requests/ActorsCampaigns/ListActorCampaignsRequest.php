@@ -24,7 +24,7 @@ class ListActorCampaignsRequest extends FormRequest {
         // The current user can access the campaigns of anyone it has access to, AS WELL AS the campaigns from its parent, which is excluded from the default `hasAccessTo` method
 
         /** @var Actor $actor */
-        $actor = $this->route('actor');
+        $actor = Actor::query()->findOrFail($this->route('actors'));
 
         return !$actor->is(Auth::user()) || $actor->id === Auth::user()->details->parent_id || Auth::user()->hasAccessTo($actor);
     }

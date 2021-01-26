@@ -26,7 +26,6 @@ class ListActorCampaignsRequest extends FormRequest {
 
         /** @var Actor $actor */
         $actor = Actor::findOrFail($this->route('actor'));
-        Log::debug($this->route('actor'));
 
         return !$actor->is(Auth::user()) || $actor->id === Auth::user()->details->parent_id || Auth::user()->hasAccessTo($actor);
     }

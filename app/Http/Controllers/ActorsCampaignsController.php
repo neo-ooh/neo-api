@@ -9,7 +9,7 @@ use Neo\Models\Actor;
 class ActorsCampaignsController extends Controller {
     public function index(ListActorCampaignsRequest $request): Response {
         return new Response(Actor::query()
-                                 ->findOrFail($this->route('actor'))
+                                 ->findOrFail($request->route('actor'))
                                  ->getCampaigns(true, true, false, false)
                                  ->loadMissing([
                                      "format",

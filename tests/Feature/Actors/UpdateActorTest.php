@@ -236,7 +236,7 @@ class UpdateActorTest extends TestCase {
             "name"        => $aActor->name,
             "email"       => $aActor->email,
             "is_locked"   => true,
-            "parent_id"   => $aActor->parent_id,
+            "parent_id"   => $aActor->details->parent_id,
             "branding_id" => $aActor->branding_id,
         ]);
 
@@ -264,7 +264,7 @@ class UpdateActorTest extends TestCase {
             "name"        => $aActor->name,
             "email"       => $aActor->email,
             "is_locked"   => false,
-            "parent_id"   => $aActor->parent_id,
+            "parent_id"   => $aActor->details->parent_id,
             "branding_id" => $branding->id,
         ]);
 

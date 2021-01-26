@@ -107,7 +107,6 @@ class ActorsController extends Controller {
             $actor->load("sharers");
         }
 
-        $actor->promoteDetails();
         $actor->append(["parent", "registration_sent", "is_registered"]);
 
         return new Response($actor);
@@ -151,7 +150,7 @@ class ActorsController extends Controller {
             CreateActorLibrary::dispatch($actor->id);
         }
 
-        return new Response($actor->promoteDetails(), 201);
+        return new Response($actor, 201);
     }
 
     public function update(UpdateActorRequest $request, Actor $actor): Response {

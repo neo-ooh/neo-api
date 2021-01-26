@@ -60,7 +60,7 @@ trait HasLocations {
      * @return Collection<Location>
      */
     public function getGroupLocationsAttribute (): Collection {
-        if ($this->is_group || $this->parent_id === null || !$this->parent->is_group) {
+        if ($this->is_group || !$this->details->parent_is_group) {
             return new Collection();
         }
 

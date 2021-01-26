@@ -178,6 +178,7 @@ trait HasRoles {
      */
     public function scopeCapabilities(Builder $query): Builder {
         return $query->setModel(new Capability())
+                     ->setEagerLoads([])
                      ->select("c.*")
                      ->from("capabilities", "c")
                      ->join("roles_capabilities as rc", "rc.capability_id", "=", "c.id")
@@ -210,6 +211,7 @@ trait HasRoles {
      */
     public function scopeOwnStandaloneCapabilities(Builder $query): Builder {
         return $query->setModel(new Capability())
+                     ->setEagerLoads([])
                      ->select("c.*")
                      ->from("capabilities", "c")
                      ->join("actors_capabilities as uc", "c.id", "=", "uc.capability_id")
@@ -266,6 +268,7 @@ trait HasRoles {
      */
     public function scopeOwnRoles(Builder $query): Builder {
         return $query->setModel(new Role())
+                     ->setEagerLoads([])
                      ->select("r.*")
                      ->from("roles", "r")
                      ->join("actors_roles AS ur", "ur.role_id", "=", "r.id")
@@ -284,6 +287,7 @@ trait HasRoles {
     public function scopeInheritedRoles(Builder $query): Builder {
         // Select all roles of the parent if it's a group
         return $query->setModel(new Role())
+                     ->setEagerLoads([])
                      ->when(!$this->is_group, function (Builder $query) {
                          $query->select("r.*")
                                ->from("roles", "r")

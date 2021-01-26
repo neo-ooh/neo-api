@@ -92,16 +92,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     use Traits\HasCampaigns;
     use WithRelationCaching;
 
-    // Details properties
-    public ?int $parent_id = null;
-    public bool $parent_is_group = false;
-    public int $direct_children_count = 0;
-    public string $path_names = "";
-    public string $path_ids = "";
-
-
-    public bool $details_loaded = false;
-
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -143,6 +133,15 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         "is_group"     => "boolean",
         "is_locked"    => "boolean",
         "tos_accepted" => "boolean",
+    ];
+
+    /**
+     * The accessors to append to the model"s array form.
+     *
+     * @var array
+     */
+    protected $with = [
+        "details",
     ];
 
     /**
@@ -263,7 +262,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $actors = new Collection();
 
         if ($children && $shallow) {
-            $actors = $actors->merge($this->direct_children);
+            $actors = $actors->merge($this->details->direct_children);
         }
 
         if ($children && !$shallow) {
@@ -351,19 +350,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return null;
     }
 
-    public function promoteDetails(): self {
-        if($this->details_loaded) { return $this; }
-
-        $this->parent_id             = $this->details->parent_id;
-        $this->parent_is_group       = $this->details->parent_is_group;
-        $this->direct_children_count = $this->details->direct_children_count;
-        $this->path_names            = $this->details->path_names;
-        $this->path_ids              = $this->details->path_ids;
-        $this->details_loaded        = true;
-
-        return $this;
-    }
-
     public function getParentIdAttribute(): ?int {
         return $this->details->parent_id;
     }
@@ -444,7 +430,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // Libraries of the parent of the user
-//        if ($parent && ($this->parent_is_group ?? false)) {  --  WTF is this not working ?????
+//        if ($parent && ($this->details->parent_is_group ?? false)) {  --  WTF is this not working ?????
         if ($parent && ($this->parent->is_group ?? false)) {
             $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && Gate::allows(\Neo\Enums\Capability::libraries_edit)));
         }

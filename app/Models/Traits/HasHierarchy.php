@@ -265,8 +265,8 @@ trait HasHierarchy {
                 $parent->getKey(),
             ]);
 
-        $this->parent_is_group = $parent->is_group;
-        $this->parent_id = $parent->id;
+        $this->details->parent_is_group = $parent->is_group;
+        $this->details->parent_id = $parent->id;
         $this->setRelation("parent", $parent);
 
         return $this;

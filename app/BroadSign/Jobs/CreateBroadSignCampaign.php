@@ -77,7 +77,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
         $bsCampaign->domain_id = $broadsign->getDefaults()["domain_id"];
         $bsCampaign->duration_msec = $campaign->display_duration * 1000;
         $bsCampaign->end_date = $endDate->toDateString();
-        $bsCampaign->end_time = "23:59:00";
+        $bsCampaign->end_time = "23:59:30";
         $bsCampaign->name = $campaign->name . "(" . $campaign->owner->name . ")";
         $bsCampaign->parent_id = $broadsign->getDefaults()["customer_id"];
         $bsCampaign->start_date = $startDate->toDateString();
@@ -109,6 +109,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
         if($campaign->format->frames_count === 1 && $campaign->format->frames[0]->type === Frame::TYPE_MAIN) {
             return;
         }
+
 
         // There is multiple frames for this format, we will have to give additional criteria to the campaign
         /** @var Frame $frame */

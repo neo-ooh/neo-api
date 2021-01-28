@@ -86,6 +86,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
         $bsCampaign->create();
 
         // Target the campaign. Apply criteria to tell broadsign how to play this campaign.
+        $this->targetCampaign($bsCampaign, $campaign, $broadsign);
 
         // Save the BroadSign campaign ID with the Access campaign
         $campaign->broadsign_reservation_id = $bsCampaign->id;

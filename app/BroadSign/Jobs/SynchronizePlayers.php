@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Log;
 use Neo\BroadSign\Models\Player as BSPlayer;
 use Neo\Models\Location;
 use Neo\Models\Player;
@@ -45,12 +44,18 @@ class SynchronizePlayers implements ShouldQueue {
             $progressBar->advance();
             $progressBar->setMessage("{$bsPlayer->name} ($bsPlayer->id)");
 
+            if(!$bsPlayer->active) {
+                // Player is inactive, make sure it is not present in our DB
+                Player::query()->where('broadsign_player_id', '=', $bsPlayer->id)->delete();
+                continue;
+            }
+
             $location = Location::query()->where("broadsign_display_unit",
                 "=", $bsPlayer->display_unit_id)->first(["id"]);
 
             if($location === null) {
                 // Ignore player
-                Log::warning("Could not find display unit {$bsPlayer->display_unit_id} for player {$bsPlayer->name} ($bsPlayer->name). Ignoring...");
+                Log::warning("Could not find display unit {$bsPlayer->display_unit_id} for player {$bsPlayer->name} ($bsPlayer->id). Ignoring...");
                 continue;
             }
 

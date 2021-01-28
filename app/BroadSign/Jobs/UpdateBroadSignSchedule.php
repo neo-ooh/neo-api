@@ -61,9 +61,15 @@ class UpdateBroadSignSchedule implements ShouldQueue {
         $schedule = Schedule::query()->find($this->scheduleID);
 
         if (!$schedule->broadsign_schedule_id) {
-            // This schedule doesn't have a known counterpart in broadsign, create it;
+            // This schedule doesn't have a known counterpart in broadsign, create it
             CreateBroadSignSchedule::dispatch($this->scheduleID, $schedule->owner_id);
             return;
+        }
+
+        // We need to make sure the end time is not after 23:59:00
+        $endTime = $schedule->end_date;
+        if($endTime->isAfter($endTime->setTime(23, 59, 00))) {
+            $endTime = $endTime->setTime(23, 59, 00);
         }
 
         // Get and update the schedule
@@ -72,7 +78,7 @@ class UpdateBroadSignSchedule implements ShouldQueue {
         $bsSchedule->start_date = $schedule->start_date->toDateString();
         $bsSchedule->start_time = $schedule->start_date->setSecond(0)->toTimeString();
         $bsSchedule->end_date = $schedule->end_date->toDateString();
-        $bsSchedule->end_time = $schedule->end_date->setSecond(30)->toTimeString();
+        $bsSchedule->end_time = $endTime->toTimeString();
         $bsSchedule->save();
     }
 }

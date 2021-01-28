@@ -73,6 +73,7 @@ class Format extends Model {
      * @var array
      */
     protected $casts = [
+        "is_fullscreen" => "boolean",
         "is_enabled" => "boolean",
     ];
 

@@ -8,15 +8,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change afterPath="$PROJECT_DIR$/database/migrations/2021_01_28_205633_alter_formats_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Formats/UpdateFormatRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Formats/UpdateFormatRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Format.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Format.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/documents.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/documents.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_01_28_205633_alter_formats_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_01_28_205633_alter_formats_table.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -278,7 +272,7 @@
       <workItem from="1611585237584" duration="5052000" />
       <workItem from="1611671680675" duration="18018000" />
       <workItem from="1611759751819" duration="932000" />
-      <workItem from="1611841219519" duration="15647000" />
+      <workItem from="1611841219519" duration="17228000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

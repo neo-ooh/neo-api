@@ -14,7 +14,7 @@ class AlterFormatsTable extends Migration
     public function up()
     {
         Schema::table("formats", function (Blueprint $table) {
-            $table->boolean("is_fullscreen")->after("name")->default(true);
+            $table->boolean("is_fullscreen")->after("name")->default(false);
         });
     }
 

@@ -41,7 +41,6 @@ class RebuildResources implements ShouldQueue {
      * @return void
      */
     public function __construct () {
-        $this->delay(60);
     }
 
     /**
@@ -52,10 +51,6 @@ class RebuildResources implements ShouldQueue {
      * @return void
      */
     public function handle (BroadSign $broadsign): void {
-        if(config("app.env") === "testing") {
-            return;
-        }
-
         // First step is to deactivate all schedules and bundles
         $schedules = Schedule::all();
         foreach ($schedules as $schedule) {

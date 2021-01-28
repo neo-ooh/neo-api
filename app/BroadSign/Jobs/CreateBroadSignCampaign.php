@@ -68,8 +68,10 @@ class CreateBroadSignCampaign implements ShouldQueue {
         }
 
         // Prepare the start and end date
-        $startDate = Date::now();
-        $endDate = $startDate->copy()->addYears(BroadSign::getDefaults()['campaign_length']);
+        $startDate = $campaign->start_date->setTime(0, 0, 0);
+        $endDate = $startDate->copy()
+                             ->addYears(BroadSign::getDefaults()['campaign_length'])
+                             ->setTime(23, 59, 0);
 
         // Create the campaign
         $bsCampaign = new BSCampaign();
@@ -77,7 +79,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
         $bsCampaign->domain_id = $broadsign->getDefaults()["domain_id"];
         $bsCampaign->duration_msec = $campaign->display_duration * 1000;
         $bsCampaign->end_date = $endDate->toDateString();
-        $bsCampaign->end_time = "23:59:30";
+        $bsCampaign->end_time = "23:59:00";
         $bsCampaign->name = $campaign->name . "(" . $campaign->owner->name . ")";
         $bsCampaign->parent_id = $broadsign->getDefaults()["customer_id"];
         $bsCampaign->start_date = $startDate->toDateString();

@@ -148,7 +148,7 @@ class CreateBroadSignSchedule implements ShouldQueue {
 
         // Assign the bundle ID to the content
         $schedule->broadsign_bundle_id = $bundle->id;
-        $content->save();
+        $schedule->save();
 
         // Import the content's creatives
         /** @var Creative $creative */

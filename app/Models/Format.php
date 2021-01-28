@@ -24,6 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int                  broadsign_display_type
  * @property string               slug
  * @property string               name
+ * @property boolean              is_fullscreen
  * @property boolean              is_enabled
  *
  * @property Collection<Frame>    frames

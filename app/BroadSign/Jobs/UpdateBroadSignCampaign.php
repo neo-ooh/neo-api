@@ -60,8 +60,9 @@ class UpdateBroadSignCampaign implements ShouldQueue {
         $campaign   = Campaign::query()->findOrFail($this->campaignID);
         $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
 
-        // Update the name of the campaign
+        // Update the name and fullscreen status of the campaign
         $bsCampaign->name = $campaign->name;
+        $bsCampaign->default_fullscreen = $campaign->format->is_fullscreen;
         $bsCampaign->save();
 
         // Update the campaign saturation as needed

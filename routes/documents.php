@@ -15,5 +15,5 @@ use Neo\Http\Controllers\DocumentsGenerationController;
 
 Route::prefix("documents")->group(function () {
     Route::get("{document}", DocumentsGenerationController::class . "@make")
-         ->name("pdf.contract");
+         ->name("documents.make");
 });

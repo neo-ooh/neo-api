@@ -20,7 +20,7 @@ class UpdateFormatRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::formats_edit);
     }
 
@@ -29,11 +29,12 @@ class UpdateFormatRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "name" => ["required", "string"],
-            "slug" => ["required", "string"],
-            "is_enabled" => ["required", "boolean"],
+            "name"          => ["required", "string"],
+            "slug"          => ["required", "string"],
+            "is_fullscreen" => ["required", "boolean"],
+            "is_enabled"    => ["required", "boolean"],
         ];
     }
 }

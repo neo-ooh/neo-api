@@ -85,6 +85,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
         $bsCampaign->start_date = $startDate->toDateString();
         $bsCampaign->start_time = "00:00:00";
         $bsCampaign->saturation = $campaign->loop_saturation;
+        $bsCampaign->default_fullscreen = $campaign->format->is_fullscreen;
         $bsCampaign->create();
 
         // Target the campaign. Apply criteria to tell broadsign how to play this campaign.

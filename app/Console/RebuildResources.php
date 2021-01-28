@@ -5,52 +5,44 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - CreateBroadSignCampaign.php
+ * @neo/api - NetworkUpdate.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\Console;
 
-use Carbon\Carbon as Date;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Neo\BroadSign\BroadSign;
+use Illuminate\Console\Command;
+use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
+use Neo\BroadSign\Jobs\CreateBroadSignSchedule;
+use Neo\BroadSign\Jobs\SynchronizeFormats;
+use Neo\BroadSign\Jobs\SynchronizeLocations;
+use Neo\BroadSign\Jobs\SynchronizePlayers;
 use Neo\BroadSign\Models\Bundle;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Campaign;
-use Neo\Models\Frame;
 use Neo\Models\Schedule;
 
-/**
- * Class CreateBroadSignCampaign
- * Create the BroadSign campaign matching the Access' one. BS Campaigns are created with a far-future end date. This is
- * to prevent rebooking, which as of now, 2020-10, cannot be done automatically. Actual end date of the campaign is
- * handled inside Direct
- *
- * @package Neo\Jobs
- */
-class RebuildResources implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+class RebuildResources extends Command {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'network:rebuild';
 
     /**
-     * Create a new job instance.
+     * The console command description.
      *
-     * @return void
+     * @var string
      */
-    public function __construct () {
-    }
+    protected $description = 'Rebuild all campaigns, schedules and bundles for Connect resources in Broadsign';
 
     /**
-     * Execute the job.
+     * Execute the console command.
      *
-     * @param BroadSign $broadsign
-     *
-     * @return void
+     * @return int
      */
-    public function handle (BroadSign $broadsign): void {
+    public function handle (): int {
         // First step is to deactivate all schedules and bundles
         $schedules = Schedule::all();
         foreach ($schedules as $schedule) {
@@ -82,7 +74,7 @@ class RebuildResources implements ShouldQueue {
         $campaigns = Campaign::all();
         foreach ($campaigns as $campaign) {
             if($campaign->broadsign_reservation_id === null) {
-                return;
+                continue;
             }
 
             $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
@@ -105,5 +97,7 @@ class RebuildResources implements ShouldQueue {
         }
 
         // An now we pray
+
+        return 0;
     }
 }

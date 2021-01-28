@@ -34,13 +34,6 @@ class AssociateAdCopyWithBundle implements ShouldQueue {
      *
      * @var int
      */
-    public $delay = 60;
-
-    /**
-     * The number of seconds to wait before retrying the job.
-     *
-     * @var int
-     */
     public int $backoff = 60;
 
     protected int $bundleID, $adCopyID;
@@ -52,6 +45,8 @@ class AssociateAdCopyWithBundle implements ShouldQueue {
      * @param int $adCopyID
      */
     public function __construct(int $bundleID, int $adCopyID) {
+        $this->delay = 60;
+
         $this->bundleID = $bundleID;
         $this->adCopyID = $adCopyID;
     }

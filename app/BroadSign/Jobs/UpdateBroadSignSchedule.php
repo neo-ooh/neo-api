@@ -15,6 +15,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Schedule;
 
@@ -43,7 +44,7 @@ class UpdateBroadSignSchedule implements ShouldQueue {
      *
      * @return void
      */
-    public function __construct (int $scheduleID) {
+    public function __construct(int $scheduleID) {
         $this->scheduleID = $scheduleID;
     }
 
@@ -52,8 +53,8 @@ class UpdateBroadSignSchedule implements ShouldQueue {
      *
      * @return void
      */
-    public function handle (): void {
-        if(config("app.env") === "testing") {
+    public function handle(): void {
+        if (config("app.env") === "testing") {
             return;
         }
 
@@ -68,17 +69,21 @@ class UpdateBroadSignSchedule implements ShouldQueue {
 
         // We need to make sure the end time is not after 23:59:00
         $endTime = $schedule->end_date;
-        if($endTime->isAfter($endTime->setTime(23, 59, 00))) {
+        if ($endTime->isAfter($endTime->setTime(23, 59, 00))) {
             $endTime = $endTime->setTime(23, 59, 00);
         }
 
         // Get and update the schedule
         $bsSchedule = BSSchedule::get($schedule->broadsign_schedule_id);
-        $bsSchedule->name = $schedule->content->name . " Schedules";
+
+        Log::debug("schedule #$schedule->id: " . $schedule->start_date->toDateTimeString() . " -> " . $schedule->end_date->toDateTimeString());
+        Log::debug("schedule #$schedule->id: " . $bsSchedule->start_date . " " . $bsSchedule->start_time . " -> " . $bsSchedule->start_date . " " . $bsSchedule->start_time);
+
+        $bsSchedule->name       = $schedule->content->name . " Schedules";
         $bsSchedule->start_date = $schedule->start_date->toDateString();
         $bsSchedule->start_time = $schedule->start_date->setSecond(0)->toTimeString();
-        $bsSchedule->end_date = $schedule->end_date->toDateString();
-        $bsSchedule->end_time = $endTime->toTimeString();
+        $bsSchedule->end_date   = $schedule->end_date->toDateString();
+        $bsSchedule->end_time   = $endTime->toTimeString();
         $bsSchedule->save();
     }
 }

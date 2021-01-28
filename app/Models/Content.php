@@ -83,9 +83,7 @@ class Content extends SecuredModel {
      *
      * @var array
      */
-    protected $hidden = [
-        "broadsign_content_id",
-    ];
+    protected $hidden = [];
 
     /**
      * The attributes that should be cast.

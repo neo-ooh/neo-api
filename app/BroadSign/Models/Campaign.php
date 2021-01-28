@@ -127,7 +127,7 @@ class Campaign extends BroadSignModel {
         static::addSkinSlots([
             "id"           => $this->id,
             "sub_elements" => [
-                "display_unit"      => $display_units_ids->map(fn($du) => ["id" => $du])->values(),
+                "display_unit"      => $display_units_ids->map(fn($du) => ["id" => $du])->values()->toArray(),
                 "frame_or_criteria" => [
                     ["id" => config("broadsign.advertising-criteria")],
                 ],
@@ -158,7 +158,7 @@ class Campaign extends BroadSignModel {
         static::dropSkinSlots([
             "id"           => $this->id,
             "sub_elements" => [
-                "display_unit" => $display_units_ids->map(fn($du) => ["id" => $du])->values(),
+                "display_unit" => $display_units_ids->map(fn($du) => ["id" => $du])->values()->toArray(),
             ],
         ]);
     }

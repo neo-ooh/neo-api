@@ -155,6 +155,6 @@ class CampaignsController extends Controller {
         $campaign->delete();
 
         // Propagate the changes in BroadSign
-        DisableBroadSignCampaign::dispatch($campaign->id);
+        DisableBroadSignCampaign::dispatch($campaign->broadsign_reservation_id);
     }
 }

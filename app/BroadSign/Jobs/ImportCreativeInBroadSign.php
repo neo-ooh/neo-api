@@ -31,8 +31,8 @@ use Neo\Models\Creative;
 class ImportCreativeInBroadSign implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $creativeID;
-    protected $creativeName;
+    protected int $creativeID;
+    protected string $creativeName;
 
     /**
      * Create a new job instance.
@@ -41,8 +41,8 @@ class ImportCreativeInBroadSign implements ShouldQueue {
      *
      * @return void
      */
-    public function __construct (int $creativeID, string $creativeName) {
-        $this->creativeID = $creativeID;
+    public function __construct(int $creativeID, string $creativeName) {
+        $this->creativeID   = $creativeID;
         $this->creativeName = $creativeName;
     }
 
@@ -54,8 +54,8 @@ class ImportCreativeInBroadSign implements ShouldQueue {
      * @return void
      * @throws Exception
      */
-    public function handle (BroadSign $broadsign): void {
-        if(config("app.env") === "testing") {
+    public function handle(BroadSign $broadsign): void {
+        if (config("app.env") === "testing") {
             return;
         }
 
@@ -71,25 +71,32 @@ class ImportCreativeInBroadSign implements ShouldQueue {
         $attributes .= "height=" . $creative->frame->height . "\n";
 
         if ($creative->extension === "mp4") {
-            $interval = new DateInterval("PT" . $creative->content->duration . "S");
+            $interval   = new DateInterval("PT" . $creative->content->duration . "S");
             $attributes .= "duration=" . $interval->format("H:I:S") . "\n";
         }
 
-        $bsCreative = new BSCreative();
+        $bsCreative             = new BSCreative();
         $bsCreative->attributes = $attributes;
-        $bsCreative->name = $creative->owner->email . " - " . $this->creativeName;
-        $bsCreative->parent_id = $broadsign->getDefaults()["customer_id"];
-        $bsCreative->url = $creative->file_url;
+        $bsCreative->name       = $creative->owner->email . " - " . $this->creativeName;
+        $bsCreative->parent_id  = $broadsign->getDefaults()["customer_id"];
+        $bsCreative->url        = $creative->file_url;
         $bsCreative->create();
 
         $creative->broadsign_ad_copy_id = $bsCreative->id;
         $creative->save();
+
+        $this->targetCreative($bsCreative, $creative, $broadsign);
     }
 
-
+    /**
+     * Appropriately set the criteria for the ad-copy to broadcast
+     * @param BSCreative $bsCreative
+     * @param Creative   $creative
+     * @param BroadSign  $broadsign
+     */
     public function targetCreative(BSCreative $bsCreative, Creative $creative, BroadSign $broadsign) {
         // We need to target the creative base on its format and frames
-        if($creative->frame->format->frames_count === 1) {
+        if ($creative->frame->format->frames_count === 1) {
             // Only one frame in the format, do nothing
             return;
         }

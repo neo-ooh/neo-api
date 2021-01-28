@@ -30,18 +30,18 @@ class DisableBroadSignCampaign implements ShouldQueue {
     /**
      * @var int ID of the campaign in Access
      */
-    protected int $campaignID;
+    protected int $reservationId;
 
 
     /**
      * Create a new job instance.
      *
-     * @param int $campaignID ID of the campaign in Access
+     * @param int $reservationId ID of the campaign in Access
      *
      * @return void
      */
-    public function __construct (int $campaignID) {
-        $this->campaignID = $campaignID;
+    public function __construct (int $reservationId) {
+        $this->reservationId = $reservationId;
     }
 
     /**
@@ -54,18 +54,16 @@ class DisableBroadSignCampaign implements ShouldQueue {
             return;
         }
 
-        // Get the campaign
-        $campaign = Campaign::query()->findOrFail($this->campaignID);
+        // Update the broadsign campaign
+        $bsReservation = BSCampaign::get($this->reservationId);
 
-        if (!$campaign->broadsign_reservation_id) {
-            // This campaign doesn't have a BroadSign ID, do nothing.
+        if($bsReservation === null) {
+            // We do not throw any error on reservation not found as we were already trying to deactivate it.
             return;
         }
 
-        // Update the broadsign campaign
-        $bsSchedule = BSCampaign::get($campaign->broadsign_reservation_id);
-        $bsSchedule->active = false;
-        $bsSchedule->state = 2;
-        $bsSchedule->save();
+        $bsReservation->active = false;
+        $bsReservation->state = 2;
+        $bsReservation->save();
     }
 }

@@ -54,6 +54,12 @@ class DisableBroadSignCreative implements ShouldQueue {
         }
 
         $bsCreative = BSCreative::get($this->adCopyID);
+
+        if($bsCreative === null) {
+            // We do not throw any error on ad-copy not found as we were already trying to deactive it.
+            return;
+        }
+
         $bsCreative->active = false;
         $bsCreative->save();
     }

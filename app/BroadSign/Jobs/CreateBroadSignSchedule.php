@@ -23,6 +23,7 @@ use Neo\Models\Actor;
 use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Schedule;
+use Symfony\Component\Translation\Exception\InvalidResourceException;
 
 /**
  * Class CreateBroadSignSchedule
@@ -86,6 +87,10 @@ class CreateBroadSignSchedule implements ShouldQueue {
         // Load the broadsign loop slot for the campaign
         $loopSlot = LoopSlot::forCampaign([ "reservable_id" => $schedule->campaign->broadsign_reservation_id ])[0];
 
+        if($loopSlot === null) {
+            throw new InvalidResourceException("Could not retrieve the loop slot for the reservation ".$schedule->campaign->broadsign_reservation_id.". ");
+        }
+
         // Create the schedule in broadsign
         $bsSchedule = new BSSchedule();
         $bsSchedule->day_of_week_mask = 127; // 01111111
@@ -136,12 +141,8 @@ class CreateBroadSignSchedule implements ShouldQueue {
         // Import the content's creatives
         /** @var Creative $creative */
         foreach ($content->creatives as $creative) {
-            try {
-                $bundle->associateCreative($creative->broadsign_ad_copy_id);
-            } catch (BadResponse $e) {
-                // Association failed, The creative / Ad-Copy may have not finished uploading, set a job to try again in a bit
+                // Association is done through another job as the ad copy need to have finished uploading. This way we can retry the association if needed
                 AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id);
-            }
         }
     }
 }

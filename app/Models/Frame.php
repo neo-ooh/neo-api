@@ -35,6 +35,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Frame extends Model {
     use SoftDeletes;
 
+    // Define the supported frame types
+    public const TYPE_MAIN = 'MAIN';
+    public const TYPE_RIGHT = 'RIGHT';
+
     /*
     |--------------------------------------------------------------------------
     | Table properties

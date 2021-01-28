@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Neo\BroadSign\Models\Bundle;
 
 /**
@@ -52,7 +51,7 @@ class AssociateAdCopyWithBundle implements ShouldQueue {
      * @param int $bundleID
      * @param int $adCopyID
      */
-    public function __construct (int $bundleID, int $adCopyID) {
+    public function __construct(int $bundleID, int $adCopyID) {
         $this->bundleID = $bundleID;
         $this->adCopyID = $adCopyID;
     }
@@ -63,12 +62,12 @@ class AssociateAdCopyWithBundle implements ShouldQueue {
      * @return void
      * @throws BadResponse
      */
-    public function handle (): void {
-        if(config("app.env") === "testing") {
+    public function handle(): void {
+        if (config("app.env") === "testing") {
             return;
         }
 
-        $bundle = new Bundle([ "id" => $this->bundleID ]);
+        $bundle = new Bundle(["id" => $this->bundleID]);
         $bundle->associateCreative($this->adCopyID);
     }
 }

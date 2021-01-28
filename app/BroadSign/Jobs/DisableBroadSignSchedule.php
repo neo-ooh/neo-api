@@ -18,6 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\Models\Bundle as BSBundle;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Schedule;
+use Symfony\Component\Translation\Exception\InvalidResourceException;
 
 /**
  * Class DisableBroadSignSchedule
@@ -31,18 +32,18 @@ class DisableBroadSignSchedule implements ShouldQueue {
     /**
      * @var int ID of the schedule in Access
      */
-    protected int $scheduleID;
+    protected int $broadsignScheduleId;
 
 
     /**
      * Create a new job instance.
      *
-     * @param int $scheduleID ID of the schedule in Access
+     * @param int $broadsignScheduleId ID of the schedule in Access
      *
      * @return void
      */
-    public function __construct (int $scheduleID) {
-        $this->scheduleID = $scheduleID;
+    public function __construct (int $broadsignScheduleId) {
+        $this->broadsignScheduleId = $broadsignScheduleId;
     }
 
     /**
@@ -55,22 +56,26 @@ class DisableBroadSignSchedule implements ShouldQueue {
             return;
         }
 
-        // Get the campaign
-        $schedule = Schedule::query()->findOrFail($this->scheduleID);
+        // Deactivate the schedule
+        $bsSchedule = BSSchedule::get($this->broadsignScheduleId);
 
-        if (!$schedule->broadsign_schedule_id) {
-            // This schedule doesn't have a BroadSign ID, do nothing.
+        if($bsSchedule === null) {
+            // We do not throw error on schedule not found here as we are already trying to deactivate it.
             return;
         }
 
-        // Deactivate the schedule
-        $bsSchedule = BSSchedule::get($schedule->broadsign_schedule_id);
         $bsSchedule->active = false;
         $bsSchedule->weight = 0;
         $bsSchedule->save();
 
-        // Deactivate the bundle
-        $bsBundle = BSBundle::bySchedule($this->scheduleID);
+        // Deactivate the schedule's bundle
+        $bsBundle = BSBundle::bySchedule($this->broadsignScheduleId);
+
+        if($bsBundle === null) {
+            // We do not throw error on bundle not found here as we are already trying to deactivate it.
+            throw new InvalidResourceException("BroadSign Bundle for Schedule $this->broadsignScheduleId could not be loaded.");
+        }
+
         $bsBundle->active = false;
         $bsBundle->save();
     }

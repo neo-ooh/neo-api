@@ -62,9 +62,12 @@ class RebuildResources extends Command {
                 continue;
             }
 
-            $bsBundle = Bundle::bySchedule($schedule->broadsign_bundle_id);
-            $bsBundle->active = false;
-            $bsBundle->save();
+            $bsBundles = Bundle::bySchedule($schedule->broadsign_bundle_id);
+
+            foreach ($bsBundles as $bsBundle) {
+                $bsBundle->active = false;
+                $bsBundle->save();
+            }
 
             $schedule->broadsign_bundle_id = null;
             $schedule->save();

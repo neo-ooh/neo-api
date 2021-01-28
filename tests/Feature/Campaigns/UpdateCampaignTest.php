@@ -22,9 +22,8 @@ class UpdateCampaignTest extends TestCase {
     /**
      * Assert guests cannot call this route
      */
-    public function testGuestsAreProhibited (): void
-    {
-        $actor = Actor::factory()->create();
+    public function testGuestsAreProhibited(): void {
+        $actor    = Actor::factory()->create();
         $campaign = Campaign::factory()->create(["owner_id" => $actor->id]);
 
         $response = $this->json("PUT", "/v1/campaigns/" . $campaign->id);
@@ -34,8 +33,7 @@ class UpdateCampaignTest extends TestCase {
     /**
      * Assert only user with the proper capability can call this route
      */
-    public function testOnlyActorWithTheProperCapabilityCanCallThisRoute (): void
-    {
+    public function testOnlyActorWithTheProperCapabilityCanCallThisRoute(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
         $campaign = Campaign::factory()->create(["owner_id" => $actor->id]);
@@ -52,8 +50,7 @@ class UpdateCampaignTest extends TestCase {
     /**
      * Assert Correct response on correct request
      */
-    public function testCorrectResponseOnCorrectRequest (): void
-    {
+    public function testCorrectResponseOnCorrectRequest(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
@@ -68,6 +65,7 @@ class UpdateCampaignTest extends TestCase {
                 "display_duration" => $campaign->display_duration,
                 "start_date"       => $campaign->start_date,
                 "end_date"         => $campaign->end_date,
+                "loop_saturation"  => 1
             ]);
         $response->assertOk()
                  ->assertJsonStructure([
@@ -78,14 +76,14 @@ class UpdateCampaignTest extends TestCase {
                      "display_duration",
                      "start_date",
                      "end_date",
+                     "loop_saturation"
                  ]);
     }
 
     /**
      * Assert correct errors on bad request
      */
-    public function testCorrectErrorsOnBadRequest (): void
-    {
+    public function testCorrectErrorsOnBadRequest(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
@@ -106,13 +104,12 @@ class UpdateCampaignTest extends TestCase {
     /**
      * Assert cannot update inaccessible campaign
      */
-    public function testActorCannotUpdateInaccessibleCampaign (): void
-    {
+    public function testActorCannotUpdateInaccessibleCampaign(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
         $otherActor = Actor::factory()->create();
-        $campaign = Campaign::factory()->create(["owner_id" => $otherActor->id]);
+        $campaign   = Campaign::factory()->create(["owner_id" => $otherActor->id]);
 
         $response = $this->json("PUT", "/v1/campaigns/" . $campaign->id);
         $response->assertForbidden();

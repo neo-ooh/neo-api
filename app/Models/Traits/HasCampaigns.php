@@ -58,7 +58,7 @@ trait HasCampaigns {
     |--------------------------------------------------------------------------
     */
 
-    public function getCampaigns($own = true, $shared = true, $children = true, $parent = true) {
+    public function getCampaigns($own = true, $shared = true, $children = true, $parent = true): Collection {
         $campaigns = new Collection();
 
         // Actor's own campaigns
@@ -77,7 +77,7 @@ trait HasCampaigns {
             $campaigns = $campaigns->merge($this->children_campaigns);
         }
 
-        // Libraries of the parent of the user, if applicable
+        // Campaigns of the parent of the user, if applicable
         if($parent && ($this->details->parent_is_group ?? false) && !$this->is_group) {
             $campaigns = $campaigns->merge($this->parent->getCampaigns(true, true, true, false));
         }

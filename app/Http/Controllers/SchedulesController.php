@@ -14,6 +14,7 @@ namespace Neo\Http\Controllers;
 
 use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -315,12 +316,14 @@ class SchedulesController extends Controller
     public function pending(ListPendingSchedulesRequest $request)
     {
         // List all accessible schedules pending review
-        // A schedule pending review is a schedule who is locked and who doesn't have any reviews
+        // A schedule pending review is a schedule who is locked, is not pre-approved, and who doesn't have any reviews
 
         $campaigns = Auth::user()->getCampaigns()->pluck('id');
         $schedules = Schedule::query()
                              ->whereIn("campaign_id", $campaigns)
                              ->where("locked", "=", 1)
+                             ->join('contents', 'contents.id', '=', "content_id")
+                             ->where('contents.is_approved', '=', false)
                              ->whereNotExists(fn($query) => $query->select(DB::raw(1))
                                                                   ->from('reviews')
                                                                   ->whereRaw('reviews.schedule_id = schedules.id'))

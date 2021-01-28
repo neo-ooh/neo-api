@@ -75,6 +75,7 @@ class StoreCampaignTest extends TestCase
                 "content_limit" => 10,
                 "start_date" => Date::now()->toIso8601String(),
                 "end_date" => Date::now()->addDays(14)->toIso8601String(),
+                "loop_saturation" => 1
             ]);
         $response->assertCreated()
                  ->assertJsonStructure([
@@ -86,6 +87,7 @@ class StoreCampaignTest extends TestCase
                      "content_limit",
                      "start_date",
                      "end_date",
+                     "loop_saturation"
                  ]);
     }
 
@@ -132,6 +134,7 @@ class StoreCampaignTest extends TestCase
                 "content_limit" => 10,
                 "start_date" => Date::now()->toIso8601String(),
                 "end_date" => Date::now()->addDays(14)->toIso8601String(),
+                "loop_saturation" => 1
             ]);
         $response->assertCreated()
                  ->assertJsonStructure([
@@ -143,6 +146,7 @@ class StoreCampaignTest extends TestCase
                      "content_limit",
                      "start_date",
                      "end_date",
+                     "loop_saturation",
                  ]);
     }
 

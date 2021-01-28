@@ -75,10 +75,6 @@ class UpdateBroadSignSchedule implements ShouldQueue {
 
         // Get and update the schedule
         $bsSchedule = BSSchedule::get($schedule->broadsign_schedule_id);
-
-        Log::debug("schedule #$schedule->id: " . $schedule->start_date->toDateTimeString() . " -> " . $schedule->end_date->toDateTimeString());
-        Log::debug("schedule #$schedule->id: " . $bsSchedule->start_date . " " . $bsSchedule->start_time . " -> " . $bsSchedule->start_date . " " . $bsSchedule->start_time);
-
         $bsSchedule->name       = $schedule->content->name . " Schedules";
         $bsSchedule->start_date = $schedule->start_date->toDateString();
         $bsSchedule->start_time = $schedule->start_date->setSecond(0)->toTimeString();

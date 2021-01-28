@@ -15,7 +15,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Neo\BroadSign\Models\Bundle as BSBundle;
+use Neo\BroadSign\Models\Campaign;
 use Neo\BroadSign\Models\LoopSlot;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Actor;
@@ -96,6 +98,10 @@ class CreateBroadSignSchedule implements ShouldQueue {
         if ($endTime->isAfter($endTime->setTime(23, 59, 00))) {
             $endTime = $endTime->setTime(23, 59, 00);
         }
+
+        $bsCampaign = Campaign::get($schedule->campaign->broadsign_reservation_id);
+        Log::debug("schedule #$schedule->id: " . $schedule->start_date->toDateTimeString() . " -> " . $schedule->end_date->toDateTimeString());
+        Log::debug("campaign #$schedule->id: " . $bsCampaign->start_date . " " . $bsCampaign->start_time . " -> " . $bsCampaign->start_date . " " . $bsCampaign->start_time);
 
         // Create the schedule in broadsign
         $bsSchedule                   = new BSSchedule();

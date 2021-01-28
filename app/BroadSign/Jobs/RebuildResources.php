@@ -96,7 +96,7 @@ class RebuildResources implements ShouldQueue {
             $bsCampaign->save();
 
             $campaign->broadsign_reservation_id = null;
-            $bsCampaign->save();
+            $campaign->save();
         }
 
         // Now, we start by replicating all campaigns

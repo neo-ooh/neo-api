@@ -100,9 +100,9 @@ class CreateBroadSignSchedule implements ShouldQueue {
         $bsSchedule->rotation_mode = 0;
         $bsSchedule->schedule_group = 2;
         $bsSchedule->start_date = $schedule->start_date->toDateString();
-        $bsSchedule->start_time = $schedule->start_date->toTimeString();
+        $bsSchedule->start_time = $schedule->start_date->setSecond(0)->toTimeString();
         $bsSchedule->end_date = $schedule->end_date->toDateString();
-        $bsSchedule->end_time = $schedule->end_date->toTimeString();
+        $bsSchedule->end_time = $schedule->end_date->setSecond(30)->toTimeString();
         $bsSchedule->weight = 1;
         $bsSchedule->create();
 

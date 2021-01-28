@@ -91,6 +91,13 @@ class CreateBroadSignSchedule implements ShouldQueue {
             throw new InvalidResourceException("Could not retrieve the loop slot for the reservation ".$schedule->campaign->broadsign_reservation_id.". ");
         }
 
+
+        // We need to make sure the end time is not after 23:59:00
+        $endTime = $schedule->end_date;
+        if($endTime->isAfter($endTime->setTime(23, 59, 00))) {
+            $endTime = $endTime->setTime(23, 59, 00);
+        }
+
         // Create the schedule in broadsign
         $bsSchedule = new BSSchedule();
         $bsSchedule->day_of_week_mask = 127; // 01111111
@@ -102,7 +109,7 @@ class CreateBroadSignSchedule implements ShouldQueue {
         $bsSchedule->start_date = $schedule->start_date->toDateString();
         $bsSchedule->start_time = $schedule->start_date->setSecond(0)->toTimeString();
         $bsSchedule->end_date = $schedule->end_date->toDateString();
-        $bsSchedule->end_time = $schedule->end_date->setSecond(30)->toTimeString();
+        $bsSchedule->end_time = $endTime->toTimeString();
         $bsSchedule->weight = 1;
         $bsSchedule->create();
 

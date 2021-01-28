@@ -9,8 +9,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Format.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Format.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_01_28_205633_alter_formats_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_01_28_205633_alter_formats_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Brandings/ListBrandingsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Brandings/ListBrandingsRequest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -272,7 +272,7 @@
       <workItem from="1611585237584" duration="5052000" />
       <workItem from="1611671680675" duration="18018000" />
       <workItem from="1611759751819" duration="932000" />
-      <workItem from="1611841219519" duration="17228000" />
+      <workItem from="1611841219519" duration="17685000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

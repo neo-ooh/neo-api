@@ -29,6 +29,8 @@ use BenSampo\Enum\Enum;
  * @method static self bursts_request()
  * @method static self reports_create()
  * @method static self reports_edit()
+ *
+ * @method static self chores_broadsign()
  * @method static self tests()
  */
 final class Capability extends Enum {
@@ -75,4 +77,7 @@ final class Capability extends Enum {
     public const reports_create = "reports.create";
     public const reports_edit = "reports.edit";
     public const bursts_request = "bursts.request";
+
+    // Broadsign administration
+    public const chores_broadsign = "chores.broadsign";
 }

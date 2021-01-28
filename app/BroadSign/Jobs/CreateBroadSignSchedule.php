@@ -10,7 +10,6 @@
 
 namespace Neo\BroadSign\Jobs;
 
-use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -53,9 +52,9 @@ class CreateBroadSignSchedule implements ShouldQueue {
      *
      * @return void
      */
-    public function __construct (int $scheduleID, int $actorID) {
+    public function __construct(int $scheduleID, int $actorID) {
         $this->scheduleID = $scheduleID;
-        $this->actorID = $actorID;
+        $this->actorID    = $actorID;
     }
 
     /**
@@ -63,8 +62,8 @@ class CreateBroadSignSchedule implements ShouldQueue {
      *
      * @return void
      */
-    public function handle (): void {
-        if(config("app.env") === "testing") {
+    public function handle(): void {
+        if (config("app.env") === "testing") {
             return;
         }
 
@@ -72,7 +71,7 @@ class CreateBroadSignSchedule implements ShouldQueue {
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->findOrFail($this->scheduleID);
 
-        if ($schedule->broadsign_schedule_id || !$schedule->campaign->broadsign_reservation_id) {
+        if ($schedule->broadsign_schedule_id || !$schedule->campaign) {
             // This schedule already has a BroadSign ID, do nothing. OR
             // This schedule's campaign do not have a schedule ID, do nothing
             return;
@@ -85,32 +84,32 @@ class CreateBroadSignSchedule implements ShouldQueue {
         $actor = Actor::query()->findOrFail($this->actorID);
 
         // Load the broadsign loop slot for the campaign
-        $loopSlot = LoopSlot::forCampaign([ "reservable_id" => $schedule->campaign->broadsign_reservation_id ])[0];
+        $loopSlot = LoopSlot::forCampaign(["reservable_id" => $schedule->campaign->broadsign_reservation_id])[0];
 
-        if($loopSlot === null) {
-            throw new InvalidResourceException("Could not retrieve the loop slot for the reservation ".$schedule->campaign->broadsign_reservation_id.". ");
+        if ($loopSlot === null) {
+            throw new InvalidResourceException("Could not retrieve the loop slot for the reservation " . $schedule->campaign->broadsign_reservation_id . ". ");
         }
 
 
         // We need to make sure the end time is not after 23:59:00
         $endTime = $schedule->end_date;
-        if($endTime->isAfter($endTime->setTime(23, 59, 00))) {
+        if ($endTime->isAfter($endTime->setTime(23, 59, 00))) {
             $endTime = $endTime->setTime(23, 59, 00);
         }
 
         // Create the schedule in broadsign
-        $bsSchedule = new BSSchedule();
+        $bsSchedule                   = new BSSchedule();
         $bsSchedule->day_of_week_mask = 127; // 01111111
-        $bsSchedule->name = $schedule->campaign->name . " - " . $actor->email;
-        $bsSchedule->parent_id = $loopSlot->id;
-        $bsSchedule->reservable_id = $schedule->campaign->broadsign_reservation_id;
-        $bsSchedule->rotation_mode = 0;
-        $bsSchedule->schedule_group = 2;
-        $bsSchedule->start_date = $schedule->start_date->toDateString();
-        $bsSchedule->start_time = $schedule->start_date->setSecond(0)->toTimeString();
-        $bsSchedule->end_date = $schedule->end_date->toDateString();
-        $bsSchedule->end_time = $endTime->toTimeString();
-        $bsSchedule->weight = 1;
+        $bsSchedule->name             = $schedule->campaign->name . " - " . $actor->email;
+        $bsSchedule->parent_id        = $loopSlot->id;
+        $bsSchedule->reservable_id    = $schedule->campaign->broadsign_reservation_id;
+        $bsSchedule->rotation_mode    = 0;
+        $bsSchedule->schedule_group   = 2;
+        $bsSchedule->start_date       = $schedule->start_date->toDateString();
+        $bsSchedule->start_time       = $schedule->start_date->setSecond(0)->toTimeString();
+        $bsSchedule->end_date         = $schedule->end_date->toDateString();
+        $bsSchedule->end_time         = $endTime->toTimeString();
+        $bsSchedule->weight           = 1;
         $bsSchedule->create();
 
         $schedule->broadsign_schedule_id = $bsSchedule->id;
@@ -130,15 +129,15 @@ class CreateBroadSignSchedule implements ShouldQueue {
      *
      * @return void
      */
-    public function makeBundle (Content $content, BSSchedule $bsSchedule, Schedule $schedule): void {
+    public function makeBundle(Content $content, BSSchedule $bsSchedule, Schedule $schedule): void {
         // Create a bundle
-        $bundle = new BSBundle();
-        $bundle->active = true;
+        $bundle                        = new BSBundle();
+        $bundle->active                = true;
         $bundle->allow_custom_duration = true;
-        $bundle->fullscreen = true;
-        $bundle->max_duration_msec = $schedule->campaign->display_duration * 1000;
-        $bundle->name = $schedule->campaign->name . " (" . $schedule->campaign_id . ")" . "-" . $content->name ?? ("Bundle #" . $schedule->id);
-        $bundle->parent_id = $bsSchedule->id;
+        $bundle->fullscreen            = true;
+        $bundle->max_duration_msec     = $schedule->campaign->display_duration * 1000;
+        $bundle->name                  = $schedule->campaign->name . " (" . $schedule->campaign_id . ")" . "-" . $content->name ?? ("Bundle #" . $schedule->id);
+        $bundle->parent_id             = $bsSchedule->id;
         $bundle->create();
 
         // Assign the bundle ID to the content
@@ -148,8 +147,8 @@ class CreateBroadSignSchedule implements ShouldQueue {
         // Import the content's creatives
         /** @var Creative $creative */
         foreach ($content->creatives as $creative) {
-                // Association is done through another job as the ad copy need to have finished uploading. This way we can retry the association if needed
-                AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id);
+            // Association is done through another job as the ad copy need to have finished uploading. This way we can retry the association if needed
+            AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id);
         }
     }
 }

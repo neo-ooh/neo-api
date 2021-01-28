@@ -70,6 +70,9 @@ class Kernel extends HttpKernel {
         'broadsign'   => [
             SubstituteBindings::class,
         ],
+        'documents'   => [
+            SubstituteBindings::class,
+        ],
     ];
 
     /**

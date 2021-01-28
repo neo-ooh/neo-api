@@ -16,7 +16,8 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
+use Neo\BroadSign\Jobs\DisableBroadSignCreative;
+use Neo\BroadSign\Jobs\ImportCreativeInBroadSign;
 use Neo\Exceptions\BaseException;
 use Neo\Exceptions\CannotOverwriteCreativeException;
 use Neo\Exceptions\IncompatibleFrameAndFormat;
@@ -28,16 +29,12 @@ use Neo\Exceptions\InvalidCreativeSize;
 use Neo\Exceptions\InvalidVideoCodec;
 use Neo\Http\Requests\Creatives\DestroyCreativeRequest;
 use Neo\Http\Requests\Creatives\StoreCreativeRequest;
-use Neo\BroadSign\Jobs\DisableBroadSignCreative;
-use Neo\BroadSign\Jobs\ImportCreativeInBroadSign;
 use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Frame;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
-use Symfony\Component\Mime\MimeTypes;
 
-class CreativesController extends Controller
-{
+class CreativesController extends Controller {
     /**
      * @param StoreCreativeRequest $request
      * @param Content              $content
@@ -46,8 +43,7 @@ class CreativesController extends Controller
      * @throws IncompatibleFrameAndFormat
      * @throws InvalidCreativeFileFormat
      */
-    public function store(StoreCreativeRequest $request, Content $content)
-    {
+    public function store(StoreCreativeRequest $request, Content $content) {
         // Start by checking the given frame matched the content format
         /** @var Frame $frame */
         $frame = Frame::query()->find($request->get("frame_id"));
@@ -88,7 +84,6 @@ class CreativesController extends Controller
         $creative->save();
         $creative->refresh();
         $creative->store($file);
-
 
         // Import the creative in BroadSign
         ImportCreativeInBroadSign::dispatch($creative->id, $file->getClientOriginalName());
@@ -176,8 +171,7 @@ class CreativesController extends Controller
         throw new InvalidCreativeFileFormat();
     }
 
-    private function fracToFloat($frac): float
-    {
+    private function fracToFloat($frac): float {
         $numbers = explode("/", $frac);
         return round($numbers[0] / $numbers[1], 6);
     }
@@ -190,8 +184,7 @@ class CreativesController extends Controller
      * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */
-    public function destroy(DestroyCreativeRequest $request, Creative $creative)
-    {
+    public function destroy(DestroyCreativeRequest $request, Creative $creative) {
         if ($creative->content->schedules_count === 0) {
             $creative->forceDelete();
         } else {

@@ -99,7 +99,7 @@ class Report extends Model {
 
     public function getPerformancesAttribute(): array {
         $reservations = $this->reservations;
-        $performances = ReservablePerformance::byReservable($reservations->pluck('broadsign_reservation_id')->toArray());
+        $performances = ReservablePerformance::byReservable($reservations->pluck('broadsign_reservation_id')->values()->toArray());
 
         return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
     }

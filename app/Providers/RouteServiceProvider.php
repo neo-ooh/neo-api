@@ -38,6 +38,8 @@ class RouteServiceProvider extends ServiceProvider {
             Route::middleware('api')->group(base_path('routes/auth.php'));
 
             Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
+
+            Route::middleware('documents')->group(base_path('routes/documents.php'));
         });
     }
 

@@ -16,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\BroadSign;
+use Neo\BroadSign\Models\Bundle as BSBundle;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\Models\Campaign;
 
@@ -61,12 +62,21 @@ class UpdateBroadSignCampaign implements ShouldQueue {
         $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
 
         // Update the name and fullscreen status of the campaign
-        $bsCampaign->name = $campaign->name;
+        $bsCampaign->name = $campaign->owner->name . " - " . $campaign->name;
         $bsCampaign->default_fullscreen = $campaign->format->is_fullscreen;
         $bsCampaign->save();
 
         // Update the campaign saturation as needed
         $bsCampaign->saturation = $campaign->loop_saturation > 0 ? $campaign->loop_saturation : $campaign->schedules->filter(fn($schedule) => $schedule->is_approved)->count();
+
+        // Update the bundle in the campaign to match the campaign duration
+        $bundles = BSBundle::byReservable($bsCampaign->id);
+
+        /** @var BSBundle $bundle */
+        foreach ($bundles as $bundle) {
+            $bundle->max_duration_msec = $campaign->display_duration * 1000; // ms
+            $bundle->save();
+        }
 
         // Get the campaign locations
         $locations = $campaign->locations;

@@ -80,7 +80,7 @@ class CreateBroadSignCampaign implements ShouldQueue {
         $bsCampaign->duration_msec = $campaign->display_duration * 1000;
         $bsCampaign->end_date = $endDate->toDateString();
         $bsCampaign->end_time = "23:59:00";
-        $bsCampaign->name = $campaign->name . "(" . $campaign->owner->name . ")";
+        $bsCampaign->name = $campaign->owner->name . " - " . $campaign->name;
         $bsCampaign->parent_id = $broadsign->getDefaults()["customer_id"];
         $bsCampaign->start_date = $startDate->toDateString();
         $bsCampaign->start_time = "00:00:00";

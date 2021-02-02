@@ -23,11 +23,10 @@ class CapabilitiesSeeder extends Seeder {
     public static function run(): void {
         $allCapabilities = \Neo\Enums\Capability::asArray();
 
-        /** @var Role $admin */
-        $admin = Role::query()->firstOrCreate(["name" => "Admin"]);
+        Role::query()->firstOrCreate(["name" => "Admin"]);
 
         foreach ($allCapabilities as $capability => $value) {
-            $cap = Capability::query()->firstOrCreate(["slug" => $value], ["service" => "", "standalone" => true]);
+            Capability::query()->firstOrCreate(["slug" => $value], ["service" => "", "standalone" => true]);
         }
 
         // Assign proper service to each capability

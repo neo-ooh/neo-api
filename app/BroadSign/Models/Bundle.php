@@ -51,7 +51,8 @@ class Bundle extends BroadSignModel {
             "create"    => Endpoint::post("/bundle/v12/add")->id(),
             "update"    => Endpoint::put("/bundle/v12"),
             "associate" => Endpoint::post("/bundle_content/v5/add")->ignore(),
-            "bySchedule" => Endpoint::get("/bundle/v12/by_schedule")->multiple()
+            "bySchedule" => Endpoint::get("/bundle/v12/by_schedule")->multiple(),
+            "byReservable" => Endpoint::get("/bundle/v12/by_reservable")->multiple()
         ];
     }
 
@@ -72,5 +73,9 @@ class Bundle extends BroadSignModel {
 
     public static function bySchedule(int $scheduleId) {
         return (new self())->callAction("bySchedule", ["schedule_id" => $scheduleId]);
+    }
+
+    public static function byReservable(int $reservableId) {
+        return (new self())->callAction("byReservable", ["reservable_id" => $reservableId]);
     }
 }

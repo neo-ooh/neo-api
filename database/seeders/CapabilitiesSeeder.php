@@ -28,9 +28,6 @@ class CapabilitiesSeeder extends Seeder {
 
         foreach ($allCapabilities as $capability => $value) {
             $cap = Capability::query()->firstOrCreate(["slug" => $value], ["service" => "", "standalone" => true]);
-            if (!$admin->capabilities->contains($cap)) {
-                $admin->capabilities()->attach($cap->id);
-            }
         }
 
         // Assign proper service to each capability
@@ -63,5 +60,7 @@ class CapabilitiesSeeder extends Seeder {
         Capability::where("slug", "=", "bursts.request")->update(["service" => "REPORTS"]);
         Capability::where("slug", "=", "reports.create")->update(["service" => "REPORTS"]);
         Capability::where("slug", "=", "reports.edit")->update(["service" => "REPORTS"]);
+
+        Capability::where("slug", "=", "chores.broadsign")->update(["service" => "INTERNAL"]);
     }
 }

@@ -24,6 +24,9 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         NetworkUpdate::class,
         RebuildResources::class,
+        RebuildResources::class,
+
+        Hotfixes\DisableFullscreenEverywhere::class,
     ];
 
     /**

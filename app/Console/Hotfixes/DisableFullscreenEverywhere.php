@@ -8,7 +8,7 @@
  * @neo/api - NetworkUpdate.php
  */
 
-namespace Neo\Console;
+namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
 use Neo\BroadSign\Models\Bundle;

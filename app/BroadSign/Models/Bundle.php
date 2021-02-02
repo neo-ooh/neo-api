@@ -47,14 +47,35 @@ class Bundle extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all"       => Endpoint::get("/bundle/v12")->multiple(),
-            "create"    => Endpoint::post("/bundle/v12/add")->id(),
-            "update"    => Endpoint::put("/bundle/v12"),
-            "associate" => Endpoint::post("/bundle_content/v5/add")->ignore(),
-            "bySchedule" => Endpoint::get("/bundle/v12/by_schedule")->multiple(),
+            "all"          => Endpoint::get("/bundle/v12")->multiple(),
+            "create"       => Endpoint::post("/bundle/v12/add")->id(),
+            "update"       => Endpoint::put("/bundle/v12"),
+            "associate"    => Endpoint::post("/bundle_content/v5/add")->ignore(),
+            "bySchedule"   => Endpoint::get("/bundle/v12/by_schedule")->multiple(),
             "byReservable" => Endpoint::get("/bundle/v12/by_reservable")->multiple()
         ];
     }
+
+    protected static array $updatable = [
+        "active",
+        "allow_custom_duration",
+        "attributes",
+        "auto_synchronized",
+        "category_id",
+        "domain_id",
+        "fullscreen",
+        "id",
+        "interactivity_timeout",
+        "interactivity_trigger_id",
+        "loop_category_id",
+        "loop_positions",
+        "loop_weight",
+        "max_duration_msec",
+        "name",
+        "position",
+        "secondary_sep_category_ids",
+        "trigger_category_id"
+    ];
 
     /**
      * @param int $creativeID

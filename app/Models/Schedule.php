@@ -87,8 +87,6 @@ class Schedule extends Model {
      * @var array
      */
     protected $hidden = [
-        "broadsign_bundle_id",
-        "broadsign_schedule_id",
     ];
 
     /**

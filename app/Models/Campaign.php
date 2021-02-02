@@ -88,9 +88,7 @@ class Campaign extends SecuredModel {
      *
      * @var array
      */
-    protected $hidden = [
-        "reservation_id",
-    ];
+    protected $hidden = [];
 
     /**
      * The attributes that should be mutated to dates.
@@ -117,8 +115,7 @@ class Campaign extends SecuredModel {
      *
      * @var array
      */
-    protected $withCount = [
-    ];
+    protected $withCount = [];
 
     protected $appends = [
         "status",

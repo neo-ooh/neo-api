@@ -294,9 +294,6 @@ class SchedulesController extends Controller
      */
     public function destroy(DestroyScheduleRequest $request, Schedule $schedule)
     {
-        // Execute the deletion on broadsign side
-        DisableBroadSignSchedule::dispatch($schedule->broadsign_schedule_id);
-
         // If a schedule has not be reviewed, we want to completely remove it
         if ($schedule->status === 'draft' || $schedule->status === 'pending') {
             $schedule->forceDelete();

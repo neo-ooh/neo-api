@@ -143,8 +143,9 @@ class Schedule extends Model {
     protected static function boot() {
         parent::boot();
 
-        static::deleted(function (Schedule $schedule) {
-            DisableBroadSignSchedule::dispatch($schedule->id);
+        static::deleting(function (Schedule $schedule) {
+            // Execute the deletion on broadsign side
+            DisableBroadSignSchedule::dispatch($schedule->broadsign_schedule_id);
         });
     }
 

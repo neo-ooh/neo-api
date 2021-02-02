@@ -39,7 +39,7 @@ class ActorsCapabilitiesController extends Controller {
         }
 
         // All good, add the capabilities
-        $capabilitiesID = $actor->standalone_capabilities->pluck("id")->values();
+        $capabilitiesID = $actor->standalone_capabilities->pluck("id")->values()->toArray();
 
         $toAdd = array_diff($capabilities, $capabilitiesID);
         $toRemove = array_diff($capabilitiesID, $capabilities);

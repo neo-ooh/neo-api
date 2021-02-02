@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon as Date;
-use Illuminate\Support\Facades\Auth;
+use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
 use Neo\Models\Factories\CampaignFactory;
 use Neo\Rules\AccessibleCampaign;
 
@@ -131,6 +131,24 @@ class Campaign extends SecuredModel {
      */
     protected string $accessRule = AccessibleCampaign::class;
 
+
+    public static function boot(): void {
+        static::deleting(function (Campaign $campaign) {
+            // Disable the campaign in BroadSign
+            DisableBroadSignCampaign::dispatch($campaign->broadsign_reservation_id);
+
+            // Delete all schedules in the campaign
+            /** @var Schedule $schedule */
+            foreach ($campaign->schedules as $schedule) {
+                if ($campaign->isForceDeleting()) {
+                    $schedule->forceDelete();
+                } else {
+                    $schedule->delete();
+                }
+            }
+        });
+    }
+
     protected static function newFactory(): CampaignFactory {
         return CampaignFactory::new();
     }
@@ -190,6 +208,7 @@ class Campaign extends SecuredModel {
 
     /**
      * List the libraries ID determined to be relevant for the campaign
+     *
      * @return \Illuminate\Support\Collection
      */
     public function getRelatedLibrariesAttribute(): \Illuminate\Support\Collection {

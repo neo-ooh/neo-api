@@ -185,8 +185,6 @@ class CreativesController extends Controller {
      * @noinspection PhpUnusedParameterInspection
      */
     public function destroy(DestroyCreativeRequest $request, Creative $creative) {
-        DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
-
         if ($creative->content->schedules_count === 0) {
             $creative->forceDelete();
         } else {
@@ -195,6 +193,4 @@ class CreativesController extends Controller {
 
         return new Response([]);
     }
-
-
 }

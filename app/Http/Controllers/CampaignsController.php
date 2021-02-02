@@ -153,8 +153,5 @@ class CampaignsController extends Controller {
     /** @noinspection PhpUnusedParameterInspection */
     public function destroy(DestroyCampaignRequest $request, Campaign $campaign): void {
         $campaign->delete();
-
-        // Propagate the changes in BroadSign
-        DisableBroadSignCampaign::dispatch($campaign->broadsign_reservation_id);
     }
 }

@@ -30,16 +30,17 @@ use Neo\Rules\AccessibleContent;
  * @property int                       format_id
  * @property int                       broadsign_content_id
  * @property string                    name
- * @property double                    duration How long this content will display. Not applicable if the content only has static creatives
- * @property bool                      is_approved Tell if the content has been pre-approved
+ * @property double                    duration            How long this content will display. Not applicable if the content only
+ *           has static creatives
+ * @property bool                      is_approved         Tell if the content has been pre-approved
  * @property int                       scheduling_duration Maximum duration of a scheduling of this content.
- * @property int                       scheduling_times How many times this content can be scheduled
+ * @property int                       scheduling_times    How many times this content can be scheduled
  *
- * @property Actor                     owner The actor who created this content
- * @property Library                   library The library where this content resides
- * @property Format                    format The format of the content
+ * @property Actor                     owner               The actor who created this content
+ * @property Library                   library             The library where this content resides
+ * @property Format                    format              The format of the content
  *
- * @property-read Collection<Creative> creatives The creatives of the content
+ * @property-read Collection<Creative> creatives           The creatives of the content
  * @property-read int                  creatives_count
  *
  * @property-read Collection<Schedule> schedules
@@ -133,9 +134,14 @@ class Content extends SecuredModel {
                 }
             }
 
-            /** @var Creative $creative */
+            /** @var Schedule $schedule */
             foreach ($content->schedules as $schedule) {
-                $schedule->delete();
+                // If a schedule has not be reviewed, we want to completely remove it
+                if ($schedule->status === 'draft' || $schedule->status === 'pending') {
+                    $schedule->forceDelete();
+                } else {
+                    $schedule->delete();
+                }
             }
         });
     }

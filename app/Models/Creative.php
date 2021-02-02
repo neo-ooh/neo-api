@@ -22,6 +22,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image;
+use Neo\BroadSign\Jobs\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
 
 /**
@@ -91,6 +92,9 @@ class Creative extends Model {
         parent::boot();
 
         static::deleting(function (Creative $creative) {
+            // Disabled the creative in Broadsign
+            DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
+
             // If the content has no more creatives attached to it, we reset its duration
             // We check for 1 creative and not zero has we are not deleted yet
             if ($creative->content->duration !== 0 && $creative->content->creatives_count === 1) {

@@ -215,6 +215,8 @@ class SchedulesController extends Controller
 
             if(!$schedule->content->is_approved && !Gate::allows(Capability::contents_review)) {
                 SendReviewRequestEmail::dispatch($schedule->id);
+            } else {
+                // Content is pre-approved
             }
         }
 

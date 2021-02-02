@@ -81,5 +81,11 @@ class UpdateBroadSignSchedule implements ShouldQueue {
         $bsSchedule->end_date   = $schedule->end_date->toDateString();
         $bsSchedule->end_time   = $endTime->toTimeString();
         $bsSchedule->save();
+
+        // Check if the schedule status needs to be updated
+        if($schedule->is_approved !== $bsSchedule->active) {
+            // Mismatch, trigger an update of the schedule status
+            UpdateBroadSignScheduleStatus::dispatchSync($this->scheduleID);
+        }
     }
 }

@@ -20,6 +20,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Neo\BroadSign\Jobs\DisableBroadSignSchedule;
 use Neo\BroadSign\Jobs\ReorderBroadSignSchedules;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Schedules\DestroyScheduleRequest;
@@ -293,6 +294,9 @@ class SchedulesController extends Controller
      */
     public function destroy(DestroyScheduleRequest $request, Schedule $schedule)
     {
+        // Execute the deletion on broadsign side
+        DisableBroadSignSchedule::dispatch($schedule->broadsign_schedule_id);
+
         // If a schedule has not be reviewed, we want to completely remove it
         if ($schedule->status === 'draft' || $schedule->status === 'pending') {
             $schedule->forceDelete();

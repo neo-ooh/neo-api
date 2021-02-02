@@ -140,7 +140,7 @@ class CreateBroadSignSchedule implements ShouldQueue {
         $bundle                        = new BSBundle();
         $bundle->active                = true;
         $bundle->allow_custom_duration = true;
-        $bundle->fullscreen            = true;
+        $bundle->fullscreen            = false;
         $bundle->max_duration_msec     = $schedule->campaign->display_duration * 1000;
         $bundle->name                  = $schedule->campaign->name . " (" . $schedule->campaign_id . ")" . "-" . $content->name ?? ("Bundle #" . $schedule->id);
         $bundle->parent_id             = $bsSchedule->id;

@@ -133,6 +133,8 @@ class Campaign extends SecuredModel {
 
 
     public static function boot(): void {
+        parent::boot();
+
         static::deleting(function (Campaign $campaign) {
             // Disable the campaign in BroadSign
             DisableBroadSignCampaign::dispatch($campaign->broadsign_reservation_id);

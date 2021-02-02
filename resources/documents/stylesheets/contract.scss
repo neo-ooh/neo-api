@@ -1,0 +1,214 @@
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - contract.scss
+ */
+
+@import "colors";
+@import "fonts";
+
+@page {
+  margin-left : 1mm;
+}
+
+h1, h2 {
+  font-family : $font-bold;
+}
+
+@mixin debug-style {
+  border           : 3px solid rgba(255, 0, 0, .75);
+  background-color : rgba(0, 255, 0, .25);
+}
+
+.details-header {
+  &-neo-logo {
+    width  : 60mm;
+    margin : 5mm 0 0 5mm;
+  }
+
+  &-title-wrapper {
+    width      : 100mm;
+    margin     : -20mm 0 0 110mm;
+    text-align : center;
+  }
+
+  &-title {
+    font-family : $font-extra-light;
+    font-size   : 24pt;
+  }
+
+  &-contract-data {
+    width           : 100mm;
+    margin          : -25mm 0 0 250mm;
+    border-collapse : collapse;
+
+    tr {
+      td {
+        border-bottom : 1px solid #000000;
+
+        &:nth-child(1) {
+          border-right : 1px solid #000000;
+          padding      : 3px 5px 3px 15px;
+        }
+
+        &:nth-child(2) {
+          padding : 3px 15px 3px 5px;
+        }
+      }
+
+      &:nth-child(6) td {
+        border-bottom : none;
+      }
+    }
+
+    &-label {
+      font-family : $font-light;
+      text-align  : right;
+    }
+
+    &-value {
+      font-weight : bold;
+    }
+  }
+}
+
+.detailed-purchases {
+  page-break-inside: avoid;
+  &-title {
+    margin-bottom  : 0;
+    text-transform : uppercase;
+    font-size      : 14pt;
+
+    .shopping {
+      color : $shopping;
+    }
+
+    .otg {
+      color : $otg;
+    }
+
+    .fitness {
+      color : $fitness;
+    }
+  }
+
+  &-table {
+    page-break-inside : avoid;
+    margin-bottom     : 10mm;
+    border-collapse   : collapse;
+
+    thead tr {
+      th {
+        width            : 25mm;
+
+        padding          : 2mm 0;
+        background-color : $dark-blue;
+        color            : #FFFFFF;
+
+        font-weight      : bold;
+        text-align       : center;
+        font-size        : 10pt;
+        border-right     : 2px solid #FFFFFF;
+
+        &:nth-child(1) {
+          width : 60mm;
+        }
+
+        &:nth-child(2) {
+          width : 40mm;
+        }
+
+        &:nth-child(11) {
+          border-right : none;
+        }
+      }
+    }
+
+    tbody {
+      tr {
+        td {
+          font-size : 9pt;
+        }
+
+        &.region-row {
+          background-color : $ultralight-grey;
+
+          td {
+            padding     : 1mm 0;
+            text-align  : center;
+            font-weight : bold;
+
+            &:nth-child(1) {
+              border-right : 2px solid #FFFFFF;
+            }
+          }
+        }
+
+        &.property-row {
+          td {
+            padding : 2mm 0 1mm;
+
+            &.property-name {
+              text-align  : left;
+              font-family : $font-bold;
+              font-size   : 10pt;
+
+              &.shopping {
+                color : $shopping;
+              }
+
+              &.otg {
+                color : $otg;
+              }
+
+              &.fitness {
+                color : $fitness;
+              }
+            }
+
+            &.property-city {
+              text-align : center;
+            }
+          }
+
+          &.first td {
+            border-top : 1px solid #000000;
+          }
+        }
+
+        &.purchase-row {
+          td {
+            padding    : 1mm 0;
+            text-align : center;
+
+            &.product-type {
+              padding-left : 7.5mm;
+              text-align   : left;
+            }
+          }
+
+          &.last {
+            td {
+              padding-bottom : 2mm;
+            }
+          }
+        }
+
+        &.shopping td.border-right {
+          border-right : 1px solid $shopping;
+        }
+
+        &.otg td.border-right {
+          border-right : 1px solid $otg;
+        }
+
+        &.fitness td.border-right {
+          border-right : 1px solid $fitness;
+        }
+      }
+    }
+  }
+}

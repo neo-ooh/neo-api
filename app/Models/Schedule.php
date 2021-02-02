@@ -155,7 +155,7 @@ class Schedule extends Model {
     */
 
     public function campaign(): BelongsTo {
-        return $this->belongsTo(Campaign::class, 'campaign_id', 'id');
+        return $this->belongsTo(Campaign::class, 'campaign_id', 'id')->withTrashed();
     }
 
     /**

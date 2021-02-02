@@ -30,7 +30,32 @@ abstract class Document {
     protected Mpdf $mpdf;
 
     protected function __construct() {
-        $this->mpdf = new Mpdf();
+        $this->mpdf = new Mpdf([
+            "fontDir" => [resource_path('fonts/')],
+            "fontdata" => [
+                "poppins-bold" => [
+                    "R" => "Poppins-SemiBold.ttf",
+                    "I" => "Poppins-SemiBoldItalic.ttf",
+                    "B" => "Poppins-Bold.ttf",
+                    "BI" => "Poppins-BoldItalic.ttf",
+                ],
+                "poppins-regular" => [
+                    "R" => "Poppins-Regular.ttf",
+                    "I" => "Poppins-Italic.ttf",
+                    "B" => "Poppins-Medium.ttf",
+                    "BI" => "Poppins-MediumItalic.ttf",
+                ],
+                "poppins-light" => [
+                    "R" => "Poppins-Light.ttf",
+                    "I" => "Poppins-Italic.ttf",
+                ],
+                "poppins-extra-light" => [
+                    "R" => "Poppins-ExtraLight.ttf",
+                    "I" => "Poppins-ExtraItalic.ttf",
+                ]
+            ],
+            'default_font' => 'poppins-regular'
+        ]);
     }
 
     /**

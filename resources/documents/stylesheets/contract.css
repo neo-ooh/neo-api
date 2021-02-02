@@ -1,0 +1,170 @@
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - contract.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _fonts.scss
+ */
+@page {
+  margin-left: 1mm;
+}
+h1, h2 {
+  font-family: "poppins-bold";
+}
+
+.details-header-neo-logo {
+  width: 60mm;
+  margin: 5mm 0 0 5mm;
+}
+.details-header-title-wrapper {
+  width: 100mm;
+  margin: -20mm 0 0 110mm;
+  text-align: center;
+}
+.details-header-title {
+  font-family: "poppins-extra-light";
+  font-size: 24pt;
+}
+.details-header-contract-data {
+  width: 100mm;
+  margin: -25mm 0 0 250mm;
+  border-collapse: collapse;
+}
+.details-header-contract-data tr td {
+  border-bottom: 1px solid #000000;
+}
+.details-header-contract-data tr td:nth-child(1) {
+  border-right: 1px solid #000000;
+  padding: 3px 5px 3px 15px;
+}
+.details-header-contract-data tr td:nth-child(2) {
+  padding: 3px 15px 3px 5px;
+}
+.details-header-contract-data tr:nth-child(6) td {
+  border-bottom: none;
+}
+.details-header-contract-data-label {
+  font-family: "poppins-light";
+  text-align: right;
+}
+.details-header-contract-data-value {
+  font-weight: bold;
+}
+
+.detailed-purchases {
+  page-break-inside: avoid;
+}
+.detailed-purchases-title {
+  margin-bottom: 0;
+  text-transform: uppercase;
+  font-size: 14pt;
+}
+.detailed-purchases-title .shopping {
+  color: #0099F8;
+}
+.detailed-purchases-title .otg {
+  color: #FF6300;
+}
+.detailed-purchases-title .fitness {
+  color: #F8002B;
+}
+.detailed-purchases-table {
+  page-break-inside: avoid;
+  margin-bottom: 10mm;
+  border-collapse: collapse;
+}
+.detailed-purchases-table thead tr th {
+  width: 25mm;
+  padding: 2mm 0;
+  background-color: #202035;
+  color: #FFFFFF;
+  font-weight: bold;
+  text-align: center;
+  font-size: 10pt;
+  border-right: 2px solid #FFFFFF;
+}
+.detailed-purchases-table thead tr th:nth-child(1) {
+  width: 60mm;
+}
+.detailed-purchases-table thead tr th:nth-child(2) {
+  width: 40mm;
+}
+.detailed-purchases-table thead tr th:nth-child(11) {
+  border-right: none;
+}
+.detailed-purchases-table tbody tr td {
+  font-size: 9pt;
+}
+.detailed-purchases-table tbody tr.region-row {
+  background-color: #EEEEEE;
+}
+.detailed-purchases-table tbody tr.region-row td {
+  padding: 1mm 0;
+  text-align: center;
+  font-weight: bold;
+}
+.detailed-purchases-table tbody tr.region-row td:nth-child(1) {
+  border-right: 2px solid #FFFFFF;
+}
+.detailed-purchases-table tbody tr.property-row td {
+  padding: 2mm 0 1mm;
+}
+.detailed-purchases-table tbody tr.property-row td.property-name {
+  text-align: left;
+  font-family: "poppins-bold";
+  font-size: 10pt;
+}
+.detailed-purchases-table tbody tr.property-row td.property-name.shopping {
+  color: #0099F8;
+}
+.detailed-purchases-table tbody tr.property-row td.property-name.otg {
+  color: #FF6300;
+}
+.detailed-purchases-table tbody tr.property-row td.property-name.fitness {
+  color: #F8002B;
+}
+.detailed-purchases-table tbody tr.property-row td.property-city {
+  text-align: center;
+}
+.detailed-purchases-table tbody tr.property-row.first td {
+  border-top: 1px solid #000000;
+}
+.detailed-purchases-table tbody tr.purchase-row td {
+  padding: 1mm 0;
+  text-align: center;
+}
+.detailed-purchases-table tbody tr.purchase-row td.product-type {
+  padding-left: 7.5mm;
+  text-align: left;
+}
+.detailed-purchases-table tbody tr.purchase-row.last td {
+  padding-bottom: 2mm;
+}
+.detailed-purchases-table tbody tr.shopping td.border-right {
+  border-right: 1px solid #0099F8;
+}
+.detailed-purchases-table tbody tr.otg td.border-right {
+  border-right: 1px solid #FF6300;
+}
+.detailed-purchases-table tbody tr.fitness td.border-right {
+  border-right: 1px solid #F8002B;
+}
+
+/*# sourceMappingURL=contract.css.map */

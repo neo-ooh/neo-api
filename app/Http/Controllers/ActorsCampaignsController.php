@@ -4,6 +4,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\ActorsCampaigns\ListActorCampaignsRequest;
+use Neo\Models\Actor;
 
 class ActorsCampaignsController extends Controller {
     public function index(ListActorCampaignsRequest $request): Response {

@@ -58,7 +58,7 @@ class AssociateAdCopyWithBundle implements ShouldQueue {
      * @throws BadResponse
      */
     public function handle(): void {
-        if (config("app.env") === "testing") {
+        if (config("app.env") !== "production") {
             return;
         }
 

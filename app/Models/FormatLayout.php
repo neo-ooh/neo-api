@@ -5,11 +5,12 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - Frame.php
+ * @neo/api - FormatLayout.php
  */
 
 namespace Neo\Models;
 
+use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -18,27 +19,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * Neo\Models\Frame Model
+ * Neo\Models\FormatLayout
  *
- * @property int                  id
- * @property int                  layout_id
- * @property string               name
- * @property int                  width
- * @property int                  height
- * @property string               type
+ * @property int               id
+ * @property int               format_id
+ * @property string            name
+ * @property boolean           is_fullscreen
+ * @property Date              created_at
+ * @property Date              updated_at
+ * @property Date              deleted_at
  *
- * @property FormatLayout         layout
- * @property Collection<Creative> creatives
+ * @property Format            format
+ * @property Collection<Frame> frames
  *
  * @mixin Builder
  */
-class Frame extends Model {
+class FormatLayout extends Model {
     use SoftDeletes;
-
-    // Define the supported frame types
-    public const TYPE_MAIN = 'MAIN';
-    public const TYPE_RIGHT = 'RIGHT';
-
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -51,7 +48,7 @@ class Frame extends Model {
      *
      * @var string
      */
-    protected $table = 'frames';
+    protected $table = 'formats_layouts';
 
     /**
      * The attributes that are mass assignable.
@@ -59,22 +56,26 @@ class Frame extends Model {
      * @var array
      */
     protected $fillable = [
-        'format_id',
-        'name',
-        'width',
-        'height',
-        'type'
+        "format_id",
+        "name",
+        "is_fullscreen",
     ];
 
     /**
-     * The attributes that should be cast.
+     * The attributes that shoud be casted
      *
      * @var array
      */
     protected $casts = [
-        'width'  => 'integer',
-        'height' => 'integer',
+        "is_fullscreen" => "boolean",
     ];
+
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [ "frames" ];
 
 
     /*
@@ -83,15 +84,11 @@ class Frame extends Model {
     |--------------------------------------------------------------------------
     */
 
-    /* Network */
-
-    public function layout(): BelongsTo {
-        return $this->belongsTo(FormatLayout::class, 'layout_id', 'id');
+    public function format(): BelongsTo {
+        return $this->belongsTo(Format::class, 'format_id', 'id');
     }
 
-    /* Direct */
-
-    public function creatives(): HasMany {
-        return $this->hasMany(Creative::class, 'frame_id', 'id');
+    public function frames(): HasMany {
+        return $this->hasMany(Frame::class, 'layout_id', 'id');
     }
 }

@@ -11,6 +11,7 @@
 namespace Neo\BroadSign;
 
 use Neo\BroadSign\Models\Inventory;
+use stdClass;
 
 class BroadSign {
     protected $supportMapping = [
@@ -37,6 +38,7 @@ class BroadSign {
         return [
             "domain_id"               => config("broadsign.domain-id"),
             "customer_id"             => config("broadsign.customer-id"),
+            "category_separation_id"  => config("broadsign.category-separation-id"),
             "campaign_length"         => config("broadsign.default-campaign-length"),
             "advertising_criteria_id" => config("broadsign.advertising-criteria"),
             "left_frame_criteria_id"  => config("broadsign.left-frame-criteria"),

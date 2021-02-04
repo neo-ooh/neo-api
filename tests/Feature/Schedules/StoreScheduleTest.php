@@ -76,7 +76,7 @@ class StoreScheduleTest extends TestCase {
         $content = Content::factory()->create([ "library_id" => $library->id, "owner_id" => $actor->id ]);
         $content->refresh();
 
-        foreach ($content->format->frames as $frame) {
+        foreach ($content->layout->frames as $frame) {
             Creative::factory()->create([ "owner_id"   => $actor->id,
                                           "content_id" => $content->id,
                                           "frame_id"   => $frame->id ]);
@@ -132,10 +132,10 @@ class StoreScheduleTest extends TestCase {
         $format = Format::query()->first();
         $campaign = Campaign::factory()->create([ "owner_id" => $actor->id, "format_id" => $format ]);
         $library = Library::factory()->create([ "owner_id" => $actor->id ]);
-        $format = Format::get()[1];
+        $format = Format::query()->has('layouts')->first();
         $content = Content::factory()->create([ "library_id" => $library->id,
                                                 "owner_id"   => $actor->id,
-                                                "format_id"  => $format->id ]);
+                                                "layout_id"  => $format->layouts[0]->id ]);
 
         $response = $this->json("POST",
             "/v1/campaigns/" . $campaign->id . "/schedules",

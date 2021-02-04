@@ -16,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Models\Bundle as BSBundle;
 use Neo\BroadSign\Models\Campaign;
 use Neo\BroadSign\Models\LoopSlot;
@@ -65,7 +66,7 @@ class CreateBroadSignSchedule implements ShouldQueue {
      * @return void
      */
     public function handle(): void {
-        if (config("app.env") === "testing") {
+        if (config("app.env") !== "production") {
             return;
         }
 
@@ -92,16 +93,11 @@ class CreateBroadSignSchedule implements ShouldQueue {
             throw new InvalidResourceException("Could not retrieve the loop slot for the reservation " . $schedule->campaign->broadsign_reservation_id . ". ");
         }
 
-
         // We need to make sure the end time is not after 23:59:00
         $endTime = $schedule->end_date;
         if ($endTime->isAfter($endTime->setTime(23, 59, 00))) {
             $endTime = $endTime->setTime(23, 59, 00);
         }
-
-        $bsCampaign = Campaign::get($schedule->campaign->broadsign_reservation_id);
-        Log::debug("schedule #$schedule->id: " . $schedule->start_date->toDateTimeString() . " -> " . $schedule->end_date->toDateTimeString());
-        Log::debug("campaign #$schedule->id: " . $bsCampaign->start_date . " " . $bsCampaign->start_time . " -> " . $bsCampaign->start_date . " " . $bsCampaign->start_time);
 
         // Create the schedule in broadsign
         $bsSchedule                   = new BSSchedule();
@@ -140,6 +136,8 @@ class CreateBroadSignSchedule implements ShouldQueue {
         $bundle                        = new BSBundle();
         $bundle->active                = true;
         $bundle->allow_custom_duration = true;
+        $bundle->auto_synchronized     = true;
+        $bundle->category_id           = BroadSign::getDefaults()["category_separation_id"];
         $bundle->fullscreen            = false;
         $bundle->max_duration_msec     = $schedule->campaign->display_duration * 1000;
         $bundle->name                  = $schedule->campaign->name . " (" . $schedule->campaign_id . ")" . "-" . $content->name ?? ("Bundle #" . $schedule->id);

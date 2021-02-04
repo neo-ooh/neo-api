@@ -8,7 +8,59 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Bundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Bundle.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/FormatsLayoutsController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts/DestroyLayoutRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts/StoreLayoutRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts/UpdateLayoutRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/FormatLayout.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/webResources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webResources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/AssociateAdCopyWithBundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/AssociateAdCopyWithBundle.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignSchedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignCampaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignCreative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignCreative.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignSchedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/ImportCreativeInBroadSign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/ImportCreativeInBroadSign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/ReorderBroadSignSchedules.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/ReorderBroadSignSchedules.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/RequestScreenshotsBursts.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/RequestScreenshotsBursts.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignCampaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignSchedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignScheduleStatus.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignScheduleStatus.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsCampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsCampaignsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FramesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FramesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LibrariesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LibrariesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns/ListActorCampaignsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns/ListActorCampaignsRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Contents/StoreContentRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Contents/StoreContentRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Formats/UpdateFormatRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Formats/UpdateFormatRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Frames/StoreFrameRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Frames/StoreFrameRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/CreateActorLibrary.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/CreateActorLibrary.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/CreateSignupToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/CreateSignupToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Content.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Content.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Creative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Creative.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Factories/CampaignFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Factories/CampaignFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Factories/ContentFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Factories/ContentFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Format.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Format.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Frame.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Frame.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Schedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Schedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/broadsign.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/broadsign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Contents/ListLibraryContentsTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Contents/ListLibraryContentsTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Contents/StoreContentTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Contents/StoreContentTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Contents/UpdateContentTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Contents/UpdateContentTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Creatives/DestroyCreativeTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Creatives/DestroyCreativeTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Creatives/StoreCreativeTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Creatives/StoreCreativeTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Schedules/StoreScheduleTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Schedules/StoreScheduleTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -49,11 +101,19 @@
   <component name="NamedScopeManager">
     <scope name="Documents Stylesheets" pattern="file[api]:resources/documents/stylesheets/*" />
   </component>
-  <component name="PhpDebugGeneral" xdebug_debug_port="9003">
-    <xdebug_debug_ports port="9003" />
+  <component name="PhpDebugGeneral" xdebug_debug_port="9003" ignore_connections_through_unregistered_servers="true">
     <xdebug_debug_ports port="9003" />
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 7.4">
+  <component name="PhpServers">
+    <servers>
+      <server host="phpmyadmin.test" id="2b431a42-5792-46c8-b344-3d93a3159d13" name="phpmyadmin.test" port="443">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$/public" remote-root="/" />
+        </path_mappings>
+      </server>
+    </servers>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 8.0">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/neutron/temporary-filesystem" />
       <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
@@ -189,6 +249,8 @@
       <path value="$PROJECT_DIR$/vendor/paragonie/random_compat" />
       <path value="$PROJECT_DIR$/vendor/mpdf/mpdf" />
       <path value="$PROJECT_DIR$/vendor/league/csv" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
+      <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
     </include_path>
   </component>
   <component name="ProjectId" id="1ksnCPVQp4bw80G0IajP0zqEtzk" />
@@ -210,7 +272,7 @@
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Console" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -223,16 +285,16 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
+    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php.debug" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts" />
+      <recent name="$PROJECT_DIR$/app/Models" />
       <recent name="$PROJECT_DIR$/app/Console" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs" />
       <recent name="$PROJECT_DIR$/storage/app" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/ActorsAccesses" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/Console" />
@@ -243,6 +305,10 @@
     </key>
   </component>
   <component name="RunManager" selected="PHPUnit.All Tests">
+    <configuration name="StoreScheduleTest.testCorrectResponseReturnedOnCorrectRequest" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Tests\Feature\Schedules\StoreScheduleTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/Schedules/StoreScheduleTest.php" method="testCorrectResponseReturnedOnCorrectRequest" scope="Method" />
+      <method v="2" />
+    </configuration>
     <configuration name="TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
       <TestRunner class="Tests\Feature\TermsOfServiceTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/TermsOfServiceTest.php" method="testTermsOfServiceCanBeRetrievedLoggedIn" scope="Method" />
       <method v="2" />
@@ -253,6 +319,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="PHPUnit.StoreScheduleTest.testCorrectResponseReturnedOnCorrectRequest" />
         <item itemvalue="PHPUnit.UpdateActorTest.testActorParentCanBeChanged" />
         <item itemvalue="PHPUnit.TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" />
       </list>
@@ -282,7 +349,8 @@
       <workItem from="1611585237584" duration="5052000" />
       <workItem from="1611671680675" duration="18018000" />
       <workItem from="1611759751819" duration="932000" />
-      <workItem from="1611841219519" duration="44582000" />
+      <workItem from="1611841219519" duration="50750000" />
+      <workItem from="1612370980953" duration="17924000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>
@@ -393,17 +461,6 @@
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="php">
-          <url>file://$PROJECT_DIR$/tests/Feature/Login/LoginAuthTest.php</url>
-          <line>95</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

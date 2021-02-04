@@ -134,7 +134,9 @@ class Campaign extends SecuredModel {
 
         static::deleting(function (Campaign $campaign) {
             // Disable the campaign in BroadSign
-            DisableBroadSignCampaign::dispatch($campaign->broadsign_reservation_id);
+            if ($campaign->broadsign_reservation_id !== null) {
+                DisableBroadSignCampaign::dispatch($campaign->broadsign_reservation_id);
+            }
 
             // Delete all schedules in the campaign
             /** @var Schedule $schedule */

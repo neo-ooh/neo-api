@@ -19,6 +19,8 @@ return [
 
     "default-campaign-length" => 10, // years
 
+    "category-separation-id" => env("BROADSIGN_CATEGORY_SEPARATION_ID"),
+
     "advertising-criteria" => env("BROADSIGN_ADVERTISING_CRITERIA_ID"),
     "left-frame-criteria" => env("BROADSIGN_LEFT_FRAME_CRITERIA_ID"),
     "right-frame-criteria" => env("BROADSIGN_RIGHT_FRAME_CRITERIA_ID"),

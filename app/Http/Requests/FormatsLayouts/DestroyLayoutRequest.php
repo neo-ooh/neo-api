@@ -5,16 +5,16 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - StoreFrameRequest.php
+ * @neo/api - StoreLayoutRequest.php
  */
 
-namespace Neo\Http\Requests\Frames;
+namespace Neo\Http\Requests\FormatsLayouts;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class StoreFrameRequest extends FormRequest {
+class DestroyLayoutRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -30,12 +30,6 @@ class StoreFrameRequest extends FormRequest {
      * @return array
      */
     public function rules(): array {
-        return [
-            "layout_id" => ["required", "integer", "exists:formats_layouts,id"],
-            "name"      => ["required", "string"],
-            "width"     => ["required", "integer", "min:1"],
-            "height"    => ["required", "integer", "min:1"],
-            "type"      => ["required", "string", "min:1"],
-        ];
+        return [];
     }
 }

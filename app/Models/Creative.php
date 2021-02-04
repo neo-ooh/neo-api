@@ -93,7 +93,9 @@ class Creative extends Model {
 
         static::deleting(function (Creative $creative) {
             // Disabled the creative in Broadsign
-            DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
+            if($creative->broadsign_ad_copy_id !== null) {
+                DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
+            }
 
             // If the content has no more creatives attached to it, we reset its duration
             // We check for 1 creative and not zero has we are not deleted yet

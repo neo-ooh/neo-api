@@ -23,8 +23,7 @@ class StoreContentTest extends TestCase {
     /**
      * Assert guest cannot access this route
      */
-    public function testGuestsAreForbidden (): void
-    {
+    public function testGuestsAreForbidden(): void {
         $response = $this->json("POST", "/v1/contents");
         $response->assertUnauthorized();
     }
@@ -32,8 +31,7 @@ class StoreContentTest extends TestCase {
     /**
      * Assert user without proper capabilities cannot call this route
      */
-    public function testCannotCallRouteWithoutProperCapability (): void
-    {
+    public function testCannotCallRouteWithoutProperCapability(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
@@ -44,8 +42,7 @@ class StoreContentTest extends TestCase {
     /**
      * Assert user with proper capability can call this route
      */
-    public function testRouteCanBeCalledWithProperCapability (): void
-    {
+    public function testRouteCanBeCalledWithProperCapability(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
@@ -54,34 +51,33 @@ class StoreContentTest extends TestCase {
                  ->assertJsonValidationErrors([
                      "owner_id",
                      "library_id",
-                     "format_id",
+                     "layout_id",
                  ]);
     }
 
     /**
      * Assert correct request yields correct response
      */
-    public function testCorrectResponseOnCorrectRequest (): void
-    {
+    public function testCorrectResponseOnCorrectRequest(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
         $library = Library::factory()->create(["owner_id" => $actor->id]);
-        $format = Format::inRandomOrder()->first();
+        $format  = Format::query()->has("layouts")->inRandomOrder()->first();
 
         $response = $this->json("POST",
             "/v1/contents",
             [
-                "owner_id"      => $actor->id,
-                "library_id"    => $library->id,
-                "format_id"     => $format->id,
+                "owner_id"   => $actor->id,
+                "library_id" => $library->id,
+                "layout_id"  => $format->layouts[0]->id,
             ]);
         $response->assertCreated()
                  ->assertJsonStructure([
                      "id",
                      "owner_id",
                      "library_id",
-                     "format_id",
+                     "layout_id",
                      "name",
                      "scheduling_duration",
                      "scheduling_times",
@@ -91,23 +87,22 @@ class StoreContentTest extends TestCase {
     /**
      * Assert user cannot create content in inaccessible library
      */
-    public function testCannotCreateContentInInaccessibleLibrary (): void
-    {
+    public function testCannotCreateContentInInaccessibleLibrary(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
         $otherActor = Actor::factory()->create();
-        $library = Library::factory()->create(["owner_id" => $otherActor->id]);
+        $library    = Library::factory()->create(["owner_id" => $otherActor->id]);
 
-        $format = Format::inRandomOrder()->first();
+        $format = Format::query()->has("layouts")->inRandomOrder()->first();
 
         $response = $this->json("POST",
             "/v1/contents",
             [
-                "owner_id"      => $actor->id,
-                "library_id"    => $library->id,
-                "format_id"     => $format->id,
-                "name"          => "test-content",
+                "owner_id"   => $actor->id,
+                "library_id" => $library->id,
+                "layout"     => $format->layouts[0]->id,
+                "name"       => "test-content",
             ]);
         $response->assertStatus(422)
                  ->assertJsonValidationErrors(["library_id"]);

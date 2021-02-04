@@ -137,16 +137,16 @@ class StoreCreativeTest extends TestCase
         Creative::factory()->create([
             "owner_id" => $actor->id,
             "content_id" => $content->id,
-            "frame_id" => $content->format->frames[0]->id,
+            "frame_id" => $content->layout->frames[0]->id,
         ]);
 
         $response = $this->json("POST",
             "/v1/contents/{$content->id}",
             [
-                "frame_id" => $content->format->frames[0]->id,
+                "frame_id" => $content->layout->frames[0]->id,
                 "file" => UploadedFile::fake()->image("ad-01",
-                    $content->format->frames[0]->width,
-                    $content->format->frames[0]->height),
+                    $content->layout->frames[0]->width,
+                    $content->layout->frames[0]->height),
             ]);
         $response->assertStatus(422);
     }
@@ -174,10 +174,10 @@ class StoreCreativeTest extends TestCase
         $response = $this->json("POST",
             "/v1/contents/" . $content->id,
             [
-                "frame_id" => $content->format->frames[0]->id,
+                "frame_id" => $content->layout->frames[0]->id,
                 "file" => UploadedFile::fake()->image("ad-01.jpeg",
-                    $content->format->frames[0]->width + 100,
-                    $content->format->frames[0]->height),
+                    $content->layout->frames[0]->width + 100,
+                    $content->layout->frames[0]->height),
             ]);
         $response->assertStatus(422);
     }

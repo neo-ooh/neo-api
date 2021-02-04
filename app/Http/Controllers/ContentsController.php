@@ -44,13 +44,13 @@ class ContentsController extends Controller
         [
             "owner_id" => $content->owner_id,
             "library_id" => $content->library_id,
-            "format_id" => $content->format_id,
+            "layout_id" => $content->layout_id,
         ] = $request->validated();
 
         $content->save();
         $content->refresh();
 
-        return new Response($content->load("format.frames"), 201);
+        return new Response($content->load("layout.frames"), 201);
     }
 
     /**
@@ -64,7 +64,8 @@ class ContentsController extends Controller
             "creatives",
             "schedules",
             "schedules.campaign:id,name",
-            "format",
+            "layout",
+            "layout.format",
             "library:id,name"]));
     }
 
@@ -105,7 +106,7 @@ class ContentsController extends Controller
             "creatives",
             "schedules",
             "schedules.campaign",
-            "format",
+            "layout",
             "library"]));
     }
 

@@ -23,7 +23,7 @@ class CampaignFactory extends Factory {
     public function definition (): array
     {
         return [
-            "format_id"        => Format::query()->first()->id,
+            "format_id"        => Format::query()->has('layouts')->first()->id,
             "name"             => $this->faker->streetName,
             "display_duration" => $this->faker->numberBetween(10, 30),
             "content_limit"    => 15,

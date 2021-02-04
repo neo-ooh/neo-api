@@ -22,7 +22,7 @@ class ContentFactory extends Factory {
     public function definition (): array
     {
         return [
-            "format_id"           => Format::query()->first()->id,
+            "layout_id"           => Format::query()->has('layouts')->first()->layouts[0]->id,
             "name"                => $this->faker->name,
             "scheduling_duration" => 0,
             "scheduling_times"    => 0,

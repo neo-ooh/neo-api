@@ -86,6 +86,7 @@ class CampaignsController extends Controller {
     public function show(Campaign $campaign) {
         return new Response($campaign->loadMissing([
             "format",
+            "format.layouts",
             "locations",
             "owner",
             "shares",

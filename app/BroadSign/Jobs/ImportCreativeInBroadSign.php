@@ -55,7 +55,7 @@ class ImportCreativeInBroadSign implements ShouldQueue {
      * @throws Exception
      */
     public function handle(BroadSign $broadsign): void {
-        if (config("app.env") === "testing") {
+        if (config("app.env") !== "production") {
             return;
         }
 
@@ -96,7 +96,7 @@ class ImportCreativeInBroadSign implements ShouldQueue {
      */
     public function targetCreative(BSCreative $bsCreative, Creative $creative, BroadSign $broadsign) {
         // We need to target the creative base on its format and frames
-        if ($creative->frame->format->frames_count === 1) {
+        if ($creative->frame->layout->frames_count === 1) {
             // Only one frame in the format, do nothing
             return;
         }

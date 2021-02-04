@@ -52,7 +52,7 @@ class UpdateBroadSignCampaign implements ShouldQueue {
      * @noinspection PhpUnusedParameterInspection
      */
     public function handle (BroadSign $broadsign): void {
-        if(config("app.env") === "testing") {
+        if(config("app.env") !== "production") {
             return;
         }
 
@@ -63,7 +63,6 @@ class UpdateBroadSignCampaign implements ShouldQueue {
 
         // Update the name and fullscreen status of the campaign
         $bsCampaign->name = $campaign->owner->name . " - " . $campaign->name;
-        $bsCampaign->default_fullscreen = $campaign->format->is_fullscreen;
         $bsCampaign->save();
 
         // Update the campaign saturation as needed

@@ -33,7 +33,7 @@ class LibrariesController extends Controller
         $libraries = Auth::user()->getLibraries();
 
         if ($request->has("withContent")) {
-            $libraries->load("contents", "contents.format");
+            $libraries->load("contents", "contents.layout");
         }
 
         return new Response($libraries);
@@ -67,7 +67,7 @@ class LibrariesController extends Controller
     {
         // User authorization has been cleared by the FormRequest
         $library->append("available_formats");
-        return new Response($library->load(["contents", "contents.format", "shares"]));
+        return new Response($library->load(["contents", "contents.layout", "shares"]));
     }
 
     /**

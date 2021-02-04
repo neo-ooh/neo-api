@@ -20,22 +20,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Neo\Models\Formats
  *
- * @property int                  id
- * @property int                  broadsign_display_type
- * @property string               slug
- * @property string               name
- * @property boolean              is_fullscreen
- * @property boolean              is_enabled
+ * @property int                      id
+ * @property int                      broadsign_display_type
+ * @property string                   slug
+ * @property string                   name
+ * @property boolean                  is_fullscreen
+ * @property boolean                  is_enabled
  *
- * @property Collection<Frame>    frames
- * @property Collection<Content>  contents
- * @property Collection<Campaign> campaigns
- * @property Collection<Location> locations
+ * @property Collection<FormatLayout> layouts
+ * @property Collection<Content>      contents
+ * @property Collection<Campaign>     campaigns
+ * @property Collection<Location>     locations
  *
- * @property int                  frames_count
- * @property int                  contents_count
- * @property int                  campaigns_count
- * @property int                  locations_count
+ * @property int                      contents_count
+ * @property int                      campaigns_count
+ * @property int                      locations_count
  *
  * @mixin Builder
  */
@@ -74,7 +73,7 @@ class Format extends Model {
      */
     protected $casts = [
         "is_fullscreen" => "boolean",
-        "is_enabled" => "boolean",
+        "is_enabled"    => "boolean",
     ];
 
     /**
@@ -82,14 +81,14 @@ class Format extends Model {
      *
      * @var array
      */
-    protected $with = [ "frames" ];
+    protected $with = ["layouts"];
 
     /**
      * The relationship counts that should always be loaded.
      *
      * @var array
      */
-    protected $withCount = [ "frames" ];
+    protected $withCount = ["layouts"];
 
 
     /*
@@ -100,11 +99,19 @@ class Format extends Model {
 
     /* Network */
 
-    public function frames (): HasMany {
+    /**
+     * @deprecated Formats no longer have frames, they have layouts who holds the frames
+     * @see        Format::layouts()
+     */
+    public function frames(): HasMany {
         return $this->hasMany(Frame::class, 'format_id', 'id');
     }
 
-    public function locations (): BelongsToMany {
+    public function layouts(): HasMany {
+        return $this->hasMany(FormatLayout::class, 'format_id', 'id');
+    }
+
+    public function locations(): BelongsToMany {
         return $this->belongsToMany(Location::class, 'locations_formats', 'format_id', 'location_id');
     }
 }

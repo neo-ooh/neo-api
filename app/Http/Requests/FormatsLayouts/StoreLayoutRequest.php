@@ -5,25 +5,23 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - StoreContentRequest.php
+ * @neo/api - StoreLayoutRequest.php
  */
 
-namespace Neo\Http\Requests\Contents;
+namespace Neo\Http\Requests\FormatsLayouts;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Rules\AccessibleActor;
-use Neo\Rules\AccessibleLibrary;
 
-class StoreContentRequest extends FormRequest {
+class StoreLayoutRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize (): bool {
-        return Gate::allows(Capability::contents_edit);
+    public function authorize(): bool {
+        return Gate::allows(Capability::formats_edit);
     }
 
     /**
@@ -31,11 +29,11 @@ class StoreContentRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "owner_id"   => ["required", "integer", new AccessibleActor()],
-            "library_id" => ["required", "integer", new AccessibleLibrary()],
-            "layout_id"  => ["required", "integer", "exists:formats_layouts,id"],
+            "format_id"     => ["required", "integer", "exists:formats,id"],
+            "name"          => ["required", "string"],
+            "is_fullscreen" => ["required", "boolean"]
         ];
     }
 }

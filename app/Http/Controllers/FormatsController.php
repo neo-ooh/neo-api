@@ -67,8 +67,6 @@ class FormatsController extends Controller
     {
         [
             "name" => $format->name,
-            "slug" => $format->slug,
-            "is_fullscreen" => $format->is_fullscreen,
             "is_enabled" => $format->is_enabled,
         ] = $request->validated();
         $format->save();

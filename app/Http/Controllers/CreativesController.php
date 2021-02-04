@@ -44,10 +44,10 @@ class CreativesController extends Controller {
      * @throws InvalidCreativeFileFormat
      */
     public function store(StoreCreativeRequest $request, Content $content) {
-        // Start by checking the given frame matched the content format
+        // Start by checking the given frame matched the content layout
         /** @var Frame $frame */
         $frame = Frame::query()->find($request->get("frame_id"));
-        if ($frame->format->id !== $content->format->id) {
+        if ($frame->layout->id !== $content->layout->id) {
             throw new IncompatibleFrameAndFormat();
         }
 
@@ -105,7 +105,9 @@ class CreativesController extends Controller {
      */
     protected function validateCreative(UploadedFile $file, Frame $frame, Content $content): bool {
         // Execute additional media specific asserts
-        if ($file->getMimeType() === "image/jpeg") {
+        $mime = $file->getMimeType();
+
+        if ($mime === "image/jpeg" || $mime === "image/png") {
             // Static (Picture)
             // Dimensions
             [$width, $height] = getimagesize($file);
@@ -121,7 +123,7 @@ class CreativesController extends Controller {
             return true;
         }
 
-        if ($file->getMimeType() === "video/mp4") {
+        if ($mime === "video/mp4") {
             // Dynamic (video)
             $ffprobe = FFProbe::create(config('ffmpeg'));
 

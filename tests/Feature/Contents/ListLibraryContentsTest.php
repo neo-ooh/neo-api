@@ -55,7 +55,7 @@ class ListLibraryContentsTest extends TestCase {
                          "id",
                          "owner_id",
                          "library_id",
-                         "format_id",
+                         "layout_id",
                          "name",
                          "scheduling_duration",
                          "scheduling_times",

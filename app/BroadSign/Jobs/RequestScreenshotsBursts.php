@@ -31,7 +31,7 @@ class RequestScreenshotsBursts implements ShouldQueue {
      * @throws Exception
      */
     public function handle (): void {
-        if(config("app.env") === "testing") {
+        if(config("app.env") !== "production") {
             return;
         }
 

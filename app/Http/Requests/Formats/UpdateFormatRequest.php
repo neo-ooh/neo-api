@@ -32,8 +32,6 @@ class UpdateFormatRequest extends FormRequest {
     public function rules(): array {
         return [
             "name"          => ["required", "string"],
-            "slug"          => ["required", "string"],
-            "is_fullscreen" => ["required", "boolean"],
             "is_enabled"    => ["required", "boolean"],
         ];
     }

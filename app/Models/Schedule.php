@@ -66,7 +66,7 @@ class Schedule extends Model {
      *
      * @var string
      */
-    protected $table = 'schedules';
+    protected $table = "schedules";
 
     /**
      * The attributes that are mass assignable.
@@ -74,19 +74,13 @@ class Schedule extends Model {
      * @var array
      */
     protected $fillable = [
-        'campaign_id',
-        'content_id',
-        'owner_id',
-        'start_date',
-        'end_date',
-    ];
-
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
+        "campaign_id",
+        "content_id",
+        "owner_id",
+        "start_date",
+        "end_date",
+        "order",
+        "locked"
     ];
 
     /**

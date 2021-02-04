@@ -54,7 +54,7 @@ class CreateActorLibrary implements ShouldQueue {
         /** @var Actor $actor */
         $actor = Actor::query()->findOrFail($this->actorID);
 
-        if(config("app.env") === "testing") {
+        if(config("app.env") !== "production") {
             return;
         }
 

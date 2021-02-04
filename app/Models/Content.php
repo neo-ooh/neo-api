@@ -27,7 +27,7 @@ use Neo\Rules\AccessibleContent;
  * @property int                       id
  * @property int                       owner_id
  * @property int                       library_id
- * @property int                       format_id
+ * @property int                       layout_id
  * @property int                       broadsign_content_id
  * @property string                    name
  * @property double                    duration            How long this content will display. Not applicable if the content only
@@ -38,7 +38,7 @@ use Neo\Rules\AccessibleContent;
  *
  * @property Actor                     owner               The actor who created this content
  * @property Library                   library             The library where this content resides
- * @property Format                    format              The format of the content
+ * @property FormatLayout              layout              The layout of the content
  *
  * @property-read Collection<Creative> creatives           The creatives of the content
  * @property-read int                  creatives_count
@@ -73,7 +73,7 @@ class Content extends SecuredModel {
     protected $fillable = [
         'owner_id',
         'library_id',
-        'format_id',
+        'layout_id',
         'name',
         'scheduling_duration',
         'scheduling_times',
@@ -102,7 +102,7 @@ class Content extends SecuredModel {
      *
      * @var array
      */
-    protected $with = ["creatives", "format:id,slug"];
+    protected $with = ["creatives"];
 
     /**
      * The relationship counts that should always be loaded.
@@ -156,9 +156,8 @@ class Content extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    /* Direct */
-
     /**
+     * The Actor who owns this content
      * @return BelongsTo
      */
     public function owner(): BelongsTo {
@@ -166,6 +165,7 @@ class Content extends SecuredModel {
     }
 
     /**
+     * The Library hosting this content
      * @return BelongsTo
      */
     public function library(): BelongsTo {
@@ -173,6 +173,7 @@ class Content extends SecuredModel {
     }
 
     /**
+     * The Content's creatives
      * @return HasMany
      */
     public function creatives(): HasMany {
@@ -180,18 +181,27 @@ class Content extends SecuredModel {
     }
 
     /**
+     * The Schedules using this content
      * @return HasMany
      */
     public function schedules(): HasMany {
         return $this->hasMany(Schedule::class, 'content_id', 'id')->withTrashed();
     }
 
-    /* Network */
-
     /**
+     * The format of the content
+     * @deprecated
      * @return BelongsTo
      */
     public function format(): BelongsTo {
         return $this->belongsTo(Format::class, 'format_id', 'id');
+    }
+
+    /**
+     * The Content's Layout
+     * @return BelongsTo
+     */
+    public function layout(): BelongsTo {
+        return $this->belongsTo(FormatLayout::class, "layout_id", "id");
     }
 }

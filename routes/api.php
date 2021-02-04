@@ -28,6 +28,7 @@ use Neo\Http\Controllers\ContentsController;
 use Neo\Http\Controllers\CreativesController;
 use Neo\Http\Controllers\CustomersController;
 use Neo\Http\Controllers\FormatsController;
+use Neo\Http\Controllers\FormatsLayoutsController;
 use Neo\Http\Controllers\FramesController;
 use Neo\Http\Controllers\InventoryController;
 use Neo\Http\Controllers\LibrariesController;
@@ -47,6 +48,7 @@ use Neo\Models\Campaign;
 use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Format;
+use Neo\Models\FormatLayout;
 use Neo\Models\Frame;
 use Neo\Models\Library;
 use Neo\Models\Location;
@@ -284,15 +286,28 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     /*
     |----------------------------------------------------------------------
+    | Formats Layouts
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("layout", FormatLayout::class);
+
+    Route::  post("layouts"         , FormatsLayoutsController::class . "@store"  )->name("layouts.store");
+    Route::   put("layouts/{layout}", FormatsLayoutsController::class . "@update" )->name("layouts.update");
+    Route::delete("layouts/{layout}", FormatsLayoutsController::class . "@destroy")->name("layouts.destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
     | Frames
     |----------------------------------------------------------------------
     */
 
     Route::model("frame", Frame::class);
 
-    Route::  post("formats/{format}/frames", FramesController::class . "@store")->name("frames.index");
-    Route::   put("formats/{format}/frames/{frame}", FramesController::class . "@update")->name("frames.update");
-    Route::delete("formats/{format}/frames/{frame}", FramesController::class . "@destroy")->name("frames.destroy");
+    Route::  post("frames", FramesController::class . "@store")->name("frames.index");
+    Route::   put("frames/{frame}", FramesController::class . "@update")->name("frames.update");
+    Route::delete("frames/{frame}", FramesController::class . "@destroy")->name("frames.destroy");
 
 
     /*

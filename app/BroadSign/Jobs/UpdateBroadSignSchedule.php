@@ -54,7 +54,7 @@ class UpdateBroadSignSchedule implements ShouldQueue {
      * @return void
      */
     public function handle(): void {
-        if (config("app.env") === "testing") {
+        if (config("app.env") !== "production") {
             return;
         }
 

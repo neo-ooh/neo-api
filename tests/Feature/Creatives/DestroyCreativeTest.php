@@ -43,7 +43,7 @@ class DestroyCreativeTest extends TestCase {
         $creative = Creative::factory()->create([
             "owner_id"   => $actor->id,
             "content_id" => $content->id,
-            "frame_id"   => $content->format->frames[0]->id,
+            "frame_id"   => $content->layout->frames[0]->id,
         ]);
 
         $response = $this->json("DELETE", "/v1/creatives/{$creative->id}");
@@ -73,7 +73,7 @@ class DestroyCreativeTest extends TestCase {
         $creative = Creative::factory()->create([
             "owner_id"   => $actor->id,
             "content_id" => $content->id,
-            "frame_id"   => $content->format->frames[0]->id,
+            "frame_id"   => $content->layout->frames[0]->id,
         ]);
 
         $response = $this->json("DELETE", "/v1/creatives/{$creative->id}");
@@ -91,6 +91,8 @@ class DestroyCreativeTest extends TestCase {
         $this->actingAs($actor);
 
         $library = Library::factory()->create(["owner_id" => $actor->id]);
+
+        /** @var Content $content */
         $content = Content::factory()->create([
             "owner_id"   => $actor->id,
             "library_id" => $library->id,
@@ -98,7 +100,7 @@ class DestroyCreativeTest extends TestCase {
         $creative = Creative::factory()->create([
             "owner_id"   => $actor->id,
             "content_id" => $content->id,
-            "frame_id"   => $content->format->frames[0]->id,
+            "frame_id"   => $content->layout->frames[0]->id,
         ]);
 
         $response = $this->json("DELETE", "/v1/creatives/" . $creative->id);

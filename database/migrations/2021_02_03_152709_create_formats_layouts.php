@@ -39,7 +39,7 @@ class CreateFormatsLayouts extends Migration
 //            ]);
 //        }
 
-        $formats = Format::query()->has("frames")->with('frames')->get();
+        $formats = Format::all();
 
         Schema::table("frames", function (Blueprint $table) {
             $table->foreignId("layout_id")->after('id')->index()->nullable()->constrained("formats_layouts")->cascadeOnUpdate()->cascadeOnDelete();

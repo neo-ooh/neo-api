@@ -137,7 +137,9 @@ class Schedule extends Model {
 
         static::deleting(function (Schedule $schedule) {
             // Execute the deletion on broadsign side
-            DisableBroadSignSchedule::dispatch($schedule->broadsign_schedule_id);
+            if ($schedule->broadsign_schedule_id !== null) {
+                DisableBroadSignSchedule::dispatch($schedule->broadsign_schedule_id);
+            }
         });
     }
 

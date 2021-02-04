@@ -22,7 +22,7 @@ class CreateFormatsLayouts extends Migration
             $table->id();
             $table->foreignId('format_id')->index()->constrained('formats')->cascadeOnUpdate()->cascadeOnDelete();
             $table->string('name', 64)->default("");
-            $table->boolean("is_fullscreen")->after("name")->default(false);
+            $table->boolean("is_fullscreen")->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

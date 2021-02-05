@@ -39,8 +39,8 @@ class ResourceCriteria extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "update" => Endpoint::put("/resource_criteria")->id(),
-            "forResource" => Endpoint::get("/resource_criteria")->multiple(),
+            "update" => Endpoint::put("/resource_criteria/v7")->id(),
+            "forResource" => Endpoint::get("/resource_criteria/v7")->multiple(),
         ];
     }
 

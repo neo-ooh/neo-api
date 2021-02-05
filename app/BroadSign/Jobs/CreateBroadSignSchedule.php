@@ -80,6 +80,12 @@ class CreateBroadSignSchedule implements ShouldQueue {
             return;
         }
 
+        // Make sure the campaign has a broadsign id, if not, release and retry later
+        if($schedule->campaign->broadsign_reservation_id === null) {
+            // Wait 30s before trying again
+            $this->release(30);
+        }
+
         // Get the associated content
         $content = $schedule->content;
 

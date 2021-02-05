@@ -59,6 +59,15 @@ class UpdateBroadSignCampaign implements ShouldQueue {
         // Get the Access and Broadsign campaign
         /** @var Campaign $campaign */
         $campaign   = Campaign::query()->findOrFail($this->campaignID);
+
+        if($campaign->broadsign_reservation_id === null) {
+            // This campaign has no BroadSign ID. It must be created before it gets updated
+            CreateBroadSignCampaign::dispatch($this->campaignID);
+
+            // We die here as the creation triggers an update
+            return;
+        }
+
         $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
 
         // Update the name and fullscreen status of the campaign

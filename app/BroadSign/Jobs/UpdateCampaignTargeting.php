@@ -71,8 +71,9 @@ class UpdateCampaignTargeting extends BroadSignJob {
 
         // List the types of all the layouts
         $requiredCriteria = $layouts
-            ->frames
-            ->map(fn($frame) => $frame->pluck("type"))
+            ->map(fn($layout) => $layout
+                ->frames
+                ->map(fn($frame) => $frame->pluck("type")))
             ->flatten()
             ->unique()
             ->values()

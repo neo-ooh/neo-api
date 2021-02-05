@@ -26,7 +26,7 @@ use Symfony\Component\Translation\Exception\InvalidResourceException;
  *
  * @package Neo\Jobs
  */
-class DisableBroadSignSchedule implements ShouldQueue {
+class DisableBroadSignSchedule extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -52,10 +52,6 @@ class DisableBroadSignSchedule implements ShouldQueue {
      * @return void
      */
     public function handle (): void {
-        if(config("app.env") !== "production") {
-            return;
-        }
-
         // Deactivate the schedule
         $bsSchedule = BSSchedule::get($this->broadsignScheduleId);
 

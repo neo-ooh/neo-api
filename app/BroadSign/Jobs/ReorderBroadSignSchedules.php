@@ -28,7 +28,7 @@ use Neo\Models\Schedule;
  * @warning This does not update the broadcasting status of the schedule, only its properties.
  * @see     UpdateBroadSignScheduleStatus
  */
-class ReorderBroadSignSchedules implements ShouldQueue {
+class ReorderBroadSignSchedules extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -54,10 +54,6 @@ class ReorderBroadSignSchedules implements ShouldQueue {
      * @return void
      */
     public function handle(): void {
-        if (config("app.env") !== "production") {
-            return;
-        }
-
         // Get all the schedules of the campaign
         $schedules = Schedule::query()
                              ->where("id", "=", $this->campaignId)

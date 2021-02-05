@@ -26,7 +26,7 @@ use Neo\Models\Campaign;
  *
  * @package Neo\Jobs
  */
-class UpdateBroadSignCampaign implements ShouldQueue {
+class UpdateBroadSignCampaign extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $campaignID;
@@ -52,10 +52,6 @@ class UpdateBroadSignCampaign implements ShouldQueue {
      * @noinspection PhpUnusedParameterInspection
      */
     public function handle (BroadSign $broadsign): void {
-        if(config("app.env") !== "production") {
-            return;
-        }
-
         // Get the Access and Broadsign campaign
         /** @var Campaign $campaign */
         $campaign   = Campaign::query()->findOrFail($this->campaignID);

@@ -28,7 +28,7 @@ use Neo\Models\Schedule;
  * @warning This does not update the broadcasting status of the schedule, only its properties.
  * @see     UpdateBroadSignScheduleStatus
  */
-class UpdateBroadSignSchedule implements ShouldQueue {
+class UpdateBroadSignSchedule extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -54,10 +54,6 @@ class UpdateBroadSignSchedule implements ShouldQueue {
      * @return void
      */
     public function handle(): void {
-        if (config("app.env") !== "production") {
-            return;
-        }
-
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 

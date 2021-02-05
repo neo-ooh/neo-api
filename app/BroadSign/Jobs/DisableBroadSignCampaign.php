@@ -24,7 +24,7 @@ use Neo\Models\Campaign;
  *
  * @package Neo\Jobs
  */
-class DisableBroadSignCampaign implements ShouldQueue {
+class DisableBroadSignCampaign extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -50,10 +50,6 @@ class DisableBroadSignCampaign implements ShouldQueue {
      * @return void
      */
     public function handle (): void {
-        if(config("app.env") !== "production") {
-            return;
-        }
-
         // Update the broadsign campaign
         $bsReservation = BSCampaign::get($this->reservationId);
 

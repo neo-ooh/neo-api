@@ -33,7 +33,7 @@ use Symfony\Component\Translation\Exception\InvalidResourceException;
  *
  * @package Neo\Jobs
  */
-class CreateBroadSignSchedule implements ShouldQueue {
+class CreateBroadSignSchedule extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -66,10 +66,6 @@ class CreateBroadSignSchedule implements ShouldQueue {
      * @return void
      */
     public function handle(): void {
-        if (config("app.env") !== "production") {
-            return;
-        }
-
         // Get the access Schedules
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->findOrFail($this->scheduleID);
@@ -125,6 +121,8 @@ class CreateBroadSignSchedule implements ShouldQueue {
 
         // Create the broadsign bundle that will be broadcast by the schedule
         $this->makeBundle($content, $bsSchedule, $schedule);
+
+        UpdateCampaignTargeting::dispatch($schedule->campaign_id);
     }
 
     /**

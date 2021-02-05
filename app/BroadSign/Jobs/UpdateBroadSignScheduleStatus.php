@@ -26,7 +26,7 @@ use Neo\Models\Schedule;
  * @package Neo\Jobs
  *
  */
-class UpdateBroadSignScheduleStatus implements ShouldQueue {
+class UpdateBroadSignScheduleStatus extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -54,10 +54,6 @@ class UpdateBroadSignScheduleStatus implements ShouldQueue {
      * @throws Exception
      */
     public function handle (): void {
-        if(config("app.env") !== "production") {
-            return;
-        }
-
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 

@@ -26,7 +26,7 @@ use Neo\Models\Creative;
  *
  * Imports the specified creative in BroadSign and register its BroadSign ID.
  */
-class DisableBroadSignCreative implements ShouldQueue {
+class DisableBroadSignCreative extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected int $adCopyID;
@@ -49,10 +49,6 @@ class DisableBroadSignCreative implements ShouldQueue {
      * @throws Exception
      */
     public function handle (): void {
-        if(config("app.env") !== "production") {
-            return;
-        }
-
         $bsCreative = BSCreative::get($this->adCopyID);
 
         if($bsCreative === null) {

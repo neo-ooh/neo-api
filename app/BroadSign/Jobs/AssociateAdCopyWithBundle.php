@@ -12,7 +12,6 @@ namespace Neo\BroadSign\Jobs;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -26,7 +25,7 @@ use Neo\BroadSign\Models\Bundle;
  *
  * @package Neo\Jobs
  */
-class AssociateAdCopyWithBundle implements ShouldQueue {
+class AssociateAdCopyWithBundle extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -58,10 +57,6 @@ class AssociateAdCopyWithBundle implements ShouldQueue {
      * @throws BadResponse
      */
     public function handle(): void {
-        if (config("app.env") !== "production") {
-            return;
-        }
-
         $bundle = new Bundle(["id" => $this->bundleID]);
         $bundle->associateCreative($this->adCopyID);
     }

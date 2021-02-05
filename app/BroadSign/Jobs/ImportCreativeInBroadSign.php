@@ -28,7 +28,7 @@ use Neo\Models\Creative;
  *
  * Imports the specified creative in BroadSign and register its BroadSign ID.
  */
-class ImportCreativeInBroadSign implements ShouldQueue {
+class ImportCreativeInBroadSign extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected int $creativeID;
@@ -55,10 +55,6 @@ class ImportCreativeInBroadSign implements ShouldQueue {
      * @throws Exception
      */
     public function handle(BroadSign $broadsign): void {
-        if (config("app.env") !== "production") {
-            return;
-        }
-
         /** @var Creative $creative */
         $creative = Creative::query()->findOrFail($this->creativeID);
 

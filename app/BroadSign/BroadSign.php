@@ -16,7 +16,7 @@ use stdClass;
 class BroadSign {
     protected $supportMapping = [
         "Digital Horizontal" => "DH",
-        "Digital Vertical"   => "DH",
+        "Digital Vertical"   => "DV",
         "Panorama"           => "PANO",
     ];
 

@@ -29,7 +29,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  *
  * @package Neo\Jobs
  */
-class SynchronizeLocations implements ShouldQueue {
+class SynchronizeLocations extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle (): void {

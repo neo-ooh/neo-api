@@ -24,7 +24,7 @@ use Neo\Models\Burst;
 use Neo\Models\Player;
 
 
-class RequestScreenshotsBursts implements ShouldQueue {
+class RequestScreenshotsBursts extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**

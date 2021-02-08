@@ -8,16 +8,15 @@
  * @neo/api - DisableBroadSignCreative.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Creatives;
 
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Creative as BSCreative;
-use Neo\Models\Creative;
 
 /**
  * Class DisableBroadSignCreative
@@ -38,7 +37,7 @@ class DisableBroadSignCreative extends BroadSignJob {
      *
      * @return void
      */
-    public function __construct (int $adCopyID) {
+    public function __construct(int $adCopyID) {
         $this->adCopyID = $adCopyID;
     }
 
@@ -48,10 +47,10 @@ class DisableBroadSignCreative extends BroadSignJob {
      * @return void
      * @throws Exception
      */
-    public function handle (): void {
+    public function handle(): void {
         $bsCreative = BSCreative::get($this->adCopyID);
 
-        if($bsCreative === null) {
+        if ($bsCreative === null) {
             // We do not throw any error on ad-copy not found as we were already trying to deactive it.
             return;
         }

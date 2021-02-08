@@ -8,10 +8,9 @@
  * @neo/api - BlockJobsOnTestingEnv.php
  */
 
-namespace Neo\BroadSign\Jobs\Middlewares;
+namespace Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\Middlewares;
 
 use Illuminate\Queue\Jobs\Job;
-use Illuminate\Support\Facades\Redis;
 
 /**
  * Class BlockJobOnTestingEnv

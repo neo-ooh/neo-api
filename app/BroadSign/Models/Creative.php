@@ -10,6 +10,7 @@
 
 namespace Neo\BroadSign\Models;
 
+use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Neo\BroadSign\Endpoint;
 
 /**
@@ -42,7 +43,6 @@ use Neo\BroadSign\Endpoint;
  * @property int size
  *
  * @method static Creative[] all()
- * @method static int create(array $attributes)
  * @method static Creative get(int $creativeID)
  * @method static int update(array $attributes)
  */
@@ -76,7 +76,12 @@ class Creative extends BroadSignModel {
     }
 
 
-
+    /**
+     * @param int $criteriaID
+     * @param int $type
+     *
+     * @throws BadResponse
+     */
     public function addCriteria(int $criteriaID, int $type): void {
         static::addResourceCriteria([
             "active"      => true,

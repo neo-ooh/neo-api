@@ -20,9 +20,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Constraint;
 use Intervention\Image\Facades\Image;
-use Neo\BroadSign\Jobs\DisableBroadSignCreative;
+use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\DisableBroadSignCreative;
+use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
 
 /**
@@ -86,14 +86,14 @@ class Creative extends Model {
      *
      * @var array
      */
-    protected $appends = [ "file_url", "thumbnail_url" ];
+    protected $appends = ["file_url", "thumbnail_url"];
 
-    public static function boot (): void {
+    public static function boot(): void {
         parent::boot();
 
         static::deleting(function (Creative $creative) {
             // Disabled the creative in Broadsign
-            if($creative->broadsign_ad_copy_id !== null) {
+            if ($creative->broadsign_ad_copy_id !== null) {
                 DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
             }
 
@@ -111,7 +111,7 @@ class Creative extends Model {
         });
     }
 
-    public function eraseFile (): void {
+    public function eraseFile(): void {
         Storage::delete($this->file_path);
     }
 
@@ -123,19 +123,19 @@ class Creative extends Model {
 
     /* Direct */
 
-    public function eraseThumbnail (): void {
+    public function eraseThumbnail(): void {
         Storage::delete($this->thumbnail_path);
     }
 
-    protected static function newFactory (): CreativeFactory {
+    protected static function newFactory(): CreativeFactory {
         return CreativeFactory::new();
     }
 
-    public function owner (): BelongsTo {
+    public function owner(): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
     }
 
-    public function content (): BelongsTo {
+    public function content(): BelongsTo {
         return $this->belongsTo(Content::class, 'content_id', 'id');
     }
 
@@ -145,7 +145,7 @@ class Creative extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function frame (): BelongsTo {
+    public function frame(): BelongsTo {
         return $this->belongsTo(Frame::class, 'frame_id', 'id');
     }
 
@@ -156,23 +156,23 @@ class Creative extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function getFileUrlAttribute (): string {
+    public function getFileUrlAttribute(): string {
         return Storage::url($this->file_path);
     }
 
-    public function getFilePathAttribute (): string {
+    public function getFilePathAttribute(): string {
         return 'creatives/' . $this->id . '.' . $this->extension;
     }
 
-    public function getThumbnailUrlAttribute (): string {
+    public function getThumbnailUrlAttribute(): string {
         return Storage::url($this->thumbnail_path);
     }
 
-    public function getThumbnailPathAttribute (): string {
+    public function getThumbnailPathAttribute(): string {
         return 'creatives/' . $this->id . '_thumb.jpeg';
     }
 
-    public function store (UploadedFile $file): void {
+    public function store(UploadedFile $file): void {
         if (Storage::exists($this->file_path)) {
             Storage::delete($this->file_path);
         }
@@ -197,7 +197,7 @@ class Creative extends Model {
      * @return void
      * @throws FileNotFoundException
      */
-    public function createThumbnail (UploadedFile $file): void {
+    public function createThumbnail(UploadedFile $file): void {
         if (Storage::exists($this->thumbnail_path)) {
             Storage::delete($this->thumbnail_path);
         }
@@ -224,10 +224,10 @@ class Creative extends Model {
      *
      * @return void
      */
-    private function createImageThumbnail (UploadedFile $file): void {
+    private function createImageThumbnail(UploadedFile $file): void {
 
         $img = Image::make($file->getRealPath());
-        $img->resize(1280, 1280, function($constraint) {
+        $img->resize(1280, 1280, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });
@@ -244,7 +244,7 @@ class Creative extends Model {
      * @return void
      * @throws FileNotFoundException
      */
-    private function createVideoThumbnail (UploadedFile $file): void {
+    private function createVideoThumbnail(UploadedFile $file): void {
         $ffmpeg = FFMpeg::create(config('ffmpeg'));
 
         $tempName = 'thumb_' . $this->checksum;

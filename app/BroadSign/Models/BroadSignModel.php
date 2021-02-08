@@ -190,7 +190,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      */
     protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, array $params) {
         /** @var Response $response */
-        Log::debug("Calling broadsign API: ({$endpoint->method}) {$path}", $params);
+        Log::channel("broadsign")->debug("Calling broadsign API: ({$endpoint->method}) {$path}", $params);
 
         $response = Http::withoutVerifying()
                         ->withOptions(["cert" => storage_path('broadsign.pem')])
@@ -203,7 +203,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         }
 
         if (!$response->successful()) {
-            Log::error($response->json());
+            Log::channel("broadsign")->error($response->json());
             throw new BadResponse("Received response with invalid status code", $response->status());
         }
 

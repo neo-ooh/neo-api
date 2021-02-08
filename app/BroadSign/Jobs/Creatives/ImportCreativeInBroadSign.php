@@ -8,16 +8,16 @@
  * @neo/api - ImportCreativeInBroadSign.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Creatives;
 
 use DateInterval;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\BroadSign;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Creative as BSCreative;
 use Neo\Models\Creative;
 
@@ -81,30 +81,8 @@ class ImportCreativeInBroadSign extends BroadSignJob {
         $creative->broadsign_ad_copy_id = $bsCreative->id;
         $creative->save();
 
-        $this->targetCreative($bsCreative, $creative, $broadsign);
-    }
-
-    /**
-     * Appropriately set the criteria for the ad-copy to broadcast
-     * @param BSCreative $bsCreative
-     * @param Creative   $creative
-     * @param BroadSign  $broadsign
-     */
-    public function targetCreative(BSCreative $bsCreative, Creative $creative, BroadSign $broadsign) {
-        // We need to target the creative base on its format and frames
-        if ($creative->frame->layout->frames_count === 1) {
-            // Only one frame in the format, do nothing
-            return;
-        }
-
-        switch ($creative->frame->type) {
-            case "MAIN":
-                $bsCreative->addCriteria(BroadSign::getDefaults()['left_frame_criteria_id'], 4);
-                break;
-            case "RIGHT":
-                $bsCreative->addCriteria(BroadSign::getDefaults()['right_frame_criteria_id'], 4);
-                break;
-        }
+        // Schedule job to target the creative accordingly
+        TargetCreative::dispatch($creative->id);
     }
 }
 

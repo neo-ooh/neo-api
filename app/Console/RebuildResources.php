@@ -11,11 +11,11 @@
 namespace Neo\Console;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
-use Neo\BroadSign\Jobs\CreateBroadSignSchedule;
-use Neo\BroadSign\Jobs\SynchronizeFormats;
-use Neo\BroadSign\Jobs\SynchronizeLocations;
-use Neo\BroadSign\Jobs\SynchronizePlayers;
+use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\CreateBroadSignCampaign;
+use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\CreateBroadSignSchedule;
+use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\SynchronizeFormats;
+use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\SynchronizeLocations;
+use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\SynchronizePlayers;
 use Neo\BroadSign\Models\Bundle;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\BroadSign\Models\Schedule as BSSchedule;

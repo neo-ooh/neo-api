@@ -11,9 +11,9 @@
 namespace Neo\Console;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\SynchronizeFormats;
-use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\SynchronizeLocations;
-use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\SynchronizePlayers;
+use Neo\BroadSign\Jobs\SynchronizeFormats;
+use Neo\BroadSign\Jobs\SynchronizeLocations;
+use Neo\BroadSign\Jobs\SynchronizePlayers;
 
 class NetworkUpdate extends Command {
     /**

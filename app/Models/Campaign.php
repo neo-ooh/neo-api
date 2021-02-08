@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon as Date;
-use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\DisableBroadSignCampaign;
+use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
 use Neo\Models\Factories\CampaignFactory;
 use Neo\Rules\AccessibleCampaign;
 

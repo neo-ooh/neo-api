@@ -3,7 +3,7 @@
 namespace Neo\BroadSign\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\Middlewares\BlockJobOutsideProduction;
+use Neo\BroadSign\Jobs\Middlewares\BlockJobOutsideProduction;
 
 abstract class BroadSignJob implements ShouldQueue {
     /**

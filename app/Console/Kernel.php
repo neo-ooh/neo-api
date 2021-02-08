@@ -12,7 +12,7 @@ namespace Neo\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\RequestScreenshotsBursts;
+use Neo\BroadSign\Jobs\RequestScreenshotsBursts;
 
 class Kernel extends ConsoleKernel
 {

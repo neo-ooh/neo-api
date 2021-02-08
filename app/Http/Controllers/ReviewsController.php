@@ -13,7 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\UpdateBroadSignScheduleStatus;
+use Neo\BroadSign\Jobs\UpdateBroadSignScheduleStatus;
 use Neo\Http\Requests\Reviews\StoreReviewRequest;
 use Neo\Models\Review;
 use Neo\Models\Schedule;

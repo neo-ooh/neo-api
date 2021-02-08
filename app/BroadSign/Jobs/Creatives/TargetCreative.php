@@ -79,7 +79,7 @@ class TargetCreative extends BroadSignJob {
                     $bsCreative->addCriteria(BroadSign::getDefaults()['right_frame_criteria_id'], 4);
                     break;
             }
-        } catch (BadResponse) {
+        } catch (BadResponse $exception) {
             // Creative could not be targeted. It is most probably still uploading
             $this->release(60);
         }

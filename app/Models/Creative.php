@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
-use Neo\BroadSign\Jobs\Creatives\Creatives\Creatives\DisableBroadSignCreative;
 use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
 

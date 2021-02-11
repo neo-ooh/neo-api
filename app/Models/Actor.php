@@ -233,7 +233,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @return HasOne
      */
     public function logo(): HasOne {
-        return $this->hasOne(ActorLogo::class, 'actor_id', 'id');
+        return $this->hasOne(ActorLogo::class, 'id', 'id');
     }
 
 

@@ -32,10 +32,12 @@ class ActorsLogosController extends Controller {
 
         // The request has already validated that the file is an image, but we want to make sure we only store pngs
         $actorLogo = new ActorLogo();
-        $actorLogo->actor_id = $actor->id;
+        $actorLogo->id = $actor->id;
+        $actorLogo->original_name = $uploadedFile->getClientOriginalName();
         $actorLogo->save();
         $actorLogo->store($uploadedFile);
 
+        return new Response($actorLogo, 201);
     }
 
     public function destroy(DestroyActorLogoRequest $request, Actor $actor) {

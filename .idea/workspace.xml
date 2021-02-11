@@ -18,7 +18,6 @@
       <change afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrders.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrdersCategory.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsLogosController.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsLogos/DestroyActorLogoRequest.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsLogos/StoreActorLogoRequest.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/resources/documents/stylesheets/_footer.scss" afterDir="false" />
@@ -51,10 +50,13 @@
       <change beforePath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsCampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsCampaignsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsLogosController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsLogosController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BrandingsFilesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BrandingsFilesController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/ActorLogo.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/ActorLogo.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_02_11_194151_create_actors_logo_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_02_11_194151_create_actors_logo_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/_colors.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/_colors.scss" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" afterDir="false" />
@@ -353,7 +355,7 @@
       <workItem from="1611759751819" duration="932000" />
       <workItem from="1611841219519" duration="50750000" />
       <workItem from="1612370980953" duration="32840000" />
-      <workItem from="1612886336214" duration="42063000" />
+      <workItem from="1612886336214" duration="43383000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

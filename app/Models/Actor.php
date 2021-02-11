@@ -508,21 +508,24 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     /**
-     * Build and return a JWT for the current user.q
+     * Build and return a JWT for the current user.
      *
      * @return string
      */
     public function getJWT(): string {
+        $twoFAIsValid = $this->is2FAValid();
+
         $payload = [
             // Registered
             "iss"  => config("app.url"),
-            "aud"  => "*.neo-ooh.info",
+            "aud"  => "*.neo-ooh.com",
             "iat"  => time(),
+            "exp"  => $twoFAIsValid ? $this->twoFactorToken->created_at->addDays(29) : Date::now()->addDay(),
 
             // Private
             "uid"  => $this->id,
             "name" => $this->name,
-            "2fa"  => $this->is2FAValid(),
+            "2fa"  => $twoFAIsValid,
             "tos"  => $this->tos_accepted,
         ];
 

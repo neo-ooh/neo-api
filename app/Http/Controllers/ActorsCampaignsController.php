@@ -10,6 +10,7 @@ class ActorsCampaignsController extends Controller {
     public function index(ListActorCampaignsRequest $request): Response {
         return new Response(Actor::query()
                                  ->findOrFail($request->route('actor'))
+                                 ->append("applied_branding")
                                  ->getCampaigns(true, true, false, false)
                                  ->loadMissing([
                                      "format",

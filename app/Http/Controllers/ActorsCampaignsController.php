@@ -21,6 +21,6 @@ class ActorsCampaignsController extends Controller {
                                      "schedules.owner:id,name",
                                      "trashedSchedules",
                                      "trashedSchedules.content"])
-                                 ->append(["related_libraries"])->each(fn($campaign) => $campaign->owner->append("applied_branding")));
+                                 ->append(["related_libraries"])->each(fn($campaign) => $campaign->owner->with("logo")->append("applied_branding")));
     }
 }

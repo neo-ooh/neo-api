@@ -77,6 +77,8 @@ use Neo\Rules\AccessibleActor;
  * @property Collection     shared_libraries
  * @property Collection     children_libraries
  *
+ * @property ?ActorLogo     logo
+ *
  * @method Builder    accessibleActors()
  * @method Builder      SharedActors()
  *
@@ -218,8 +220,20 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->hasOne(RecoveryToken::class, "email", "email");
     }
 
+    /**
+     * Load details about the actor hierarchy
+     * @return HasOne
+     */
     public function details(): HasOne {
         return $this->hasOne(ActorDetails::class, 'id', 'id');
+    }
+
+    /**
+     * The actor's logo
+     * @return HasOne
+     */
+    public function logo(): HasOne {
+        return $this->hasOne(ActorLogo::class, 'actor_id', 'id');
     }
 
 

@@ -11,7 +11,6 @@
 namespace Neo\BroadSign;
 
 use Neo\BroadSign\Models\Inventory;
-use stdClass;
 
 class BroadSign {
     protected $supportMapping = [

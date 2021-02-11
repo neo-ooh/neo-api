@@ -16,6 +16,7 @@ use Neo\Http\Controllers\ActorsCampaignsController;
 use Neo\Http\Controllers\ActorsCapabilitiesController;
 use Neo\Http\Controllers\ActorsController;
 use Neo\Http\Controllers\ActorsLocationsController;
+use Neo\Http\Controllers\ActorsLogosController;
 use Neo\Http\Controllers\ActorsRolesController;
 use Neo\Http\Controllers\ActorsSharingsController;
 use Neo\Http\Controllers\BrandingsController;
@@ -130,6 +131,16 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::get("actors/{actor}/locations", ActorsLocationsController::class . "@index")->name("actors.locations.index");
     Route::put("actors/{actor}/locations", ActorsLocationsController::class . "@sync")->name("actors.locations.sync");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Actors Logos
+    |----------------------------------------------------------------------
+    */
+
+    Route::post("actors/{actor}/logo", ActorsLogosController::class . "@store")->name("actors.logo.store");
+    Route::delete("actors/{actor}/logo", ActorsLogosController::class . "@destroy")->name("actors.logo.destroy");
 
 
     /*
@@ -292,8 +303,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route::model("layout", FormatLayout::class);
 
-    Route::  post("layouts"         , FormatsLayoutsController::class . "@store"  )->name("layouts.store");
-    Route::   put("layouts/{layout}", FormatsLayoutsController::class . "@update" )->name("layouts.update");
+    Route::  post("layouts", FormatsLayoutsController::class . "@store")->name("layouts.store");
+    Route::   put("layouts/{layout}", FormatsLayoutsController::class . "@update")->name("layouts.update");
     Route::delete("layouts/{layout}", FormatsLayoutsController::class . "@destroy")->name("layouts.destroy");
 
 

@@ -60,7 +60,7 @@ class BrandingsFilesController extends Controller {
 
         // Is there already a file in the branding for the specified type ?
         /** @var BrandingFile $file */
-        $file = $branding->files()->where('type', '=', '$type')->first();
+        $file = $branding->files()->where('type', '=', $type)->first();
 
         if (!is_null($file)) {
             // A file already exists, remove it

@@ -107,6 +107,10 @@ class ActorsController extends Controller {
             $actor->load("sharers");
         }
 
+        if (in_array("logo", $with, true)) {
+            $actor->load("logo");
+        }
+
         $actor->append(["parent", "registration_sent", "is_registered"]);
 
         return new Response($actor);

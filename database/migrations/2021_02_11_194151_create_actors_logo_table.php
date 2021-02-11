@@ -15,6 +15,7 @@ class CreateActorsLogoTable extends Migration
     {
         Schema::create('actors_logo', function (Blueprint $table) {
             $table->foreignId("id")->primary()->constrained("actors")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string("original_name", 256);
             $table->timestamps();
         });
     }

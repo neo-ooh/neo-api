@@ -497,7 +497,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // Is the token validated and not too old
-        if ($token->validated && $token->created_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) < 1) {
+        if ($token->validated && $token->validated_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) < 1) {
             return true;
         }
 
@@ -518,7 +518,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             "aud"  => "*.neo-ooh.com",
             "iat"  => time(),
             "exp"  => $twoFAIsValid
-                ? $this->twoFactorToken->created_at->addDays(29)->timestamp
+                ? $this->twoFactorToken->validated_at->addDays(29)->timestamp
                 : Date::now()->addDays(1)->timestamp,
 
             // Private

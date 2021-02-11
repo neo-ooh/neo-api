@@ -493,6 +493,11 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
         // Is there a token ?
         if ($token === null) {
+            // If we are here, it means the user is logged in using its identifier, but has no twoFA.
+            // We create one for it
+            $token = new TwoFactorToken();
+            $token->actor()->associate($this);
+            $token->save();
             return false;
         }
 

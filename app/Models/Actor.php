@@ -501,8 +501,13 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return false;
         }
 
-        // If the token is not validated or if it is too old, we replace it
-        if(!$token->validated || $token->validated_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) >= 1) {
+        // If the token is not validated and is not too old, stops here just saying not validated
+        if(!$token->validated && $token->validated_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) < 1) {
+            return false;
+        }
+
+        // If the token is validated but is too old, create a new one and say not validated
+        if($token->validated && $token->validated_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) >= 1) {
             $token->delete();
 
             $token = new TwoFactorToken();
@@ -512,6 +517,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return false;
         }
 
+        // token is validated and is not expired
         return true;
     }
 

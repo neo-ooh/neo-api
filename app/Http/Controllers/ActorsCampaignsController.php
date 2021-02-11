@@ -10,7 +10,6 @@ class ActorsCampaignsController extends Controller {
     public function index(ListActorCampaignsRequest $request): Response {
         return new Response(Actor::query()
                                  ->findOrFail($request->route('actor'))
-                                 ->append("applied_branding")
                                  ->getCampaigns(true, true, false, false)
                                  ->loadMissing([
                                      "format",
@@ -22,6 +21,6 @@ class ActorsCampaignsController extends Controller {
                                      "schedules.owner:id,name",
                                      "trashedSchedules",
                                      "trashedSchedules.content"])
-                                 ->append(["related_libraries"]));
+                                 ->append(["related_libraries"])->each(fn($campaign) => $campaign->owner->append(["applied_branding"])));
     }
 }

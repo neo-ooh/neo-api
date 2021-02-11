@@ -29,43 +29,181 @@ h1, h2 {
   font-family: "poppins-bold";
 }
 
-.details-header-neo-logo {
-  width: 60mm;
-  margin: 5mm 0 0 5mm;
+.shopping {
+  color: #3e9cca;
 }
-.details-header-title-wrapper {
-  width: 100mm;
-  margin: -20mm 0 0 110mm;
+
+.otg {
+  color: #e5782c;
+}
+
+.fitness {
+  color: #d63641;
+}
+
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _header.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _fonts.scss
+ */
+header {
+  margin: 0 -5mm;
+}
+header .header-table {
+  width: 100%;
+}
+
+.header-company-logo {
+  width: 50mm;
+}
+.header-neo-logo {
+  width: 50mm;
+}
+.header-title {
+  width: calc(100% - 130mm);
   text-align: center;
-}
-.details-header-title {
   font-family: "poppins-extra-light";
   font-size: 24pt;
 }
-.details-header-contract-data {
-  width: 100mm;
-  margin: -25mm 0 0 250mm;
+.header-contract {
+  width: 80mm;
+}
+.header-contract-data {
+  width: 80mm;
   border-collapse: collapse;
 }
-.details-header-contract-data tr td {
+.header-contract-data tr td {
   border-bottom: 1px solid #000000;
+  font-size: 0.889em;
 }
-.details-header-contract-data tr td:nth-child(1) {
+.header-contract-data tr td:nth-child(1) {
   border-right: 1px solid #000000;
-  padding: 3px 5px 3px 15px;
+  padding: 2px 5px 2px 15px;
 }
-.details-header-contract-data tr td:nth-child(2) {
-  padding: 3px 15px 3px 5px;
+.header-contract-data tr td:nth-child(2) {
+  padding: 2px 15px 2px 5px;
 }
-.details-header-contract-data tr:nth-child(6) td {
+.header-contract-data tr:nth-child(6) td {
   border-bottom: none;
 }
-.details-header-contract-data-label {
+.header-contract-data-label {
   font-family: "poppins-light";
   text-align: right;
 }
-.details-header-contract-data-value {
+.header-contract-data-value {
   font-weight: bold;
+}
+
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _footer.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _fonts.scss
+ */
+footer {
+  position: absolute;
+  left: 10mm;
+  bottom: 10mm;
+}
+
+.footer-company-branding-logo {
+  width: 30mm;
+}
+
+.footer-folio {
+  text-align: right;
+}
+.footer-folio-current {
+  font-size: 1.802rem;
+}
+.footer-folio-group {
+  font-size: 1.125rem;
+  color: #888888;
+}
+
+.summary-purchases-table {
+  border-collapse: collapse;
+  margin-bottom: 5mm;
+}
+.summary-purchases-table thead tr th {
+  width: 25mm;
+  padding: 2mm 1mm;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  text-align: center;
+  font-size: 0.889em;
+  background-color: #252734;
+  border-left: 1px solid #FFFFFF;
+}
+.summary-purchases-table thead tr th:nth-child(1) {
+  width: 40mm;
+  border-left: none;
+}
+.summary-purchases-table tbody tr td {
+  padding: 3mm 0;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  text-align: center;
+  font-size: 0.889em;
+  border-left: 1px solid #FFFFFF;
+  border-top: 1px solid #FFFFFF;
+}
+.summary-purchases-table tbody tr td:nth-child(1) {
+  border-left: none;
+}
+.summary-purchases-table tbody tr.shopping td {
+  background-color: #3e9cca;
+}
+.summary-purchases-table tbody tr.otg td {
+  background-color: #e5782c;
+}
+.summary-purchases-table tbody tr.fitness td {
+  background-color: #d63641;
+}
+.summary-purchases-table tfoot tr td {
+  padding: 4mm 0;
+  color: #252734;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.889em;
 }
 
 .detailed-purchases {
@@ -77,36 +215,43 @@ h1, h2 {
   font-size: 14pt;
 }
 .detailed-purchases-title .shopping {
-  color: #0099F8;
+  color: #3e9cca;
 }
 .detailed-purchases-title .otg {
-  color: #FF6300;
+  color: #e5782c;
 }
 .detailed-purchases-title .fitness {
-  color: #F8002B;
+  color: #d63641;
 }
 .detailed-purchases-table {
   page-break-inside: avoid;
   margin-bottom: 10mm;
   border-collapse: collapse;
 }
-.detailed-purchases-table thead tr th {
+.detailed-purchases-table thead tr.title td.detailed-purchases-title {
+  padding-bottom: 3mm;
+  text-transform: uppercase;
+  font-size: 14pt;
+  font-family: "poppins-bold";
+  font-weight: bold;
+}
+.detailed-purchases-table thead tr.headers th {
   width: 25mm;
   padding: 2mm 0;
-  background-color: #202035;
+  background-color: #252734;
   color: #FFFFFF;
   font-weight: bold;
   text-align: center;
   font-size: 10pt;
   border-right: 2px solid #FFFFFF;
 }
-.detailed-purchases-table thead tr th:nth-child(1) {
+.detailed-purchases-table thead tr.headers th:nth-child(1) {
   width: 60mm;
 }
-.detailed-purchases-table thead tr th:nth-child(2) {
+.detailed-purchases-table thead tr.headers th:nth-child(2) {
   width: 40mm;
 }
-.detailed-purchases-table thead tr th:nth-child(11) {
+.detailed-purchases-table thead tr.headers th:nth-child(11) {
   border-right: none;
 }
 .detailed-purchases-table tbody tr td {
@@ -123,6 +268,19 @@ h1, h2 {
 .detailed-purchases-table tbody tr.region-row td:nth-child(1) {
   border-right: 2px solid #FFFFFF;
 }
+.detailed-purchases-table tbody tr.region-footer-row {
+  background-color: #BBBBBB;
+}
+.detailed-purchases-table tbody tr.region-footer-row td {
+  padding: 1mm 0;
+  text-align: center;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  color: #FFFFFF;
+}
+.detailed-purchases-table tbody tr.region-footer-row td:nth-child(1) {
+  border-right: 2px solid #FFFFFF;
+}
 .detailed-purchases-table tbody tr.property-row td {
   padding: 2mm 0 1mm;
 }
@@ -132,13 +290,13 @@ h1, h2 {
   font-size: 10pt;
 }
 .detailed-purchases-table tbody tr.property-row td.property-name.shopping {
-  color: #0099F8;
+  color: #3e9cca;
 }
 .detailed-purchases-table tbody tr.property-row td.property-name.otg {
-  color: #FF6300;
+  color: #e5782c;
 }
 .detailed-purchases-table tbody tr.property-row td.property-name.fitness {
-  color: #F8002B;
+  color: #d63641;
 }
 .detailed-purchases-table tbody tr.property-row td.property-city {
   text-align: center;
@@ -158,13 +316,172 @@ h1, h2 {
   padding-bottom: 2mm;
 }
 .detailed-purchases-table tbody tr.shopping td.border-right {
-  border-right: 1px solid #0099F8;
+  border-right: 1px solid #3e9cca;
 }
 .detailed-purchases-table tbody tr.otg td.border-right {
-  border-right: 1px solid #FF6300;
+  border-right: 1px solid #e5782c;
 }
 .detailed-purchases-table tbody tr.fitness td.border-right {
-  border-right: 1px solid #F8002B;
+  border-right: 1px solid #d63641;
+}
+.detailed-purchases-table tbody .spacer-row td {
+  height: 2mm;
+}
+.detailed-purchases-table tfoot tr td {
+  color: #FFFFFF;
+  padding: 1mm 0;
+  font-size: 9pt;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+}
+.detailed-purchases-table tfoot tr td.label-row {
+  border-right: 2px solid #FFFFFF;
+}
+.detailed-purchases-table tfoot tr td.border-right {
+  border-right: 1px solid #FFFFFF;
+}
+.detailed-purchases-table tfoot tr.shopping td {
+  background-color: #3e9cca;
+}
+.detailed-purchases-table tfoot tr.otg td {
+  background-color: #e5782c;
+}
+.detailed-purchases-table tfoot tr.fitness td {
+  background-color: #d63641;
+}
+
+.detailed-purchases-summary-table {
+  border-collapse: collapse;
+  margin-top: -5mm;
+}
+.detailed-purchases-summary-table tr td {
+  width: 25mm;
+  padding: 1.5mm 0;
+  background-color: #252734;
+  border-right: 1px solid #FFFFFF;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+  font-size: 10pt;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+}
+.detailed-purchases-summary-table tr td:nth-child(1) {
+  width: 60mm;
+  border-right-width: 2px;
+}
+.detailed-purchases-summary-table tr td:nth-child(2) {
+  width: 90mm;
+}
+.detailed-purchases-summary-table tr td:nth-child(9) {
+  border-right: none;
+}
+
+.technical-specs-title {
+  margin: 15mm 0 0 0;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+.technical-specs-table {
+  border-collapse: collapse;
+}
+.technical-specs-table thead tr th {
+  width: 30mm;
+  padding: 2mm 1mm;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 0.889em;
+  background-color: #252734;
+}
+.technical-specs-table thead tr th:nth-child(1) {
+  width: 50mm;
+}
+.technical-specs-table tbody tr td {
+  padding: 2mm 0;
+  text-align: center;
+  font-weight: normal;
+  font-size: 0.79em;
+  border-top: 1px solid #252734;
+}
+
+.summary-right-col {
+  position: fixed;
+  top: 0;
+  left: 170mm;
+}
+
+.summary-totals-table {
+  border-collapse: collapse;
+}
+.summary-totals-table thead tr th {
+  width: 25mm;
+  padding: 2mm 0;
+  color: #FFFFFF;
+  text-align: center;
+  font-family: "poppins-bold";
+  font-size: 0.889em;
+  background-color: #252734;
+  border-bottom: 1px solid #252734;
+}
+.summary-totals-table thead tr th.placeholder {
+  background-color: transparent;
+}
+.summary-totals-table thead tr th:nth-child(1) {
+  width: 63mm;
+  background-color: #FFFFFF;
+  font-size: 1.125em;
+  color: #252734;
+  text-transform: uppercase;
+}
+.summary-totals-table.full {
+  margin-top: 5mm;
+  table-layout: fixed;
+}
+.summary-totals-table.full thead tr th:nth-child(1) {
+  width: 40mm;
+}
+.summary-totals-table tbody tr td {
+  height: 12mm;
+  text-align: center;
+  color: #252734;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  font-size: 0.889em;
+  border-bottom: 1px solid #888888;
+}
+.summary-totals-table tbody tr td.investment {
+  background-color: #cae4f0;
+}
+.summary-totals-table tbody tr td:nth-child(1) {
+  border-right: 1px solid #888888;
+}
+.summary-totals-table tbody tr.grand-total td {
+  background-color: #EEEEEE;
+}
+.summary-totals-table tbody tr.grand-total td.investment {
+  background-color: #8ec5e0;
+}
+.summary-totals-table tbody tr.cpm td {
+  border-bottom: none;
+}
+.summary-totals-table tbody tr.cpm td.investment {
+  background-color: #8ec5e0;
+}
+
+.summary-notices {
+  margin-top: 15mm;
+  color: #252734;
+}
+.summary-notices p strong {
+  font-family: "poppins-bold";
+  font-weight: bold;
+}
+.summary-notices p .emphase {
+  font-family: "poppins-regular";
+  font-weight: bold;
 }
 
 /*# sourceMappingURL=contract.css.map */

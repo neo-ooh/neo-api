@@ -122,10 +122,10 @@ class ContentsController extends Controller
     {
         $content->authorizeAccess();
 
-        if ($content->schedules_count > 0) {
+        if ($content->schedules_count > 0 && $content->schedules->some(fn($schedule) => $schedule->status === 'broadcasting' || $schedule->status === 'expired')) {
+            // We don't want to remove a content that has played or is currently playing
             $content->delete();
         } else {
-            // If a content has no schedules, we remove it completely
             $content->forceDelete();
         }
 

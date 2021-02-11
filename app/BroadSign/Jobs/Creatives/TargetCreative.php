@@ -10,7 +10,6 @@
 
 namespace Neo\BroadSign\Jobs\Creatives;
 
-use DateInterval;
 use Exception;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Bus\Queueable;
@@ -42,7 +41,7 @@ class TargetCreative extends BroadSignJob {
      * @return void
      */
     public function __construct(int $creativeID) {
-        $this->creativeID   = $creativeID;
+        $this->creativeID = $creativeID;
     }
 
     /**

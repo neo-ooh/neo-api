@@ -18,65 +18,93 @@ h1, h2 {
   font-family : $font-bold;
 }
 
+
+.shopping {
+  color : $shopping;
+}
+
+.otg {
+  color : $otg;
+}
+
+.fitness {
+  color : $fitness;
+}
+
 @mixin debug-style {
   border           : 3px solid rgba(255, 0, 0, .75);
   background-color : rgba(0, 255, 0, .25);
 }
 
-.details-header {
-  &-neo-logo {
-    width  : 60mm;
-    margin : 5mm 0 0 5mm;
+@import "header";
+@import "footer";
+
+.summary-purchases-table {
+  border-collapse : collapse;
+  margin-bottom   : 5mm;
+
+  thead tr th {
+    width            : 25mm;
+    padding          : 2mm 1mm;
+
+    color            : #FFFFFF;
+    font-family      : $font-bold;
+    text-align       : center;
+    font-size        : .889em;
+
+    background-color : $dark-blue;
+    border-left      : 1px solid #FFFFFF;
+
+    &:nth-child(1) {
+      width       : 40mm;
+      border-left : none;
+    }
   }
 
-  &-title-wrapper {
-    width      : 100mm;
-    margin     : -20mm 0 0 110mm;
-    text-align : center;
-  }
+  tbody tr {
+    td {
+      padding     : 3mm 0;
 
-  &-title {
-    font-family : $font-extra-light;
-    font-size   : 24pt;
-  }
+      color       : #FFFFFF;
+      font-family : $font-bold;
+      text-align  : center;
+      font-size   : .889em;
 
-  &-contract-data {
-    width           : 100mm;
-    margin          : -25mm 0 0 250mm;
-    border-collapse : collapse;
+      border-left : 1px solid #FFFFFF;
+      border-top  : 1px solid #FFFFFF;
 
-    tr {
-      td {
-        border-bottom : 1px solid #000000;
 
-        &:nth-child(1) {
-          border-right : 1px solid #000000;
-          padding      : 3px 5px 3px 15px;
-        }
-
-        &:nth-child(2) {
-          padding : 3px 15px 3px 5px;
-        }
+      &:nth-child(1) {
+        border-left : none;
       }
-
-      &:nth-child(6) td {
-        border-bottom : none;
-      }
     }
 
-    &-label {
-      font-family : $font-light;
-      text-align  : right;
+    &.shopping td {
+      background-color : $shopping;
     }
 
-    &-value {
-      font-weight : bold;
+    &.otg td {
+      background-color : $otg;
     }
+
+    &.fitness td {
+      background-color : $fitness;
+    }
+  }
+
+  tfoot tr td {
+    padding     : 4mm 0;
+    color       : $dark-blue;
+    font-family : $font-bold;
+    font-weight : bold;
+    text-align  : center;
+    font-size   : .889em;
   }
 }
 
 .detailed-purchases {
-  page-break-inside: avoid;
+  page-break-inside : avoid;
+
   &-title {
     margin-bottom  : 0;
     text-transform : uppercase;
@@ -100,29 +128,40 @@ h1, h2 {
     margin-bottom     : 10mm;
     border-collapse   : collapse;
 
-    thead tr {
-      th {
-        width            : 25mm;
+    thead {
+      tr.title td.detailed-purchases-title {
+        padding-bottom : 3mm;
 
-        padding          : 2mm 0;
-        background-color : $dark-blue;
-        color            : #FFFFFF;
+        text-transform : uppercase;
+        font-size      : 14pt;
+        font-family    : $font-bold;
+        font-weight    : bold;
+      }
 
-        font-weight      : bold;
-        text-align       : center;
-        font-size        : 10pt;
-        border-right     : 2px solid #FFFFFF;
+      tr.headers {
+        th {
+          width            : 25mm;
 
-        &:nth-child(1) {
-          width : 60mm;
-        }
+          padding          : 2mm 0;
+          background-color : $dark-blue;
+          color            : #FFFFFF;
 
-        &:nth-child(2) {
-          width : 40mm;
-        }
+          font-weight      : bold;
+          text-align       : center;
+          font-size        : 10pt;
+          border-right     : 2px solid #FFFFFF;
 
-        &:nth-child(11) {
-          border-right : none;
+          &:nth-child(1) {
+            width : 60mm;
+          }
+
+          &:nth-child(2) {
+            width : 40mm;
+          }
+
+          &:nth-child(11) {
+            border-right : none;
+          }
         }
       }
     }
@@ -140,6 +179,22 @@ h1, h2 {
             padding     : 1mm 0;
             text-align  : center;
             font-weight : bold;
+
+            &:nth-child(1) {
+              border-right : 2px solid #FFFFFF;
+            }
+          }
+        }
+
+        &.region-footer-row {
+          background-color : $light-grey;
+
+          td {
+            padding     : 1mm 0;
+            text-align  : center;
+            font-family : $font-bold;
+            font-weight : bold;
+            color       : #FFFFFF;
 
             &:nth-child(1) {
               border-right : 2px solid #FFFFFF;
@@ -209,6 +264,217 @@ h1, h2 {
           border-right : 1px solid $fitness;
         }
       }
+
+      .spacer-row td {
+        height : 2mm;
+      }
+    }
+
+    tfoot tr {
+      td {
+        color       : #FFFFFF;
+        padding     : 1mm 0;
+
+        font-size   : 9pt;
+        font-family : $font-bold;
+        font-weight : bold;
+        text-align  : center;
+
+        &.label-row {
+          border-right : 2px solid #FFFFFF;
+        }
+
+        &.border-right {
+          border-right : 1px solid #FFFFFF;
+        }
+      }
+
+      &.shopping td {
+        background-color : $shopping;
+      }
+
+      &.otg td {
+        background-color : $otg;
+      }
+
+      &.fitness td {
+        background-color : $fitness;
+      }
+    }
+  }
+}
+
+.detailed-purchases-summary-table {
+  border-collapse : collapse;
+  margin-top      : -5mm;
+
+  tr td {
+    width            : 25mm;
+    padding          : 1.5mm 0;
+
+    background-color : $dark-blue;
+    border-right     : 1px solid #FFFFFF;
+
+    color            : #FFFFFF;
+    font-family      : $font-bold;
+    font-weight      : bold;
+    text-align       : center;
+    font-size        : 10pt;
+    text-transform   : uppercase;
+
+    letter-spacing   : -.025em;
+
+    &:nth-child(1) {
+      width              : 60mm;
+      border-right-width : 2px;
+    }
+
+    &:nth-child(2) {
+      width : 90mm;
+    }
+
+    &:nth-child(9) {
+      border-right : none;
+    }
+  }
+}
+
+.technical-specs-title {
+  margin         : 15mm 0 0 0;
+  font-size      : 1.2rem;
+  text-transform : uppercase;
+}
+
+.technical-specs-table {
+  border-collapse : collapse;
+
+  thead tr th {
+    width            : 30mm;
+    padding          : 2mm 1mm;
+
+    color            : #FFFFFF;
+    text-align       : center;
+    font-size        : .889em;
+
+    background-color : $dark-blue;
+
+    &:nth-child(1) {
+      width : 50mm;
+    }
+  }
+
+  tbody tr td {
+    padding     : 2mm 0;
+
+    text-align  : center;
+    font-weight : normal;
+    font-size   : .79em;
+
+    border-top  : 1px solid $dark-blue;
+  }
+}
+
+.summary-right-col {
+  position : fixed;
+  top      : 0;
+  left     : 170mm;
+}
+
+.summary-totals-table {
+  border-collapse : collapse;
+
+  thead {
+    tr th {
+      width            : 25mm;
+      padding          : 2mm 0;
+
+      color            : #FFFFFF;
+      text-align       : center;
+      font-family      : $font-bold;
+      font-size        : .889em;
+
+      background-color : $dark-blue;
+      border-bottom    : 1px solid $dark-blue;
+
+      &.placeholder {
+        background-color : transparent;
+      }
+
+      &:nth-child(1) {
+        width            : 63mm;
+
+        background-color : #FFFFFF;
+        font-size        : 1.125em;
+        color            : $dark-blue;
+        text-transform   : uppercase;
+      }
+    }
+  }
+
+  &.full {
+    margin-top   : 5mm;
+    table-layout : fixed;
+
+    thead tr th:nth-child(1) {
+      width : 40mm;
+    }
+
+    tbody tr td {
+    }
+  }
+
+  tbody tr {
+    td {
+      height        : 12mm;
+
+      text-align    : center;
+      color         : $dark-blue;
+      font-family   : $font-bold;
+      font-weight   : bold;
+      font-size     : .889em;
+
+      border-bottom : 1px solid $idle-grey;
+
+      &.investment {
+        background-color : lighten($light-blue, 35%);
+      }
+
+      &:nth-child(1) {
+        border-right : 1px solid $idle-grey;
+      }
+    }
+
+    &.grand-total td {
+      background-color : $ultralight-grey;
+
+      &.investment {
+        background-color : lighten($light-blue, 20%);
+      }
+    }
+
+    &.cpm td {
+      border-bottom : none;
+
+      &.investment {
+        background-color : lighten($light-blue, 20%);
+      }
+    }
+  }
+}
+
+.summary-notices {
+  margin-top : 15mm;
+  color      : $dark-blue;
+
+  p {
+    strong {
+      font-family : $font-bold;
+      font-weight : bold;
+    }
+
+    .emphase {
+      font-family : $font-regular;
+      font-weight : bold;
     }
   }
 }

@@ -65,6 +65,8 @@ class OrderLine {
             "Order Lines/Property/Geo Longitude" => $this->property_lng,
             "Order Lines/Property/City" => $this->property_city,
         ] = $record;
+
+        $this->discount = (int)$this->discount;
     }
 
     public function isNetwork(string $network) {
@@ -76,5 +78,21 @@ class OrderLine {
             case Network::NEO_FITNESS:
                 return $this->property_type === 'Fitness';
         }
+    }
+
+    public function netInvestment(): int {
+        return $this->unit_price * $this->quantity * (1 - (int)$this->discount / 100);
+    }
+
+    public function isGuaranteedPurchase(): int {
+        return (int)$this->discount < 100 && !str_ends_with($this->product, "(bonus)");
+    }
+
+    public function isGuaranteedBonus(): int {
+        return (int)$this->discount === 100 && str_ends_with($this->product, "(bonus)");
+    }
+
+    public function isBonusUponAvailability(): int {
+        return (int)$this->discount === 0 && str_ends_with($this->product, "(bonus)");
     }
 }

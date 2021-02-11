@@ -1,0 +1,73 @@
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <Valentin Dufois>
+ *
+ * @neo/api - _header.scss
+ */
+
+@import "colors";
+@import "fonts";
+
+header {
+  margin: 0 -5mm;
+  .header-table {
+    width : 100%;
+  }
+}
+
+.header {
+  &-company-logo {
+    width : 50mm;
+  }
+
+  &-neo-logo {
+    width : 50mm;
+  }
+
+  &-title {
+    width       : calc(100% - 130mm);
+    text-align  : center;
+    font-family : $font-extra-light;
+    font-size   : 24pt;
+  }
+
+  &-contract {
+    width           : 80mm;
+  }
+
+  &-contract-data {
+    width           : 80mm;
+    border-collapse : collapse;
+
+    tr {
+      td {
+        border-bottom : 1px solid #000000;
+        font-size     : .889em;
+
+        &:nth-child(1) {
+          border-right : 1px solid #000000;
+          padding      : 2px 5px 2px 15px;
+        }
+
+        &:nth-child(2) {
+          padding : 2px 15px 2px 5px;
+        }
+      }
+
+      &:nth-child(6) td {
+        border-bottom : none;
+      }
+    }
+
+    &-label {
+      font-family : $font-light;
+      text-align  : right;
+    }
+
+    &-value {
+      font-weight : bold;
+    }
+  }
+}

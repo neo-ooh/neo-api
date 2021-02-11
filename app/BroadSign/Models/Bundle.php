@@ -11,6 +11,7 @@
 namespace Neo\BroadSign\Models;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
+use Illuminate\Support\Collection;
 use Neo\BroadSign\Endpoint;
 
 /**
@@ -92,7 +93,7 @@ class Bundle extends BroadSignModel {
             ]);
     }
 
-    public static function bySchedule(int $scheduleId) {
+    public static function bySchedule(int $scheduleId): Collection {
         return (new self())->callAction("bySchedule", ["schedule_id" => $scheduleId]);
     }
 

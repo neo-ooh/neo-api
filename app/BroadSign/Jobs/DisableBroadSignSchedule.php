@@ -64,15 +64,17 @@ class DisableBroadSignSchedule extends BroadSignJob {
         $bsSchedule->weight = 0;
         $bsSchedule->save();
 
-        // Deactivate the schedule's bundle
-        $bsBundle = BSBundle::bySchedule($this->broadsignScheduleId);
+        // Deactivate the schedule's bundles
+        $bsBundles = BSBundle::bySchedule($this->broadsignScheduleId);
 
-        if($bsBundle === null) {
+        if($bsBundles->count() === 0) {
             // We do not throw error on bundle not found here as we are already trying to deactivate it.
             throw new InvalidResourceException("BroadSign Bundle for Schedule $this->broadsignScheduleId could not be loaded.");
         }
 
-        $bsBundle->active = false;
-        $bsBundle->save();
+        foreach($bsBundles as $bsBundle) {
+            $bsBundle->active = false;
+            $bsBundle->save();
+        }
     }
 }

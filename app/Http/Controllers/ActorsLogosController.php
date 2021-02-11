@@ -29,11 +29,11 @@ class ActorsLogosController extends Controller {
         }
 
         // The request has already validated that the file is an image, but we want to make sure we only store pngs
-        $actorLogo                = new ActorLogo();
-        $actorLogo->id            = $actor->id;
-        $actorLogo->original_name = $uploadedFile->getClientOriginalName();
+        $actorLogo = $actor->logo()->make([
+            "original_name" => $uploadedFile->getClientOriginalName(),
+        ]);
         $actorLogo->save();
-        $actorLogo->refresh();
+
         $actorLogo->store($uploadedFile);
 
         return new Response($actorLogo, 201);

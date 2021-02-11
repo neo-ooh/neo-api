@@ -33,6 +33,11 @@ class ActorLogo extends Model {
     protected $table = "actors_logo";
 
     /**
+     * @var array
+     */
+    protected $fillable = ["id", "original_name"];
+
+    /**
      * The accessors to append to the model's array form.
      *
      * @var array

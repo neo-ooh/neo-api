@@ -520,7 +520,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             "iss"  => config("app.url"),
             "aud"  => "*.neo-ooh.com",
             "iat"  => time(),
-            "exp"  => $twoFAIsValid ? $this->twoFactorToken->created_at->addDays(29) : Date::now()->addDay(),
+            "exp"  => $twoFAIsValid ? $this->twoFactorToken->created_at->addDays(29) : Date::now()->addDay(1),
 
             // Private
             "uid"  => $this->id,

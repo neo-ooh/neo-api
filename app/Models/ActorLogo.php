@@ -32,6 +32,8 @@ class ActorLogo extends Model {
      */
     protected $table = "actors_logo";
 
+    public $incrementing = false;
+
     /**
      * @var array
      */

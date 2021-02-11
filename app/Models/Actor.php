@@ -501,9 +501,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return true;
         }
 
-        // Delete the token
-        $token->delete();
-
         return false;
     }
 

@@ -502,7 +502,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // If the token is not validated and is not too old, stops here just saying not validated
-        if(!$token->validated && $token->validated_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) < 1) {
+        if(!$token->validated && $token->created_at->diffInMinutes(\Illuminate\Support\Facades\Date::now()) < 15) {
             return false;
         }
 

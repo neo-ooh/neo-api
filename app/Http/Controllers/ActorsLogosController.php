@@ -35,6 +35,7 @@ class ActorsLogosController extends Controller {
         $actorLogo->id = $actor->id;
         $actorLogo->original_name = $uploadedFile->getClientOriginalName();
         $actorLogo->save();
+        $actorLogo->refresh();
         $actorLogo->store($uploadedFile);
 
         return new Response($actorLogo, 201);

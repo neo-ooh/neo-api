@@ -47,14 +47,14 @@ class ActorLogo extends Model {
     */
 
     public function getFilePathAttribute(): string {
-        return Storage::url("actors_logo/{$this->id}.png");
+        return Storage::url("actors_logo/{$this->getKey()}.png");
     }
 
     /**
      * @param UploadedFile $file
      */
     public function store(UploadedFile $file): void {
-        Storage::put("actors_logo/{$this->id}.png", Image::make($file)->encode("png"), 'public');
+        Storage::put("actors_logo/{$this->getKey()}.png", Image::make($file)->encode("png"), 'public');
     }
 
     /**

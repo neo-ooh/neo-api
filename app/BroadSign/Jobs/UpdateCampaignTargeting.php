@@ -99,20 +99,23 @@ class UpdateCampaignTargeting extends BroadSignJob {
         /** @var string $criterion */
         foreach ($requiredCriteria as $criterion) {
             $criterionId = null;
+            $criteriontype = null;
 
             switch ($criterion) {
                 case "MAIN":
                     $criterionId = BroadSign::getDefaults()["advertising_criteria_id"];
+                    $criteriontype = 10;
                     break;
                 case "RIGHT":
                     $criterionId = BroadSign::getDefaults()["right_frame_criteria_id"];
+                    $criteriontype = 2;
             }
 
             BSCampaign::addResourceCriteria([
                 "active"      => true,
                 "criteria_id" => $criterionId,
                 "parent_id"   => $campaign->broadsign_reservation_id,
-                "type"        => 8,
+                "type"        => $criteriontype,
             ]);
         }
 

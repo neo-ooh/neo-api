@@ -23,6 +23,8 @@ class TwoFactorTokenEmail extends ReliableEmail {
      */
     public $token;
 
+    public $subject = "Connexion aux services web Neo-ooh — Neo-ooh web services connection";
+
     /**
      * Create a new message instance.
      *

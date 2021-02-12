@@ -24,6 +24,8 @@ class RecoverPasswordEmail extends ReliableEmail {
      */
     public $recoveryToken;
 
+    public $subject = "Connexion aux services web Neo-ooh — Neo-ooh web services connection";
+
     /**
      * Create a new message instance.
      *
@@ -40,7 +42,6 @@ class RecoverPasswordEmail extends ReliableEmail {
      * @return $this
      */
     public function build (): self {
-        return $this->view('emails.auth.password-recovery')
-                    ->subject('Connexion aux services web Neo-ooh — Neo-ooh web services connection');
+        return $this->view('emails.auth.password-recovery');
     }
 }

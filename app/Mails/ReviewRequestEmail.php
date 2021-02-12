@@ -22,6 +22,8 @@ class ReviewRequestEmail extends ReliableEmail {
      */
     public Schedule $schedule;
 
+    public $subject = "Programmation en attente de validation — Schedule awaiting approval";
+
     /**
      * Create a new message instance.
      *

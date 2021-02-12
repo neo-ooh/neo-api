@@ -41,7 +41,6 @@
       <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignSchedule.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizePlayers.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizePlayers.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateCampaignTargeting.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateCampaignTargeting.php" afterDir="false" />
@@ -54,6 +53,10 @@
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BrandingsFilesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BrandingsFilesController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Mails/ActorWelcomeEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/ActorWelcomeEmail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Mails/RecoverPasswordEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/RecoverPasswordEmail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Mails/ReviewRequestEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/ReviewRequestEmail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Mails/TwoFactorTokenEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/TwoFactorTokenEmail.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/ActorLogo.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/ActorLogo.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/database/migrations/2020_09_01_000010_create_actors_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2020_09_01_000010_create_actors_table.php" afterDir="false" />
@@ -356,7 +359,7 @@
       <workItem from="1611759751819" duration="932000" />
       <workItem from="1611841219519" duration="50750000" />
       <workItem from="1612370980953" duration="32840000" />
-      <workItem from="1612886336214" duration="51053000" />
+      <workItem from="1612886336214" duration="51799000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

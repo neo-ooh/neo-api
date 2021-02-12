@@ -28,8 +28,8 @@ class CreateActorsTable extends Migration {
                 $table->string('password', 256)->nullable();
                 $table->boolean('is_group')->default(0)->index();
                 $table->boolean('is_locked')->default(0);
-                $table->foreignId('locked_by')->nullable()->constrained('actors');
-                $table->foreignId('branding_id')->nullable()->constrained('brandings');
+                $table->foreignId('locked_by')->nullable()->constrained('actors')->cascadeOnUpdate()->nullOnDelete();
+                $table->foreignId('branding_id')->nullable()->constrained('brandings')->cascadeOnUpdate()->nullOnDelete();
                 $table->boolean('tos_accepted')->default(0);
                 $table->timestamp('last_login_at')->nullable();
                 $table->timestamps();

@@ -15,6 +15,7 @@ use Intervention\Image\Facades\Image;
  * @package Neo\Models
  *
  * @property int    id
+ * @property int    actor_id
  * @property string original_name
  * @property Date   created_at
  * @property Date   updated_at
@@ -31,8 +32,6 @@ class ActorLogo extends Model {
      * @var string
      */
     protected $table = "actors_logo";
-
-    public $incrementing = false;
 
     /**
      * @var array

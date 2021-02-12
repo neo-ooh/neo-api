@@ -11,7 +11,6 @@
 namespace Neo\Http\Requests\Actors;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 /**
  * Class ListActorsRequest

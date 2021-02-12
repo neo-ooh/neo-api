@@ -29,8 +29,7 @@ use Neo\Models\Param;
  */
 class ParamsController extends Controller {
     /**
-     * @param Param $param
-     *
+     * @param Param $parameter
      * @return Response
      */
     public function show (Param $parameter): Response {

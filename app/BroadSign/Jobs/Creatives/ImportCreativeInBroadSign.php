@@ -37,9 +37,8 @@ class ImportCreativeInBroadSign extends BroadSignJob {
     /**
      * Create a new job instance.
      *
-     * @param int $creativeID ID of the creative to import
-     *
-     * @return void
+     * @param int    $creativeID ID of the creative to import
+     * @param string $creativeName
      */
     public function __construct(int $creativeID, string $creativeName) {
         $this->creativeID   = $creativeID;

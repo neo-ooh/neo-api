@@ -6,7 +6,6 @@ use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
-use Mpdf\Mpdf;
 
 class SummaryOrders extends Component {
     protected Collection $orders;

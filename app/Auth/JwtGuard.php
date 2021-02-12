@@ -207,12 +207,12 @@ abstract class JwtGuard implements Guard {
     /**
      * Set the current actor.
      *
-     * @param Authenticatable $actor
+     * @param Authenticatable|null $user
      *
      * @return void
      */
-    public function setUser (?Authenticatable $actor): void {
+    public function setUser (?Authenticatable $user): void {
         /* Authenticatable => Actor */
-        $this->actor = $actor;
+        $this->actor = $user;
     }
 }

@@ -10,7 +10,6 @@
 
 namespace Neo\BroadSign\Models;
 
-use ArrayAccess;
 use Illuminate\Support\Collection;
 use Neo\BroadSign\Endpoint;
 

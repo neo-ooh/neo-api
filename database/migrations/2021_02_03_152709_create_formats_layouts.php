@@ -5,7 +5,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Neo\Models\Content;
 use Neo\Models\Format;
-use Neo\Models\FormatLayout;
 
 class CreateFormatsLayouts extends Migration
 {

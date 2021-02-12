@@ -26,7 +26,7 @@ class BlockJobOutsideProduction
      * @param  callable  $next
      * @return mixed
      */
-    public function handle($job, $next)
+    public function handle($job, $next): void
     {
         if(config("app.env") !== "production") {
             $job->delete();

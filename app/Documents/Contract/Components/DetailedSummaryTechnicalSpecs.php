@@ -3,7 +3,6 @@
 namespace Neo\Documents\Contract\Components;
 
 use Closure;
-use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 

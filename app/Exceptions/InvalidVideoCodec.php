@@ -14,5 +14,5 @@ class InvalidVideoCodec extends BaseException {
     protected $code = "creative.bad-video-codec";
     protected $message = "Creative video codec is not supported";
 
-    protected int $status = 422;
+//    protected int $status = 422;
 }

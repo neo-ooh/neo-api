@@ -16,13 +16,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Mail;
 use Neo\BroadSign\Models\Campaign;
-use Neo\Mails\ActorWelcomeEmail;
-use Neo\Models\Actor;
 use Neo\Models\Report;
 use Neo\Models\ReportReservation;
-use Neo\Models\SignupToken;
 
 /**
  * Class CreateSignupToken
@@ -42,9 +38,7 @@ class RefreshReportReservations implements ShouldQueue {
     /**
      * Create a new job instance.
      *
-     * @param int $actorID ID of the actor
-     *
-     * @return void
+     * @param int $reportId
      */
     public function __construct(int $reportId) {
         $this->reportId = $reportId;

@@ -8,8 +8,6 @@
  * @neo/api - api.php
  */
 
-/** @noinspection GrazieInspection */
-
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\ActorsAccessesController;
 use Neo\Http\Controllers\ActorsCampaignsController;

@@ -80,13 +80,6 @@ class Content extends SecuredModel {
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [];
-
-    /**
      * The attributes that should be cast.
      *
      * @var array

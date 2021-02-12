@@ -15,7 +15,6 @@ use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 use Neo\Documents\Contract\OrderLine;
-use Neo\Documents\Network;
 
 class DetailedOrdersCategory extends Component {
     protected string $type;

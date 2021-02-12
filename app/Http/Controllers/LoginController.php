@@ -12,11 +12,9 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Hash;
 use Neo\Http\Requests\Auth\LoginRequest;
 use Neo\Models\Actor;
-use Neo\Models\TwoFactorToken;
 
 class LoginController extends Controller {
     /**

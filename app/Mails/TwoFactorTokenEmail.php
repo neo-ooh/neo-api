@@ -11,7 +11,6 @@
 namespace Neo\Mails;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\TwoFactorToken;
 
@@ -30,7 +29,7 @@ class TwoFactorTokenEmail extends ReliableEmail {
      *
      * @param TwoFactorToken $token
      */
-    public function __construct (TwoFactorToken $token) {
+    public function __construct(TwoFactorToken $token) {
         parent::__construct();
 
         $this->token = $token->token;
@@ -41,7 +40,7 @@ class TwoFactorTokenEmail extends ReliableEmail {
      *
      * @return $this
      */
-    public function build (): self {
+    public function build(): self {
         return $this->view('emails.auth.two-fa-token');
     }
 }

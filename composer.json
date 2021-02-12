@@ -31,7 +31,6 @@
     "nunomaduro/collision": "^5.0",
     "phpunit/phpunit": "^9.3.3",
     "roave/security-advisories": "dev-master",
-    "vimeo/psalm": "^4.2"
   },
   "config": {
 	"optimize-autoloader": true,

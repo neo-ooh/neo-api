@@ -11,14 +11,11 @@
 namespace Neo\BroadSign\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Models\Bundle as BSBundle;
-use Neo\BroadSign\Models\Campaign;
 use Neo\BroadSign\Models\LoopSlot;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Actor;

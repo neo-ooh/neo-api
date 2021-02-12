@@ -12,7 +12,6 @@ class DetailedSummaryNotices extends Component {
     /**
      * Create the component instance.
      *
-     * @param Collection $orders
      */
     public function __construct() {}
 

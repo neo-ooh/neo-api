@@ -25,7 +25,6 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Neo\Models\Traits\HasHierarchy;
@@ -501,6 +500,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * @return bool
+     * @throws \Exception
+     * @throws \Exception
      */
     public function is2FAValid(): bool {
         $token = $this->twoFactorToken;
@@ -550,7 +551,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             "iat"  => time(),
             "exp"  => $twoFAIsValid
                 ? $this->twoFactorToken->validated_at->addDays(29)->timestamp
-                : Date::now()->addDays(1)->timestamp,
+                : Date::now()->addDay()->timestamp,
 
             // Private
             "uid"  => $this->id,

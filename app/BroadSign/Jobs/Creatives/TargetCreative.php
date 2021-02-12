@@ -47,12 +47,10 @@ class TargetCreative extends BroadSignJob {
     /**
      * Execute the job.
      *
-     * @param BroadSign $broadsign
-     *
      * @return void
      * @throws Exception
      */
-    public function handle(BroadSign $broadsign): void {
+    public function handle(): void {
         /** @var Creative $creative */
         $creative = Creative::query()->findOrFail($this->creativeID);
 

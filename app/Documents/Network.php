@@ -3,7 +3,7 @@
 namespace Neo\Documents;
 
 class Network {
-    const NEO_SHOPPING = 'shopping';
-    const NEO_OTG = 'otg';
-    const NEO_FITNESS = 'fitness';
+    public const NEO_SHOPPING = 'shopping';
+    public const NEO_OTG = 'otg';
+    public const NEO_FITNESS = 'fitness';
 }

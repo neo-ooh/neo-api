@@ -83,6 +83,7 @@ class Bundle extends BroadSignModel {
      *
      * @return void
      * @throws BadResponse
+     * @throws \JsonException
      *
      */
     public function associateCreative(int $creativeID): void {

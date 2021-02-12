@@ -84,13 +84,6 @@ class Campaign extends SecuredModel {
     ];
 
     /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [];
-
-    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
@@ -109,13 +102,6 @@ class Campaign extends SecuredModel {
         'content_limit'    => 'integer',
         'display_duration' => 'integer',
     ];
-
-    /**
-     * The relationship counts that should always be loaded.
-     *
-     * @var array
-     */
-    protected $withCount = [];
 
     protected $appends = [
         "status",
@@ -215,6 +201,6 @@ class Campaign extends SecuredModel {
     public function getRelatedLibrariesAttribute(): \Illuminate\Support\Collection {
         // I. Select campaigns owned by the same user
         // II. Filter out the current one
-        return $this->owner->getLibraries(true, false, false, true)->pluck('id');
+        return $this->owner->getLibraries(true, false, false)->pluck('id');
     }
 }

@@ -131,8 +131,9 @@ class Endpoint {
      * Enable caching by setting the cache duration in seconds
      *
      * @param int $duration
+     * @return Endpoint
      */
-    public function cache(int $duration): self {
+    public function cache(int $duration) {
         $this->cache = $duration;
         return $this;
     }

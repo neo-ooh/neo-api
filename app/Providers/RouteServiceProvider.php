@@ -8,8 +8,6 @@
  * @neo/api - RouteServiceProvider.php
  */
 
-/** @noinspection GrazieInspection */
-
 namespace Neo\Providers;
 
 use Illuminate\Cache\RateLimiting\Limit;

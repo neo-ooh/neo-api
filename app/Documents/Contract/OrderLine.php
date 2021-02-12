@@ -78,6 +78,8 @@ class OrderLine {
             case Network::NEO_FITNESS:
                 return $this->property_type === 'Fitness';
         }
+
+        return false;
     }
 
     public function netInvestment(): int {

@@ -14,7 +14,6 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
-use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
 use Neo\BroadSign\Jobs\UpdateBroadSignCampaign;
 use Neo\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Http\Requests\Campaigns\ListCampaignsRequest;

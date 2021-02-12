@@ -44,13 +44,6 @@ class ActorDetails extends Model {
     protected $table = 'actors_details';
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [];
-
-    /**
      * The attributes that should be cast.
      *
      * @var array
@@ -58,13 +51,6 @@ class ActorDetails extends Model {
     protected $casts = [
         'parent_is_group' => 'boolean',
     ];
-
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = [];
 
 
     /*

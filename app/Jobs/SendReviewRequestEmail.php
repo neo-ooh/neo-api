@@ -10,7 +10,6 @@
 
 namespace Neo\Jobs;
 
-use Egulias\EmailValidator\Exception\AtextAfterCFWS;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,8 +20,6 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Neo\Enums\Capability;
 use Neo\Mails\ReviewRequestEmail;
-use Neo\Models\Actor;
-use Neo\Models\Library;
 use Neo\Models\Schedule;
 
 /**

@@ -7,7 +7,6 @@ use Illuminate\Http\UploadedFile;
 use Neo\Http\Requests\ActorsLogos\DestroyActorLogoRequest;
 use Neo\Http\Requests\ActorsLogos\StoreActorLogoRequest;
 use Neo\Models\Actor;
-use Neo\Models\ActorLogo;
 
 class ActorsLogosController extends Controller {
     public function store(StoreActorLogoRequest $request, Actor $actor) {

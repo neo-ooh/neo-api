@@ -49,8 +49,6 @@ class UpdateCampaignTargeting extends BroadSignJob {
     /**
      * Execute the job.
      *
-     * @param BroadSign $broadsign
-     *
      * @return void
      */
     public function handle(): void {

@@ -13,7 +13,6 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Neo\BroadSign\Models\Player;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\Burst;
 use Neo\Models\Screenshot;

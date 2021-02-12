@@ -10,8 +10,6 @@
 
 namespace Neo\Providers;
 
-use FFMpeg\FFMpeg;
-use FFMpeg\FFProbe;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
@@ -21,9 +19,7 @@ use Neo\Auth\FourthLoAGuard;
 use Neo\Auth\SecondLoAGuard;
 use Neo\Auth\ThirdLoAGuard;
 use Neo\Enums\Capability;
-use Neo\Http\Controllers\CreativesController;
 use Neo\Models\Actor;
-use Neo\Models\Creative;
 
 class AuthServiceProvider extends ServiceProvider {
     /**

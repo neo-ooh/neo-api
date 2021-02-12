@@ -10,16 +10,13 @@
 
 namespace Neo\BroadSign\Jobs;
 
-use Carbon\Carbon as Date;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\Models\Campaign;
-use Neo\Models\Frame;
 
 /**
  * Class CreateBroadSignCampaign
@@ -63,10 +60,10 @@ class CreateBroadSignCampaign extends BroadSignJob {
         }
 
         // Prepare the start and end date
-        $startDate = $campaign->start_date->setTime(0, 0, 0);
+        $startDate = $campaign->start_date->setTime(0, 0);
         $endDate = $startDate->copy()
                              ->addYears(BroadSign::getDefaults()['campaign_length'])
-                             ->setTime(23, 59, 0);
+                             ->setTime(23, 59);
 
         // Create the campaign
         $bsCampaign = new BSCampaign();

@@ -11,12 +11,10 @@
 namespace Neo\BroadSign\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\Models\Bundle;
-use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Schedule;
 
 /**
@@ -57,7 +55,7 @@ class ReorderBroadSignSchedules extends BroadSignJob {
         // Get all the schedules of the campaign
         $schedules = Schedule::query()
                              ->where("id", "=", $this->campaignId)
-                             ->where("broadsign_schedule_id", "<>", null)->get();
+                             ->whereNotNull("broadsign_schedule_id")->get();
 
         // For each schedule, we need to retrieve its bundle, and update its position.
         /** @var Schedule $schedule */

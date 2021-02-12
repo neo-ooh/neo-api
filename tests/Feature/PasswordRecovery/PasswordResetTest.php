@@ -84,6 +84,8 @@ class PasswordResetTest extends TestCase {
      * The password gets updated properly when the token is valid and the passwords match
      *
      * @return void
+     * @throws \Exception
+     * @throws \Exception
      */
     public function testPasswordUpdatesCorrectly(): void {
         // Get a user

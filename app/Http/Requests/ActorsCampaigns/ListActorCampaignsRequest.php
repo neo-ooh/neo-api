@@ -12,7 +12,6 @@ namespace Neo\Http\Requests\ActorsCampaigns;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Neo\Models\Actor;
 
 class ListActorCampaignsRequest extends FormRequest {

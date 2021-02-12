@@ -11,7 +11,6 @@
 namespace Neo\Mails;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\RecoveryToken;
 use Neo\Models\TwoFactorToken;

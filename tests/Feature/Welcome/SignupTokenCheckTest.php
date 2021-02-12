@@ -13,7 +13,6 @@ namespace Tests\Feature\Welcome;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
-use Psalm\Report\GithubActionsReport;
 use Tests\TestCase;
 
 class SignupTokenCheckTest extends TestCase {

@@ -523,6 +523,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             $token = new TwoFactorToken();
             $token->actor()->associate($this);
             $token->save();
+
+            return false;
         }
 
         // If the token is not validated and is not too old, stops here just saying not validated

@@ -102,7 +102,7 @@ class UpdateCampaignTargeting extends BroadSignJob {
             switch ($criterion) {
                 case "MAIN":
                     $criterionId = BroadSign::getDefaults()["advertising_criteria_id"];
-                    $criteriontype = 10;
+                    $criteriontype = 8;
                     break;
                 case "RIGHT":
                     $criterionId = BroadSign::getDefaults()["right_frame_criteria_id"];

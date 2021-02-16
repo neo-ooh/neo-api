@@ -70,10 +70,13 @@ class TargetCreative extends BroadSignJob {
         try {
             switch ($creative->frame->type) {
                 case "MAIN":
-                    $bsCreative->addCriteria(BroadSign::getDefaults()['left_frame_criteria_id'], 4);
+                    $bsCreative->addCriteria(BroadSign::getDefaults()['advertising_criteria_id'], 2);
+                    break;
+                case "LEFT":
+                    $bsCreative->addCriteria(BroadSign::getDefaults()['left_frame_criteria_id'], 2);
                     break;
                 case "RIGHT":
-                    $bsCreative->addCriteria(BroadSign::getDefaults()['right_frame_criteria_id'], 4);
+                    $bsCreative->addCriteria(BroadSign::getDefaults()['right_frame_criteria_id'], 2);
                     break;
             }
         } catch (BadResponse $exception) {

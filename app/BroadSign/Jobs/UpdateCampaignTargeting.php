@@ -81,6 +81,7 @@ class UpdateCampaignTargeting extends BroadSignJob {
 
         $frameTypesIdsMapping = [
             "MAIN" => BroadSign::getDefaults()["advertising_criteria_id"],
+            "LEFT" => BroadSign::getDefaults()["left_frame_criteria_id"],
             "RIGHT" => BroadSign::getDefaults()["right_frame_criteria_id"],
         ];
 
@@ -132,9 +133,14 @@ class UpdateCampaignTargeting extends BroadSignJob {
                     $criterionId = BroadSign::getDefaults()["advertising_criteria_id"];
                     $criteriontype = 8;
                     break;
+                case "LEFT":
+                    $criterionId = BroadSign::getDefaults()["left_frame_criteria_id"];
+                    $criteriontype = 8;
+                    break;
                 case "RIGHT":
                     $criterionId = BroadSign::getDefaults()["right_frame_criteria_id"];
-                    $criteriontype = 2;
+                    $criteriontype = 8;
+                    break;
             }
 
             BSCampaign::addResourceCriteria([

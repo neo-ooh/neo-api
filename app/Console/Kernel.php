@@ -28,6 +28,8 @@ class Kernel extends ConsoleKernel
         Hotfixes\DisableFullscreenEverywhere::class,
         Hotfixes\RetargetAllCampaigns::class,
         Hotfixes\RetargetAllCreatives::class,
+
+        Chores\CleanUpCampaigns::class,
     ];
 
     /**

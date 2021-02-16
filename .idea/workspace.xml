@@ -8,6 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
+      <change afterPath="$PROJECT_DIR$/app/Console/Chores/CleanUpCampaigns.php" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/app/Console/Hotfixes/RetargetAllCreatives.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" afterDir="false" />
@@ -232,7 +233,7 @@
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Console/Hotfixes" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Console/Chores" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -250,11 +251,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Console/Chores" />
       <recent name="$PROJECT_DIR$/app/Console/Hotfixes" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/ActorsLogos" />
       <recent name="$PROJECT_DIR$/resources/views/documents/contract" />
       <recent name="$PROJECT_DIR$/app/Documents/Contract/Components" />
-      <recent name="$PROJECT_DIR$/resources/views/documents/contract/campaign-details" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/resources/views/documents/contract" />
@@ -311,7 +312,7 @@
       <workItem from="1611759751819" duration="932000" />
       <workItem from="1611841219519" duration="50750000" />
       <workItem from="1612370980953" duration="32840000" />
-      <workItem from="1612886336214" duration="76833000" />
+      <workItem from="1612886336214" duration="78475000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

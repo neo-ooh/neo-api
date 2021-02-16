@@ -60,7 +60,7 @@ class RetargetAllCampaigns extends Command {
             ]);
 
             // Trigger a targeting of the campaign
-            UpdateCampaignTargeting::dispatchSync($campaign->id);
+            UpdateCampaignTargeting::dispatch($campaign->id);
         }
 
         $progressBar->setMessage("Hotfix done");

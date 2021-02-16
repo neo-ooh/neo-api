@@ -30,6 +30,7 @@ class Kernel extends ConsoleKernel
         Hotfixes\RetargetAllCreatives::class,
 
         Chores\CleanUpCampaigns::class,
+        Chores\CleanUpCreatives::class,
     ];
 
     /**

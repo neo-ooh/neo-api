@@ -42,7 +42,7 @@ use Neo\BroadSign\Endpoint;
  * @property int parent_id
  * @property int size
  *
- * @method static Creative[] all()
+ * @method static Collection<Creative> all()
  * @method static Creative get(int $creativeID)
  * @method static int update(array $attributes)
  */

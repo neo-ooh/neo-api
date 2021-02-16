@@ -55,7 +55,7 @@ class RetargetAllCampaigns extends Command {
             \Neo\BroadSign\Models\Campaign::dropSkinSlots([
                 "id"           => $campaign->broadsign_reservation_id,
                 "sub_elements" => [
-                    "display_unit" => $locations->map(fn($du) => ["id" => $du])->values()->toArray(),
+                    "display_unit" => $locations->map(fn($du) => ["id" => $du->broadsign_display_unit])->values()->toArray(),
                 ]
             ]);
 

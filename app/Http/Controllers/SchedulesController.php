@@ -98,8 +98,6 @@ class SchedulesController extends Controller {
         }
 
         // Does the schedule has the correct format
-        Log::debug($content);
-        Log::debug($campaign);
         if ($content->layout->format_id !== $campaign->format_id) {
             return new Response(["Content format does not fit in this campaign"], 422);
         }

@@ -77,7 +77,7 @@ class UpdateCampaignTargeting extends BroadSignJob {
         $targetedFramesIds = $targetedFramesTypes->map(fn($type) => $frameTypesIdsMapping[$type]);
 
         // Make sure the campaign has the proper criteria applied to it
-        $this->validateCampaignCriteria($campaign, $targetedFramesIds->toArray());
+        $this->validateCampaignCriteria($campaign, $targetedFramesIds->values()->toArray());
 
         // Get the campaign locations
         $locations = $campaign->locations;

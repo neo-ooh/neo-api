@@ -11,25 +11,27 @@
 namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
+use Neo\BroadSign\Jobs\UpdateCampaignTargeting;
 use Neo\BroadSign\Models\Bundle;
+use Neo\BroadSign\Models\Location;
 use Neo\Models\Campaign;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-class DisableFullscreenEverywhere extends Command {
+class RetargetAllCampaigns extends Command {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'hotfix:2021-02-02';
+    protected $signature = 'hotfix:2021-02-16';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Disable fullscreen option on all bundles and ensure proper max duration';
+    protected $description = 'Retarget all campaigns by removing all their associated frames and associating them again in BroadSign.';
 
     /**
      * Execute the console command.
@@ -43,20 +45,22 @@ class DisableFullscreenEverywhere extends Command {
         $progressBar = $this->makeProgressBar(count($campaigns));
         $progressBar->start();
 
-        // Now for each campaign, we load its bundles, force-disable the fullscreen option, and save it
+        // Now for each campaign, we load its locations, remove them, and trigger a re-targeting
         /** @var Campaign $campaign */
         foreach ($campaigns as $campaign) {
             $progressBar->advance();
             $progressBar->setMessage("{$campaign->name} ($campaign->broadsign_reservation_id)");
 
-            $bundles = Bundle::byReservable($campaign->broadsign_reservation_id);
+            $locations = Location::byReservable(["reservable_id" => $campaign->broadsign_reservation_id]);
+            \Neo\BroadSign\Models\Campaign::dropSkinSlots([
+                "id"           => $campaign->broadsign_reservation_id,
+                "sub_elements" => [
+                    "display_unit" => $locations->map(fn($du) => ["id" => $du])->values()->toArray(),
+                ]
+            ]);
 
-            /** @var Bundle $bundle */
-            foreach ($bundles as $bundle) {
-                $bundle->fullscreen        = false;
-                $bundle->max_duration_msec = $campaign->display_duration * 1000;
-                $bundle->save();
-            }
+            // Trigger a targeting of the campaign
+            UpdateCampaignTargeting::dispatchSync($campaign->id);
         }
 
         $progressBar->setMessage("Hotfix done");

@@ -80,27 +80,5 @@ class UpdateBroadSignCampaign extends BroadSignJob {
             $bundle->max_duration_msec = $campaign->display_duration * 1000; // ms
             $bundle->save();
         }
-
-        // Get the campaign locations
-        $locations = $campaign->locations;
-        $locationsID = $locations->pluck("broadsign_display_unit");
-
-        // Get the broadsign campaign locations (display units)
-        $bsLocations = $bsCampaign->locations();
-        $bsLocationsID = $bsLocations->map(fn ($bsloc) => $bsloc->id);
-
-        // Is there any broadsign location missing from the campaign ?
-        $missingLocations = $locationsID->diff($bsLocationsID);
-        if ($missingLocations->count() > 0) {
-            // Associate missing locations
-            $bsCampaign->addLocations($missingLocations);
-        }
-
-        // Is there any broadsign location that needs to be removed from the campaign ?
-        $locationsToRemove = $bsLocationsID->diff($locationsID);
-        if ($locationsToRemove->count() > 0) {
-            $bsCampaign->removeLocations($locationsToRemove);
-        }
-        // Campaigns is good
     }
 }

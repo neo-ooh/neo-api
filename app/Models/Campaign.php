@@ -13,13 +13,14 @@
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon as Date;
+use Illuminate\Support\Collection;
 use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
 use Neo\Models\Factories\CampaignFactory;
 use Neo\Rules\AccessibleCampaign;
@@ -27,27 +28,30 @@ use Neo\Rules\AccessibleCampaign;
 /**
  * Neo\Models\Campaigns
  *
- * @property int                  id
- * @property string               broadsign_reservation_id
- * @property int                  owner_id
- * @property int                  format_id
- * @property string               name
- * @property int                  display_duration
- * @property int                  content_limit
- * @property int                  loop_saturation
- * @property Date                 start_date
- * @property Date                 end_date
+ * @property int                 id
+ * @property string              broadsign_reservation_id
+ * @property int                 owner_id
+ * @property int                 format_id
+ * @property string              name
+ * @property int                 display_duration
+ * @property int                 content_limit
+ * @property int                 loop_saturation
+ * @property Date                start_date
+ * @property Date                end_date
  *
- * @property Actor                owner
- * @property Format               format
- * @property Collection<Schedule> schedules
- * @property Collection<Location> locations
- * @property Collection<Actor>    shares
+ * @property Actor               owner
+ * @property Format              format
+ * @property EloquentCollection  schedules
+ * @property EloquentCollection  locations
+ * @property EloquentCollection  shares
  *
- * @property int                  locations_count
- * @property int                  schedules_count
+ * @property int                 locations_count
+ * @property int                 schedules_count
  *
- * @property Collection<Campaign> related_campaigns
+ * @property EloquentCollection  related_campaigns
+ *
+ * @property Collection<integer> targeted_broadsign_frames Frame targeting criteria required by the campaign
+ *           schedule
  *
  * @mixin Builder
  */
@@ -196,11 +200,21 @@ class Campaign extends SecuredModel {
     /**
      * List the libraries ID determined to be relevant for the campaign
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
-    public function getRelatedLibrariesAttribute(): \Illuminate\Support\Collection {
+    public function getRelatedLibrariesAttribute(): Collection {
         // I. Select campaigns owned by the same user
         // II. Filter out the current one
         return $this->owner->getLibraries(true, false, false)->pluck('id');
+    }
+
+    public function getTargetedBroadsignFramesAttribute(): Collection {
+        $layouts = $this->schedules->map(fn($schedule) => $schedule->content->layout);
+
+        // List the required criteria
+        return $layouts->map(fn($layout) => $layout->frames->map(fn($frame) => $frame->pluck("type")))
+                       ->flatten()
+                       ->unique()
+                       ->values();
     }
 }

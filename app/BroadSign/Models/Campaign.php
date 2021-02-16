@@ -10,6 +10,7 @@
 
 namespace Neo\BroadSign\Models;
 
+use ArrayAccess;
 use Illuminate\Support\Collection;
 use Neo\BroadSign\Endpoint;
 
@@ -123,14 +124,21 @@ class Campaign extends BroadSignModel {
         return Location::byReservable(["reservable_id" => $this->id]);
     }
 
-    public function addLocations(Collection $display_units_ids): void {
+    public function addCriteria(int $criteriaID, int $type): void {
+        static::addResourceCriteria([
+            "active"      => true,
+            "criteria_id" => $criteriaID,
+            "parent_id"   => $this->id,
+            "type"        => $type,
+        ]);
+    }
+
+    public function addLocations(Collection $display_units_ids, Collection $frames): void {
         static::addSkinSlots([
             "id"           => $this->id,
             "sub_elements" => [
                 "display_unit"      => $display_units_ids->map(fn($du) => ["id" => $du])->values()->toArray(),
-                "frame_or_criteria" => [
-                    ["id" => config("broadsign.advertising-criteria")],
-                ],
+                "frame_or_criteria" => $frames->map(fn($frame) => ["id" => $frame])->values()->toArray(),
             ],
         ]);
 
@@ -142,15 +150,6 @@ class Campaign extends BroadSignModel {
         static::promoteSkinSlots([
             "id"            => $this->id,
             "skin_slot_ids" => $skinSlotsID->join(','),
-        ]);
-    }
-
-    public function addCriteria(int $criteriaID, int $type): void {
-        static::addResourceCriteria([
-            "active"      => true,
-            "criteria_id" => $criteriaID,
-            "parent_id"   => $this->id,
-            "type"        => $type,
         ]);
     }
 

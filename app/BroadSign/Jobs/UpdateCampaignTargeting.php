@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
 use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\BroadSign\Models\ResourceCriteria;
@@ -22,10 +23,8 @@ use Neo\Models\Campaign;
 use Neo\Models\FormatLayout;
 
 /**
- * Class CreateBroadSignCampaign
- * Create the BroadSign campaign matching the Access' one. BS Campaigns are created with a far-future end date. This is
- * to prevent rebooking, which as of now, 2020-10, cannot be done automatically. Actual end date of the campaign is
- * handled inside Direct
+ * Class UpdateCampaignTargeting
+ * Campaign targeting in BroadSign is made of two stones : The Resource Criteria and the Skin Slots, whick map to the layout used in the campaign and the locations it broadcasts to.
  *
  * @package Neo\Jobs
  */
@@ -52,7 +51,7 @@ class UpdateCampaignTargeting extends BroadSignJob {
      * @return void
      */
     public function handle(): void {
-        // To target campaign a campaign, we need to list all the layouts currently used by the schedules in the campaign, and sync the criterions applied to the campaign with the ones required by the schedules
+        // To target campaign a campaign, We only need to apply the advertising criteria. Then, each locations where the campaign broadcasts will be targeted with the appropriate frames.
 
         /** @var Campaign $campaign */
         $campaign = Campaign::with("schedules.content.layout")->find($this->campaignID);
@@ -63,60 +62,46 @@ class UpdateCampaignTargeting extends BroadSignJob {
             return;
         }
 
-        // First list all the layouts
-        /** @var Collection<FormatLayout> $layouts */
-        $layouts = $campaign->schedules->map(fn($schedule) => $schedule->content->layout);
+        // Get the BroadSign Campaign
+        $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
 
-        // List the types of all the layouts
-        $requiredCriteria = $layouts
-            ->map(fn($layout) => $layout
-                ->frames
-                ->map(fn($frame) => $frame->pluck("type")))
-            ->flatten()
-            ->unique()
-            ->values()
-            ->toArray();
+        // List the frames targeted by the campaign
+        $targetedFramesTypes = $campaign->targeted_broadsign_frames;
 
-        // Enumerate over the criteria already applied to the campaign
-        $campaignCriteria = ResourceCriteria::for($campaign->broadsign_reservation_id);
-
-        /** @var ResourceCriteria $criterion */
-        foreach ($campaignCriteria as $criterion) {
-            // Is this criterion in our requirements ?
-            if (in_array($criterion->id, $requiredCriteria, true)) {
-                // Yes, remove it from our requirements
-                unset($requiredCriteria[array_search($criterion->id, $requiredCriteria, true)]);
-            }
-
-            // No, remove it from the server
-            $criterion->active = false;
-            $criterion->save();
+        // Remove the advertising frame from the list of frames.
+        if (($key = array_search("MAIN", $targetedFramesTypes->toArray(), true)) !== false) {
+            $targetedFramesTypes->pull($key);
         }
 
-        // We are now left only with the criteria that needs to be added to the campaign.
-        /** @var string $criterion */
-        foreach ($requiredCriteria as $criterion) {
-            $criterionId = null;
-            $criteriontype = null;
+        $frameTypesIdsMapping = [
+            "LEFT" => BroadSign::getDefaults()["left_frame_criteria_id"],
+            "RIGHT" => BroadSign::getDefaults()["right_frame_criteria_id"],
+        ];
 
-            switch ($criterion) {
-                case "MAIN":
-                    $criterionId = BroadSign::getDefaults()["advertising_criteria_id"];
-                    $criteriontype = 8;
-                    break;
-                case "RIGHT":
-                    $criterionId = BroadSign::getDefaults()["right_frame_criteria_id"];
-                    $criteriontype = 2;
-            }
+        // Map the types
+        $targetedFramesIds = $targetedFramesTypes->map(fn($type) => $frameTypesIdsMapping[$type]);
 
-            BSCampaign::addResourceCriteria([
-                "active"      => true,
-                "criteria_id" => $criterionId,
-                "parent_id"   => $campaign->broadsign_reservation_id,
-                "type"        => $criteriontype,
-            ]);
+        // Get the campaign locations
+        $locations = $campaign->locations;
+        $locationsID = $locations->pluck("broadsign_display_unit");
+
+        // Get the broadsign campaign locations (display units)
+        $bsLocations = $bsCampaign->locations();
+        $bsLocationsID = $bsLocations->map(fn ($bsloc) => $bsloc->id);
+
+        // Is there any broadsign location missing from the campaign ?
+        $missingLocations = $locationsID->diff($bsLocationsID);
+        if ($missingLocations->count() > 0) {
+            // Associate missing locations
+            $bsCampaign->addLocations($missingLocations, $targetedFramesIds);
         }
 
-        // Campaign criteria up to date
+        // Is there any broadsign location that needs to be removed from the campaign ?
+        $locationsToRemove = $bsLocationsID->diff($locationsID);
+        if ($locationsToRemove->count() > 0) {
+            $bsCampaign->removeLocations($locationsToRemove);
+        }
+
+        // Campaigns is good
     }
 }

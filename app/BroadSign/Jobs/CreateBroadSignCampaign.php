@@ -84,7 +84,10 @@ class CreateBroadSignCampaign extends BroadSignJob {
         $campaign->broadsign_reservation_id = $bsCampaign->id;
         $campaign->save();
 
-        // Trigger an update to link the locations
-        UpdateBroadSignCampaign::dispatch($campaign->id);
+        // Apply the advertising Criteria to the campaign
+        $bsCampaign->addCriteria($broadsign->getDefaults()["advertising_criteria_id"], 8 /* <- Condition type */);
+
+        // Now set the targeting of the campaign
+        UpdateCampaignTargeting::dispatch($campaign->id);
     }
 }

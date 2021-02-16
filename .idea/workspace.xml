@@ -8,67 +8,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Console/Hotfixes/RetargetAllCampaigns.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Auth/JwtGuard.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Auth/JwtGuard.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Endpoint.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Endpoint.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/CreateBroadSignSchedule.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/ImportCreativeInBroadSign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/ImportCreativeInBroadSign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/DisableBroadSignSchedule.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Middlewares/BlockJobOutsideProduction.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Middlewares/BlockJobOutsideProduction.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/ReorderBroadSignSchedules.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/ReorderBroadSignSchedules.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/RequestScreenshotsBursts.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/RequestScreenshotsBursts.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeFormats.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeFormats.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignSchedule.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignScheduleStatus.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateBroadSignScheduleStatus.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateCampaignTargeting.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/UpdateCampaignTargeting.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Bundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Bundle.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/ReservablePerformance.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/ReservablePerformance.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/RebuildResources.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/RebuildResources.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersCategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersCategory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummary.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummary.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryNotices.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryNotices.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryProductionCosts.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryProductionCosts.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryTechnicalSpecs.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryTechnicalSpecs.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrders.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrders.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Network.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Network.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Exceptions/InvalidVideoCodec.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Exceptions/InvalidVideoCodec.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsLogosController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsLogosController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Hotfixes/DisableFullscreenEverywhere.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Hotfixes/DisableFullscreenEverywhere.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LoginController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ParamsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ParamsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Actors/RequestActorTokenRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/RequestActorTokenRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns/ListActorCampaignsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns/ListActorCampaignsRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Mails/RecoverPasswordEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/RecoverPasswordEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Mails/TwoFactorTokenEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/TwoFactorTokenEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/ActorDetails.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/ActorDetails.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Content.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Content.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Library.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Library.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Report.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Report.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Screenshot.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Screenshot.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/logging.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/logging.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_02_03_152709_create_formats_layouts.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_02_03_152709_create_formats_layouts.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_02_12_155821_alter_actors_logo_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_02_12_155821_alter_actors_logo_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/PasswordRecovery/PasswordResetTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/PasswordRecovery/PasswordResetTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Welcome/SignupTokenCheckTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Welcome/SignupTokenCheckTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -280,7 +229,7 @@
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/ActorsLogos" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Console/Hotfixes" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -298,11 +247,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Console/Hotfixes" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/ActorsLogos" />
       <recent name="$PROJECT_DIR$/resources/views/documents/contract" />
       <recent name="$PROJECT_DIR$/app/Documents/Contract/Components" />
       <recent name="$PROJECT_DIR$/resources/views/documents/contract/campaign-details" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/resources/views/documents/contract" />
@@ -359,7 +308,7 @@
       <workItem from="1611759751819" duration="932000" />
       <workItem from="1611841219519" duration="50750000" />
       <workItem from="1612370980953" duration="32840000" />
-      <workItem from="1612886336214" duration="56253000" />
+      <workItem from="1612886336214" duration="67912000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

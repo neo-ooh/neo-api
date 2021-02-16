@@ -80,7 +80,7 @@ class UpdateCampaignTargeting extends BroadSignJob {
         $bsLocationsID = $bsLocations->map(fn ($bsloc) => $bsloc->id);
 
         $frameTypesIdsMapping = [
-            "MAIN" => BroadSign::getDefaults()["left_frame_criteria_id"],
+            "MAIN" => BroadSign::getDefaults()["advertising_criteria_id"],
             "RIGHT" => BroadSign::getDefaults()["right_frame_criteria_id"],
         ];
 

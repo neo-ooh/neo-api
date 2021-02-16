@@ -68,14 +68,6 @@ class UpdateCampaignTargeting extends BroadSignJob {
         // List the frames targeted by the campaign
         $targetedFramesTypes = $campaign->targeted_broadsign_frames;
 
-        $frameTypesIdsMapping = [
-            "MAIN" => BroadSign::getDefaults()["advertising_criteria_id"],
-            "RIGHT" => BroadSign::getDefaults()["right_frame_criteria_id"],
-        ];
-
-        // Map the types
-        $targetedFramesIds = $targetedFramesTypes->map(fn($type) => $frameTypesIdsMapping[$type]);
-
         // Make sure the campaign has the proper criteria applied to it
         $this->validateCampaignCriteria($campaign, $targetedFramesTypes->values()->toArray());
 
@@ -86,6 +78,14 @@ class UpdateCampaignTargeting extends BroadSignJob {
         // Get the broadsign campaign locations (display units)
         $bsLocations = $bsCampaign->locations();
         $bsLocationsID = $bsLocations->map(fn ($bsloc) => $bsloc->id);
+
+        $frameTypesIdsMapping = [
+            "MAIN" => BroadSign::getDefaults()["left_frame_criteria_id"],
+            "RIGHT" => BroadSign::getDefaults()["right_frame_criteria_id"],
+        ];
+
+        // Map the types
+        $targetedFramesIds = $targetedFramesTypes->map(fn($type) => $frameTypesIdsMapping[$type]);
 
         // Is there any broadsign location missing from the campaign ?
         $missingLocations = $locationsID->diff($bsLocationsID);

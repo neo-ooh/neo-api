@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
         RebuildResources::class,
 
         Hotfixes\DisableFullscreenEverywhere::class,
+        Hotfixes\RetargetAllCampaigns::class,
         Hotfixes\RetargetAllCreatives::class,
     ];
 

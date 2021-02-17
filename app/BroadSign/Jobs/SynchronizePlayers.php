@@ -10,7 +10,6 @@
 
 namespace Neo\BroadSign\Jobs;
 
-
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -44,7 +43,7 @@ class SynchronizePlayers extends BroadSignJob {
             $progressBar->advance();
             $progressBar->setMessage("{$bsPlayer->name} ($bsPlayer->id)");
 
-            if(!$bsPlayer->active) {
+            if (!$bsPlayer->active) {
                 // Player is inactive, make sure it is not present in our DB
                 Player::query()->where('broadsign_player_id', '=', $bsPlayer->id)->delete();
                 continue;
@@ -53,7 +52,7 @@ class SynchronizePlayers extends BroadSignJob {
             $location = Location::query()->where("broadsign_display_unit",
                 "=", $bsPlayer->display_unit_id)->first(["id"]);
 
-            if($location === null) {
+            if ($location === null) {
                 // Ignore player
                 Log::warning("Could not find display unit {$bsPlayer->display_unit_id} for player {$bsPlayer->name} ($bsPlayer->id). Ignoring...");
                 continue;

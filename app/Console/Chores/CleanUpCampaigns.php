@@ -12,7 +12,7 @@ namespace Neo\Console\Chores;
 
 use Illuminate\Console\Command;
 use Neo\BroadSign\BroadSign;
-use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
+use Neo\BroadSign\Jobs\Campaigns\DisableBroadSignCampaign;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\Models\Campaign;
 use Symfony\Component\Console\Helper\ProgressBar;

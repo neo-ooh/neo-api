@@ -12,6 +12,7 @@ namespace Neo\BroadSign\Models;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Support\Collection;
+use JsonException;
 use Neo\BroadSign\Endpoint;
 
 /**
@@ -83,7 +84,7 @@ class Bundle extends BroadSignModel {
      *
      * @return void
      * @throws BadResponse
-     * @throws \JsonException
+     * @throws JsonException
      *
      */
     public function associateCreative(int $creativeID): void {

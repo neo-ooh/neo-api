@@ -11,11 +11,8 @@
 namespace Neo\Console\Chores;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
-use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
 use Neo\BroadSign\Models\Creative as BSCreative;
-use Neo\Models\Campaign;
 use Neo\Models\Creative;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;

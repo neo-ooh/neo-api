@@ -2,11 +2,13 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
 use Neo\Documents\Contract\Contract;
+use Neo\Documents\Exceptions\UnknownGenerationException;
 use Neo\Exceptions\UnknownDocumentException;
 
 class DocumentsGenerationController extends Controller {
@@ -15,8 +17,8 @@ class DocumentsGenerationController extends Controller {
      * @param Request $request
      * @return Response
      * @throws UnknownDocumentException
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
-     * @throws \Neo\Documents\Exceptions\UnknownGenerationException
+     * @throws FileNotFoundException
+     * @throws UnknownGenerationException
      */
     public function make(Request $request) {
         App::setLocale('en');

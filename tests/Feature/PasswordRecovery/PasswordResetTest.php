@@ -10,6 +10,7 @@
 
 namespace Tests\Feature\PasswordRecovery;
 
+use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -84,8 +85,8 @@ class PasswordResetTest extends TestCase {
      * The password gets updated properly when the token is valid and the passwords match
      *
      * @return void
-     * @throws \Exception
-     * @throws \Exception
+     * @throws Exception
+     * @throws Exception
      */
     public function testPasswordUpdatesCorrectly(): void {
         // Get a user

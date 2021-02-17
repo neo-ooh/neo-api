@@ -11,6 +11,7 @@
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -31,8 +32,8 @@ use Neo\BroadSign\Models\ReservablePerformance;
  * @property Actor                                                creator
  * @property Customer                                             customer
  *
- * @property \Illuminate\Database\Eloquent\Collection<BSCampaign> reservations
- * @property \Illuminate\Database\Eloquent\Collection<Burst> bursts
+ * @property Collection<BSCampaign> reservations
+ * @property Collection<Burst> bursts
  *
  * @mixin Builder
  */

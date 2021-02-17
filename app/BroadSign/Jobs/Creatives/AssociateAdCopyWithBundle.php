@@ -8,13 +8,14 @@
  * @neo/api - AssociateAdCopyWithBundle.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Creatives;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Bundle;
 
 /**

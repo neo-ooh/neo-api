@@ -11,8 +11,8 @@
 namespace Neo\Console;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
-use Neo\BroadSign\Jobs\CreateBroadSignSchedule;
+use Neo\BroadSign\Jobs\Campaigns\CreateBroadSignCampaign;
+use Neo\BroadSign\Jobs\Schedules\CreateBroadSignSchedule;
 use Neo\BroadSign\Models\Bundle;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\BroadSign\Models\Schedule as BSSchedule;

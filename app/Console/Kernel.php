@@ -12,10 +12,9 @@ namespace Neo\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Neo\BroadSign\Jobs\RequestScreenshotsBursts;
+use Neo\BroadSign\Jobs\Players\RequestScreenshotsBursts;
 
-class Kernel extends ConsoleKernel
-{
+class Kernel extends ConsoleKernel {
     /**
      * The Artisan commands provided by your application.
      *
@@ -40,8 +39,7 @@ class Kernel extends ConsoleKernel
      * @param Schedule $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule)
-    {
+    protected function schedule(Schedule $schedule) {
         $schedule->command('network:update')->daily();
         $schedule->job(RequestScreenshotsBursts::class)->everyMinute();
     }
@@ -51,9 +49,8 @@ class Kernel extends ConsoleKernel
      *
      * @return void
      */
-    protected function commands()
-    {
-        $this->load(__DIR__.'/Commands');
+    protected function commands() {
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

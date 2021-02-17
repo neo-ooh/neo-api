@@ -8,14 +8,14 @@
  * @neo/api - CreateBroadSignSchedule.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Schedules;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\BroadSign;
-use Neo\BroadSign\Jobs\Creatives\ImportCreativeInBroadSign;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Bundle as BSBundle;
 use Neo\BroadSign\Models\LoopSlot;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
@@ -75,7 +75,7 @@ class CreateBroadSignSchedule extends BroadSignJob {
         }
 
         // Make sure the campaign has a broadsign id, if not, release and retry later
-        if($schedule->campaign->broadsign_reservation_id === null) {
+        if ($schedule->campaign->broadsign_reservation_id === null) {
             // Wait 30s before trying again
             $this->release(30);
         }
@@ -152,7 +152,7 @@ class CreateBroadSignSchedule extends BroadSignJob {
         /** @var Creative $creative */
         foreach ($content->creatives as $creative) {
             // Association is done through another job as the ad copy need to have finished uploading. This way we can retry the association if needed
-            if($creative->broadsign_ad_copy_id === null) {
+            if ($creative->broadsign_ad_copy_id === null) {
                 continue;
             }
 

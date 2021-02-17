@@ -11,11 +11,11 @@
 namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\Jobs\CreateBroadSignCampaign;
-use Neo\BroadSign\Jobs\CreateBroadSignSchedule;
-use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
-use Neo\BroadSign\Jobs\DisableBroadSignSchedule;
-use Neo\BroadSign\Jobs\UpdateBroadSignScheduleStatus;
+use Neo\BroadSign\Jobs\Campaigns\CreateBroadSignCampaign;
+use Neo\BroadSign\Jobs\Campaigns\DisableBroadSignCampaign;
+use Neo\BroadSign\Jobs\Schedules\CreateBroadSignSchedule;
+use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
+use Neo\BroadSign\Jobs\Schedules\UpdateBroadSignScheduleStatus;
 use Neo\Models\Campaign;
 use Neo\Models\Schedule;
 use Symfony\Component\Console\Helper\ProgressBar;

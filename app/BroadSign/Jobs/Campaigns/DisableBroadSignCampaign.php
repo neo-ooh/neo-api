@@ -8,12 +8,13 @@
  * @neo/api - DisableBroadSignCampaign.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Campaigns;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 
 /**
@@ -38,7 +39,7 @@ class DisableBroadSignCampaign extends BroadSignJob {
      *
      * @return void
      */
-    public function __construct (int $reservationId) {
+    public function __construct(int $reservationId) {
         $this->reservationId = $reservationId;
     }
 
@@ -47,17 +48,17 @@ class DisableBroadSignCampaign extends BroadSignJob {
      *
      * @return void
      */
-    public function handle (): void {
+    public function handle(): void {
         // Update the broadsign campaign
         $bsReservation = BSCampaign::get($this->reservationId);
 
-        if($bsReservation === null) {
+        if ($bsReservation === null) {
             // We do not throw any error on reservation not found as we were already trying to deactivate it.
             return;
         }
 
         $bsReservation->active = false;
-        $bsReservation->state = 2;
+        $bsReservation->state  = 2;
         $bsReservation->save();
     }
 }

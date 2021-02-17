@@ -11,6 +11,7 @@
 namespace Neo\Models;
 
 use Carbon\Carbon as Date;
+use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -500,8 +501,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * @return bool
-     * @throws \Exception
-     * @throws \Exception
+     * @throws Exception
+     * @throws Exception
      */
     public function is2FAValid(): bool {
         $token = $this->twoFactorToken;

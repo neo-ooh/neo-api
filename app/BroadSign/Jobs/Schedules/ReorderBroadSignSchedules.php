@@ -8,12 +8,13 @@
  * @neo/api - ReorderBroadSignSchedules.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Schedules;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Bundle;
 use Neo\Models\Schedule;
 
@@ -62,12 +63,12 @@ class ReorderBroadSignSchedules extends BroadSignJob {
         foreach ($schedules as $schedule) {
             $bundles = Bundle::bySchedule($schedule->id);
 
-            if(count($bundles) === 0) {
+            if (count($bundles) === 0) {
                 return;
             }
 
             /** @var Bundle $bundle */
-            $bundle = $bundles[0];
+            $bundle           = $bundles[0];
             $bundle->position = $schedule->order;
             $bundle->save();
         }

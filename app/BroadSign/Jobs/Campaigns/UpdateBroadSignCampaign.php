@@ -8,13 +8,15 @@
  * @neo/api - UpdateBroadSignCampaign.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Campaigns;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Date;
 use Neo\BroadSign\BroadSign;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Bundle as BSBundle;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\Models\Campaign;
@@ -64,6 +66,14 @@ class UpdateBroadSignCampaign extends BroadSignJob {
         }
 
         $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
+
+        // Can we simply update the BroadSign Campaign or do we need to rebuild it ?
+        if($campaign->start_date->isBefore(Date::make($bsCampaign->start_date)) ||
+            $campaign->end_date->isAfter(Date::make($bsCampaign->end_date))) {
+            // We need to rebuild the campaign
+            RebuildBroadSignCampaign::dispatchSync($campaign->id);
+            return;
+        }
 
         // Update the name and fullscreen status of the campaign
         $bsCampaign->name = $campaign->owner->name . " - " . $campaign->name;

@@ -11,7 +11,7 @@
 namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\Jobs\UpdateCampaignTargeting;
+use Neo\BroadSign\Jobs\Campaigns\UpdateCampaignTargeting;
 use Neo\BroadSign\Models\Location;
 use Neo\Models\Campaign;
 use Symfony\Component\Console\Helper\ProgressBar;

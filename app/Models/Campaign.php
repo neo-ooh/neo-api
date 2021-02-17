@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon as Date;
 use Illuminate\Support\Collection;
-use Neo\BroadSign\Jobs\DisableBroadSignCampaign;
+use Neo\BroadSign\Jobs\Campaigns\DisableBroadSignCampaign;
 use Neo\Models\Factories\CampaignFactory;
 use Neo\Rules\AccessibleCampaign;
 

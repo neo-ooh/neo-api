@@ -28,7 +28,7 @@
             $totalImpressions = 0;
             $totalMediaValue = 0;
             $totalDiscount = 0;
-            $totalNetInvestment = 0;
+            $totalNetInvestment = 0
         @endphp
         {{-- Loop over each region --}}
         @foreach($orders as $purchasesByProperties)
@@ -38,7 +38,7 @@
                 $regionImpressions = 0;
                 $regionMediaValue = 0;
                 $regionDiscount = 0;
-                $regionNetInvestment = 0;
+                $regionNetInvestment = 0
             @endphp
 
             {{-- Print the region row --}}
@@ -71,7 +71,7 @@
                         $regionImpressions += (int)$purchase->impressions;
                         $regionMediaValue += (int)$purchase->unit_price;
                         $regionDiscount += (int)$purchase->discount;
-                        $regionNetInvestment += (int)$purchase->netInvestment();
+                        $regionNetInvestment += (int)$purchase->netInvestment()
                     @endphp
 
                     <tr class="purchase-row {{ $loop->last ? 'last' : '' }} {{ $network }}">
@@ -111,7 +111,7 @@
                 $totalImpressions += $regionImpressions;
                 $totalMediaValue += $regionMediaValue;
                 $totalDiscount += $regionDiscount;
-                $totalNetInvestment += $regionNetInvestment;
+                $totalNetInvestment += $regionNetInvestment
             @endphp
 
             <tr class="spacer-row">

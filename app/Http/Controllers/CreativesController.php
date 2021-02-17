@@ -16,8 +16,6 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Neo\BroadSign\Jobs\DisableBroadSignCreative;
-use Neo\BroadSign\Jobs\TargetCreative;
 use Neo\BroadSign\Jobs\Creatives\ImportCreativeInBroadSign;
 use Neo\Exceptions\BaseException;
 use Neo\Exceptions\CannotOverwriteCreativeException;

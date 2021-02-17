@@ -8,13 +8,15 @@
  * @neo/api - UpdateBroadSignScheduleStatus.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Schedules;
 
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\BroadSign\Jobs\BroadSignJob;
+use Neo\BroadSign\Jobs\Campaigns\UpdateBroadSignCampaign;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Schedule;
 
@@ -41,7 +43,7 @@ class UpdateBroadSignScheduleStatus extends BroadSignJob {
      *
      * @return void
      */
-    public function __construct (int $scheduleID) {
+    public function __construct(int $scheduleID) {
         $this->scheduleID = $scheduleID;
     }
 
@@ -52,7 +54,7 @@ class UpdateBroadSignScheduleStatus extends BroadSignJob {
      * @throws Exception
      * @throws Exception
      */
-    public function handle (): void {
+    public function handle(): void {
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 
@@ -62,7 +64,7 @@ class UpdateBroadSignScheduleStatus extends BroadSignJob {
         }
 
         // We update the broadsign schedule based on its Access counterpart's status
-        $bsSchedule = BSSchedule::get($schedule->broadsign_schedule_id);
+        $bsSchedule         = BSSchedule::get($schedule->broadsign_schedule_id);
         $bsSchedule->active = $schedule->is_approved;
         $bsSchedule->save();
 
@@ -75,7 +77,7 @@ class UpdateBroadSignScheduleStatus extends BroadSignJob {
         }
 
         // Finally, trigger an update of the campaign if its saturation is automatic
-        if($schedule->campaign->loop_saturation === 0) {
+        if ($schedule->campaign->loop_saturation === 0) {
             UpdateBroadSignCampaign::dispatch($schedule->campaign_id);
         }
     }

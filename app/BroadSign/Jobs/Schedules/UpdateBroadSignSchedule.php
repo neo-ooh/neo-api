@@ -8,12 +8,13 @@
  * @neo/api - UpdateBroadSignSchedule.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Schedules;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Models\Schedule;
 
@@ -68,7 +69,7 @@ class UpdateBroadSignSchedule extends BroadSignJob {
         }
 
         // Get and update the schedule
-        $bsSchedule = BSSchedule::get($schedule->broadsign_schedule_id);
+        $bsSchedule             = BSSchedule::get($schedule->broadsign_schedule_id);
         $bsSchedule->name       = $schedule->content->name . " Schedules";
         $bsSchedule->start_date = $schedule->start_date->toDateString();
         $bsSchedule->start_time = $schedule->start_date->setSecond(0)->toTimeString();
@@ -77,7 +78,7 @@ class UpdateBroadSignSchedule extends BroadSignJob {
         $bsSchedule->save();
 
         // Check if the schedule status needs to be updated
-        if($schedule->is_approved !== $bsSchedule->active) {
+        if ($schedule->is_approved !== $bsSchedule->active) {
             // Mismatch, trigger an update of the schedule status
             UpdateBroadSignScheduleStatus::dispatchSync($this->scheduleID);
         }

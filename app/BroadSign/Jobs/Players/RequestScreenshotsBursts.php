@@ -8,7 +8,7 @@
  * @neo/api - RequestScreenshotsBursts.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Players;
 
 
 use Carbon\Carbon as Date;
@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Player as BSPlayer;
 use Neo\Models\Burst;
 use Neo\Models\Player;
@@ -29,8 +30,8 @@ class RequestScreenshotsBursts extends BroadSignJob {
     /**
      * @throws Exception
      */
-    public function handle (): void {
-        if(config("app.env") !== "production") {
+    public function handle(): void {
+        if (config("app.env") !== "production") {
             return;
         }
 
@@ -53,7 +54,7 @@ class RequestScreenshotsBursts extends BroadSignJob {
         /** @var Player|null $player */
         $player = $burst->location->players()->inRandomOrder()->first();
 
-        if(is_null($player)) {
+        if (is_null($player)) {
             // This location has no player, delete the burst
             $burst->delete();
             return;
@@ -64,7 +65,7 @@ class RequestScreenshotsBursts extends BroadSignJob {
 
         // Update the start date to reflect the effective start date.
         $burst->start_at = Date::now();
-        $burst->started = true;
+        $burst->started  = true;
         $burst->save();
     }
 }

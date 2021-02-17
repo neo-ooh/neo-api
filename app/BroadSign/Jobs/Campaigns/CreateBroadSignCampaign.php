@@ -8,13 +8,14 @@
  * @neo/api - CreateBroadSignCampaign.php
  */
 
-namespace Neo\BroadSign\Jobs;
+namespace Neo\BroadSign\Jobs\Campaigns;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\BroadSign;
+use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\Models\Campaign;
 
@@ -38,7 +39,7 @@ class CreateBroadSignCampaign extends BroadSignJob {
      *
      * @return void
      */
-    public function __construct (int $campaignID) {
+    public function __construct(int $campaignID) {
         $this->campaignID = $campaignID;
     }
 
@@ -49,7 +50,7 @@ class CreateBroadSignCampaign extends BroadSignJob {
      *
      * @return void
      */
-    public function handle (BroadSign $broadsign): void {
+    public function handle(BroadSign $broadsign): void {
         // Get the access campaign
         /** @var Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignID);
@@ -61,23 +62,23 @@ class CreateBroadSignCampaign extends BroadSignJob {
 
         // Prepare the start and end date
         $startDate = $campaign->start_date->setTime(0, 0);
-        $endDate = $startDate->copy()
-                             ->addYears(BroadSign::getDefaults()['campaign_length'])
-                             ->setTime(23, 59);
+        $endDate   = $startDate->copy()
+                               ->addYears(BroadSign::getDefaults()['campaign_length'])
+                               ->setTime(23, 59);
 
         // Create the campaign
-        $bsCampaign = new BSCampaign();
+        $bsCampaign                           = new BSCampaign();
         $bsCampaign->auto_synchronize_bundles = true;
-        $bsCampaign->domain_id = $broadsign->getDefaults()["domain_id"];
-        $bsCampaign->duration_msec = $campaign->display_duration * 1000;
-        $bsCampaign->end_date = $endDate->toDateString();
-        $bsCampaign->end_time = "23:59:00";
-        $bsCampaign->name = $campaign->owner->name . " - " . $campaign->name;
-        $bsCampaign->parent_id = $broadsign->getDefaults()["customer_id"];
-        $bsCampaign->start_date = $startDate->toDateString();
-        $bsCampaign->start_time = "00:00:00";
-        $bsCampaign->saturation = $campaign->loop_saturation;
-        $bsCampaign->default_fullscreen = false;
+        $bsCampaign->domain_id                = $broadsign->getDefaults()["domain_id"];
+        $bsCampaign->duration_msec            = $campaign->display_duration * 1000;
+        $bsCampaign->end_date                 = $endDate->toDateString();
+        $bsCampaign->end_time                 = "23:59:00";
+        $bsCampaign->name                     = $campaign->owner->name . " - " . $campaign->name;
+        $bsCampaign->parent_id                = $broadsign->getDefaults()["customer_id"];
+        $bsCampaign->start_date               = $startDate->toDateString();
+        $bsCampaign->start_time               = "00:00:00";
+        $bsCampaign->saturation               = $campaign->loop_saturation;
+        $bsCampaign->default_fullscreen       = false;
         $bsCampaign->create();
 
         // Save the BroadSign campaign ID with the Access campaign

@@ -17,7 +17,7 @@
         <tbody>
             @foreach(['shopping', 'otg', 'fitness'] as $network)
                 @php
-                $networkOrders = $orders->filter(fn($order) => $order->isNetwork($network));
+                $networkOrders = $orders->filter(fn($order) => $order->isNetwork($network))
                 @endphp
                 @if($networkOrders->count() === 0)
                     @continue

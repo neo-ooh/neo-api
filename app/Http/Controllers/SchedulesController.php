@@ -323,7 +323,12 @@ class SchedulesController extends Controller {
                              ->whereNotExists(fn($query) => $query->select(DB::raw(1))
                                                                   ->from('reviews')
                                                                   ->whereRaw('reviews.schedule_id = schedules.id'))
-                             ->with(["campaign", "content", "owner", "campaign.locations:id,name"])
+                             ->with([
+                                 "campaign",
+                                 "campaign.owner:id,name",
+                                 "content",
+                                 "owner",
+                             ])
                              ->get();
 
         return new Response($schedules);

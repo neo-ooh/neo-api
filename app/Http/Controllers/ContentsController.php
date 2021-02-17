@@ -148,7 +148,7 @@ class ContentsController extends Controller {
         // Reload the content and return it
         $content->refresh();
 
-        return new Response($this->show($content));
+        return new Response($this->show($content)->getOriginalContent());
     }
 
     /**

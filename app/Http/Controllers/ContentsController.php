@@ -61,7 +61,7 @@ class ContentsController extends Controller {
         return new Response($content->load([
             "creatives",
             "schedules",
-            "schedules.campaign:id,name",
+            "schedules.campaign:id,name,owner_id",
             "layout",
             "layout.format",
             "library:id,name"]));

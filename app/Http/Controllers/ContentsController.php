@@ -23,16 +23,14 @@ use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Library;
 
-class ContentsController extends Controller
-{
+class ContentsController extends Controller {
     /**
      * @param StoreContentRequest $request
      *
      * @return ResponseFactory|Response
      * @throws LibraryStorageFullException
      */
-    public function store(StoreContentRequest $request)
-    {
+    public function store(StoreContentRequest $request) {
         /** @var Library $library */
         $library = Library::query()->find($request->validated()["library_id"]);
 
@@ -43,9 +41,9 @@ class ContentsController extends Controller
 
         $content = new Content();
         [
-            "owner_id" => $content->owner_id,
+            "owner_id"   => $content->owner_id,
             "library_id" => $content->library_id,
-            "layout_id" => $content->layout_id,
+            "layout_id"  => $content->layout_id,
         ] = $request->validated();
 
         $content->save();
@@ -59,8 +57,7 @@ class ContentsController extends Controller
      *
      * @return ResponseFactory|Response
      */
-    public function show(Content $content)
-    {
+    public function show(Content $content) {
         return new Response($content->load([
             "creatives",
             "schedules",
@@ -77,8 +74,7 @@ class ContentsController extends Controller
      * @return ResponseFactory|Response
      * @throws LibraryStorageFullException
      */
-    public function update(SwapContentCreativesRequest $request, Content $content)
-    {
+    public function update(SwapContentCreativesRequest $request, Content $content) {
         if ($content->library_id !== $request->validated()["library_id"]) {
             /** @var Library $library */
             $library = Library::query()->find($request->validated()["library_id"]);
@@ -90,60 +86,60 @@ class ContentsController extends Controller
         }
 
         [
-            "owner_id" => $content->owner_id,
+            "owner_id"   => $content->owner_id,
             "library_id" => $content->library_id,
-            "name" => $content->name,
+            "name"       => $content->name,
         ] = $request->validated();
 
         // If the user is a reviewer, it can fill additional fields
         if (Gate::allows(Capability::contents_review)) {
-            $content->is_approved = $request->get("is_approved", $content->is_approved);
+            $content->is_approved         = $request->get("is_approved", $content->is_approved);
             $content->scheduling_duration = $request->get("scheduling_duration", $content->scheduling_duration);
-            $content->scheduling_times = $request->get("scheduling_times", $content->scheduling_times);
+            $content->scheduling_times    = $request->get("scheduling_times", $content->scheduling_times);
         }
 
         $content->save();
         return new Response($content->load(["owner",
-            "creatives",
-            "schedules",
-            "schedules.campaign",
-            "layout",
-            "library"]));
+                                            "creatives",
+                                            "schedules",
+                                            "schedules.campaign",
+                                            "layout",
+                                            "library"]));
     }
 
     public function swap(SwapContentCreativesRequest $request, Content $content) {
         // make sure the Content can be edited
-        if(!$content->is_editable) {
+        if (!$content->is_editable) {
             return new Response([
-                "code" => "content.locked",
+                "code"    => "content.locked",
                 "message" => "This content is locekd and cannot be edited."
             ], 400);
         }
 
         // Creatives are named left and right for ease of comprehension. Actual swaping could happen between any two frames as long as they have the same dimensions.
         [$leftId, $rightId] = $request->validated()["creatives"];
-        $left = Creative::findOrFail($leftId);
+        $left  = Creative::findOrFail($leftId);
         $right = Creative::findOrFail($rightId);
 
         // Make sure the two creatives are part of the same content
-        if($left->content_id !== $content->id || $right->content_id !== $content->id) {
+        if ($left->content_id !== $content->id || $right->content_id !== $content->id) {
             return new Response([
-                "code" => "creative.unrelated",
+                "code"    => "creative.unrelated",
                 "message" => "Creatives needs to be part of the same content to be swapped."
             ], 400);
         }
 
         // Make sure the two frames have the same dimensions so that swapping can happen
-        if($left->frame->width !== $right->frame->width || $left->frame->height !== $right->frame->height) {
+        if ($left->frame->width !== $right->frame->width || $left->frame->height !== $right->frame->height) {
             return new Response([
-                "code" => "creative.mismatch",
+                "code"    => "creative.mismatch",
                 "message" => "Creatives needs to have the same dimensions to be swapped."
             ], 400);
         }
 
         // All good, swap the creatives
-        $leftFrame = $left->frame_id;
-        $left->frame_id = $right->frame_id;
+        $leftFrame       = $left->frame_id;
+        $left->frame_id  = $right->frame_id;
         $right->frame_id = $leftFrame;
 
         $left->save();
@@ -152,19 +148,18 @@ class ContentsController extends Controller
         // Reload the content and return it
         $content->refresh();
 
-        return new Response($content);
+        return new Response($this->show($content));
     }
 
     /**
      * @param DestroyContentRequest $request
-     * @param Content $content
+     * @param Content               $content
      *
      * @return ResponseFactory|Response
      * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */
-    public function destroy(DestroyContentRequest $request, Content $content)
-    {
+    public function destroy(DestroyContentRequest $request, Content $content) {
         $content->authorizeAccess();
 
         if ($content->schedules_count > 0 && $content->schedules->some(fn($schedule) => $schedule->status === 'broadcasting' || $schedule->status === 'expired')) {

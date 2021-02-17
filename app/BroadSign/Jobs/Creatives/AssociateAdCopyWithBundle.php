@@ -55,7 +55,7 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
      * Execute the job.
      *
      * @return void
-     * @throws BadResponse
+     * @throws
      */
     public function handle(): void {
         $bundle = new Bundle(["id" => $this->bundleID]);

@@ -85,7 +85,7 @@ class RecreateAllCampaigns extends Command {
             // Re-create all the schedules in BroadSign
             /** @var Schedule $schedule */
             foreach ($campaign->schedules as $schedule) {
-                CreateBroadSignSchedule::dispatchSync($schedule->id);
+                CreateBroadSignSchedule::dispatchSync($schedule->id, $schedule->owner_id);
                 UpdateBroadSignScheduleStatus::dispatchSync($schedule->id);
             }
         }

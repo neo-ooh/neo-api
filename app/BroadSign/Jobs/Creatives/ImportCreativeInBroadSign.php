@@ -38,11 +38,9 @@ class ImportCreativeInBroadSign extends BroadSignJob {
      * Create a new job instance.
      *
      * @param int    $creativeID ID of the creative to import
-     * @param string $creativeName
      */
-    public function __construct(int $creativeID, string $creativeName) {
+    public function __construct(int $creativeID) {
         $this->creativeID   = $creativeID;
-        $this->creativeName = $creativeName;
     }
 
     /**
@@ -72,7 +70,7 @@ class ImportCreativeInBroadSign extends BroadSignJob {
 
         $bsCreative             = new BSCreative();
         $bsCreative->attributes = $attributes;
-        $bsCreative->name       = $creative->owner->email . " - " . $this->creativeName;
+        $bsCreative->name       = $creative->owner->email . " - " . $creative->original_name;
         $bsCreative->parent_id  = $broadsign->getDefaults()["customer_id"];
         $bsCreative->url        = $creative->file_url;
         $bsCreative->create();

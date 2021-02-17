@@ -16,7 +16,6 @@ use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Neo\BroadSign\Jobs\Creatives\ImportCreativeInBroadSign;
 use Neo\Exceptions\BaseException;
 use Neo\Exceptions\CannotOverwriteCreativeException;
 use Neo\Exceptions\IncompatibleFrameAndFormat;
@@ -77,15 +76,13 @@ class CreativesController extends Controller {
         $creative->content_id = $content->id;
         $creative->frame_id   = $frame->id;
         $creative->extension  = $file->extension();
+        $creative->original_name  = $file->getClientOriginalName();
         $creative->status     = "OK";
         $creative->checksum   = hash_file('sha256', $file->path());
         $creative->duration   = $content->duration;
         $creative->save();
         $creative->refresh();
         $creative->store($file);
-
-        // Import the creative in BroadSign
-        ImportCreativeInBroadSign::dispatch($creative->id, $file->getClientOriginalName());
 
         return new Response($creative, 201);
     }

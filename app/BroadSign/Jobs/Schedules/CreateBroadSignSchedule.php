@@ -16,6 +16,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Jobs\BroadSignJob;
+use Neo\BroadSign\Jobs\Creatives\AssociateAdCopyWithBundle;
+use Neo\BroadSign\Jobs\Creatives\ImportCreativeInBroadSign;
 use Neo\BroadSign\Models\Bundle as BSBundle;
 use Neo\BroadSign\Models\LoopSlot;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
@@ -151,12 +153,14 @@ class CreateBroadSignSchedule extends BroadSignJob {
         // Import the content's creatives
         /** @var Creative $creative */
         foreach ($content->creatives as $creative) {
-            // Association is done through another job as the ad copy need to have finished uploading. This way we can retry the association if needed
+            // If the creative has no ad_copy ID, it needs to be imported in BroadSign
             if ($creative->broadsign_ad_copy_id === null) {
+                ImportCreativeInBroadSign::dispatchSync($creative->id);
                 continue;
             }
 
-            AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id);
+            // Apply a 60 seconds delay to the association as BroadSign returns an error if the Ad Copy hasn't finished uploading.
+            AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id)->delay(60);
         }
     }
 }

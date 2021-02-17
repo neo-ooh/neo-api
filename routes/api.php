@@ -255,6 +255,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route::  post("contents", ContentsController::class . "@store")->name("contents.store");
     Route::   get("contents/{content}", ContentsController::class . "@show")->name("contents.show");
     Route::   put("contents/{content}", ContentsController::class . "@update")->name("contents.update");
+    Route::   put("contents/{content}/swap", ContentsController::class . "@swap")->name("contents.swap");
     Route::delete("contents/{content}", ContentsController::class . "@destroy")->name("contents.destroy");
 
 

@@ -33,6 +33,7 @@ use Neo\Models\Factories\CreativeFactory;
  * @property int     content_id
  * @property int     frame_id
  * @property string  extension
+ * @property string  original_name
  * @property string  status
  * @property string  checksum
  * @property int     duration

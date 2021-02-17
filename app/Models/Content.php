@@ -12,6 +12,7 @@
 
 namespace Neo\Models;
 
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,8 +31,8 @@ use Neo\Rules\AccessibleContent;
  * @property int                       layout_id
  * @property int                       broadsign_content_id
  * @property string                    name
- * @property double                    duration            How long this content will display. Not applicable if the content only
- *           has static creatives
+ * @property double                    duration            How long this content will display. Not applicable if the content only has static creatives
+ * @property bool                      is_editable         Tell if the content can be edited
  * @property bool                      is_approved         Tell if the content has been pre-approved
  * @property int                       scheduling_duration Maximum duration of a scheduling of this content.
  * @property int                       scheduling_times    How many times this content can be scheduled
@@ -40,7 +41,7 @@ use Neo\Rules\AccessibleContent;
  * @property Library                   library             The library where this content resides
  * @property FormatLayout              layout              The layout of the content
  *
- * @property-read Collection<Creative> creatives           The creatives of the content
+ * @property-read Collection<Creative> creatives           The content's creatives
  * @property-read int                  creatives_count
  *
  * @property-read Collection<Schedule> schedules
@@ -196,5 +197,28 @@ class Content extends SecuredModel {
      */
     public function layout(): BelongsTo {
         return $this->belongsTo(FormatLayout::class, "layout_id", "id");
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attributes
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * A content editable status is based on its scheduling. A content who has never been schedules, or only at the state of
+     * drafts, will be editable. As soon as one of the content's schedule gets sent for review or reviewed, the content is
+     * locked and cannot be edited again.
+     *
+     * @return bool True if the content can be edited
+     */
+    public function getIsEditableAttribute() {
+        if($this->schedules_count === 0) {
+            // No schedules, can be edited
+            return true;
+        }
+
+        // If a content has been scheduled, it can still be edited if it has never been locked/approved, etc...
+        return $this->schedules->every("status", "===", Schedule::STATUS_DRAFT);
     }
 }

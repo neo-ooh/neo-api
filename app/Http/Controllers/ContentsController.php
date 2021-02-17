@@ -18,8 +18,9 @@ use Neo\Enums\Capability;
 use Neo\Exceptions\LibraryStorageFullException;
 use Neo\Http\Requests\Contents\DestroyContentRequest;
 use Neo\Http\Requests\Contents\StoreContentRequest;
-use Neo\Http\Requests\Contents\UpdateContentRequest;
+use Neo\Http\Requests\Contents\SwapContentCreativesRequest;
 use Neo\Models\Content;
+use Neo\Models\Creative;
 use Neo\Models\Library;
 
 class ContentsController extends Controller
@@ -70,13 +71,13 @@ class ContentsController extends Controller
     }
 
     /**
-     * @param UpdateContentRequest $request
-     * @param Content $content
+     * @param SwapContentCreativesRequest $request
+     * @param Content                     $content
      *
      * @return ResponseFactory|Response
      * @throws LibraryStorageFullException
      */
-    public function update(UpdateContentRequest $request, Content $content)
+    public function update(SwapContentCreativesRequest $request, Content $content)
     {
         if ($content->library_id !== $request->validated()["library_id"]) {
             /** @var Library $library */
@@ -108,6 +109,50 @@ class ContentsController extends Controller
             "schedules.campaign",
             "layout",
             "library"]));
+    }
+
+    public function swap(SwapContentCreativesRequest $request, Content $content) {
+        // make sure the Content can be edited
+        if(!$content->is_editable) {
+            return new Response([
+                "code" => "content.locked",
+                "message" => "This content is locekd and cannot be edited."
+            ], 400);
+        }
+
+        // Creatives are named left and right for ease of comprehension. Actual swaping could happen between any two frames as long as they have the same dimensions.
+        [$leftId, $rightId] = $request->validated()["creatives"];
+        $left = Creative::findOrFail($leftId);
+        $right = Creative::findOrFail($rightId);
+
+        // Make sure the two creatives are part of the same content
+        if($left->content_id !== $content->id || $right->content_id !== $content->id) {
+            return new Response([
+                "code" => "creative.unrelated",
+                "message" => "Creatives needs to be part of the same content to be swapped."
+            ], 400);
+        }
+
+        // Make sure the two frames have the same dimensions so that swapping can happen
+        if($left->frame->width !== $right->frame->width || $left->frame->height !== $right->frame->height) {
+            return new Response([
+                "code" => "creative.mismatch",
+                "message" => "Creatives needs to have the same dimensions to be swapped."
+            ], 400);
+        }
+
+        // All good, swap the creatives
+        $leftFrame = $left->frame_id;
+        $left->frame_id = $right->frame_id;
+        $right->frame_id = $leftFrame;
+
+        $left->save();
+        $right->save();
+
+        // Reload the content and return it
+        $content->refresh();
+
+        return new Response($content);
     }
 
     /**

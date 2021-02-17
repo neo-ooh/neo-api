@@ -54,6 +54,14 @@ use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
 class Schedule extends Model {
     use SoftDeletes;
 
+    public const STATUS_DRAFT = "draft";
+    public const STATUS_PENDING = "pending";
+    public const STATUS_APPROVED = "approved";
+    public const STATUS_LIVE = "broadcasting";
+    public const STATUS_REJECTED = "rejected";
+    public const STATUS_EXPIRED = "expired";
+    public const STATUS_TRASHED = "trashed";
+
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -165,14 +173,12 @@ class Schedule extends Model {
     }
 
     public function getStatusAttribute(): string {
-        $isTrashed = $this->trashed();
-
-        if ($isTrashed) {
-            return 'trashed';
+        if ($this->trashed()) {
+            return self::STATUS_TRASHED;
         }
 
         if (!$this->locked) {
-            return 'draft';
+            return self::STATUS_DRAFT;
         }
 
         // Schedule is locked
@@ -181,28 +187,27 @@ class Schedule extends Model {
             // Schedule's content is not pre-approved,
             // Is their a review for it ?
             if ($this->reviews_count === 0) {
-                return 'pending';
+                return self::STATUS_PENDING;
             }
 
             // Is the last review valid ?
             if (!$this->reviews()->first()->approved) {
-                return 'rejected';
+                return self::STATUS_REJECTED;
             }
+        }
+
+        // Has broadcasting finished ?
+        if ($this->end_date < Date::now()) {
+            return self::STATUS_EXPIRED; // Finish
         }
 
         // The schedule is approved, has broadcasting started ?
         if ($this->start_date > Date::now()) {
-            return 'approved'; // Not started
-        }
-
-
-        // Has broadcasting finished ?
-        if ($this->end_date < Date::now()) {
-            return 'expired'; // Finish
+            return self::STATUS_APPROVED; // Not started
         }
 
         // This schedule is live
-        return 'broadcasting';
+        return self::STATUS_LIVE;
     }
 
 

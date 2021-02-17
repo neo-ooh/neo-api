@@ -118,8 +118,6 @@ class CreateBroadSignSchedule extends BroadSignJob {
 
         // Create the broadsign bundle that will be broadcast by the schedule
         $this->makeBundle($content, $bsSchedule, $schedule);
-
-        UpdateCampaignTargeting::dispatch($schedule->campaign_id);
     }
 
     /**

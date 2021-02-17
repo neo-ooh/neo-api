@@ -159,8 +159,8 @@ class CreateBroadSignSchedule extends BroadSignJob {
                 continue;
             }
 
-            // Apply a 60 seconds delay to the association as BroadSign returns an error if the Ad Copy hasn't finished uploading.
-            AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id)->delay(60);
+            // Apply a 120 seconds delay to the association as BroadSign returns an error if the Ad Copy hasn't finished uploading.
+            AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id)->delay(120);
         }
     }
 }

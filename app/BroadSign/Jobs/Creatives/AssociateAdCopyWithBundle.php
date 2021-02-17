@@ -34,7 +34,7 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
      *
      * @var int
      */
-    public int $backoff = 60;
+    public int $backoff = 120;
 
     protected int $bundleID, $adCopyID;
 

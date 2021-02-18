@@ -16,6 +16,7 @@ use Neo\Http\Requests\PasswordRecoveries\PasswordForgotRequest;
 use Neo\Http\Requests\PasswordRecoveries\PasswordRecoveryRequest;
 use Neo\Models\RecoveryToken;
 use Neo\Models\Actor;
+use Neo\Models\TwoFactorToken;
 
 class PasswordRecoveryController extends Controller {
     public function makeToken (PasswordForgotRequest $request): Response {
@@ -64,7 +65,6 @@ class PasswordRecoveryController extends Controller {
             ], 400);
         }
 
-
         // Token is valid, return user name for display purpose a success status
         return new Response([
             "name" => $recoveryToken->actor->name,
@@ -94,6 +94,9 @@ class PasswordRecoveryController extends Controller {
 
         // And erase the token
         RecoveryToken::destroy($actor->email);
+
+        // And all two factor tokens
+        TwoFactorToken::where("actor_id", "=", $actor->id)->delete();
 
         return new Response([]);
     }

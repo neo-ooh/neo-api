@@ -9,9 +9,34 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/AssociateAdCopyWithBundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/AssociateAdCopyWithBundle.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrders.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrders.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersCategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersCategory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersTable.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersTable.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummary.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummary.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryProductionCosts.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryProductionCosts.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrders.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrdersCategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrdersCategory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Order.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Order.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/_header.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/_header.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.scss" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-category.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-category.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-network.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-network.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary-production-costs.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary-production-costs.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders-category.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders-category.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders-totals.blade.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/details.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/details.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/order-totals.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/order-totals.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/summary.blade.php" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -223,7 +248,7 @@
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/Contents" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/storage/app" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -241,11 +266,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/storage/app" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Contents" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns" />
       <recent name="$PROJECT_DIR$/app/Console/Chores" />
       <recent name="$PROJECT_DIR$/app/Console/Hotfixes" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/ActorsLogos" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Players" />
@@ -270,9 +295,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="PHPUnit.StoreScheduleTest.testCorrectResponseReturnedOnCorrectRequest" />
         <item itemvalue="PHPUnit.UpdateActorTest.testActorParentCanBeChanged" />
         <item itemvalue="PHPUnit.TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" />
+        <item itemvalue="PHPUnit.StoreScheduleTest.testCorrectResponseReturnedOnCorrectRequest" />
       </list>
     </recent_temporary>
   </component>
@@ -302,7 +327,7 @@
       <workItem from="1611759751819" duration="932000" />
       <workItem from="1611841219519" duration="50750000" />
       <workItem from="1612370980953" duration="32840000" />
-      <workItem from="1612886336214" duration="92009000" />
+      <workItem from="1612886336214" duration="111116000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

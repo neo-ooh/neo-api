@@ -98,6 +98,7 @@ header .header-table {
 .header-contract-data tr td:nth-child(1) {
   border-right: 1px solid #000000;
   padding: 2px 5px 2px 15px;
+  white-space: nowrap;
 }
 .header-contract-data tr td:nth-child(2) {
   padding: 2px 15px 2px 5px;
@@ -163,12 +164,12 @@ footer {
   margin-bottom: 5mm;
 }
 .summary-purchases-table thead tr th {
-  width: 25mm;
+  width: 24mm;
   padding: 2mm 1mm;
   color: #FFFFFF;
   font-family: "poppins-bold";
   text-align: center;
-  font-size: 0.889em;
+  font-size: 0.85em;
   background-color: #252734;
   border-left: 1px solid #FFFFFF;
 }
@@ -206,9 +207,6 @@ footer {
   font-size: 0.889em;
 }
 
-.detailed-purchases {
-  page-break-inside: avoid;
-}
 .detailed-purchases-title {
   margin-bottom: 0;
   text-transform: uppercase;
@@ -248,28 +246,32 @@ footer {
 .detailed-purchases-table thead tr.headers th:nth-child(1) {
   width: 60mm;
 }
+.detailed-purchases-table thead tr.headers th.larger {
+  width: 120mm;
+}
 .detailed-purchases-table thead tr.headers th:nth-child(2) {
   width: 40mm;
 }
-.detailed-purchases-table thead tr.headers th:nth-child(11) {
+.detailed-purchases-table thead tr.headers th:nth-child(11), .detailed-purchases-table thead tr.headers th.last {
   border-right: none;
 }
 .detailed-purchases-table tbody tr td {
   font-size: 9pt;
 }
 .detailed-purchases-table tbody tr.region-row {
-  background-color: #EEEEEE;
+  page-break-after: avoid;
 }
 .detailed-purchases-table tbody tr.region-row td {
   padding: 1mm 0;
   text-align: center;
   font-weight: bold;
+  background-color: #EEEEEE;
 }
 .detailed-purchases-table tbody tr.region-row td:nth-child(1) {
   border-right: 2px solid #FFFFFF;
 }
 .detailed-purchases-table tbody tr.region-footer-row {
-  background-color: #BBBBBB;
+  page-break-before: avoid;
 }
 .detailed-purchases-table tbody tr.region-footer-row td {
   padding: 1mm 0;
@@ -277,9 +279,13 @@ footer {
   font-family: "poppins-bold";
   font-weight: bold;
   color: #FFFFFF;
+  background-color: #BBBBBB;
 }
 .detailed-purchases-table tbody tr.region-footer-row td:nth-child(1) {
   border-right: 2px solid #FFFFFF;
+}
+.detailed-purchases-table tbody tr.property-row {
+  page-break-after: avoid;
 }
 .detailed-purchases-table tbody tr.property-row td {
   padding: 2mm 0 1mm;
@@ -303,6 +309,9 @@ footer {
 }
 .detailed-purchases-table tbody tr.property-row.first td {
   border-top: 1px solid #000000;
+}
+.detailed-purchases-table tbody tr.purchase-row {
+  page-break-before: avoid;
 }
 .detailed-purchases-table tbody tr.purchase-row td {
   padding: 1mm 0;
@@ -372,11 +381,44 @@ footer {
   width: 60mm;
   border-right-width: 2px;
 }
+.detailed-purchases-summary-table tr td.larger {
+  width: 120mm;
+}
 .detailed-purchases-summary-table tr td:nth-child(2) {
   width: 90mm;
 }
-.detailed-purchases-summary-table tr td:nth-child(9) {
+.detailed-purchases-summary-table tr td:nth-child(9), .detailed-purchases-summary-table tr td.last {
   border-right: none;
+}
+
+.production-specs-table {
+  border-collapse: collapse;
+}
+.production-specs-table thead tr th {
+  width: 46.68mm;
+  padding: 5mm 1mm;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 0.889em;
+  background-color: #252734;
+  border-left: 2px solid #FFF;
+}
+.production-specs-table thead tr th:nth-child(1) {
+  border-left: none;
+}
+.production-specs-table tbody tr td {
+  padding: 2mm 0;
+  text-align: center;
+  font-weight: normal;
+  font-size: 0.79em;
+  border-top: 1px solid #252734;
+}
+.production-specs-table tfoot tr td {
+  padding: 2mm 1mm;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 0.889em;
+  background-color: #252734;
 }
 
 .technical-specs-title {

@@ -44,13 +44,13 @@ h1, h2 {
   margin-bottom   : 5mm;
 
   thead tr th {
-    width            : 25mm;
+    width            : 24mm;
     padding          : 2mm 1mm;
 
     color            : #FFFFFF;
     font-family      : $font-bold;
     text-align       : center;
-    font-size        : .889em;
+    font-size        : .85em;
 
     background-color : $dark-blue;
     border-left      : 1px solid #FFFFFF;
@@ -103,8 +103,6 @@ h1, h2 {
 }
 
 .detailed-purchases {
-  page-break-inside : avoid;
-
   &-title {
     margin-bottom  : 0;
     text-transform : uppercase;
@@ -155,11 +153,15 @@ h1, h2 {
             width : 60mm;
           }
 
+          &.larger {
+            width: 120mm;
+          }
+
           &:nth-child(2) {
             width : 40mm;
           }
 
-          &:nth-child(11) {
+          &:nth-child(11), &.last {
             border-right : none;
           }
         }
@@ -173,12 +175,13 @@ h1, h2 {
         }
 
         &.region-row {
-          background-color : $ultralight-grey;
+          page-break-after: avoid;
 
           td {
             padding     : 1mm 0;
             text-align  : center;
             font-weight : bold;
+            background-color : $ultralight-grey;
 
             &:nth-child(1) {
               border-right : 2px solid #FFFFFF;
@@ -187,7 +190,7 @@ h1, h2 {
         }
 
         &.region-footer-row {
-          background-color : $light-grey;
+          page-break-before: avoid;
 
           td {
             padding     : 1mm 0;
@@ -195,6 +198,7 @@ h1, h2 {
             font-family : $font-bold;
             font-weight : bold;
             color       : #FFFFFF;
+            background-color : $light-grey;
 
             &:nth-child(1) {
               border-right : 2px solid #FFFFFF;
@@ -203,6 +207,8 @@ h1, h2 {
         }
 
         &.property-row {
+          page-break-after: avoid;
+
           td {
             padding : 2mm 0 1mm;
 
@@ -235,6 +241,8 @@ h1, h2 {
         }
 
         &.purchase-row {
+          page-break-before: avoid;
+
           td {
             padding    : 1mm 0;
             text-align : center;
@@ -329,13 +337,58 @@ h1, h2 {
       border-right-width : 2px;
     }
 
+    &.larger {
+      width: 120mm;
+    }
+
     &:nth-child(2) {
       width : 90mm;
     }
 
-    &:nth-child(9) {
-      border-right : none;
+    &:nth-child(9), &.last {
+      border-right: none;
     }
+  }
+}
+
+.production-specs-table {
+  border-collapse : collapse;
+
+  thead tr th {
+    width            : 46.68mm;
+    padding          : 5mm 1mm;
+
+    color            : #FFFFFF;
+    text-align       : center;
+    font-size        : .889em;
+
+    background-color : $dark-blue;
+
+    border-left: 2px solid #FFF;
+
+    &:nth-child(1) {
+      border-left: none;
+    }
+  }
+
+  tbody tr td {
+    padding     : 2mm 0;
+
+    text-align  : center;
+    font-weight : normal;
+    font-size   : .79em;
+
+    border-top  : 1px solid $dark-blue;
+  }
+
+  tfoot tr td {
+    padding          : 2mm 1mm;
+
+    color            : #FFFFFF;
+    text-align       : center;
+    font-size        : .889em;
+
+    background-color : $dark-blue;
   }
 }
 

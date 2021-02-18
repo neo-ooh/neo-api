@@ -20,14 +20,14 @@ class Customer {
             "Customer"                      => $this->name,
             "Company"                       => $this->company,
             "Analytic Account/Display Name" => $this->account,
-            "Customer Reference"            => $this->reference,
+            //            "Customer Reference"            => $this->reference,
 
-            "Customer/Street"           => $this->address_street,
-            "Customer/Street2"          => $this->address_street_2,
-            "Customer/City"             => $this->address_city,
-            "Customer/State"            => $this->address_state,
-            "Customer/State/State Name" => $this->address_state_name,
-            "Customer/Country"          => $this->address_country,
+            "Customer/Street"               => $this->address_street,
+            //            "Customer/Street2"          => $this->address_street_2,
+            "Customer/City"                 => $this->address_city,
+            //            "Customer/State"            => $this->address_state,
+            "Customer/State/State Name"     => $this->address_state_name,
+            "Customer/Country/Country Name" => $this->address_country,
         ] = $record;
     }
 }

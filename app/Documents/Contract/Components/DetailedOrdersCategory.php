@@ -14,10 +14,12 @@ use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
+use Neo\Documents\Contract\Order;
 use Neo\Documents\Contract\OrderLine;
 
 class DetailedOrdersCategory extends Component {
     protected string $type;
+    protected Order $order;
     protected Collection $purchases;
 
 
@@ -25,11 +27,13 @@ class DetailedOrdersCategory extends Component {
      * Create the component instance.
      *
      * @param string     $type
+     * @param Order      $order
      * @param Collection $purchases
      */
-    public function __construct(string $type, Collection $purchases) {
-        $this->purchases = $purchases;
+    public function __construct(string $type, Order $order, Collection $purchases) {
         $this->type      = $type;
+        $this->order     = $order;
+        $this->purchases = $purchases;
     }
 
     /**
@@ -41,24 +45,25 @@ class DetailedOrdersCategory extends Component {
         $purchases = $this
             ->purchases
             ->filter(fn(/**@var OrderLine $order */ $order) => [
-                    "purchase" => $order->isGuaranteedPurchase(),
-                    "bonus"    => $order->isGuaranteedBonus(),
-                    "bua"      => $order->isBonusUponAvailability(),
-                ][$this->type]);
+                                                                   "purchase" => $order->isGuaranteedPurchase(),
+                                                                   "bonus"    => $order->isGuaranteedBonus(),
+                                                                   "bua"      => $order->isBonusUponAvailability(),
+                                                               ][$this->type]);
 
-        if($purchases->count() === 0) {
+        if ($purchases->count() === 0) {
             return "";
         }
 
         return view('documents.contract.campaign-details.orders-category', [
-            "type"        => $this->type,
-            "orders"      => $purchases,
-            "totalSpots" => $purchases->sum("quantity"),
-            "totalScreens" => $purchases->sum("nb_screens"),
+            "type"             => $this->type,
+            "order"            => $this->order,
+            "orders"           => $purchases,
+            "totalSpots"       => $purchases->sum("quantity"),
+            "totalScreens"     => $purchases->sum("nb_screens"),
             "totalImpressions" => $purchases->sum("impressions"),
-            "totalValue" => $purchases->sum("unit_price"),
-            "totalDiscount" => $purchases->sum("discount"),
-            "totalInvestment" => $purchases->sum(fn($order) => $order->netInvestment()),
+            "totalValue"       => $purchases->sum("unit_price"),
+            "totalDiscount"    => $purchases->sum("discount"),
+            "totalInvestment"  => $purchases->sum(fn($order) => $order->netInvestment()),
         ]);
     }
 

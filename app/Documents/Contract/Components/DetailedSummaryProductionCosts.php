@@ -6,17 +6,18 @@ use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
+use Neo\Documents\Contract\OrderLine;
 
 class DetailedSummaryProductionCosts extends Component {
-    protected Collection $orders;
+    protected Collection $production;
 
     /**
      * Create the component instance.
      *
-     * @param Collection $orders
+     * @param OrderLine $production
      */
-    public function __construct(Collection $orders) {
-        $this->orders = $orders;
+    public function __construct(Collection $production) {
+        $this->production = $production;
     }
 
     /**
@@ -26,7 +27,7 @@ class DetailedSummaryProductionCosts extends Component {
      */
     public function render() {
         return view('documents.contract.campaign-details.summary-production-costs', [
-            "orders" => $this->orders
+            "production" => $this->production
         ]);
     }
 

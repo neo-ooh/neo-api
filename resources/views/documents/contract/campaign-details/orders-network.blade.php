@@ -1,5 +1,5 @@
 <section class="detailed-purchases">
-    <table class="detailed-purchases-table">
+    <table class="detailed-purchases-table" autosize="1">
         <thead>
         <tr class="title">
             <td colspan="11" class="detailed-purchases-title">
@@ -8,7 +8,10 @@
             </td>
         </tr>
         <tr class="headers">
-            <th>Markets, Properties & Products</th>
+            <th @if(!$order->show_investment)
+                class="larger"
+                    @endif >Markets, Properties & Products
+            </th>
             <th>City</th>
             <th>Start Date</th>
             <th>End Date</th>
@@ -16,9 +19,11 @@
             <th>Screens / Posters</th>
             <th>Weeks</th>
             <th>Impressions</th>
-            <th>Media Value</th>
-            <th>Discount %</th>
-            <th>Net Investment</th>
+            <th @if(!$order->show_investment) class="last" @endif>Media Value</th>
+            @if($order->show_investment)
+                <th>Discount %</th>
+                <th>Net Investment</th>
+            @endif
         </tr>
         </thead>
         <tbody>
@@ -44,6 +49,7 @@
             {{-- Print the region row --}}
             <tr class="region-row">
                 <td>{{ $purchasesByProperties->first()->first()->market }}</td>
+                <td class="filler" colspan="@if($order->show_investment) 10 @else 8 @endif"></td>
             </tr>
 
             {{-- Loop over each property in the region --}}
@@ -58,8 +64,10 @@
                     <td class="border-right"></td>
                     <td class="border-right"></td>
                     <td class="border-right"></td>
-                    <td class="border-right"></td>
-                    <td class="border-right"></td>
+                    @if($order->show_investment)
+                        <td class="border-right"></td>
+                        <td class="border-right"></td>
+                    @endif
                     <td></td>
                 </tr>
 
@@ -83,9 +91,17 @@
                         <td class="border-right">{{ $purchase->nb_screens }}</td>
                         <td class="border-right">{{ $purchase->nb_weeks }}</td>
                         <td class="border-right">{{ number_format($purchase->impressions) }}</td>
-                        <td class="border-right">$ {{ $purchase->unit_price }}</td>
-                        <td class="border-right">{{ $purchase->discount == 0 ? '-' : "{$purchase->discount}%" }}</td>
-                        <td>$ {{ $purchase->netInvestment() }}</td>
+                        <td @if($order->show_investment)
+                            class="border-right"
+                                @endif >
+                            $ {{ $purchase->unit_price }}
+                        </td>
+                        @if($order->show_investment)
+                            <td class="border-right">
+                                {{ $purchase->discount == 0 ? '-' : "{$purchase->discount}%" }}
+                            </td>
+                            <td>$ {{ $purchase->netInvestment() }}</td>
+                        @endif
                     </tr>
                 @endforeach
             @endforeach
@@ -100,9 +116,17 @@
                 <td class="border-right">{{ $regionScreens }}</td>
                 <td class="border-right">-</td>
                 <td class="border-right">{{ number_format($regionImpressions) }}</td>
-                <td class="border-right">$ {{ $regionMediaValue }}</td>
-                <td class="border-right">{{ $regionDiscount === 0 ? '-' : $regionDiscount->discount }}</td>
-                <td>$ {{ $regionNetInvestment }}</td>
+                <td @if($order->show_investment)
+                    class="border-right"
+                        @endif >
+                    $ {{ $regionMediaValue }}
+                </td>
+                @if($order->show_investment)
+                    <td class="border-right">
+                        {{ $regionDiscount === 0 ? '-' : ($regionDiscount / $purchasesByProperties->flatten()->count()) . "%" }}
+                    </td>
+                    <td>$ {{ $regionNetInvestment }}</td>
+                @endif
             </tr>
 
             @php
@@ -115,7 +139,7 @@
             @endphp
 
             <tr class="spacer-row">
-                @for($i = 0; $i < 11; ++$i)
+                @for($i = 0; $i < ($order->show_investment ? 11 : 9); ++$i)
                     <td></td>
                 @endfor
             </tr>
@@ -131,9 +155,19 @@
             <td class="border-right">{{ $totalScreens }}</td>
             <td class="border-right">-</td>
             <td class="border-right">{{ number_format($totalImpressions) }}</td>
-            <td class="border-right">$ {{ $totalMediaValue }}</td>
-            <td class="border-right">{{ $totalDiscount === 0 ? '-' : $totalDiscount->discount }}</td>
-            <td>$ {{$totalNetInvestment}}</td>
+            <td @if($order->show_investment)
+                class="border-right"
+                @else
+                    class="last"
+                    @endif >
+                $ {{ $totalMediaValue }}
+            </td>
+            @if($order->show_investment)
+                <td class="border-right">
+                    {{ $totalDiscount === 0 ? '-' : round($totalDiscount / $orders->flatten()->count()) . "%" }}
+                </td>
+                <td>$ {{ number_format($totalNetInvestment) }}</td>
+            @endif
         </tr>
         </tfoot>
     </table>

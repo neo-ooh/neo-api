@@ -1,19 +1,36 @@
 @if($type !== 'purchase')
-    <pagebreak />
+    <pagebreak/>
 @endif
-<x-contract::detailed-orders-table :type="$type" network="shopping" :purchases="$orders"/>
-<x-contract::detailed-orders-table :type="$type" network="otg" :purchases="$orders"/>
-<x-contract::detailed-orders-table :type="$type" network="fitness" :purchases="$orders"/>
-<table class="detailed-purchases-summary-table">
+<x-contract::detailed-orders-table :type="$type"
+                                   :order="$order"
+                                   network="shopping"
+                                   :purchases="$orders"/>
+<x-contract::detailed-orders-table :type="$type"
+                                   :order="$order"
+                                   network="otg"
+                                   :purchases="$orders"/>
+<x-contract::detailed-orders-table :type="$type"
+                                   :order="$order"
+                                   network="fitness"
+                                   :purchases="$orders"/>
+<table class="detailed-purchases-summary-table" autosize="1">
     <tr class="headers">
-        <td>Total {{ __("order-type-$type") }}</td>
+        <td @if(!$order->show_investment)
+            class="larger"
+                @endif >Total {{ __("order-type-$type") }}</td>
         <td></td>
         <td>{{ $totalSpots }}</td>
         <td>{{ $totalScreens }}</td>
         <td>-</td>
         <td>{{ number_format($totalImpressions) }}</td>
-        <td>$ {{ number_format($totalValue) }}</td>
-        <td>{{ $totalDiscount == 0 ? '-' : "{$totalDiscount}%" }}</td>
-        <td>$ {{ number_format($totalInvestment) }}</td>
+        <td @if(!$order->show_investment)
+            class="last"
+                @endif>$ {{ number_format($totalValue) }}</td>
+        @if($order->show_investment)
+            <td>
+                {{ $totalDiscount == 0 ? '-' : round($totalDiscount / $orders->flatten()->count())."%" }}
+            </td>
+            <td>$ {{ number_format($totalInvestment) }}</td>
+        @endif
     </tr>
 </table>

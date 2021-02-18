@@ -6,11 +6,13 @@ use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
+use Neo\Documents\Contract\Order;
 use Neo\Documents\Contract\OrderLine;
 use Neo\Documents\Network;
 
 class DetailedOrdersTable extends Component {
     protected string $type;
+    protected Order $order;
     protected string $network;
     protected Collection $purchases;
 
@@ -19,13 +21,15 @@ class DetailedOrdersTable extends Component {
      * Create the component instance.
      *
      * @param string     $type
+     * @param Order      $order
      * @param string     $network
      * @param Collection $purchases
      */
-    public function __construct(string $type, string $network, Collection $purchases) {
-        $this->purchases = $purchases;
-        $this->network   = $network;
+    public function __construct(string $type, Order $order, string $network, Collection $purchases) {
         $this->type      = $type;
+        $this->order     = $order;
+        $this->network   = $network;
+        $this->purchases = $purchases;
     }
 
     /**
@@ -45,7 +49,7 @@ class DetailedOrdersTable extends Component {
             ->sortBy(['market', 'property_name'])
             ->groupBy(['market', 'property_name']);
 
-        if($purchases->count() === 0) {
+        if ($purchases->count() === 0) {
             return "";
         }
 
@@ -53,7 +57,8 @@ class DetailedOrdersTable extends Component {
             "type"        => $this->type,
             "network"     => $this->network,
             "networkName" => $this->networkName(),
-            "orders"      => $purchases
+            "orders"      => $purchases,
+            "order"       => $this->order,
         ]);
     }
 

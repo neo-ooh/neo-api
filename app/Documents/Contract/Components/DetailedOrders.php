@@ -7,19 +7,20 @@ use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
 use Mpdf\Mpdf;
+use Neo\Documents\Contract\Order;
 
 class DetailedOrders extends Component {
-    protected Mpdf $mpdf;
+    protected order $order;
     protected Collection $orders;
 
     /**
      * Create the component instance.
      *
-     * @param Mpdf       $mpdf
+     * @param Order $order
      * @param Collection $orders
      */
-    public function __construct(Mpdf $mpdf, Collection $orders) {
-        $this->mpdf   = $mpdf;
+    public function __construct(Order $order, Collection $orders) {
+        $this->order = $order;
         $this->orders = $orders;
     }
 
@@ -30,6 +31,7 @@ class DetailedOrders extends Component {
      */
     public function render() {
         return view('documents.contract.campaign-details.orders', [
+            "order" => $this->order,
             "orders" => $this->orders
         ]);
     }

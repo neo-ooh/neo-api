@@ -49,6 +49,8 @@ header {
         &:nth-child(1) {
           border-right : 1px solid #000000;
           padding      : 2px 5px 2px 15px;
+
+          white-space: nowrap;
         }
 
         &:nth-child(2) {

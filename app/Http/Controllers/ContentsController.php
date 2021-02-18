@@ -19,6 +19,7 @@ use Neo\Exceptions\LibraryStorageFullException;
 use Neo\Http\Requests\Contents\DestroyContentRequest;
 use Neo\Http\Requests\Contents\StoreContentRequest;
 use Neo\Http\Requests\Contents\SwapContentCreativesRequest;
+use Neo\Http\Requests\Contents\UpdateContentRequest;
 use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Library;
@@ -68,13 +69,13 @@ class ContentsController extends Controller {
     }
 
     /**
-     * @param SwapContentCreativesRequest $request
+     * @param UpdateContentRequest $request
      * @param Content                     $content
      *
      * @return ResponseFactory|Response
      * @throws LibraryStorageFullException
      */
-    public function update(SwapContentCreativesRequest $request, Content $content) {
+    public function update(UpdateContentRequest $request, Content $content) {
         if ($content->library_id !== $request->validated()["library_id"]) {
             /** @var Library $library */
             $library = Library::query()->find($request->validated()["library_id"]);

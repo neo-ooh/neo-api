@@ -8,35 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrders.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrders.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersCategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersCategory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersTable.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedOrdersTable.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummary.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummary.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryProductionCosts.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummaryProductionCosts.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrders.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrdersCategory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/SummaryOrdersCategory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Order.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Order.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/_header.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/_header.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-category.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-category.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-network.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-network.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary-production-costs.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary-production-costs.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders-category.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders-category.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders-totals.blade.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/details.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/details.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/order-totals.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/order-totals.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/summary.blade.php" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,7 +65,7 @@
       </server>
     </servers>
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 7.4">
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 8.0">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/neutron/temporary-filesystem" />
       <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
@@ -110,7 +86,6 @@
       <path value="$PROJECT_DIR$/vendor/evenement/evenement" />
       <path value="$PROJECT_DIR$/vendor/ramsey/collection" />
       <path value="$PROJECT_DIR$/vendor/ramsey/uuid" />
-      <path value="$PROJECT_DIR$/vendor/vimeo/psalm" />
       <path value="$PROJECT_DIR$/vendor/filp/whoops" />
       <path value="$PROJECT_DIR$/vendor/nesbot/carbon" />
       <path value="$PROJECT_DIR$/vendor/doctrine/lexer" />
@@ -130,14 +105,11 @@
       <path value="$PROJECT_DIR$/vendor/psr/log" />
       <path value="$PROJECT_DIR$/vendor/symfony/var-dumper" />
       <path value="$PROJECT_DIR$/vendor/brick/math" />
-      <path value="$PROJECT_DIR$/vendor/webmozart/path-util" />
       <path value="$PROJECT_DIR$/vendor/psr/container" />
       <path value="$PROJECT_DIR$/vendor/psr/http-client" />
       <path value="$PROJECT_DIR$/vendor/graham-campbell/result-type" />
       <path value="$PROJECT_DIR$/vendor/laravel/tinker" />
       <path value="$PROJECT_DIR$/vendor/laravel/framework" />
-      <path value="$PROJECT_DIR$/vendor/felixfbecker/advanced-json-rpc" />
-      <path value="$PROJECT_DIR$/vendor/felixfbecker/language-server-protocol" />
       <path value="$PROJECT_DIR$/vendor/opis/closure" />
       <path value="$PROJECT_DIR$/vendor/mockery/mockery" />
       <path value="$PROJECT_DIR$/vendor/fideloper/proxy" />
@@ -147,17 +119,13 @@
       <path value="$PROJECT_DIR$/vendor/fruitcake/laravel-cors" />
       <path value="$PROJECT_DIR$/vendor/facade/ignition-contracts" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-timer" />
-      <path value="$PROJECT_DIR$/vendor/amphp/amp" />
-      <path value="$PROJECT_DIR$/vendor/amphp/byte-stream" />
       <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
       <path value="$PROJECT_DIR$/vendor/phpoption/phpoption" />
       <path value="$PROJECT_DIR$/vendor/webmozart/assert" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-file-iterator" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-invoker" />
-      <path value="$PROJECT_DIR$/vendor/openlss/lib-array2xml" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-text-template" />
       <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
-      <path value="$PROJECT_DIR$/vendor/netresearch/jsonmapper" />
       <path value="$PROJECT_DIR$/vendor/sebastian/type" />
       <path value="$PROJECT_DIR$/vendor/ralouphie/getallheaders" />
       <path value="$PROJECT_DIR$/vendor/guzzlehttp/promises" />
@@ -261,7 +229,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
+    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -327,7 +295,7 @@
       <workItem from="1611759751819" duration="932000" />
       <workItem from="1611841219519" duration="50750000" />
       <workItem from="1612370980953" duration="32840000" />
-      <workItem from="1612886336214" duration="111116000" />
+      <workItem from="1612886336214" duration="113432000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

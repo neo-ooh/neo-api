@@ -1,6 +1,7 @@
 /public/hot
 /public/storage
 
+/storage/app
 /storage/*.key
 /storage/*.pem
 

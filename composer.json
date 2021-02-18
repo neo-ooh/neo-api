@@ -5,7 +5,7 @@
   "keywords": [],
   "license": "",
   "require": {
-    "php": "^7.4.12",
+    "php": "^8.0",
     "ext-gd": "*",
     "ext-json": "*",
     "ext-pdo": "*",

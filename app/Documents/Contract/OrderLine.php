@@ -69,6 +69,8 @@ class OrderLine {
         ] = $record;
 
         $this->discount = (float)$this->discount;
+
+        $this->final_media-value
     }
 
     public function isNetwork(string $network) {
@@ -98,5 +100,9 @@ class OrderLine {
 
     public function isBonusUponAvailability(): int {
         return (float)$this->discount === 0 && str_ends_with($this->product, "(bonus)");
+    }
+
+    public function finalMediaValue() {
+        return $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
     }
 }

@@ -12,11 +12,11 @@
             <table class="header-contract-data">
                 <tr>
                     <td class="header-contract-data-label">Customer</td>
-                    <td class="header-contract-data-value">{{ $customer->account }}</td>
+                    <td class="header-contract-data-value">{{ $customer->company }}</td>
                 </tr>
                 <tr>
                     <td class="header-contract-data-label">Advertiser</td>
-                    <td class="header-contract-data-value">{{ $customer->company }}</td>
+                    <td class="header-contract-data-value">{{ $customer->account }}</td>
                 </tr>
                 <tr>
                     <td class="header-contract-data-label">Proposal #</td>

@@ -10,6 +10,7 @@ use Illuminate\View\View;
 class DetailedSummary extends Component {
     protected Collection $orders;
     protected Collection $production;
+    protected bool $renderDisclaimers;
 
     /**
      * Create the component instance.
@@ -17,9 +18,10 @@ class DetailedSummary extends Component {
      * @param Collection $orders
      * @param Collection  $production
      */
-    public function __construct(Collection $orders, Collection $production) {
+    public function __construct(Collection $orders, Collection $production, bool $renderDisclaimers) {
         $this->orders     = $orders;
         $this->production = $production;
+        $this->renderDisclaimers = $renderDisclaimers;
     }
 
     /**
@@ -31,6 +33,7 @@ class DetailedSummary extends Component {
         return view('documents.contract.campaign-details.summary', [
             "orders"     => $this->orders,
             "production" => $this->production,
+            "renderDisclaimers" => $this->renderDisclaimers,
         ]);
     }
 

@@ -61,7 +61,7 @@ class Contract extends Document {
 
         if ($this->orderLines->count() === 0) {
             // Production Contract
-            $this->setHeader("Production Costs");
+            $this->setHeader("Production Details");
             $this->setFooter();
 
             $orientation = "P";
@@ -69,7 +69,7 @@ class Contract extends Document {
             $this->mpdf->SetMargins(0, 0, 50);
             $this->mpdf->AddPage();
 
-            $this->renderDetailedSummary();
+            $this->renderDetailedSummary(false);
 
             return true;
         }
@@ -155,7 +155,7 @@ class Contract extends Document {
 
         $this->mpdf->WriteHTML($campaignDetails->render()->render());
 
-        $this->renderDetailedSummary();
+        $this->renderDetailedSummary(true);
     }
 
     private function setHeader($title) {
@@ -172,8 +172,8 @@ class Contract extends Document {
         ])->render());
     }
 
-    private function renderDetailedSummary() {
-        $campaignDetailedSummary = new DetailedSummary($this->orderLines, $this->production);
+    private function renderDetailedSummary(bool $renderDisclaimers) {
+        $campaignDetailedSummary = new DetailedSummary($this->orderLines, $this->production, $renderDisclaimers);
         $this->mpdf->WriteHTML($campaignDetailedSummary->render()->render());
     }
 }

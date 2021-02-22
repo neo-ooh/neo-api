@@ -134,13 +134,19 @@ class Campaign extends BroadSignModel {
     }
 
     public function addLocations(Collection $display_units_ids, Collection $frames): void {
-        static::addSkinSlots([
+        $request = [
             "id"           => $this->id,
             "sub_elements" => [
                 "display_unit"      => $display_units_ids->map(fn($du) => ["id" => $du])->values()->toArray(),
-                "frame_or_criteria" => $frames->map(fn($frame) => ["id" => $frame])->values()->toArray(),
+
             ],
-        ]);
+        ];
+
+        if($frames->count() > 0) {
+            $request["sub_elements"]["frame_or_criteria"] = $frames->map(fn($frame) => ["id" => $frame])->values()->toArray();
+        }
+
+        static::addSkinSlots($request);
 
         // Load the campaign skin slots
         $skinSlots   = SkinSlot::forCampaign(["reservable_id" => $this->id]);

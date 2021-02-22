@@ -13,6 +13,7 @@ namespace Neo\Console;
 use Illuminate\Console\Command;
 use Neo\BroadSign\Jobs\Campaigns\CreateBroadSignCampaign;
 use Neo\BroadSign\Jobs\Schedules\CreateBroadSignSchedule;
+use Neo\BroadSign\Jobs\Schedules\UpdateBroadSignScheduleStatus;
 use Neo\BroadSign\Models\Bundle;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\BroadSign\Models\Schedule as BSSchedule;
@@ -42,6 +43,7 @@ class RebuildResources extends Command {
     public function handle (): int {
         // First step is to deactivate all schedules and bundles
         $schedules = Schedule::all();
+
         foreach ($schedules as $schedule) {
             if($schedule->broadsign_schedule_id === null) {
                 continue;
@@ -87,6 +89,7 @@ class RebuildResources extends Command {
         // Now, we replicate all schedules
         foreach ($schedules as $schedule) {
             CreateBroadSignSchedule::dispatchSync($schedule->id, $schedule->owner_id);
+            UpdateBroadSignScheduleStatus::dispatchSync($schedule->id);
         }
 
         // An now we pray

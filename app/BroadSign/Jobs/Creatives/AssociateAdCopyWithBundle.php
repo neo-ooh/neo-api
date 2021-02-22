@@ -17,6 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Bundle;
+use Neo\Models\Creative;
 
 /**
  * Class AssociateAdCopyWithBundle
@@ -36,19 +37,19 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
      */
     public int $backoff = 120;
 
-    protected int $bundleID, $adCopyID;
+    protected int $bundleID, $creativeId;
 
     /**
      * Create a new job instance.
      *
      * @param int $bundleID
-     * @param int $adCopyID
+     * @param int $creativeId
      */
-    public function __construct(int $bundleID, int $adCopyID) {
+    public function __construct(int $bundleID, int $creativeId) {
         $this->delay = 60;
 
-        $this->bundleID = $bundleID;
-        $this->adCopyID = $adCopyID;
+        $this->bundleID   = $bundleID;
+        $this->creativeId = $creativeId;
     }
 
     /**
@@ -58,7 +59,21 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
      * @throws
      */
     public function handle(): void {
+        /** @var ?Creative $creative */
+        $creative = Creative::query()->find($this->creativeId);
+
+        if($creative === null) {
+            // Creative does not exist, remove it
+            return;
+        }
+
+        if($creative->broadsign_ad_copy_id === null) {
+            // No Ad-copy id, try again late
+            $this->release(60);
+            return;
+        }
+
         $bundle = new Bundle(["id" => $this->bundleID]);
-        $bundle->associateCreative($this->adCopyID);
+        $bundle->associateCreative($creative->broadsign_ad_copy_id);
     }
 }

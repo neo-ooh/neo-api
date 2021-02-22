@@ -157,10 +157,11 @@ class CreateBroadSignSchedule extends BroadSignJob {
             // If the creative has no ad_copy ID, it needs to be imported in BroadSign
             if ($creative->broadsign_ad_copy_id === null) {
                 ImportCreativeInBroadSign::withChain([ new AssociateAdCopyWithBundle($bundle->id, $creative->id)])->dispatch($creative->id);
+                return;
             }
 
             // Apply a 120 seconds delay to the association as BroadSign returns an error if the Ad Copy hasn't finished uploading.
-            AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->broadsign_ad_copy_id)->delay(120);
+            AssociateAdCopyWithBundle::dispatch($bundle->id, $creative->id)->delay(120);
         }
     }
 }

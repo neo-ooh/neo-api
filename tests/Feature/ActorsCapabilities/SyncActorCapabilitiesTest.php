@@ -59,6 +59,8 @@ class SyncActorCapabilitiesTest extends TestCase {
         $this->actingAs($actor);
 
         $testCapability = Capability::where("slug", "=", "test.capability")->first();
+        $testCapability->standalone = true;
+        $testCapability->save();
 
         $otherActor = Actor::factory()->create()->moveTo($actor);
 

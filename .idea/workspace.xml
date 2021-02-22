@@ -22,6 +22,7 @@
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/PasswordRecoveryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/PasswordRecoveryController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Requests/Actors/UpdateActorRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/UpdateActorRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns/ListActorCampaignsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns/ListActorCampaignsRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Traits/HasCampaigns.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Traits/HasCampaigns.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
@@ -33,6 +34,7 @@
       <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders-category.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-summary/orders-category.blade.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/header.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/header.blade.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/ActorsCapabilities/SyncActorCapabilitiesTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/ActorsCapabilities/SyncActorCapabilitiesTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -268,9 +270,13 @@
       <recent name="$PROJECT_DIR$/resources/views/documents/contract" />
     </key>
   </component>
-  <component name="RunManager" selected="PHPUnit.All Tests">
+  <component name="RunManager" selected="PHPUnit.SyncActorCapabilitiesTest.testActorCanAddCapabilityToAccessibleActor">
     <configuration name="StoreScheduleTest.testCorrectResponseReturnedOnCorrectRequest" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
       <TestRunner class="Tests\Feature\Schedules\StoreScheduleTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/Schedules/StoreScheduleTest.php" method="testCorrectResponseReturnedOnCorrectRequest" scope="Method" />
+      <method v="2" />
+    </configuration>
+    <configuration name="SyncActorCapabilitiesTest.testActorCanAddCapabilityToAccessibleActor" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
+      <TestRunner class="Tests\Feature\ActorsCapabilities\SyncActorCapabilitiesTest" configuration_file="$PROJECT_DIR$/phpunit.xml" file="$PROJECT_DIR$/tests/Feature/ActorsCapabilities/SyncActorCapabilitiesTest.php" method="testActorCanAddCapabilityToAccessibleActor" scope="Method" />
       <method v="2" />
     </configuration>
     <configuration name="TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" type="PHPUnitRunConfigurationType" factoryName="PHPUnit" temporary="true">
@@ -283,6 +289,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="PHPUnit.SyncActorCapabilitiesTest.testActorCanAddCapabilityToAccessibleActor" />
         <item itemvalue="PHPUnit.UpdateActorTest.testActorParentCanBeChanged" />
         <item itemvalue="PHPUnit.TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" />
         <item itemvalue="PHPUnit.StoreScheduleTest.testCorrectResponseReturnedOnCorrectRequest" />
@@ -315,7 +322,7 @@
       <workItem from="1611759751819" duration="932000" />
       <workItem from="1611841219519" duration="50750000" />
       <workItem from="1612370980953" duration="32840000" />
-      <workItem from="1612886336214" duration="148601000" />
+      <workItem from="1612886336214" duration="149344000" />
     </task>
     <task id="LOCAL-00001" summary="Fix ReviewTemplatesController static typing">
       <created>1607375484940</created>

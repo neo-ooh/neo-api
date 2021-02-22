@@ -121,10 +121,25 @@ h1, h2 {
     }
   }
 
+  @mixin detailed-col-sizing() {
+    width : 25mm;
+
+    &:nth-child(1) {
+      width : 60mm;
+    }
+
+    &.larger {
+      width : 120mm;
+    }
+
+    &:nth-child(2) {
+      width : 40mm;
+    }
+  }
+
   &-table {
-    page-break-inside : avoid;
-    margin-bottom     : 10mm;
     border-collapse   : collapse;
+    page-break-inside : avoid;
 
     thead {
       tr.title td.detailed-purchases-title {
@@ -138,8 +153,6 @@ h1, h2 {
 
       tr.headers {
         th {
-          width            : 25mm;
-
           padding          : 2mm 0;
           background-color : $dark-blue;
           color            : #FFFFFF;
@@ -149,17 +162,7 @@ h1, h2 {
           font-size        : 10pt;
           border-right     : 2px solid #FFFFFF;
 
-          &:nth-child(1) {
-            width : 60mm;
-          }
-
-          &.larger {
-            width: 120mm;
-          }
-
-          &:nth-child(2) {
-            width : 40mm;
-          }
+          @include detailed-col-sizing;
 
           &:nth-child(11), &.last {
             border-right : none;
@@ -172,15 +175,17 @@ h1, h2 {
       tr {
         td {
           font-size : 9pt;
+
+          @include detailed-col-sizing;
         }
 
         &.region-row {
-          page-break-after: avoid;
+          page-break-after : avoid;
 
           td {
-            padding     : 1mm 0;
-            text-align  : center;
-            font-weight : bold;
+            padding          : 1mm 0;
+            text-align       : center;
+            font-weight      : bold;
             background-color : $ultralight-grey;
 
             &:nth-child(1) {
@@ -190,72 +195,18 @@ h1, h2 {
         }
 
         &.region-footer-row {
-          page-break-before: avoid;
+          page-break-before : avoid;
 
           td {
-            padding     : 1mm 0;
-            text-align  : center;
-            font-family : $font-bold;
-            font-weight : bold;
-            color       : #FFFFFF;
+            padding          : 1mm 0;
+            text-align       : center;
+            font-family      : $font-bold;
+            font-weight      : bold;
+            color            : #FFFFFF;
             background-color : $light-grey;
 
             &:nth-child(1) {
               border-right : 2px solid #FFFFFF;
-            }
-          }
-        }
-
-        &.property-row {
-          page-break-after: avoid;
-
-          td {
-            padding : 2mm 0 1mm;
-
-            &.property-name {
-              text-align  : left;
-              font-family : $font-bold;
-              font-size   : 10pt;
-
-              &.shopping {
-                color : $shopping;
-              }
-
-              &.otg {
-                color : $otg;
-              }
-
-              &.fitness {
-                color : $fitness;
-              }
-            }
-
-            &.property-city {
-              text-align : center;
-            }
-          }
-
-          &.first td {
-            border-top : 1px solid #000000;
-          }
-        }
-
-        &.purchase-row {
-          page-break-before: avoid;
-
-          td {
-            padding    : 1mm 0;
-            text-align : center;
-
-            &.product-type {
-              padding-left : 7.5mm;
-              text-align   : left;
-            }
-          }
-
-          &.last {
-            td {
-              padding-bottom : 2mm;
             }
           }
         }
@@ -310,6 +261,92 @@ h1, h2 {
       }
     }
   }
+
+  .property-purchases-table {
+    border-collapse   : collapse;
+    page-break-inside : avoid;
+
+    thead tr {
+      th {
+        width     : 25mm;
+        padding   : 2mm 0 1mm;
+        font-size : 9pt;
+
+        @include detailed-col-sizing;
+
+        &.property-name {
+          text-align  : left;
+          font-family : $font-bold;
+          font-size   : 10pt;
+
+          &.shopping {
+            color : $shopping;
+          }
+
+          &.otg {
+            color : $otg;
+          }
+
+          &.fitness {
+            color : $fitness;
+          }
+        }
+
+        &.property-city {
+          padding    : 2mm 1mm 1mm;
+          text-align : center;
+        }
+
+        &:nth-child(11), &.last {
+          border-right : none;
+        }
+      }
+    }
+
+    tbody tr {
+      &.purchase-row {
+        td {
+          padding    : 1mm 0;
+          text-align : center;
+          font-size  : 9pt;
+
+          &.product-type {
+            padding-left : 7.5mm;
+            text-align   : left;
+          }
+        }
+
+        &.last {
+          td {
+            padding-bottom : 2mm;
+            border-bottom  : 1px solid #000000;
+          }
+        }
+      }
+    }
+
+    tbody tr, thead tr {
+      &.shopping td.border-right,
+      &.shopping th.border-right {
+        border-right : 1px solid $shopping;
+      }
+
+      &.otg td.border-right,
+      &.otg th.border-right {
+        border-right : 1px solid $otg;
+      }
+
+      &.fitness td.border-right,
+      &.fitness th.border-right {
+        border-right : 1px solid $fitness;
+      }
+    }
+  }
+}
+
+.detailed-purchases-footer {
+  height : 10mm;
+  width  : 50mm;
 }
 
 .detailed-purchases-summary-table {
@@ -338,7 +375,7 @@ h1, h2 {
     }
 
     &.larger {
-      width: 120mm;
+      width : 120mm;
     }
 
     &:nth-child(2) {
@@ -346,7 +383,7 @@ h1, h2 {
     }
 
     &:nth-child(9), &.last {
-      border-right: none;
+      border-right : none;
     }
   }
 }
@@ -364,10 +401,10 @@ h1, h2 {
 
     background-color : $dark-blue;
 
-    border-left: 2px solid #FFF;
+    border-left      : 2px solid #FFFFFF;
 
     &:nth-child(1) {
-      border-left: none;
+      border-left : none;
     }
   }
 

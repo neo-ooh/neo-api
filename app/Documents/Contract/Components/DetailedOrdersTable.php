@@ -16,6 +16,26 @@ class DetailedOrdersTable extends Component {
     protected string $network;
     protected Collection $purchases;
 
+    protected array $regions = [
+        "Greater Montreal",
+        "Eastern Townships",
+        "Center of Quebec",
+        "Hull - Gatineau",
+        "Quebec City & Region",
+        "Northeast of Quebec",
+        "Greater Toronto",
+        "North-Western Ontario",
+        "South-Western Ontario",
+        "Kingston / Belleville",
+        "Ottawa",
+        "Greater Vancouver Area",
+        "Winnipeg & Region",
+        "Regina & Region",
+        "Edmonton & Region",
+        "Calgary & Region",
+        "Halifax & Region",
+        "New Brunswick",
+    ];
 
     /**
      * Create the component instance.
@@ -46,12 +66,19 @@ class DetailedOrdersTable extends Component {
                     "bonus"    => $order->isGuaranteedBonus(),
                     "bua"      => $order->isBonusUponAvailability(),
                 ][$this->type])
-            ->sortBy(['market', 'property_name'])
+            ->sortBy(['property_name'])
             ->groupBy(['market', 'property_name']);
+
+
 
         if ($purchases->count() === 0) {
             return "";
         }
+
+        $purchases = (new Collection($this->regions))
+            ->flip()
+            ->replace($purchases)
+            ->filter(fn($region) => !is_int($region));
 
         return view('documents.contract.campaign-details.orders-network', [
             "type"        => $this->type,

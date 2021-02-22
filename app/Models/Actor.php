@@ -28,6 +28,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Neo\Models\Traits\HasCampaigns;
 use Neo\Models\Traits\HasHierarchy;
 use Neo\Models\Traits\HasLocations;
 use Neo\Models\Traits\HasRoles;
@@ -54,8 +55,9 @@ use Neo\Rules\AccessibleActor;
  *
  * @property bool           registration_sent Tell if the registration email was sent to the actor. Not applicable to groups
  * @property bool           is_registered     Tell if the user has registered its account. Not applicable to groups
- * @property bool           tos_accepted      Tell if the actor has accepted the current version of the TOS. Not applicable to
- *           groups
+ * @property bool           tos_accepted      Tell if the actor has accepted the current version of the TOS. Not applicable to groups
+
+ * @property bool           limited_access    If set, the actor does not have access to its group and group's children campaigns. Only to its own, its children campaigns and with user shared with it.
  *
  *
  * @property TwoFactorToken twoFactorToken
@@ -91,7 +93,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     use HasLocations;
     use HasRoles;
     use HasHierarchy;
-    use Traits\HasCampaigns;
+    use HasCampaigns;
     use WithRelationCaching;
 
     /*

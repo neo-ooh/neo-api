@@ -7,29 +7,32 @@ use Neo\Documents\Network;
 class OrderLine {
     public string $orderLine;
     public string $description;
-    public string $discount;
+    public float $discount;
     public string $date_start;
     public string $date_end;
-    public string $impressions;
+    public int $impressions;
     public string $traffic;
 
     public string $market;
     public string $market_name;
 
-    public string $nb_weeks;
-    public string $nb_screens;
-    public string $quantity;
+    public int $nb_weeks;
+    public int $nb_screens;
+    public int $quantity;
 
-    public string $is_production;
+    public bool $is_production;
     public string $product;
     public string $product_category;
     public string $product_description;
     public string $product_rental;
     public string $product_type;
-    public string $unit_price;
+    public float $unit_price;
 
-    public string $subtotal;
-    public string $total_tax;
+    public float $media_value;
+    public float $net_investment;
+
+    public float $subtotal;
+    public float $total_tax;
 
     public string $property_type;
     public string $property_name;
@@ -39,38 +42,37 @@ class OrderLine {
 
 
     public function __construct(array $record) {
-        [
-            "Order Lines" => $this->orderLine,
-            "Order Lines/Description" => $this->description,
-            "Order Lines/Discount (%)" => $this->discount,
-            "Order Lines/Start date" => $this->date_start,
-            "Order Lines/End date" => $this->date_end,
-            "Order Lines/Impression" => $this->impressions,
-            "Order Lines/Traffic" => $this->traffic,
-            "Order Lines/Market" => $this->market,
-            "Order Lines/Market/Name" => $this->market_name,
-            "Order Lines/Nb Weeks" => $this->nb_weeks,
-            "Order Lines/Nb Screen/Poster" => $this->nb_screens,
-            "Order Lines/Quantity" => $this->quantity,
-            "Order Lines/Product" => $this->product,
-            "Order Lines/Product/Production" => $this->is_production,
-            "Order Lines/Product/Product Category" => $this->product_category,
-            "Order Lines/Product/Description" => $this->product_description,
-            "Order Lines/Rental Product" => $this->product_rental,
-            "Order Lines/Type of Product" => $this->product_type,
-            "Order Lines/Unit Price" => $this->unit_price,
-            "Order Lines/Subtotal" => $this->subtotal,
-            "Order Lines/Total Tax" => $this->total_tax,
-            "Order Lines/Property/Property Type" => $this->property_type,
-            "Order Lines/Property/Name" => $this->property_name,
-            "Order Lines/Property/Geo Latitude" => $this->property_lat,
-            "Order Lines/Property/Geo Longitude" => $this->property_lng,
-            "Order Lines/Property/City" => $this->property_city,
-        ] = $record;
 
-        $this->discount = (float)$this->discount;
+//        $this->orderLine           = $record["Order Lines"];
+//        $this->traffic             = $record["Order Lines/Traffic"];
+//        $this->property_lat        = $record["Order Lines/Property/Geo Latitude"];
+//        $this->property_lng        = $record["Order Lines/Property/Geo Longitude"];
 
-        $this->final_media-value
+        $this->description         = $record["Order Lines/Description"];
+        $this->discount            = (float)($record["Order Lines/Discount (%)"] ?? 0);
+        $this->date_start          = $record["Order Lines/Start date"];
+        $this->date_end            = $record["Order Lines/End date"];
+        $this->impressions         = (int)($record["Order Lines/Impression"] ?? 0);
+        $this->market              = $record["Order Lines/Market"];
+        $this->market_name         = $record["Order Lines/Market/Name"];
+        $this->nb_weeks            = (int)($record["Order Lines/Nb Weeks"] ?? 0);
+        $this->nb_screens          = (int)($record["Order Lines/Nb Screen/Poster"] ?? 0);
+        $this->quantity            = $record["Order Lines/Quantity"];
+        $this->product             = $record["Order Lines/Product"];
+        $this->is_production       = $record["Order Lines/Product/Production"] === "VRAI";
+        $this->product_category    = $record["Order Lines/Product/Product Category"];
+        $this->product_description = $record["Order Lines/Product/Description"];
+        $this->product_rental      = $record["Order Lines/Rental Product"];
+        $this->product_type        = $record["Order Lines/Type of Product"];
+        $this->unit_price          = (float)$record["Order Lines/Unit Price"];
+        $this->subtotal            = (float)$record["Order Lines/Subtotal"];
+        $this->total_tax           = (float)$record["Order Lines/Total Tax"];
+        $this->property_type       = $record["Order Lines/Property/Property Type"];
+        $this->property_name       = $record["Order Lines/Property/Name"];
+        $this->property_city       = $record["Order Lines/Property/City"];
+
+        $this->media_value    = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
+        $this->net_investment = $this->subtotal * (1 - $this->discount / 100);
     }
 
     public function isNetwork(string $network) {
@@ -86,23 +88,15 @@ class OrderLine {
         return false;
     }
 
-    public function netInvestment(): int {
-        return (float)$this->subtotal * (1 - (float)$this->discount / 100);
-    }
-
     public function isGuaranteedPurchase(): int {
         return (float)$this->discount < 100 && !str_ends_with($this->product, "(bonus)");
     }
 
     public function isGuaranteedBonus(): int {
-        return (float)$this->discount === 100 && str_ends_with($this->product, "(bonus)");
+        return (float)$this->discount === 100;
     }
 
     public function isBonusUponAvailability(): int {
-        return (float)$this->discount === 0 && str_ends_with($this->product, "(bonus)");
-    }
-
-    public function finalMediaValue() {
-        return $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
+        return str_ends_with($this->product, "(bonus)");
     }
 }

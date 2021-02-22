@@ -45,10 +45,9 @@ class DetailedOrdersCategory extends Component {
         $purchases = $this
             ->purchases
             ->filter(fn(/**@var OrderLine $order */ $order) => [
-                                                                   "purchase" => $order->isGuaranteedPurchase(),
-                                                                   "bonus"    => $order->isGuaranteedBonus(),
-                                                                   "bua"      => $order->isBonusUponAvailability(),
-                                                               ][$this->type]);
+                "purchase" => $order->isGuaranteedPurchase(),
+                "bonus"    => $order->isGuaranteedBonus(),
+                "bua"      => $order->isBonusUponAvailability(),][$this->type]);
 
         if ($purchases->count() === 0) {
             return "";
@@ -61,10 +60,21 @@ class DetailedOrdersCategory extends Component {
             "totalSpots"       => $purchases->sum("quantity"),
             "totalScreens"     => $purchases->sum("nb_screens"),
             "totalImpressions" => $purchases->sum("impressions"),
-            "totalValue"       => $purchases->sum("unit_price"),
+            "totalValue"       => $purchases->sum("media_value"),
             "totalDiscount"    => $purchases->sum("discount"),
-            "totalInvestment"  => $purchases->sum(fn($order) => $order->netInvestment()),
+            "totalInvestment"  => $purchases->sum("net_investment"),
         ]);
+    }
+
+    public function __toString(): string {
+        // TODO: Implement __toString() method.
+        $temp = $this->render();
+
+        if(is_string($temp)) {
+            return $temp;
+        }
+
+        return $temp->render();
     }
 
 }

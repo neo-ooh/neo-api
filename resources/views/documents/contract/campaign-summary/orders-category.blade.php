@@ -30,9 +30,9 @@
                 <td>{{ $networkOrders->pluck('nb_weeks')->unique()->join(" & ") }}</td>
                 <td>{{ $networkOrders->sum('nb_screens') }}</td>
                 <td>{{ number_format($networkOrders->sum('impressions')) }}</td>
-                <td>$ {{ number_format($networkOrders->sum('unit_price')) }}</td>
+                <td>$ {{ number_format($networkOrders->sum('media_value')) }}</td>
                 @if($order->show_investment)
-                    <td>$ {{ number_format($networkOrders->sum(fn($order) => $order->netInvestment())) }}</td>
+                    <td>$ {{ number_format($networkOrders->sum("net_investment")) }}</td>
                 @endif
             </tr>
         @endforeach
@@ -44,9 +44,9 @@
             <td>-</td>
             <td>{{ $orders->sum('nb_screens') }}</td>
             <td>{{ number_format($orders->sum('impressions')) }}</td>
-            <td>$ {{ number_format($orders->sum('unit_price')) }}</td>
+            <td>$ {{ number_format($orders->sum('media_value')) }}</td>
             @if($order->show_investment)
-                <td>$ {{ number_format($orders->sum(fn($order) => $order->netInvestment())) }}</td>
+                <td>$ {{ number_format($orders->sum("net_investment")) }}</td>
             @endif
         </tr>
         </tfoot>

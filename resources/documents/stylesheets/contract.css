@@ -222,9 +222,8 @@ footer {
   color: #d63641;
 }
 .detailed-purchases-table {
-  page-break-inside: avoid;
-  margin-bottom: 10mm;
   border-collapse: collapse;
+  page-break-inside: avoid;
 }
 .detailed-purchases-table thead tr.title td.detailed-purchases-title {
   padding-bottom: 3mm;
@@ -234,7 +233,6 @@ footer {
   font-weight: bold;
 }
 .detailed-purchases-table thead tr.headers th {
-  width: 25mm;
   padding: 2mm 0;
   background-color: #252734;
   color: #FFFFFF;
@@ -242,6 +240,7 @@ footer {
   text-align: center;
   font-size: 10pt;
   border-right: 2px solid #FFFFFF;
+  width: 25mm;
 }
 .detailed-purchases-table thead tr.headers th:nth-child(1) {
   width: 60mm;
@@ -257,6 +256,16 @@ footer {
 }
 .detailed-purchases-table tbody tr td {
   font-size: 9pt;
+  width: 25mm;
+}
+.detailed-purchases-table tbody tr td:nth-child(1) {
+  width: 60mm;
+}
+.detailed-purchases-table tbody tr td.larger {
+  width: 120mm;
+}
+.detailed-purchases-table tbody tr td:nth-child(2) {
+  width: 40mm;
 }
 .detailed-purchases-table tbody tr.region-row {
   page-break-after: avoid;
@@ -283,46 +292,6 @@ footer {
 }
 .detailed-purchases-table tbody tr.region-footer-row td:nth-child(1) {
   border-right: 2px solid #FFFFFF;
-}
-.detailed-purchases-table tbody tr.property-row {
-  page-break-after: avoid;
-}
-.detailed-purchases-table tbody tr.property-row td {
-  padding: 2mm 0 1mm;
-}
-.detailed-purchases-table tbody tr.property-row td.property-name {
-  text-align: left;
-  font-family: "poppins-bold";
-  font-size: 10pt;
-}
-.detailed-purchases-table tbody tr.property-row td.property-name.shopping {
-  color: #3e9cca;
-}
-.detailed-purchases-table tbody tr.property-row td.property-name.otg {
-  color: #e5782c;
-}
-.detailed-purchases-table tbody tr.property-row td.property-name.fitness {
-  color: #d63641;
-}
-.detailed-purchases-table tbody tr.property-row td.property-city {
-  text-align: center;
-}
-.detailed-purchases-table tbody tr.property-row.first td {
-  border-top: 1px solid #000000;
-}
-.detailed-purchases-table tbody tr.purchase-row {
-  page-break-before: avoid;
-}
-.detailed-purchases-table tbody tr.purchase-row td {
-  padding: 1mm 0;
-  text-align: center;
-}
-.detailed-purchases-table tbody tr.purchase-row td.product-type {
-  padding-left: 7.5mm;
-  text-align: left;
-}
-.detailed-purchases-table tbody tr.purchase-row.last td {
-  padding-bottom: 2mm;
 }
 .detailed-purchases-table tbody tr.shopping td.border-right {
   border-right: 1px solid #3e9cca;
@@ -358,6 +327,73 @@ footer {
 }
 .detailed-purchases-table tfoot tr.fitness td {
   background-color: #d63641;
+}
+.detailed-purchases .property-purchases-table {
+  border-collapse: collapse;
+  page-break-inside: avoid;
+}
+.detailed-purchases .property-purchases-table thead tr th {
+  width: 25mm;
+  padding: 2mm 0 1mm;
+  font-size: 9pt;
+  width: 25mm;
+}
+.detailed-purchases .property-purchases-table thead tr th:nth-child(1) {
+  width: 60mm;
+}
+.detailed-purchases .property-purchases-table thead tr th.larger {
+  width: 120mm;
+}
+.detailed-purchases .property-purchases-table thead tr th:nth-child(2) {
+  width: 40mm;
+}
+.detailed-purchases .property-purchases-table thead tr th.property-name {
+  text-align: left;
+  font-family: "poppins-bold";
+  font-size: 10pt;
+}
+.detailed-purchases .property-purchases-table thead tr th.property-name.shopping {
+  color: #3e9cca;
+}
+.detailed-purchases .property-purchases-table thead tr th.property-name.otg {
+  color: #e5782c;
+}
+.detailed-purchases .property-purchases-table thead tr th.property-name.fitness {
+  color: #d63641;
+}
+.detailed-purchases .property-purchases-table thead tr th.property-city {
+  padding: 2mm 1mm 1mm;
+  text-align: center;
+}
+.detailed-purchases .property-purchases-table thead tr th:nth-child(11), .detailed-purchases .property-purchases-table thead tr th.last {
+  border-right: none;
+}
+.detailed-purchases .property-purchases-table tbody tr.purchase-row td {
+  padding: 1mm 0;
+  text-align: center;
+  font-size: 9pt;
+}
+.detailed-purchases .property-purchases-table tbody tr.purchase-row td.product-type {
+  padding-left: 7.5mm;
+  text-align: left;
+}
+.detailed-purchases .property-purchases-table tbody tr.purchase-row.last td {
+  padding-bottom: 2mm;
+  border-bottom: 1px solid #000000;
+}
+.detailed-purchases .property-purchases-table tbody tr.shopping td.border-right, .detailed-purchases .property-purchases-table tbody tr.shopping th.border-right, .detailed-purchases .property-purchases-table thead tr.shopping td.border-right, .detailed-purchases .property-purchases-table thead tr.shopping th.border-right {
+  border-right: 1px solid #3e9cca;
+}
+.detailed-purchases .property-purchases-table tbody tr.otg td.border-right, .detailed-purchases .property-purchases-table tbody tr.otg th.border-right, .detailed-purchases .property-purchases-table thead tr.otg td.border-right, .detailed-purchases .property-purchases-table thead tr.otg th.border-right {
+  border-right: 1px solid #e5782c;
+}
+.detailed-purchases .property-purchases-table tbody tr.fitness td.border-right, .detailed-purchases .property-purchases-table tbody tr.fitness th.border-right, .detailed-purchases .property-purchases-table thead tr.fitness td.border-right, .detailed-purchases .property-purchases-table thead tr.fitness th.border-right {
+  border-right: 1px solid #d63641;
+}
+
+.detailed-purchases-footer {
+  height: 10mm;
+  width: 50mm;
 }
 
 .detailed-purchases-summary-table {
@@ -401,7 +437,7 @@ footer {
   text-align: center;
   font-size: 0.889em;
   background-color: #252734;
-  border-left: 2px solid #FFF;
+  border-left: 2px solid #FFFFFF;
 }
 .production-specs-table thead tr th:nth-child(1) {
   border-left: none;

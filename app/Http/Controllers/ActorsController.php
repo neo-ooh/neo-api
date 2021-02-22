@@ -167,9 +167,10 @@ class ActorsController extends Controller {
         }
 
         // The request handles input validation
-        $actor->name        = $request->get("name", $actor->name);
-        $actor->email       = $request->get("email", $actor->email);
-        $actor->branding_id = $request->get("branding_id", $actor->branding_id);
+        $actor->name           = $request->get("name", $actor->name);
+        $actor->email          = $request->get("email", $actor->email);
+        $actor->branding_id    = $request->get("branding_id", $actor->branding_id);
+        $actor->limited_access = $request->get("limited_access", $actor->limited_access);
 
         if ($request->has("password")) {
             $actor->password = $request->get("password");

@@ -38,16 +38,16 @@ class Totals extends Component {
             "size"                  => $this->size,
             "orders"                => $this->orders,
             "guaranteedImpressions" => $guaranteedOrders->sum("impressions"),
-            "guaranteedValue"       => $guaranteedOrders->sum("unit_price"),
+            "guaranteedValue"       => $guaranteedOrders->sum("media_value"),
             "guaranteedDiscount"    => $guaranteedOrders->count() > 0 ? $guaranteedOrders->sum("discount") / $guaranteedOrders->count() : 0,
-            "guaranteedInvestment"  => $guaranteedOrders->sum(fn($order) => $order->netInvestment()),
+            "guaranteedInvestment"  => $guaranteedOrders->sum("net_investment"),
             "hasBua"                => $buaOrders->isNotEmpty(),
             "buaImpressions"        => $buaOrders->sum("impressions"),
-            "buaValue"              => $buaOrders->sum("unit_price"),
+            "buaValue"              => $buaOrders->sum("media_value"),
             "buaDiscount"           => $guaranteedOrders->count() > 0 ? $buaOrders->sum("discount") / $guaranteedOrders->count() : 0,
-            "buaInvestment"         => $buaOrders->sum(fn($order) => $order->netInvestment()),
+            "buaInvestment"         => $buaOrders->sum("net_investment"),
 
-            "grandTotalInvestment" => $guaranteedOrders->sum(fn($order) => $order->netInvestment()) + $buaOrders->sum(fn($order) => $order->netInvestment()),
+            "grandTotalInvestment" => $guaranteedOrders->sum("net_investment") + $buaOrders->sum("net_investment"),
 
             "production" => $this->production
         ]);

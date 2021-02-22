@@ -24,7 +24,7 @@ class UpdateActorRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         // This is the ID of the actor targeted by the route
         /** @var Actor $actor */
         $actor = $this->route('actor');
@@ -46,14 +46,16 @@ class UpdateActorRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "name"        => [ "sometimes", "string" ],
-            "email"       => [ "sometimes", "exclude_unless:is_group,false", "email", Rule::unique('actors')->ignore($this->route('actor')->id) ],
-            "password"    => [ "sometimes", "string", "min:6" ],
-            "is_locked"   => [ "sometimes", "boolean" ],
-            "parent_id"   => [ "sometimes", "integer", "exists:actors,id" ],
-            "branding_id" => [ "sometimes", "present" ],
+            "name"           => ["sometimes", "string"],
+            "email"          => ["sometimes", "exclude_unless:is_group,false", "email", Rule::unique('actors')
+                                                                                            ->ignore($this->route('actor')->id)],
+            "password"       => ["sometimes", "string", "min:6"],
+            "is_locked"      => ["sometimes", "boolean"],
+            "parent_id"      => ["sometimes", "integer", "exists:actors,id"],
+            "branding_id"    => ["sometimes", "present"],
+            "limited_access" => ["sometimes", "boolean"],
         ];
     }
 }

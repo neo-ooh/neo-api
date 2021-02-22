@@ -29,8 +29,8 @@ abstract class Document {
 
     protected Mpdf $mpdf;
 
-    protected function __construct() {
-        $this->mpdf = new Mpdf([
+    protected function __construct(array $mpdfConfiguration) {
+        $this->mpdf = new Mpdf(array_merge([
             "fontDir" => [resource_path('fonts/')],
             "fontdata" => [
                 "poppins-bold" => [
@@ -54,8 +54,9 @@ abstract class Document {
                     "I" => "Poppins-ExtraItalic.ttf",
                 ]
             ],
-            'default_font' => 'poppins-regular'
-        ]);
+            'default_font' => 'poppins-regular',
+            ], $mpdfConfiguration
+        ));
     }
 
     /**

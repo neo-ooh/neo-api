@@ -293,8 +293,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             $actors = $actors->merge($this->shared_actors);
         }
 
-        if ($parent && !$this->limited_access && !$this->is_group && ($this->parent->is_group ?? false)) {
-            $actors = $actors->merge($this->parent->getAccessibleActors(true, false, true, false));
+        if ($parent && !$this->is_group && ($this->parent->is_group ?? false)) {
+            $actors = $actors->merge($this->parent->getAccessibleActors(!$this->limited_access, false, !$this->limited_access, false));
         }
 
         // By default, a user cannot see itself
@@ -452,7 +452,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         // Libraries of the parent of the user
 //        if ($parent && ($this->details->parent_is_group ?? false)) {  --  WTF is this not working ?????
         if ($parent && ($this->parent->is_group ?? false)) {
-            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && Gate::allows(\Neo\Enums\Capability::libraries_edit)));
+            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && Gate::allows(\Neo\Enums\Capability::libraries_edit) && !$this->limited_access));
         }
 
         return $libraries->unique("id")->values();

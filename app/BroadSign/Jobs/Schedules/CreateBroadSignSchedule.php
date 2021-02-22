@@ -80,6 +80,7 @@ class CreateBroadSignSchedule extends BroadSignJob {
         if ($schedule->campaign->broadsign_reservation_id === null) {
             // Wait 30s before trying again
             $this->release(30);
+            return;
         }
 
         // Get the associated content

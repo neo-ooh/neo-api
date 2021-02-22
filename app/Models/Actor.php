@@ -293,7 +293,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             $actors = $actors->merge($this->shared_actors);
         }
 
-        if ($parent && !$this->is_group && ($this->parent->is_group ?? false)) {
+        if ($parent && !$this->limited_access && !$this->is_group && ($this->parent->is_group ?? false)) {
             $actors = $actors->merge($this->parent->getAccessibleActors(true, false, true, false));
         }
 

@@ -209,12 +209,15 @@ class Campaign extends SecuredModel {
     }
 
     public function getTargetedBroadsignFramesAttribute(): Collection {
-        $layouts = $this->format->layouts;
 
         // List the required criteria
-        return $layouts->map(fn($layout) => $layout->frames->map(fn($frame) => $frame->pluck("type")))
-                       ->flatten()
-                       ->unique()
-                       ->values();
+        return $this
+            ->format
+            ->layouts
+            ->pluck("frames")
+            ->flatten()
+            ->pluck("type")
+            ->unique()
+            ->values();
     }
 }

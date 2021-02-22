@@ -55,9 +55,10 @@ use Neo\Rules\AccessibleActor;
  *
  * @property bool           registration_sent Tell if the registration email was sent to the actor. Not applicable to groups
  * @property bool           is_registered     Tell if the user has registered its account. Not applicable to groups
- * @property bool           tos_accepted      Tell if the actor has accepted the current version of the TOS. Not applicable to groups
-
- * @property bool           limited_access    If set, the actor does not have access to its group and group's children campaigns. Only to its own, its children campaigns and with user shared with it.
+ * @property bool           tos_accepted      Tell if the actor has accepted the current version of the TOS. Not applicable to
+ *           groups
+ * @property bool           limited_access    If set, the actor does not have access to its group and group's children campaigns.
+ *           Only to its own, its children campaigns and with user shared with it.
  *
  *
  * @property TwoFactorToken twoFactorToken
@@ -134,9 +135,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @var array
      */
     protected $casts = [
-        "is_group"     => "boolean",
-        "is_locked"    => "boolean",
-        "tos_accepted" => "boolean",
+        "is_group"       => "boolean",
+        "is_locked"      => "boolean",
+        "tos_accepted"   => "boolean",
+        "limited_access" => "boolean",
     ];
 
     /**
@@ -224,6 +226,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * Load details about the actor hierarchy
+     *
      * @return HasOne
      */
     public function details(): HasOne {
@@ -232,6 +235,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * The actor's logo
+     *
      * @return HasOne
      */
     public function logo(): HasOne {
@@ -520,7 +524,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // If the token is not validated and is too old, recreate one and stop here
-        if(!$token->validated && $token->created_at->diffInMinutes(\Illuminate\Support\Facades\Date::now()) >= 15) {
+        if (!$token->validated && $token->created_at->diffInMinutes(\Illuminate\Support\Facades\Date::now()) >= 15) {
             $token->delete();
 
             $token = new TwoFactorToken();
@@ -531,12 +535,12 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // If the token is not validated and is not too old, stops here just saying not validated
-        if(!$token->validated) {
+        if (!$token->validated) {
             return false;
         }
 
         // If the token is validated but is too old, create a new one and say not validated
-        if($token->validated && $token->validated_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) >= 1) {
+        if ($token->validated && $token->validated_at->diffInMonths(\Illuminate\Support\Facades\Date::now()) >= 1) {
             $token->delete();
 
             $token = new TwoFactorToken();

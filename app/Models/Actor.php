@@ -82,6 +82,8 @@ use Neo\Rules\AccessibleActor;
  *
  * @property ?ActorLogo     logo
  *
+ * @property string         campaigns_status
+ *
  * @method Builder    accessibleActors()
  * @method Builder      SharedActors()
  *
@@ -579,5 +581,25 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         ];
 
         return JWT::encode($payload, config("auth.jwt_private_key"), "RS256");
+    }
+
+    public function getCampaignsStatusAttribute() {
+        $campaignsStatus = $this->getCampaigns(true, false, false, false)
+                                ->pluck("status")
+                                ->values();
+
+        if ($campaignsStatus->contains(Campaign::STATUS_PENDING)) {
+            return Campaign::STATUS_PENDING;
+        }
+
+        if ($campaignsStatus->contains(Campaign::STATUS_LIVE)) {
+            return Campaign::STATUS_LIVE;
+        }
+
+        if ($campaignsStatus->contains(Campaign::STATUS_EXPIRED)) {
+            return Campaign::STATUS_EXPIRED;
+        }
+
+        return Campaign::STATUS_OFFLINE;
     }
 }

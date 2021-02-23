@@ -56,6 +56,10 @@ class ActorsController extends Controller {
             $actors->load("details");
         }
 
+        if ($request->has("campaigns_status")) {
+            $actors->append("campaigns_status");
+        }
+
         return new Response($actors->unique("id")->values());
     }
 

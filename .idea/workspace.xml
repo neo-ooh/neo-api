@@ -7,8 +7,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="WiP 2020-12-07 Reports+Bursts+screenshots">
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" afterDir="false" />
+    <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,6 +35,11 @@
       <list>
         <option value="valentin-dufois &lt;19367658+valentin-dufois@users.noreply.github.com&gt;" />
       </list>
+    </option>
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="main" />
+      </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -225,7 +233,8 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
+    <property name="settings.editor.selected.configurable" value="tasks" />
+    <property name="tasks.open.task.update.state.enabled" value="true" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -361,7 +370,22 @@
       <option name="project" value="LOCAL" />
       <updated>1607379179154</updated>
     </task>
+    <task active="true" id="CONNECT-14" summary="Coloured dots">
+      <branch name="dev" repository="$PROJECT_DIR$" />
+      <changelist id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="" />
+      <created>1614029235728</created>
+      <option name="issue" value="true" />
+      <url>https://neo-ooh.myjetbrains.com/youtrack/issue/CONNECT-14</url>
+      <option name="number" value="14" />
+      <option name="presentableId" value="CONNECT-14" />
+      <option name="project" value="CONNECT" />
+      <updated>1614104598314</updated>
+      <workItem from="1614104598991" duration="1751000" />
+    </task>
     <option name="localTasksCounter" value="10" />
+    <option name="createChangelist" value="false" />
+    <option name="createBranch" value="false" />
+    <option name="useBranch" value="true" />
     <servers>
       <YouTrack url="https://neo-ooh.myjetbrains.com/youtrack">
         <username>Valentin_Dufois</username>

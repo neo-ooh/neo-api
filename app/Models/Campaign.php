@@ -58,6 +58,13 @@ use Neo\Rules\AccessibleCampaign;
 class Campaign extends SecuredModel {
     use HasFactory, SoftDeletes;
 
+    public const STATUS_NOT_STARTED = "not_started";
+    public const STATUS_EMPTY = "empty";
+    public const STATUS_PENDING = "pending";
+    public const STATUS_LIVE = "live";
+    public const STATUS_OFFLINE = "offline";
+    public const STATUS_EXPIRED = "expired";
+
     /*
     |--------------------------------------------------------------------------
     | Model properties
@@ -185,18 +192,6 @@ class Campaign extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    public function getStatusAttribute(): string {
-        $schedules = $this->schedules;
-        foreach ($schedules as $schedule) {
-            if ($schedule->status === "pending") {
-                return "pending";
-            }
-        }
-
-        return "ready";
-    }
-
-
     /**
      * List the libraries ID determined to be relevant for the campaign
      *
@@ -219,5 +214,32 @@ class Campaign extends SecuredModel {
             ->pluck("type")
             ->unique()
             ->values();
+    }
+
+    public function getStatusAttribute() {
+        // Is the campaign expired ?
+        if($this->end_date->isBefore(Date::now())) {
+            return static::STATUS_EXPIRED;
+        }
+
+        if($this->schedules()->count() === 0) {
+            return static::STATUS_EMPTY;
+        }
+
+        // Does it has a pending schedule in it?
+        if($this->schedules->some("status", Schedule::STATUS_PENDING)) {
+            return static::STATUS_PENDING;
+        }
+
+        // Does it has a valid schedule in it ?
+        if($this->schedules->some("status", Schedule::STATUS_LIVE) || $this->schedules->some("status", Schedule::STATUS_APPROVED))  {
+            return static::STATUS_LIVE;
+        }
+
+        if($this->start_date->isAfter(Date::now())) {
+            return static::STATUS_NOT_STARTED;
+        }
+
+        return static::STATUS_OFFLINE;
     }
 }

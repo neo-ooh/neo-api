@@ -589,7 +589,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                                 ->values();
 
         if ($campaignsStatus->count() === 0) {
-            return Campaign::STATUS_NOT_STARTED;
+            return "no-campaigns";
         }
 
         if ($campaignsStatus->contains(Campaign::STATUS_PENDING)) {

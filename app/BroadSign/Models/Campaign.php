@@ -105,6 +105,7 @@ class Campaign extends BroadSignModel {
             "currents"            => Endpoint::get("/reservation/v21?current_only=True")->multiple()->cache(3600),
             "create"              => Endpoint::post("/reservation/v21/add")->id(),
             "get"                 => Endpoint::get("/reservation/v21/{id}")->cache(3600),
+            "byId"                 => Endpoint::get("/reservation/v21/by_id")->cache(3600)->multiple(),
             "update"              => Endpoint::put("/reservation/v21")->id(),
             "rebook"              => Endpoint::post("/reservation/v21/rebook")->id(),
             "confirm_rebook"      => Endpoint::post("/reservation/v21/rebook_confirm")->id(),
@@ -202,5 +203,11 @@ class Campaign extends BroadSignModel {
                 "id"                  => $this->id,
                 "slot_transaction_id" => $transactionID,
             ]);
+    }
+
+    public static function search($search) {
+        $results = ResourceQuery::byName($search, "reservation");
+
+        return static::byId(["ids" => $results->pluck("id")->values()->join(",")]);
     }
 }

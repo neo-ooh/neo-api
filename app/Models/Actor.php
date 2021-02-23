@@ -585,6 +585,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     public function getCampaignsStatusAttribute() {
         $campaignsStatus = $this->getCampaigns(true, false, false, false)
+                                ->load("schedules")
                                 ->pluck("status")
                                 ->values();
 

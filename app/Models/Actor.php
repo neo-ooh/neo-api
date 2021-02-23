@@ -596,7 +596,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return Campaign::STATUS_PENDING;
         }
 
-        if ($campaignsStatus->contains(Campaign::STATUS_OFFLINE)) {
+        if ($campaignsStatus->contains(Campaign::STATUS_OFFLINE) ||$campaignsStatus->contains(Campaign::STATUS_EMPTY) ) {
             return Campaign::STATUS_OFFLINE;
         }
 

@@ -40,6 +40,6 @@ class ReviewsController extends Controller {
         // Update the schedule in BroadSign to reflect the new status
         UpdateBroadSignScheduleStatus::dispatch($schedule->id);
 
-        return new Response($schedule->load("content", "owner:id,name"), 201);
+        return new Response($schedule->load("content", "owner:id,name", "campaign", "campaign.owner:id,name"), 201);
     }
 }

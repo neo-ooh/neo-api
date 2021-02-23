@@ -153,6 +153,11 @@ class Campaign extends BroadSignModel {
         $skinSlotsID = $skinSlots->filter(fn($skinSlot) => (bool)$skinSlot->active)
                                  ->map(fn($skinSlot) => $skinSlot->id);
 
+        if($skinSlotsID->count() === 0) {
+            // Nothing to promote
+            return;
+        }
+
         static::promoteSkinSlots([
             "id"            => $this->id,
             "skin_slot_ids" => $skinSlotsID->join(','),

@@ -82,11 +82,6 @@ class RebuildBroadSignCampaign extends BroadSignJob {
         // Re-create all the schedules in BroadSign
         /** @var Schedule $schedule */
         foreach ($campaign->schedules as $schedule) {
-            if($schedule->campaign->trashed()) {
-                //  Ignore schedule in deleted campaigns
-                continue;
-            }
-
             CreateBroadSignSchedule::dispatchSync($schedule->id, $schedule->owner_id);
             UpdateBroadSignScheduleStatus::dispatchSync($schedule->id);
         }

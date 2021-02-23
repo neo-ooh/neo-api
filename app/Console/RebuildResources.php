@@ -88,6 +88,11 @@ class RebuildResources extends Command {
 
         // Now, we replicate all schedules
         foreach ($schedules as $schedule) {
+            if($schedule->campaign->trashed()) {
+                //  Ignore schedule in deleted campaigns
+                continue;
+            }
+
             CreateBroadSignSchedule::dispatchSync($schedule->id, $schedule->owner_id);
             UpdateBroadSignScheduleStatus::dispatchSync($schedule->id);
         }

@@ -9,7 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Requests/Actors/ListActorsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/ListActorsRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -379,7 +381,7 @@
       <option name="presentableId" value="CONNECT-14" />
       <option name="project" value="CONNECT" />
       <updated>1614104598314</updated>
-      <workItem from="1614104598991" duration="4037000" />
+      <workItem from="1614104598991" duration="5538000" />
     </task>
     <option name="localTasksCounter" value="10" />
     <option name="createChangelist" value="false" />

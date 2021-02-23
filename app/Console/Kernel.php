@@ -13,6 +13,7 @@ namespace Neo\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\BroadSign\Jobs\Players\RequestScreenshotsBursts;
+use Neo\Jobs\RefreshReportReservations;
 
 class Kernel extends ConsoleKernel {
     /**
@@ -51,6 +52,10 @@ class Kernel extends ConsoleKernel {
      */
     protected function commands() {
         $this->load(__DIR__ . '/Commands');
+
+        $this->command("reports:refresh", function($reportId) {
+            RefreshReportReservations::dispatchSync($reportId);
+        });
 
         require base_path('routes/console.php');
     }

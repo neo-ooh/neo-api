@@ -53,7 +53,7 @@ class Kernel extends ConsoleKernel {
     protected function commands() {
         $this->load(__DIR__ . '/Commands');
 
-        $this->command("reports:refresh", function($reportId) {
+        $this->command("reports:refresh {reportId}", function($reportId) {
             RefreshReportReservations::dispatchSync($reportId);
         });
 

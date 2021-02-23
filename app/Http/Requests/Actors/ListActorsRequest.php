@@ -23,7 +23,7 @@ class ListActorsRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return true;
     }
 
@@ -32,13 +32,14 @@ class ListActorsRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "exclude"   => [ "sometimes", "array" ],
-            "exclude.*" => [ "integer", "exists:actors,id" ],
-            "groups"    => [ "sometimes", "boolean" ],
-            "withself"  => [ "sometimes", "boolean" ],
-            "details"   => [ "sometimes", "boolean" ],
+            "exclude"          => ["sometimes", "array"],
+            "exclude.*"        => ["integer", "exists:actors,id"],
+            "groups"           => ["sometimes", "boolean"],
+            "withself"         => ["sometimes", "boolean"],
+            "details"          => ["sometimes", "boolean"],
+            "campaigns_status" => ["sometimes", "boolean"],
         ];
     }
 }

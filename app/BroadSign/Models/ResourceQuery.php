@@ -28,7 +28,7 @@ class ResourceQuery extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "queryByName" => Endpoint::post("/resource_query/v3/query_by_name")->multiple(),
+            "queryByName" => Endpoint::post("/resource_query/v3/query_by_name")->multiple()->domain(false),
         ];
     }
 

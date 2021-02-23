@@ -588,7 +588,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                                 ->pluck("status")
                                 ->values();
 
-        if($campaignsStatus->count() === 0) {
+        if ($campaignsStatus->count() === 0) {
             return Campaign::STATUS_NOT_STARTED;
         }
 
@@ -596,7 +596,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return Campaign::STATUS_PENDING;
         }
 
-        if ($campaignsStatus->contains(Campaign::STATUS_OFFLINE) ||$campaignsStatus->contains(Campaign::STATUS_EMPTY) ) {
+        if ($campaignsStatus->contains(Campaign::STATUS_OFFLINE) || $campaignsStatus->contains(Campaign::STATUS_EMPTY)) {
             return Campaign::STATUS_OFFLINE;
         }
 
@@ -604,6 +604,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return Campaign::STATUS_LIVE;
         }
 
-        return Campaign::STATUS_EXPIRED;
+        if ($campaignsStatus->contains(Campaign::STATUS_EXPIRED)) {
+            return Campaign::STATUS_EXPIRED;
+        }
+
+        return Campaign::STATUS_OFFLINE;
     }
 }

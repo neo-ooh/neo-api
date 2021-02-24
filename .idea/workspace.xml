@@ -8,25 +8,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/database/migrations/2021_02_24_192723_alter_schedules_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/CreateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/CreateBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateBroadSignCampaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/ResourceQuery.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/ResourceQuery.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsCampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsCampaignsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CustomersController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ReviewsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Actors/ListActorsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/ListActorsRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns/ListActorCampaignsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/ActorsCampaigns/ListActorCampaignsRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Exceptions/Handler.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Exceptions/Handler.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Schedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Schedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -214,6 +201,21 @@
       <path value="$PROJECT_DIR$/vendor/league/csv" />
       <path value="$PROJECT_DIR$/vendor/doctrine/dbal" />
       <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
+      <path value="$PROJECT_DIR$/vendor/jean85/pretty-package-versions" />
+      <path value="$PROJECT_DIR$/vendor/http-interop/http-factory-guzzle" />
+      <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
+      <path value="$PROJECT_DIR$/vendor/clue/stream-filter" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/vendor/symfony/options-resolver" />
+      <path value="$PROJECT_DIR$/vendor/php-http/client-common" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-uuid" />
+      <path value="$PROJECT_DIR$/vendor/php-http/httplug" />
+      <path value="$PROJECT_DIR$/vendor/php-http/message-factory" />
+      <path value="$PROJECT_DIR$/vendor/php-http/discovery" />
+      <path value="$PROJECT_DIR$/vendor/php-http/message" />
+      <path value="$PROJECT_DIR$/vendor/php-http/promise" />
+      <path value="$PROJECT_DIR$/vendor/sentry/sentry-laravel" />
+      <path value="$PROJECT_DIR$/vendor/sentry/sentry" />
     </include_path>
   </component>
   <component name="ProjectId" id="1ksnCPVQp4bw80G0IajP0zqEtzk" />
@@ -396,7 +398,7 @@
       <option name="presentableId" value="CONNECT-14" />
       <option name="project" value="CONNECT" />
       <updated>1614104598314</updated>
-      <workItem from="1614104598991" duration="17182000" />
+      <workItem from="1614104598991" duration="20059000" />
     </task>
     <option name="localTasksCounter" value="10" />
     <option name="createChangelist" value="false" />

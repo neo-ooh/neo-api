@@ -223,7 +223,7 @@ class Campaign extends SecuredModel {
         }
 
         if($this->schedules->count() === 0) {
-            return static::STATUS_EMPTY;
+            return static::STATUS_OFFLINE;
         }
 
         // Does it has a pending schedule in it?
@@ -237,7 +237,7 @@ class Campaign extends SecuredModel {
         }
 
         if($this->start_date->isAfter(Date::now())) {
-            return static::STATUS_NOT_STARTED;
+            return static::STATUS_OFFLINE;
         }
 
         return static::STATUS_OFFLINE;

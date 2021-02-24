@@ -67,9 +67,14 @@ class UpdateBroadSignCampaign extends BroadSignJob {
 
         $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
 
+        $saturation = $campaign->loop_saturation > 0
+            ? $campaign->loop_saturation
+            : $campaign->schedules->filter(fn($schedule) => $schedule->is_approved)->count();
+
         // Can we simply update the BroadSign Campaign or do we need to rebuild it ?
-        if($campaign->start_date->isBefore(Date::make($bsCampaign->start_date)) ||
-            $campaign->end_date->isAfter(Date::make($bsCampaign->end_date))) {
+        if($saturation !== $bsCampaign->saturation
+            || $campaign->start_date->isBefore(Date::make($bsCampaign->start_date))
+            || $campaign->end_date->isAfter(Date::make($bsCampaign->end_date))) {
             // We need to rebuild the campaign
             RebuildBroadSignCampaign::dispatchSync($campaign->id);
             return;
@@ -78,9 +83,6 @@ class UpdateBroadSignCampaign extends BroadSignJob {
         // Update the name and fullscreen status of the campaign
         $bsCampaign->name = $campaign->owner->name . " - " . $campaign->name;
         $bsCampaign->save();
-
-        // Update the campaign saturation as needed
-        $bsCampaign->saturation = $campaign->loop_saturation > 0 ? $campaign->loop_saturation : $campaign->schedules->filter(fn($schedule) => $schedule->is_approved)->count();
 
         // Update the bundle in the campaign to match the campaign duration
         $bundles = BSBundle::byReservable($bsCampaign->id);

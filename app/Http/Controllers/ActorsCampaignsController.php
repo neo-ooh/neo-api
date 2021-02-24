@@ -8,10 +8,17 @@ use Neo\Models\Actor;
 
 class ActorsCampaignsController extends Controller {
     public function index(ListActorCampaignsRequest $request): Response {
-        return new Response(Actor::query()
-                                 ->findOrFail($request->route('actor'))
-                                 ->getCampaigns(true, true, false, false)
-                                 ->loadMissing([
+
+        $routeActor = $request->route('actor');
+
+        if(is_object($routeActor)) {
+            $actor = $routeActor;
+        } else {
+            $actor = Actor::findOrFail($routeActor);
+        }
+
+        return new Response($actor->getCampaigns(true, true, false, false)
+                                  ->loadMissing([
                                      "format",
                                      "locations",
                                      "owner",

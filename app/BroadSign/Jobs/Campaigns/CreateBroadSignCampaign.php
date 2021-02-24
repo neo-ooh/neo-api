@@ -77,7 +77,9 @@ class CreateBroadSignCampaign extends BroadSignJob {
         $bsCampaign->parent_id                = $broadsign->getDefaults()["customer_id"];
         $bsCampaign->start_date               = $startDate->toDateString();
         $bsCampaign->start_time               = "00:00:00";
-        $bsCampaign->saturation               = $campaign->loop_saturation;
+        $bsCampaign->saturation               = $campaign->loop_saturation > 0
+            ? $campaign->loop_saturation
+            : $campaign->schedules->filter(fn($schedule) => $schedule->is_approved)->count();
         $bsCampaign->default_fullscreen       = false;
         $bsCampaign->create();
 

@@ -74,6 +74,13 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
         }
 
         $bundle = new Bundle(["id" => $this->bundleID]);
-        $bundle->associateCreative($creative->broadsign_ad_copy_id);
+
+        // Try the association. If it fails, try again later.
+        // Broadsign Do not allow an ad-copy to be associated with a bundle until it has finished uploading, which is done async.
+        try {
+            $bundle->associateCreative($creative->broadsign_ad_copy_id);
+        } catch (BadResponse $exception) {
+            $this->release(60);
+        }
     }
 }

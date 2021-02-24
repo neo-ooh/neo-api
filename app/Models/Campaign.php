@@ -222,7 +222,7 @@ class Campaign extends SecuredModel {
             return static::STATUS_EXPIRED;
         }
 
-        if($this->schedules()->count() === 0) {
+        if($this->schedules->count() === 0) {
             return static::STATUS_EMPTY;
         }
 

@@ -35,6 +35,8 @@ class ReviewsController extends Controller {
         ] = $request->validated();
         $review->save();
 
+        $schedule->is_approved = $review->approved;
+        $schedule->save();
         $schedule->refresh();
 
         // Update the schedule in BroadSign to reflect the new status

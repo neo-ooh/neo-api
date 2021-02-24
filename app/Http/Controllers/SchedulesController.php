@@ -164,6 +164,7 @@ class SchedulesController extends Controller {
         $schedule->end_date    = $endDate;
         $schedule->order       = $order;
         $schedule->locked      = false;
+        $schedule->is_approved = $content->is_approved;
         $schedule->save();
         $schedule->refresh();
 

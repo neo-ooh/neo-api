@@ -34,11 +34,12 @@ use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
  * @property Date               end_date
  * @property int                order
  * @property bool               locked
+ * @property bool               is_approved
  * @property int                print_count
  *
  * - Custom Attributes
  * @property string             status
- * @property bool               is_approved
+ * // * @property bool is_approved
  *
  * - Relations
  * @property Campaign           campaign
@@ -109,6 +110,7 @@ class Schedule extends Model {
     protected $casts = [
         'print_count' => 'integer',
         'locked'      => 'boolean',
+        'is_approved' => 'boolean',
     ];
 
     /**
@@ -183,7 +185,7 @@ class Schedule extends Model {
 
         // Schedule is locked
         // Check reviews and its content pre-approval
-        if (!$this->content->is_approved) {
+        if (!$this->is_approved) {
             // Schedule's content is not pre-approved,
             // Is their a review for it ?
             if ($this->reviews_count === 0) {
@@ -191,7 +193,7 @@ class Schedule extends Model {
             }
 
             // Is the last review valid ?
-            if (!$this->reviews()->first()->approved) {
+            if (!$this->reviews->first()->approved) {
                 return self::STATUS_REJECTED;
             }
         }
@@ -221,8 +223,11 @@ class Schedule extends Model {
         return $this->hasMany(Review::class, 'schedule_id', 'id')->orderByDesc("created_at");
     }
 
-    public function getIsApprovedAttribute(): bool {
-        $status = $this->status;
-        return $status === 'approved' || $status === 'broadcasting';
+    public function getOldIsApprovedAttribute(): bool {
+        if ($this->content->is_approved) {
+            return true;
+        }
+
+        return $this->reviews->count() > 0 ? $this->reviews->first()->approved : false;
     }
 }

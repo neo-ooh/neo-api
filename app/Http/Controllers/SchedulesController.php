@@ -69,6 +69,7 @@ class SchedulesController extends Controller {
         $schedule->end_date    = $endDate;
         $schedule->order       = $campaign->schedules()->count();
         $schedule->locked      = $request->validated()['send_for_review'];
+        $schedule->is_approved = $content->is_approved;
         $schedule->save();
         $schedule->refresh();
 

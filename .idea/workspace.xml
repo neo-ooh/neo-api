@@ -13,6 +13,7 @@
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/AssociateAdCopyWithBundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/AssociateAdCopyWithBundle.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Exceptions/Handler.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Exceptions/Handler.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ContentsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
     </list>
@@ -399,7 +400,7 @@
       <option name="presentableId" value="CONNECT-14" />
       <option name="project" value="CONNECT" />
       <updated>1614104598314</updated>
-      <workItem from="1614104598991" duration="21388000" />
+      <workItem from="1614104598991" duration="23601000" />
     </task>
     <option name="localTasksCounter" value="10" />
     <option name="createChangelist" value="false" />

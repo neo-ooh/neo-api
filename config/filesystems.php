@@ -68,6 +68,30 @@ return [
             'root'       => env('DO_SPACE_ROOT'),
             'visibility' => 'public',
         ],
+
+        'root' => [
+            'driver'     => 's3',
+            'key'        => env('DO_SPACE_KEY'),
+            'secret'     => env('DO_SPACE_SECRET'),
+            'endpoint'   => env('DO_SPACE_ENDPOINT'),
+            'region'     => env('DO_SPACE_REGION'),
+            'bucket'     => env('DO_SPACE_BUCKET'),
+            'url'        => env('DO_SPACE_URL'),
+            'root'       => "/",
+            'visibility' => 'public',
+        ],
+
+        'dev' => [
+            'driver'     => 's3',
+            'key'        => env('DO_SPACE_KEY'),
+            'secret'     => env('DO_SPACE_SECRET'),
+            'endpoint'   => env('DO_SPACE_ENDPOINT'),
+            'region'     => env('DO_SPACE_REGION'),
+            'bucket'     => env('DO_SPACE_BUCKET'),
+            'url'        => env('DO_SPACE_URL'),
+            'root'       => "ooh-dev",
+            'visibility' => 'public',
+        ],
     ],
 
     /*

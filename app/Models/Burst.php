@@ -84,8 +84,8 @@ class Burst extends Model {
      * @var array
      */
     protected $casts = [
-        'started'    => 'integer',
-        'is_finished' => 'integer',
+        'started'    => 'boolean',
+        'is_finished' => 'boolean',
     ];
 
     /**

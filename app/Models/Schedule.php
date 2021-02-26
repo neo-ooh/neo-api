@@ -39,7 +39,6 @@ use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
  *
  * - Custom Attributes
  * @property string             status
- * // * @property bool is_approved
  *
  * - Relations
  * @property Campaign           campaign

@@ -159,14 +159,4 @@ class Burst extends Model {
     public function getExpectedScreenshotsAttribute() {
         return ceil($this->duration_ms / $this->frequency_ms) + 1;
     }
-
-
-    /**
-     * Tell if the burst has received all expected screenshots.
-     * @deprecated Use the `is_finished` property instead
-     * @return bool
-     */
-    public function getIsCompleteAttribute(): bool {
-        return (bool)$this->is_finished;
-    }
 }

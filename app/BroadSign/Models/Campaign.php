@@ -208,6 +208,10 @@ class Campaign extends BroadSignModel {
     public static function search($search) {
         $results = ResourceQuery::byName($search, "reservation");
 
+        if(count($results) === 0) {
+            return new Collection();
+        }
+
         return static::byId(["ids" => $results->pluck("id")->values()->join(",")]);
     }
 }

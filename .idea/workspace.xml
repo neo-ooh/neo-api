@@ -8,6 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Burst.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
     </list>

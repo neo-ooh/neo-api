@@ -11,6 +11,7 @@
 namespace Neo\Console\Chores;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Jobs\Campaigns\DisableBroadSignCampaign;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
@@ -31,7 +32,7 @@ class CleanUpCampaigns extends Command {
      *
      * @var string
      */
-    protected $description = 'Clean up campaigns from BroadSign. Removing campaigns with no match in BroadSign';
+    protected $description = 'Clean up campaigns from BroadSign. Removing campaigns in specific trash folder';
 
     /**
      * Execute the console command.
@@ -41,22 +42,12 @@ class CleanUpCampaigns extends Command {
     public function handle(): int {
         $allCampaigns = BSCampaign::all();
 
-        $activeCampaignsWithNoMatch = $allCampaigns
-            ->filter(fn($campaign) => $campaign->parent_id === BroadSign::getDefaults()["customer_id"])
-            ->filter(fn($c) => !Campaign::where("broadsign_reservation_id", "=", $c->id)->exists() && $c->active);
+        $campaignToDelete = \Neo\BroadSign\Models\Campaign::inContainer(437269513);
 
-        foreach ($activeCampaignsWithNoMatch as $campaign) {
+        foreach ($campaignToDelete as $campaign) {
             DisableBroadSignCampaign::dispatchSync($campaign->id);
         }
 
         return 0;
-    }
-
-    protected function makeProgressBar(int $steps): ProgressBar {
-        $bar = new ProgressBar(new ConsoleOutput(), $steps);
-        $bar->setFormat('%current%/%max% [%bar%] %message%');
-        $bar->setMessage('Fetching data...');
-
-        return $bar;
     }
 }

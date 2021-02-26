@@ -106,6 +106,7 @@ class Campaign extends BroadSignModel {
             "create"              => Endpoint::post("/reservation/v21/add")->id(),
             "get"                 => Endpoint::get("/reservation/v21/{id}")->cache(3600),
             "byId"                 => Endpoint::get("/reservation/v21/by_id")->cache(3600)->multiple(),
+            "by_container"                 => Endpoint::get("/reservation/v21/by_container")->multiple(),
             "update"              => Endpoint::put("/reservation/v21")->id(),
             "rebook"              => Endpoint::post("/reservation/v21/rebook")->id(),
             "confirm_rebook"      => Endpoint::post("/reservation/v21/rebook_confirm")->id(),
@@ -213,5 +214,9 @@ class Campaign extends BroadSignModel {
         }
 
         return static::byId(["ids" => $results->pluck("id")->values()->join(",")]);
+    }
+
+    public static function inContainer(int $containerId) {
+        return static::by_container(["container_id" => $containerId]);
     }
 }

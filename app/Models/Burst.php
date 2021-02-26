@@ -44,7 +44,6 @@ use Illuminate\Support\Carbon as Date;
  * @property int screenshots_count
  *
  * @property int expected_screenshots
- * @property bool is_complete
  *
  * @mixin Builder
  */
@@ -80,6 +79,16 @@ class Burst extends Model {
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'started'    => 'integer',
+        'is_finished' => 'integer',
+    ];
+
+    /**
      * The attributes that should be mutated to dates.
      *
      * @var array
@@ -95,7 +104,6 @@ class Burst extends Model {
      */
     protected $appends = [
         "expected_screenshots",
-        "is_complete",
     ];
 
     /**
@@ -159,6 +167,6 @@ class Burst extends Model {
      * @return bool
      */
     public function getIsCompleteAttribute(): bool {
-        return $this->is_finished;
+        return (bool)$this->is_finished;
     }
 }

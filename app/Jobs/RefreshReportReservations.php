@@ -11,6 +11,7 @@
 namespace Neo\Jobs;
 
 use Carbon\Carbon;
+use Database\Seeders\ParamsSeeder;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -62,6 +63,13 @@ class RefreshReportReservations implements ShouldQueue {
             $utfContract = str_replace('-', mb_chr(8208, 'UTF-8'), $report->contract_id);
 
             $reservations = Campaign::search(strtoupper($utfContract));
+
+            if(count($reservations) === 0) {
+                // Still nothing, let's try with an underscore this time
+                $utfContract = str_replace('-', '_', $report->contract_id);
+
+                $reservations = Campaign::search(strtoupper($utfContract));
+            }
         }
 
         // Now make sure all reservations are properly associated with the report

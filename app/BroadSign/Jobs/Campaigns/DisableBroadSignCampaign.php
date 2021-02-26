@@ -58,7 +58,7 @@ class DisableBroadSignCampaign extends BroadSignJob {
         }
 
         $bsReservation->active = false;
-        $bsReservation->state  = 2;
+        $bsReservation->state  = $bsReservation->state === 3 ? $bsReservation->state : 2;
         $bsReservation->save();
     }
 }

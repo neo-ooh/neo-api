@@ -45,6 +45,8 @@ class BurstsController extends Controller {
             $bursts[] = $burst;
         }
 
+        $burst->refresh();
+
         // And return the burst
         return new Response($bursts, 201);
     }

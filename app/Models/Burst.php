@@ -94,7 +94,8 @@ class Burst extends Model {
      * @var array
      */
     protected $appends = [
-        "expected_screenshots", "is_complete",
+        "expected_screenshots",
+        "is_complete",
     ];
 
     /**

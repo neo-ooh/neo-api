@@ -40,9 +40,7 @@ class CleanUpCampaigns extends Command {
      * @return int
      */
     public function handle(): int {
-        $allCampaigns = BSCampaign::all();
-
-        $campaignToDelete = \Neo\BroadSign\Models\Campaign::inContainer(437269513);
+        $campaignToDelete = BSCampaign::inContainer(437269513);
 
         foreach ($campaignToDelete as $campaign) {
             DisableBroadSignCampaign::dispatchSync($campaign->id);

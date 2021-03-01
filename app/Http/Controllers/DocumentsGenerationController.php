@@ -24,7 +24,7 @@ class DocumentsGenerationController extends Controller {
         App::setLocale('en');
 
         if($request->getContentType() !== "text/csv") {
-            return new Response(["error" => "Invalid content-type. `text/csv` expected"],  400);
+            return new Response(["error" => "Invalid content-type. `text/csv` expected, got {$request->getContentType()}"],  400);
         }
 
         $contract = null;

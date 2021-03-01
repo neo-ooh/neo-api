@@ -203,7 +203,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
         }
 
         if (!$response->successful()) {
-            Log::channel("broadsign")->error("response:{$response->status()} ".json_encode($response->body()));
+            Log::channel("broadsign")->error("response:{$response->status()} [{$path}] ".json_encode($response->body()));
             throw new BadResponse("", $response->status());
         }
 

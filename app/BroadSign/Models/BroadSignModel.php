@@ -197,13 +197,15 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
                         ->withHeaders($headers)
                         ->{$endpoint->method}(config('broadsign.api.url') . $path, $params);
 
+        // Log the response
+        Log::channel("broadsign")->error("response:{$response->status()} [{$path}] ".json_encode($response->body()));
+
         // In case the resource wasn't found (404), return null
         if($response->status() === 404) {
             return null;
         }
 
         if (!$response->successful()) {
-            Log::channel("broadsign")->error("response:{$response->status()} [{$path}] ".json_encode($response->body()));
             throw new BadResponse("", $response->status());
         }
 

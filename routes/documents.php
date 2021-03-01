@@ -14,6 +14,6 @@ use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\DocumentsGenerationController;
 
 Route::prefix("documents")->group(function () {
-    Route::get("{document}", DocumentsGenerationController::class . "@make")
+    Route::post("{document}", DocumentsGenerationController::class . "@make")
          ->name("documents.make");
 });

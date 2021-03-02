@@ -53,7 +53,7 @@ class RecoveryTokenCheckTest extends TestCase {
     public function testCorrectResponseIsReturnedOnGoodToken (): void {
         /** @var Actor $actor */
         $actor = Actor::factory()->create();
-        RecoveryToken::create(["email" => $actor->email]);
+        RecoveryToken::create(["actor" => $actor, "email" => $actor->email]);
 
         $response = $this->json("POST", "/v1/auth/recovery/check-token",
             [

@@ -72,7 +72,7 @@ class OrderLine {
         $this->property_city       = $record["Order Lines/Property/City"];
 
         $this->media_value    = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
-        $this->net_investment = $this->subtotal * (1 - $this->discount / 100);
+        $this->net_investment = $this->media_value * (1 - $this->discount / 100);
     }
 
     public function isNetwork(string $network) {
@@ -93,7 +93,7 @@ class OrderLine {
     }
 
     public function isGuaranteedBonus(): int {
-        return (float)$this->discount === 100;
+        return (int)$this->discount === 100;
     }
 
     public function isBonusUponAvailability(): int {

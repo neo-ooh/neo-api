@@ -221,174 +221,222 @@ footer {
 .detailed-purchases-title .fitness {
   color: #d63641;
 }
+
+.detailed-purchases-wrapper {
+  border-collapse: collapse;
+  margin: 0;
+}
+.detailed-purchases-wrapper tr td, .detailed-purchases-wrapper tr th {
+  padding: 0;
+}
+.detailed-purchases-wrapper tr.spacer-row td {
+  height: 2mm;
+}
+
 .detailed-purchases-table {
   border-collapse: collapse;
-  page-break-inside: avoid;
 }
-.detailed-purchases-table thead tr.title td.detailed-purchases-title {
-  padding-bottom: 3mm;
-  text-transform: uppercase;
-  font-size: 14pt;
-  font-family: "poppins-bold";
-  font-weight: bold;
-}
-.detailed-purchases-table thead tr.headers th {
+.detailed-purchases-table tr th {
   padding: 2mm 0;
   background-color: #252734;
   color: #FFFFFF;
+  font-family: "poppins-bold";
   font-weight: bold;
   text-align: center;
   font-size: 10pt;
   border-right: 2px solid #FFFFFF;
   width: 25mm;
 }
-.detailed-purchases-table thead tr.headers th:nth-child(1) {
+.detailed-purchases-table tr th:nth-child(1) {
   width: 60mm;
 }
-.detailed-purchases-table thead tr.headers th.larger {
+.detailed-purchases-table tr th.larger {
   width: 120mm;
 }
-.detailed-purchases-table thead tr.headers th:nth-child(2) {
+.detailed-purchases-table tr th:nth-child(2) {
   width: 40mm;
 }
-.detailed-purchases-table thead tr.headers th:nth-child(11), .detailed-purchases-table thead tr.headers th.last {
+.detailed-purchases-table tr th:nth-child(11), .detailed-purchases-table tr th.last {
   border-right: none;
 }
-.detailed-purchases-table tbody tr td {
+
+.region-row-wrapper {
+  margin: 0;
+}
+
+.region-row-table {
+  border-collapse: collapse;
+  padding: 0;
+}
+.region-row-table tr td {
   font-size: 9pt;
-  width: 25mm;
-}
-.detailed-purchases-table tbody tr td:nth-child(1) {
-  width: 60mm;
-}
-.detailed-purchases-table tbody tr td.larger {
-  width: 120mm;
-}
-.detailed-purchases-table tbody tr td:nth-child(2) {
-  width: 40mm;
-}
-.detailed-purchases-table tbody tr.region-row {
-  page-break-after: avoid;
-}
-.detailed-purchases-table tbody tr.region-row td {
   padding: 1mm 0;
   text-align: center;
   font-weight: bold;
   background-color: #EEEEEE;
+  width: 25mm;
 }
-.detailed-purchases-table tbody tr.region-row td:nth-child(1) {
+.region-row-table tr td:nth-child(1) {
+  width: 60mm;
+}
+.region-row-table tr td.larger {
+  width: 120mm;
+}
+.region-row-table tr td:nth-child(2) {
+  width: 40mm;
+}
+.region-row-table tr td:nth-child(1) {
   border-right: 2px solid #FFFFFF;
 }
-.detailed-purchases-table tbody tr.region-footer-row {
-  page-break-before: avoid;
+.region-row-table tr td:nth-child(2) {
+  width: 215mm;
 }
-.detailed-purchases-table tbody tr.region-footer-row td {
-  padding: 1mm 0;
-  text-align: center;
-  font-family: "poppins-bold";
-  font-weight: bold;
-  color: #FFFFFF;
-  background-color: #BBBBBB;
+.region-row-table tr td.show-investment {
+  width: 265mm;
 }
-.detailed-purchases-table tbody tr.region-footer-row td:nth-child(1) {
-  border-right: 2px solid #FFFFFF;
-}
-.detailed-purchases-table tbody tr.shopping td.border-right {
-  border-right: 1px solid #3e9cca;
-}
-.detailed-purchases-table tbody tr.otg td.border-right {
-  border-right: 1px solid #e5782c;
-}
-.detailed-purchases-table tbody tr.fitness td.border-right {
-  border-right: 1px solid #d63641;
-}
-.detailed-purchases-table tbody .spacer-row td {
-  height: 2mm;
-}
-.detailed-purchases-table tfoot tr td {
-  color: #FFFFFF;
-  padding: 1mm 0;
-  font-size: 9pt;
-  font-family: "poppins-bold";
-  font-weight: bold;
-  text-align: center;
-}
-.detailed-purchases-table tfoot tr td.label-row {
-  border-right: 2px solid #FFFFFF;
-}
-.detailed-purchases-table tfoot tr td.border-right {
-  border-right: 1px solid #FFFFFF;
-}
-.detailed-purchases-table tfoot tr.shopping td {
-  background-color: #3e9cca;
-}
-.detailed-purchases-table tfoot tr.otg td {
-  background-color: #e5782c;
-}
-.detailed-purchases-table tfoot tr.fitness td {
-  background-color: #d63641;
-}
-.detailed-purchases .property-purchases-table {
+
+.property-purchases-table {
   border-collapse: collapse;
   page-break-inside: avoid;
 }
-.detailed-purchases .property-purchases-table thead tr th {
+.property-purchases-table tr th {
   width: 25mm;
   padding: 2mm 0 1mm;
   font-size: 9pt;
   width: 25mm;
 }
-.detailed-purchases .property-purchases-table thead tr th:nth-child(1) {
+.property-purchases-table tr th:nth-child(1) {
   width: 60mm;
 }
-.detailed-purchases .property-purchases-table thead tr th.larger {
+.property-purchases-table tr th.larger {
   width: 120mm;
 }
-.detailed-purchases .property-purchases-table thead tr th:nth-child(2) {
+.property-purchases-table tr th:nth-child(2) {
   width: 40mm;
 }
-.detailed-purchases .property-purchases-table thead tr th.property-name {
+.property-purchases-table tr th.property-name {
   text-align: left;
   font-family: "poppins-bold";
   font-size: 10pt;
 }
-.detailed-purchases .property-purchases-table thead tr th.property-name.shopping {
+.property-purchases-table tr th.property-name.shopping {
   color: #3e9cca;
 }
-.detailed-purchases .property-purchases-table thead tr th.property-name.otg {
+.property-purchases-table tr th.property-name.otg {
   color: #e5782c;
 }
-.detailed-purchases .property-purchases-table thead tr th.property-name.fitness {
+.property-purchases-table tr th.property-name.fitness {
   color: #d63641;
 }
-.detailed-purchases .property-purchases-table thead tr th.property-city {
+.property-purchases-table tr th.property-city {
   padding: 2mm 1mm 1mm;
   text-align: center;
 }
-.detailed-purchases .property-purchases-table thead tr th:nth-child(11), .detailed-purchases .property-purchases-table thead tr th.last {
+.property-purchases-table tr th:nth-child(11), .property-purchases-table tr th.last {
   border-right: none;
 }
-.detailed-purchases .property-purchases-table tbody tr.purchase-row td {
+.property-purchases-table tr.purchase-row td {
   padding: 1mm 0;
   text-align: center;
   font-size: 9pt;
 }
-.detailed-purchases .property-purchases-table tbody tr.purchase-row td.product-type {
+.property-purchases-table tr.purchase-row td.product-type {
   padding-left: 7.5mm;
   text-align: left;
 }
-.detailed-purchases .property-purchases-table tbody tr.purchase-row.last td {
+.property-purchases-table tr.purchase-row.last td {
   padding-bottom: 2mm;
   border-bottom: 1px solid #000000;
 }
-.detailed-purchases .property-purchases-table tbody tr.shopping td.border-right, .detailed-purchases .property-purchases-table tbody tr.shopping th.border-right, .detailed-purchases .property-purchases-table thead tr.shopping td.border-right, .detailed-purchases .property-purchases-table thead tr.shopping th.border-right {
+.property-purchases-table tr.purchase-row.shopping td.border-right {
   border-right: 1px solid #3e9cca;
 }
-.detailed-purchases .property-purchases-table tbody tr.otg td.border-right, .detailed-purchases .property-purchases-table tbody tr.otg th.border-right, .detailed-purchases .property-purchases-table thead tr.otg td.border-right, .detailed-purchases .property-purchases-table thead tr.otg th.border-right {
+.property-purchases-table tr.purchase-row.otg td.border-right {
   border-right: 1px solid #e5782c;
 }
-.detailed-purchases .property-purchases-table tbody tr.fitness td.border-right, .detailed-purchases .property-purchases-table tbody tr.fitness th.border-right, .detailed-purchases .property-purchases-table thead tr.fitness td.border-right, .detailed-purchases .property-purchases-table thead tr.fitness th.border-right {
+.property-purchases-table tr.purchase-row.fitness td.border-right {
   border-right: 1px solid #d63641;
+}
+.property-purchases-table tr.shopping td.border-right, .property-purchases-table tr.shopping th.border-right {
+  border-right: 1px solid #3e9cca;
+}
+.property-purchases-table tr.otg td.border-right, .property-purchases-table tr.otg th.border-right {
+  border-right: 1px solid #e5782c;
+}
+.property-purchases-table tr.fitness td.border-right, .property-purchases-table tr.fitness th.border-right {
+  border-right: 1px solid #d63641;
+}
+
+.region-footer-table {
+  border-collapse: collapse;
+}
+.region-footer-table tr td {
+  padding: 1mm 0;
+  text-align: center;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  font-size: 9pt;
+  color: #FFFFFF;
+  background-color: #BBBBBB;
+  width: 25mm;
+}
+.region-footer-table tr td:nth-child(1) {
+  border-right: 2px solid #FFFFFF;
+}
+.region-footer-table tr td:nth-child(1) {
+  width: 60mm;
+}
+.region-footer-table tr td.larger {
+  width: 120mm;
+}
+.region-footer-table tr td:nth-child(2) {
+  width: 40mm;
+}
+.region-footer-table tr.shopping td.border-right, .region-footer-table tr.shopping th.border-right {
+  border-right: 1px solid #3e9cca;
+}
+.region-footer-table tr.otg td.border-right, .region-footer-table tr.otg th.border-right {
+  border-right: 1px solid #e5782c;
+}
+.region-footer-table tr.fitness td.border-right, .region-footer-table tr.fitness th.border-right {
+  border-right: 1px solid #d63641;
+}
+
+.totals-wrapper {
+  border-collapse: collapse;
+}
+.totals-wrapper tr td {
+  color: #FFFFFF;
+  padding: 1mm 0;
+  font-size: 9pt;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+  width: 25mm;
+}
+.totals-wrapper tr td:nth-child(1) {
+  width: 60mm;
+}
+.totals-wrapper tr td.larger {
+  width: 120mm;
+}
+.totals-wrapper tr td:nth-child(2) {
+  width: 40mm;
+}
+.totals-wrapper tr td.label-row {
+  border-right: 2px solid #FFFFFF;
+}
+.totals-wrapper tr td.border-right {
+  border-right: 1px solid #FFFFFF;
+}
+.totals-wrapper tr.shopping td {
+  background-color: #3e9cca;
+}
+.totals-wrapper tr.otg td {
+  background-color: #e5782c;
+}
+.totals-wrapper tr.fitness td {
+  background-color: #d63641;
 }
 
 .detailed-purchases-footer {

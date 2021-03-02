@@ -12,6 +12,7 @@ namespace Neo\Mails;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
 
@@ -48,6 +49,8 @@ class ActorWelcomeEmail extends ReliableEmail {
      * @return $this
      */
     public function build(): self {
+        App::setLocale($this->actor->locale);
+
         return $this->subject("Bienvenue — Welcome")
                     ->view('emails.welcome')
                     ->text('emails.welcome-text');

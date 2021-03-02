@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Connexion aux services web Neo-ooh — Neo-ooh web services connection</title>
+    <title>{!! __("email-2fa-subject") !!}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style type="text/css">
@@ -78,16 +78,11 @@
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0">
-    <tr>
-        <td align="center" colspan="2">
-            <h6>ENGLISH VERSION BELOW</h6>
-        </td>
-    </tr>
     <tr class="main">
         <td colspan="2">
-            <h1>Jeton d'authentification Neo-OOH</h1>
+            <h1>{!! __("email-2fa-title") !!}</h1>
             <p>
-                Entrez le code ci-dessous pour confirmer votre connexion à votre compte Neo-ooh.
+                {!! __("email-2fa-body") !!}
             </p>
             <h3>
                 <span>{{ substr($token, 0, 1) }}</span>
@@ -98,38 +93,10 @@
                 <span>{{ substr($token, 4, 1) }}</span>
                 <span>{{ substr($token, 5, 1) }}</span>
             </h3>
-        </td>
-    </tr>
-    <tr class="spacer">
-        <td></td>
-    </tr>
-    <tr class="main">
-        <td colspan="2">
-            <h1>Neo-OOH authentication token</h1>
-            <p>
-                Enter the code below to confirm your connection to your Neo-ooh account.
-            </p>
-            <h3>
-                <span>{{ substr($token, 0, 1) }}</span>
-                <span>{{ substr($token, 1, 1) }}</span>
-                <span>{{ substr($token, 2, 1) }}</span>
-                <span class="letter-spacer"></span>
-                <span>{{ substr($token, 3, 1) }}</span>
-                <span>{{ substr($token, 4, 1) }}</span>
-                <span>{{ substr($token, 5, 1) }}</span>
-            </h3>
-        </td>
-    </tr>
-    <tr class="logos">
-        <td align="center">
-            <img src="{{ secure_asset('images/main.dark.fr.png') }}" alt="Neo-OOH Logo">
-        </td>
-        <td align="center">
-            <img src="{{ secure_asset('images/main.dark.en.png') }}" alt="Neo-OOH Logo">
         </td>
     </tr>
     <tr class="legals" align="center">
-        <td colspan="2">© {{ date("Y") }} Neo-OOH. Tous droits réservés. — All rights reserved.</td>
+        <td colspan="2">{!! __("email-legals", ["date" => date("Y")]) !!}</td>
     </tr>
 </table>
 </body>

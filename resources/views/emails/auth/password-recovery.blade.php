@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Connexion aux services web Neo-ooh — Neo-ooh web services connection</title>
+    <title>{!! __("email-password-recovery-subject") !!}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style type="text/css">
@@ -76,49 +76,26 @@
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0">
-    <tr>
-        <td align="center" colspan="2">
-            <h6>ENGLISH VERSION BELOW</h6>
-        </td>
-    </tr>
     <tr class="main">
         <td colspan="2">
-            <h1>Services web Neo-ooh</h1>
+            <h1>{!! __("email-password-recovery-title") !!}</h1>
             <p>
-                Veuillez cliquer sur le lien ci-dessous pour reinitialiser le mot de passe associé à votre compte Neo.
+                {!! __("email-password-recovery-body") !!}
             </p>
             <h3>
                 <a href="https://connect.neo-ooh.com/reset-password?token={{ $recoveryToken }}">
-                    Réinitialiser mon mot de passe
-                </a>
-            </h3>
-        </td>
-    </tr>
-    <tr class="spacer"><td></td></tr>
-    <tr class="main">
-        <td colspan="2">
-            <h1>Neo-ooh web services</h1>
-            <p>
-                Veuillez cliquer sur le lien ci-dessous pour reinitialiser le mot de passse associé à votre compte Neo.
-                Click on the link below to reset you Neo account's password
-            </p>
-            <h3>
-                <a href="https://connect.neo-ooh.com/reset-password?token={{ $recoveryToken }}">
-                    Reset my password
+                    {!! __("email-password-recovery-cta") !!}
                 </a>
             </h3>
         </td>
     </tr>
     <tr class="logos">
         <td align="center">
-            <img src="{{ secure_asset('images/main.dark.fr.png') }}" alt="Neo-OOH Logo">
-        </td>
-        <td align="center">
-            <img src="{{ secure_asset('images/main.dark.en.png') }}" alt="Neo-OOH Logo">
+            <img src="{{ secure_asset("images/main.dark.$locale.png") }}" alt="Neo-OOH Logo">
         </td>
     </tr>
     <tr class="legals" align="center">
-        <td colspan="2">© {{ date("Y") }} Neo-OOH. Tous droits réservés. — All rights reserved.</td>
+        <td colspan="2">{!! __("email-legals", ["date" => date("Y")]) !!}</td>
     </tr>
 </table>
 </body>

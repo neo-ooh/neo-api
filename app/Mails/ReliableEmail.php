@@ -7,6 +7,8 @@ use Swift_Message;
 use Swift_Signers_DKIMSigner;
 
 abstract class ReliableEmail extends Mailable {
+    public $locale;
+
     public function __construct() {
         // Set DKIM signature
         $this->withSwiftMessage(function(Swift_Message $message) {

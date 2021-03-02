@@ -127,6 +127,7 @@ class ActorsController extends Controller {
         // Create the actor's "shell"
         $actor           = new Actor();
         $actor->name     = $values['name'];
+        $actor->locale   = $values['locale'];
         $actor->is_group = $values['is_group'];
         $actor->save();
 
@@ -173,6 +174,7 @@ class ActorsController extends Controller {
         // The request handles input validation
         $actor->name           = $request->get("name", $actor->name);
         $actor->email          = $request->get("email", $actor->email);
+        $actor->locale          = $request->get("locale", $actor->locale);
         $actor->branding_id    = $request->get("branding_id", $actor->branding_id);
         $actor->limited_access = $request->get("limited_access", $actor->limited_access);
 

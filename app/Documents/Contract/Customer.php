@@ -4,6 +4,7 @@ namespace Neo\Documents\Contract;
 
 class Customer {
     public string $name;
+    public string $parent_name;
     public string $account;
     public string $company;
     public string $reference;
@@ -17,7 +18,8 @@ class Customer {
 
     public function __construct(array $record) {
         [
-            "Customer"                      => $this->name,
+            "Customer/Name"                 => $this->name,
+            "Customer/Parent name"          => $this->parent_name,
             "Company"                       => $this->company,
             "Analytic Account/Display Name" => $this->account,
             //            "Customer Reference"            => $this->reference,

@@ -54,6 +54,7 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
+            "locale" => "fr",
             "enabled" => true,
             "parent_id" => $actor->id,
             "branding_id" => null,
@@ -200,6 +201,7 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
+            "locale" => "fr",
             "enabled" => true,
             "parent_id" => $actor->id,
             "branding_id" => null,
@@ -216,6 +218,7 @@ class StoreActorTest extends TestCase
                      "parent",
                      "email",
                      "name",
+                     "locale",
                      "parent",
                      "branding_id",
                  ]);
@@ -238,6 +241,7 @@ class StoreActorTest extends TestCase
             "is_group" => false,
             "name" => $newActor->name,
             "email" => $newActor->email,
+            "locale" => "fr",
             "enabled" => true,
             "parent_id" => $actor->id, // <- Bad ID
             "branding_id" => null,

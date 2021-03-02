@@ -51,6 +51,7 @@ class UpdateActorRequest extends FormRequest {
             "name"           => ["sometimes", "string"],
             "email"          => ["sometimes", "exclude_unless:is_group,false", "email", Rule::unique('actors')
                                                                                             ->ignore($this->route('actor')->id)],
+            "locale"         => ["sometimes", "string"],
             "password"       => ["sometimes", "string", "min:6"],
             "is_locked"      => ["sometimes", "boolean"],
             "parent_id"      => ["sometimes", "integer", "exists:actors,id"],

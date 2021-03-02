@@ -9,7 +9,7 @@
         @endif
         <th>Impressions</th>
         <th>Media Value</th>
-        @if($size === 'small')
+        @if($size === 'small' && $showInvestment)
             <th>Discount</th>
         @endif
         <th>Net Investment</th>
@@ -26,10 +26,16 @@
             @endif
             <td>{{ number_format($guaranteedImpressions) }}</td>
             <td>$ {{ number_format($guaranteedValue) }}</td>
-            @if($size === 'small')
+            @if($size === 'small' && $showInvestment)
                 <td>{{ $guaranteedDiscount === 0 ? "-" : round($guaranteedDiscount)."%"}}</td>
             @endif
-            <td class="investment">$ {{ number_format($guaranteedInvestment) }}</td>
+            <td class="investment">
+                @if($showInvestment)
+                    $ {{ number_format($guaranteedInvestment) }}
+                @else
+                    -
+                @endif
+            </td>
         </tr>
         @if($hasBua)
             <tr>
@@ -41,10 +47,16 @@
                 @endif
                 <td>{{ number_format($buaImpressions) }}</td>
                 <td>$ {{ number_format($buaValue) }}</td>
-                @if($size === 'small')
+                @if($size === 'small' && $showInvestment)
                     <td>{{ $buaDiscount === 0 ? "-" : round($buaDiscount)."%"}}</td>
                 @endif
-                <td class="investment">$ 0</td>
+                <td class="investment">
+                    @if($showInvestment)
+                        $ 0
+                    @else
+                        -
+                    @endif
+                </td>
             </tr>
             <tr class="grand-total">
                 <td>(Potential) Grand Media Total</td>
@@ -55,10 +67,16 @@
                 @endif
                 <td>{{ number_format($guaranteedImpressions + $buaImpressions) }}</td>
                 <td>$ {{ number_format($guaranteedValue + $buaValue) }}</td>
-                @if($size === 'small')
+                @if($size === 'small' && $showInvestment)
                     <td>{{ round(($buaValue / ($guaranteedValue + $buaValue)) * 100) }} %</td>
                 @endif
-                <td class="investment">$ {{ number_format($grandTotalInvestment) }}</td>
+                <td class="investment">
+                    @if($showInvestment)
+                        $ {{ number_format($grandTotalInvestment) }}
+                    @else
+                        -
+                    @endif
+                </td>
             </tr>
         @endif
     @endif
@@ -72,7 +90,7 @@
             @endif
             <td>-</td>
             <td>-</td>
-            @if($size === 'small')
+            @if($size === 'small' && $showInvestment)
                 <td>-</td>
             @endif
             <td class="investment">
@@ -90,10 +108,11 @@
             @endif
             <td>-</td>
             <td>-</td>
-            @if($size === 'small')
+            @if($size === 'small' && $showInvestment)
                 <td>-</td>
             @endif
-            <td class="investment">$ {{ number_format($grandTotalInvestment + ($production->count() > 0 ? $production->sum("subtotal") : 0)) }}</td>
+            <td class="investment">
+                $ {{ number_format($grandTotalInvestment + ($production->count() > 0 ? $production->sum("subtotal") : 0)) }}</td>
         </tr>
     @endif
     @if($size === 'small' && $orders->count() > 0)

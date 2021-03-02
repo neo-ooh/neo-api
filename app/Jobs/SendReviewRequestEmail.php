@@ -67,7 +67,7 @@ class SendReviewRequestEmail implements ShouldQueue {
 
         Log::error($reviewers->pluck("email"));
         $reviewers->each(fn($reviewer) =>
-            Mail::to($reviewer)->send(new ReviewRequestEmail($schedule))
+            Mail::to($reviewer)->send(new ReviewRequestEmail($reviewer, $schedule))
         );
     }
 

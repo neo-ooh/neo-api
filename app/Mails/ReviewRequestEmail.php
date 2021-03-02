@@ -12,6 +12,8 @@ namespace Neo\Mails;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\App;
+use Neo\Models\Actor;
 use Neo\Models\Schedule;
 
 class ReviewRequestEmail extends ReliableEmail {
@@ -22,6 +24,8 @@ class ReviewRequestEmail extends ReliableEmail {
      */
     public Schedule $schedule;
 
+    public Actor $actor;
+
     public $subject = "Programmation en attente de validation — Schedule awaiting approval";
 
     /**
@@ -29,9 +33,10 @@ class ReviewRequestEmail extends ReliableEmail {
      *
      * @param Schedule $schedule
      */
-    public function __construct(Schedule $schedule) {
+    public function __construct(Actor $actor, Schedule $schedule) {
         parent::__construct();
 
+        $this->actor = $actor;
         $this->schedule = $schedule;
     }
 
@@ -41,6 +46,8 @@ class ReviewRequestEmail extends ReliableEmail {
      * @return $this
      */
     public function build(): self {
+        App::setLocale($this->actor->locale);
+
         return $this->view('emails.review-schedule')
                     ->text('emails.review-schedule-text');
     }

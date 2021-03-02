@@ -12,7 +12,7 @@
             <table class="header-contract-data">
                 <tr>
                     <td class="header-contract-data-label">Customer</td>
-                    <td class="header-contract-data-value">{{ $customer->company }}</td>
+                    <td class="header-contract-data-value">{{ $customer->parent_name }}</td>
                 </tr>
                 <tr>
                     <td class="header-contract-data-label">Advertiser</td>

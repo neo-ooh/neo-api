@@ -34,6 +34,7 @@ class StoreActorRequest extends FormRequest {
             "is_group"       => ["required", "boolean"],
             "name"           => ["required", "string"],
             "email"          => ["required_unless:is_group,true", "email", "unique:actors,email"],
+            "locale"         => ["required", "string"],
             "enabled"        => ["required", "boolean"],
             "parent_id"      => ["required", "numeric", "exists:actors,id"],
             "branding_id"    => ["sometimes", "numeric", "nullable", "exists:brandings,id"],

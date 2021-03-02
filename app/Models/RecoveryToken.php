@@ -106,7 +106,7 @@ class RecoveryToken extends Model {
             $model->token      = Str::random(32);
             $model->created_at = $model->freshTimestamp();
 
-            Mail::to($model->actor)->send(new RecoverPasswordEmail($model));
+            Mail::to($model->actor)->send(new RecoverPasswordEmail($model->actor()->first(), $model));
         });
     }
 

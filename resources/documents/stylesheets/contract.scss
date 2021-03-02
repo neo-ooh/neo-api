@@ -102,244 +102,272 @@ h1, h2 {
   }
 }
 
-.detailed-purchases {
-  &-title {
-    margin-bottom  : 0;
-    text-transform : uppercase;
-    font-size      : 14pt;
+.detailed-purchases-title {
+  margin-bottom  : 0;
+  text-transform : uppercase;
+  font-size      : 14pt;
 
-    .shopping {
-      color : $shopping;
-    }
-
-    .otg {
-      color : $otg;
-    }
-
-    .fitness {
-      color : $fitness;
-    }
+  .shopping {
+    color : $shopping;
   }
 
-  @mixin detailed-col-sizing() {
-    width : 25mm;
-
-    &:nth-child(1) {
-      width : 60mm;
-    }
-
-    &.larger {
-      width : 120mm;
-    }
-
-    &:nth-child(2) {
-      width : 40mm;
-    }
+  .otg {
+    color : $otg;
   }
 
-  &-table {
-    border-collapse   : collapse;
-    page-break-inside : avoid;
+  .fitness {
+    color : $fitness;
+  }
+}
 
-    thead {
-      tr.title td.detailed-purchases-title {
-        padding-bottom : 3mm;
+// Define mixin for column sizing
+@mixin detailed-col-sizing() {
+  width : 25mm;
 
-        text-transform : uppercase;
-        font-size      : 14pt;
-        font-family    : $font-bold;
-        font-weight    : bold;
-      }
+  &:nth-child(1) {
+    width : 60mm;
+  }
 
-      tr.headers {
-        th {
-          padding          : 2mm 0;
-          background-color : $dark-blue;
-          color            : #FFFFFF;
+  &.larger {
+    width : 120mm;
+  }
 
-          font-weight      : bold;
-          text-align       : center;
-          font-size        : 10pt;
-          border-right     : 2px solid #FFFFFF;
+  &:nth-child(2) {
+    width : 40mm;
+  }
+}
 
-          @include detailed-col-sizing;
+.detailed-purchases-wrapper {
+  border-collapse   : collapse;
+  //page-break-inside : avoid;
+  margin: 0;
 
-          &:nth-child(11), &.last {
-            border-right : none;
-          }
-        }
-      }
-    }
+  tr td, tr th {
+    padding : 0;
+  }
 
-    tbody {
-      tr {
-        td {
-          font-size : 9pt;
+  tr.spacer-row td {
+    height : 2mm;
+  }
+}
 
-          @include detailed-col-sizing;
-        }
+.detailed-purchases-table {
+  border-collapse   : collapse;
 
-        &.region-row {
-          page-break-after : avoid;
+  tr {
+    th {
+      padding          : 2mm 0;
+      background-color : $dark-blue;
+      color            : #FFFFFF;
 
-          td {
-            padding          : 1mm 0;
-            text-align       : center;
-            font-weight      : bold;
-            background-color : $ultralight-grey;
+      font-family: $font-bold;
+      font-weight      : bold;
+      text-align       : center;
+      font-size        : 10pt;
+      border-right     : 2px solid #FFFFFF;
 
-            &:nth-child(1) {
-              border-right : 2px solid #FFFFFF;
-            }
-          }
-        }
+      @include detailed-col-sizing;
 
-        &.region-footer-row {
-          page-break-before : avoid;
-
-          td {
-            padding          : 1mm 0;
-            text-align       : center;
-            font-family      : $font-bold;
-            font-weight      : bold;
-            color            : #FFFFFF;
-            background-color : $light-grey;
-
-            &:nth-child(1) {
-              border-right : 2px solid #FFFFFF;
-            }
-          }
-        }
-
-        &.shopping td.border-right {
-          border-right : 1px solid $shopping;
-        }
-
-        &.otg td.border-right {
-          border-right : 1px solid $otg;
-        }
-
-        &.fitness td.border-right {
-          border-right : 1px solid $fitness;
-        }
-      }
-
-      .spacer-row td {
-        height : 2mm;
+      &:nth-child(11), &.last {
+        border-right : none;
       }
     }
+  }
+}
 
-    tfoot tr {
-      td {
-        color       : #FFFFFF;
-        padding     : 1mm 0;
+.region-row-wrapper {
+  margin : 0;
+}
 
-        font-size   : 9pt;
+.region-row-table {
+  border-collapse   : collapse;
+  padding         : 0;
+
+  tr {
+    td {
+      font-size        : 9pt;
+      padding          : 1mm 0;
+      text-align       : center;
+      font-weight      : bold;
+      background-color : $ultralight-grey;
+
+      @include detailed-col-sizing;
+
+      &:nth-child(1) {
+        border-right : 2px solid #FFFFFF;
+      }
+
+      &:nth-child(2) {
+        width : 215mm;
+      }
+
+      &.show-investment {
+        width : 265mm;
+      }
+    }
+  }
+}
+
+.property-purchases-table {
+  border-collapse   : collapse;
+  page-break-inside : avoid;
+
+  tr {
+    th {
+      width     : 25mm;
+      padding   : 2mm 0 1mm;
+      font-size : 9pt;
+
+      @include detailed-col-sizing;
+
+      &.property-name {
+        text-align  : left;
         font-family : $font-bold;
-        font-weight : bold;
-        text-align  : center;
+        font-size   : 10pt;
 
-        &.label-row {
-          border-right : 2px solid #FFFFFF;
+        &.shopping {
+          color : $shopping;
         }
 
-        &.border-right {
-          border-right : 1px solid #FFFFFF;
+        &.otg {
+          color : $otg;
+        }
+
+        &.fitness {
+          color : $fitness;
         }
       }
 
-      &.shopping td {
-        background-color : $shopping;
+      &.property-city {
+        padding    : 2mm 1mm 1mm;
+        text-align : center;
       }
 
-      &.otg td {
-        background-color : $otg;
-      }
-
-      &.fitness td {
-        background-color : $fitness;
-      }
-    }
-  }
-
-  .property-purchases-table {
-    border-collapse   : collapse;
-    page-break-inside : avoid;
-
-    thead tr {
-      th {
-        width     : 25mm;
-        padding   : 2mm 0 1mm;
-        font-size : 9pt;
-
-        @include detailed-col-sizing;
-
-        &.property-name {
-          text-align  : left;
-          font-family : $font-bold;
-          font-size   : 10pt;
-
-          &.shopping {
-            color : $shopping;
-          }
-
-          &.otg {
-            color : $otg;
-          }
-
-          &.fitness {
-            color : $fitness;
-          }
-        }
-
-        &.property-city {
-          padding    : 2mm 1mm 1mm;
-          text-align : center;
-        }
-
-        &:nth-child(11), &.last {
-          border-right : none;
-        }
+      &:nth-child(11), &.last {
+        border-right : none;
       }
     }
 
-    tbody tr {
-      &.purchase-row {
+    &.purchase-row {
+      td {
+        padding    : 1mm 0;
+        text-align : center;
+        font-size  : 9pt;
+
+        &.product-type {
+          padding-left : 7.5mm;
+          text-align   : left;
+        }
+      }
+
+      &.last {
         td {
-          padding    : 1mm 0;
-          text-align : center;
-          font-size  : 9pt;
-
-          &.product-type {
-            padding-left : 7.5mm;
-            text-align   : left;
-          }
-        }
-
-        &.last {
-          td {
-            padding-bottom : 2mm;
-            border-bottom  : 1px solid #000000;
-          }
+          padding-bottom : 2mm;
+          border-bottom  : 1px solid #000000;
         }
       }
-    }
 
-    tbody tr, thead tr {
-      &.shopping td.border-right,
-      &.shopping th.border-right {
+      &.shopping td.border-right {
         border-right : 1px solid $shopping;
       }
 
-      &.otg td.border-right,
-      &.otg th.border-right {
+      &.otg td.border-right {
         border-right : 1px solid $otg;
       }
 
-      &.fitness td.border-right,
-      &.fitness th.border-right {
+      &.fitness td.border-right {
         border-right : 1px solid $fitness;
       }
+    }
+
+    &.shopping td.border-right,
+    &.shopping th.border-right {
+      border-right : 1px solid $shopping;
+    }
+
+    &.otg td.border-right,
+    &.otg th.border-right {
+      border-right : 1px solid $otg;
+    }
+
+    &.fitness td.border-right,
+    &.fitness th.border-right {
+      border-right : 1px solid $fitness;
+    }
+  }
+}
+
+.region-footer-table {
+  border-collapse : collapse;
+
+  tr {
+    td {
+      padding          : 1mm 0;
+      text-align       : center;
+      font-family      : $font-bold;
+      font-weight      : bold;
+
+      font-size   : 9pt;
+      color            : #FFFFFF;
+      background-color : $light-grey;
+
+      &:nth-child(1) {
+        border-right : 2px solid #FFFFFF;
+      }
+
+      @include detailed-col-sizing;
+    }
+
+    &.shopping td.border-right,
+    &.shopping th.border-right {
+      border-right : 1px solid $shopping;
+    }
+
+    &.otg td.border-right,
+    &.otg th.border-right {
+      border-right : 1px solid $otg;
+    }
+
+    &.fitness td.border-right,
+    &.fitness th.border-right {
+      border-right : 1px solid $fitness;
+    }
+  }
+}
+
+.totals-wrapper {
+  border-collapse : collapse;
+  tr {
+    td {
+      color       : #FFFFFF;
+      padding     : 1mm 0;
+
+      font-size   : 9pt;
+      font-family : $font-bold;
+      font-weight : bold;
+      text-align  : center;
+
+      @include detailed-col-sizing;
+
+      &.label-row {
+        border-right : 2px solid #FFFFFF;
+      }
+
+      &.border-right {
+        border-right : 1px solid #FFFFFF;
+      }
+    }
+
+    &.shopping td {
+      background-color : $shopping;
+    }
+
+    &.otg td {
+      background-color : $otg;
+    }
+
+    &.fitness td {
+      background-color : $fitness;
     }
   }
 }

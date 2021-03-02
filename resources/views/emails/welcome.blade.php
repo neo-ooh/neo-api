@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>Bienvenue chez les services web Neo-OOH — Welcome to Neo-OOH web-services</title>
+    <title>{!! __("email-welcome-subject") !!}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style type="text/css">
@@ -76,53 +76,26 @@
 </head>
 <body>
     <table border="0" cellpadding="0" cellspacing="0">
-        <tr>
-            <td align="center" colspan="2">
-                <h6>ENGLISH VERSION BELOW</h6>
-            </td>
-        </tr>
         <tr class="main">
             <td colspan="2">
-                <h1>Un compte Neo-OOH viens de vous être attribué</h1>
+                <h1>{!! __("email-welcome-title") !!}</h1>
                 <p>
-                    Bienvenue!<br />
-                    Un compte Neo vous permet d'accéder aux services web Neo-OOH.<br /><br />
-                    Veuillez cliquer sur le lien ci-dessous pour terminer la configuration
-                    de votre compte.
+                    {!! __("email-welcome-body") !!}
                 </p>
                 <h3>
                     <a href="https://connect.neo-ooh.com/welcome?token={{ $signupToken }}">
-                        Configurer mon compte
-                    </a>
-                </h3>
-            </td>
-        </tr>
-        <tr class="spacer"><td></td></tr>
-        <tr class="main">
-            <td colspan="2">
-                <h1>A Neo-OOH account has been given to you</h1>
-                <p>
-                    Welcome!<br />
-                    A Neo account gives you access to Neo-OOH web-services.<br /><br />
-                    Please click on the link below to complete your account configuration.
-                </p>
-                <h3>
-                    <a href="https://connect.neo-ooh.com/welcome?token={{ $signupToken }}">
-                        Configure my account
+                        {!! __("email-welcome-cta") !!}
                     </a>
                 </h3>
             </td>
         </tr>
         <tr class="logos">
             <td align="center">
-                <img src="{{ secure_asset('images/main.dark.fr.png') }}" alt="Neo-OOH Logo">
-            </td>
-            <td align="center">
-                <img src="{{ secure_asset('images/main.dark.en.png') }}" alt="Neo-OOH Logo">
+                <img src="{{ secure_asset("images/main.dark.$locale.png") }}" alt="Neo-OOH Logo">
             </td>
         </tr>
         <tr class="legals" align="center">
-            <td colspan="2">© {{ date("Y") }} Neo-OOH. Tous droits réservés. — All rights reserved.</td>
+            <td colspan="2">{!! __("email-legals", ["date" => date("Y")]) !!}© {{ date("Y") }}</td>
         </tr>
     </table>
 </body>

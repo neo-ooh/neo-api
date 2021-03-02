@@ -44,6 +44,7 @@ use Neo\Rules\AccessibleActor;
  * @property string         name
  * @property string         email
  * @property string         password
+ * @property string         locale
  * @property bool           is_group          Tell if the current actor is a group
  * @property bool           is_locked         Tell if the current actor has been locked. A locked actor cannot login
  * @property int|null       locked_by         Tell who locke this actor, if applicable

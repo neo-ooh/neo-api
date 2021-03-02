@@ -6,8 +6,10 @@ use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Illuminate\View\View;
+use Neo\Documents\Contract\Order;
 
 class DetailedSummary extends Component {
+    protected Order $order;
     protected Collection $orders;
     protected Collection $production;
     protected bool $renderDisclaimers;
@@ -18,7 +20,8 @@ class DetailedSummary extends Component {
      * @param Collection $orders
      * @param Collection  $production
      */
-    public function __construct(Collection $orders, Collection $production, bool $renderDisclaimers) {
+    public function __construct(Order $order, Collection $orders, Collection $production, bool $renderDisclaimers) {
+        $this->order     = $order;
         $this->orders     = $orders;
         $this->production = $production;
         $this->renderDisclaimers = $renderDisclaimers;
@@ -31,6 +34,7 @@ class DetailedSummary extends Component {
      */
     public function render() {
         return view('documents.contract.campaign-details.summary', [
+            "order"     => $this->order,
             "orders"     => $this->orders,
             "production" => $this->production,
             "renderDisclaimers" => $this->renderDisclaimers,

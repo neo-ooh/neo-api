@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use League\Csv\Reader;
 use Mpdf\HTMLParserMode;
-use Neo\Documents\Contract\Components\DetailedOrders;
 use Neo\Documents\Contract\Components\DetailedOrdersCategory;
 use Neo\Documents\Contract\Components\DetailedSummary;
 use Neo\Documents\Contract\Components\Totals;
@@ -27,6 +26,8 @@ class Contract extends Document {
     public function __construct() {
         parent::__construct([
             "margin_bottom" => 25,
+            "packTableData" => true,
+            "use_kwt" => true,
         ]);
 
         // Register our components
@@ -125,7 +126,7 @@ class Contract extends Document {
 
         $this->mpdf->WriteHTML($campaignSummaryOrders);
 
-        $this->mpdf->WriteHTML((new Totals($this->orderLines, "full", $this->production))->render()->render());
+        $this->mpdf->WriteHTML((new Totals($this->order, $this->orderLines, "full", $this->production))->render()->render());
     }
 
     private function makeCampaignDetails(): void {
@@ -165,7 +166,7 @@ class Contract extends Document {
     }
 
     private function renderDetailedSummary(bool $renderDisclaimers) {
-        $campaignDetailedSummary = new DetailedSummary($this->orderLines, $this->production, $renderDisclaimers);
+        $campaignDetailedSummary = new DetailedSummary($this->order, $this->orderLines, $this->production, $renderDisclaimers);
         $this->mpdf->WriteHTML($campaignDetailedSummary->render()->render());
     }
 }

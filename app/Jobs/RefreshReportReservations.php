@@ -84,6 +84,7 @@ class RefreshReportReservations implements ShouldQueue {
             ]);
 
             // Make sure information about the campaign are up to date
+            $rr->report_id = $report->id;
             $rr->internal_name = $reservation->name;
             $rr->start_date = Carbon::parse($reservation->start_date ." ". $reservation->start_time);
             $rr->end_date = Carbon::parse($reservation->end_date ." ". $reservation->end_time);

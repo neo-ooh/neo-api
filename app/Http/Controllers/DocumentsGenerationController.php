@@ -23,15 +23,17 @@ class DocumentsGenerationController extends Controller {
     public function make(Request $request) {
         App::setLocale('en');
 
-        if($request->getContentType() !== "text/csv") {
-            return new Response(["error" => "Invalid content-type. `text/csv` expected, got {$request->getContentType()}"],  400);
+        $file = $request->file("file");
+
+        if($file === null) {
+            return new Response(["error" => "Missing file"],  400);
         }
 
         $contract = null;
 
         switch ($request->route('document')) {
             case "contract":
-                $contract = Contract::make($request->getContent());
+                $contract = Contract::make($file->getContent());
 //                $contract = Contract::make(Storage::disk('local')->get('sale.order.11.csv'));
                 break;
             default:

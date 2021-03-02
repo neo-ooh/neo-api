@@ -52,6 +52,12 @@ class ReportsController extends Controller {
         return new Response($report);
     }
 
+    public function refresh(Report $report): Response {
+        RefreshReportReservations::dispatchSync($report->id);
+
+        return new Response([]);
+    }
+
     public function destroy(DestroyReportRequest $request, Report $report): Response {
         $bursts = $report->bursts;
 

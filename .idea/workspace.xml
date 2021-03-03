@@ -9,50 +9,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/resources/lang/fr.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" afterPath="$PROJECT_DIR$/.gitattributes" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/BroadSignModel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummary.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/DetailedSummary.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ActorsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/ReportsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Actors/StoreActorRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/StoreActorRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Actors/UpdateActorRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Actors/UpdateActorRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/RefreshReportReservations.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Mails/ActorWelcomeEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/ActorWelcomeEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Mails/RecoverPasswordEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/RecoverPasswordEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Mails/ReliableEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/ReliableEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Mails/ReviewRequestEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/ReviewRequestEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Mails/TwoFactorTokenEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Mails/TwoFactorTokenEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Burst.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/RecoveryToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/RecoveryToken.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/TwoFactorToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/TwoFactorToken.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/lang/en.json" beforeDir="false" afterPath="$PROJECT_DIR$/resources/lang/en.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-network.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/orders-network.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/campaign-details/summary.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/header.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/header.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/order-totals.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/order-totals.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/auth/password-recovery.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/auth/password-recovery.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/auth/two-fa-token.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/auth/two-fa-token.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/review-schedule-text.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/review-schedule-text.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/review-schedule.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/review-schedule.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/welcome-text.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/welcome-text.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/emails/welcome.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/emails/welcome.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/Actors/StoreActorTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Actors/StoreActorTest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/Feature/PasswordRecovery/RecoveryTokenCheckTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/PasswordRecovery/RecoveryTokenCheckTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/logging.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/logging.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

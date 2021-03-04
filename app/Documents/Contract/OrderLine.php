@@ -73,6 +73,10 @@ class OrderLine {
 
         $this->media_value    = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
         $this->net_investment = $this->media_value * (1 - $this->discount / 100);
+
+        if($this->isGuaranteedBonus() || $this->isBonusUponAvailability()) {
+            $this->net_investment = 0;
+        }
     }
 
     public function isNetwork(string $network) {

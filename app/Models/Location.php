@@ -21,6 +21,7 @@ use Neo\Rules\AccessibleLocation;
  *
  * @property int        id
  * @property int        broadsign_display_unit
+ * @property int        display_type_id
  * @property int        network
  * @property string     name
  * @property string     internal_name
@@ -94,8 +95,16 @@ class Location extends SecuredModel {
         return $this->hasMany(Player::class);
     }
 
+    /**
+     * @return BelongsTo
+     * @deprecated WILL NOT WORK!!!
+     */
     public function format (): BelongsTo {
         return $this->belongsTo(Format::class);
+    }
+
+    public function display_type (): BelongsTo {
+        return $this->belongsTo(DisplayType::class, "display_type_id");
     }
 
     public function container (): BelongsTo {

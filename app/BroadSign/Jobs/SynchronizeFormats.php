@@ -16,7 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\Models\Format as BSFormat;
-use Neo\Models\Format;
+use Neo\Models\DisplayType;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -40,14 +40,11 @@ class SynchronizeFormats extends BroadSignJob {
         foreach ($broadsignFormats as $bsformat) {
             $progressBar->setMessage("{$bsformat->name} ({$bsformat->id})");
 
-            Format::query()->firstOrCreate([
-                "broadsign_display_type" => $bsformat->id,
-            ],
-                [
-                    "slug"       => $this->supportMapping[$bsformat->name] ?? $bsformat->name,
-                    "name"       => $bsformat->name,
-                    "is_enabled" => true,
-                ]);
+            DisplayType::query()->updateOrCreate([
+                "broadsign_display_type_id" => $bsformat->id,
+            ], [
+                "name" => $bsformat->name,
+            ]);
 
             $progressBar->advance();
         }

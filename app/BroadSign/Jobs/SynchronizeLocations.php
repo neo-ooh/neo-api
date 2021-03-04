@@ -16,7 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\Models\Location as BSLocation;
-use Neo\Models\Format;
+use Neo\Models\DisplayType;
 use Neo\Models\Location;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -31,7 +31,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class SynchronizeLocations extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function handle (): void {
+    public function handle(): void {
         $broadsignLocation = BSLocation::all();
 
         $locations = [];
@@ -54,14 +54,13 @@ class SynchronizeLocations extends BroadSignJob {
 
             $location = Location::query()->firstOrCreate([
                 "broadsign_display_unit" => $bslocation->id,
-            ],
-                [
-                    "format_id"     => Format::query()->where("broadsign_display_type", "=", $bslocation->display_unit_type_id)
-                                             ->first(["id"])->id,
-                    "name"          => $bslocation->name,
-                    "internal_name" => $bslocation->name,
-                    "container_id"  => $containerID,
-                ]);
+            ], [
+                "display_type_id" => DisplayType::query()
+                                                ->where("broadsign_display_type_id", "=", $bslocation->display_unit_type_id),
+                "name"            => $bslocation->name,
+                "internal_name"   => $bslocation->name,
+                "container_id"    => $containerID,
+            ]);
 
 
             $location->container_id = $containerID;
@@ -85,7 +84,7 @@ class SynchronizeLocations extends BroadSignJob {
      *
      * @return ProgressBar
      */
-    protected function makeProgressBar (int $steps): ProgressBar {
+    protected function makeProgressBar(int $steps): ProgressBar {
         $bar = new ProgressBar(new ConsoleOutput(), $steps);
         $bar->setFormat('%current%/%max% [%bar%] %message%');
         $bar->setMessage('Fetching data...');

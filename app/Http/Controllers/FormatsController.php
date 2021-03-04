@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Neo\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Http\Requests\Formats\ShowFormatRequest;
 use Neo\Http\Requests\Formats\UpdateFormatRequest;
@@ -30,7 +31,7 @@ class FormatsController extends Controller
     {
         if($request->has("actor")) {
             // An actor is specified, we only return formats accessible by the user
-            $formats = Actor::query()->findOrFail($request->query("actor"))->getLocations()->pluck("format")->unique("id")->values();
+            $formats = Actor::query()->findOrFail($request->query("actor"))->getLocations()->pluck("display_type.formats")->flatten()->unique("id")->values();
 
             if($request->has('enabled')) {
                 $formats = $formats->filter(fn($format) => $format->is_enabled)->values();
@@ -54,7 +55,7 @@ class FormatsController extends Controller
      */
     public function show(ShowFormatRequest $request, Format $format)
     {
-        return new Response($format);
+        return new Response($format->load("display_types"));
     }
 
     /**

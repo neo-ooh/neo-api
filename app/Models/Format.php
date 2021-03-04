@@ -21,8 +21,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * Neo\Models\Formats
  *
  * @property int                      id
- * @property int                      broadsign_display_type
- * @property string                   slug
  * @property string                   name
  * @property boolean                  is_fullscreen
  * @property boolean                  is_enabled
@@ -61,8 +59,6 @@ class Format extends Model {
      * @var array
      */
     protected $fillable = [
-        "broadsign_display_type",
-        "slug",
         "name",
     ];
 
@@ -97,14 +93,16 @@ class Format extends Model {
     |--------------------------------------------------------------------------
     */
 
-    /* Network */
-
     /**
      * @deprecated Formats no longer have frames, they have layouts who holds the frames
      * @see        Format::layouts()
      */
     public function frames(): HasMany {
         return $this->hasMany(Frame::class, 'format_id', 'id');
+    }
+
+    public function display_types(): BelongsToMany {
+        return $this->belongsToMany(DisplayType::class, 'formats_display_types', 'format_id', "display_type_id");
     }
 
     public function layouts(): HasMany {

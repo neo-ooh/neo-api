@@ -19,6 +19,7 @@ use Neo\Http\Requests\Locations\ListLocationsRequest;
 use Neo\Http\Requests\Locations\ShowLocationRequest;
 use Neo\Http\Requests\Locations\UpdateLocationRequest;
 use Neo\Models\Actor;
+use Neo\Models\Format;
 use Neo\Models\Location;
 
 class LocationsController extends Controller {
@@ -40,7 +41,9 @@ class LocationsController extends Controller {
         $query = Location::query();
 
         if ($request->has("format")) {
-            $query->where("format_id", "=", $request->input("format"));
+            $displayTypes = Format::find($request->input("format"))->display_types->pluck("id");
+            $query->whereIn("display_type_id", $displayTypes);
+            $query->with([ 'display_type' ]);
         }
 
         $loadHierarchy = in_array('hierarchy', $request->input('with', []), true) ?? $request->has('with_hierarchy');

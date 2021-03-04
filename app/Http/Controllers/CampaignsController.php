@@ -34,7 +34,7 @@ class CampaignsController extends Controller {
      * @noinspection PhpUnusedParameterInspection
      */
     public function index(ListCampaignsRequest $request) {
-        return new Response(Auth::user()->getCampaigns()->load("format:id,slug,name",
+        return new Response(Auth::user()->getCampaigns()->load("format:id,name",
             "owner"));
     }
 
@@ -63,7 +63,7 @@ class CampaignsController extends Controller {
 
         $campaign->save();
 
-        $locations = $campaign->owner->locations->where("format_id", "=", $campaign->format_id);
+        $locations = $campaign->owner->locations->whereIn("display_type_id", $campaign->format->display_types->pluck('id'));
 
         // Copy over the locations of the campaign owner to the campaign itself
         if (count($locations) > 0) {
@@ -86,6 +86,7 @@ class CampaignsController extends Controller {
         return new Response($campaign->loadMissing([
             "format",
             "format.layouts",
+            "format.display_types",
             "locations",
             "owner",
             "shares",

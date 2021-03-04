@@ -215,11 +215,12 @@ class SchedulesController extends Controller {
             }
         }
 
+        $schedule->save();
+        $schedule->refresh();
+
         // Propagate the update to the associated BroadSign Schedule
         UpdateBroadSignSchedule::dispatch($schedule->id);
 
-        $schedule->save();
-        $schedule->refresh();
 
         return new Response($schedule->load("content", "owner"));
     }

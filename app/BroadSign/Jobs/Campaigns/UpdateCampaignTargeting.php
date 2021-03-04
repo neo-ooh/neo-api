@@ -140,6 +140,14 @@ class UpdateCampaignTargeting extends BroadSignJob {
                     $criterionId   = BroadSign::getDefaults()["right_frame_criteria_id"];
                     $criteriontype = 8;
                     break;
+                case "TEST_LEFT":
+                    $criterionId   = BroadSign::getDefaults()["test_left_frame_criteria_id"];
+                    $criteriontype = 8;
+                    break;
+                case "TEST_RIGHT":
+                    $criterionId   = BroadSign::getDefaults()["test_right_frame_criteria_id"];
+                    $criteriontype = 8;
+                    break;
             }
 
             BSCampaign::addResourceCriteria([

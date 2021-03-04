@@ -82,6 +82,8 @@ class UpdateCampaignTargeting extends BroadSignJob {
             "MAIN"  => BroadSign::getDefaults()["advertising_criteria_id"],
             "LEFT"  => BroadSign::getDefaults()["left_frame_criteria_id"],
             "RIGHT" => BroadSign::getDefaults()["right_frame_criteria_id"],
+            "TEST_LEFT" => BroadSign::getDefaults()["test_left_frame_criteria_id"],
+            "TEST_RIGHT" => BroadSign::getDefaults()["test_right_frame_criteria_id"],
         ];
 
         // Map the types

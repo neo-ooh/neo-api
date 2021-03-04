@@ -13,9 +13,9 @@ namespace Neo\Http\Controllers;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Neo\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Http\Requests\Formats\ShowFormatRequest;
+use Neo\Http\Requests\Formats\StoreFormatRequest;
 use Neo\Http\Requests\Formats\UpdateFormatRequest;
 use Neo\Models\Actor;
 use Neo\Models\Format;
@@ -44,6 +44,17 @@ class FormatsController extends Controller
         }
 
         return new Response($formats);
+    }
+
+    public function store(StoreFormatRequest $request): Response {
+        $format = new Format();
+        [
+            "name" => $format->name,
+            "is_enabled" => $format->is_enabled,
+        ] = $request->validated();
+        $format->save();
+
+        return new Response($format, 201);
     }
 
     /**

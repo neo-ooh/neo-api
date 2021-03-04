@@ -26,7 +26,9 @@ use Neo\Http\Controllers\ContainersController;
 use Neo\Http\Controllers\ContentsController;
 use Neo\Http\Controllers\CreativesController;
 use Neo\Http\Controllers\CustomersController;
+use Neo\Http\Controllers\DisplayTypesController;
 use Neo\Http\Controllers\FormatsController;
+use Neo\Http\Controllers\FormatsDisplayTypesController;
 use Neo\Http\Controllers\FormatsLayoutsController;
 use Neo\Http\Controllers\FramesController;
 use Neo\Http\Controllers\InventoryController;
@@ -283,6 +285,15 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     /*
     |----------------------------------------------------------------------
+    | Display Types
+    |----------------------------------------------------------------------
+    */
+
+    Route::get("display-types", DisplayTypesController::class . "@index")->name("display-types.index");
+
+
+    /*
+    |----------------------------------------------------------------------
     | Formats
     |----------------------------------------------------------------------
     */
@@ -290,8 +301,18 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route::model("format", Format::class);
 
     Route::get("formats", FormatsController::class . "@index")->name("formats.index");
+    Route::post("formats", FormatsController::class . "@store")->name("formats.store");
     Route::get("formats/{format}", FormatsController::class . "@show")->name("formats.show");
     Route::put("formats/{format}", FormatsController::class . "@update")->name("formats.update");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Formats Display Types
+    |----------------------------------------------------------------------
+    */
+
+    Route::   put("formats/{format}/display-types", FormatsDisplayTypesController::class . "@sync")->name("formats.display-types.sync");
 
 
     /*

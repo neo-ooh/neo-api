@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property boolean                  is_enabled
  *
  * @property Collection<FormatLayout> layouts
+ * @property Collection<DisplayType>  display_types
  * @property Collection<Content>      contents
  * @property Collection<Campaign>     campaigns
  * @property Collection<Location>     locations

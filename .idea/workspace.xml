@@ -15,6 +15,7 @@
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Burst.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/broadsign.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/broadsign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/logging.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/logging.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

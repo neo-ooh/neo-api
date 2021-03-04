@@ -54,7 +54,7 @@ return [
         ],
 
         'broadsign' => [
-            'driver' => 'single',
+            'driver' => 'daily',
             'path' => storage_path('logs/broadsign.log'),
             'level' => env('LOG_LEVEL', 'debug'),
         ],

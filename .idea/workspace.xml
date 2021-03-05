@@ -9,16 +9,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/DisplayTypes/ListDisplayTypesRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Formats/StoreFormatRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/FormatsDisplayTypes/SyncFormatDisplayTypesRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/copyright/Neo.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/copyright/Neo.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Logging/BroadSignLogFormatter.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Logging/LaravelLogFormatter.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Burst.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Burst.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/EditorTemplate.php" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Format.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Format.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/logging.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/logging.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -228,7 +222,7 @@
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HTML&#10;MySQL" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/FormatsDisplayTypes" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Logging" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -247,11 +241,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Logging" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/FormatsDisplayTypes" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/DisplayTypes" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Formats" />
       <recent name="$PROJECT_DIR$/app/Models" />
-      <recent name="$PROJECT_DIR$/app/Jobs" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Players" />

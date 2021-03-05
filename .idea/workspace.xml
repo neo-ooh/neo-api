@@ -10,8 +10,10 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/app/Logging/BroadSignLogFormatter.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Logging/LaravelLogFormatter.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Logging/LaravelLogFormatter.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Logging/LaravelLogFormatter.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Library.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Library.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/config/logging.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/logging.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

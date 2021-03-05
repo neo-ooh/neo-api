@@ -15,12 +15,14 @@ class LaravelLogFormatter {
     public function __invoke(Logger $logger)
     {
         foreach ($logger->getHandlers() as $handler) {
-            $handler->setFormatter(new LineFormatter(
+            $lineFormatter = new LineFormatter(
                 '[%datetime%] %channel%.%level_name%: %message% %context% %extra%'. PHP_EOL,
                 'c', // ISO 8601 Date format
                 true,
                 true
-            ));
+            );
+            $lineFormatter->includeStacktraces(true);
+            $handler->setFormatter($lineFormatter);
         }
     }
 }

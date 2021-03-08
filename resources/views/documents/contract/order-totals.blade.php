@@ -27,7 +27,12 @@
             <td>{{ number_format($guaranteedImpressions) }}</td>
             <td>$ {{ number_format($guaranteedValue) }}</td>
             @if($size === 'small' && $showInvestment)
-                <td>{{ $guaranteedDiscount === 0 ? "-" : round($guaranteedDiscount)."%"}}</td>
+                <td>
+                    @php
+                        $guaranteedDiscount = ($guaranteedValue - $guaranteedInvestment) / $guaranteedValue * 100;
+                    @endphp
+                    {{ round($guaranteedDiscount) === 0 ? '-' : number_format($guaranteedDiscount) . "%" }}
+                </td>
             @endif
             <td class="investment">
                 @if($showInvestment)
@@ -48,7 +53,7 @@
                 <td>{{ number_format($buaImpressions) }}</td>
                 <td>$ {{ number_format($buaValue) }}</td>
                 @if($size === 'small' && $showInvestment)
-                    <td>{{ $buaDiscount === 0 ? "-" : round($buaDiscount)."%"}}</td>
+                    <td> 100% </td>
                 @endif
                 <td class="investment">
                     @if($showInvestment)
@@ -68,7 +73,13 @@
                 <td>{{ number_format($guaranteedImpressions + $buaImpressions) }}</td>
                 <td>$ {{ number_format($guaranteedValue + $buaValue) }}</td>
                 @if($size === 'small' && $showInvestment)
-                    <td>{{ round(($buaValue / ($guaranteedValue + $buaValue)) * 100) }} %</td>
+                    <td>
+                        @php
+                            $potentionValue = $buaValue + $guaranteedValue;
+                            $potentionDiscount = ($potentionValue - $guaranteedInvestment) / $potentionValue * 100;
+                        @endphp
+                        {{ round($potentionDiscount) === 0 ? '-' : number_format($potentionDiscount) . "%" }}
+                    </td>
                 @endif
                 <td class="investment">
                     @if($showInvestment)
@@ -118,7 +129,7 @@
     @if($size === 'small' && $orders->count() > 0)
         <tr class="cpm">
             <td>CPM:
-                $ {{ number_format($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000) }}</td>
+                $ {{ number_format($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000, 2) }}</td>
         </tr>
     @endif
     </tbody>

@@ -33,7 +33,7 @@ class Kernel extends ConsoleKernel {
         Chores\CleanUpCampaigns::class,
         Chores\CleanUpCreatives::class,
 
-        OneShots\MergeOTGResourcesIntoOneFormat::class,
+        Utils\MergeOTGResourcesIntoOneFormat::class,
     ];
 
     /**

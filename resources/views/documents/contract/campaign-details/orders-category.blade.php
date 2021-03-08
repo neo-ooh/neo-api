@@ -28,7 +28,10 @@
                 @endif>$ {{ number_format($totalValue) }}</td>
         @if($order->show_investment)
             <td>
-                {{ $totalDiscount == 0 ? '-' : round($totalDiscount / $orders->flatten()->count())."%" }}
+                @php
+                    $totalDiscount = ($totalValue - $totalInvestment) / $totalValue * 100;
+                @endphp
+                {{ (int)floor($totalDiscount) === 0 ? '-' : number_format($totalDiscount) . "%" }}
             </td>
             <td>$ {{ number_format($totalInvestment) }}</td>
         @endif

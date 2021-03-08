@@ -42,6 +42,6 @@ class Order {
             "Investment"             => $this->show_investment,
         ] = $record;
 
-        $this->show_investment = strtolower($this->show_investment) === "vrai" || strtolower($this->show_investment) === "true";
+        $this->show_investment = strtolower($this->show_investment) === "faux" || strtolower($this->show_investment) === "false ";
     }
 }

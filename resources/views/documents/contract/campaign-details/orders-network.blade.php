@@ -38,7 +38,6 @@
             $totalScreens = 0;
             $totalImpressions = 0;
             $totalMediaValue = 0;
-            $totalDiscount = 0;
             $totalNetInvestment = 0
         @endphp
         {{-- Loop over each region --}}
@@ -48,7 +47,6 @@
                 $regionScreens = 0;
                 $regionImpressions = 0;
                 $regionMediaValue = 0;
-                $regionDiscount = 0;
                 $regionNetInvestment = 0
             @endphp
             {{-- Print the region row --}}
@@ -97,7 +95,6 @@
                                     $regionScreens += $purchase->nb_screens;
                                     $regionImpressions += $purchase->impressions;
                                     $regionMediaValue += $purchase->media_value;
-                                    $regionDiscount += $purchase->discount;
                                     $regionNetInvestment += $purchase->net_investment
                                 @endphp
 
@@ -146,7 +143,10 @@
                             </td>
                             @if($order->show_investment)
                                 <td class="border-right">
-                                    {{ $regionDiscount === 0 ? '-' : ($regionDiscount / $regionOrders->flatten()->count()) . "%" }}
+                                    @php
+                                        $regionDiscount = ($regionMediaValue - $regionNetInvestment) / $regionMediaValue * 100;
+                                    @endphp
+                                    {{ (int)floor($regionDiscount) === 0 ? '-' : number_format($regionDiscount) . "%" }}
                                 </td>
                                 <td>$ {{ number_format($regionNetInvestment) }}</td>
                             @endif
@@ -156,7 +156,6 @@
                             $totalScreens += $regionScreens;
                             $totalImpressions += $regionImpressions;
                             $totalMediaValue += $regionMediaValue;
-                            $totalDiscount += $regionDiscount;
                             $totalNetInvestment += $regionNetInvestment
                         @endphp
                     </table>
@@ -185,7 +184,10 @@
                         </td>
                         @if($order->show_investment)
                             <td class="border-right">
-                                {{ $totalDiscount === 0 ? '-' : round($totalDiscount / $orders->flatten()->count()) . "%" }}
+                                @php
+                                    $totalDiscount = ($totalMediaValue - $totalNetInvestment) / $totalMediaValue * 100;
+                                @endphp
+                                {{ (int)floor($totalDiscount) === 0 ? '-' : number_format($totalDiscount) . "%" }}
                             </td>
                             <td>$ {{ number_format($totalNetInvestment) }}</td>
                         @endif

@@ -1,9 +1,8 @@
 <?php
 
-namespace Neo\Console\OneShots;
+namespace Neo\Console\Utils;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
 use Neo\Models\Creative;
@@ -17,23 +16,22 @@ class MergeOTGResourcesIntoOneFormat extends Command {
      *
      * @var string
      */
-    protected $signature = 'one-shot:2021-03-08';
+    protected $signature = 'utils:move-formats-resources {to: Id of the receiving format} {from*: Id.s of the old formats} "{--delete?: Delete the old formats on completion}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Merge all resources from the OTG formats to a unique one';
+    protected $description = 'Move all resources from one or multiple format.s to another one.';
 
     /**
      * Run the migrations.
      */
     public function handle(): int {
-        // Our goal is to merge all resources in the Depanneurs and gas stations formats into a single one.
-        // For easier run, the formats IDs are hardcoded here. The value set here are for the production env.
-        $oldFormatsIds = [4, 17];
-        $newFormatId   = 43;
+        // Our goal is to move all resources in the old format.s to the new one.
+        $oldFormatsIds = $this->argument("from");
+        $newFormatId   = $this->argument("to");
         /** @var Format $newFormat */
         $newFormat = Format::find($newFormatId);
         /** @var FormatLayout $newLayout */
@@ -44,7 +42,7 @@ class MergeOTGResourcesIntoOneFormat extends Command {
         $newFrame = $newLayout->frames()->first();
         $this->info($newFrame);
 
-        // First, move all contents and their creatives to the new format. thankfully, the old and new formats only have one frame.
+        // First, move all contents and their creatives to the new format.
         $layouts  = FormatLayout::query()->whereIn("format_id", $oldFormatsIds)->get();
         $contents = Content::query()->whereIn("layout_id", $layouts->pluck("id"))->get();
 
@@ -68,6 +66,12 @@ class MergeOTGResourcesIntoOneFormat extends Command {
         foreach ($campaigns as $campaign) {
             $campaign->format_id = $newFormatId;
             $campaign->save();
+        }
+
+        if($this->hasOption("delete")) {
+            foreach ($oldFormatsIds as $formatId) {
+                Format::query()->find($formatId)->delete();
+            }
         }
 
         return 0;

@@ -24,7 +24,4 @@ return [
     "advertising-criteria" => env("BROADSIGN_ADVERTISING_CRITERIA_ID"),
     "left-frame-criteria" => env("BROADSIGN_LEFT_FRAME_CRITERIA_ID"),
     "right-frame-criteria" => env("BROADSIGN_RIGHT_FRAME_CRITERIA_ID"),
-
-    "test-left-frame-criteria" => env("BROADSIGN_TEST_LEFT_FRAME_CRITERIA_ID"),
-    "test-right-frame-criteria" => env("BROADSIGN_TEST_RIGHT_FRAME_CRITERIA_ID"),
 ];

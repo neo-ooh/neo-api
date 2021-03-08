@@ -9,12 +9,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Logging/BroadSignLogFormatter.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Jobs/SendReviewRequestEmail.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Logging/LaravelLogFormatter.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Logging/LaravelLogFormatter.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Library.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Library.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/logging.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/logging.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateCampaignTargeting.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateCampaignTargeting.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/broadsign.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/broadsign.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -237,7 +236,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="copyright" />
+    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
     <property name="tasks.open.task.update.state.enabled" value="true" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
@@ -285,7 +284,7 @@
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
+    <task id="Default" summary="Default task">
       <changelist id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="" />
       <created>1606498039666</created>
       <option name="number" value="Default" />
@@ -385,6 +384,7 @@
       <option name="project" value="CONNECT" />
       <updated>1614104598314</updated>
       <workItem from="1614104598991" duration="30862000" />
+      <workItem from="1615215614637" duration="396000" />
     </task>
     <option name="localTasksCounter" value="10" />
     <option name="createChangelist" value="false" />

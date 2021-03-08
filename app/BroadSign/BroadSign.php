@@ -36,9 +36,6 @@ class BroadSign {
             "advertising_criteria_id" => config("broadsign.advertising-criteria"),
             "left_frame_criteria_id"  => config("broadsign.left-frame-criteria"),
             "right_frame_criteria_id" => config("broadsign.right-frame-criteria"),
-
-            "test_left_frame_criteria_id"  => config("broadsign.test-left-frame-criteria"),
-            "test_right_frame_criteria_id" => config("broadsign.test-right-frame-criteria"),
         ];
     }
 

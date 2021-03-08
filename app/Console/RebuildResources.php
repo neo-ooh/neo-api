@@ -74,7 +74,11 @@ class RebuildResources extends Command {
 
             $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
             $bsCampaign->active = false;
-            $bsCampaign->state = 2;
+
+            if($bsCampaign->state !== 3) {
+                $bsCampaign->state = 2;
+            }
+
             $bsCampaign->save();
 
             $campaign->broadsign_reservation_id = null;

@@ -46,7 +46,7 @@ class MergeOTGResourcesIntoOneFormat extends Command {
 
         // First, move all contents and their creatives to the new format. thankfully, the old and new formats only have one frame.
         $layouts  = FormatLayout::query()->whereIn("format_id", $oldFormatsIds)->get();
-        $contents = Content::query()->whereIn("layout_id", $layouts);
+        $contents = Content::query()->whereIn("layout_id", $layouts->pluck("id"));
 
 
         /** @var Content $content */

@@ -16,7 +16,7 @@ class MergeOTGResourcesIntoOneFormat extends Command {
      *
      * @var string
      */
-    protected $signature = 'utils:move-formats-resources {to: Id of the receiving format} {from*: Id.s of the old formats} "{--delete?: Delete the old formats on completion}';
+    protected $signature = 'utils:move-formats-resources {to: Id of the receiving format} {from*: Id.s of the old formats} {--delete: Delete the old formats on completion}';
 
     /**
      * The console command description.

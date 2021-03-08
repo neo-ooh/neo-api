@@ -46,8 +46,6 @@ class MergeOTGResourcesIntoOneFormat extends Command {
         $layouts  = FormatLayout::query()->whereIn("format_id", $oldFormatsIds)->get();
         $contents = Content::query()->whereIn("layout_id", $layouts);
 
-        DB::beginTransaction();
-
         /** @var Content $content */
         foreach ($contents as $content) {
             /** @var Creative $creative */
@@ -60,20 +58,14 @@ class MergeOTGResourcesIntoOneFormat extends Command {
             }
         }
 
-        DB::commit();
-
         // Secondly, move all the campaigns to the new format
         $campaigns = Campaign::query()->whereIn("format_id", $oldFormatsIds)->get();
-
-        DB::beginTransaction();
 
         /** @var Campaign $campaign */
         foreach ($campaigns as $campaign) {
             $campaign->format_id = $newFormatId;
             $campaign->save();
         }
-
-        DB::commit();
 
         return 0;
     }

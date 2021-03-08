@@ -1,9 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+namespace Neo\Console\OneShots;
+
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
 use Neo\Models\Creative;
@@ -11,19 +11,29 @@ use Neo\Models\Format;
 use Neo\Models\FormatLayout;
 use Neo\Models\Frame;
 
-class MergeOtgFormatsIntoOne extends Migration
-{
+class MergeOTGResourcesIntoOneFormat extends Command {
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'one-shot:2021-03-08';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Merge all resources from the OTG formats to a unique one';
+
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
-    {
+    public function handle(): int {
         // Our goal is to merge all resources in the Depanneurs and gas stations formats into a single one.
         // For easier run, the formats IDs are hardcoded here. The value set here are for the production env.
         $oldFormatsIds = [4, 17];
-        $newFormatId = 43;
+        $newFormatId   = 43;
         /** @var Format $newFormat */
         $newFormat = Format::find($newFormatId);
         /** @var FormatLayout $newLayout */
@@ -33,7 +43,7 @@ class MergeOtgFormatsIntoOne extends Migration
         $newFrame = $newLayout->frames()->first();
 
         // First, move all contents and their creatives to the new format. thankfully, the old and new formats only have one frame.
-        $layouts = FormatLayout::query()->whereIn("format_id", $oldFormatsIds)->get();
+        $layouts  = FormatLayout::query()->whereIn("format_id", $oldFormatsIds)->get();
         $contents = Content::query()->whereIn("layout_id", $layouts);
 
         DB::beginTransaction();
@@ -64,15 +74,7 @@ class MergeOtgFormatsIntoOne extends Migration
         }
 
         DB::commit();
-    }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        //
+        return 0;
     }
 }

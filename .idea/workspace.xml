@@ -9,8 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_03_08_155056_merge_otg_formats_into_one.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/OneShots/MergeOTGResourcesIntoOneFormat.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -381,7 +380,7 @@
       <option name="project" value="CONNECT" />
       <updated>1614104598314</updated>
       <workItem from="1614104598991" duration="30862000" />
-      <workItem from="1615215614637" duration="6143000" />
+      <workItem from="1615215614637" duration="6220000" />
     </task>
     <option name="localTasksCounter" value="10" />
     <option name="createChangelist" value="false" />

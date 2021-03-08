@@ -25,7 +25,7 @@ class MergeOtgFormatsIntoOne extends Migration
         $oldFormatsIds = [4, 17];
         $newFormatId = 43;
         /** @var Format $newFormat */
-        $newFormat = Format::query()->find($newFormatId);
+        $newFormat = Format::find($newFormatId);
         /** @var FormatLayout $newLayout */
         $newLayout = $newFormat->layouts()->first();
 

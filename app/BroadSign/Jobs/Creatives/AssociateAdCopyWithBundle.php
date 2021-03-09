@@ -80,7 +80,7 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
         try {
             $bundle->associateCreative($creative->broadsign_ad_copy_id);
         } catch (BadResponse $exception) {
-            $this->release(60);
+            $this->release(120);
         }
     }
 }

@@ -43,7 +43,7 @@ class Frame extends BroadSignModel {
     protected static function actions(): array {
         return [
             "all" => Endpoint::get("/skin/v7")->multiple(),
-            "get" => Endpoint::get("/skin/v7/{id}"),
+            "get" => Endpoint::get("/skin/v7/{id}")->cache(3600),
             "byReservable" => Endpoint::get("/skin/v7/by_display_unit?display_unit_id={id}")->multiple(),
         ];
     }

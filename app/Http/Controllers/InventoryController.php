@@ -21,7 +21,7 @@ class InventoryController extends Controller {
      * @return ResponseFactory|Response
      */
     public function index (BroadSign $broadsign) {
-        $inventory = $broadsign->getInventoryReport(2020);
+        $inventory = $broadsign->getInventoryReport(2021);
 
         return new Response($inventory);
     }

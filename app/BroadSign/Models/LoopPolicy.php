@@ -44,7 +44,7 @@ class LoopPolicy extends BroadSignModel {
     protected static function actions(): array {
         return [
             "all" => Endpoint::get("/loop_policy/v10/all")->multiple(),
-            "get" => Endpoint::get("/loop_policy/v10/{id}"),
+            "get" => Endpoint::get("/loop_policy/v10/{id}")->cache(360),
         ];
     }
 }

@@ -38,11 +38,13 @@ class Inventory extends BroadSignModel {
 
     protected static function actions (): array {
         return [
-            "all" => Endpoint::get("/inventory/v1")->customTransform("processInventory"),
+            "all" => Endpoint::get("/inventory/v1")->customTransform("processInventory")->cache(3600),
         ];
     }
 
     protected static function processInventory ($inventory): Collection {
+        // Increase time limit
+        set_time_limit(120);
         /** @var Collection<Report> $reports */
         $reports = static::asMultipleSelf($inventory);
 

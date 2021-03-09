@@ -9,13 +9,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Frames/ShowFormatRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Inventory/ShowInventoryRequest.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/AssociateAdCopyWithBundle.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/AssociateAdCopyWithBundle.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Frame.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Frame.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Frame.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Skin.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/LoopPolicy.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/LoopPolicy.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Console/Utils/MergeOTGResourcesIntoOneFormat.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Utils/MergeOTGResourcesIntoOneFormat.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LocationsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LocationsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Location.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -225,7 +227,7 @@
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HTML&#10;MySQL" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Logging" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/Inventory" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -244,18 +246,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Inventory" />
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Frames" />
       <recent name="$PROJECT_DIR$/app/Logging" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/FormatsDisplayTypes" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/DisplayTypes" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/Formats" />
-      <recent name="$PROJECT_DIR$/app/Models" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Inventory" />
       <recent name="$PROJECT_DIR$/app/Console/OneShots" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Players" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Schedules" />
-      <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns" />
     </key>
   </component>
   <component name="RunManager" selected="PHPUnit.All Tests">
@@ -386,7 +388,7 @@
       <option name="project" value="CONNECT" />
       <updated>1614104598314</updated>
       <workItem from="1614104598991" duration="30862000" />
-      <workItem from="1615215614637" duration="14423000" />
+      <workItem from="1615215614637" duration="20768000" />
     </task>
     <option name="localTasksCounter" value="10" />
     <option name="createChangelist" value="false" />

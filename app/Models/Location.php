@@ -73,7 +73,7 @@ class Location extends SecuredModel {
      *
      * @var array
      */
-    protected $with = [ "format" ];
+    protected $with = [];
 
     /**
      * The rule used to validate access to the model upon binding it with a route

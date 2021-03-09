@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <Valentin Dufois>
  *
- * @neo/api - Frame.php
+ * @neo/api - Skin.php
  */
 
 namespace Neo\BroadSign\Models;
@@ -14,6 +14,7 @@ use Neo\BroadSign\Endpoint;
 
 /**
  * Class Support
+ *
  * @package Neo\BroadSign\Models
  *
  * @property bool   active
@@ -32,11 +33,12 @@ use Neo\BroadSign\Endpoint;
  * @property int y
  * @property int z
  *
- * @method static Frame[] all()
- * @method static Frame[] get(int $frameID)
- * @method static Frame[] byReservable(array $params)
+ * @method static Skin[] all()
+ * @method static Skin[] get(int $frameID)
+ * @method static Skin[] byReservable(array $params)
+ * @method static Skin[] byDisplayUnit(array $params)
  */
-class Frame extends BroadSignModel {
+class Skin extends BroadSignModel {
 
     protected static string $unwrapKey = "skin";
 
@@ -45,6 +47,7 @@ class Frame extends BroadSignModel {
             "all" => Endpoint::get("/skin/v7")->multiple(),
             "get" => Endpoint::get("/skin/v7/{id}")->cache(3600),
             "byReservable" => Endpoint::get("/skin/v7/by_display_unit?display_unit_id={id}")->multiple(),
+            "byDisplayUnit" => Endpoint::get("/skin/v7/by_display_unit")->multiple(),
         ];
     }
 }

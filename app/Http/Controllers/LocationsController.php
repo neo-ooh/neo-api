@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -38,26 +39,20 @@ class LocationsController extends Controller {
             Redirect::route('actors.locations', [ 'actor' => Auth::user() ]);
         }
 
-        $query = Location::query();
+        $query = Location::query()->with(["display_type"])->orderBy("name");
 
-        if ($request->has("format")) {
+        $query->when($request->has("format"), function (Builder $query) use ($request) {
             $displayTypes = Format::find($request->input("format"))->display_types->pluck("id");
             $query->whereIn("display_type_id", $displayTypes);
-            $query->with([ 'display_type' ]);
-        }
+        });
 
         $loadHierarchy = in_array('hierarchy', $request->input('with', []), true) ?? $request->has('with_hierarchy');
 
         if ($loadHierarchy) {
-            $query->with([ 'container' ]);
+            $query->with(["container"]);
         }
 
-        $query->orderBy("name");
         $locations = $query->get()->values();
-
-        if ($loadHierarchy) {
-            $locations->each(fn(location $location) => $location->container->append("parents_list"));
-        }
 
         if ($loadHierarchy) {
             $locations->each(fn ($location) => $location->loadHierarchy());

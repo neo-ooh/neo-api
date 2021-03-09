@@ -10,7 +10,7 @@
 
 namespace Neo\BroadSign\Models;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Neo\BroadSign\Endpoint;
 use Neo\Models\Report;
 
@@ -27,10 +27,10 @@ use Neo\Models\Report;
  *
  * @property Collection inventory
  *
- * @property Frame      skin
+ * @property Skin       skin
  * @property LoopPolicy loop_policy
  *
- * @method static Inventory[] all(array $params)
+ * @method static Inventory[] all()
  */
 class Inventory extends BroadSignModel {
 
@@ -38,13 +38,11 @@ class Inventory extends BroadSignModel {
 
     protected static function actions (): array {
         return [
-            "all" => Endpoint::get("/inventory/v1")->customTransform("processInventory")->cache(3600),
+            "all" => Endpoint::get("/inventory/v1")->customTransform("processInventory"),
         ];
     }
 
-    protected static function processInventory ($inventory): Collection {
-        // Increase time limit
-        set_time_limit(120);
+    public static function processInventory ($inventory): Collection {
         /** @var Collection<Report> $reports */
         $reports = static::asMultipleSelf($inventory);
 
@@ -53,21 +51,36 @@ class Inventory extends BroadSignModel {
         return $reports;
     }
 
-    public function processReport (): void {
+    protected function processReport (): void {
         // Parse the inventory string to an array
-        $inventory = ltrim($this->inventory, '{');
-        $inventory = rtrim($inventory, '}');
+        $inventory = rtrim(ltrim($this->inventory, '{'), '}');
         $this->inventory = collect(explode(',', $inventory));
 
         // Transform each value to an appropriate number
         $this->inventory = $this->inventory->map(fn ($val) => (int)$val / 10_000.0);
         $this->inventory_size = $this->inventory->count();
+    }
 
-        // Load the skin and the loop slot
-        $this->skin = Frame::get($this->skin_id);
-        $this->loop_policy = LoopPolicy::get($this->skin->loop_policy_id);
+    public static function forDisplayUnit(int $displayUnitId, int $year) {
+        // Load the frames for the display unit
+        $skins = Skin::byDisplayUnit(["display_unit_id" => $displayUnitId]);
 
-        // Calculate the maximum booking
-        $this->loop_policy->max_booking = $this->loop_policy->max_duration_msec / $this->loop_policy->default_slot_duration;
+        // Load the current inventory state
+        /** @var Collection<Inventory> $inventory */
+        $inventory = static::all(["year" => $year]);
+
+        // Load loop policies for each skin
+        /** @var Skin $skin */
+        foreach ($skins as $skin) {
+            $skin->loop_policy = LoopPolicy::get($skin->loop_policy_id);
+
+            // Calculate the maximum booking
+            $skin->loop_policy->max_booking = $skin->loop_policy->max_duration_msec / $skin->loop_policy->default_slot_duration;
+
+            // Inject the inventory state
+            $skin->inventory = $inventory->first(fn($inventory) => $inventory->skin_id === $skin->id);
+        }
+
+        return $skins;
     }
 }

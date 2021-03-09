@@ -145,7 +145,7 @@ class TwoFactorToken extends Model {
 
         // Good token
         $this->validated = true;
-        $this->validated_at = $this->freshTimestamp();
+        $this->validated_at = Date::now("America/Toronto");
         $this->save();
 
         return true;

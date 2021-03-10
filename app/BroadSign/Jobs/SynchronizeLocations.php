@@ -3,7 +3,7 @@
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
- * Written by Valentin Dufois <Valentin Dufois>
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
  * @neo/api - SynchronizeLocations.php
  */
@@ -52,11 +52,12 @@ class SynchronizeLocations extends BroadSignJob {
                 $containerID = $bsContainer->id;
             }
 
-            $location = Location::query()->firstOrCreate([
+            $location = Location::query()->updateOrCreate([
                 "broadsign_display_unit" => $bslocation->id,
             ], [
                 "display_type_id" => DisplayType::query()
-                                                ->where("broadsign_display_type_id", "=", $bslocation->display_unit_type_id),
+                                                ->where("broadsign_display_type_id", "=", $bslocation->display_unit_type_id)
+                                                ->first(),
                 "name"            => $bslocation->name,
                 "internal_name"   => $bslocation->name,
                 "container_id"    => $containerID,

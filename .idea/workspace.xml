@@ -8,14 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Locations/SearchLocationsRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/webResources.xml" beforeDir="false" />
+    <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
+      <change beforePath="$PROJECT_DIR$/.idea/webResources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webResources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LocationsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LocationsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Locations/ListLocationsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Locations/ListLocationsRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Location.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -241,6 +237,27 @@
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
     <property name="tasks.open.task.update.state.enabled" value="true" />
+    <property name="timeTracker.activityTracker" value="null" />
+    <property name="timeTracker.comment" value="" />
+    <property name="timeTracker.inactivityPeriodInMills" value="600000" />
+    <property name="timeTracker.isAutoTrackingEnable" value="false" />
+    <property name="timeTracker.isAutoTrackingTemporaryDisabled" value="false" />
+    <property name="timeTracker.isManualTrackingEnable" value="false" />
+    <property name="timeTracker.isPaused" value="true" />
+    <property name="timeTracker.isPostAfterCommitEnabled" value="true" />
+    <property name="timeTracker.isPostedScheduled" value="true" />
+    <property name="timeTracker.isRunning" value="false" />
+    <property name="timeTracker.isScheduledEnabled" value="true" />
+    <property name="timeTracker.isWhenProjectClosedEnabled" value="true" />
+    <property name="timeTracker.issueId" value="Default" />
+    <property name="timeTracker.issueIdReadable" value="Default" />
+    <property name="timeTracker.pausedTime" value="0" />
+    <property name="timeTracker.query" value="" />
+    <property name="timeTracker.recordedTime" value="0" />
+    <property name="timeTracker.scheduledPeriod" value="19:00:0" />
+    <property name="timeTracker.startTime" value="0" />
+    <property name="timeTracker.timeInMills" value="0" />
+    <property name="timeTracker.type" value="Development" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RecentsManager">
@@ -278,9 +295,9 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="PHPUnit.SyncActorCapabilitiesTest.testActorCanAddCapabilityToAccessibleActor" />
         <item itemvalue="PHPUnit.UpdateActorTest.testActorParentCanBeChanged" />
         <item itemvalue="PHPUnit.TermsOfServiceTest.testTermsOfServiceCanBeRetrievedLoggedIn" />
+        <item itemvalue="PHPUnit.SyncActorCapabilitiesTest.testActorCanAddCapabilityToAccessibleActor" />
         <item itemvalue="PHPUnit.StoreScheduleTest.testCorrectResponseReturnedOnCorrectRequest" />
       </list>
     </recent_temporary>
@@ -389,9 +406,17 @@
       <workItem from="1614104598991" duration="30862000" />
       <workItem from="1615215614637" duration="25806000" />
       <workItem from="1615328890744" duration="5093000" />
-      <workItem from="1615388486961" duration="296000" />
+      <workItem from="1615388486961" duration="2772000" />
+      <workItem from="1615394894850" duration="563000" />
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Add Locations search endpoint">
+      <created>1615388957440</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1615388957440</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <option name="createChangelist" value="false" />
     <option name="createBranch" value="false" />
     <option name="useBranch" value="true" />
@@ -440,7 +465,8 @@
     <option name="CHECK_CODE_CLEANUP_BEFORE_PROJECT_COMMIT" value="true" />
     <MESSAGE value="Fix ReviewTemplatesController static typing" />
     <MESSAGE value="WiP 2020-12-07 Reports+Bursts+screenshots" />
-    <option name="LAST_COMMIT_MESSAGE" value="WiP 2020-12-07 Reports+Bursts+screenshots" />
+    <MESSAGE value="Add Locations search endpoint" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Locations search endpoint" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

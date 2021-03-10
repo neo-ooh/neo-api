@@ -10,6 +10,7 @@
 
 namespace Neo\BroadSign\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Neo\BroadSign\Endpoint;
 
 /**
@@ -36,7 +37,7 @@ use Neo\BroadSign\Endpoint;
  * @method static Skin[] all()
  * @method static Skin[] get(int $frameID)
  * @method static Skin[] byReservable(array $params)
- * @method static Skin[] byDisplayUnit(array $params)
+ * @method static Collection byDisplayUnit(array $params)
  */
 class Skin extends BroadSignModel {
 

@@ -9,8 +9,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
+      <change afterPath="$PROJECT_DIR$/app/Console/CacheInventory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Inventory.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/HasCompositePrimarykey.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Skin.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Skin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Kernel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Inventory/ShowInventoryRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Inventory/ShowInventoryRequest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -221,7 +228,7 @@
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HTML&#10;MySQL" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/Locations" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Models" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -261,18 +268,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Models" />
+      <recent name="$PROJECT_DIR$/app/BroadSign/Jobs" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Locations" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Inventory" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Frames" />
-      <recent name="$PROJECT_DIR$/app/Logging" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/FormatsDisplayTypes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Console" />
+      <recent name="$PROJECT_DIR$/app/Jobs" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Inventory" />
       <recent name="$PROJECT_DIR$/app/Console/OneShots" />
       <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Players" />
-      <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives" />
-      <recent name="$PROJECT_DIR$/app/BroadSign/Jobs/Schedules" />
     </key>
   </component>
   <component name="RunManager" selected="PHPUnit.All Tests">
@@ -406,7 +413,7 @@
       <workItem from="1615215614637" duration="25806000" />
       <workItem from="1615328890744" duration="5093000" />
       <workItem from="1615388486961" duration="2772000" />
-      <workItem from="1615394894850" duration="2470000" />
+      <workItem from="1615394894850" duration="9756000" />
     </task>
     <task id="LOCAL-00010" summary="Add Locations search endpoint">
       <created>1615388957440</created>

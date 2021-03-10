@@ -11,22 +11,35 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Neo\BroadSign\Models\Inventory;
+use Illuminate\Support\Facades\Log;
+use Neo\BroadSign\Models\Skin;
 use Neo\Http\Requests\Inventory\ShowInventoryRequest;
+use Neo\Models\Actor;
+use Neo\Models\Inventory;
 use Neo\Models\Location;
 
 class InventoryController extends Controller {
     public function index(ShowInventoryRequest $request) {
-        $year = $request->validated()["year"];
-        // Start by loading all the locations
-        $locationsIds = $request->validated()["locations"];
-        $locations    = Location::query()->findMany($locationsIds);
+        $year  = $request->validated()["year"];
+        $actor = Actor::findOrFail($request->validated()["actor_id"]);
 
-        // For each location, we need to retrieve its frames and inventory for each one.
-        // By frames, we mean here the skins associated with the display unit in BroadSign
+        $locations = $actor->getLocations(true, false, true);
+
+        // We want the inventory for each and every frame of all the selected locations
         /** @var Location $location */
         foreach ($locations as $location) {
-            $location->skins = Inventory::forDisplayUnit($location->broadsign_display_unit, $year);
+            $skins = Skin::byDisplayUnit(["display_unit_id" => $location->broadsign_display_unit]);
+
+            $skins->each(function ($skin) use ($year) {
+                Log::debug($year);
+                return $skin->inventory = Inventory::query()
+                                                   ->where("skin_id", "=", $skin->id)
+                                                   ->where("year", "=", $year)
+                                                   ->first();
+            }
+            );
+
+            $location->skins = $skins;
         }
 
         return new Response($locations);

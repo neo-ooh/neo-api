@@ -30,7 +30,7 @@ use Neo\Models\Report;
  * @property Skin       skin
  * @property LoopPolicy loop_policy
  *
- * @method static Inventory[] all()
+ * @method static Inventory[] all(array $params)
  */
 class Inventory extends BroadSignModel {
 

@@ -24,6 +24,7 @@ class Kernel extends ConsoleKernel {
     protected $commands = [
         NetworkUpdate::class,
         RebuildResources::class,
+        CacheInventory::class,
 
         Hotfixes\DisableFullscreenEverywhere::class,
         Hotfixes\RetargetAllCampaigns::class,
@@ -43,8 +44,14 @@ class Kernel extends ConsoleKernel {
      * @return void
      */
     protected function schedule(Schedule $schedule) {
-        $schedule->command('network:update')->daily();
+        // Every-second tasks
         $schedule->job(RequestScreenshotsBursts::class)->everyMinute();
+
+        // Hourly tasks
+        $schedule->command('network:cache-inventory')->hourly();
+
+        // Daily tasks
+        $schedule->command('network:update')->daily();
     }
 
     /**
@@ -54,10 +61,6 @@ class Kernel extends ConsoleKernel {
      */
     protected function commands() {
         $this->load(__DIR__ . '/Commands');
-
-        $this->command("reports:refresh {reportId}", function($reportId) {
-            RefreshReportReservations::dispatchSync($reportId);
-        });
 
         require base_path('routes/console.php');
     }

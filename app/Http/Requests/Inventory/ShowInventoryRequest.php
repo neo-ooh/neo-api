@@ -32,8 +32,7 @@ class ShowInventoryRequest extends FormRequest {
     public function rules (): array {
         return [
             "year" => ["required", "integer"],
-            "locations" => ["required", "array"],
-            "locations.*" => ["integer", "exists:locations,id"]
+            "actor_id" => ["required", "integer", "exists:actors,id"]
         ];
     }
 }

@@ -52,12 +52,14 @@ class SynchronizeLocations extends BroadSignJob {
                 $containerID = $bsContainer->id;
             }
 
+            $displayType = DisplayType::query()
+                                       ->where("broadsign_display_type_id", "=", $bslocation->display_unit_type_id)
+                                       ->first();
+
             $location = Location::query()->updateOrCreate([
                 "broadsign_display_unit" => $bslocation->id,
             ], [
-                "display_type_id" => DisplayType::query()
-                                                ->where("broadsign_display_type_id", "=", $bslocation->display_unit_type_id)
-                                                ->first(),
+                "display_type_id" => $displayType->id ?? 0,
                 "name"            => $bslocation->name,
                 "internal_name"   => $bslocation->name,
                 "container_id"    => $containerID,

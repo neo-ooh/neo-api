@@ -9,8 +9,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
-      <change beforePath="$PROJECT_DIR$/.idea/webResources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/webResources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -407,7 +405,7 @@
       <workItem from="1615215614637" duration="25806000" />
       <workItem from="1615328890744" duration="5093000" />
       <workItem from="1615388486961" duration="2772000" />
-      <workItem from="1615394894850" duration="563000" />
+      <workItem from="1615394894850" duration="768000" />
     </task>
     <task id="LOCAL-00010" summary="Add Locations search endpoint">
       <created>1615388957440</created>
@@ -416,7 +414,14 @@
       <option name="project" value="LOCAL" />
       <updated>1615388957440</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Fix Locations' `display_type_id` being set to zero on new Locations">
+      <created>1615395569678</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1615395569678</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <option name="createChangelist" value="false" />
     <option name="createBranch" value="false" />
     <option name="useBranch" value="true" />
@@ -466,7 +471,8 @@
     <MESSAGE value="Fix ReviewTemplatesController static typing" />
     <MESSAGE value="WiP 2020-12-07 Reports+Bursts+screenshots" />
     <MESSAGE value="Add Locations search endpoint" />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Locations search endpoint" />
+    <MESSAGE value="Fix Locations' `display_type_id` being set to zero on new Locations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fix Locations' `display_type_id` being set to zero on new Locations" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />

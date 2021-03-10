@@ -3,20 +3,21 @@
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
- * Written by Valentin Dufois <Valentin Dufois>
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
  * @neo/api - LocationsController.php
  */
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Locations\ListLocationsRequest;
+use Neo\Http\Requests\Locations\SearchLocationsRequest;
 use Neo\Http\Requests\Locations\ShowLocationRequest;
 use Neo\Http\Requests\Locations\UpdateLocationRequest;
 use Neo\Models\Actor;
@@ -27,7 +28,7 @@ class LocationsController extends Controller {
     /**
      * List all locations this user has access to
      *
-     * @param ListLocationsRequest $request
+     * @param SearchLocationsRequest $request
      *
      * @return Response
      */
@@ -36,11 +37,17 @@ class LocationsController extends Controller {
         $actor = Auth::user();
 
         if (!$actor->hasCapability(Capability::locations_edit())) {
-            Redirect::route('actors.locations', [ 'actor' => Auth::user() ]);
+            Redirect::route('actors.locations', ['actor' => Auth::user()]);
         }
 
         $query = Location::query()->with(["display_type"])->orderBy("name");
 
+        // Should we  scope by container ?
+        $query->when($request->has("container"), function (Builder $query) use ($request) {
+            $query->where("container_id", "=", $request->input("container"));
+        });
+
+        // Should we scope by format ?
         $query->when($request->has("format"), function (Builder $query) use ($request) {
             $displayTypes = Format::find($request->input("format"))->display_types->pluck("id");
             $query->whereIn("display_type_id", $displayTypes);
@@ -51,22 +58,33 @@ class LocationsController extends Controller {
         if ($loadHierarchy) {
             $query->with(["container"]);
         }
-
+        clock()->event('Executing and serializing')->color('purple')->begin();
         $locations = $query->get()->values();
+        clock()->event('Executing and serializing')->end();
 
         if ($loadHierarchy) {
-            $locations->each(fn ($location) => $location->loadHierarchy());
+            $locations->each(fn($location) => $location->loadHierarchy());
         }
+
+        return new Response($locations);
+    }
+
+    public function search(SearchLocationsRequest $request) {
+        $q         = strtolower($request->query("q"));
+        $locations = Location::query()
+                             ->with("display_type")
+                             ->where('locations.name', 'LIKE', "%{$q}%")
+                             ->get();
 
         return new Response($locations);
     }
 
     /**
      * @param ShowLocationRequest $request
-     * @param Location $location
+     * @param Location            $location
      * @return Response
      */
-    public function show (ShowLocationRequest $request, Location $location): Response {
+    public function show(ShowLocationRequest $request, Location $location): Response {
         if ($request->has('with_hierarchy')) {
             $location->loadHierarchy();
         }

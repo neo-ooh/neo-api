@@ -3,7 +3,7 @@
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
- * Written by Valentin Dufois <Valentin Dufois>
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
  * @neo/api - api.php
  */
@@ -378,6 +378,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route::model("location", Location::class);
 
     Route:: get("locations", LocationsController::class . "@index")->name("locations.index");
+    Route:: get("locations/_search", LocationsController::class . "@search")->name("locations.search");
     Route:: get("locations/{location}", LocationsController::class . "@show")->name("locations.show");
     Route:: put("locations/{location}", LocationsController::class . "@update")->name("locations.update");
 

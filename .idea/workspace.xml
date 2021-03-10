@@ -9,9 +9,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Locations/SearchLocationsRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/webResources.xml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/TwoFactorToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/TwoFactorToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/LocationsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/LocationsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Locations/ListLocationsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Locations/ListLocationsRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Location.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +73,7 @@
       </server>
     </servers>
   </component>
-  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 8.0">
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 7.4">
     <include_path>
       <path value="$PROJECT_DIR$/vendor/neutron/temporary-filesystem" />
       <path value="$PROJECT_DIR$/vendor/dragonmantank/cron-expression" />
@@ -201,6 +205,7 @@
       <path value="$PROJECT_DIR$/vendor/doctrine/event-manager" />
     </include_path>
   </component>
+  <component name="PhpXdebugProxy" ide_key="PHPSTORM" host="localhost" port="9003" />
   <component name="ProjectId" id="1ksnCPVQp4bw80G0IajP0zqEtzk" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
@@ -221,7 +226,7 @@
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HTML&#10;MySQL" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/Inventory" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Requests/Locations" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -240,11 +245,11 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/Http/Requests/Locations" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Inventory" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Frames" />
       <recent name="$PROJECT_DIR$/app/Logging" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/FormatsDisplayTypes" />
-      <recent name="$PROJECT_DIR$/app/Http/Requests/DisplayTypes" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/Http/Requests/Inventory" />
@@ -382,7 +387,9 @@
       <option name="project" value="CONNECT" />
       <updated>1614104598314</updated>
       <workItem from="1614104598991" duration="30862000" />
-      <workItem from="1615215614637" duration="22748000" />
+      <workItem from="1615215614637" duration="25806000" />
+      <workItem from="1615328890744" duration="5093000" />
+      <workItem from="1615388486961" duration="296000" />
     </task>
     <option name="localTasksCounter" value="10" />
     <option name="createChangelist" value="false" />

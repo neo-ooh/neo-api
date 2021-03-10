@@ -3,7 +3,7 @@
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
- * Written by Valentin Dufois <Valentin Dufois>
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
  * @neo/api - Location.php
  */
@@ -73,7 +73,9 @@ class Location extends SecuredModel {
      *
      * @var array
      */
-    protected $with = [];
+    protected $with = [
+        "display_type"
+    ];
 
     /**
      * The rule used to validate access to the model upon binding it with a route

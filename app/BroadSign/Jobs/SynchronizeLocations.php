@@ -15,6 +15,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Neo\BroadSign\Models\Location as BSLocation;
 use Neo\Models\DisplayType;
 use Neo\Models\Location;
@@ -56,16 +57,17 @@ class SynchronizeLocations extends BroadSignJob {
                                        ->where("broadsign_display_type_id", "=", $bslocation->display_unit_type_id)
                                        ->first();
 
-            $location = Location::query()->updateOrCreate([
+            $location = Location::query()->firstOrCreate([
                 "broadsign_display_unit" => $bslocation->id,
             ], [
-                "display_type_id" => $displayType->id ?? 0,
+                "display_type_id" => $displayType->id,
                 "name"            => $bslocation->name,
                 "internal_name"   => $bslocation->name,
                 "container_id"    => $containerID,
             ]);
 
 
+            $location->display_type_id = $displayType->id;
             $location->container_id = $containerID;
             $location->save();
             $locations[] = $location->id;

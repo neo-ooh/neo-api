@@ -9,6 +9,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -405,7 +406,7 @@
       <workItem from="1615215614637" duration="25806000" />
       <workItem from="1615328890744" duration="5093000" />
       <workItem from="1615388486961" duration="2772000" />
-      <workItem from="1615394894850" duration="768000" />
+      <workItem from="1615394894850" duration="2470000" />
     </task>
     <task id="LOCAL-00010" summary="Add Locations search endpoint">
       <created>1615388957440</created>

@@ -34,6 +34,7 @@ use Neo\Http\Controllers\FramesController;
 use Neo\Http\Controllers\InventoryController;
 use Neo\Http\Controllers\LibrariesController;
 use Neo\Http\Controllers\LocationsController;
+use Neo\Http\Controllers\NetworkController;
 use Neo\Http\Controllers\ParamsController;
 use Neo\Http\Controllers\ReportsController;
 use Neo\Http\Controllers\ReviewsController;
@@ -382,6 +383,14 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route:: get("locations/{location}", LocationsController::class . "@show")->name("locations.show");
     Route:: put("locations/{location}", LocationsController::class . "@update")->name("locations.update");
 
+
+    /*
+    |----------------------------------------------------------------------
+    | Network
+    |----------------------------------------------------------------------
+    */
+
+    Route:: get("network/refresh", NetworkController::class . "@refresh")->name("network.refresh");
 
     /*
     |----------------------------------------------------------------------

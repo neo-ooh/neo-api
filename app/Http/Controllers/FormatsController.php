@@ -40,6 +40,7 @@ class FormatsController extends Controller
             $formats = Format::query()
                              ->when($request->has("enabled"),
                                  fn(Builder $query) => $query->where("is_enabled", "=", (bool)$request->get("enabled")))
+                             ->with("display_types")
                              ->get();
         }
 

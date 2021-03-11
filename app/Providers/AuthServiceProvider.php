@@ -14,6 +14,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Neo\Auth\AccessTokenGuard;
 use Neo\Auth\FirstLoAGuard;
 use Neo\Auth\FourthLoAGuard;
 use Neo\Auth\SecondLoAGuard;
@@ -39,7 +40,7 @@ class AuthServiceProvider extends ServiceProvider {
      * @return void
      */
     public function boot(): void {
-        // Register our JWT Authentication= providers
+        // Register our JWT Authentication providers
         Auth::extend('neo-loa-4', fn($app, $name, array $config) =>
             new FourthLoAGuard(Auth::createUserProvider($config['provider'])));
 
@@ -53,8 +54,14 @@ class AuthServiceProvider extends ServiceProvider {
             new FirstLoAGuard(Auth::createUserProvider($config['provider'])));
 
 
+        // Register the AccessToken Authentication provider
+        Auth::extend("access-tokens", fn($app, $name, array $config) =>
+            new AccessTokenGuard());
+
+
         // Register our gate authorization provider
         Gate::before(
-            fn(Actor $actor, string $capability) => $actor->hasCapability(Capability::coerce($capability)));
+            fn(Actor $actor, string $capability) => $actor->hasCapability(Capability::coerce($capability))
+        );
     }
 }

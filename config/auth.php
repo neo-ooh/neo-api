@@ -64,6 +64,11 @@ return [
             'provider' => 'actors',
             'hash'     => false,
         ],
+        'access-tokens' => [
+            'driver'   => 'access-tokens',
+            'provider' => 'actors',
+            'hash'     => false,
+        ],
         'test' => [
             'driver'   => 'test',
             'provider' => 'actors',
@@ -92,6 +97,10 @@ return [
         'actors' => [
             'driver' => 'eloquent',
             'model' => Neo\Models\Actor::class,
+        ],
+        'access_tokens' => [
+            'driver' => 'eloquent',
+            'model' => Neo\Models\AccessToken::class,
         ],
     ],
 

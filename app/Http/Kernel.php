@@ -71,6 +71,8 @@ class Kernel extends HttpKernel {
             SubstituteBindings::class,
         ],
         'documents'   => [
+            'throttle:api',
+            'auth:access-tokens',
             SubstituteBindings::class,
         ],
     ];

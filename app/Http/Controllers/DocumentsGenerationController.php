@@ -32,7 +32,7 @@ class DocumentsGenerationController extends Controller {
         $contract = null;
 
         switch ($request->route('document')) {
-            case "contract":
+            case "proposal":
                 $contract = Contract::make($file->getContent());
 //                $contract = Contract::make(Storage::disk('local')->get('sale.order.5.csv'));
                 break;

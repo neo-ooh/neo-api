@@ -84,7 +84,7 @@ class LocationsController extends Controller {
     /**
      * @param SalesLocationRequest $request
      */
-    public function allByNetworks(SalesLocationRequest $request) {
+    public function allByNetwork(SalesLocationRequest $request) {
         // We want to list all the locations per network and per province
         // retrieve our networks roots
         $locations = [];

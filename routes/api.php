@@ -380,7 +380,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
 
     Route:: get("locations", LocationsController::class . "@index")->name("locations.index");
     Route:: get("locations/_search", LocationsController::class . "@search")->name("locations.search");
-    Route:: get("locations/_networks", LocationsController::class . "@allByNetworks")->name("locations.networks");
+    Route:: get("locations/_network", LocationsController::class . "@allByNetworks")->name("locations.network");
     Route:: get("locations/{location}", LocationsController::class . "@show")->name("locations.show");
     Route:: put("locations/{location}", LocationsController::class . "@update")->name("locations.update");
 

@@ -97,7 +97,14 @@ class LocationsController extends Controller {
                 continue;
             }
 
-            $locations[$networkID] = $root->getLocations(true, false, true, true)->groupBy("province");
+            $locations[$networkID] = $root->getLocations(true, false, true, true)
+                                          ->map(fn($location) => [
+                                              "id" => $location->id,
+                                              "name" => $location->name,
+                                              "province" => $location->province,
+                                              "city" => $location->city,
+                                          ])
+                                          ->groupBy(["province", "city"]);
         }
 
         return new Response($locations);

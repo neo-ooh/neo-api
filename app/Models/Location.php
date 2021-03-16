@@ -27,6 +27,7 @@ use Neo\Rules\AccessibleLocation;
  * @property string     internal_name
  * @property int        container_id
  * @property string     province [QC, ON, ...]
+ * @property string     city
  *
  * @property ?Container container
  *

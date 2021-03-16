@@ -8,6 +8,6 @@ use Neo\Http\Requests\Network\NetworkRequest;
 class NetworkController extends Controller
 {
     public function refresh(NetworkRequest $request) {
-        Artisan::queue("network:refresh");
+        Artisan::queue("network:update");
     }
 }

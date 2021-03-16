@@ -11,6 +11,7 @@
 namespace Neo\BroadSign\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -28,7 +29,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  *
  * @package Neo\Jobs
  */
-class SynchronizePlayers extends BroadSignJob {
+class SynchronizePlayers implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle(): void {

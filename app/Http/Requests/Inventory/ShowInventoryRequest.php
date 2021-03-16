@@ -34,6 +34,7 @@ class ShowInventoryRequest extends FormRequest {
             "year" => ["required", "integer"],
             "network" => ["required", "string"],
             "province" => ["sometimes", "string"],
+            "city" => ["sometimes", "string"],
             "location_id" => ["sometimes", "exists:locations,id"]
         ];
     }

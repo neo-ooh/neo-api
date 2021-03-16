@@ -34,6 +34,11 @@ class InventoryController extends Controller {
                 $province  = $request->validated()["province"];
                 $locations = $locations->filter(fn($location) => $location->province === $province);
             }
+
+            if ($request->has("city")) {
+                $city  = $request->validated()["city"];
+                $locations = $locations->filter(fn($location) => $location->city === $city);
+            }
         }
 
         // We want the inventory for each and every frame of all the selected locations

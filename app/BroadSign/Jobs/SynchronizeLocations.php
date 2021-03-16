@@ -64,8 +64,8 @@ class SynchronizeLocations implements ShouldQueue {
             // [4] => Province
             // [5] => Zip code
             if(preg_match('/(^\d*)\s([.\-\w\s]+),\s*([.\-\w\s]+),\s*([A-Z]{2})\s(\w\d\w\s*\d\w\d)/iu', $bslocation->address, $matches)) {
-                $address = $matches[4];
-                $city = $matches[3];
+                $address = trim($matches[4]);
+                $city = trim($matches[3]);
             } else {
                 Log::info("No address available for Display Unit $bslocation->name");
                 $address = "--";

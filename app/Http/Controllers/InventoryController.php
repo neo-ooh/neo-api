@@ -52,6 +52,6 @@ class InventoryController extends Controller {
             $location->skins = $skins;
         }
 
-        return new Response($locations);
+        return new Response($locations->values());
     }
 }

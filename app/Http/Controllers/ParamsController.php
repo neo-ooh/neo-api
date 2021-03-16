@@ -14,6 +14,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -47,42 +48,48 @@ class ParamsController extends Controller {
         if (Str::startsWith($parameter->format, "file:")) {
             $file = $request->file("value");
 
-            // Confirm upload success
-            if (!$file->isValid()) {
-                return new Response([
-                    "code"    => "upload.error",
-                    "message" => "Error during upload",
-                ],
-                    400);
-            }
+            $this->handleFileParameter($parameter, $file);
+        }
 
-            $fileType = explode(":", $parameter->format)[1];
-
-            // Validate the file
-            $validator = Validator::make([ "value" => $file ], [ "value" => "file|mimes:{$fileType}" ]);
-            if ($validator->fails()) {
-                throw new ValidationException($validator);
-            }
-
-            // File is OK, store it properly
-            if ($parameter->slug === "tos") {
-                $fileName = "terms-of-service.pdf";
-                if (Storage::exists($fileName)) {
-                    Storage::delete($fileName);
-                }
-
-                $file->storePubliclyAs('/', $fileName);
-                $parameter->value = Storage::url($fileName);
-
-                // Tos have been updated, now require everyone to accept it again
-                Actor::query()->update(['tos_accepted' => false]);
-            }
-        } else {
+        if ($parameter->format === "actor" || $parameter->format === "text") {
             $parameter->value = $request->get("value");
         }
 
         $parameter->save();
 
         return new Response($parameter);
+    }
+
+    protected function handleFileParameter(Param $parameter, UploadedFile $file) {
+        // Confirm upload success
+        if (!$file->isValid()) {
+            return new Response([
+                "code"    => "upload.error",
+                "message" => "Error during upload",
+            ],
+                400);
+        }
+
+        $fileType = explode(":", $parameter->format)[1];
+
+        // Validate the file
+        $validator = Validator::make([ "value" => $file ], [ "value" => "file|mimes:{$fileType}" ]);
+        if ($validator->fails()) {
+            throw new ValidationException($validator);
+        }
+
+        // File is OK, store it properly
+        if ($parameter->slug === "tos") {
+            $fileName = "terms-of-service.pdf";
+            if (Storage::exists($fileName)) {
+                Storage::delete($fileName);
+            }
+
+            $file->storePubliclyAs('/', $fileName);
+            $parameter->value = Storage::url($fileName);
+
+            // Tos have been updated, now require everyone to accept it again
+            Actor::query()->update(['tos_accepted' => false]);
+        }
     }
 }

@@ -17,12 +17,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Locations\ListLocationsRequest;
+use Neo\Http\Requests\Locations\SalesLocationRequest;
 use Neo\Http\Requests\Locations\SearchLocationsRequest;
 use Neo\Http\Requests\Locations\ShowLocationRequest;
 use Neo\Http\Requests\Locations\UpdateLocationRequest;
 use Neo\Models\Actor;
 use Neo\Models\Format;
 use Neo\Models\Location;
+use Neo\Models\Param;
 
 class LocationsController extends Controller {
     /**
@@ -75,6 +77,28 @@ class LocationsController extends Controller {
                              ->with("display_type")
                              ->where('locations.name', 'LIKE', "%{$q}%")
                              ->get();
+
+        return new Response($locations);
+    }
+
+    /**
+     * @param SalesLocationRequest $request
+     */
+    public function allByNetworks(SalesLocationRequest $request) {
+        // We want to list all the locations per network and per province
+        // retrieve our networks roots
+        $locations = [];
+
+        foreach (["NETWORK_SHOPPING", "NETWORK_FITNESS", "NETWORK_OTG"] as $networkID) {
+            $root = Actor::find(Param::find($networkID)->value);
+
+            if(!$root) {
+                // Ignore network if root is missing
+                continue;
+            }
+
+            $locations[$networkID] = $root->getLocations(true, false, true, true)->groupBy("province");
+        }
 
         return new Response($locations);
     }

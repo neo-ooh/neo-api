@@ -24,7 +24,7 @@ use Neo\Models\Location;
  * @property Collection<Location> locations
  */
 trait HasLocations {
-    public function getLocations($own = true, $group = true, $children = true): Collection {
+    public function getLocations($own = true, $group = true, $children = true, $recurs = false): Collection {
         $locations = new Collection();
 
         if($group && !$this->is_group && $this->details->parent_is_group) {
@@ -34,7 +34,7 @@ trait HasLocations {
         }
 
         if($children) {
-            $locations = $locations->merge($this->children->map(fn($child) => $child->getLocations(true, false, false))->flatten());
+            $locations = $locations->merge($this->children->map(fn($child) => $child->getLocations(true, false, $children && $recurs, $recurs))->flatten());
         }
 
         return $locations->unique("id")->values();

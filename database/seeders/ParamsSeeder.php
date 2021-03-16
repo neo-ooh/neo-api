@@ -35,5 +35,22 @@ class ParamsSeeder extends Seeder {
             "format" => "text",
             "value" => "..."
         ]);
+
+        // Network actors references
+        Param::insertOrIgnore([
+            "slug" => "NETWORK_SHOPPING",
+            "format" => "actor",
+            "value" => null
+        ]);
+        Param::insertOrIgnore([
+            "slug" => "NETWORK_FITNESS",
+            "format" => "actor",
+            "value" => null
+        ]);
+        Param::insertOrIgnore([
+            "slug" => "NETWORK_OTG",
+            "format" => "actor",
+            "value" => null
+        ]);
     }
 }

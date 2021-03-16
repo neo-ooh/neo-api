@@ -102,8 +102,9 @@ class LocationsController extends Controller {
                                               "id" => $location->id,
                                               "name" => $location->name,
                                               "province" => $location->province,
+                                              "city" => $location->city,
                                           ])
-                                          ->groupBy("province");
+                                          ->groupBy(["province", "city"]);
         }
 
         return new Response($locations);

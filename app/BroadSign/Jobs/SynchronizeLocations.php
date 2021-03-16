@@ -13,6 +13,7 @@ namespace Neo\BroadSign\Jobs;
 
 use ErrorException;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -30,7 +31,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  *
  * @package Neo\Jobs
  */
-class SynchronizeLocations extends BroadSignJob {
+class SynchronizeLocations implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle(): void {
@@ -63,10 +64,12 @@ class SynchronizeLocations extends BroadSignJob {
             // [4] => Province
             // [5] => Zip code
             if(preg_match('/(^\d*)\s([.\-\w\s]+),\s*([.\-\w\s]+),\s*([A-Z]{2})\s(\w\d\w\s*\d\w\d)/iu', $bslocation->address, $matches)) {
-                $address = $matches[4];
+                $address = trim($matches[4]);
+                $city = trim($matches[3]);
             } else {
                 Log::info("No address available for Display Unit $bslocation->name");
                 $address = "--";
+                $city = "--";
             }
 
             /** @var DisplayType $displayType */
@@ -85,6 +88,7 @@ class SynchronizeLocations extends BroadSignJob {
             $location->display_type_id = $displayType->id;
             $location->container_id = $containerID;
             $location->province = $address;
+            $location->city = $city;
             $location->save();
             $locations[] = $location->id;
 

@@ -17,13 +17,29 @@ use Neo\Http\Requests\Inventory\ShowInventoryRequest;
 use Neo\Models\Actor;
 use Neo\Models\Inventory;
 use Neo\Models\Location;
+use Neo\Models\Param;
 
 class InventoryController extends Controller {
     public function index(ShowInventoryRequest $request) {
-        $year  = $request->validated()["year"];
-        $actor = Actor::findOrFail($request->validated()["actor_id"]);
+        $year    = $request->validated()["year"];
+        $network = $request->validated()["network"];
 
-        $locations = $actor->getLocations(true, false, true);
+        if ($request->has("location_id")) {
+            $locations = Location::where("id", "=", $request->validated()["location_id"])->get();
+        } else {
+            $networks  = ["shopping" => "NETWORK_SHOPPING", "fitness" => "NETWORK_FITNESS", "otg" => "NETWORK_OTG"];
+            $locations = Actor::find(Param::find($networks[$network])->value)->getLocations(true, false, true, true);
+
+            if ($request->has("province")) {
+                $province  = $request->validated()["province"];
+                $locations = $locations->filter(fn($location) => $location->province === $province);
+            }
+
+            if ($request->has("city")) {
+                $city  = $request->validated()["city"];
+                $locations = $locations->filter(fn($location) => $location->city === $city);
+            }
+        }
 
         // We want the inventory for each and every frame of all the selected locations
         /** @var Location $location */
@@ -36,12 +52,11 @@ class InventoryController extends Controller {
                                                    ->where("skin_id", "=", $skin->id)
                                                    ->where("year", "=", $year)
                                                    ->first();
-            }
-            );
+            });
 
             $location->skins = $skins;
         }
 
-        return new Response($locations);
+        return new Response($locations->values());
     }
 }

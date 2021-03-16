@@ -10,7 +10,9 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FormatsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/SynchronizeLocations.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Location.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Location.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -234,7 +236,7 @@
     <property name="node.js.selected.package.tslint" value="(autodetect)" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="tasks.servers" />
+    <property name="settings.editor.selected.configurable" value="web-ide.project.structure" />
     <property name="tasks.open.task.update.state.enabled" value="true" />
     <property name="timeTracker.activityTracker" value="null" />
     <property name="timeTracker.comment" value="" />
@@ -395,18 +397,20 @@
     <task active="true" id="CONNECT-14" summary="Coloured dots">
       <branch name="dev" repository="$PROJECT_DIR$" />
       <changelist id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="" />
+      <option name="closed" value="true" />
       <created>1614029235728</created>
       <option name="issue" value="true" />
       <url>https://neo-ooh.myjetbrains.com/youtrack/issue/CONNECT-14</url>
       <option name="number" value="14" />
       <option name="presentableId" value="CONNECT-14" />
       <option name="project" value="CONNECT" />
-      <updated>1614104598314</updated>
+      <updated>1614196197238</updated>
       <workItem from="1614104598991" duration="30862000" />
       <workItem from="1615215614637" duration="25806000" />
       <workItem from="1615328890744" duration="5093000" />
       <workItem from="1615388486961" duration="2772000" />
-      <workItem from="1615394894850" duration="22498000" />
+      <workItem from="1615394894850" duration="24011000" />
+      <workItem from="1615901657208" duration="2837000" />
     </task>
     <task id="LOCAL-00010" summary="Add Locations search endpoint">
       <created>1615388957440</created>

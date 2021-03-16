@@ -11,6 +11,7 @@
 namespace Neo\BroadSign\Jobs;
 
 
+use ErrorException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -53,22 +54,37 @@ class SynchronizeLocations extends BroadSignJob {
                 $containerID = $bsContainer->id;
             }
 
-            $displayType = DisplayType::query()
-                                       ->where("broadsign_display_type_id", "=", $bslocation->display_unit_type_id)
-                                       ->first();
+            // Extract the province from the DisplayType address
+            // Matches:
+            // [0] => Full address
+            // [1] => Street #
+            // [2] => Street Name
+            // [3] => City
+            // [4] => Province
+            // [5] => Zip code
+            if(preg_match('/(^\d*)\s([.\-\w\s]+),\s*([.\-\w\s]+),\s*([A-Z]{2})\s(\w\d\w\s*\d\w\d)/iu', $bslocation->address, $matches)) {
+                $address = $matches[4];
+            } else {
+                Log::info("No address available for Display Unit $bslocation->name");
+                $address = "--";
+            }
 
+            /** @var DisplayType $displayType */
+            $displayType = DisplayType::query()
+                                      ->where("broadsign_display_type_id", "=", $bslocation->display_unit_type_id)
+                                      ->first();
+
+            /** @var Location $location */
             $location = Location::query()->firstOrCreate([
                 "broadsign_display_unit" => $bslocation->id,
             ], [
-                "display_type_id" => $displayType->id,
                 "name"            => $bslocation->name,
                 "internal_name"   => $bslocation->name,
-                "container_id"    => $containerID,
             ]);
-
 
             $location->display_type_id = $displayType->id;
             $location->container_id = $containerID;
+            $location->province = $address;
             $location->save();
             $locations[] = $location->id;
 

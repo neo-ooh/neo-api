@@ -25,6 +25,8 @@ use Neo\Rules\AccessibleLocation;
  * @property int        network
  * @property string     name
  * @property string     internal_name
+ * @property int        container_id
+ * @property string     province [QC, ON, ...]
  *
  * @property ?Container container
  *
@@ -93,7 +95,7 @@ class Location extends SecuredModel {
 
     /* Network */
 
-    public function players (): HasMany {
+    public function players(): HasMany {
         return $this->hasMany(Player::class);
     }
 
@@ -101,25 +103,25 @@ class Location extends SecuredModel {
      * @return BelongsTo
      * @deprecated WILL NOT WORK!!!
      */
-    public function format (): BelongsTo {
+    public function format(): BelongsTo {
         return $this->belongsTo(Format::class);
     }
 
-    public function display_type (): BelongsTo {
+    public function display_type(): BelongsTo {
         return $this->belongsTo(DisplayType::class, "display_type_id");
     }
 
-    public function container (): BelongsTo {
+    public function container(): BelongsTo {
         return $this->belongsTo(Container::class);
     }
 
     /* Reports */
 
-    public function bursts (): HasManyThrough {
+    public function bursts(): HasManyThrough {
         return $this->hasManyThrough(Burst::class, Player::class);
     }
 
-    public function reports (): HasManyThrough {
+    public function reports(): HasManyThrough {
         return $this->hasManyThrough(Report::class, Player::class);
     }
 
@@ -130,7 +132,7 @@ class Location extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    public function loadHierarchy (): self {
+    public function loadHierarchy(): self {
         if ($this->container !== null) {
             $this->container->append('parents_list');
         }

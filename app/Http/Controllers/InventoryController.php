@@ -55,7 +55,7 @@ class InventoryController extends Controller {
             });
 
             $location->skins = $skins;
-            $location->format = $location->display_type->formats->first()->only("id", "name");
+            $location->format = $location->display_type->formats()->without(["layouts", "display_types"])->first()->only("id", "name");
         }
 
 

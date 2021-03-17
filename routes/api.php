@@ -302,6 +302,7 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route::model("format", Format::class);
 
     Route::get("formats", FormatsController::class . "@index")->name("formats.index");
+    Route::get("formats/_query", FormatsController::class . "@query")->name("formats.query");
     Route::post("formats", FormatsController::class . "@store")->name("formats.store");
     Route::get("formats/{format}", FormatsController::class . "@show")->name("formats.show");
     Route::put("formats/{format}", FormatsController::class . "@update")->name("formats.update");
@@ -313,7 +314,8 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::   put("formats/{format}/display-types", FormatsDisplayTypesController::class . "@sync")->name("formats.display-types.sync");
+    Route::   put("formats/{format}/display-types", FormatsDisplayTypesController::class . "@sync")
+         ->name("formats.display-types.sync");
 
 
     /*

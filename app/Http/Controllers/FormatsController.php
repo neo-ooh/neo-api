@@ -14,6 +14,7 @@ use Egulias\EmailValidator\Exception\LocalOrReservedDomain;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Neo\Enums\Network;
 use Neo\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Http\Requests\Formats\QueryFormatsRequest;
@@ -58,8 +59,8 @@ class FormatsController extends Controller {
     public function query(QueryFormatsRequest $request) {
         // we list locations matching the query terms and only keep their formats
         if ($request->has("network")) {
-            $network   = $request->validated()["network"];
-            $locations = Actor::find(Param::find(Network::coerce($network))->value)->getLocations(true, false, true, true);
+            $network   = Network::coerce($request->validated()["network"])->value;
+            $locations = Actor::find(Param::find($network)->value)->getLocations(true, false, true, true);
 
             if ($request->has("province")) {
                 $province  = $request->validated()["province"];
@@ -72,8 +73,8 @@ class FormatsController extends Controller {
             }
         } else {
             // If no network is specified, we load all locations in each network
-            $locations = array_map(fn($network) => Actor::find(Param::find($network))
-                                                        ->getLocations(true, false, true, true), Network::getValues());
+            $locations = collect(array_map(fn($network) => Actor::find(Param::find(Network::coerce($network)))
+                                                        ->getLocations(true, false, true, true), Network::getValues()))->flatten();
         }
 
         // Now that we have ou locations, extract the formats

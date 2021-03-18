@@ -41,20 +41,11 @@ class InventoryController extends Controller {
             }
         }
 
-        // We want the inventory for each and every frame of all the selected locations
+        // Load the inventory of each location
+        $locations->load("inventory");
+
         /** @var Location $location */
         foreach ($locations as $location) {
-            $skins = Skin::byDisplayUnit(["display_unit_id" => $location->broadsign_display_unit]);
-
-            $skins->each(function ($skin) use ($year) {
-                Log::debug($year);
-                return $skin->inventory = Inventory::query()
-                                                   ->where("skin_id", "=", $skin->id)
-                                                   ->where("year", "=", $year)
-                                                   ->first();
-            });
-
-            $location->skins = $skins;
             $location->format = $location->display_type->formats()->without(["layouts", "display_types"])->
             first()->only("id", "name");
         }

@@ -27,12 +27,12 @@ use Neo\BroadSign\Endpoint;
  * @property int    interactivity_trigger_id
  * @property int    loop_policy_id
  * @property string name
- * @property int    parent_id
+ * @property int    parent_id   Day Part
  * @property int    screen_no
- * @property int width
- * @property int x
- * @property int y
- * @property int z
+ * @property int    width
+ * @property int    x
+ * @property int    y
+ * @property int    z
  *
  * @method static Skin[] all()
  * @method static Skin[] get(int $frameID)
@@ -45,10 +45,14 @@ class Skin extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all" => Endpoint::get("/skin/v7")->multiple(),
-            "get" => Endpoint::get("/skin/v7/{id}")->cache(3600),
-            "byReservable" => Endpoint::get("/skin/v7/by_display_unit?display_unit_id={id}")->multiple(),
+            "all"           => Endpoint::get("/skin/v7")->multiple(),
+            "get"           => Endpoint::get("/skin/v7/{id}")->cache(3600),
+            "byReservable"  => Endpoint::get("/skin/v7/by_display_unit?display_unit_id={id}")->multiple(),
             "byDisplayUnit" => Endpoint::get("/skin/v7/by_display_unit")->multiple(),
         ];
+    }
+
+    public function dayPart(): DayPart {
+        return DayPart::get($this->parent_id);
     }
 }

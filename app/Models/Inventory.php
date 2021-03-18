@@ -23,6 +23,9 @@ use Neo\Models\Traits\HasCompositePrimarykey;
  * @property int   year
  * @property array bookings
  * @property int   max_booking
+ * @property int   name
+ * @property Date  start_date
+ * @property Date  end_date
  * @property Date  created_at
  * @property Date  updated_at
  *
@@ -55,8 +58,12 @@ class Inventory extends Model {
     protected $fillable = [
         "skin_id",
         "year",
+        "location_id",
         "bookings",
         "max_booking",
+        "name",
+        "start_date",
+        "end_date"
     ];
 
     /**
@@ -67,4 +74,6 @@ class Inventory extends Model {
     protected $casts = [
         "bookings" => "array"
     ];
+
+    protected $dates = ["start_date", "end_date"];
 }

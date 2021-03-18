@@ -116,6 +116,10 @@ class Location extends SecuredModel {
         return $this->belongsTo(Container::class);
     }
 
+    public function inventory(): HasMany {
+        return $this->hasMany(Inventory::class, "location_id", "id");
+    }
+
     /* Reports */
 
     public function bursts(): HasManyThrough {

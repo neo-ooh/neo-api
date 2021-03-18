@@ -19,6 +19,7 @@ use Neo\BroadSign\Models\LoopPolicy;
 use Neo\BroadSign\Models\ResourceCriteria;
 use Neo\BroadSign\Models\Skin;
 use Neo\Models\Inventory;
+use Neo\Models\Location;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -82,11 +83,14 @@ class CacheInventory extends Command {
             /** @var Skin $skin */
             $skin = Skin::get($inventory->skin_id);
 
-            // And the loop policy
+            // Calculate the maximum booking allowed for the frame using its LoopPolicy
             /** @var LoopPolicy $loopPolicy */
             $loopPolicy = LoopPolicy::get($skin->loop_policy_id);
 
             $maxBooking = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
+
+            // Get its day part as we need the dates of the skin as well as a better name
+            $dayPart = $skin->dayPart();
 
             if ($maxBooking === 0) {
                 // Ignore inventories with no booking space.
@@ -98,6 +102,10 @@ class CacheInventory extends Command {
                 "skin_id" => $inventory->skin_id,
                 "year"    => $year,
             ], [
+                "location_id" => Location::query()->where("broadsign_display_unit", "=", $dayPart->parent_id)->first()->id,
+                "name" => $dayPart->name,
+                "start_date" => $dayPart->virtual_start_date,
+                "end_date" => $dayPart->virtual_end_date,
                 "bookings"    => $inventory->inventory,
                 "max_booking" => $maxBooking,
             ]);

@@ -19,6 +19,9 @@ use Neo\Http\Controllers\ActorsRolesController;
 use Neo\Http\Controllers\ActorsSharingsController;
 use Neo\Http\Controllers\BrandingsController;
 use Neo\Http\Controllers\BrandingsFilesController;
+use Neo\Http\Controllers\BroadSignCriteriaController;
+use Neo\Http\Controllers\BroadSignSeparationsController;
+use Neo\Http\Controllers\BroadSignTriggersController;
 use Neo\Http\Controllers\BurstsController;
 use Neo\Http\Controllers\CampaignsController;
 use Neo\Http\Controllers\CapabilitiesController;
@@ -45,6 +48,9 @@ use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\ScreenshotsController;
 use Neo\Models\Actor;
+use Neo\Models\BroadSignCriteria;
+use Neo\Models\BroadSignSeparation;
+use Neo\Models\BroadSignTrigger;
 use Neo\Models\Burst;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
@@ -72,7 +78,7 @@ use Neo\Models\Screenshot;
 |
 */
 
-Route::prefix("v1")->middleware("loa-4")->group(function () {
+Route::prefix("v1")->group(function () {
     /*
     |----------------------------------------------------------------------
     | Actors
@@ -192,6 +198,61 @@ Route::prefix("v1")->middleware("loa-4")->group(function () {
     Route::delete("brandings/{branding}/files", BrandingsFilesController::class . "@destroy")
          ->name("brandings.files.destroy");
 
+
+    /*
+    |----------------------------------------------------------------------
+    | Broadsign
+    |----------------------------------------------------------------------
+    */
+
+
+    Route::prefix("broadsign")->group(function () {
+
+        /*
+        |--------------------------------------------------------------------------
+        | Criteria
+        |--------------------------------------------------------------------------
+        */
+
+        Route::model("criteria", BroadSignCriteria::class);
+
+        Route::get("criteria", BroadSignCriteriaController::class . "@index")->name('broadsign.criteria.index');
+        Route::get("criteria/{criteria}", BroadSignCriteriaController::class . "@show")->name('broadsign.criteria.show');
+        Route::post("criteria", BroadSignCriteriaController::class . "@store")->name('broadsign.criteria.store');
+        Route::put("criteria/{criteria}", BroadSignCriteriaController::class . "@update")->name('broadsign.criteria.update');
+        Route::delete("criteria/{criteria}", BroadSignCriteriaController::class . "@destroy")->name('broadsign.criteria.delete');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Triggers
+        |--------------------------------------------------------------------------
+        */
+
+        Route::model("trigger", BroadSignTrigger::class);
+
+        Route::get("triggers", BroadSignTriggersController::class . "@index")->name('broadsign.triggers.index');
+        Route::get("triggers/{trigger}", BroadSignTriggersController::class . "@show")->name('broadsign.triggers.show');
+        Route::post("triggers", BroadSignTriggersController::class . "@store")->name('broadsign.triggers.store');
+        Route::put("triggers/{trigger}", BroadSignTriggersController::class . "@update")->name('broadsign.triggers.update');
+        Route::delete("triggers/{trigger}", BroadSignTriggersController::class . "@destroy")->name('broadsign.triggers.delete');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Separations
+        |--------------------------------------------------------------------------
+        */
+
+        Route::model("separation", BroadSignSeparation::class);
+
+        Route::get("separations", BroadSignSeparationsController::class . "@index")->name('broadsign.separations.index');
+        Route::get("separations/{separation}", BroadSignSeparationsController::class . "@show")
+             ->name('broadsign.separations.show');
+        Route::post("separations", BroadSignSeparationsController::class . "@store")->name('broadsign.separations.store');
+        Route::put("separations/{separation}", BroadSignSeparationsController::class . "@update")
+             ->name('broadsign.separations.update');
+        Route::delete("separations/{separation}", BroadSignSeparationsController::class . "@destroy")
+             ->name('broadsign.separations.delete');
+    });
 
     /*
     |----------------------------------------------------------------------

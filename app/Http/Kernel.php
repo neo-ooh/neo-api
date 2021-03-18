@@ -51,6 +51,11 @@ class Kernel extends HttpKernel {
      * @var array
      */
     protected $middlewareGroups = [
+        "default" => [
+            "throttle:api",
+            SubstituteBindings::class,
+            "auth:neo-loa-4",
+        ],
         'api'   => [
             'throttle:api',
             SubstituteBindings::class,

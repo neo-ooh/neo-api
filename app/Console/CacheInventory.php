@@ -12,8 +12,11 @@ namespace Neo\Console;
 
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
+use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Models\Inventory as BSInventory;
 use Neo\BroadSign\Models\LoopPolicy;
+use Neo\BroadSign\Models\ResourceCriteria;
 use Neo\BroadSign\Models\Skin;
 use Neo\Models\Inventory;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -43,6 +46,11 @@ class CacheInventory extends Command {
 
     public function handle(): void {
         collect([2020, 2021])->each(fn($year) => $this->cacheInventory($year));
+
+        $this->info("Cleaning up...");
+        Inventory::query()->whereDate("updated_at", "<", Date::now()->subMinutes(30)->toDateString())->delete();
+
+        $this->info("Inventory synced!");
     }
 
     protected function cacheInventory(int $year) {
@@ -62,19 +70,36 @@ class CacheInventory extends Command {
         foreach ($allInventory as $inventory) {
             $progressBar->advance();
 
-            // We need the skin and the loop policy associated with it
+            // Before doing anything, we want to check that the current skin has the advertising criteria associated with it
+            $resourceCriteria = ResourceCriteria::forResource(["parent_id" => $inventory->skin_id]);
+
+            // If none of the criteria applied to the skin is the advertising criteria, we skip it.
+            if (!$resourceCriteria->some(fn($criteria) => $criteria->criteria_id === BroadSign::getDefaults()["advertising_criteria_id"])) {
+                continue;
+            }
+
+            // Get the skin specified by the current report
             /** @var Skin $skin */
-            $skin       = Skin::get($inventory->skin_id);
+            $skin = Skin::get($inventory->skin_id);
+
+            // And the loop policy
             /** @var LoopPolicy $loopPolicy */
             $loopPolicy = LoopPolicy::get($skin->loop_policy_id);
+
+            $maxBooking = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
+
+            if ($maxBooking === 0) {
+                // Ignore inventories with no booking space.
+                continue;
+            }
 
             // Cache
             Inventory::query()->updateOrCreate([
                 "skin_id" => $inventory->skin_id,
-                "year" => $year,
+                "year"    => $year,
             ], [
-                "bookings" => $inventory->inventory,
-                "max_booking" => $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration,
+                "bookings"    => $inventory->inventory,
+                "max_booking" => $maxBooking,
             ]);
         }
 

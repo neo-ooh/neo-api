@@ -78,14 +78,14 @@ class Format extends Model {
      *
      * @var array
      */
-    protected $with = ["layouts"];
+    protected $with = ["layouts", "display_types"];
 
     /**
      * The relationship counts that should always be loaded.
      *
      * @var array
      */
-    protected $withCount = ["layouts"];
+    protected $withCount = ["layouts", "display_types"];
 
 
     /*

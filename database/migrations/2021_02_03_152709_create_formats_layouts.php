@@ -17,26 +17,26 @@ class CreateFormatsLayouts extends Migration
     {
         // The layouts takes the form of an intermediary table between the formats and the frames
         // A format can have multiple layouts, and a layout can have multiple frames.
-//        Schema::create('formats_layouts', function (Blueprint $table) {
-//            $table->id();
-//            $table->foreignId('format_id')->index()->constrained('formats')->cascadeOnUpdate()->cascadeOnDelete();
-//            $table->string('name', 64)->default("");
-//            $table->boolean("is_fullscreen")->default(false);
-//            $table->timestamps();
-//            $table->softDeletes();
-//        });
-//
-//        Schema::dropColumns("formats", ["is_fullscreen"]);
-//
-//        // Create a layout for each and every format who have frames
-//        $formats = Format::query()->has("frames")->with('frames')->get();
-//
-//        foreach($formats as $format) {
-//            FormatLayout::create([
-//                "format_id" => $format->id,
-//                "name" => "Main",
-//            ]);
-//        }
+        Schema::create('formats_layouts', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('format_id')->index()->constrained('formats')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string('name', 64)->default("");
+            $table->boolean("is_fullscreen")->default(false);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+
+        Schema::dropColumns("formats", ["is_fullscreen"]);
+
+        // Create a layout for each and every format who have frames
+        $formats = Format::query()->has("frames")->with('frames')->get();
+
+        foreach($formats as $format) {
+            FormatLayout::create([
+                "format_id" => $format->id,
+                "name" => "Main",
+            ]);
+        }
 
         $formats = Format::query()->has("frames")->without("layouts")->with('frames')->get();
 

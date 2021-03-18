@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Neo\BroadSign\Models\Skin;
+use Neo\Enums\Network;
 use Neo\Http\Requests\Inventory\ShowInventoryRequest;
 use Neo\Models\Actor;
 use Neo\Models\Inventory;
@@ -27,8 +28,7 @@ class InventoryController extends Controller {
         if ($request->has("location_id")) {
             $locations = Location::where("id", "=", $request->validated()["location_id"])->get();
         } else {
-            $networks  = ["shopping" => "NETWORK_SHOPPING", "fitness" => "NETWORK_FITNESS", "otg" => "NETWORK_OTG"];
-            $locations = Actor::find(Param::find($networks[$network])->value)->getLocations(true, false, true, true);
+            $locations = Actor::find(Param::find(Network::coerce($network)->value)->value)->getLocations(true, false, true, true);
 
             if ($request->has("province")) {
                 $province  = $request->validated()["province"];
@@ -55,7 +55,9 @@ class InventoryController extends Controller {
             });
 
             $location->skins = $skins;
+            $location->format = $location->display_type->formats()->without(["layouts", "display_types"])->first()->only("id", "name");
         }
+
 
         return new Response($locations->values());
     }

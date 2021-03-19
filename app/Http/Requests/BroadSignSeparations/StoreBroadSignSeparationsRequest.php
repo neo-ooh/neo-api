@@ -27,7 +27,7 @@ class StoreBroadSignSeparationsRequest extends FormRequest
     {
         return [
             "name" => ["required", "string"],
-            "separation_id" => ["required", "integer"],
+            "broadsign_separation_id" => ["required", "integer"],
         ];
     }
 }

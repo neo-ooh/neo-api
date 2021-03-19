@@ -22,7 +22,7 @@ class BroadSignSeparationsController extends Controller {
         $separation = new BroadSignSeparation();
         [
             "name"       => $separation->name,
-            "separation_id" => $separation->broadsign_trigger_id,
+            "broadsign_separation_id" => $separation->broadsign_trigger_id,
         ] = $request->validated();
         $separation->save();
 
@@ -32,7 +32,7 @@ class BroadSignSeparationsController extends Controller {
     public function update(UpdateBroadSignSeparationsRequest $request, BroadSignSeparation $separation) {
         [
             "name"       => $separation->name,
-            "separation_id" => $separation->broadsign_trigger_id,
+            "broadsign_separation_id" => $separation->broadsign_trigger_id,
         ] = $request->validated();
         $separation->save();
 

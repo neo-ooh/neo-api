@@ -27,7 +27,7 @@ class UpdateBroadSignTriggersRequest extends FormRequest
     {
         return [
             "name" => ["required", "string"],
-            "trigger_id" => ["required", "integer"],
+            "broadsign_trigger_id" => ["required", "integer"],
         ];
     }
 }

@@ -32,7 +32,7 @@ class OrderLine {
     public float $net_investment;
 
     public float $subtotal;
-    public float $total_tax;
+    public float $price_tax;
 
     public string $property_type;
     public string $property_name;
@@ -44,37 +44,42 @@ class OrderLine {
     public function __construct(array $record) {
 
 //        $this->orderLine           = $record["Order Lines"];
-//        $this->traffic             = $record["Order Lines/Traffic"];
-//        $this->property_lat        = $record["Order Lines/Property/Geo Latitude"];
-//        $this->property_lng        = $record["Order Lines/Property/Geo Longitude"];
+        $this->description         = $record["order_line/name"];
 
-        $this->description         = $record["Order Lines/Description"];
-        $this->discount            = (float)($record["Order Lines/Discount (%)"] ?? 0);
-        $this->date_start          = $record["Order Lines/Start date"];
-        $this->date_end            = $record["Order Lines/End date"];
-        $this->impressions         = (int)($record["Order Lines/Impression"] ?? 0);
-        $this->market              = $record["Order Lines/Market"];
-        $this->market_name         = $record["Order Lines/Market/Name"];
-        $this->nb_weeks            = (int)($record["Order Lines/Nb Weeks"] ?? 0);
-        $this->nb_screens          = (int)($record["Order Lines/Nb Screen/Poster"] ?? 0);
-        $this->quantity            = $record["Order Lines/Quantity"];
-        $this->product             = $record["Order Lines/Product"];
+        $this->discount            = (float)($record["order_line/discount"] ?? 0);
+        $this->date_start          = $record["order_line/rental_start"];
+        $this->date_end            = $record["order_line/rental_end"];
+        $this->impressions         = (int)($record["order_line/impression"] ?? 0);
+        $this->traffic             = $record["order_line/traffic"];
+        $this->market              = $record["order_line/market_id"];
+        $this->market_name         = $record["order_line/market_id/name"];
+        $this->nb_weeks            = (float)($record["order_line/nb_weeks"] ?? 0);
+        $this->nb_screens          = (int)($record["order_line/nb_screen"] ?? 0);
+        $this->quantity            = $record["order_line/product_uom_qty"];
+
         $this->is_production       = $record["Order Lines/Product/Production"] === "VRAI";
-        $this->product_category    = $record["Order Lines/Product/Product Category"];
-        $this->product_description = $record["Order Lines/Product/Description"];
-        $this->product_rental      = $record["Order Lines/Rental Product"];
-        $this->product_type        = $record["Order Lines/Type of Product"];
-        $this->unit_price          = (float)$record["Order Lines/Unit Price"];
-        $this->subtotal            = (float)$record["Order Lines/Subtotal"];
-        $this->total_tax           = (float)$record["Order Lines/Total Tax"];
+
+        $this->product             = $record["order_line/product_id"];
+        $this->product_category    = $record["order_line/product_id/description"];
+//        $this->product_description = $record["order_line/product_id/description"];
+        $this->product_rental      = $record["order_line/is_product_rentable"];
+        $this->product_type        = $record["order_line/product_type"];
+
+        $this->unit_price          = (float)$record["order_line/price_unit"];
+        $this->subtotal            = (float)$record["order_line/price_subtotal"];
+        $this->price_tax           = (float)$record["order_line/price_tax"];
+
         $this->property_type       = $record["Order Lines/Property/Property Type"];
-        $this->property_name       = $record["Order Lines/Property/Name"];
-        $this->property_city       = $record["Order Lines/Property/City"];
+
+        $this->property_name       = $record["order_line/shopping_center_id/name"];
+        $this->property_city       = $record["order_line/shopping_center_id/cityw"];
+        $this->property_lat        = $record["order_line/shopping_center_id/partner_latitude"];
+        $this->property_lng        = $record["order_line/shopping_center_id/partner_longitude"];
 
         $this->media_value    = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
         $this->net_investment = $this->media_value * (1 - $this->discount / 100);
 
-        if($this->isGuaranteedBonus() || $this->isBonusUponAvailability()) {
+        if ($this->isGuaranteedBonus() || $this->isBonusUponAvailability()) {
             $this->net_investment = 0;
         }
     }

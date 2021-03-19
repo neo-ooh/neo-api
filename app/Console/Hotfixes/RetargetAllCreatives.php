@@ -44,7 +44,7 @@ class RetargetAllCreatives extends Command {
         $progressBar = $this->makeProgressBar(count($creatives));
         $progressBar->start();
 
-        // Now for each campaign, we load its locations, remove them, and trigger a re-targeting
+        // Now for each campaign, we load its creatives, remove them, and trigger a re-targeting
         /** @var Creative $creative */
         foreach ($creatives as $creative) {
             $progressBar->advance();

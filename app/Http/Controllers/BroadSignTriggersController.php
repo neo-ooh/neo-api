@@ -4,11 +4,8 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\BroadSignTriggers\ListBroadSignTriggersRequest;
-use Neo\Http\Requests\BroadSignTriggers\ShowBroadSignSeparationsRequest;
 use Neo\Http\Requests\BroadSignTriggers\ShowBroadSignTriggersRequest;
-use Neo\Http\Requests\BroadSignTriggers\StoreBroadSignSeparationsRequest;
 use Neo\Http\Requests\BroadSignTriggers\StoreBroadSignTriggersRequest;
-use Neo\Http\Requests\BroadSignTriggers\UpdateBroadSignSeparationsRequest;
 use Neo\Http\Requests\BroadSignTriggers\UpdateBroadSignTriggersRequest;
 use Neo\Models\BroadSignTrigger;
 
@@ -24,8 +21,8 @@ class BroadSignTriggersController extends Controller {
     public function store(StoreBroadSignTriggersRequest $request) {
         $trigger = new BroadSignTrigger();
         [
-            "name"       => $trigger->name,
-            "trigger_id" => $trigger->broadsign_trigger_id,
+            "name"                 => $trigger->name,
+            "broadsign_trigger_id" => $trigger->broadsign_trigger_id,
         ] = $request->validated();
         $trigger->save();
 
@@ -34,8 +31,8 @@ class BroadSignTriggersController extends Controller {
 
     public function update(UpdateBroadSignTriggersRequest $request, BroadSignTrigger $trigger) {
         [
-            "name"        => $trigger->name,
-            "trigger_id" => $trigger->broadsign_trigger_id,
+            "name"                 => $trigger->name,
+            "broadsign_trigger_id" => $trigger->broadsign_trigger_id,
         ] = $request->validated();
         $trigger->save();
 

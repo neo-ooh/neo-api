@@ -9,10 +9,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
+      <change beforePath="$PROJECT_DIR$/.idea/csv-plugin.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv-plugin.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Inventory/ShowInventoryRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Inventory/ShowInventoryRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Location.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Hotfixes/RetargetAllCreatives.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Hotfixes/RetargetAllCreatives.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Order.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Order.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BroadSignCriteriaController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BroadSignCriteriaController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BroadSignSeparationsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BroadSignSeparationsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BroadSignTriggersController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BroadSignTriggersController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/StoreBroadSignCriteriaRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/StoreBroadSignCriteriaRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/UpdateBroadSignCriteriaRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/UpdateBroadSignCriteriaRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/StoreBroadSignSeparationsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/StoreBroadSignSeparationsRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/UpdateBroadSignSeparationsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/UpdateBroadSignSeparationsRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/StoreBroadSignTriggersRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/StoreBroadSignTriggersRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/UpdateBroadSignTriggersRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/UpdateBroadSignTriggersRequest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

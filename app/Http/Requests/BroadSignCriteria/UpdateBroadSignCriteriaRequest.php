@@ -27,7 +27,7 @@ class UpdateBroadSignCriteriaRequest extends FormRequest
     {
         return [
             "name" => ["required", "string"],
-            "criteria_id" => ["required", "integer"],
+            "broadsign_criteria_id" => ["required", "integer"],
         ];
     }
 }

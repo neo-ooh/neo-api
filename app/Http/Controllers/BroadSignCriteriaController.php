@@ -24,7 +24,7 @@ class BroadSignCriteriaController extends Controller
         $criteria = new BroadSignCriteria();
         [
             "name" => $criteria->name,
-            "criteria_id" => $criteria->broadsign_criteria_id,
+            "broadsign_criteria_id" => $criteria->broadsign_criteria_id,
         ] = $request->validated();
         $criteria->save();
 
@@ -34,7 +34,7 @@ class BroadSignCriteriaController extends Controller
     public function update(UpdateBroadSignCriteriaRequest $request, BroadSignCriteria $criteria) {
         [
             "name" => $criteria->name,
-            "criteria_id" => $criteria->broadsign_criteria_id,
+            "broadsign_criteria_id" => $criteria->broadsign_criteria_id,
         ] = $request->validated();
         $criteria->save();
 

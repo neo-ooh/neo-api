@@ -18,18 +18,18 @@ class Customer {
 
     public function __construct(array $record) {
         [
-            "Customer/Name"                 => $this->name,
-            "Customer/Parent name"          => $this->parent_name,
-            "Company"                       => $this->company,
-            "Analytic Account/Display Name" => $this->account,
-            //            "Customer Reference"            => $this->reference,
+            "partner_id"                       => $this->name,
 
-            "Customer/Street"               => $this->address_street,
-            //            "Customer/Street2"          => $this->address_street_2,
-            "Customer/City"                 => $this->address_city,
-            //            "Customer/State"            => $this->address_state,
-            "Customer/State/State Name"     => $this->address_state_name,
-            "Customer/Country/Country Name" => $this->address_country,
+            "Customer/Parent name"             => $this->parent_name,
+
+            "company_id/name"                  => $this->company,
+            "analytic_account_id/display_name" => $this->account,
+
+            "partner_id/street"          => $this->address_street,
+            "partner_id/street2"         => $this->address_street_2,
+            "partner_id/city"            => $this->address_city,
+            "partner_id/state_id/name"   => $this->address_state_name,
+            "partner_id/country_id/name" => $this->address_country,
         ] = $record;
     }
 }

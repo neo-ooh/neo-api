@@ -9,32 +9,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/BroadSignCriteriaController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/BroadSignSeparationsController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/BroadSignTriggersController.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/DestroyBroadSignCriteriaRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/ListBroadSignCriteriaRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/ShowBroadSignCriteriaRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/StoreBroadSignCriteriaRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria/UpdateBroadSignCriteriaRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/DestroyBroadSignSeparationsRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/ListBroadSignSeparationsRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/ShowBroadSignSeparationsRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/StoreBroadSignSeparationsRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignSeparations/UpdateBroadSignSeparationsRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/DestroyBroadSignTriggersRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/ListBroadSignTriggersRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/ShowBroadSignTriggersRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/StoreBroadSignTriggersRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/BroadSignTriggers/UpdateBroadSignTriggersRequest.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Models/BroadSignCriteria.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Models/BroadSignSeparation.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Models/BroadSignTrigger.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Kernel.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Kernel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/RouteServiceProvider.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/broadsign.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/broadsign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Inventory/ShowInventoryRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Inventory/ShowInventoryRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Location.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Location.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

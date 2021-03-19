@@ -100,14 +100,6 @@ class Location extends SecuredModel {
         return $this->hasMany(Player::class);
     }
 
-    /**
-     * @return BelongsTo
-     * @deprecated WILL NOT WORK!!!
-     */
-    public function format(): BelongsTo {
-        return $this->belongsTo(Format::class);
-    }
-
     public function display_type(): BelongsTo {
         return $this->belongsTo(DisplayType::class, "display_type_id");
     }

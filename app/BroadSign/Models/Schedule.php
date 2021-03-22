@@ -14,6 +14,7 @@ use Neo\BroadSign\Endpoint;
 
 /**
  * Class Schedules
+ *
  * @package Neo\BroadSign\Models
  *
  * @property bool   active
@@ -29,7 +30,7 @@ use Neo\BroadSign\Endpoint;
  * @property int    schedule_group
  * @property string start_date
  * @property string start_time
- * @property int weight
+ * @property int    weight
  *
  * @method static Schedule[] all()
  * @method static Schedule get(int $scheduleID)
@@ -54,9 +55,9 @@ class Schedule extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all" => Endpoint::get("/schedule/v8")->multiple(),
+            "all"    => Endpoint::get("/schedule/v8")->multiple(),
             "create" => Endpoint::post("/schedule/v8/add")->id(),
-            "get" => Endpoint::get("/schedule/v8/{id}"),
+            "get"    => Endpoint::get("/schedule/v8/{id}"),
             "update" => Endpoint::put("/schedule/v8")->id()
         ];
     }

@@ -31,11 +31,11 @@ class StoreFrameRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "layout_id" => ["required", "integer", "exists:formats_layouts,id"],
-            "name"      => ["required", "string"],
-            "width"     => ["required", "integer", "min:1"],
-            "height"    => ["required", "integer", "min:1"],
-            "type"      => ["required", "string", "min:1"],
+            "layout_id"   => ["required", "integer", "exists:formats_layouts,id"],
+            "name"        => ["required", "string"],
+            "width"       => ["required", "integer", "min:1"],
+            "height"      => ["required", "integer", "min:1"],
+            "criteria_id" => ["required", "string", "exists:broadsign_criteria,id"],
         ];
     }
 }

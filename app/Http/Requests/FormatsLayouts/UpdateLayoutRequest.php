@@ -32,7 +32,9 @@ class UpdateLayoutRequest extends FormRequest {
     public function rules(): array {
         return [
             "name"          => ["required", "string"],
-            "is_fullscreen" => ["required", "boolean"]
+            "is_fullscreen" => ["required", "boolean"],
+            "trigger_id"    => ["sometimes", "integer", "exists:broadsign_triggers,id"],
+            "separation_id" => ["sometimes", "integer", "exists:broadsign_separations,id"],
         ];
     }
 }

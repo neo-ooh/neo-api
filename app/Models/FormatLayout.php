@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int               format_id
  * @property string            name
  * @property boolean           is_fullscreen
+ * @property int               trigger_id
+ * @property int               separation_id
  * @property Date              created_at
  * @property Date              updated_at
  * @property Date              deleted_at
@@ -36,6 +38,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class FormatLayout extends Model {
     use SoftDeletes;
+
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -59,6 +62,8 @@ class FormatLayout extends Model {
         "format_id",
         "name",
         "is_fullscreen",
+        "trigger_id",
+        "separation_id",
     ];
 
     /**
@@ -75,7 +80,7 @@ class FormatLayout extends Model {
      *
      * @var array
      */
-    protected $with = [ "frames" ];
+    protected $with = ["frames"];
 
 
     /*

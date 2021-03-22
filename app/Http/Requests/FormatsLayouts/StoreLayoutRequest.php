@@ -33,7 +33,9 @@ class StoreLayoutRequest extends FormRequest {
         return [
             "format_id"     => ["required", "integer", "exists:formats,id"],
             "name"          => ["required", "string"],
-            "is_fullscreen" => ["required", "boolean"]
+            "is_fullscreen" => ["required", "boolean"],
+            "trigger_id"    => ["sometimes", "integer", "exists:broadsign_triggers,id"],
+            "separation_id" => ["sometimes", "integer", "exists:broadsign_separations,id"],
         ];
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -25,7 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string               name
  * @property int                  width
  * @property int                  height
- * @property string               type
+ * @property int                  criteria_id
  *
  * @property FormatLayout         layout
  * @property Collection<Creative> creatives
@@ -34,10 +35,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Frame extends Model {
     use SoftDeletes;
-
-    // Define the supported frame types
-    public const TYPE_MAIN = 'MAIN';
-    public const TYPE_RIGHT = 'RIGHT';
 
     /*
     |--------------------------------------------------------------------------
@@ -63,7 +60,7 @@ class Frame extends Model {
         'name',
         'width',
         'height',
-        'type'
+        'criteria_id'
     ];
 
     /**
@@ -83,15 +80,15 @@ class Frame extends Model {
     |--------------------------------------------------------------------------
     */
 
-    /* Network */
-
     public function layout(): BelongsTo {
         return $this->belongsTo(FormatLayout::class, 'layout_id', 'id');
     }
 
-    /* Direct */
-
     public function creatives(): HasMany {
         return $this->hasMany(Creative::class, 'frame_id', 'id');
+    }
+
+    public function criteria(): HasOne {
+        return $this->hasOne(BroadSignCriteria::class, "criteria_id");
     }
 }

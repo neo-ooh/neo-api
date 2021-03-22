@@ -24,13 +24,13 @@ class FramesController extends Controller {
      * @return Response
      */
     public function store(StoreFrameRequest $request): Response {
-        $frame            = new Frame();
+        $frame = new Frame();
         [
-            "layout_id" => $frame->layout_id,
-            "name"      => $frame->name,
-            "width"     => $frame->width,
-            "height"    => $frame->height,
-            "type"      => $frame->type,
+            "layout_id"   => $frame->layout_id,
+            "name"        => $frame->name,
+            "width"       => $frame->width,
+            "height"      => $frame->height,
+            "criteria_id" => $frame->criteria_id,
         ] = $request->validated();
         $frame->save();
 
@@ -45,10 +45,10 @@ class FramesController extends Controller {
      */
     public function update(UpdateFrameRequest $request, Frame $frame): Response {
         [
-            "name"   => $frame->name,
-            "width"  => $frame->width,
-            "height" => $frame->height,
-            "type"   => $frame->type,
+            "name"        => $frame->name,
+            "width"       => $frame->width,
+            "height"      => $frame->height,
+            "criteria_id" => $frame->criteria_id,
         ] = $request->validated();
         $frame->save();
 

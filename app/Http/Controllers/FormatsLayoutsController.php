@@ -10,24 +10,22 @@ use Neo\Models\FormatLayout;
 
 class FormatsLayoutsController extends Controller {
     public function store(StoreLayoutRequest $request): Response {
-        $layout = new FormatLayout();
-        [
-            "format_id" => $layout->format_id,
-            "name" => $layout->name,
-            "is_fullscreen" => $layout->is_fullscreen,
-        ] = $request->validated();
-
+        $layout                = new FormatLayout();
+        $layout->format_id     = $request->get("format_id");
+        $layout->name          = $request->get("name");
+        $layout->is_fullscreen = $request->get("is_fullscreen");
+        $layout->trigger_id    = $request->get("trigger_id");
+        $layout->separation_id = $request->get("separation_id");
         $layout->save();
 
         return new Response($layout->load("frames"), 201);
     }
 
     public function update(UpdateLayoutRequest $request, FormatLayout $layout): Response {
-        [
-            "name" => $layout->name,
-            "is_fullscreen" => $layout->is_fullscreen,
-        ] = $request->validated();
-
+        $layout->name = $request->get("name");
+        $layout->is_fullscreen = $request->get("is_fullscreen");
+        $layout->trigger_id    = $request->get("trigger_id");
+        $layout->separation_id = $request->get("separation_id");
         $layout->save();
 
         return new Response($layout);

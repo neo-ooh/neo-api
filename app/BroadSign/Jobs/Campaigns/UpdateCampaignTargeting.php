@@ -14,10 +14,11 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\BroadSign\BroadSign;
+use Illuminate\Support\Collection;
 use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
 use Neo\BroadSign\Models\ResourceCriteria;
+use Neo\Models\BroadSignCriteria;
 use Neo\Models\Campaign;
 
 /**
@@ -50,7 +51,7 @@ class UpdateCampaignTargeting extends BroadSignJob {
      * @return void
      */
     public function handle(): void {
-        // To target campaign a campaign, We only need to apply the advertising criteria. Then, each locations where the campaign broadcasts will be targeted with the appropriate frames.
+        // To target a campaign, We only need to apply the advertising criteria. Then, each locations where the campaign broadcasts will be targeted with the appropriate frames.
 
         /** @var Campaign $campaign */
         $campaign = Campaign::with("schedules.content.layout")->find($this->campaignID);
@@ -65,10 +66,11 @@ class UpdateCampaignTargeting extends BroadSignJob {
         $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
 
         // List the frames targeted by the campaign
-        $targetedFramesTypes = $campaign->targeted_broadsign_frames;
+        $targetedFrames    = $campaign->targeted_broadsign_frames;
+        $requestedCriteria = $targetedFrames->pluck("criteria")->values();
 
         // Make sure the campaign has the proper criteria applied to it
-        $this->validateCampaignCriteria($campaign, $targetedFramesTypes->values()->toArray());
+        $this->validateCampaignCriteria($campaign, $requestedCriteria);
 
         // Get the campaign locations
         $locations   = $campaign->locations;
@@ -78,20 +80,11 @@ class UpdateCampaignTargeting extends BroadSignJob {
         $bsLocations   = $bsCampaign->locations();
         $bsLocationsID = $bsLocations->map(fn($bsloc) => $bsloc->id);
 
-        $frameTypesIdsMapping = [
-            "MAIN"  => BroadSign::getDefaults()["advertising_criteria_id"],
-            "LEFT"  => BroadSign::getDefaults()["left_frame_criteria_id"],
-            "RIGHT" => BroadSign::getDefaults()["right_frame_criteria_id"],
-        ];
-
-        // Map the types
-        $targetedFramesIds = $targetedFramesTypes->map(fn($type) => $frameTypesIdsMapping[$type]);
-
         // Is there any broadsign location missing from the campaign ?
         $missingLocations = $locationsID->diff($bsLocationsID);
         if ($missingLocations->count() > 0) {
             // Associate missing locations
-            $bsCampaign->addLocations($missingLocations, $targetedFramesIds);
+            $bsCampaign->addLocations($missingLocations, $requestedCriteria->pluck("broadsign_criteria_id"));
         }
 
         // Is there any broadsign location that needs to be removed from the campaign ?
@@ -103,16 +96,16 @@ class UpdateCampaignTargeting extends BroadSignJob {
         // Campaigns is good
     }
 
-    protected function validateCampaignCriteria(Campaign $campaign, array $targetedFramesIds): void {
+    protected function validateCampaignCriteria(Campaign $campaign, Collection $requestedCriteria): void {
         // Enumerate over the criteria already applied to the campaign
         $campaignCriteria = ResourceCriteria::for($campaign->broadsign_reservation_id);
 
         /** @var ResourceCriteria $criterion */
         foreach ($campaignCriteria as $criterion) {
             // Is this criterion in our requirements ?
-            if (in_array($criterion->id, $targetedFramesIds, true)) {
+            if (in_array($criterion->id, $requestedCriteria->pluck("broadsign_criteria_id")->toArray(), true)) {
                 // Yes, remove it from our requirements
-                unset($targetedFramesIds[array_search($criterion->id, $targetedFramesIds, true)]);
+                $requestedCriteria = $requestedCriteria->filter(fn($criteria) => $criteria->broadsign_criteria_id !== $criterion->id);
                 continue;
             }
 
@@ -122,31 +115,13 @@ class UpdateCampaignTargeting extends BroadSignJob {
         }
 
         // We are now left only with the criteria that needs to be added to the campaign.
-        /** @var string $criterion */
-        foreach ($targetedFramesIds as $criterion) {
-            $criterionId   = null;
-            $criteriontype = null;
-
-            switch ($criterion) {
-                case "MAIN":
-                    $criterionId   = BroadSign::getDefaults()["advertising_criteria_id"];
-                    $criteriontype = 8;
-                    break;
-                case "LEFT":
-                    $criterionId   = BroadSign::getDefaults()["left_frame_criteria_id"];
-                    $criteriontype = 8;
-                    break;
-                case "RIGHT":
-                    $criterionId   = BroadSign::getDefaults()["right_frame_criteria_id"];
-                    $criteriontype = 8;
-                    break;
-            }
-
+        /** @var BroadSignCriteria $criterion */
+        foreach ($requestedCriteria as $criterion) {
             BSCampaign::addResourceCriteria([
                 "active"      => true,
-                "criteria_id" => $criterionId,
+                "criteria_id" => $criterion->broadsign_criteria_id,
                 "parent_id"   => $campaign->broadsign_reservation_id,
-                "type"        => $criteriontype,
+                "type"        => 8,
             ]);
         }
     }

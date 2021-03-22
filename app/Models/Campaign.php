@@ -211,8 +211,7 @@ class Campaign extends SecuredModel {
             ->layouts
             ->pluck("frames")
             ->flatten()
-            ->pluck("type")
-            ->unique()
+            ->unique("id")
             ->values();
     }
 

@@ -16,7 +16,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Creative as BSCreative;
 use Neo\Models\Creative;
@@ -68,15 +67,7 @@ class TargetCreative extends BroadSignJob {
         $bsCreative = new BSCreative(["id" => $creative->broadsign_ad_copy_id]);
 
         try {
-            switch ($creative->frame->type) {
-                case "MAIN":
-                case "LEFT":
-                    $bsCreative->addCriteria(BroadSign::getDefaults()['left_frame_criteria_id'], 0);
-                    break;
-                case "RIGHT":
-                    $bsCreative->addCriteria(BroadSign::getDefaults()['right_frame_criteria_id'], 0);
-                        break;
-            }
+            $bsCreative->addCriteria($creative->frame->criteria_id, 0);
         } catch (BadResponse $exception) {
             // Creative could not be targeted. It is most probably still uploading
             $this->release(60);

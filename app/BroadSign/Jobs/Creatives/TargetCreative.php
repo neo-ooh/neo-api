@@ -3,7 +3,7 @@
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
- * Written by Valentin Dufois <Valentin Dufois>
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
  * @neo/api - TargetCreative.php
  */
@@ -58,7 +58,7 @@ class TargetCreative extends BroadSignJob {
             return;
         }
 
-        // We need to target the creative base on its format and frames
+        // We need to target the creative base on its format and framesgs
         if ($creative->frame->layout->frames()->count() === 1) {
             // Only one frame in the format, do nothing
             return;
@@ -66,8 +66,14 @@ class TargetCreative extends BroadSignJob {
 
         $bsCreative = new BSCreative(["id" => $creative->broadsign_ad_copy_id]);
 
+        if (!$creative->frame->criteria_id) {
+            // All done
+            return;
+        }
+
+        // Add the frame criteria
         try {
-            $bsCreative->addCriteria($creative->frame->criteria_id, 0);
+            $bsCreative->addCriteria($creative->frame->criteria->broadsign_criteria_id, 0);
         } catch (BadResponse $exception) {
             // Creative could not be targeted. It is most probably still uploading
             $this->release(60);

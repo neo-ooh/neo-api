@@ -3,9 +3,9 @@
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
- * Written by Valentin Dufois <Valentin Dufois>
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - 2020_11_02_000020_create_bursts_table.php
+ * @neo/api - 2020_11_02_000030_create_screenshots_table.php
  */
 
 use Illuminate\Database\Migrations\Migration;

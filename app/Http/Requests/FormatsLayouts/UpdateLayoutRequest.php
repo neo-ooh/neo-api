@@ -33,8 +33,8 @@ class UpdateLayoutRequest extends FormRequest {
         return [
             "name"          => ["required", "string"],
             "is_fullscreen" => ["required", "boolean"],
-            "trigger_id"    => ["sometimes", "integer", "exists:broadsign_triggers,id"],
-            "separation_id" => ["sometimes", "integer", "exists:broadsign_separations,id"],
+            "trigger_id"    => ["sometimes", "nullable", "integer", "exists:broadsign_triggers,id"],
+            "separation_id" => ["sometimes", "nullable", "integer", "exists:broadsign_separations,id"],
         ];
     }
 }

@@ -14,8 +14,8 @@ class AlterLayoutsTable extends Migration
     public function up()
     {
         Schema::table("formats_layouts", function (Blueprint $table) {
-            $table->foreignId("trigger_id")->after("is_fullscreen")->constrained("broadsign_triggers")->cascadeOnUpdate()->restrictOnDelete();
-            $table->foreignId("separation_id")->after("trigger_id")->constrained("broadsign_separations")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId("trigger_id")->after("is_fullscreen")->nullable(true)->constrained("broadsign_triggers")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId("separation_id")->after("trigger_id")->nullable(true)->constrained("broadsign_separations")->cascadeOnUpdate()->restrictOnDelete();
         });
 
     }

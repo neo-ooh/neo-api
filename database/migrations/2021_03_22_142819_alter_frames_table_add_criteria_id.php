@@ -17,7 +17,7 @@ class AlterFramesTableAddCriteriaId extends Migration
     public function up()
     {
         Schema::table("frames", function (Blueprint $table) {
-            $table->foreignId("criteria_id")->after("type")->constrained("broadsign_criteria")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId("criteria_id")->after("type")->nullable(true)->constrained("broadsign_criteria")->cascadeOnUpdate()->restrictOnDelete();
         });
 
         // We need to fill the `criteria_id` column before removing the `type` column.

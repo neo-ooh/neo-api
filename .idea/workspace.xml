@@ -9,21 +9,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
-      <change afterPath="$PROJECT_DIR$/database/migrations/2021_03_22_142748_alter_layouts_table.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/database/migrations/2021_03_22_142819_alter_frames_table_add_criteria_id.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateCampaignTargeting.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateCampaignTargeting.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Creatives/TargetCreative.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Schedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Schedule.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FormatsLayoutsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FormatsLayoutsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/FramesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/FramesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts/StoreLayoutRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts/StoreLayoutRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts/UpdateLayoutRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/FormatsLayouts/UpdateLayoutRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Frames/StoreFrameRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Frames/StoreFrameRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Frames/UpdateFrameRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Frames/UpdateFrameRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/FormatLayout.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/FormatLayout.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Frame.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Frame.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_03_22_142748_alter_layouts_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_03_22_142748_alter_layouts_table.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/migrations/2021_03_22_142819_alter_frames_table_add_criteria_id.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_03_22_142819_alter_frames_table_add_criteria_id.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

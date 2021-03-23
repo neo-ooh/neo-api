@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property string $name
- * @property int $broadsign_trigger_id
+ * @property int $broadsign_separation_id
  * @property Date $created_at
  * @property Date $updated_at
  */

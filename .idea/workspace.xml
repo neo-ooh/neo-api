@@ -10,8 +10,8 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_03_22_142748_alter_layouts_table.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_03_22_142748_alter_layouts_table.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/migrations/2021_03_22_142819_alter_frames_table_add_criteria_id.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/migrations/2021_03_22_142819_alter_frames_table_add_criteria_id.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BroadSignSeparationsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BroadSignSeparationsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/BroadSignSeparation.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/BroadSignSeparation.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

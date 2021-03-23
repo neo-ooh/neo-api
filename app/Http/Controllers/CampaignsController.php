@@ -15,7 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\BroadSign\Jobs\Campaigns\CreateBroadSignCampaign;
 use Neo\BroadSign\Jobs\Campaigns\UpdateBroadSignCampaign;
-use Neo\BroadSign\Jobs\Campaigns\UpdateCampaignTargeting;
+use Neo\BroadSign\Jobs\Campaigns\CampaignTargeting;
 use Neo\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Http\Requests\Campaigns\ListCampaignsRequest;
 use Neo\Http\Requests\Campaigns\StoreCampaignRequest;
@@ -136,7 +136,7 @@ class CampaignsController extends Controller {
         $campaign->refresh();
 
         // Propagate the changes in BroadSign
-        UpdateCampaignTargeting::dispatch($campaign->id);
+        CampaignTargeting::dispatch($campaign->id);
 
         return new Response($campaign->locations);
     }
@@ -146,7 +146,7 @@ class CampaignsController extends Controller {
         $campaign->refresh();
 
         // Propagate the changes in BroadSign
-        UpdateCampaignTargeting::dispatch($campaign->id);
+        CampaignTargeting::dispatch($campaign->id);
 
         return new Response($campaign->locations);
     }

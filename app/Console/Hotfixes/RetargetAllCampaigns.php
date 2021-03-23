@@ -11,7 +11,7 @@
 namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\Jobs\Campaigns\UpdateCampaignTargeting;
+use Neo\BroadSign\Jobs\Campaigns\CampaignTargeting;
 use Neo\BroadSign\Models\Location;
 use Neo\Models\Campaign;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -59,7 +59,7 @@ class RetargetAllCampaigns extends Command {
             ]);
 
             // Trigger a targeting of the campaign
-            UpdateCampaignTargeting::dispatch($campaign->id);
+            CampaignTargeting::dispatch($campaign->id);
         }
 
         $progressBar->setMessage("Hotfix done");

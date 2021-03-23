@@ -16,23 +16,26 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Neo\Models\FormatLayout
  *
- * @property int               id
- * @property int               format_id
- * @property string            name
- * @property boolean           is_fullscreen
- * @property int               trigger_id
- * @property int               separation_id
- * @property Date              created_at
- * @property Date              updated_at
- * @property Date              deleted_at
+ * @property int                  id
+ * @property int                  format_id
+ * @property string               name
+ * @property boolean              is_fullscreen
+ * @property int                  trigger_id
+ * @property int                  separation_id
+ * @property Date                 created_at
+ * @property Date                 updated_at
+ * @property Date                 deleted_at
  *
- * @property Format            format
- * @property Collection<Frame> frames
+ * @property Format               format
+ * @property Collection<Frame>    frames
+ * @property ?BroadSignTrigger    trigger
+ * @property ?BroadSignSeparation separation
  *
  * @mixin Builder
  */
@@ -95,5 +98,13 @@ class FormatLayout extends Model {
 
     public function frames(): HasMany {
         return $this->hasMany(Frame::class, 'layout_id', 'id');
+    }
+
+    public function trigger(): HasOne {
+        return $this->hasOne(BroadSignTrigger::class, 'trigger_id', 'id');
+    }
+
+    public function separation(): HasOne {
+        return $this->hasOne(BroadSignSeparation::class, 'separation_id', 'id');
     }
 }

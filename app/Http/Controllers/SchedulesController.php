@@ -19,7 +19,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Neo\BroadSign\Jobs\Campaigns\UpdateCampaignTargeting;
+use Neo\BroadSign\Jobs\Campaigns\CampaignTargeting;
 use Neo\BroadSign\Jobs\Schedules\CreateBroadSignSchedule;
 use Neo\BroadSign\Jobs\Schedules\ReorderBroadSignSchedules;
 use Neo\BroadSign\Jobs\Schedules\UpdateBroadSignSchedule;
@@ -289,7 +289,7 @@ class SchedulesController extends Controller {
      * @throws Exception
      */
     public function destroy(DestroyScheduleRequest $request, Schedule $schedule) {
-        UpdateCampaignTargeting::dispatch($schedule->campaign_id);
+        CampaignTargeting::dispatch($schedule->campaign_id);
 
         // If a schedule has not be reviewed, we want to completely remove it
         if ($schedule->status === 'draft' || $schedule->status === 'pending') {

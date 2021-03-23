@@ -88,6 +88,6 @@ class CreateBroadSignCampaign extends BroadSignJob {
         $campaign->save();
 
         // Now set the targeting of the campaign
-        UpdateCampaignTargeting::dispatch($campaign->id);
+        CampaignTargeting::dispatch($campaign->id);
     }
 }

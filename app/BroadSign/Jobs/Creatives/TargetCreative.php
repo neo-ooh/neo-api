@@ -58,7 +58,7 @@ class TargetCreative extends BroadSignJob {
             return;
         }
 
-        // We need to target the creative base on its format and framesgs
+        // We need to target the creative base on its format and frames
         if ($creative->frame->layout->frames()->count() === 1) {
             // Only one frame in the format, do nothing
             return;

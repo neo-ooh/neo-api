@@ -48,7 +48,7 @@ class Kernel extends ConsoleKernel {
         $schedule->job(RequestScreenshotsBursts::class)->everyMinute();
 
         // Hourly tasks
-        $schedule->command('network:cache-inventory')->hourly();
+        $schedule->command('network:cache-inventory')->everyThreeHours();
 
         // Daily tasks
         $schedule->command('network:update')->daily();

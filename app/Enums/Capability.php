@@ -27,6 +27,7 @@ use BenSampo\Enum\Enum;
  * @method static self contents_review()
  * @method static self locations_edit()
  * @method static self bursts_request()
+ * @method static self bursts_quality()
  * @method static self reports_create()
  * @method static self reports_edit()
  * @method static self inventory_read()
@@ -78,6 +79,7 @@ final class Capability extends Enum {
     public const reports_create = "reports.create";
     public const reports_edit = "reports.edit";
     public const bursts_request = "bursts.request";
+    public const bursts_quality = "bursts.quality";
 
     public const inventory_read = "inventory.read";
 

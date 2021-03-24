@@ -31,11 +31,8 @@ class BroadSign {
         return [
             "domain_id"               => config("broadsign.domain-id"),
             "customer_id"             => config("broadsign.customer-id"),
-            "category_separation_id"  => config("broadsign.category-separation-id"),
             "campaign_length"         => config("broadsign.default-campaign-length"),
             "advertising_criteria_id" => config("broadsign.advertising-criteria"),
-            "left_frame_criteria_id"  => config("broadsign.left-frame-criteria"),
-            "right_frame_criteria_id" => config("broadsign.right-frame-criteria"),
         ];
     }
 

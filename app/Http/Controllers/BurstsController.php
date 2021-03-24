@@ -13,6 +13,8 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\Burst;
 use Neo\Models\Screenshot;
@@ -27,6 +29,11 @@ class BurstsController extends Controller {
             "duration_ms"  => $duration,
             "frequency_ms" => $frequency,
         ] = $request->validated();
+
+        // If the user is not allowed to select the burst quality, we make it is set to the default value
+        if (!Gate::allows(Capability::bursts_quality)) {
+            $scaleFactor = config("broadsign.bursts.default-quality");
+        }
 
         $bursts = [];
 
@@ -59,7 +66,7 @@ class BurstsController extends Controller {
         $screenshot->store($request->getContent(true));
 
         // Check if the burst is complete
-        if($burst->screenshots_count === $burst->expected_screenshots) {
+        if ($burst->screenshots_count === $burst->expected_screenshots) {
             $burst->is_finished = true;
             $burst->save();
         }
@@ -70,7 +77,7 @@ class BurstsController extends Controller {
     }
 
     public function destroy(Burst $burst): Response {
-        if(!$burst->started) {
+        if (!$burst->started) {
             $burst->delete();
             return new Response();
         }

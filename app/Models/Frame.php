@@ -90,6 +90,6 @@ class Frame extends Model {
     }
 
     public function criteria(): HasOne {
-        return $this->hasOne(BroadSignCriteria::class, "criteria_id");
+        return $this->hasOne(BroadSignCriteria::class, "criteria_id", "id");
     }
 }

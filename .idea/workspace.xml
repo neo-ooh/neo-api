@@ -8,7 +8,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Formats/QueryFormatsRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Formats/QueryFormatsRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/CampaignTargeting.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateCampaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/CreateBroadSignCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/CreateBroadSignCampaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Console/Hotfixes/RetargetAllCampaigns.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Console/Hotfixes/RetargetAllCampaigns.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Frames/StoreFrameRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Frames/StoreFrameRequest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -407,7 +413,7 @@
       <workItem from="1615388486961" duration="2772000" />
       <workItem from="1615394894850" duration="24011000" />
       <workItem from="1615901657208" duration="5256000" />
-      <workItem from="1616610673914" duration="839000" />
+      <workItem from="1616610673914" duration="1784000" />
     </task>
     <task id="LOCAL-00010" summary="Add Locations search endpoint">
       <created>1615388957440</created>

@@ -10,7 +10,7 @@
 
 namespace Neo\Models\Traits;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Neo\Models\Location;
 
@@ -33,8 +33,14 @@ trait HasLocations {
             $locations = $locations->merge($this->own_locations);
         }
 
-        if($children) {
-            $locations = $locations->merge($this->children->map(fn($child) => $child->getLocations(true, false, $children && $recurs, $recurs))->flatten());
+        if($children && !$recurs) {
+            $locations = $locations->merge($this->direct_children->map(fn($child) => $child->getLocations(true, false, $children && $recurs, $recurs))->flatten());
+        }
+
+        if($children && $recurs) {
+            $allChildren = $this->children;
+            $allChildren->load("own_locations");
+            return $allChildren->pluck("own_locations")->flatten();
         }
 
         return $locations->unique("id")->values();

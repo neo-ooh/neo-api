@@ -100,11 +100,11 @@ class FormatLayout extends Model {
         return $this->hasMany(Frame::class, 'layout_id', 'id');
     }
 
-    public function trigger(): HasOne {
-        return $this->hasOne(BroadSignTrigger::class, 'trigger_id', 'id');
+    public function trigger(): BelongsTo {
+        return $this->belongsTo(BroadSignTrigger::class, 'trigger_id', 'id');
     }
 
-    public function separation(): HasOne {
-        return $this->hasOne(BroadSignSeparation::class, 'separation_id', 'id');
+    public function separation(): BelongsTo {
+        return $this->belongsTo(BroadSignSeparation::class, 'separation_id', 'id');
     }
 }

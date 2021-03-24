@@ -89,7 +89,7 @@ class Frame extends Model {
         return $this->hasMany(Creative::class, 'frame_id', 'id');
     }
 
-    public function criteria(): HasOne {
-        return $this->hasOne(BroadSignCriteria::class, "criteria_id", "id");
+    public function criteria(): BelongsTo {
+        return $this->belongsTo(BroadSignCriteria::class, "criteria_id", "id");
     }
 }

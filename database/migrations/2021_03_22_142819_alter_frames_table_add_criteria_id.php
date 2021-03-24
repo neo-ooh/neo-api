@@ -65,6 +65,8 @@ class AlterFramesTableAddCriteriaId extends Migration
                         $frame->criteria_id = $rightFrameId;
                         break;
                 }
+
+                $frame->save();
             }
         }
 

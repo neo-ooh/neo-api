@@ -40,7 +40,7 @@ trait HasLocations {
         if($children && $recurs) {
             $allChildren = $this->children;
             $allChildren->load("own_locations");
-            return $allChildren->pluck("own_locations")->flatten();
+            $locations = $allChildren->pluck("own_locations")->flatten();
         }
 
         return $locations->unique("id")->values();

@@ -32,19 +32,19 @@ class Order {
     public string $show_investment;
 
     public function __construct(array $record) {
-        $this->reference              = $record["name"];
-        $this->date                   = $record["date_order"];
-        $this->salesperson            = $record["user_id"];
-        $this->status                 = $record["state"];
-        $this->campaign_name          = $record["campaign_name"];
-        $this->campaign_start         = $record["campaign_ids/date_start"];
-        $this->campaign_end           = $record["campaign_ids/date_end"];
-        $this->bonus_impression       = $record["bonus_impression"];
+        $this->reference     = $record["name"];
+        $this->date          = $record["date_order"];
+        $this->salesperson   = $record["user_id"];
+        $this->status        = $record["state"];
+        $this->campaign_name = $record["campaign_name"];
+//        $this->campaign_start         = $record["campaign_ids/date_start"];
+//        $this->campaign_end           = $record["campaign_ids/date_end"];
+//        $this->bonus_impression       = $record["bonus_impression"];
         $this->amount_before_discount = $record["amount_undiscounted"];
         $this->discount_amount        = $record["amount_discount"];
         $this->taxes                  = $record["amount_tax"];
         $this->total                  = $record["amount_total"];
         $this->traffic                = $record["traffic"];
-        $this->show_investment        = !!$record["investment"];
+        $this->show_investment        = $record["investment"] === "True";
     }
 }

@@ -26,15 +26,14 @@ class Customer {
 
     public function __construct(array $record) {
         [
-            "partner_id"                       => $this->name,
-
-            "Customer/Parent name"             => $this->parent_name,
+            "partner_id/name" => $this->name,
+            "partner_id/parent_name" => $this->parent_name,
 
             "company_id/name"                  => $this->company,
             "analytic_account_id/display_name" => $this->account,
 
             "partner_id/street"          => $this->address_street,
-            "partner_id/street2"         => $this->address_street_2,
+//            "partner_id/street2"         => $this->address_street_2,
             "partner_id/city"            => $this->address_city,
             "partner_id/state_id/name"   => $this->address_state_name,
             "partner_id/country_id/name" => $this->address_country,

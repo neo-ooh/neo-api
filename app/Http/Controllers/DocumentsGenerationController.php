@@ -42,7 +42,7 @@ class DocumentsGenerationController extends Controller {
         switch ($request->route('document')) {
             case "proposal":
                 $contract = Contract::make($file->getContent());
-//                $contract = Contract::make(Storage::disk('local')->get('sale.order.5.csv'));
+//                $contract = Contract::make(Storage::disk('local')->get('quotation.csv'));
                 break;
             default:
                 throw new UnknownDocumentException();

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdateCampaign.php
+ * @neo/api - TargetCampaign.php
  */
 
 namespace Neo\BroadSign\Jobs\Campaigns;
@@ -22,13 +22,13 @@ use Neo\Models\BroadSignCriteria;
 use Neo\Models\Campaign;
 
 /**
- * Class UpdateCampaign
+ * Class TargetCampaign
  * Campaign targeting in BroadSign is made of two stones : The Resource Criteria and the Skin Slots, which map to the layout used
  * in the campaign and the locations it broadcasts to.
  *
  * @package Neo\Jobs
  */
-class UpdateCampaign extends BroadSignJob {
+class TargetCampaign extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected int $campaignID;

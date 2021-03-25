@@ -9,10 +9,13 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/BroadSign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/BurstsController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/broadsign.php" beforeDir="false" afterPath="$PROJECT_DIR$/config/broadsign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateCampaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Campaigns/UpdateCampaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Order.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Order.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -223,7 +226,7 @@
     <property name="com.intellij.ide.scratch.LRUPopupBuilder$1/New Scratch File" value="HTML&#10;MySQL" />
     <property name="database.data.extractors.current.export.id" value="Comma-separated (CSV)_id" />
     <property name="database.data.extractors.current.id" value="Comma-separated (CSV)_id" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/app/Http/Controllers" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/storage" />
     <property name="list.type.of.created.stylesheet" value="SCSS" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.stylelint" value="true" />
@@ -263,18 +266,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/storage" />
       <recent name="$PROJECT_DIR$/app/Http/Controllers" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/BrandingsFiles" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Brandings" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/BroadSignCriteria" />
-      <recent name="$PROJECT_DIR$/app/Models" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/storage/app" />
       <recent name="$PROJECT_DIR$/app/Http/Requests" />
       <recent name="$PROJECT_DIR$/app/Console" />
       <recent name="$PROJECT_DIR$/app/Jobs" />
       <recent name="$PROJECT_DIR$/app/Http/Requests/Inventory" />
-      <recent name="$PROJECT_DIR$/app/Console/OneShots" />
     </key>
   </component>
   <component name="RunManager" selected="PHPUnit.All Tests">

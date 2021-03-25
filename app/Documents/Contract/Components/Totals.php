@@ -52,7 +52,7 @@ class Totals extends Component {
             "guaranteedImpressions" => $guaranteedOrders->sum("impressions"),
             "guaranteedValue"       => $guaranteedOrders->sum("media_value"),
             "guaranteedDiscount"    => $guaranteedOrders->count() > 0 ? $guaranteedOrders->sum("discount") / $guaranteedOrders->count() : 0,
-            "guaranteedInvestment"  => $guaranteedOrders->sum("net_investment"),
+            "guaranteedInvestment"  => $this->order->total,
             "hasBua"                => $buaOrders->isNotEmpty(),
             "buaImpressions"        => $buaOrders->sum("impressions"),
             "buaValue"              => $buaOrders->sum("media_value"),

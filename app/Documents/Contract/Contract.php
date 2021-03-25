@@ -79,7 +79,7 @@ class Contract extends Document {
         // Data is expected to be a CSV file
         // Read the csv file
         $reader = Reader::createFromString($data);
-        $reader->setDelimiter(';');
+        $reader->setDelimiter(',');
         $reader->setHeaderOffset(0);
 
         // Get all records in the file

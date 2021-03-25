@@ -144,15 +144,17 @@ class CreateBroadSignSchedule extends BroadSignJob {
         $bundle->max_duration_msec     = $schedule->campaign->display_duration * 1000;
         $bundle->name                  = $schedule->campaign->name . " (" . $schedule->campaign_id . ")" . "-" . $content->name ?? ("Bundle #" . $schedule->id);
         $bundle->parent_id             = $bsSchedule->id;
-        $bundle->create();
 
         if($content->layout->trigger_id) {
+            $bundle->auto_synchronized     = false;
             $bundle->trigger_category_id   = $content->layout->trigger->broadsign_trigger_id;
         }
 
         if($content->layout->separation_id) {
             $bundle->category_id           = $content->layout->separation->broadsign_separation_id;
         }
+
+        $bundle->create();
 
         // Assign the bundle ID to the content
         $schedule->broadsign_bundle_id = $bundle->id;

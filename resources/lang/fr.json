@@ -2,7 +2,7 @@
   "email-review-schedule-subject": "Programmation en attente de validation",
   "email-review-schedule-title": "Une programmation est en attente de validation",
   "email-review-schedule-body": "Une programmation de <strong>:scheduler</strong> pour la campagne <strong>:campaign</strong> est en attente de validation.<br /><br />Vous pouvez utiliser le lien ci-dessous pour y accèder directement.",
-  "email-review-schedule-body_text": "Une programmation de :scheduler pour la campagne :campaign est en attente de validation.\n\nVous pouvez utiliser le lien ci-dessous pour y accèder directement.",
+  "email-review-schedule-body_text": "Une programmation de :scheduler pour la campagne :campaign de :campaign-owner est en attente de validation.\n\nVous pouvez utiliser le lien ci-dessous pour y accèder directement.",
   "email-review-schedule-cta": "Accéder à la campagne",
 
   "email-welcome-subject": "Bienvenue chez les services web Neo-OOH",

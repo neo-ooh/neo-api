@@ -52,7 +52,7 @@ class Location extends BroadSignModel {
     protected static function actions(): array {
         return [
             "all"          => Endpoint::get("/display_unit/v12")->multiple(),
-            "byReservable" => Endpoint::get("/display_unit/v12/by_reservable")->domain(false)->multiple()->cache(3600),
+            "byReservable" => Endpoint::get("/display_unit/v12/by_reservable")->domain(false)->multiple(),
         ];
     }
 

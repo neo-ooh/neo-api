@@ -63,6 +63,9 @@ final class Capability extends Enum {
     // Formats
     public const formats_edit = "formats.edit";
 
+    // Headlines
+    public const headlines_edit = "headlines.edit";
+
     // Formats
     public const locations_edit = "locations.edit";
 

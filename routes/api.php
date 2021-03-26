@@ -34,6 +34,7 @@ use Neo\Http\Controllers\FormatsController;
 use Neo\Http\Controllers\FormatsDisplayTypesController;
 use Neo\Http\Controllers\FormatsLayoutsController;
 use Neo\Http\Controllers\FramesController;
+use Neo\Http\Controllers\HeadlinesController;
 use Neo\Http\Controllers\InventoryController;
 use Neo\Http\Controllers\LibrariesController;
 use Neo\Http\Controllers\LocationsController;
@@ -58,6 +59,7 @@ use Neo\Models\Creative;
 use Neo\Models\Format;
 use Neo\Models\FormatLayout;
 use Neo\Models\Frame;
+use Neo\Models\Headline;
 use Neo\Models\Library;
 use Neo\Models\Location;
 use Neo\Models\Param;
@@ -390,6 +392,22 @@ Route::prefix("v1")->group(function () {
     Route::  post("layouts", FormatsLayoutsController::class . "@store")->name("layouts.store");
     Route::   put("layouts/{layout}", FormatsLayoutsController::class . "@update")->name("layouts.update");
     Route::delete("layouts/{layout}", FormatsLayoutsController::class . "@destroy")->name("layouts.destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Headlines
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("headline", Headline::class);
+
+    Route::get("headlines", HeadlinesController::class . "@index")->name("headlines.index");
+    Route::get("headlines/_current", HeadlinesController::class . "@curent")->name("headlines.current");
+    Route::get("headlines/{headline}", HeadlinesController::class . "@show")->name("headlines.show");
+    Route::post("headlines", HeadlinesController::class . "@store")->name("headlines.store");
+    Route::put("headlines/{headline}", HeadlinesController::class . "@update")->name("headlines.update");
+    Route::delete("headlines/{headline}", HeadlinesController::class . "@delete")->name("headlines.destroy");
 
 
     /*

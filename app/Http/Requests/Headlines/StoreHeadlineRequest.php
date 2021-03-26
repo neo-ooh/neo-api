@@ -30,7 +30,7 @@ class StoreHeadlineRequest extends FormRequest
             "end_date" => ["required", "nullable", "date"],
             "messages" => ["required", "array"],
             "messages.*.locale" => ["required", "string", "max:5"],
-            "messages.*.messsage" => ["required", "string", "max:5"],
+            "messages.*.message" => ["required", "string", "max:5"],
         ];
     }
 }

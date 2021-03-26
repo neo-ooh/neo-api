@@ -42,8 +42,8 @@ class HeadlinesController extends Controller
         foreach ($messages as $message) {
             HeadlineMessage::query()->create([
                 "headline_id" => $headline->id,
-                "locale" => $messages["locale"],
-                "message" => $messages["message"],
+                "locale" => $message["locale"],
+                "message" => $message["message"],
             ]);
         }
 

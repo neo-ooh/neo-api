@@ -48,6 +48,7 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\ScreenshotsController;
+use Neo\Http\Controllers\StatsController;
 use Neo\Models\Actor;
 use Neo\Models\BroadSignCriteria;
 use Neo\Models\BroadSignSeparation;
@@ -595,4 +596,13 @@ Route::prefix("v1")->group(function () {
     Route::model("screenshot", Screenshot::class);
 
     Route::delete("screenshots/{screenshot}", ScreenshotsController::class . "@destroy")->name("screenshots.destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Screenshots
+    |----------------------------------------------------------------------
+    */
+
+    Route::get("stats", StatsController::class . "@index")->name("stats.index");
 });

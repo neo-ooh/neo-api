@@ -397,22 +397,6 @@ Route::prefix("v1")->group(function () {
 
     /*
     |----------------------------------------------------------------------
-    | Headlines
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("headline", Headline::class);
-
-    Route::get("headlines", HeadlinesController::class . "@index")->name("headlines.index");
-    Route::get("headlines/_current", HeadlinesController::class . "@curent")->name("headlines.current");
-    Route::get("headlines/{headline}", HeadlinesController::class . "@show")->name("headlines.show");
-    Route::post("headlines", HeadlinesController::class . "@store")->name("headlines.store");
-    Route::put("headlines/{headline}", HeadlinesController::class . "@update")->name("headlines.update");
-    Route::delete("headlines/{headline}", HeadlinesController::class . "@delete")->name("headlines.destroy");
-
-
-    /*
-    |----------------------------------------------------------------------
     | Frames
     |----------------------------------------------------------------------
     */
@@ -422,6 +406,22 @@ Route::prefix("v1")->group(function () {
     Route::  post("frames", FramesController::class . "@store")->name("frames.index");
     Route::   put("frames/{frame}", FramesController::class . "@update")->name("frames.update");
     Route::delete("frames/{frame}", FramesController::class . "@destroy")->name("frames.destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Headlines
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("headline", Headline::class);
+
+    Route::   get("headlines"           , HeadlinesController::class . "@index"  )->name("headlines.index");
+    Route::   get("headlines/_current"  , HeadlinesController::class . "@current")->name("headlines.current");
+    Route::   get("headlines/{headline}", HeadlinesController::class . "@show"   )->name("headlines.show");
+    Route::  post("headlines"           , HeadlinesController::class . "@store"  )->name("headlines.store");
+    Route::   put("headlines/{headline}", HeadlinesController::class . "@update" )->name("headlines.update");
+    Route::delete("headlines/{headline}", HeadlinesController::class . "@delete" )->name("headlines.destroy");
 
 
     /*
@@ -460,11 +460,11 @@ Route::prefix("v1")->group(function () {
 
     Route::model("location", Location::class);
 
-    Route:: get("locations", LocationsController::class . "@index")->name("locations.index");
-    Route:: get("locations/_search", LocationsController::class . "@search")->name("locations.search");
-    Route:: get("locations/_network", LocationsController::class . "@allByNetwork")->name("locations.network");
-    Route:: get("locations/{location}", LocationsController::class . "@show")->name("locations.show");
-    Route:: put("locations/{location}", LocationsController::class . "@update")->name("locations.update");
+    Route::get("locations"           , LocationsController::class . "@index"       )->name("locations.index");
+    Route::get("locations/_search"   , LocationsController::class . "@search"      )->name("locations.search");
+    Route::get("locations/_network"  , LocationsController::class . "@allByNetwork")->name("locations.network");
+    Route::get("locations/{location}", LocationsController::class . "@show"        )->name("locations.show");
+    Route::put("locations/{location}", LocationsController::class . "@update"      )->name("locations.update");
 
 
     /*

@@ -10,6 +10,7 @@ use Neo\Http\Requests\Headlines\DestroyHeadlineRequest;
 use Neo\Http\Requests\Headlines\ListHeadlinesRequest;
 use Neo\Http\Requests\Headlines\ShowHeadlineRequest;
 use Neo\Http\Requests\Headlines\StoreHeadlineRequest;
+use Neo\Http\Requests\Headlines\UpdateHeadlineMessageRequest;
 use Neo\Http\Requests\Headlines\UpdateHeadlineRequest;
 use Neo\Models\Headline;
 use Neo\Models\HeadlineMessage;
@@ -57,6 +58,13 @@ class HeadlinesController extends Controller
         $headline->save();
 
         return new Response($headline->refresh());
+    }
+
+    public function updateMessage(UpdateHeadlineMessageRequest $request, Headline $headline, HeadlineMessage $headlineMessage) {
+        $headlineMessage->message = $request->validated()["message"];
+        $headlineMessage->save();
+
+        return new Response($headlineMessage);
     }
 
     public function destroy(DestroyHeadlineRequest $request, Headline $headline) {

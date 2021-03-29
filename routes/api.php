@@ -61,6 +61,7 @@ use Neo\Models\Format;
 use Neo\Models\FormatLayout;
 use Neo\Models\Frame;
 use Neo\Models\Headline;
+use Neo\Models\HeadlineMessage;
 use Neo\Models\Library;
 use Neo\Models\Location;
 use Neo\Models\Param;
@@ -415,6 +416,7 @@ Route::prefix("v1")->group(function () {
     */
 
     Route::model("headline", Headline::class);
+    Route::model("headlineMessage", HeadlineMessage::class);
 
     Route::   get("headlines"           , HeadlinesController::class . "@index"  )->name("headlines.index");
     Route::   get("headlines/_current"  , HeadlinesController::class . "@current")->name("headlines.current");
@@ -422,7 +424,7 @@ Route::prefix("v1")->group(function () {
     Route::  post("headlines"           , HeadlinesController::class . "@store"  )->name("headlines.store");
     Route::   put("headlines/{headline}", HeadlinesController::class . "@update" )->name("headlines.update");
     Route::delete("headlines/{headline}", HeadlinesController::class . "@delete" )->name("headlines.destroy");
-    Route::put("headlines/{headline}/messages/{message}", HeadlinesController::class . "@updateMessage" )->name("headlines.messages.update");
+    Route::put("headlines/{headline}/messages/{headlineMessage}", HeadlinesController::class . "@updateMessage" )->name("headlines.messages.update");
 
 
     /*

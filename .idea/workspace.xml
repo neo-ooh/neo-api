@@ -8,13 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
-      <change afterPath="$PROJECT_DIR$/app/Http/Requests/Headlines/UpdateHeadlineMessageRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/HeadlinesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/HeadlinesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Headlines/ListHeadlinesRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Headlines/ListHeadlinesRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Headlines/StoreHeadlineRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Headlines/StoreHeadlineRequest.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Headline.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Headline.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

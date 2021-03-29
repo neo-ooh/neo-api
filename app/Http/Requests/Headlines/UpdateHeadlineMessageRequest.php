@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class StoreHeadlineRequest extends FormRequest
+class UpdateHeadlineMessageRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -26,11 +26,7 @@ class StoreHeadlineRequest extends FormRequest
     public function rules()
     {
         return [
-            "style" => ["required", "string"],
-            "end_date" => ["required", "nullable", "date"],
-            "messages" => ["required", "array"],
-            "messages.*.locale" => ["required", "string"],
-            "messages.*.message" => ["required", "string"],
+            "message" => ["required", "string"],
         ];
     }
 }

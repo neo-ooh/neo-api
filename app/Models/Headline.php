@@ -63,11 +63,4 @@ class Headline extends Model
     public static function query() {
         return parent::query()->orderBy("end_date", "desc");
     }
-
-    /**
-     * @return Builder
-     */
-    public static function withTrashed() {
-        return static::withTrashed()->orderBy("end_date", "desc");
-    }
 }

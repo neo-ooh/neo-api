@@ -17,7 +17,7 @@ use Neo\Models\HeadlineMessage;
 class HeadlinesController extends Controller
 {
     public function index(ListHeadlinesRequest $request) {
-        return new Response(Headline::withTrashed()->with("messages")->get());
+        return new Response(Headline::withTrashed()->orderBy("end_date", "desc")->with("messages")->get());
     }
 
     public function current(CurrentHeadlinesRequest $request) {
@@ -25,7 +25,7 @@ class HeadlinesController extends Controller
     }
 
     public function show(ShowHeadlineRequest $request, Headline $headline) {
-        return new Response($headline);
+        return new Response($headline->load("messages"));
     }
 
     public function store(StoreHeadlineRequest $request) {

@@ -422,6 +422,7 @@ Route::prefix("v1")->group(function () {
     Route::  post("headlines"           , HeadlinesController::class . "@store"  )->name("headlines.store");
     Route::   put("headlines/{headline}", HeadlinesController::class . "@update" )->name("headlines.update");
     Route::delete("headlines/{headline}", HeadlinesController::class . "@delete" )->name("headlines.destroy");
+    Route::put("headlines/{headline}/messages/{message}", HeadlinesController::class . "@updateMessage" )->name("headlines.messages.update");
 
 
     /*

@@ -13,8 +13,7 @@ class ListHeadlinesRequest extends FormRequest
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize(): bool {
         return Gate::allows(Capability::headlines_edit);
     }
 
@@ -23,8 +22,7 @@ class ListHeadlinesRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules(): array {
         return [
             //
         ];

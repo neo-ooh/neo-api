@@ -140,7 +140,6 @@ class Campaign extends BroadSignModel {
             "id"           => $this->id,
             "sub_elements" => [
                 "display_unit"      => $display_units_ids->map(fn($du) => ["id" => $du])->values()->toArray(),
-
             ],
         ];
 

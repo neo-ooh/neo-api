@@ -221,12 +221,4 @@ class Schedule extends Model {
     public function reviews(): HasMany {
         return $this->hasMany(Review::class, 'schedule_id', 'id')->orderByDesc("created_at");
     }
-
-    public function getOldIsApprovedAttribute(): bool {
-        if ($this->content->is_approved) {
-            return true;
-        }
-
-        return $this->reviews->count() > 0 ? $this->reviews->first()->approved : false;
-    }
 }

@@ -63,6 +63,7 @@ Route::prefix("v1/auth")->group(function () {
     */
     Route::middleware('loa-2')->group(function() {
         Route::post('/two-fa-validation', TwoFactorAuthController::class . '@validateToken')->name('two-fa-validation');
+        Route::post('/two-fa-refresh', TwoFactorAuthController::class . '@refresh')->name('two-fa-validation');
     });
 
 

@@ -84,6 +84,12 @@ class CreativesController extends Controller {
         $creative->refresh();
         $creative->store($file);
 
+        // Properly rename the ad if applicable
+        if($content->creatives_count === 1) {
+            // This creative is the first
+            $content->name = $file->getBasename();
+        }
+
         return new Response($creative, 201);
     }
 

@@ -41,10 +41,13 @@ class TwoFactorAuthController extends Controller {
         ]);
     }
 
-    public function test(): Response {
-        return new Response([
-            "name"  => Auth::user()->name,
-            "email" => Auth::user()->email,
-        ]);
+    public function refresh(): Response {
+        // Remove any two factor token associated with the user
+        TwoFactorToken::query()->where("actor_id", Auth::id());
+
+        // and create a new one by triggering a check
+        Auth::user()->getJWT();
+
+        return new Response();
     }
 }

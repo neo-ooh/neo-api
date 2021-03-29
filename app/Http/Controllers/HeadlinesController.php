@@ -57,7 +57,7 @@ class HeadlinesController extends Controller
         $headline->end_date = $inputs["end_date"];
         $headline->save();
 
-        return new Response($headline->refresh());
+        return new Response($headline->load("messages")->refresh());
     }
 
     public function updateMessage(UpdateHeadlineMessageRequest $request, Headline $headline, HeadlineMessage $headlineMessage) {

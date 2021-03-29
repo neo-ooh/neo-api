@@ -2,6 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -22,7 +23,7 @@ class HeadlinesController extends Controller
     }
 
     public function current(CurrentHeadlinesRequest $request) {
-        return new Response(Headline::query()->orderBy("end_date", "desc")->where("end_date", "<", "NOW()")->with("messages")->get());
+        return new Response(Headline::query()->orderBy("end_date", "desc")->whereDate("end_date", "<", Date::now())->with("messages")->get());
     }
 
     public function show(ShowHeadlineRequest $request, Headline $headline) {

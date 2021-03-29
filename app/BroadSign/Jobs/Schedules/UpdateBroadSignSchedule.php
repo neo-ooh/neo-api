@@ -64,7 +64,7 @@ class UpdateBroadSignSchedule extends BroadSignJob {
 
         // We need to make sure the end time is not after 23:59:00
         $endTime = $schedule->end_date;
-        if ($endTime->isAfter($endTime->setTime(23, 59, 00))) {
+        if ($endTime->isAfter($endTime->copy()->setTime(23, 59, 00))) {
             $endTime = $endTime->setTime(23, 59, 00);
         }
 

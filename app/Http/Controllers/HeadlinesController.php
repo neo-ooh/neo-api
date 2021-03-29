@@ -2,10 +2,10 @@
 
 namespace Neo\Http\Controllers;
 
-use Carbon\Traits\Date;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Neo\Http\Requests\Headlines\CurrentHeadlinesRequest;
 use Neo\Http\Requests\Headlines\DestroyHeadlineRequest;
 use Neo\Http\Requests\Headlines\ListHeadlinesRequest;

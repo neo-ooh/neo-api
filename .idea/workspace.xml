@@ -9,10 +9,10 @@
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Campaign.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CreativesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/TwoFactorAuthController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/TwoFactorAuthController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Models/Schedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Schedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Schedules/UpdateBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Schedules/UpdateBroadSignSchedule.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/routes/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/auth.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

@@ -56,6 +56,10 @@ class UpdateBroadSignSchedule extends BroadSignJob {
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 
+        if(!$schedule) {
+            return; // Schedule does not exist
+        }
+
         if (!$schedule->broadsign_schedule_id) {
             // This schedule doesn't have a known counterpart in broadsign, create it
             CreateBroadSignSchedule::dispatch($this->scheduleID, $schedule->owner_id);

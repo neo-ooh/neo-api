@@ -65,8 +65,8 @@ class InventoryController extends Controller {
         }
 
         // Load the inventory of each location
-        $locations->load(["inventory" => function ($query) {
-            $query->where("year", "=", 2021);
+        $locations->load(["inventory" => function ($query) use ($year) {
+            $query->where("year", "=", $year);
         }]);
 
         return new Response($locations->sortBy("name")->values());

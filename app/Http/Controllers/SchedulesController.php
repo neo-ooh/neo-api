@@ -324,6 +324,7 @@ class SchedulesController extends Controller {
         $schedules = Schedule::query()
                              ->whereIn("campaign_id", $campaigns)
                              ->where("locked", "=", 1)
+                             ->where("schedules.is_approved", "<>", 1)
                              ->join('contents', 'contents.id', '=', "content_id")
                              ->where('contents.is_approved', '=', false)
                              ->whereNotExists(fn($query) => $query->select(DB::raw(1))

@@ -56,7 +56,7 @@ class Inventory extends BroadSignModel {
         $inventory = rtrim(ltrim($this->inventory, '{'), '}');
         $this->inventory = collect(explode(',', $inventory));
 
-        // Transform each value to an appropriate number
+        // Transform each value from ms to seconds
         $this->inventory = $this->inventory->map(fn ($val) => (int)$val / 10_000.0);
         $this->inventory_size = $this->inventory->count();
     }

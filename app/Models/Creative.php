@@ -169,7 +169,7 @@ class Creative extends Model {
     }
 
     public function getThumbnailPathAttribute(): string {
-        return 'creatives/' . $this->id . '_thumb.jpeg';
+        return 'creatives/' . $this->id . '_thumb.' . $this->extension;
     }
 
     public function store(UploadedFile $file): void {
@@ -206,6 +206,7 @@ class Creative extends Model {
         switch ($this->extension) {
             case "jpg":
             case "jpeg":
+            case "png":
                 $this->createImageThumbnail($file);
                 break;
             case "mp4":

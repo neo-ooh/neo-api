@@ -65,7 +65,7 @@ class PasswordRecoveryController extends Controller {
             ], 400);
         }
 
-        // Token is valid, return user name for display purpose a success status
+        // Token is valid, return user name for display purpose as success status
         return new Response([
             "name" => $recoveryToken->actor->name,
         ]);

@@ -58,8 +58,8 @@ class UpdateBroadSignScheduleStatus extends BroadSignJob {
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 
-        if (!$schedule->broadsign_schedule_id) {
-            // This schedule doesn't have a BroadSign ID, do nothing.
+        if (!$schedule || !$schedule->broadsign_schedule_id) {
+            // This schedule doesn't exist or doesn't have a BroadSign ID, do nothing.
             return;
         }
 

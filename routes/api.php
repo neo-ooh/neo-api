@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\AccessTokensController;
 use Neo\Http\Controllers\ActorsAccessesController;
 use Neo\Http\Controllers\ActorsCampaignsController;
 use Neo\Http\Controllers\ActorsCapabilitiesController;
@@ -49,6 +50,7 @@ use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\ScreenshotsController;
 use Neo\Http\Controllers\StatsController;
+use Neo\Models\AccessToken;
 use Neo\Models\Actor;
 use Neo\Models\BroadSignCriteria;
 use Neo\Models\BroadSignSeparation;
@@ -83,6 +85,20 @@ use Neo\Models\Screenshot;
 */
 
 Route::prefix("v1")->group(function () {
+    /*
+    |----------------------------------------------------------------------
+    | Access Token
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("accessToken", AccessToken::class);
+
+    Route::   get("access-tokens", AccessTokensController::class ."@index"                )->name("access-tokens.index");
+    Route::  post("access-tokens", AccessTokensController::class ."@store"                )->name("access-tokens.store");
+    Route::   get("access-tokens/{accessToken}", AccessTokensController::class ."@show"   )->name("access-tokens.show");
+    Route::   put("access-tokens/{accessToken}", AccessTokensController::class ."@update" )->name("access-tokens.update");
+    Route::delete("access-tokens/{accessToken}", AccessTokensController::class ."@destroy")->name("access-tokens.destroy2   ");
+
     /*
     |----------------------------------------------------------------------
     | Actors

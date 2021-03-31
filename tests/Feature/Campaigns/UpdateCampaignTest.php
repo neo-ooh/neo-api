@@ -61,7 +61,6 @@ class UpdateCampaignTest extends TestCase {
             [
                 "name"             => "test-campaign-1111",
                 "owner_id"         => $campaign->owner_id,
-                "content_limit"    => $campaign->content_limit + 5,
                 "display_duration" => $campaign->display_duration,
                 "start_date"       => $campaign->start_date,
                 "end_date"         => $campaign->end_date,
@@ -72,7 +71,6 @@ class UpdateCampaignTest extends TestCase {
                      "id",
                      "owner_id",
                      "owner",
-                     "content_limit",
                      "display_duration",
                      "start_date",
                      "end_date",
@@ -94,7 +92,6 @@ class UpdateCampaignTest extends TestCase {
                  ->assertJsonValidationErrors([
                      "name",
                      "owner_id",
-                     "content_limit",
                      "display_duration",
                      "start_date",
                      "end_date",

@@ -86,6 +86,13 @@ final class Capability extends Enum {
 
     public const inventory_read = "inventory.read";
 
+    // Documents Generation
+    public const documents_generation = "documents.generation";
+
+    // Dymamics
+    public const dynamics_weather = "dynamics.weather";
+    public const dynamics_news = "dynamics.news";
+
     // Broadsign administration
     public const chores_broadsign = "chores.broadsign";
 }

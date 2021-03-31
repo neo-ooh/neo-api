@@ -72,7 +72,6 @@ class StoreCampaignTest extends TestCase
                 "format_id" => $format->id,
                 "name" => "campaign-name",
                 "display_duration" => 15,
-                "content_limit" => 10,
                 "start_date" => Date::now()->toIso8601String(),
                 "end_date" => Date::now()->addDays(14)->toIso8601String(),
                 "loop_saturation" => 1
@@ -84,7 +83,6 @@ class StoreCampaignTest extends TestCase
                      "format_id",
                      "name",
                      "display_duration",
-                     "content_limit",
                      "start_date",
                      "end_date",
                      "loop_saturation"
@@ -105,7 +103,6 @@ class StoreCampaignTest extends TestCase
                      "owner_id",
                      "format_id",
                      "display_duration",
-                     "content_limit",
                      "start_date",
                      "end_date",
                  ]);
@@ -131,7 +128,6 @@ class StoreCampaignTest extends TestCase
                 "format_id" => $format->id,
                 "name" => "campaign-name",
                 "display_duration" => 15,
-                "content_limit" => 10,
                 "start_date" => Date::now()->toIso8601String(),
                 "end_date" => Date::now()->addDays(14)->toIso8601String(),
                 "loop_saturation" => 1
@@ -143,7 +139,6 @@ class StoreCampaignTest extends TestCase
                      "format_id",
                      "name",
                      "display_duration",
-                     "content_limit",
                      "start_date",
                      "end_date",
                      "loop_saturation",
@@ -173,7 +168,6 @@ class StoreCampaignTest extends TestCase
                 "format_id" => $format->id,
                 "name" => "campaign-name",
                 "display_duration" => 15,
-                "content_limit" => 10,
                 "start_date" => Date::now()->toIso8601String(),
                 "end_date" => Date::now()->addDays(14)->toIso8601String(),
             ]);

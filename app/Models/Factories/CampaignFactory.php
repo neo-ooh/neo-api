@@ -26,7 +26,6 @@ class CampaignFactory extends Factory {
             "format_id"        => Format::query()->has('layouts')->first()->id,
             "name"             => $this->faker->streetName,
             "display_duration" => $this->faker->numberBetween(10, 30),
-            "content_limit"    => 15,
             "start_date"       => Date::now()->toIso8601String(),
             "end_date"         => Date::now()->addMonth()->toIso8601String(),
         ];

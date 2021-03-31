@@ -111,11 +111,6 @@ class SchedulesController extends Controller {
                 422);
         }
 
-        // Can the campaign host another schedule ?
-        if ($campaign->content_limit !== 0 && $campaign->schedules_count >= $campaign->content_limit) {
-            return new Response(["This campaign is full"], 422);
-        }
-
         return null;
     }
 

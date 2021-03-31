@@ -48,17 +48,6 @@ trait HasRoles {
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Tell if the current Actor has the specified capability
-     *
-     * @param CapabilityEnum $capability
-     *
-     * @return bool
-     */
-    public function hasCapability(CapabilityEnum $capability): bool {
-        return $this->capabilities->pluck("slug")->contains($capability->value);
-    }
-
     public function addCapability(CapabilityEnum $capability): self {
         $cap = new ActorCapability([
             "actor_id"      => $this->getKey(),

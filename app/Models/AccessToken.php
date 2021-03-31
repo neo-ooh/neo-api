@@ -17,7 +17,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\Authorizable;
-use Illuminate\Notifications\Notifiable;
+use Neo\Models\Traits\HasCapabilities;
 
 /**
  * Class Actor
@@ -32,8 +32,9 @@ use Illuminate\Notifications\Notifiable;
  *
  * @mixin Builder
  */
-class AccessToken extends Model  implements AuthenticatableContract, AuthorizableContract {
+class AccessToken extends Model implements AuthenticatableContract, AuthorizableContract {
     use Authenticatable, Authorizable;
+    use HasCapabilities;
 
     /*
     |--------------------------------------------------------------------------

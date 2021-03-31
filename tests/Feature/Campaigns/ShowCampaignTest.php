@@ -80,7 +80,6 @@ class ShowCampaignTest extends TestCase {
                      "format",
                      "name",
                      "display_duration",
-                     "content_limit",
                      "start_date",
                      "end_date",
                  ]);

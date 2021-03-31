@@ -34,7 +34,6 @@ use Neo\Rules\AccessibleCampaign;
  * @property int                 format_id
  * @property string              name
  * @property int                 display_duration
- * @property int                 content_limit
  * @property int                 loop_saturation
  * @property Date                start_date
  * @property Date                end_date
@@ -89,7 +88,6 @@ class Campaign extends SecuredModel {
         'forant_id',
         'name',
         'display_duration',
-        'content_limit',
         'start_date',
         'end_date',
     ];
@@ -110,7 +108,6 @@ class Campaign extends SecuredModel {
      * @var array
      */
     protected $casts = [
-        'content_limit'    => 'integer',
         'display_duration' => 'integer',
     ];
 

@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Neo\Models\Traits\HasCampaigns;
+use Neo\Models\Traits\HasCapabilities;
 use Neo\Models\Traits\HasHierarchy;
 use Neo\Models\Traits\HasLocations;
 use Neo\Models\Traits\HasRoles;
@@ -98,6 +99,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     use HasRoles;
     use HasHierarchy;
     use HasCampaigns;
+    use HasCapabilities;
     use WithRelationCaching;
 
     /*

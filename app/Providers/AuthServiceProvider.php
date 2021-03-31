@@ -21,6 +21,7 @@ use Neo\Auth\SecondLoAGuard;
 use Neo\Auth\ThirdLoAGuard;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
+use Neo\Models\Traits\HasCapabilities;
 
 class AuthServiceProvider extends ServiceProvider {
     /**
@@ -61,7 +62,7 @@ class AuthServiceProvider extends ServiceProvider {
 
         // Register our gate authorization provider
         Gate::before(
-            fn(Actor $actor, string $capability) => $actor->hasCapability(Capability::coerce($capability))
+            fn($model, string $capability) => $model->hasCapability(Capability::coerce($capability))
         );
     }
 }

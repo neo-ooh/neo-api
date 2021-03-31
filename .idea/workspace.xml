@@ -8,12 +8,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
+      <change afterPath="$PROJECT_DIR$/app/Http/Controllers/AccessTokensController.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Models/Traits/HasCapabilities.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2021_03_31_150757_remove_campaign_content_limit.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Jobs/Schedules/UpdateBroadSignSchedule.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Jobs/Schedules/UpdateBroadSignSchedule.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/BroadSign/Models/Inventory.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/InventoryController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/CampaignsController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/SchedulesController.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/auth.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/auth.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Campaigns/StoreCampaignRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/StoreCampaignRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Requests/Campaigns/UpdateCampaignRequest.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Requests/Campaigns/UpdateCampaignRequest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/AccessToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/AccessToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Actor.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Actor.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Campaign.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Campaign.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Factories/CampaignFactory.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Factories/CampaignFactory.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/Traits/HasRoles.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Traits/HasRoles.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Providers/AuthServiceProvider.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/api.php" beforeDir="false" afterPath="$PROJECT_DIR$/routes/api.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Campaigns/ListCampaignsTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/ListCampaignsTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Campaigns/ShowCampaignTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/ShowCampaignTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Campaigns/StoreCampaignTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/StoreCampaignTest.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/Feature/Campaigns/UpdateCampaignTest.php" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Feature/Campaigns/UpdateCampaignTest.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

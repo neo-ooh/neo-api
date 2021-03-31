@@ -169,7 +169,7 @@ class Creative extends Model {
     }
 
     public function getThumbnailPathAttribute(): string {
-        return 'creatives/' . $this->id . '_thumb.' . $this->extension;
+        return 'creatives/' . $this->id . '_thumb.jpeg';
     }
 
     public function store(UploadedFile $file): void {

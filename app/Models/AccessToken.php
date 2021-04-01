@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Neo\Models\Traits\HasCapabilities;
+use Ramsey\Uuid\Uuid;
 
 /**
  * Class Actor
@@ -65,6 +66,14 @@ class AccessToken extends Model implements AuthenticatableContract, Authorizable
      * @var array
      */
     protected $appends = [];
+
+    public static function boot() {
+        parent::boot();
+
+        static::creating(function (TwoFactorToken $model) {
+            $model->token = Uuid::uuid4()->toString();
+        });
+    }
 
 
     /*

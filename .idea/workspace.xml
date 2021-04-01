@@ -8,9 +8,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/AccessTokens/DestroyAccessTokenRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/AccessTokens/ListAccessTokensRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/AccessTokens/ShowAccessTokenRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/AccessTokens/StoreAccessTokenRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/Http/Requests/AccessTokens/UpdateAccessTokenRequest.php" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/database/migrations/2021_04_01_162047_alter_access_tokens_table.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Enums/Capability.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Enums/Capability.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" beforeDir="false" afterPath="$PROJECT_DIR$/database/seeders/CapabilitiesSeeder.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/AccessTokensController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/AccessTokensController.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/Models/AccessToken.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/AccessToken.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

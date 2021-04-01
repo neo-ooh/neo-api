@@ -28,7 +28,6 @@ class StoreAccessTokenRequest extends FormRequest
         return [
             "name" => ["required", "string", "min:1"],
             "capabilities" => ["present", "array"],
-            "capabilities.*" => ["sometimes", "exists:capabilities,id"]
         ];
     }
 }

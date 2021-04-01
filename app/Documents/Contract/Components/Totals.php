@@ -42,26 +42,24 @@ class Totals extends Component {
      * @return View|Closure|string
      */
     public function render() {
-        $guaranteedOrders = $this->orders->filter(fn($order) => $order->isGuaranteedPurchase() || $order->isGuaranteedBonus());
-        $buaOrders        = $this->orders->filter(fn($order) => $order->isBonusUponAvailability());
-
         return view('documents.contract.order-totals', [
             "showInvestment"        => $this->order->show_investment,
             "size"                  => $this->size,
             "orders"                => $this->orders,
-            "guaranteedImpressions" => $guaranteedOrders->sum("impressions"),
-            "guaranteedValue"       => $guaranteedOrders->sum("media_value"),
-            "guaranteedDiscount"    => $guaranteedOrders->count() > 0 ? $guaranteedOrders->sum("discount") / $guaranteedOrders->count() : 0,
-            "guaranteedInvestment"  => $this->order->total,
-            "hasBua"                => $buaOrders->isNotEmpty(),
-            "buaImpressions"        => $buaOrders->sum("impressions"),
-            "buaValue"              => $buaOrders->sum("media_value"),
-            "buaDiscount"           => $guaranteedOrders->count() > 0 ? $buaOrders->sum("discount") / $guaranteedOrders->count() : 0,
-            "buaInvestment"         => $buaOrders->sum("net_investment"),
+            "guaranteedImpressions" => $this->order->guaranteed_impressions_count,
+            "guaranteedValue"       => $this->order->guaranteed_value,
+            "guaranteedDiscount"    => $this->order->guaranteed_discount,
+            "guaranteedInvestment"  => $this->order->guaranteed_investment,
+            "hasBua"                => $this->order->has_bua,
+            "buaImpressions"        => $this->order->bua_impressions_count,
+            "buaValue"              => $this->order->bua_value,
+            "buaDiscount"           => $this->order->bua_discount,
+            "buaInvestment"         => $this->order->bua_investment,
+            "potentialDiscount"     => $this->order->potential_discount,
+            "grandTotalInvestment"  => $this->order->grand_total_investment,
 
-            "grandTotalInvestment" => $guaranteedOrders->sum("net_investment") + $buaOrders->sum("net_investment"),
-
-            "production" => $this->production
+            "production" => $this->production,
+            "productionCosts" => $this->order->production_costs,
         ]);
     }
 

@@ -37,17 +37,23 @@ class DocumentsGenerationController extends Controller {
             return new Response(["error" => "Missing file"],  400);
         }
 
-        $contract = null;
+        $document = null;
 
         switch ($request->route('document')) {
+            case "contract":
+                $document = Contract::makeContract($file->getContent());
+                break;
             case "proposal":
-                $contract = Contract::make($file->getContent());
-//                $contract = Contract::make(Storage::disk('local')->get('quotation.csv'));
+                $document = Contract::makeProposal($file->getContent());
                 break;
             default:
                 throw new UnknownDocumentException();
         }
 
-        return new Response($contract->output(), 200, ["Content-Type" => "application/pdf"]);
+        if(!$document->build()) {
+            throw new UnknownDocumentException();
+        }
+
+        return new Response($document->output(), 200, ["Content-Type" => "application/pdf"]);
     }
 }

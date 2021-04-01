@@ -39,6 +39,309 @@ h1, h2 {
 @import "header";
 @import "footer";
 
+.contract-home-page {
+  h1 {
+    text-align  : center;
+    color       : $dark-blue;
+    font-size   : 1.5rem;
+    font-family : $font-regular;
+  }
+
+  h2 {
+    text-transform : uppercase;
+    font-size      : 14pt;
+    font-weight    : $font-regular;
+    margin-bottom  : 0;
+  }
+
+  .contract-party {
+    font-size : 9pt;
+
+    &-left-column {
+      width          : 35mm;
+      float          : left;
+
+      font-size      : 12pt;
+      text-transform : uppercase;
+    }
+
+    &-right-column {
+      float : left;
+
+      .party-infos {
+        font-size       : 9pt;
+        border-collapse : collapse;
+
+        tr {
+          td {
+            &:nth-child(2) {
+              padding-left: 2mm;
+              font-family : $font-bold;
+              color       : $dark-blue;
+            }
+          }
+        }
+      }
+    }
+
+    .first-party-name {
+      line-height : 1.3;
+      margin-top  : 0;
+
+      strong {
+        font-family : $font-bold;
+      }
+    }
+
+    &.second-party {
+      margin-top : 4mm;
+    }
+  }
+
+  .payable-contact {
+    width           : 200mm;
+    margin-top      : 6mm;
+    border-collapse : collapse;
+    border          : 1px solid $dark-blue;
+    font-size       : 9pt;
+
+    tr {
+      th {
+        height           : 8mm;
+        padding          : 0 4mm;
+        background-color : $dark-blue;
+        color            : $white;
+        text-align       : left;
+      }
+
+      td {
+        height        : 8mm;
+        border-bottom : 1px solid $dark-grey;
+
+        &:nth-child(1) {
+          width        : 38mm;
+          padding      : 0 2mm;
+          text-align   : right;
+          border-right : 1px solid $dark-grey;
+        }
+
+        &:nth-child(2) {
+          background-color : $ultralight-grey;
+        }
+
+        &.invoice-type-cell {
+          padding-left : 3mm;
+        }
+      }
+    }
+  }
+
+  .costs-recap {
+    margin-top : 3mm;
+
+    p {
+      margin    : 0;
+      font-size : 10pt;
+    }
+
+    .investment-label {
+      margin-top : 0;
+      width      : 50mm;
+    }
+
+    .costs-recap-table {
+      margin-top      : -6mm;
+      margin-left     : 50mm;
+      width           : 80mm;
+      border-collapse : collapse;
+      border          : 1px solid $dark-blue;
+      font-size: 9pt;
+
+      tr {
+        td, th {
+          height  : 6mm;
+
+          padding : 0 2mm;
+        }
+
+        td {
+          &:nth-child(1) {
+            border-right : 1px solid $dark-blue;
+          }
+
+          &:nth-child(2) {
+            background-color : $ultralight-grey;
+            text-align       : right;
+          }
+
+          &.value.row-1 {
+            border-bottom : 1px solid $dark-blue;
+          }
+        }
+
+        &.footer {
+          th {
+            text-transform   : uppercase;
+            background-color : $dark-blue;
+            color            : $white;
+
+            &:nth-child(2) {
+              text-align : right;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .payment-terms {
+    ul {
+      margin-top : -2mm;
+
+      li {
+        font-size   : 9pt;
+        line-height : 1.6;
+
+        strong {
+          font-family : $font-bold;
+        }
+      }
+    }
+  }
+
+  .intervention {
+    h2 {
+      margin : 0;
+    }
+
+    p {
+      margin      : 0;
+      font-size   : 9pt;
+      line-height : 1.6;
+    }
+  }
+
+  .signatures {
+    border-collapse : collapse;
+    border          : 1px solid $dark-blue;
+    width           : 200mm;
+    font-size: 9pt;
+    margin-top: 5mm;
+
+    tr {
+      td, th {
+        height : 8mm;
+      }
+
+      &.header th {
+        padding        : 0 2mm;
+        border-bottom  : 1px solid $dark-blue;
+        text-transform : uppercase;
+        text-align     : left;
+      }
+
+      .v-separator, .end-spacing {
+        width: 10mm;
+      }
+
+      &.client-top-row, &.neo-top-row {
+        td:nth-child(1) {
+          padding: 0 2mm;
+          width : 65mm;
+        }
+
+        td.date-placeholder {
+          border-bottom : 1px solid $light-grey;
+        }
+
+        td.signed-by {
+          width: 16mm;
+          padding: 0 2mm;
+        }
+
+        td.signature-placeholder {
+          width: 55mm;
+          border-bottom: 1px solid $light-grey;
+        }
+      }
+
+      &.client-bottom-row, &.neo-bottom-row {
+        td.date, td.client-name {
+          text-align: center;
+        }
+      }
+
+      &.client-bottom-row td {
+        border-bottom: 1px solid $dark-blue;
+      }
+
+      &.client-top-row, &.client-bottom-row {
+        .v-separator {
+          border-right: 1px solid $dark-grey;
+        }
+
+        .signed-by, .signed-by-spacer, .signature-placeholder, .client-name, .end-spacing {
+          background-color: $ultralight-grey;
+        }
+      }
+    }
+  }
+}
+
+#general-conditions {
+  border-top: 1px solid $ultralight-grey;
+
+  h1 {
+    text-align  : center;
+    color       : $dark-blue;
+    font-size   : 1.5rem;
+    font-family : $font-regular;
+  }
+
+  h2 {
+    text-transform : uppercase;
+    font-size      : 14pt;
+    font-weight    : $font-regular;
+    margin-bottom  : 0;
+  }
+
+  p {
+    font-size: 9pt;
+  }
+
+  .signature {
+    margin-top: 20mm;
+    border-collapse: collapse;
+    font-size: 9pt;
+
+    tr {
+      td {
+        &:nth-child(1) {
+          padding-right: 5mm;
+        }
+
+        &.date-placeholder {
+          width: 25mm;
+          border-bottom: 1px solid $idle-grey;
+        }
+
+        &:nth-child(3) {
+          padding: 0 5mm;
+        }
+
+        &.signature-placeholder {
+          width: 50mm;
+          border-bottom: 1px solid $idle-grey;
+        }
+      }
+    }
+    .date-placeholder {
+      border-left: 5mm solid $white;
+      border-right: 5mm solid $white;
+    }
+  }
+}
+
 .summary-purchases-table {
   border-collapse : collapse;
   margin-bottom   : 5mm;
@@ -138,9 +441,9 @@ h1, h2 {
 }
 
 .detailed-purchases-wrapper {
-  border-collapse   : collapse;
+  border-collapse : collapse;
   //page-break-inside : avoid;
-  margin: 0;
+  margin          : 0;
 
   tr td, tr th {
     padding : 0;
@@ -152,7 +455,7 @@ h1, h2 {
 }
 
 .detailed-purchases-table {
-  border-collapse   : collapse;
+  border-collapse : collapse;
 
   tr {
     th {
@@ -160,7 +463,7 @@ h1, h2 {
       background-color : $dark-blue;
       color            : #FFFFFF;
 
-      font-family: $font-bold;
+      font-family      : $font-bold;
       font-weight      : bold;
       text-align       : center;
       font-size        : 10pt;
@@ -180,7 +483,7 @@ h1, h2 {
 }
 
 .region-row-table {
-  border-collapse   : collapse;
+  border-collapse : collapse;
   padding         : 0;
 
   tr {
@@ -307,7 +610,7 @@ h1, h2 {
       font-family      : $font-bold;
       font-weight      : bold;
 
-      font-size   : 9pt;
+      font-size        : 9pt;
       color            : #FFFFFF;
       background-color : $light-grey;
 
@@ -337,6 +640,7 @@ h1, h2 {
 
 .totals-wrapper {
   border-collapse : collapse;
+
   tr {
     td {
       color       : #FFFFFF;

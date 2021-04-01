@@ -15,21 +15,22 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use League\Csv\Reader;
 use Mpdf\HTMLParserMode;
+use Neo\Documents\Contract\Components\ContractFirstPage;
 use Neo\Documents\Contract\Components\DetailedOrdersCategory;
 use Neo\Documents\Contract\Components\DetailedSummary;
+use Neo\Documents\Contract\Components\GeneralConditions;
 use Neo\Documents\Contract\Components\Totals;
 use Neo\Documents\Document;
 use Neo\Documents\Network;
 
 class Contract extends Document {
+    const TYPE_PROPOSAL = 'proposal';
+    const TYPE_CONTRACT = 'contract';
+
+    protected $documentType = null;
+
     protected Customer $customer;
     protected Order $order;
-    protected Collection $production;
-
-    /**
-     * @var Collection
-     */
-    protected Collection $orderLines;
 
     public function __construct() {
         parent::__construct([
@@ -40,42 +41,23 @@ class Contract extends Document {
 
         // Register our components
         Blade::componentNamespace("Neo\\Documents\\Contract\\Components", "contract");
-
-        $this->production = new Collection();
     }
 
-    protected function build($data): bool {
-        $this->ingest($data);
+    public static function makeContract($data): Document {
+        $document = parent::make($data);
+        $document->documentType = self::TYPE_CONTRACT;
 
-        // Import the stylesheet
-        $this->mpdf->WriteHTML(File::get(resource_path('documents/stylesheets/contract.css')), HTMLParserMode::HEADER_CSS);
-
-        if ($this->orderLines->count() === 0) {
-            // Production Contract
-            $this->setHeader("Production Details");
-            $this->setFooter();
-
-            $orientation = "P";
-            $this->mpdf->_setPageSize([355, 355], $orientation);
-            $this->mpdf->SetMargins(0, 0, 50);
-            $this->mpdf->AddPage();
-
-            $this->renderDetailedSummary(false);
-
-            return true;
-        }
-
-        // Build each section
-        $this->makeCampaignSummary();
-        $this->makeCampaignDetails();
-        return true;
+        return $document;
     }
 
-    public function output() {
-        return $this->mpdf->Output();
+    public static function makeProposal($data): Document {
+        $document = parent::make($data);
+        $document->documentType = self::TYPE_PROPOSAL;
+
+        return $document;
     }
 
-    private function ingest($data): void {
+    public function ingest($data): bool {
         // Data is expected to be a CSV file
         // Read the csv file
         $reader = Reader::createFromString($data);
@@ -98,8 +80,8 @@ class Contract extends Document {
             $orderLine = new OrderLine($record);
 
             if ($orderLine->is_production) {
-                $this->production->push($orderLine);
-                return;
+                $this->order->productionLines->push($orderLine);
+                continue;
             }
 
             if((int)$orderLine->unit_price === 0 && $orderLine->isNetwork(Network::NEO_OTG)) {
@@ -110,8 +92,81 @@ class Contract extends Document {
             }
 
             // Each line holds one Order Line
-            $this->orderLines->push($orderLine);
+            $this->order->orderLines->push($orderLine);
         }
+
+        // All data has been correctly parsed and imported, let's make some calculations right now
+        $this->order->computeValues();
+
+        return true;
+    }
+
+    public function build(): bool {
+        // Import the stylesheet
+        $this->mpdf->WriteHTML(File::get(resource_path('documents/stylesheets/contract.css')), HTMLParserMode::HEADER_CSS);
+
+        if ($this->order->orderLines->count() === 0) {
+            // Production Contract
+            $this->setHeader("Production Details");
+            $this->setFooter();
+
+            $orientation = "P";
+            $this->mpdf->_setPageSize([355, 355], $orientation);
+            $this->mpdf->SetMargins(0, 0, 40);
+            $this->mpdf->AddPage();
+
+            $this->renderDetailedSummary(false);
+
+            return true;
+        }
+
+        // Build each section
+
+        // A contract has additional sections at the beginning and end of the document
+        if($this->documentType === self::TYPE_CONTRACT) {
+            $this->makeContractFirstPage();
+        }
+
+        $this->makeCampaignSummary();
+        $this->makeCampaignDetails();
+
+        if($this->documentType === self::TYPE_CONTRACT) {
+            $this->makeGeneralConditions();
+        }
+
+        return true;
+    }
+
+    public function output() {
+        return $this->mpdf->Output();
+    }
+
+    private function makeContractFirstPage(): void {
+        // Update the header
+        $this->setHeader("");
+        $this->setFooter();
+
+        // Create a new letter page
+        $orientation = "P";
+        $this->mpdf->_setPageSize("legal", $orientation);
+        $this->mpdf->SetMargins(0, 0, 40);
+        $this->mpdf->AddPage($orientation, "", 1);
+
+        $this->mpdf->WriteHTML((new ContractFirstPage($this->order, $this->customer))->render()->render());
+    }
+
+    private function makeGeneralConditions(): void {
+        // Update the header
+        $this->setHeader("");
+        $this->setFooter();
+
+        // Create a new letter page
+        $orientation = "P";
+        $this->mpdf->_setPageSize("legal", $orientation);
+        $this->mpdf->SetMargins(0, 0, 40);
+        $this->mpdf->AddPage($orientation, "", 1);
+
+        $this->mpdf->WriteHTML((new GeneralConditions())->render()->render());
     }
 
     private function makeCampaignSummary(): void {
@@ -122,19 +177,19 @@ class Contract extends Document {
         // Create a new letter page
         $orientation = "P";
         $this->mpdf->_setPageSize("legal", $orientation);
-        $this->mpdf->SetMargins(0, 0, 50);
+        $this->mpdf->SetMargins(0, 0, 40);
         $this->mpdf->AddPage($orientation, "", 1);
 
         $campaignSummaryOrders = view('documents.contract.campaign-summary.orders', [
-            "purchaseOrders" => $this->orderLines->filter(fn($order) => $order->isGuaranteedPurchase()),
-            "bonusOrders"    => $this->orderLines->filter(fn($order) => $order->isGuaranteedBonus()),
-            "buaOrders"      => $this->orderLines->filter(fn($order) => $order->isBonusUponAvailability()),
+            "purchaseOrders" => $this->order->getPurchasedOrders(),
+            "bonusOrders"    => $this->order->getBonusOrders(),
+            "buaOrders"      => $this->order->getBuaOrders(),
             "order" => $this->order
         ])->render();
 
         $this->mpdf->WriteHTML($campaignSummaryOrders);
 
-        $this->mpdf->WriteHTML((new Totals($this->order, $this->orderLines, "full", $this->production))->render()->render());
+        $this->mpdf->WriteHTML((new Totals($this->order, $this->order->orderLines, "full", $this->order->productionLines))->render()->render());
     }
 
     private function makeCampaignDetails(): void {
@@ -144,13 +199,13 @@ class Contract extends Document {
         // Create a new 14" by 14" page
         $orientation = "P";
         $this->mpdf->_setPageSize([355, 355], $orientation);
-        $this->mpdf->SetMargins(0, 0, 50);
+        $this->mpdf->SetMargins(0, 0, 40);
         $this->mpdf->AddPage($orientation, "", 1);
 
         $this->setFooter();
 
         foreach(["purchase", "bonus", "bua"] as $orderType) {
-            $orders = new DetailedOrdersCategory($orderType, $this->order, $this->orderLines);
+            $orders = new DetailedOrdersCategory($orderType, $this->order, $this->order->orderLines);
             $this->mpdf->WriteHTML($orders);
         }
 
@@ -174,7 +229,7 @@ class Contract extends Document {
     }
 
     private function renderDetailedSummary(bool $renderDisclaimers) {
-        $campaignDetailedSummary = new DetailedSummary($this->order, $this->orderLines, $this->production, $renderDisclaimers);
+        $campaignDetailedSummary = new DetailedSummary($this->order, $this->order->orderLines, $this->order->productionLines, $renderDisclaimers);
         $this->mpdf->WriteHTML($campaignDetailedSummary->render()->render());
     }
 }

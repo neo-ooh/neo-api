@@ -5,7 +5,7 @@
   "keywords": [],
   "license": "",
   "require": {
-    "php": "^7.4",
+    "php": "^8.0",
     "ext-gd": "*",
     "ext-json": "*",
     "ext-pdo": "*",
@@ -15,7 +15,7 @@
     "firebase/php-jwt": "^5.2",
     "fruitcake/laravel-cors": "^2.0",
     "guzzlehttp/guzzle": "^7.0.1",
-    "intervention/image": "^2.5",
+    "spatie/image": "^1.10",
     "itsgoingd/clockwork": "^5.0",
     "laravel/framework": "^8.12",
     "laravel/tinker": "^2.5",

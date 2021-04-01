@@ -85,7 +85,7 @@ class OrderLine {
         $this->property_lng        = $record["order_line/shopping_center_id/partner_longitude"];
 
         $this->media_value    = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
-//        $this->media_value    = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
+
         $this->net_investment = $this->subtotal;
 
         if ($this->isGuaranteedBonus() || $this->isBonusUponAvailability()) {

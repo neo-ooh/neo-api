@@ -12,39 +12,41 @@
 
 header {
   margin: 0 -5mm;
+
   .header-table {
+    margin-top: -10mm;
     width : 100%;
   }
 }
 
 .header {
   &-company-logo {
-    width : 50mm;
+    width : 40mm;
   }
 
   &-neo-logo {
-    width : 50mm;
+    width : 40mm;
   }
 
   &-title {
-    width       : calc(100% - 130mm);
+    width       : calc(100% - 150mm);
     text-align  : center;
     font-family : $font-extra-light;
     font-size   : 24pt;
   }
 
   &-contract {
-    width           : 80mm;
+    width           : 70mm;
   }
 
   &-contract-data {
-    width           : 80mm;
+    width           : 70mm;
     border-collapse : collapse;
 
     tr {
       td {
         border-bottom : 1px solid #000000;
-        font-size     : .889em;
+        font-size     : 8pt;
 
         &:nth-child(1) {
           border-right : 1px solid #000000;

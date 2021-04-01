@@ -39,4 +39,8 @@ class Customer {
             "partner_id/country_id/name" => $this->address_country,
         ] = $record;
     }
+
+    public function getAddress() {
+        return "$this->address_street, $this->address_city, $this->address_state_name";
+    }
 }

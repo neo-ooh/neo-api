@@ -28,9 +28,6 @@
             <td>$ {{ number_format($guaranteedValue) }}</td>
             @if($size === 'small' && $showInvestment)
                 <td>
-                    @php
-                        $guaranteedDiscount = ($guaranteedValue - $guaranteedInvestment) / $guaranteedValue * 100;
-                    @endphp
                     {{ round($guaranteedDiscount) === 0 ? '-' : number_format($guaranteedDiscount) . "%" }}
                 </td>
             @endif
@@ -74,11 +71,7 @@
                 <td>$ {{ number_format($guaranteedValue + $buaValue) }}</td>
                 @if($size === 'small' && $showInvestment)
                     <td>
-                        @php
-                            $potentionValue = $buaValue + $guaranteedValue;
-                            $potentionDiscount = ($potentionValue - $guaranteedInvestment) / $potentionValue * 100;
-                        @endphp
-                        {{ round($potentionDiscount) === 0 ? '-' : number_format($potentionDiscount) . "%" }}
+                        {{ round($potentialDiscount) === 0 ? '-' : number_format($potentialDiscount) . "%" }}
                     </td>
                 @endif
                 <td class="investment">
@@ -105,7 +98,7 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ number_format($production->sum("subtotal")) }}
+                $ {{ number_format($productionCosts) }}
             </td>
         </tr>
     @endif
@@ -123,7 +116,7 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ number_format($grandTotalInvestment + ($production->count() > 0 ? $production->sum("subtotal") : 0)) }}</td>
+                $ {{ number_format($grandTotalInvestment + $productionCosts) }}</td>
         </tr>
     @endif
     @if($size === 'small' && $orders->count() > 0)

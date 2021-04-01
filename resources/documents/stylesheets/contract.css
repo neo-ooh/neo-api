@@ -69,31 +69,32 @@ header {
   margin: 0 -5mm;
 }
 header .header-table {
+  margin-top: -10mm;
   width: 100%;
 }
 
 .header-company-logo {
-  width: 50mm;
+  width: 40mm;
 }
 .header-neo-logo {
-  width: 50mm;
+  width: 40mm;
 }
 .header-title {
-  width: calc(100% - 130mm);
+  width: calc(100% - 150mm);
   text-align: center;
   font-family: "poppins-extra-light";
   font-size: 24pt;
 }
 .header-contract {
-  width: 80mm;
+  width: 70mm;
 }
 .header-contract-data {
-  width: 80mm;
+  width: 70mm;
   border-collapse: collapse;
 }
 .header-contract-data tr td {
   border-bottom: 1px solid #000000;
-  font-size: 0.889em;
+  font-size: 8pt;
 }
 .header-contract-data tr td:nth-child(1) {
   border-right: 1px solid #000000;
@@ -157,6 +158,227 @@ footer {
 .footer-folio-group {
   font-size: 1.125rem;
   color: #888888;
+}
+
+.contract-home-page h1 {
+  text-align: center;
+  color: #252734;
+  font-size: 1.5rem;
+  font-family: "poppins-regular";
+}
+.contract-home-page h2 {
+  text-transform: uppercase;
+  font-size: 14pt;
+  font-weight: "poppins-regular";
+  margin-bottom: 0;
+}
+.contract-home-page .contract-party {
+  font-size: 9pt;
+}
+.contract-home-page .contract-party-left-column {
+  width: 35mm;
+  float: left;
+  font-size: 12pt;
+  text-transform: uppercase;
+}
+.contract-home-page .contract-party-right-column {
+  float: left;
+}
+.contract-home-page .contract-party-right-column .party-infos {
+  font-size: 9pt;
+  border-collapse: collapse;
+}
+.contract-home-page .contract-party-right-column .party-infos tr td:nth-child(2) {
+  padding-left: 2mm;
+  font-family: "poppins-bold";
+  color: #252734;
+}
+.contract-home-page .contract-party .first-party-name {
+  line-height: 1.3;
+  margin-top: 0;
+}
+.contract-home-page .contract-party .first-party-name strong {
+  font-family: "poppins-bold";
+}
+.contract-home-page .contract-party.second-party {
+  margin-top: 4mm;
+}
+.contract-home-page .payable-contact {
+  width: 200mm;
+  margin-top: 6mm;
+  border-collapse: collapse;
+  border: 1px solid #252734;
+  font-size: 9pt;
+}
+.contract-home-page .payable-contact tr th {
+  height: 8mm;
+  padding: 0 4mm;
+  background-color: #252734;
+  color: #FFFFFF;
+  text-align: left;
+}
+.contract-home-page .payable-contact tr td {
+  height: 8mm;
+  border-bottom: 1px solid #595959;
+}
+.contract-home-page .payable-contact tr td:nth-child(1) {
+  width: 38mm;
+  padding: 0 2mm;
+  text-align: right;
+  border-right: 1px solid #595959;
+}
+.contract-home-page .payable-contact tr td:nth-child(2) {
+  background-color: #EEEEEE;
+}
+.contract-home-page .payable-contact tr td.invoice-type-cell {
+  padding-left: 3mm;
+}
+.contract-home-page .costs-recap {
+  margin-top: 3mm;
+}
+.contract-home-page .costs-recap p {
+  margin: 0;
+  font-size: 10pt;
+}
+.contract-home-page .costs-recap .investment-label {
+  margin-top: 0;
+  width: 50mm;
+}
+.contract-home-page .costs-recap .costs-recap-table {
+  margin-top: -6mm;
+  margin-left: 50mm;
+  width: 80mm;
+  border-collapse: collapse;
+  border: 1px solid #252734;
+  font-size: 9pt;
+}
+.contract-home-page .costs-recap .costs-recap-table tr td, .contract-home-page .costs-recap .costs-recap-table tr th {
+  height: 6mm;
+  padding: 0 2mm;
+}
+.contract-home-page .costs-recap .costs-recap-table tr td:nth-child(1) {
+  border-right: 1px solid #252734;
+}
+.contract-home-page .costs-recap .costs-recap-table tr td:nth-child(2) {
+  background-color: #EEEEEE;
+  text-align: right;
+}
+.contract-home-page .costs-recap .costs-recap-table tr td.value.row-1 {
+  border-bottom: 1px solid #252734;
+}
+.contract-home-page .costs-recap .costs-recap-table tr.footer th {
+  text-transform: uppercase;
+  background-color: #252734;
+  color: #FFFFFF;
+}
+.contract-home-page .costs-recap .costs-recap-table tr.footer th:nth-child(2) {
+  text-align: right;
+}
+.contract-home-page .payment-terms ul {
+  margin-top: -2mm;
+}
+.contract-home-page .payment-terms ul li {
+  font-size: 9pt;
+  line-height: 1.6;
+}
+.contract-home-page .payment-terms ul li strong {
+  font-family: "poppins-bold";
+}
+.contract-home-page .intervention h2 {
+  margin: 0;
+}
+.contract-home-page .intervention p {
+  margin: 0;
+  font-size: 9pt;
+  line-height: 1.6;
+}
+.contract-home-page .signatures {
+  border-collapse: collapse;
+  border: 1px solid #252734;
+  width: 200mm;
+  font-size: 9pt;
+  margin-top: 5mm;
+}
+.contract-home-page .signatures tr td, .contract-home-page .signatures tr th {
+  height: 8mm;
+}
+.contract-home-page .signatures tr.header th {
+  padding: 0 2mm;
+  border-bottom: 1px solid #252734;
+  text-transform: uppercase;
+  text-align: left;
+}
+.contract-home-page .signatures tr .v-separator, .contract-home-page .signatures tr .end-spacing {
+  width: 10mm;
+}
+.contract-home-page .signatures tr.client-top-row td:nth-child(1), .contract-home-page .signatures tr.neo-top-row td:nth-child(1) {
+  padding: 0 2mm;
+  width: 65mm;
+}
+.contract-home-page .signatures tr.client-top-row td.date-placeholder, .contract-home-page .signatures tr.neo-top-row td.date-placeholder {
+  border-bottom: 1px solid #BBBBBB;
+}
+.contract-home-page .signatures tr.client-top-row td.signed-by, .contract-home-page .signatures tr.neo-top-row td.signed-by {
+  width: 16mm;
+  padding: 0 2mm;
+}
+.contract-home-page .signatures tr.client-top-row td.signature-placeholder, .contract-home-page .signatures tr.neo-top-row td.signature-placeholder {
+  width: 55mm;
+  border-bottom: 1px solid #BBBBBB;
+}
+.contract-home-page .signatures tr.client-bottom-row td.date, .contract-home-page .signatures tr.client-bottom-row td.client-name, .contract-home-page .signatures tr.neo-bottom-row td.date, .contract-home-page .signatures tr.neo-bottom-row td.client-name {
+  text-align: center;
+}
+.contract-home-page .signatures tr.client-bottom-row td {
+  border-bottom: 1px solid #252734;
+}
+.contract-home-page .signatures tr.client-top-row .v-separator, .contract-home-page .signatures tr.client-bottom-row .v-separator {
+  border-right: 1px solid #595959;
+}
+.contract-home-page .signatures tr.client-top-row .signed-by, .contract-home-page .signatures tr.client-top-row .signed-by-spacer, .contract-home-page .signatures tr.client-top-row .signature-placeholder, .contract-home-page .signatures tr.client-top-row .client-name, .contract-home-page .signatures tr.client-top-row .end-spacing, .contract-home-page .signatures tr.client-bottom-row .signed-by, .contract-home-page .signatures tr.client-bottom-row .signed-by-spacer, .contract-home-page .signatures tr.client-bottom-row .signature-placeholder, .contract-home-page .signatures tr.client-bottom-row .client-name, .contract-home-page .signatures tr.client-bottom-row .end-spacing {
+  background-color: #EEEEEE;
+}
+
+#general-conditions {
+  border-top: 1px solid #EEEEEE;
+}
+#general-conditions h1 {
+  text-align: center;
+  color: #252734;
+  font-size: 1.5rem;
+  font-family: "poppins-regular";
+}
+#general-conditions h2 {
+  text-transform: uppercase;
+  font-size: 14pt;
+  font-weight: "poppins-regular";
+  margin-bottom: 0;
+}
+#general-conditions p {
+  font-size: 9pt;
+}
+#general-conditions .signature {
+  margin-top: 20mm;
+  border-collapse: collapse;
+  font-size: 9pt;
+}
+#general-conditions .signature tr td:nth-child(1) {
+  padding-right: 5mm;
+}
+#general-conditions .signature tr td.date-placeholder {
+  width: 25mm;
+  border-bottom: 1px solid #888888;
+}
+#general-conditions .signature tr td:nth-child(3) {
+  padding: 0 5mm;
+}
+#general-conditions .signature tr td.signature-placeholder {
+  width: 50mm;
+  border-bottom: 1px solid #888888;
+}
+#general-conditions .signature .date-placeholder {
+  border-left: 5mm solid #FFFFFF;
+  border-right: 5mm solid #FFFFFF;
 }
 
 .summary-purchases-table {

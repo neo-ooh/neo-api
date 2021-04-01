@@ -22,7 +22,7 @@ abstract class Document {
     public static function make($data): Document {
         $document = new static();
 
-        if(!$document->build($data)) {
+        if(!$document->ingest($data)) {
             throw new UnknownGenerationException();
         }
 
@@ -71,10 +71,16 @@ abstract class Document {
     }
 
     /**
+     * Holds the data ingestion logic.
+     *
+     * @return bool A boolean value indicating if the data was correctly ingested or not
+     */
+    abstract protected function ingest($data): bool;
+
+    /**
      * Holds the entire document generation logic. Each document has to define one.
      *
-     * @param mixed $data
      * @return bool A boolean value indicating if the document generation was successful or not
      */
-    abstract protected function build($data): bool;
+    abstract public function build(): bool;
 }

@@ -51,6 +51,10 @@ class AccessToken extends Model implements AuthenticatableContract, Authorizable
      */
     protected $table = "access_tokens";
 
+    protected $dates = [
+        "last_used_at",
+    ];
+
     /**
      * The accessors to append to the model"s array form.
      *

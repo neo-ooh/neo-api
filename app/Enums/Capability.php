@@ -36,7 +36,7 @@ use BenSampo\Enum\Enum;
  * @method static self tests()
  */
 final class Capability extends Enum {
-    // Users
+    // Actors
     public const actors_edit   = "actors.edit";
     public const actors_create = "actors.create";
     public const actors_delete = "actors.delete";
@@ -92,6 +92,9 @@ final class Capability extends Enum {
     // Dymamics
     public const dynamics_weather = "dynamics.weather";
     public const dynamics_news = "dynamics.news";
+
+    // Access Tokens
+    public const access_token_edit = "access-token.edit";
 
     // Broadsign administration
     public const chores_broadsign = "chores.broadsign";

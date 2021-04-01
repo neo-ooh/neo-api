@@ -29,37 +29,58 @@ class CapabilitiesSeeder extends Seeder {
             Capability::query()->firstOrCreate(["slug" => $value], ["service" => "", "standalone" => true]);
         }
 
-        // Assign proper service to each capability
-        Capability::where("slug", "=", "actors.edit")->update(["service" => "ACTORS"]);
-        Capability::where("slug", "=", "actors.create")->update(["service" => "ACTORS"]);
-        Capability::where("slug", "=", "actors.delete")->update(["service" => "ACTORS"]);
+        // Define the capabilities groups
+        $capGroups = [
+            "ACTORS" => [
+                \Neo\Enums\Capability::actors_create,
+                \Neo\Enums\Capability::actors_delete,
+                \Neo\Enums\Capability::actors_edit,
 
-        Capability::where("slug", "=", "roles.edit")->update(["service" => "ACTORS"]);
-        Capability::where("slug", "=", "brandings.edit")->update(["service" => "ACTORS"]);
+                \Neo\Enums\Capability::roles_edit,
+                \Neo\Enums\Capability::brandings_edit,
+            ],
+            "DIRECT" => [
+                \Neo\Enums\Capability::libraries_edit,
+                \Neo\Enums\Capability::libraries_create,
+                \Neo\Enums\Capability::libraries_destroy,
 
-        Capability::where("slug", "=", "libraries.edit")->update(["service" => "DIRECT"]);
-        Capability::where("slug", "=", "libraries.create")->update(["service" => "DIRECT"]);
-        Capability::where("slug", "=", "libraries.destroy")->update(["service" => "DIRECT"]);
+                \Neo\Enums\Capability::formats_edit,
 
-        Capability::where("slug", "=", "campaigns.edit")->update(["service" => "DIRECT"]);
-        Capability::where("slug", "=", "contents.edit")->update(["service" => "DIRECT"]);
-        Capability::where("slug", "=", "contents.schedule")->update(["service" => "DIRECT"]);
+                \Neo\Enums\Capability::campaigns_edit,
 
-        Capability::where("slug", "=", "contents.review")->update(["service" => "DIRECT"]);
-        Capability::where("slug", "=", "formats.edit")->update(["service" => "DIRECT"]);
+                \Neo\Enums\Capability::contents_edit,
+                \Neo\Enums\Capability::contents_schedule,
+                \Neo\Enums\Capability::contents_review,
+            ],
+            "NETWORK" => [
+                \Neo\Enums\Capability::customers_edit,
 
-        Capability::where("slug", "=", "tos.update")->update(["service" => "ACTORS"]);
+                \Neo\Enums\Capability::reports_create,
+                \Neo\Enums\Capability::reports_edit,
 
-        Capability::where("slug", "=", "test.capability")->update(["service" => "TEST"]);
+                \Neo\Enums\Capability::bursts_request,
+                \Neo\Enums\Capability::bursts_quality,
 
-        Capability::where("slug", "=", "locations.edit")->update(["service" => "ACTORS"]);
+                \Neo\Enums\Capability::documents_generation,
+                \Neo\Enums\Capability::inventory_read,
+            ],
+            "DYNAMICS" => [
+                \Neo\Enums\Capability::dynamics_news,
+                \Neo\Enums\Capability::dynamics_weather,
+            ],
+            "INTERNAL" => [
+                \Neo\Enums\Capability::tos_update,
+                \Neo\Enums\Capability::headlines_edit,
+                \Neo\Enums\Capability::chores_broadsign,
+                \Neo\Enums\Capability::access_token_edit,
 
-        Capability::where("slug", "=", "customers.edit")->update(["service" => "REPORTS"]);
+                \Neo\Enums\Capability::tests,
+            ],
+        ];
 
-        Capability::where("slug", "=", "bursts.request")->update(["service" => "REPORTS"]);
-        Capability::where("slug", "=", "reports.create")->update(["service" => "REPORTS"]);
-        Capability::where("slug", "=", "reports.edit")->update(["service" => "REPORTS"]);
-
-        Capability::where("slug", "=", "chores.broadsign")->update(["service" => "INTERNAL"]);
+        foreach($capGroups as $key => $caps) {
+            Capability::query()->whereIn("slug", $caps)
+                ->update(["service" => $key]);
+        }
     }
 }

@@ -74,7 +74,7 @@ class AccessToken extends Model implements AuthenticatableContract, Authorizable
     public static function boot() {
         parent::boot();
 
-        static::creating(function (TwoFactorToken $model) {
+        static::creating(function (AccessToken $model) {
             $model->token = Uuid::uuid4()->toString();
         });
     }

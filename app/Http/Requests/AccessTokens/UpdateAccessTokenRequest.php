@@ -27,7 +27,7 @@ class UpdateAccessTokenRequest extends FormRequest
     {
         return [
             "name" => ["required", "string", "min:1"],
-            "capabilities" => ["required", "array"],
+            "capabilities" => ["present", "array"],
             "capabilities.*" => ["integer", "exists:capabilities,id"]
         ];
     }

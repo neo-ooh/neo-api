@@ -21,17 +21,14 @@ class CreateWeatherRecordsTable extends Migration
     public function up()
     {
         Schema::create($this->tableName, function (Blueprint $table) {
-            $table->engine = 'MyISAM';
-            $table->increments('id');
+            $table->id();
             $table->string('endpoint', 3);
-            $table->string('country', 2);
-            $table->string('province', 2);
-            $table->string('city', 30);
+            $table->foreignId("location_id")->constrained("weather_locations");
             $table->string('locale', 5);
             $table->text('content');
 
-            $table->unique(["endpoint", "country", "province", "city", "locale"], 'records_endpoint_country_province_city_locale_unique');
-            $table->nullableTimestamps();
+            $table->unique(["endpoint", "location_id", "locale"], 'records_endpoint_location_id_locale_unique');
+            $table->timestamps();
         });
     }
 

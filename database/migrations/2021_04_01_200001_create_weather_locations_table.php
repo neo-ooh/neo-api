@@ -21,16 +21,15 @@ class CreateWeatherLocationsTable extends Migration
     public function up()
     {
         Schema::create($this->tableName, function (Blueprint $table) {
-            $table->engine = 'MyISAM';
-            $table->increments('id');
+            $table->id();
             $table->string('country', 2);
             $table->string('province', 2);
             $table->string('city', 30);
-            $table->string('selection', 10)->default('WEATHER');
-            $table->integer('revert_date')->nullable()->default(null);
+            $table->string('background_selection', 10)->default('WEATHER');
+            $table->timestamp('selection_revert_date')->nullable()->default(null);
 
             $table->unique(["country", "province", "city"], 'weather_locations_country_province_city_unique');
-            $table->nullableTimestamps();
+            $table->timestamps();
         });
     }
 

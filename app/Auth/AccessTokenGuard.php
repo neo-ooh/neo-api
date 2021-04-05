@@ -134,5 +134,11 @@ class AccessTokenGuard implements Guard {
     public function setUser (?Authenticatable $token): void {
         /* Authenticatable => AccessToken */
         $this->token = $token;
+
+        if($this->token) {
+            // Update the token last used at property
+            $this->token->last_used_at = $this->token->freshTimestamp();
+            $this->token->save();
+        }
     }
 }

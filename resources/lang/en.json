@@ -8,7 +8,7 @@
 
   "email-review-schedule-subject": "Ad awaiting review",
   "email-review-schedule-title": "A scheduled ad is awaiting review",
-  "email-review-schedule-body": "A scheduled ad from <strong>:scheduler</strong> for the campaign <strong>:campaign</strong > of :campaign-owner is pending review.<br /><br />You can use the link below to access it directly.",
+  "email-review-schedule-body": "A scheduled ad from <strong>:scheduler</strong> for the campaign <strong>:campaign</strong > of :campaignowner is pending review.<br /><br />You can use the link below to access it directly.",
   "email-review-schedule-cta": "Access the campaign",
 
   "email-welcome-subject": "Welcome to Neo-OOH web-services",

@@ -81,9 +81,9 @@
             <h1>{!! __("email-review-schedule-title") !!}</h1>
             <p>
                 {!! __("email-review-schedule-body", [
-"reviewer" => $schedule->owner->name,
+"scheduler" => $schedule->owner->name,
 "campaign" => $schedule->campaign->name,
-"campaign-owner" => $schedule->campaign->owner->name,
+"campaignowner" => $schedule->campaign->owner->name,
 ]) !!}
             </p>
             <h3>

@@ -13,6 +13,7 @@ namespace Neo\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\BroadSign\Jobs\Players\RequestScreenshotsBursts;
+use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\RefreshReportReservations;
 
 class Kernel extends ConsoleKernel {
@@ -44,14 +45,35 @@ class Kernel extends ConsoleKernel {
      * @return void
      */
     protected function schedule(Schedule $schedule) {
-        // Every-second tasks
+        /* -----------------
+         * Every-second tasks
+         */
+
+        // Send screenshots requests to player
         $schedule->job(RequestScreenshotsBursts::class)->everyMinute();
 
-        // Hourly tasks
+
+
+        /* -----------------
+         * Hourly tasks
+         */
+
+        // Cache Broadsign inventory for fast access in Connect
         $schedule->command('network:cache-inventory')->everyThreeHours();
 
-        // Daily tasks
+
+
+        /* -----------------
+         * Daily tasks
+         */
+
+        // Update network from broadsign
         $schedule->command('network:update')->daily();
+
+        // End of schedule email
+        $schedule->job(NotifyEndOfSchedules::class)->weekdays()
+                                                   ->timezone('America/Toronto')
+                                                   ->at("06:00");
     }
 
     /**

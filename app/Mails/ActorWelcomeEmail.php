@@ -29,7 +29,7 @@ class ActorWelcomeEmail extends ReliableEmail {
      */
     public $actor;
 
-    public $subject = "Bienvenue chez les services web Neo-OOH — Welcome to Neo-OOH web-services";
+    public $subject = "Bienvenue sur les services web Neo-OOH — Welcome to Neo-OOH web-services";
 
     /**
      * Create a new message instance.

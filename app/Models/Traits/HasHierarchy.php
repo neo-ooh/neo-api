@@ -29,6 +29,9 @@ use Neo\Models\ActorClosure;
  * @property int               children_count
  * @property Collection<Actor> children
  *
+ * @property int               direct_children_count
+ * @property Collection<Actor> direct_children
+ *
  * @method Builder Parents() scope
  * @method Builder Parent() scope
  * @method Builder Children() scope

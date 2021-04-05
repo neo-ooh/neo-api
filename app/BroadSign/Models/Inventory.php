@@ -36,14 +36,13 @@ class Inventory extends BroadSignModel {
 
     protected static string $unwrapKey = "inventory";
 
-    protected static function actions (): array {
+    protected static function actions(): array {
         return [
             "all" => Endpoint::get("/inventory/v1")->customTransform("processInventory"),
         ];
     }
 
-    public static function processInventory ($inventory): Collection {
-        /** @var Collection<Report> $reports */
+    public static function processInventory($inventory): Collection {
         $reports = static::asMultipleSelf($inventory);
 
         $reports->map(fn(Inventory $inventory) => $inventory->processReport());
@@ -51,13 +50,13 @@ class Inventory extends BroadSignModel {
         return $reports;
     }
 
-    protected function processReport (): void {
+    protected function processReport(): void {
         // Parse the inventory string to an array
-        $inventory = rtrim(ltrim($this->inventory, '{'), '}');
+        $inventory       = rtrim(ltrim($this->inventory, '{'), '}');
         $this->inventory = collect(explode(',', $inventory));
 
         // Transform each value from ms to seconds
-        $this->inventory = $this->inventory->map(fn ($val) => (int)$val / 10_000.0);
+        $this->inventory      = $this->inventory->map(fn($val) => (int)$val / 10_000.0);
         $this->inventory_size = $this->inventory->count();
     }
 

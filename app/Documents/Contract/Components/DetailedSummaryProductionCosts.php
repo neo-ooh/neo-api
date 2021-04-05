@@ -22,7 +22,7 @@ class DetailedSummaryProductionCosts extends Component {
     /**
      * Create the component instance.
      *
-     * @param OrderLine $production
+     * @param Collection $production
      */
     public function __construct(Collection $production) {
         $this->production = $production;

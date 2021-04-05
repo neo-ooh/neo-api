@@ -39,7 +39,6 @@ class CreativesController extends Controller {
      *
      * @return ResponseFactory|Response
      * @throws IncompatibleFrameAndFormat
-     * @throws InvalidCreativeFileFormat
      */
     public function store(StoreCreativeRequest $request, Content $content) {
         // Start by checking the given frame matched the content layout

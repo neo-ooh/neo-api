@@ -25,9 +25,10 @@ class Totals extends Component {
     /**
      * Create the component instance.
      *
+     * @param Order      $order
      * @param Collection $orders
-     * @param Collection $production
      * @param string     $size
+     * @param Collection $production
      */
     public function __construct(Order $order, Collection $orders, string $size, Collection $production) {
         $this->order      = $order;

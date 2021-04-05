@@ -27,7 +27,8 @@ class EndOfScheduleNotificationEmail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @return void
+     * @param Actor    $actor
+     * @param Schedule $schedule
      */
     public function __construct(Actor $actor,Schedule $schedule)
     {

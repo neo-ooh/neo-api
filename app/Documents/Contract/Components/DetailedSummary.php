@@ -25,8 +25,10 @@ class DetailedSummary extends Component {
     /**
      * Create the component instance.
      *
+     * @param Order      $order
      * @param Collection $orders
-     * @param Collection  $production
+     * @param Collection $production
+     * @param bool       $renderDisclaimers
      */
     public function __construct(Order $order, Collection $orders, Collection $production, bool $renderDisclaimers) {
         $this->order     = $order;

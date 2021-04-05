@@ -10,11 +10,11 @@
 
 namespace Neo\BroadSign\Models;
 
-use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Neo\BroadSign\Endpoint;
 
 /**
  * Class Creatives
+ *
  * @package Neo\BroadSign\Models
  *
  * @property bool   active
@@ -28,19 +28,19 @@ use Neo\BroadSign\Endpoint;
  * @property string attributes
  * @property int    bmb_host_id
  * @property string checksum2
- * @property int checksum2_type
- * @property int container_id
+ * @property int    checksum2_type
+ * @property int    container_id
  * @property string creation_tm
- * @property int creation_user_id
- * @property int domain_id
+ * @property int    creation_user_id
+ * @property int    domain_id
  * @property string external_id
  * @property string feeds
- * @property int id
+ * @property int    id
  * @property string mime
  * @property string name
  * @property string originalfilename
- * @property int parent_id
- * @property int size
+ * @property int    parent_id
+ * @property int    size
  *
  * @method static Collection<Creative> all()
  * @method static Creative get(int $creativeID)
@@ -67,10 +67,10 @@ class Creative extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all" => Endpoint::get("/content/v11")->multiple(),
-            "create" => Endpoint::post("/content/v11/import_from_url")->id(),
-            "get" => Endpoint::get("/content/v11/{id}"),
-            "update" => Endpoint::put("/content/v11"),
+            "all"                 => Endpoint::get("/content/v11")->multiple(),
+            "create"              => Endpoint::post("/content/v11/import_from_url")->id(),
+            "get"                 => Endpoint::get("/content/v11/{id}"),
+            "update"              => Endpoint::put("/content/v11"),
             "addResourceCriteria" => Endpoint::post("/resource_criteria/v7/add")->ignore(),
         ];
     }
@@ -80,7 +80,6 @@ class Creative extends BroadSignModel {
      * @param int $criteriaID
      * @param int $type
      *
-     * @throws BadResponse
      */
     public function addCriteria(int $criteriaID, int $type): void {
         static::addResourceCriteria([
@@ -92,10 +91,10 @@ class Creative extends BroadSignModel {
     }
 
     public function approve(): void {
-        $this->active = 1;
-        $this->approval_status = 1;
+        $this->active           = 1;
+        $this->approval_status  = 1;
         $this->archive_priority = 1;
-        $this->external_id = "";
+        $this->external_id      = "";
         $this->save();
     }
 }

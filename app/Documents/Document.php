@@ -73,6 +73,7 @@ abstract class Document {
     /**
      * Holds the data ingestion logic.
      *
+     * @param $data
      * @return bool A boolean value indicating if the data was correctly ingested or not
      */
     abstract protected function ingest($data): bool;

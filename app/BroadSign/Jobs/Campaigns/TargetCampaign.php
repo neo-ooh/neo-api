@@ -82,14 +82,14 @@ class TargetCampaign extends BroadSignJob {
 
         // Is there any broadsign location missing from the campaign ?
         $missingLocations = $locationsID->diff($bsLocationsID);
-        if ($missingLocations->count() > 0) {
+        if ($missingLocations->isNotEmpty()) {
             // Associate missing locations
             $bsCampaign->addLocations($missingLocations, $requestedCriteria->pluck("broadsign_criteria_id"));
         }
 
         // Is there any broadsign location that needs to be removed from the campaign ?
         $locationsToRemove = $bsLocationsID->diff($locationsID);
-        if ($locationsToRemove->count() > 0) {
+        if ($locationsToRemove->isNotEmpty()) {
             $bsCampaign->removeLocations($locationsToRemove);
         }
 

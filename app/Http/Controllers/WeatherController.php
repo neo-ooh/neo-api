@@ -67,7 +67,7 @@ class WeatherController extends Controller
         $locale = Request('locale', 'en-CA');
 
         foreach ($this->cities as $city) {
-            array_push($forecasts, $link->getNow($locale, ...$city));
+            $forecasts[] = $link->getNow($locale, ...$city);
         }
 
         return new Response($forecasts);
@@ -75,6 +75,8 @@ class WeatherController extends Controller
 
     /**
      * Give the current weather for the specified city
+     *
+     * @param Request $request
      * @return Response
      */
     public function now(Request $request): Response
@@ -84,8 +86,9 @@ class WeatherController extends Controller
         $city = $request->city;
 
         $this->sanitizeLocation($country, $province, $city);
-        if(!$country || !$province || !$city)
+        if(!$country || !$province || !$city) {
             return new Response(null);
+        }
 
         // Request
         $link = new MeteoMediaLinkService();
@@ -111,15 +114,18 @@ class WeatherController extends Controller
         $city = $request->city;
 
         $this->sanitizeLocation($country, $province, $city);
-        if(!$country || !$province || !$city)
+        if(!$country || !$province || !$city) {
             return new Response(null);
+        }
 
         $link = new MeteoMediaLinkService();
         $locale = $request->input('locale', 'en-CA');
 
         $longTerm = $link->getNext($locale, $country, $province, $city);
 
-        if($longTerm == null) return new Response(null);
+        if($longTerm == null) {
+            return new Response(null);
+        }
 
         $forecast = $longTerm["LongTermPeriod"][1];
         $forecast["Location"] = $longTerm["Location"];
@@ -139,16 +145,18 @@ class WeatherController extends Controller
         $city = $request->city;
 
         $this->sanitizeLocation($country, $province, $city);
-        if(!$country || !$province || !$city)
+        if(!$country || !$province || !$city) {
             return new Response(null);
+        }
 
         $link = new MeteoMediaLinkService();
         $locale = $request->input('locale', 'en-CA');
 
         $forecast = $link->getNext($locale, $country, $province, $city);
 
-        if($forecast != null)
+        if($forecast != null) {
             array_splice($forecast["LongTermPeriod"], 0, 1);
+        }
 
         return new Response($forecast);
     }
@@ -165,8 +173,9 @@ class WeatherController extends Controller
         $city = $request->city;
 
         $this->sanitizeLocation($country, $province, $city);
-        if(!$country || !$province || !$city)
+        if(!$country || !$province || !$city) {
             return new Response(null);
+        }
 
         $link = new MeteoMediaLinkService();
         $locale = $request->input('locale', 'en-CA');

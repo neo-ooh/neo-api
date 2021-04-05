@@ -190,7 +190,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      */
     protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, array $params) {
         /** @var Response $response */
-        Log::channel("broadsign")->debug("request:{$endpoint->method} [{$path}] ".json_encode($params));
+        Log::channel("broadsign")->debug("request:{$endpoint->method} [{$path}] ". json_encode($params, JSON_THROW_ON_ERROR));
 
         $response = Http::withoutVerifying()
                         ->withOptions(["cert" => storage_path('broadsign.pem')])

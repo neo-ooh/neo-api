@@ -26,6 +26,8 @@ class ContractFirstPage extends Component {
     /**
      * Create the component instance.
      *
+     * @param Order    $order
+     * @param Customer $customer
      */
     public function __construct(Order $order, Customer $customer) {
         $this->order = $order;

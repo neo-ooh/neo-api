@@ -1,3 +1,4 @@
+
 <section class="detailed-purchases">
     <h2 class="detailed-purchases-title">
         {{ __("order-type-$type")  }}

@@ -24,8 +24,8 @@ use Neo\Documents\Document;
 use Neo\Documents\Network;
 
 class Contract extends Document {
-    const TYPE_PROPOSAL = 'proposal';
-    const TYPE_CONTRACT = 'contract';
+    public const TYPE_PROPOSAL = 'proposal';
+    public const TYPE_CONTRACT = 'contract';
 
     protected $documentType = null;
 

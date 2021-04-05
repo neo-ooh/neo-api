@@ -29,10 +29,10 @@ use Ramsey\Collection\Collection;
  */
 class Headline extends Model
 {
-    const STYLE_INFO = "info";
-    const STYLE_SUCCESS = "success";
-    const STYLE_WARNING = "warning";
-    const STYLE_DANGER = "danger";
+    public const STYLE_INFO = "info";
+    public const STYLE_SUCCESS = "success";
+    public const STYLE_WARNING = "warning";
+    public const STYLE_DANGER = "danger";
 
     use HasFactory;
     use SoftDeletes;

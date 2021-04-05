@@ -226,6 +226,8 @@ class Creative extends Model {
      * @param UploadedFile $file
      *
      * @return void
+     * @throws \Spatie\Image\Exceptions\InvalidManipulation
+     * @throws \Spatie\Image\Exceptions\InvalidManipulation
      */
     private function createImageThumbnail(UploadedFile $file): void {
 

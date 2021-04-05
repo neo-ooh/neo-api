@@ -11,13 +11,8 @@
 namespace Neo\Console\Chores;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
-use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Jobs\Campaigns\DisableBroadSignCampaign;
 use Neo\BroadSign\Models\Campaign as BSCampaign;
-use Neo\Models\Campaign;
-use Symfony\Component\Console\Helper\ProgressBar;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 class CleanUpCampaigns extends Command {
     /**

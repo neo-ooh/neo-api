@@ -31,6 +31,7 @@ class ReviewRequestEmail extends ReliableEmail {
     /**
      * Create a new message instance.
      *
+     * @param Actor    $actor
      * @param Schedule $schedule
      */
     public function __construct(Actor $actor, Schedule $schedule) {

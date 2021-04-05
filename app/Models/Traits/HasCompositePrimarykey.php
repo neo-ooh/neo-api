@@ -55,10 +55,6 @@ trait HasCompositePrimarykey {
             $keyName = $this->getKeyName();
         }
 
-        if (isset($this->original[$keyName])) {
-            return $this->original[$keyName];
-        }
-
-        return $this->getAttribute($keyName);
+        return $this->original[$keyName] ?? $this->getAttribute($keyName);
     }
 }

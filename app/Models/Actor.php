@@ -563,6 +563,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * Build and return a JWT for the current user.
      *
      * @return string
+     * @throws Exception
+     * @throws Exception
      */
     public function getJWT(): string {
         $twoFAIsValid = $this->is2FAValid();

@@ -30,7 +30,7 @@ class LocationsController extends Controller {
     /**
      * List all locations this user has access to
      *
-     * @param SearchLocationsRequest $request
+     * @param ListLocationsRequest $request
      *
      * @return Response
      */
@@ -83,6 +83,8 @@ class LocationsController extends Controller {
 
     /**
      * @param SalesLocationRequest $request
+     * @return Response
+     * @return Response
      */
     public function allByNetwork(SalesLocationRequest $request) {
         // We want to list all the locations per network and per province

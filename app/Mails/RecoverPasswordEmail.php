@@ -28,6 +28,7 @@ class RecoverPasswordEmail extends ReliableEmail {
     /**
      * Create a new message instance.
      *
+     * @param Actor         $actor
      * @param RecoveryToken $recoveryToken
      */
     public function __construct (Actor $actor, RecoveryToken $recoveryToken) {

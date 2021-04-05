@@ -73,8 +73,8 @@ class FormatsController extends Controller {
             }
         } else {
             // If no network is specified, we load all locations in each network
-            $locations = collect(array_map(fn($network) => Actor::find(Param::find(Network::coerce($network)))
-                                                        ->getLocations(true, false, true, true), Network::getValues()))->flatten();
+            $locations = collect(array_map(static fn($network) => Actor::find(Param::find(Network::coerce($network)))
+                                                                       ->getLocations(true, false, true, true), Network::getValues()))->flatten();
         }
 
         // Now that we have ou locations, extract the formats

@@ -26,6 +26,7 @@ class SummaryOrdersCategory extends Component {
      *
      * @param string     $category
      * @param Collection $orders
+     * @param Order      $order
      */
     public function __construct(string $category, Collection $orders, Order $order) {
         $this->category = $category;

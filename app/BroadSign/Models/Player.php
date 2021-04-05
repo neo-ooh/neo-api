@@ -11,7 +11,6 @@
 namespace Neo\BroadSign\Models;
 
 use Illuminate\Support\Collection;
-use JsonException;
 use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Endpoint;
 
@@ -69,7 +68,6 @@ class Player extends BroadSignModel {
      * @param int $duration  in ms, how long should the burst last
      * @param int $frequency in ms, number of milliseconds between bursts
      *
-     * @throws JsonException
      */
     public function requestScreenshotsBurst(int $burstID, int $scale, int $duration, int $frequency): void {
         $this->sendRequest([

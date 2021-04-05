@@ -178,6 +178,7 @@ return [
         Neo\Providers\RouteServiceProvider::class,
 
         Neo\BroadSign\BroadSignServiceProvider::class,
+        Neo\Providers\ThirdPartiesServicesProvider::class,
 
     ],
 

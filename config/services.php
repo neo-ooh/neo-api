@@ -38,4 +38,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    "meteo-media" => [
+        "endpoint" => env("METEO_MEDIA_ENDPOINT", "http://wx.api.pelmorex.com/weather"),
+        "key" => env("METEO_MEDIA_API_KEY"),
+        "record-lifespan" => env("METEO_MEDIA_RECORD_LIFESPAN", 2700),
+    ]
+
 ];

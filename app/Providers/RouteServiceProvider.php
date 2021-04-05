@@ -37,7 +37,10 @@ class RouteServiceProvider extends ServiceProvider {
 
             Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
 
-            Route::middleware('documents')->group(base_path('routes/documents.php'));
+            Route::middleware('access-tokens')->group(function () {
+                Route::group([], base_path('routes/documents.php'));
+                Route::group([], base_path('routes/dynamics.php'));
+            });
         });
     }
 

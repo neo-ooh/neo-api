@@ -4,45 +4,17 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Neo\Exceptions\InvalidLocationException;
+use Neo\Http\Requests\Hourly\ForecastWeatherRequest;
+use Neo\Http\Requests\Weather\CurrentWeatherRequest;
+use Neo\Http\Requests\Weather\HourlyWeatherRequest;
+use Neo\Http\Requests\Weather\NationalWeatherRequest;
+use Neo\Http\Requests\Weather\NextDayWeatherRequest;
+use Neo\Services\Weather\Location;
+use Neo\Services\Weather\WeatherService;
 
-class WeatherController extends Controller
-{
-    /**
-     * List of canadian provinces 2-letters names
-     */
-    protected const PROVINCES = ["NL", "PE", "NS", "NB", "QC", "ON", "MB", "SK", "AB", "BC", "YT", "NT", "NU"];
-
-    /**
-     * Full name of canadian provinces keying their abbreviated names
-     */
-    protected const PROVINCES_LNG = [
-        "Terre-Neuve-et-Labrador" => "NL",
-        "Île-du-Prince-Édouard" => "PE",
-        "Nouvelle-Écosse" => "NS",
-        "Nouveau-Brunswick" => "NB",
-        "Québec" => "QC",
-        "Ontario" => "ON",
-        "Manitoba" => "MB",
-        "Saskatchewan" => "SK",
-        "Alberta" => "AB",
-        "British Columbia" => "BC",
-        "Yukon" => "YT",
-        "Northwest Territories" => "NT",
-        "Nunavut" => "NU"
-    ];
-
-    /**
-     * List of mapping between cities.
-     * This used for specific cases where an actual town is actyally referrenced under another name in meteo-media
-     *
-     * @todo Move this part of the code to the MeteMedia part of the website
-     */
-    protected const CITIES = [
-        "Ville de Québec" => "Québec",
-        "Boulevard Laurier" => "Québec",
-    ];
-
-    private $cities = [
+class WeatherController extends Controller {
+    public $nationalLocations = [
         ["CA", "ON", "Toronto"],
         ["CA", "ON", "Ottawa"],
         ["CA", "QC", "Montreal"],
@@ -57,17 +29,20 @@ class WeatherController extends Controller
 
     /**
      * Gives the national weather
+     *
+     * @param NationalWeatherRequest $request
      * @return Response
      */
-    public function national(): Response
-    {
+    public function national(NationalWeatherRequest $request, WeatherService $weather): Response {
+        $locale    = $request->input('locale');
         $forecasts = [];
-        $link = new MeteoMediaLinkService();
 
-        $locale = Request('locale', 'en-CA');
-
-        foreach ($this->cities as $city) {
-            $forecasts[] = $link->getNow($locale, ...$city);
+        try {
+            foreach ($this->nationalLocations as $location) {
+                $forecasts[] = $weather->getCurrentWeather(new Location(...$location), $locale);
+            }
+        } catch (InvalidLocationException $e) {
+            return new Response(null);
         }
 
         return new Response($forecasts);
@@ -79,55 +54,39 @@ class WeatherController extends Controller
      * @param Request $request
      * @return Response
      */
-    public function now(Request $request): Response
-    {
-        $country = $request->country;
-        $province = $request->province;
-        $city = $request->city;
+    public function current(CurrentWeatherRequest $request, WeatherService $weather): Response {
+        $location           = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $locale             = $request->input('locale');
 
-        $this->sanitizeLocation($country, $province, $city);
-        if(!$country || !$province || !$city) {
+        try {
+            $now      = $weather->getCurrentWeather($location, $locale);
+            $longTerm = $weather->getForecastWeather($location, $locale);
+        } catch (InvalidLocationException $e) {
             return new Response(null);
         }
 
-        // Request
-        $link = new MeteoMediaLinkService();
-        $locale = $request->input('locale', 'en-CA');
-
-        $now = $link->getNow($locale, $country, $province, $city);
-        $longTerm = $link->getNext($locale, $country, $province, $city)["LongTermPeriod"][0];
-
-        $forecast = array_merge($longTerm, $now);
+        $forecast = array_merge($longTerm["LongTermPeriod"][0], $now);
 
         return new Response($forecast);
     }
 
     /**
      * Give the next day weather for the specified location
+     *
      * @param Request $request The request
      * @return Response
      */
-    public function tomorrow(Request $request): Response
-    {
-        $country = $request->country;
-        $province = $request->province;
-        $city = $request->city;
+    public function nextDay(NextDayWeatherRequest $request, WeatherService $weather): Response {
+        $location           = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $locale             = $request->input('locale');
 
-        $this->sanitizeLocation($country, $province, $city);
-        if(!$country || !$province || !$city) {
+        try {
+            $longTerm = $weather->getForecastWeather($location, $locale);
+        } catch (InvalidLocationException $e) {
             return new Response(null);
         }
 
-        $link = new MeteoMediaLinkService();
-        $locale = $request->input('locale', 'en-CA');
-
-        $longTerm = $link->getNext($locale, $country, $province, $city);
-
-        if($longTerm == null) {
-            return new Response(null);
-        }
-
-        $forecast = $longTerm["LongTermPeriod"][1];
+        $forecast             = $longTerm["LongTermPeriod"][1];
         $forecast["Location"] = $longTerm["Location"];
 
         return new Response($forecast);
@@ -135,77 +94,41 @@ class WeatherController extends Controller
 
     /**
      * Give the seven days weather for the specified location
+     *
      * @param Request $request The request
      * @return Response
      */
-    public function forecast(Request $request): Response
-    {
-        $country = $request->country;
-        $province = $request->province;
-        $city = $request->city;
+    public function forecast(ForecastWeatherRequest $request, WeatherService $weather): Response {
+        $location           = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $locale             = $request->input('locale');
 
-        $this->sanitizeLocation($country, $province, $city);
-        if(!$country || !$province || !$city) {
+        try {
+            $forecast = $weather->getForecastWeather($location, $locale);
+        } catch (InvalidLocationException $e) {
             return new Response(null);
         }
 
-        $link = new MeteoMediaLinkService();
-        $locale = $request->input('locale', 'en-CA');
-
-        $forecast = $link->getNext($locale, $country, $province, $city);
-
-        if($forecast != null) {
-            array_splice($forecast["LongTermPeriod"], 0, 1);
-        }
+        array_splice($forecast["LongTermPeriod"], 0, 1);
 
         return new Response($forecast);
     }
 
     /**
      * Give the next hours weather forecast for the specified location
+     *
      * @param Request $request The request
      * @return Response
      */
-    public function hourly(Request $request): Response
-    {
-        $country = $request->country;
-        $province = $request->province;
-        $city = $request->city;
+    public function hourly(HourlyWeatherRequest $request, WeatherService $weather): Response {
+        $location           = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $locale             = $request->input('locale');
 
-        $this->sanitizeLocation($country, $province, $city);
-        if(!$country || !$province || !$city) {
+        try {
+            $hourly = $weather->getHourlyWeather($location, $locale);
+        } catch (InvalidLocationException $e) {
             return new Response(null);
         }
 
-        $link = new MeteoMediaLinkService();
-        $locale = $request->input('locale', 'en-CA');
-
-        $hourly = $link->getHourly($locale, $country, $province, $city);
-
         return new Response($hourly);
-    }
-
-    private function sanitizeLocation(?String &$country, ?String &$province, ?String &$city) {
-        // Check if the location is valid
-        if($country !== "CA") {
-            $country = null;
-            return;
-        }
-
-        if(array_key_exists($province, self::PROVINCES_LNG)) {
-            $province = self::PROVINCES_LNG[$province];
-        } else if(!in_array($province, self::PROVINCES, true)) {
-            $province = null;
-        }
-
-        // Make sure the city format is valid
-        $city = str_replace(".", "", urldecode($city));
-        if(array_key_exists($city, self::CITIES)) {
-            $city = self::CITIES[$city];
-        }
-
-        if($city === "Repentigny") {
-            $province = 'QC';
-        }
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Neo\Documents\Contract\Contract;
 use Neo\Exceptions\UnknownDocumentException;
+use Neo\Http\Requests\Documents\MakeDocumentRequest;
 
 class DocumentsGenerationController extends Controller {
 
@@ -23,7 +24,7 @@ class DocumentsGenerationController extends Controller {
      * @return Response
      * @throws UnknownDocumentException
      */
-    public function make(Request $request) {
+    public function make(MakeDocumentRequest $request): Response {
         App::setLocale('en');
 
         $file = $request->file("file");

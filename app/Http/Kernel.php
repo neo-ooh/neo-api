@@ -75,7 +75,7 @@ class Kernel extends HttpKernel {
         'broadsign'   => [
             SubstituteBindings::class,
         ],
-        'documents'   => [
+        'access-tokens'   => [
             'throttle:api',
             'auth:access-tokens',
             SubstituteBindings::class,

@@ -190,7 +190,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      */
     protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, array $params) {
         /** @var Response $response */
-        Log::channel("broadsign")->debug("request:{$endpoint->method} [{$path}] ". json_encode($params, JSON_THROW_ON_ERROR));
+        Log::channel("broadsign")->debug("request:{$endpoint->method} [{$path}] " . json_encode($params, JSON_THROW_ON_ERROR));
 
         $response = Http::withoutVerifying()
                         ->withOptions(["cert" => storage_path('broadsign.pem')])
@@ -198,10 +198,11 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
                         ->{$endpoint->method}(config('broadsign.api.url') . $path, $params);
 
         // Log the response
-        Log::channel("broadsign")->log($response->status() === 200 ? "debug": "error", "response:{$response->status()} [{$path}] ".$response->body());
+        Log::channel("broadsign")
+           ->log($response->status() === 200 ? "debug" : "error", "response:{$response->status()} [{$path}] " . $response->body());
 
         // In case the resource wasn't found (404), return null
-        if($response->status() === 404) {
+        if ($response->status() === 404) {
             return null;
         }
 

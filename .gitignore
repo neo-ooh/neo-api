@@ -11,4 +11,5 @@
 .env.local
 .env.backup
 
+.idea/workspace.xml
 .phpunit.result.cache

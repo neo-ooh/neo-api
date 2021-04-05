@@ -60,23 +60,17 @@ class CreateBroadSignCampaign extends BroadSignJob {
             return;
         }
 
-        // Prepare the start and end date
-        $startDate = $campaign->start_date->setTime(0, 0);
-        $endDate   = $startDate->copy()
-                               ->addYears(BroadSign::getDefaults()['campaign_length'])
-                               ->setTime(23, 59);
-
         // Create the campaign
         $bsCampaign                           = new BSCampaign();
         $bsCampaign->auto_synchronize_bundles = true;
         $bsCampaign->domain_id                = $broadsign->getDefaults()["domain_id"];
         $bsCampaign->duration_msec            = $campaign->display_duration * 1000;
-        $bsCampaign->end_date                 = $endDate->toDateString();
-        $bsCampaign->end_time                 = "23:59:00";
+        $bsCampaign->end_date                 = $campaign->end_date->toDateString();
+        $bsCampaign->end_time                 = $campaign->end_date->toTimeString();
         $bsCampaign->name                     = $campaign->owner->name . " - " . $campaign->name;
         $bsCampaign->parent_id                = $broadsign->getDefaults()["customer_id"];
-        $bsCampaign->start_date               = $startDate->toDateString();
-        $bsCampaign->start_time               = "00:00:00";
+        $bsCampaign->start_date               = $campaign->start_date->toDateString();
+        $bsCampaign->start_time               = $campaign->start_date->toTimeString();
         $bsCampaign->saturation               = $campaign->loop_saturation > 0
             ? $campaign->loop_saturation
             : $campaign->schedules->filter(fn($schedule) => $schedule->is_approved)->count();

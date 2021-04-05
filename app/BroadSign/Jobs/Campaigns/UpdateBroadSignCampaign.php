@@ -73,8 +73,8 @@ class UpdateBroadSignCampaign extends BroadSignJob {
 
         // Can we simply update the BroadSign Campaign or do we need to rebuild it ?
         if($saturation !== $bsCampaign->saturation
-            || $campaign->start_date->isBefore(Date::make($bsCampaign->start_date))
-            || $campaign->end_date->isAfter(Date::make($bsCampaign->end_date))) {
+            || $campaign->start_date->notEqualTo(Date::make($bsCampaign->start_date))
+            || $campaign->end_date->notEqualTo(Date::make($bsCampaign->end_date))) {
             // We need to rebuild the campaign
             RebuildBroadSignCampaign::dispatchSync($campaign->id);
             return;

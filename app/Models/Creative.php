@@ -231,7 +231,7 @@ class Creative extends Model {
 
         $tmp = (new TemporaryDirectory())->create();
 
-        Image::load($file->getRealPath())
+        Image::load($file->getPathname())
                     ->width(1280)
                     ->height(1280)
                     ->format(Manipulations::FORMAT_JPG)

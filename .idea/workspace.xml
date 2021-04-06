@@ -8,29 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8f94374-a604-4b6f-9a9a-c5267a739e94" name="Default Changelist" comment="Add Locations search endpoint">
-      <change afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/ContractFirstPage.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/GeneralConditions.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/lang/en/common.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/lang/en/contract.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/documents/contract/first-page.blade.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/resources/views/documents/contract/general-conditions.blade.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/php.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/php.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Components/Totals.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Contract.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Customer.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/Order.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/Order.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Contract/OrderLine.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Documents/Document.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Documents/Document.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Http/Controllers/DocumentsGenerationController.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/Models/Creative.php" beforeDir="false" afterPath="$PROJECT_DIR$/app/Models/Creative.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/composer.lock" beforeDir="false" afterPath="$PROJECT_DIR$/composer.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/_header.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/_header.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.css.map" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/documents/stylesheets/contract.scss" beforeDir="false" afterPath="$PROJECT_DIR$/resources/documents/stylesheets/contract.scss" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/resources/views/documents/contract/order-totals.blade.php" beforeDir="false" afterPath="$PROJECT_DIR$/resources/views/documents/contract/order-totals.blade.php" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

@@ -231,7 +231,7 @@ class Creative extends Model {
      */
     private function createImageThumbnail(UploadedFile $file): void {
 
-        $tmp = new TemporaryDirectory();
+        $tmp = (new TemporaryDirectory())->create();
 
         Image::load($file->getRealPath())
                     ->width(1280)

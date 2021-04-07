@@ -227,15 +227,15 @@ class Creative extends Model {
      * @return void
      */
     private function createImageThumbnail(UploadedFile $file): void {
+        $tempName = 'thumb_' . $this->checksum;
+        $tempFile = Storage::disk('local')->path($tempName);
 
-        $tempFile = $file->store("", ["disk" => "local"]);
-
-        Image::load($tempFile)
+        Image::load($file->path())
              ->width(1280)
              ->height(1280)
              ->format(Manipulations::FORMAT_JPG)
              ->quality(75)
-             ->save();
+             ->save($tempFile);
 
         Storage::put($this->thumbnail_path, $tempFile);
         Storage::disk("local")->delete($tempFile);

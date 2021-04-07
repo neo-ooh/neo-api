@@ -52,20 +52,19 @@ return [
             'connection' => 'cache',
         ],
 
+        'apc' => [
+            'driver' => 'apc',
+        ],
 
-//        'apc' => [
-//            'driver' => 'apc',
-//        ],
-//
-//        'array' => [
-//            'driver' => 'array',
-//            'serialize' => false,
-//        ],
-//
-//        'file' => [
-//            'driver' => 'file',
-//            'path' => storage_path('framework/cache/data'),
-//        ],
+        'array' => [
+            'driver' => 'array',
+            'serialize' => false,
+        ],
+
+        'file' => [
+            'driver' => 'file',
+            'path' => storage_path('framework/cache/data'),
+        ],
 //
 //        'memcached' => [
 //            'driver' => 'memcached',

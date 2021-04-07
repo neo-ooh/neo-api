@@ -10,6 +10,7 @@
 
 namespace Neo\Documents\Contract;
 
+use Illuminate\Support\Str;
 use Neo\Documents\Network;
 
 class OrderLine {
@@ -90,6 +91,10 @@ class OrderLine {
 
         if ($this->isGuaranteedBonus() || $this->isBonusUponAvailability()) {
             $this->net_investment = 0;
+        }
+
+        if($this->isBonusUponAvailability() && Str::endsWith(trim($this->description), "(bonus)")) {
+            $this->product = substr($this->description, -7);
         }
     }
 

@@ -22,7 +22,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
-use Intervention\Image\Facades\Image;
+use Spatie\Image\Image;
 
 /**
  * Neo\Models\Branding
@@ -224,17 +224,22 @@ class Creative extends Model {
      * @param UploadedFile $file
      *
      * @return void
-     * @throws \Spatie\Image\Exceptions\InvalidManipulation
-     * @throws \Spatie\Image\Exceptions\InvalidManipulation
      */
     private function createImageThumbnail(UploadedFile $file): void {
-        $img = Image::make($file->getRealPath());
-        $img->resize(1280, 1280, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
 
-        Storage::put($this->thumbnail_path, $img->stream("jpg", 75));
+        $tempName = 'thumb_' . $this->checksum;
+        $tempFile = Storage::disk('local')->path($tempName);
+
+        $file->store($tempFile);
+
+        Image::load($tempFile)
+             ->width(1280)
+             ->height(1280)
+             ->format(Manipulations::FORMAT_JPG)
+             ->quality(75)
+             ->save();
+
+        Storage::put($this->thumbnail_path, $tempFile);
     }
 
 

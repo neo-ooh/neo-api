@@ -92,6 +92,15 @@ return [
             'root'       => "ooh-dev",
             'visibility' => 'public',
         ],
+
+        'canadian-press' => [
+            'driver'   => 'ftp',
+            'host'     => env('CANADIAN_PRESS_URL'),
+            'username' => env('CANADIAN_PRESS_USERNAME'),
+            'password' => env('CANADIAN_PRESS_PASSWORD'),
+            'root' => env('CANADIAN_PRESS_FTP_ROOT'),
+            'port' => 21,
+        ]
     ],
 
     /*

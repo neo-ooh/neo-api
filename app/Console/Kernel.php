@@ -15,6 +15,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\BroadSign\Jobs\Players\RequestScreenshotsBursts;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\RefreshReportReservations;
+use Neo\Services\News\NewsService;
 
 class Kernel extends ConsoleKernel {
     /**
@@ -52,6 +53,14 @@ class Kernel extends ConsoleKernel {
         // Send screenshots requests to player
         $schedule->job(RequestScreenshotsBursts::class)->everyMinute();
 
+
+
+        /* -----------------
+         * "More often that hourly but not every minutes"
+         */
+        $schedule->call(function (NewsService $news) {
+            $news->updateRecords();
+        })->everyFifteenMinutes();
 
 
         /* -----------------

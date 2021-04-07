@@ -21,21 +21,19 @@ class CreateNewsRecordsTable extends Migration
     public function up()
     {
         Schema::create($this->tableName, function (Blueprint $table) {
-            $table->engine = 'MyISAM';
-            $table->increments('id');
+            $table->id();
             $table->string('cp_id', 64);
-            $table->unsignedInteger('subject');
+            $table->string('subject', 32);
             $table->string('locale', 5);
             $table->string('headline');
-            $table->dateTime('date');
+            $table->timestamp("date");
             $table->string('media')->nullable();
-            $table->integer('media_width')->nullable()->default(null);
-            $table->integer('media_height')->nullable()->default(null);
-
-            $table->index(["subject"], 'fk_record_subject');
-
-            $table->unique(["cp_id", "subject"], 'news_records_cp_id_subject_unique');
+            $table->unsignedInteger('media_width')->nullable()->default(null);
+            $table->unsignedInteger('media_height')->nullable()->default(null);
             $table->timestamps();
+
+            $table->index(["subject"]);
+            $table->unique(["cp_id", "subject"]);
         });
     }
 

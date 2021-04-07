@@ -42,6 +42,13 @@ return [
         "endpoint" => env("METEO_MEDIA_ENDPOINT", "http://wx.api.pelmorex.com/weather"),
         "key" => env("METEO_MEDIA_API_KEY"),
         "record-lifespan" => env("METEO_MEDIA_RECORD_LIFESPAN", 2700),
-    ]
+    ],
+
+    "canadian-press" => [
+        "disk" => "canadian-press",
+        "storage" => [
+            "path" => "dynamics/news/medias/"
+        ]
+    ],
 
 ];

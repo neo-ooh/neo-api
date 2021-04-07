@@ -228,10 +228,7 @@ class Creative extends Model {
      */
     private function createImageThumbnail(UploadedFile $file): void {
 
-        $tempName = 'thumb_' . $this->checksum;
-        $tempFile = Storage::disk('local')->path($tempName);
-
-        $file->store($tempFile);
+        $tempFile = $file->store("tmp", ["disk" => "local"]);
 
         Image::load($tempFile)
              ->width(1280)
@@ -241,6 +238,7 @@ class Creative extends Model {
              ->save();
 
         Storage::put($this->thumbnail_path, $tempFile);
+        Storage::disk("local")->delete($tempFile);
     }
 
 

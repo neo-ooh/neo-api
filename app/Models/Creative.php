@@ -228,7 +228,7 @@ class Creative extends Model {
      */
     private function createImageThumbnail(UploadedFile $file): void {
 
-        $tempFile = $file->store("tmp", ["disk" => "local"]);
+        $tempFile = $file->store("", ["disk" => "local"]);
 
         Image::load($tempFile)
              ->width(1280)

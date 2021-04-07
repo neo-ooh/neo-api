@@ -23,6 +23,7 @@ use Illuminate\Support\Facades\Storage;
 use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
 use Spatie\Image\Image;
+use Spatie\Image\Manipulations;
 
 /**
  * Neo\Models\Branding

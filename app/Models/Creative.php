@@ -229,9 +229,14 @@ class Creative extends Model {
         $img->resize(1280, 1280, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
-        })->encode("jpg", 75);
+        });
 
-        Storage::putFileAs("creatives", $img, $this->id . "_thumb.jpeg");
+        $tempName = 'thumb_' . $this->checksum;
+        $tempFile = Storage::disk('local')->path($tempName);
+        $img->save($tempFile);
+
+        Storage::writeStream($this->thumbnail_path, Storage::disk("locale")->readStream($tempFile));
+        Storage::disk('local')->delete($tempName);
     }
 
 

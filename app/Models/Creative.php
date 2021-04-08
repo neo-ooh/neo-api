@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
 
@@ -224,26 +225,13 @@ class Creative extends Model {
      * @return void
      */
     private function createImageThumbnail(UploadedFile $file): void {
-        $image = Storage::get($this->file_path);
-        $size = getimagesize($file->path());
+        $img = Image::make($file->path());
+        $img->resize(1280, 1280, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        })->encode("jpg", 75);
 
-        $ratio = min(1280 / $size[0], 1280 / $size[1]); // width/height
-
-        $width  = $size[0] * $ratio;
-        $height = $size[1] * $ratio;
-
-        $src   = imagecreatefromstring($image);
-        $thumb = imagecreatetruecolor($width, $height);
-
-        imagecopyresampled($thumb, $src, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
-
-        ob_start();
-
-        imagejpeg($thumb);
-        $thumb = ob_get_clean();
-
-        imagedestroy($src);
-        Storage::put($this->thumbnail_path, $thumb);
+        Storage::putFileAs("creatives", $img->getEncoded(), $this->id . "_thumb.jpeg");
     }
 
 

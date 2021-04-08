@@ -20,6 +20,7 @@
 */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\NewsController;
 use Neo\Http\Controllers\WeatherController;
 use Neo\Http\Middleware\DynamicsMiddleware;
@@ -36,6 +37,7 @@ Route::prefix("dynamics")->group(function () {
 
     Route::prefix("_news")
          /*->middleware(DynamicsMiddleware::class)*/->group(function () {
-        Route::get("_records"  , NewsController::class . "@index"  )->name("dynamics.news.index");
+        Route::get("records"  , NewsController::class . "@index"  )->name("dynamics.news.index");
+        Route::get("backgrounds"  , NewsBackgroundsController::class . "@index"  )->name("dynamics.news.backgrounds");
     });
 });

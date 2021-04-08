@@ -33,7 +33,7 @@ class RouteServiceProvider extends ServiceProvider {
         $this->routes(function () {
             Route::middleware('default')->group(base_path('routes/api.php'));
 
-            Route::middleware('api')->group(base_path('routes/auth.php'));
+            Route::middleware('guests')->group(base_path('routes/auth.php'));
 
             Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
 

@@ -61,7 +61,7 @@ class CanadianPressInterface implements NewsService {
             "locale"   => "fr",
             "subjects" => ["FrHealth", "FrEnvironment"],
         ],
-        self::CATEGORY_SPORTS        => [
+        self::CATEGORY_FR_SPORTS     => [
             "name"     => "Sports",
             "locale"   => "fr",
             "subjects" => ["FrSport", "FrMedia"],
@@ -164,7 +164,7 @@ class CanadianPressInterface implements NewsService {
                 $mediaPath,
                 $cpDisk->readStream($record->media)
             );
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             // Could not get media, ignore
             $record->media = null;
             $record->save();

@@ -40,6 +40,7 @@ use Neo\Http\Controllers\InventoryController;
 use Neo\Http\Controllers\LibrariesController;
 use Neo\Http\Controllers\LocationsController;
 use Neo\Http\Controllers\NetworkController;
+use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\ParamsController;
 use Neo\Http\Controllers\ReportsController;
 use Neo\Http\Controllers\ReviewsController;
@@ -66,6 +67,7 @@ use Neo\Models\Headline;
 use Neo\Models\HeadlineMessage;
 use Neo\Models\Library;
 use Neo\Models\Location;
+use Neo\Models\NewsBackground;
 use Neo\Models\Param;
 use Neo\Models\Report;
 use Neo\Models\ReviewTemplate;
@@ -363,6 +365,21 @@ Route::prefix("v1")->group(function () {
 
     Route::get("customers", CustomersController::class . "@index")->name("customers.index");
     Route::get("customers/{customer}", CustomersController::class . "@show")->name("customers.show");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Dynamics
+    |----------------------------------------------------------------------
+    */
+
+    Route::prefix("dynamics")->group(function () {
+        Route::model("newsBackground", NewsBackground::class);
+
+        Route::get("news/backgrounds", NewsBackgroundsController::class . "@index")->name("dynamics.news.backgrounds.index");
+        Route::post("news/backgrounds", NewsBackgroundsController::class . "@store")->name("dynamics.news.backgrounds.store");
+        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@store")->name("dynamics.news.backgrounds.store");
+    });
 
 
     /*

@@ -56,7 +56,7 @@ class Kernel extends HttpKernel {
             SubstituteBindings::class,
             "auth:neo-loa-4",
         ],
-        'api'   => [
+        'guests'   => [
             'throttle:api',
             SubstituteBindings::class,
         ],

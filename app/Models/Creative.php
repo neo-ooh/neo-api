@@ -225,7 +225,7 @@ class Creative extends Model {
      * @return void
      */
     private function createImageThumbnail(UploadedFile $file): void {
-        $img = Image::make($file->getRealPath());
+        $img = Image::make($file->get());
         $img->resize(1280, 1280, function($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();

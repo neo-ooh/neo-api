@@ -231,7 +231,7 @@ class Creative extends Model {
             $constraint->upsize();
         });
 
-        Storage::put($this->thumbnail_path, $img->stream("jpg", 75));
+        Storage::put($this->thumbnail_path, $img->stream("jpg", 75)->__toString());
     }
 
 

@@ -231,7 +231,7 @@ class Creative extends Model {
             $constraint->upsize();
         })->encode("jpg", 75);
 
-        Storage::putFileAs("creatives", $img->getEncoded(), $this->id . "_thumb.jpeg");
+        Storage::putFileAs("creatives", $img, $this->id . "_thumb.jpeg");
     }
 
 

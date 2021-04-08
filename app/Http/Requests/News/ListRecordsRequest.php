@@ -1,6 +1,6 @@
 <?php
 
-namespace Neo\Http\Requests\Weather;
+namespace Neo\Http\Requests\News;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;

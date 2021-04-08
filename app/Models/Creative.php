@@ -225,7 +225,7 @@ class Creative extends Model {
      */
     private function createImageThumbnail(UploadedFile $file): void {
         $image = Storage::get($this->file_path);
-        $size = getimagesize($image);
+        $size = getimagesize($file->path());
 
         $ratio = min(1280 / $size[0], 1280 / $size[1]); // width/height
 

@@ -236,13 +236,13 @@ class Creative extends Model {
         $thumb = imagecreatetruecolor($width, $height);
 
         imagecopyresampled($thumb, $src, 0, 0, 0, 0, $width, $height, $size[0], $size[1]);
-        imagedestroy($src);
 
         ob_start();
 
         imagejpeg($thumb);
         $thumb = ob_get_clean();
 
+        imagedestroy($src);
         Storage::put($this->thumbnail_path, $thumb);
     }
 

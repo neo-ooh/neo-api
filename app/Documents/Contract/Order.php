@@ -11,11 +11,14 @@
 namespace Neo\Documents\Contract;
 
 use Illuminate\Support\Collection;
+use Neo\Documents\Exceptions\MissingColumnException;
 
 class Order {
     public string $reference;
     public string $date;
     public string $salesperson;
+    public string $salesperson_phone;
+    public string $salesperson_email;
     public string $status;
 
     public string $campaigns;
@@ -57,17 +60,41 @@ class Order {
     public float $net_investment = 0;
     public float $cpm = 0;
 
+    /**
+     * @throws MissingColumnException
+     */
     public function __construct(array $record) {
+        $expectedColumns = ["name",
+                            "date_order",
+                            "user_id",
+                            "user_id/phone",
+                            "user_id/email",
+                            "state",
+                            "campaign_name",
+                            "amount_undiscounted",
+                            "amount_tax",
+                            "amount_total",
+                            "traffic",
+                            "investment"];
+
+        foreach ($expectedColumns as $col) {
+            if(!array_key_exists($col, $record)) {
+                throw new MissingColumnException($col);
+            }
+        }
+
         $this->reference     = $record["name"];
         $this->date          = $record["date_order"];
         $this->salesperson   = $record["user_id"];
+        $this->salesperson_phone   = $record["user_id/phone"];
+        $this->salesperson_email   = $record["user_id/email"];
         $this->status        = $record["state"];
         $this->campaign_name = $record["campaign_name"];
 //        $this->campaign_start         = $record["campaign_ids/date_start"];
 //        $this->campaign_end           = $record["campaign_ids/date_end"];
 //        $this->bonus_impression       = $record["bonus_impression"];
         $this->amount_before_discount = $record["amount_undiscounted"];
-        $this->discount_amount        = $record["amount_discount"];
+//        $this->discount_amount        = $record["amount_discount"];
         $this->taxes                  = $record["amount_tax"];
         $this->total                  = $record["amount_total"];
         $this->traffic                = $record["traffic"];

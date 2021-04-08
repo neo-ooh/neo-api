@@ -10,6 +10,7 @@
 
 namespace Neo\Documents;
 
+use ErrorException;
 use Mpdf\Mpdf;
 use Neo\Documents\Exceptions\UnknownGenerationException;
 
@@ -22,7 +23,7 @@ abstract class Document {
     public static function make($data): Document {
         $document = new static();
 
-        if(!$document->ingest($data)) {
+        if (!$document->ingest($data)) {
             throw new UnknownGenerationException();
         }
 

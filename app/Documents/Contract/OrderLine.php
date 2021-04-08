@@ -11,6 +11,7 @@
 namespace Neo\Documents\Contract;
 
 use Illuminate\Support\Str;
+use Neo\Documents\Exceptions\MissingColumnException;
 use Neo\Documents\Network;
 
 class OrderLine {
@@ -51,6 +52,36 @@ class OrderLine {
 
 
     public function __construct(array $record) {
+        $expectedColumns = ["order_line/name",
+                            "order_line/discount",
+                            "order_line/rental_start",
+                            "order_line/rental_end",
+                            "order_line/impression",
+                            "order_line/traffic",
+                            "order_line/market_id",
+                            "order_line/market_id/name",
+                            "order_line/nb_weeks",
+                            "order_line/nb_screen",
+                            "order_line/product_uom_qty",
+                            "order_line/product_id/production",
+                            "order_line/product_id",
+                            "order_line/product_id/description",
+                            "order_line/is_product_rentable",
+                            "order_line/product_type",
+                            "order_line/price_unit",
+                            "order_line/price_subtotal",
+                            "order_line/price_tax",
+                            "order_line/shopping_center_id/center_type",
+                            "order_line/shopping_center_id/name",
+                            "order_line/shopping_center_id/city",
+                            "order_line/shopping_center_id/partner_latitude",
+                            "order_line/shopping_center_id/partner_longitude"];
+
+        foreach ($expectedColumns as $col) {
+            if (!array_key_exists($col, $record)) {
+                throw new MissingColumnException($col);
+            }
+        }
 
 //        $this->orderLine           = $record["Order Lines"];
         $this->description         = $record["order_line/name"];

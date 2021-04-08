@@ -10,7 +10,7 @@
                 <table class="party-infos">
                     <tr>
                         <td>{!! __("common.phone") !!}</td>
-                        <td>[missing column]</td>
+                        <td>{{ $order->salesperson_phone }}</td>
                     </tr>
                     <tr>
                         <td>{!! __("contract.represented-by") !!}</td>
@@ -18,7 +18,7 @@
                     </tr>
                     <tr>
                         <td>{!! __("common.email-address") !!}</td>
-                        <td>[missing column]</td>
+                        <td>{{ $order->salesperson_email }}</td>
                     </tr>
                 </table>
                 <span class="party-referred-as">
@@ -42,11 +42,11 @@
                     </tr>
                     <tr>
                         <td>{!! __("common.phone") !!}</td>
-                        <td>[missing column]</td>
+                        <td>{{ $customer->phone }}</td>
                     </tr>
                     <tr>
                         <td>{!! __("common.email-address") !!}</td>
-                        <td>[missing column]</td>
+                        <td>{{ $customer->email }}</td>
                     </tr>
                     <tr>
                         <td>{!! __("contract.represented-by") !!}</td>

@@ -10,8 +10,12 @@
 
 namespace Neo\Documents\Contract;
 
+use Neo\Documents\Exceptions\MissingColumnException;
+
 class Customer {
     public string $name;
+    public string $phone;
+    public string $email;
     public string $parent_name;
     public string $account;
     public string $company;
@@ -25,15 +29,33 @@ class Customer {
     public string $address_country;
 
     public function __construct(array $record) {
+        $expectedColumns = ["partner_id/name",
+                            "partner_id/parent_name",
+                            "partner_id/phone",
+                            "partner_id/email",
+                            "company_id/name",
+                            "analytic_account_id/display_name",
+                            "partner_id/street",
+                            "partner_id/city",
+                            "partner_id/state_id/name",
+                            "partner_id/country_id/name"];
+
+        foreach ($expectedColumns as $col) {
+            if (!array_key_exists($col, $record)) {
+                throw new MissingColumnException($col);
+            }
+        }
+
         [
             "partner_id/name"        => $this->name,
             "partner_id/parent_name" => $this->parent_name,
+            "partner_id/phone"       => $this->phone,
+            "partner_id/email"       => $this->email,
 
             "company_id/name"                  => $this->company,
             "analytic_account_id/display_name" => $this->account,
 
             "partner_id/street"          => $this->address_street,
-            //            "partner_id/street2"         => $this->address_street_2,
             "partner_id/city"            => $this->address_city,
             "partner_id/state_id/name"   => $this->address_state_name,
             "partner_id/country_id/name" => $this->address_country,

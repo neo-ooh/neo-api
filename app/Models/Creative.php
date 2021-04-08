@@ -231,7 +231,7 @@ class Creative extends Model {
             $constraint->upsize();
         })->encode("jpg", 75);
 
-        Storage::put($this->thumbnail_path, $img);
+        Storage::put($this->thumbnail_path, $img->getEncoded());
     }
 
 

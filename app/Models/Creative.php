@@ -235,7 +235,7 @@ class Creative extends Model {
         $tempFile = Storage::disk('local')->path($tempName);
         $img->save($tempFile);
 
-        Storage::writeStream($this->thumbnail_path, Storage::disk("locale")->readStream($tempFile));
+        Storage::writeStream($this->thumbnail_path, Storage::disk("local")->readStream($tempFile));
         Storage::disk('local')->delete($tempName);
     }
 

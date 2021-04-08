@@ -177,8 +177,8 @@ class Creative extends Model {
             Storage::delete($this->file_path);
         }
 
-        $file->storePubliclyAs('creatives/', $this->id . '.' . $this->extension);
         $this->createThumbnail($file);
+        $file->storePubliclyAs('creatives/', $this->id . '.' . $this->extension);
     }
 
 

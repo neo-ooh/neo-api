@@ -225,18 +225,13 @@ class Creative extends Model {
      * @return void
      */
     private function createImageThumbnail(UploadedFile $file): void {
-        $img = Image::make($file->path());
-        $img->resize(1280, 1280, function ($constraint) {
+        $img = Image::make($file->getRealPath());
+        $img->resize(1280, 1280, function($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });
 
-        $tempName = 'thumb_' . $this->checksum;
-        $tempFile = Storage::disk('local')->path($tempName);
-        $img->save($tempFile);
-
-        Storage::writeStream($this->thumbnail_path, Storage::disk("local")->readStream($tempFile));
-        Storage::disk('local')->delete($tempName);
+        Storage::put($this->thumbnail_path, $img->stream("jpg", 75));
     }
 
 

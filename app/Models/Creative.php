@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -46,6 +48,8 @@ use Neo\Models\Factories\CreativeFactory;
  * @property string  file_path
  * @property string  thumbnail_url
  * @property string  thumbnail_path
+ *
+ * @property DynamicCreative|StaticCreative settings
  *
  * @mixin Builder
  */
@@ -115,20 +119,22 @@ class Creative extends Model {
         Storage::delete($this->file_path);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
-
-    /* Direct */
-
     public function eraseThumbnail(): void {
         Storage::delete($this->thumbnail_path);
     }
 
     protected static function newFactory(): CreativeFactory {
         return CreativeFactory::new();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relations
+    |--------------------------------------------------------------------------
+    */
+
+    public function settings(): MorphTo {
+        return $this->morphTo("settings", "type", "id");
     }
 
     public function owner(): BelongsTo {
@@ -138,12 +144,6 @@ class Creative extends Model {
     public function content(): BelongsTo {
         return $this->belongsTo(Content::class, 'content_id', 'id');
     }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Attributes
-    |--------------------------------------------------------------------------
-    */
 
     public function frame(): BelongsTo {
         return $this->belongsTo(Frame::class, 'frame_id', 'id');

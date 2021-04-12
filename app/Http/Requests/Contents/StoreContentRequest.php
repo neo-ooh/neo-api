@@ -35,7 +35,7 @@ class StoreContentRequest extends FormRequest {
         return [
             "owner_id"   => ["required", "integer", new AccessibleActor()],
             "library_id" => ["required", "integer", new AccessibleLibrary()],
-            "layout_id"  => ["required", "integer", "exists:formats_layouts,id"],
+            "layout_id"  => ["required", "integer", "exists:formats_layouts,id"]
         ];
     }
 }

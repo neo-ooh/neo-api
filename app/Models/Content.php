@@ -12,7 +12,6 @@
 
 namespace Neo\Models;
 
-use Illuminate\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -23,29 +22,39 @@ use Neo\Models\Factories\ContentFactory;
 use Neo\Rules\AccessibleContent;
 
 /**
- * NeoModels\Contents
+ * Neo\Models\Contents
  *
- * @property int                       id
- * @property int                       owner_id
- * @property int                       library_id
- * @property int                       layout_id
- * @property int                       broadsign_content_id
- * @property string                    name
- * @property double                    duration            How long this content will display. Not applicable if the content only has static creatives
- * @property bool                      is_editable         Tell if the content can be edited
- * @property bool                      is_approved         Tell if the content has been pre-approved
- * @property int                       scheduling_duration Maximum duration of a scheduling of this content.
- * @property int                       scheduling_times    How many times this content can be scheduled
+ * A Content is a resource that can be scheduled in a `Campaign` using a `Schedule`.
  *
- * @property Actor                     owner               The actor who created this content
- * @property Library                   library             The library where this content resides
- * @property FormatLayout              layout              The layout of the content
+ * A Content can be of two types: A static content holds creatives, actual image or video files, corresponding to the content'
+ * format's frames. A dynamic content does not directly hold any content. Only a URL pointing to the desired resource. BroadSign
+ * is then able to use this URL to automatically refresh the content. The url can point to anything the Chromium Browser is able
+ * to display. For accurate support reference, please refer to the Chromium documentation using the Chromium version specified in
+ * the BroadSign documentation.
  *
- * @property-read Collection<Creative> creatives           The content's creatives
- * @property-read int                  creatives_count
+ * @property int                            id
+ * @property string                         type                "static" or "dynamic".
+ * @property int                            owner_id
+ * @property int                            library_id
+ * @property int                            layout_id
+ * @property int                            broadsign_content_id
+ * @property string                         name
+ * @property double                         duration            How long this content will display. Not applicable if the content
+ *           only has static creatives
+ * @property bool                           is_editable         Tell if the content can be edited
+ * @property bool                           is_approved         Tell if the content has been pre-approved
+ * @property int                            scheduling_duration Maximum duration of a scheduling of this content.
+ * @property int                            scheduling_times    How many times this content can be scheduled
  *
- * @property-read Collection<Schedule> schedules
- * @property-read int                  schedules_count
+ * @property Actor                          owner               The actor who created this content
+ * @property Library                        library             The library where this content resides
+ * @property FormatLayout                   layout              The layout of the content
+ *
+ * @property-read Collection<Creative>      creatives           The content's creatives
+ * @property-read int                       creatives_count
+ *
+ * @property-read Collection<Schedule>      schedules
+ * @property-read int                       schedules_count
  *
  * @mixin DB
  */
@@ -152,6 +161,7 @@ class Content extends SecuredModel {
 
     /**
      * The Actor who owns this content
+     *
      * @return BelongsTo
      */
     public function owner(): BelongsTo {
@@ -160,6 +170,7 @@ class Content extends SecuredModel {
 
     /**
      * The Library hosting this content
+     *
      * @return BelongsTo
      */
     public function library(): BelongsTo {
@@ -168,6 +179,7 @@ class Content extends SecuredModel {
 
     /**
      * The Content's creatives
+     *
      * @return HasMany
      */
     public function creatives(): HasMany {
@@ -176,6 +188,7 @@ class Content extends SecuredModel {
 
     /**
      * The Schedules using this content
+     *
      * @return HasMany
      */
     public function schedules(): HasMany {
@@ -184,8 +197,9 @@ class Content extends SecuredModel {
 
     /**
      * The format of the content
-     * @deprecated
+     *
      * @return BelongsTo
+     * @deprecated
      */
     public function format(): BelongsTo {
         return $this->belongsTo(Format::class, 'format_id', 'id');
@@ -193,6 +207,7 @@ class Content extends SecuredModel {
 
     /**
      * The Content's Layout
+     *
      * @return BelongsTo
      */
     public function layout(): BelongsTo {
@@ -213,7 +228,7 @@ class Content extends SecuredModel {
      * @return bool True if the content can be edited
      */
     public function getIsEditableAttribute() {
-        if($this->schedules_count === 0) {
+        if ($this->schedules_count === 0) {
             // No schedules, can be edited
             return true;
         }

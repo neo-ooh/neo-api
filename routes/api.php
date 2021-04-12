@@ -344,7 +344,6 @@ Route::prefix("v1")->group(function () {
     Route::   put("contents/{content}/swap", ContentsController::class . "@swap")->name("contents.swap");
     Route::delete("contents/{content}", ContentsController::class . "@destroy")->name("contents.destroy");
 
-
     /*
     |----------------------------------------------------------------------
     | Creatives

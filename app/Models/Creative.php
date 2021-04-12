@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
@@ -29,33 +28,30 @@ use Neo\Models\Factories\CreativeFactory;
 /**
  * Neo\Models\Branding
  *
- * @property int     id
- * @property int     broadsign_ad_copy_id
- * @property int     owner_id
- * @property int     content_id
- * @property int     frame_id
- * @property string  extension
- * @property string  original_name
- * @property string  status
- * @property string  checksum
- * @property int     duration
+ * @property int                            $id
+ * @property int                            $type
+ * @property int                            $broadsign_ad_copy_id
+ * @property int                            $owner_id
+ * @property int                            $content_id
+ * @property int                            $frame_id
+ * @property string                         $original_name
+ * @property string                         $status
+ * @property int                            $duration
  *
- * @property Actor   owner
- * @property Content content
- * @property Frame   frame
+ * @property Actor                          $owner
+ * @property Content                        $content
+ * @property Frame                          $frame
  *
- * @property string  file_url
- * @property string  file_path
- * @property string  thumbnail_url
- * @property string  thumbnail_path
- *
- * @property DynamicCreative|StaticCreative settings
+ * @property DynamicCreative|StaticCreative $properties
  *
  * @mixin Builder
  */
 class Creative extends Model {
     use HasFactory;
     use SoftDeletes;
+
+    const TYPE_STATIC = "static";
+    const TYPE_DYNAMIC = "dynamic";
 
     /*
     |--------------------------------------------------------------------------
@@ -86,11 +82,11 @@ class Creative extends Model {
     ];
 
     /**
-     * The attributes that should always be loaded.
+     * The relations that should always be loaded
      *
      * @var array
      */
-    protected $appends = ["file_url", "thumbnail_url"];
+    protected $with = ["properties"];
 
     public static function boot(): void {
         parent::boot();
@@ -133,8 +129,8 @@ class Creative extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function settings(): MorphTo {
-        return $this->morphTo("settings", "type", "id");
+    public function properties(): MorphTo {
+        return $this->morphTo("properties", "type", "id");
     }
 
     public function owner(): BelongsTo {
@@ -147,113 +143,5 @@ class Creative extends Model {
 
     public function frame(): BelongsTo {
         return $this->belongsTo(Frame::class, 'frame_id', 'id');
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Custom mechanisms
-    |--------------------------------------------------------------------------
-    */
-
-    public function getFileUrlAttribute(): string {
-        return Storage::url($this->file_path);
-    }
-
-    public function getFilePathAttribute(): string {
-        return 'creatives/' . $this->id . '.' . $this->extension;
-    }
-
-    public function getThumbnailUrlAttribute(): string {
-        return Storage::url($this->thumbnail_path);
-    }
-
-    public function getThumbnailPathAttribute(): string {
-        return 'creatives/' . $this->id . '_thumb.jpeg';
-    }
-
-    public function store(UploadedFile $file): void {
-        if (Storage::exists($this->file_path)) {
-            Storage::delete($this->file_path);
-        }
-
-        $this->createThumbnail($file);
-        $file->storePubliclyAs('creatives/', $this->id . '.' . $this->extension);
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Thumbnails
-    |--------------------------------------------------------------------------
-    */
-
-
-    /**
-     * Create the thumbnail of the creative
-     *
-     * @param UploadedFile $file
-     *
-     * @return void
-     * @throws FileNotFoundException
-     */
-    public function createThumbnail(UploadedFile $file): void {
-        if (Storage::exists($this->thumbnail_path)) {
-            Storage::delete($this->thumbnail_path);
-        }
-
-        switch (strtolower($file->extension())) {
-            case "jpg":
-            case "jpeg":
-            case "png":
-                $this->createImageThumbnail($file);
-                break;
-            case "mp4":
-                $this->createVideoThumbnail($file);
-                break;
-        }
-
-        Storage::setVisibility($this->thumbnail_path, 'public');
-    }
-
-
-    /**
-     * Create the thumbnail of image creative
-     *
-     * @param UploadedFile $file
-     *
-     * @return void
-     */
-    private function createImageThumbnail(UploadedFile $file): void {
-        $img = Image::make($file);
-        $img->resize(1280, 1280, function($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
-
-        Storage::put($this->thumbnail_path, $img->encode("jpg", 75)->getEncoded());
-    }
-
-
-    /**
-     * Create the thumbnail of video creative
-     *
-     * @param UploadedFile $file
-     *
-     * @return void
-     * @throws FileNotFoundException
-     */
-    private function createVideoThumbnail(UploadedFile $file): void {
-        $ffmpeg = FFMpeg::create(config('ffmpeg'));
-
-        $tempName = 'thumb_' . $this->checksum;
-        $tempFile = Storage::disk('local')->path($tempName);
-
-        //thumbnail
-        $video = $ffmpeg->open($file->path());
-        $frame = $video->frame(TimeCode::fromSeconds(1));
-        $frame->save($tempFile);
-        Storage::writeStream($this->thumbnail_path, Storage::disk('local')->readStream($tempName));
-        Storage::disk('local')->delete($tempName);
     }
 }

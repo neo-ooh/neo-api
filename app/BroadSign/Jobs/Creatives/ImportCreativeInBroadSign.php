@@ -37,10 +37,10 @@ class ImportCreativeInBroadSign extends BroadSignJob {
     /**
      * Create a new job instance.
      *
-     * @param int    $creativeID ID of the creative to import
+     * @param int $creativeID ID of the creative to import
      */
     public function __construct(int $creativeID) {
-        $this->creativeID   = $creativeID;
+        $this->creativeID = $creativeID;
     }
 
     /**
@@ -60,12 +60,27 @@ class ImportCreativeInBroadSign extends BroadSignJob {
             return;
         }
 
-        $attributes = "width=" . $creative->frame->width . "\n";
-        $attributes .= "height=" . $creative->frame->height . "\n";
+        // Depending on the creative type, we performed different operations
+        switch ($creative->type) {
+            case Creative::TYPE_STATIC:
+                $this->importStaticCreative($creative, $broadsign);
+                break;
+            case Creative::TYPE_DYNAMIC:
+                $this->importDynamicCreative($creative, $broadsign);
+                break;
+        }
 
-        if ($creative->extension === "mp4") {
+        // Schedule job to target the creative accordingly
+        TargetCreative::dispatch($creative->id);
+    }
+
+    protected function importStaticCreative(Creative $creative, BroadSign $broadsign): void {
+        $attributes = "width={$creative->frame->width}\n";
+        $attributes .= "height={$creative->frame->height}\n";
+
+        if ($creative->properties->extension === "mp4") {
             $interval   = new DateInterval("PT" . $creative->content->duration . "S");
-            $attributes .= "duration=" . $interval->format("H:I:S") . "\n";
+            $attributes .= "duration={$interval->format("H:I:S")}\n";
         }
 
         $bsCreative             = new BSCreative();
@@ -73,13 +88,29 @@ class ImportCreativeInBroadSign extends BroadSignJob {
         $bsCreative->name       = $creative->owner->email . " - " . $creative->original_name;
         $bsCreative->parent_id  = $broadsign->getDefaults()["customer_id"];
         $bsCreative->url        = $creative->file_url;
+        $bsCreative->import();
+
+        $creative->broadsign_ad_copy_id = $bsCreative->id;
+        $creative->save();
+    }
+
+    protected function importDynamicCreative(Creative $creative, BroadSign $broadsign): void {
+        $attributes = "expire_on_empty_remote_dir=false\n";                        // Do not expire if connection lost
+        $attributes .= "io_strategy=esf\n";                                        // ???
+        $attributes .= "source={$creative->properties->url}\n";                    // URL to the resource
+        $attributes .= "source_append_id=false\n";                                 // Append player ID to url (no)
+        $attributes .= "source_expiry=0\n";                                        // Not sure
+        $attributes .= "source_refresh={$creative->properties->refresh_interval}"; // URL refresh interval (minutes)
+
+        $bsCreative             = new BSCreative();
+        $bsCreative->attributes = $attributes;
+        $bsCreative->name       = $creative->owner->email . " - " . $creative->original_name;
+        $bsCreative->parent_id  = $broadsign->getDefaults()["customer_id"];
+        $bsCreative->size       = -1;
         $bsCreative->create();
 
         $creative->broadsign_ad_copy_id = $bsCreative->id;
         $creative->save();
-
-        // Schedule job to target the creative accordingly
-        TargetCreative::dispatch($creative->id);
     }
 }
 

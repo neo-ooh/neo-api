@@ -15,7 +15,7 @@ class MigrateCapabilitiesDataToTypedTables extends Migration
      */
     public function up()
     {
-        // At this point, we only have static creatives. The migration process is therefore the same for all creatives, and consist of simply creating the required settings table
+        // At this point, we only have static creatives. The migration process is therefore the same for all creatives, and consist of simply creating the required properties table
         Creative::withTrashed()->get()->each(function (Creative $creative) {
             StaticCreative::create([
                 "creative_id" => $creative->id,

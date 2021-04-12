@@ -68,13 +68,22 @@ class Creative extends BroadSignModel {
     protected static function actions(): array {
         return [
             "all"                 => Endpoint::get("/content/v11")->multiple(),
-            "create"              => Endpoint::post("/content/v11/import_from_url")->id(),
+            "create"              => Endpoint::post("/content/v11")->id(),
+            "import_from_url"     => Endpoint::post("/content/v11/import_from_url")->id(),
             "get"                 => Endpoint::get("/content/v11/{id}"),
             "update"              => Endpoint::put("/content/v11"),
             "addResourceCriteria" => Endpoint::post("/resource_criteria/v7/add")->ignore(),
         ];
     }
 
+    public function import() {
+        return static::import_from_url([
+            "attributes" => $this->attributes,
+            "name" => $this->name,
+            "parent_id" => $this->parent_id,
+            "url" => $this->url,
+        ]);
+    }
 
     /**
      * @param int $criteriaID

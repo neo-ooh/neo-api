@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Exception;
 use FFMpeg\FFProbe;
 use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -24,12 +25,15 @@ use Neo\Exceptions\InvalidCreativeDuration;
 use Neo\Exceptions\InvalidCreativeFileFormat;
 use Neo\Exceptions\InvalidCreativeFrameRate;
 use Neo\Exceptions\InvalidCreativeSize;
+use Neo\Exceptions\InvalidCreativeType;
 use Neo\Exceptions\InvalidVideoCodec;
 use Neo\Http\Requests\Creatives\DestroyCreativeRequest;
 use Neo\Http\Requests\Creatives\StoreCreativeRequest;
 use Neo\Models\Content;
 use Neo\Models\Creative;
+use Neo\Models\DynamicCreative;
 use Neo\Models\Frame;
+use Neo\Models\StaticCreative;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 
 class CreativesController extends Controller {
@@ -53,43 +57,71 @@ class CreativesController extends Controller {
             return (new CannotOverwriteCreativeException())->asResponse();
         }
 
-        // Check the file is correctly uploaded
-        $file = $request->file("file");
-        if (!$file->isValid()) {
-            throw new UploadException("An error occurred while uploading the creative");
+        // Check the creative type
+        $type = $request->input("type");
+
+        if($type !== Creative::TYPE_STATIC && $type !== Creative::TYPE_DYNAMIC) {
+            return (new InvalidCreativeType())->asResponse();
         }
 
-        // Control the uploaded creative
-        // This methods returns only if the creative is valid
-        try {
-            $this->validateCreative($file, $frame, $content);
-        } catch (BaseException $exc) {
-            return $exc->asResponse();
-        }
-
-        $content->refresh();
-
-        // File is good, store it
+        // Type is valid. Creative storage will be determined by the validity of the uploaded file or url
+        // Prefill the creative
         $creative             = new Creative();
         $creative->owner_id   = Auth::id();
         $creative->content_id = $content->id;
         $creative->frame_id   = $frame->id;
-        $creative->extension  = $file->extension();
+
+        if($type === Creative::TYPE_STATIC) {
+            $file = $request->file("file");
+
+            return $this->handleStaticCreative($file, $creative, $frame, $content);
+        }
+
+        if($type === Creative::TYPE_DYNAMIC) {
+            $name = $request->input("url");
+            $url = $request->input("url");
+
+            return $this->handleDynamicCreative($name, $url, $creative, $content);
+        }
+
+        return new Response("unreachable");
+    }
+
+    protected function handleStaticCreative($file, $creative, $frame, $content) {
+        // Control the uploaded creative
+        // This methods returns only if the creative is valid
+        try {
+            $this->validateStaticCreative($file, $frame, $content);
+        } catch (BaseException $exc) {
+            return $exc->asResponse();
+        }
+
+        // Finalize the creative
         $creative->original_name  = $file->getClientOriginalName();
         $creative->status     = "OK";
-        $creative->checksum   = hash_file('sha256', $file->path());
         $creative->duration   = $content->duration;
         $creative->save();
+
+        // File its settings
+        StaticCreative::query()->create([
+            "creative_id" => $creative->id,
+            "extension" => $file->extension(),
+            "checksum" => hash_file('sha256', $file->path()),
+        ]);
+
         $creative->refresh();
+
+        // And store the creative
         $creative->store($file);
 
         // Properly rename the ad if applicable
         if($content->creatives_count === 1) {
-            // This creative is the first
+            // This creative is the first, use its name
             $content->name = $file->getBasename();
+            $content->save();
         }
 
-        return new Response($creative, 201);
+        return new Response($content, 201);
     }
 
     /**
@@ -104,7 +136,12 @@ class CreativesController extends Controller {
      * @throws InvalidCreativeSize
      * @throws InvalidVideoCodec
      */
-    protected function validateCreative(UploadedFile $file, Frame $frame, Content $content): bool {
+    protected function validateStaticCreative(UploadedFile $file, Frame $frame, Content $content): bool {
+        // Check the file is correctly uploaded
+        if (!$file->isValid()) {
+            throw new UploadException("An error occurred while uploading the creative");
+        }
+
         // Execute additional media specific asserts
         $mime = $file->getMimeType();
 
@@ -172,6 +209,32 @@ class CreativesController extends Controller {
         }
 
         throw new InvalidCreativeFileFormat();
+    }
+
+    protected function handleDynamicCreative($name, $url, Creative $creative, Content $content): Response {
+        // Nothing to check here really, just create the creative
+        $creative->original_name  = $name;
+        $creative->status     = "OK";
+        $creative->duration   = $content->duration;
+        $creative->save();
+
+        // File its settings
+        DynamicCreative::query()->create([
+            "creative_id" => $creative->id,
+            "url" => $url,
+            "refresh_interval" => 60, // minutes
+        ]);
+
+        $creative->refresh();
+
+        // Properly rename the ad if applicable
+        if($content->creatives_count === 1) {
+            // This creative is the first, use its name
+            $content->name = $name;
+            $content->save();
+        }
+
+        return new Response($content, 201);
     }
 
     private function fracToFloat($frac): float {

@@ -21,8 +21,8 @@ class StoreCreativeRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        $gate = Gate::allows(Capability::contents_edit);
+    public function authorize(): bool {
+        $gate   = Gate::allows(Capability::contents_edit);
         $access = $this->route("content")->library->isAccessibleBy(Auth::user());
         return $gate && $access;
     }
@@ -32,10 +32,13 @@ class StoreCreativeRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "frame_id" => [ "required", "integer", "exists:frames,id" ],
-            "file"     => [ "required", "file" ],
+            "frame_id" => ["required", "integer", "exists:frames,id"],
+            "type"     => ["required", "string"],
+            "file"     => ["required_if:type,static", "file"],
+            "name"      => ["required_if:type,dynamic", "string", "min:2"],
+            "url"      => ["required_if:type,dynamic", "url"],
         ];
     }
 }

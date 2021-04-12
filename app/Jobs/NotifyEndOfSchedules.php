@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 use Neo\Mails\EndOfScheduleNotificationEmail;
+use Neo\Models\Actor;
 use Neo\Models\Schedule;
 
 /**
@@ -45,6 +46,8 @@ class NotifyEndOfSchedules implements ShouldQueue {
                 ->owner
                 ->direct_children
                 ->filter(fn($actor) => !$actor->is_group && !$actor->is_locked));
+
+            $dest->map(fn($actor) => is_int($actor) ? Actor::find($actor) : $actor);
 
             $dest->each(fn($recipient) =>
                 Mail::to($recipient)->send(new EndOfScheduleNotificationEmail($recipient, $schedule))

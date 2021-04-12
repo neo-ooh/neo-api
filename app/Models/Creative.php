@@ -130,7 +130,7 @@ class Creative extends Model {
     */
 
     public function properties(): MorphTo {
-        return $this->morphTo("properties", "type", "id");
+        return $this->morphTo("properties", "type", "id", "");
     }
 
     public function owner(): BelongsTo {

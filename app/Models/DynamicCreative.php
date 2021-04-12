@@ -20,6 +20,8 @@ class DynamicCreative extends Model
 
     protected $table = "dynamic_creatives";
 
+    protected $primaryKey = "creative_id";
+
     public $timestamps = false;
     public $incrementing = false;
 

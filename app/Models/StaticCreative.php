@@ -33,7 +33,10 @@ class StaticCreative extends Model {
 
     protected $table = "static_creatives";
 
+    protected $primaryKey = "creative_id";
+
     public $timestamps = false;
+    public $incrementing = false;
 
     protected $fillable = ["creative_id", "extension", "checksum"];
 

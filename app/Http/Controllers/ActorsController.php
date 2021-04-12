@@ -48,7 +48,7 @@ class ActorsController extends Controller {
         }
 
         // If the user
-        if ((bool)($params['withself'] ?? false)) {
+        if ($params['withself'] ?? false) {
             $actors = $actors->push(Auth::user());
         }
 
@@ -60,7 +60,7 @@ class ActorsController extends Controller {
             $actors->load("own_campaigns", "own_campaigns.schedules");
         }
 
-        return new Response($actors->unique("id")->values());
+        return new Response($actors->unique("id")->sortBy("name")->values());
     }
 
     public function show(Request $request, Actor $actor): Response {

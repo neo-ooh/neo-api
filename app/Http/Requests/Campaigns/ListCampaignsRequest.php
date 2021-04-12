@@ -11,7 +11,6 @@
 namespace Neo\Http\Requests\Campaigns;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
 class ListCampaignsRequest extends FormRequest {
     /**
@@ -20,7 +19,7 @@ class ListCampaignsRequest extends FormRequest {
      * @return bool
      */
     public function authorize (): bool {
-        return Auth::check();
+        return true;
     }
 
     /**

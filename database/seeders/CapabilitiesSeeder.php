@@ -49,6 +49,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::campaigns_edit,
 
                 \Neo\Enums\Capability::contents_edit,
+                \Neo\Enums\Capability::contents_dynamic,
                 \Neo\Enums\Capability::contents_schedule,
                 \Neo\Enums\Capability::contents_review,
             ],

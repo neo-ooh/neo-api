@@ -116,6 +116,7 @@ class CreativesController extends Controller {
         ]);
 
         $creative->refresh();
+        $content->refresh();
 
         // And store the creative
         $properties->store($file);

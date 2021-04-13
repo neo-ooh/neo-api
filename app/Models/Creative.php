@@ -73,6 +73,7 @@ class Creative extends Model {
      * @var array
      */
     protected $fillable = [
+        "type",
         'owner_id',
         'content_id',
         'frame_id',

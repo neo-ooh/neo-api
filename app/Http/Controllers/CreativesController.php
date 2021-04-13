@@ -98,6 +98,7 @@ class CreativesController extends Controller {
         }
 
         // Finalize the creative
+        $creative->type = "static";
         $creative->original_name  = $file->getClientOriginalName();
         $creative->status     = "OK";
         $creative->duration   = $content->duration;
@@ -214,6 +215,7 @@ class CreativesController extends Controller {
 
     protected function handleDynamicCreative($name, $url, $refreshInterval, Creative $creative, Content $content): Response {
         // Nothing to check here really, just create the creative
+        $creative->type = "dynamic";
         $creative->original_name  = $name;
         $creative->status     = "OK";
         $creative->duration   = $content->duration;
@@ -234,6 +236,8 @@ class CreativesController extends Controller {
             $content->name = $name;
             $content->save();
         }
+
+        $content->refresh();
 
         return new Response($content, 201);
     }

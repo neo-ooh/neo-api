@@ -91,7 +91,7 @@ class CreativesController extends Controller {
     /**
      * @throws FileNotFoundException
      */
-    protected function handleStaticCreative($file, $creative, $frame, $content) {
+    protected function handleStaticCreative(UploadedFile $file, Creative $creative, Frame $frame, Content $content) {
         // Control the uploaded creative
         // This methods returns only if the creative is valid
         try {
@@ -124,7 +124,7 @@ class CreativesController extends Controller {
         // Properly rename the ad if applicable
         if ($content->creatives_count === 1) {
             // This creative is the first, use its name
-            $content->name = $file->getBasename();
+            $content->name = $file->getClientOriginalName();
             $content->save();
         }
 

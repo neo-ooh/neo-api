@@ -17,6 +17,7 @@ class CreateDynamicCreativesTable extends Migration
             $table->foreignId("creative_id")->primary()->constrained("creatives");
             $table->text("url");
             $table->unsignedInteger("refresh_interval")->default(0);
+            $table->text("thumbnail_path");
         });
     }
 

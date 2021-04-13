@@ -12,8 +12,8 @@ namespace Neo\Http\Controllers;
 
 use Exception;
 use FFMpeg\FFProbe;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Contracts\Routing\ResponseFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
@@ -60,7 +60,7 @@ class CreativesController extends Controller {
         // Check the creative type
         $type = $request->input("type");
 
-        if($type !== Creative::TYPE_STATIC && $type !== Creative::TYPE_DYNAMIC) {
+        if ($type !== Creative::TYPE_STATIC && $type !== Creative::TYPE_DYNAMIC) {
             return (new InvalidCreativeType())->asResponse();
         }
 
@@ -71,15 +71,15 @@ class CreativesController extends Controller {
         $creative->content_id = $content->id;
         $creative->frame_id   = $frame->id;
 
-        if($type === Creative::TYPE_STATIC) {
+        if ($type === Creative::TYPE_STATIC) {
             $file = $request->file("file");
 
             return $this->handleStaticCreative($file, $creative, $frame, $content);
         }
 
-        if($type === Creative::TYPE_DYNAMIC) {
-            $name = $request->input("name");
-            $url = $request->input("url");
+        if ($type === Creative::TYPE_DYNAMIC) {
+            $name            = $request->input("name");
+            $url             = $request->input("url");
             $refreshInterval = $request->input("refresh-interval");
 
             return $this->handleDynamicCreative($name, $url, $refreshInterval, $creative, $content);
@@ -88,6 +88,9 @@ class CreativesController extends Controller {
         return new Response("unreachable");
     }
 
+    /**
+     * @throws FileNotFoundException
+     */
     protected function handleStaticCreative($file, $creative, $frame, $content) {
         // Control the uploaded creative
         // This methods returns only if the creative is valid
@@ -98,26 +101,27 @@ class CreativesController extends Controller {
         }
 
         // Finalize the creative
-        $creative->type = "static";
-        $creative->original_name  = $file->getClientOriginalName();
-        $creative->status     = "OK";
-        $creative->duration   = $content->duration;
+        $creative->type          = "static";
+        $creative->original_name = $file->getClientOriginalName();
+        $creative->status        = "OK";
+        $creative->duration      = $content->duration;
         $creative->save();
 
         // File its settings
-        StaticCreative::query()->create([
+        /** @var StaticCreative $properties */
+        $properties = StaticCreative::query()->create([
             "creative_id" => $creative->id,
-            "extension" => $file->extension(),
-            "checksum" => hash_file('sha256', $file->path()),
+            "extension"   => $file->extension(),
+            "checksum"    => hash_file('sha256', $file->path()),
         ]);
 
         $creative->refresh();
 
         // And store the creative
-        $creative->store($file);
+        $properties->store($file);
 
         // Properly rename the ad if applicable
-        if($content->creatives_count === 1) {
+        if ($content->creatives_count === 1) {
             // This creative is the first, use its name
             $content->name = $file->getBasename();
             $content->save();
@@ -215,23 +219,23 @@ class CreativesController extends Controller {
 
     protected function handleDynamicCreative($name, $url, $refreshInterval, Creative $creative, Content $content): Response {
         // Nothing to check here really, just create the creative
-        $creative->type = "dynamic";
-        $creative->original_name  = $name;
-        $creative->status     = "OK";
-        $creative->duration   = $content->duration;
+        $creative->type          = "dynamic";
+        $creative->original_name = $name;
+        $creative->status        = "OK";
+        $creative->duration      = $content->duration;
         $creative->save();
 
         // File its settings
         DynamicCreative::query()->create([
-            "creative_id" => $creative->id,
-            "url" => $url,
+            "creative_id"      => $creative->id,
+            "url"              => $url,
             "refresh_interval" => $refreshInterval,
         ]);
 
         $creative->refresh();
 
         // Properly rename the ad if applicable
-        if($content->creatives_count === 1) {
+        if ($content->creatives_count === 1) {
             // This creative is the first, use its name
             $content->name = $name;
             $content->save();

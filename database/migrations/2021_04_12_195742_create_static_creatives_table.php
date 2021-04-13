@@ -14,7 +14,7 @@ class CreateStaticCreativesTable extends Migration
     public function up()
     {
         Schema::create('static_creatives', function (Blueprint $table) {
-            $table->foreignId("creative_id")->primary()->constrained("creatives", "id");
+            $table->foreignId("creative_id")->primary()->constrained("creatives")->cascadeOnDelete()->cascadeOnDelete();
             $table->string("extension", 8);
             $table->string("checksum", 64);
         });

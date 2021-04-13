@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Spatie\Image\Image;
+use Spatie\Image\Manipulations;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 /**
  * Class StaticCreative
@@ -135,13 +137,18 @@ class StaticCreative extends Model {
      * @return void
      */
     private function createImageThumbnail(UploadedFile $file): void {
-        $img = Image::make($file);
-        $img->resize(1280, 1280, function ($constraint) {
-            $constraint->aspectRatio();
-            $constraint->upsize();
-        });
+        $tmp = (new TemporaryDirectory())->create();
 
-        Storage::put($this->thumbnail_path, $img->encode("jpg", 75)->getEncoded());
+        Image::load($file->path())
+             ->width(1280)
+             ->height(1280)
+             ->format(Manipulations::FORMAT_JPG)
+             ->quality(75)
+             ->save($tmp->path("thumb.jpeg"));
+
+        Storage::put($this->thumbnail_path, $tmp->path("thumb.jpeg"));
+
+        $tmp->delete();
     }
 
 

@@ -57,6 +57,7 @@ final class Capability extends Enum {
 
     // Contents
     public const contents_edit     = "contents.edit";
+    public const contents_dynamic     = "contents.dynamic";
     public const contents_schedule = "contents.schedule";
     public const contents_review   = "contents.review";
 

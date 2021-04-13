@@ -78,10 +78,11 @@ class CreativesController extends Controller {
         }
 
         if($type === Creative::TYPE_DYNAMIC) {
-            $name = $request->input("url");
+            $name = $request->input("name");
             $url = $request->input("url");
+            $refreshInterval = $request->input("refresh-interval");
 
-            return $this->handleDynamicCreative($name, $url, $creative, $content);
+            return $this->handleDynamicCreative($name, $url, $refreshInterval, $creative, $content);
         }
 
         return new Response("unreachable");
@@ -211,7 +212,7 @@ class CreativesController extends Controller {
         throw new InvalidCreativeFileFormat();
     }
 
-    protected function handleDynamicCreative($name, $url, Creative $creative, Content $content): Response {
+    protected function handleDynamicCreative($name, $url, $refreshInterval, Creative $creative, Content $content): Response {
         // Nothing to check here really, just create the creative
         $creative->original_name  = $name;
         $creative->status     = "OK";
@@ -222,7 +223,7 @@ class CreativesController extends Controller {
         DynamicCreative::query()->create([
             "creative_id" => $creative->id,
             "url" => $url,
-            "refresh_interval" => 60, // minutes
+            "refresh_interval" => $refreshInterval,
         ]);
 
         $creative->refresh();

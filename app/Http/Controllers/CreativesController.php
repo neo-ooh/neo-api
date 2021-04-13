@@ -128,7 +128,7 @@ class CreativesController extends Controller {
             $content->save();
         }
 
-        return new Response($creative, 201);
+        return new Response($creative->load("properties"), 201);
     }
 
     /**
@@ -242,9 +242,7 @@ class CreativesController extends Controller {
             $content->save();
         }
 
-        $content->refresh();
-
-        return new Response($creative, 201);
+        return new Response($creative->load("properties"), 201);
     }
 
     private function fracToFloat($frac): float {

@@ -22,18 +22,18 @@
         <td>{{ $totalSpots }}</td>
         <td>{{ $totalScreens }}</td>
         <td>-</td>
-        <td>{{ number_format($totalImpressions) }}</td>
+        <td>{{ format($totalImpressions) }}</td>
         <td @if(!$order->show_investment)
             class="last"
-                @endif>$ {{ number_format($totalValue) }}</td>
+                @endif>$ {{ format($totalValue) }}</td>
         @if($order->show_investment)
             <td>
                 @php
                     $totalDiscount = ($totalValue - $totalInvestment) / $totalValue * 100;
                 @endphp
-                {{ (int)floor($totalDiscount) === 0 ? '-' : number_format($totalDiscount) . "%" }}
+                {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
             </td>
-            <td>$ {{ number_format($totalInvestment) }}</td>
+            <td>$ {{ format($totalInvestment) }}</td>
         @endif
     </tr>
 </table>

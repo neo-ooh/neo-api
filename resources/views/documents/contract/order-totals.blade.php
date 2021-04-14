@@ -1,39 +1,39 @@
 <table class="summary-totals-table {{ $size }}" autosize="1">
     <thead>
     <tr>
-        <th>TOTAL</th>
+        <th></th>
         @if($size === 'full')
             <th class="placeholder"></th>
             <th class="placeholder"></th>
             <th class="placeholder"></th>
         @endif
-        <th>Impressions</th>
-        <th>Media Value</th>
+        <th>{!! __("contract.table-impressions") !!}</th>
+        <th>{!! __("contract.table-media-value") !!}</th>
         @if($size === 'small' && $showInvestment)
-            <th>Discount</th>
+            <th>{!! __("contract.table-discount") !!}</th>
         @endif
-        <th>Net Investment</th>
+        <th>{!! __("contract.table-net-investment") !!}</th>
     </tr>
     </thead>
     <tbody>
     @if($orders->count() > 0)
         <tr>
-            <td>Guaranteed Media Total</td>
+            <td>{!! __("contract.totals-guaranteed-media-total") !!}</td>
             @if($size === 'full')
                 <td class="placeholder">-</td>
                 <td class="placeholder">-</td>
                 <td class="placeholder">-</td>
             @endif
-            <td>{{ number_format($guaranteedImpressions) }}</td>
-            <td>$ {{ number_format($guaranteedValue) }}</td>
+            <td>{{ format($guaranteedImpressions) }}</td>
+            <td>$ {{ format($guaranteedValue) }}</td>
             @if($size === 'small' && $showInvestment)
                 <td>
-                    {{ round($guaranteedDiscount) === 0 ? '-' : number_format($guaranteedDiscount) . "%" }}
+                    {{ round($guaranteedDiscount) === 0 ? '-' : format($guaranteedDiscount) . "%" }}
                 </td>
             @endif
             <td class="investment">
                 @if($showInvestment)
-                    $ {{ number_format($guaranteedInvestment) }}
+                    $ {{ format($guaranteedInvestment) }}
                 @else
                     -
                 @endif
@@ -41,14 +41,14 @@
         </tr>
         @if($hasBua)
             <tr>
-                <td>Bonus Upon Availability Total</td>
+                <td>{!! __("contract.totals-bua-total") !!}/td>
                 @if($size === 'full')
                     <td class="placeholder">-</td>
                     <td class="placeholder">-</td>
                     <td class="placeholder">-</td>
                 @endif
-                <td>{{ number_format($buaImpressions) }}</td>
-                <td>$ {{ number_format($buaValue) }}</td>
+                <td>{{ format($buaImpressions) }}</td>
+                <td>$ {{ format($buaValue) }}</td>
                 @if($size === 'small' && $showInvestment)
                     <td> 100% </td>
                 @endif
@@ -61,22 +61,22 @@
                 </td>
             </tr>
             <tr class="grand-total">
-                <td>(Potential) Grand Media Total</td>
+                <td>{!! __("contract.totals-potential-total") !!}</td>
                 @if($size === 'full')
                     <td class="placeholder">-</td>
                     <td class="placeholder">-</td>
                     <td class="placeholder">-</td>
                 @endif
-                <td>{{ number_format($guaranteedImpressions + $buaImpressions) }}</td>
-                <td>$ {{ number_format($guaranteedValue + $buaValue) }}</td>
+                <td>{{ format($guaranteedImpressions + $buaImpressions) }}</td>
+                <td>$ {{ format($guaranteedValue + $buaValue) }}</td>
                 @if($size === 'small' && $showInvestment)
                     <td>
-                        {{ round($potentialDiscount) === 0 ? '-' : number_format($potentialDiscount) . "%" }}
+                        {{ round($potentialDiscount) === 0 ? '-' : format($potentialDiscount) . "%" }}
                     </td>
                 @endif
                 <td class="investment">
                     @if($showInvestment)
-                        $ {{ number_format($grandTotalInvestment) }}
+                        $ {{ format($grandTotalInvestment) }}
                     @else
                         -
                     @endif
@@ -86,7 +86,7 @@
     @endif
     @if($production->count() > 0)
         <tr>
-            <td>Production Cost</td>
+            <td>{!! __("contract.totals-production-cost") !!}</td>
             @if($size === 'full')
                 <td class="placeholder">-</td>
                 <td class="placeholder">-</td>
@@ -98,13 +98,13 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ number_format($productionCosts) }}
+                $ {{ format($productionCosts) }}
             </td>
         </tr>
     @endif
     @if($orders->count() > 0)
         <tr>
-            <td>Net Investment</td>
+            <td>{!! __("contract.table-net-investment") !!}</td>
             @if($size === 'full')
                 <td class="placeholder">-</td>
                 <td class="placeholder">-</td>
@@ -116,13 +116,13 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ number_format($grandTotalInvestment + $productionCosts) }}</td>
+                $ {{ format($grandTotalInvestment + $productionCosts) }}</td>
         </tr>
     @endif
     @if($size === 'small' && $orders->count() > 0)
         <tr class="cpm">
             <td>CPM:
-                $ {{ number_format($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000, 2) }}</td>
+                $ {{ format($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000, 2) }}</td>
         </tr>
     @endif
     </tbody>

@@ -66,7 +66,7 @@ h1, h2 {
  * @neo/api - _fonts.scss
  */
 header {
-  margin: 0 -5mm;
+  margin: -5mm -5mm;
 }
 header .header-table {
   margin-top: -10mm;
@@ -89,7 +89,7 @@ header .header-table {
   width: 70mm;
 }
 .header-contract-data {
-  width: 70mm;
+  width: 80mm;
   border-collapse: collapse;
 }
 .header-contract-data tr td {
@@ -98,11 +98,12 @@ header .header-table {
 }
 .header-contract-data tr td:nth-child(1) {
   border-right: 1px solid #000000;
-  padding: 2px 5px 2px 15px;
+  padding: 0.5mm 1mm 0.5mm 0;
   white-space: nowrap;
+  width: 35mm;
 }
 .header-contract-data tr td:nth-child(2) {
-  padding: 2px 15px 2px 5px;
+  padding: 0.5mm 0 0.5mm 1mm;
 }
 .header-contract-data tr:nth-child(6) td {
   border-bottom: none;
@@ -458,6 +459,24 @@ footer {
 .detailed-purchases-table {
   border-collapse: collapse;
 }
+.detailed-purchases-table tr td, .detailed-purchases-table tr th {
+  width: 25mm;
+}
+.detailed-purchases-table tr td:nth-child(1), .detailed-purchases-table tr th:nth-child(1) {
+  width: 60mm;
+}
+.detailed-purchases-table tr td.larger, .detailed-purchases-table tr th.larger {
+  width: 120mm;
+}
+.detailed-purchases-table tr td:nth-child(2), .detailed-purchases-table tr th:nth-child(2) {
+  width: 40mm;
+}
+.detailed-purchases-table tr.without-invest td:nth-child(1), .detailed-purchases-table tr.without-invest th:nth-child(1) {
+  width: 110mm;
+}
+.detailed-purchases-table tr.without-invest td:nth-child(2), .detailed-purchases-table tr.without-invest th:nth-child(2) {
+  width: 50mm;
+}
 .detailed-purchases-table tr th {
   padding: 2mm 0;
   background-color: #252734;
@@ -467,16 +486,6 @@ footer {
   text-align: center;
   font-size: 10pt;
   border-right: 2px solid #FFFFFF;
-  width: 25mm;
-}
-.detailed-purchases-table tr th:nth-child(1) {
-  width: 60mm;
-}
-.detailed-purchases-table tr th.larger {
-  width: 120mm;
-}
-.detailed-purchases-table tr th:nth-child(2) {
-  width: 40mm;
 }
 .detailed-purchases-table tr th:nth-child(11), .detailed-purchases-table tr th.last {
   border-right: none;
@@ -496,45 +505,47 @@ footer {
   text-align: center;
   font-weight: bold;
   background-color: #EEEEEE;
-  width: 25mm;
-}
-.region-row-table tr td:nth-child(1) {
-  width: 60mm;
-}
-.region-row-table tr td.larger {
-  width: 120mm;
-}
-.region-row-table tr td:nth-child(2) {
-  width: 40mm;
 }
 .region-row-table tr td:nth-child(1) {
   border-right: 2px solid #FFFFFF;
+  width: 60mm;
 }
 .region-row-table tr td:nth-child(2) {
-  width: 215mm;
-}
-.region-row-table tr td.show-investment {
   width: 265mm;
+}
+.region-row-table tr.without-invest td:nth-child(1) {
+  width: 110mm;
+}
+.region-row-table tr.without-invest td:nth-child(2) {
+  width: 225mm;
 }
 
 .property-purchases-table {
   border-collapse: collapse;
   page-break-inside: avoid;
 }
+.property-purchases-table tr td, .property-purchases-table tr th {
+  width: 25mm;
+}
+.property-purchases-table tr td:nth-child(1), .property-purchases-table tr th:nth-child(1) {
+  width: 60mm;
+}
+.property-purchases-table tr td.larger, .property-purchases-table tr th.larger {
+  width: 120mm;
+}
+.property-purchases-table tr td:nth-child(2), .property-purchases-table tr th:nth-child(2) {
+  width: 40mm;
+}
+.property-purchases-table tr.without-invest td:nth-child(1), .property-purchases-table tr.without-invest th:nth-child(1) {
+  width: 110mm;
+}
+.property-purchases-table tr.without-invest td:nth-child(2), .property-purchases-table tr.without-invest th:nth-child(2) {
+  width: 50mm;
+}
 .property-purchases-table tr th {
   width: 25mm;
   padding: 2mm 0 1mm;
   font-size: 9pt;
-  width: 25mm;
-}
-.property-purchases-table tr th:nth-child(1) {
-  width: 60mm;
-}
-.property-purchases-table tr th.larger {
-  width: 120mm;
-}
-.property-purchases-table tr th:nth-child(2) {
-  width: 40mm;
 }
 .property-purchases-table tr th.property-name {
   text-align: left;
@@ -592,6 +603,24 @@ footer {
 .region-footer-table {
   border-collapse: collapse;
 }
+.region-footer-table tr td, .region-footer-table tr th {
+  width: 25mm;
+}
+.region-footer-table tr td:nth-child(1), .region-footer-table tr th:nth-child(1) {
+  width: 60mm;
+}
+.region-footer-table tr td.larger, .region-footer-table tr th.larger {
+  width: 120mm;
+}
+.region-footer-table tr td:nth-child(2), .region-footer-table tr th:nth-child(2) {
+  width: 40mm;
+}
+.region-footer-table tr.without-invest td:nth-child(1), .region-footer-table tr.without-invest th:nth-child(1) {
+  width: 110mm;
+}
+.region-footer-table tr.without-invest td:nth-child(2), .region-footer-table tr.without-invest th:nth-child(2) {
+  width: 50mm;
+}
 .region-footer-table tr td {
   padding: 1mm 0;
   text-align: center;
@@ -600,19 +629,9 @@ footer {
   font-size: 9pt;
   color: #FFFFFF;
   background-color: #BBBBBB;
-  width: 25mm;
 }
 .region-footer-table tr td:nth-child(1) {
   border-right: 2px solid #FFFFFF;
-}
-.region-footer-table tr td:nth-child(1) {
-  width: 60mm;
-}
-.region-footer-table tr td.larger {
-  width: 120mm;
-}
-.region-footer-table tr td:nth-child(2) {
-  width: 40mm;
 }
 .region-footer-table tr.shopping td.border-right, .region-footer-table tr.shopping th.border-right {
   border-right: 1px solid #3e9cca;
@@ -627,6 +646,24 @@ footer {
 .totals-wrapper {
   border-collapse: collapse;
 }
+.totals-wrapper tr td, .totals-wrapper tr th {
+  width: 25mm;
+}
+.totals-wrapper tr td:nth-child(1), .totals-wrapper tr th:nth-child(1) {
+  width: 60mm;
+}
+.totals-wrapper tr td.larger, .totals-wrapper tr th.larger {
+  width: 120mm;
+}
+.totals-wrapper tr td:nth-child(2), .totals-wrapper tr th:nth-child(2) {
+  width: 40mm;
+}
+.totals-wrapper tr.without-invest td:nth-child(1), .totals-wrapper tr.without-invest th:nth-child(1) {
+  width: 110mm;
+}
+.totals-wrapper tr.without-invest td:nth-child(2), .totals-wrapper tr.without-invest th:nth-child(2) {
+  width: 50mm;
+}
 .totals-wrapper tr td {
   color: #FFFFFF;
   padding: 1mm 0;
@@ -634,16 +671,6 @@ footer {
   font-family: "poppins-bold";
   font-weight: bold;
   text-align: center;
-  width: 25mm;
-}
-.totals-wrapper tr td:nth-child(1) {
-  width: 60mm;
-}
-.totals-wrapper tr td.larger {
-  width: 120mm;
-}
-.totals-wrapper tr td:nth-child(2) {
-  width: 40mm;
 }
 .totals-wrapper tr td.label-row {
   border-right: 2px solid #FFFFFF;
@@ -688,10 +715,10 @@ footer {
   border-right-width: 2px;
 }
 .detailed-purchases-summary-table tr td.larger {
-  width: 120mm;
+  width: 110mm;
 }
 .detailed-purchases-summary-table tr td:nth-child(2) {
-  width: 90mm;
+  width: 100mm;
 }
 .detailed-purchases-summary-table tr td:nth-child(9), .detailed-purchases-summary-table tr td.last {
   border-right: none;

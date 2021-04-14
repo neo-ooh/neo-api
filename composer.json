@@ -25,7 +25,8 @@
     "php-ffmpeg/php-ffmpeg": "^0.18.0",
     "predis/predis": "^1.1",
     "ramsey/uuid": "^4.1",
-    "spatie/image": "^1.10"
+    "spatie/image": "^1.10",
+    "ext-intl": "*"
   },
   "require-dev": {
     "facade/ignition": "^2.5",

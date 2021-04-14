@@ -134,7 +134,7 @@ class OrderLine {
             case Network::NEO_SHOPPING:
                 return strtolower($this->property_type) === 'shopping';
             case Network::NEO_OTG:
-                return strtolower($this->property_type) === 'service station' || strtolower($this->property_type) === 'c-store';
+                return strtolower($this->property_type) === 'service station' || strtolower($this->property_type) === 'c-store' || strtolower($this->property_type) === 'station service' || strtolower($this->property_type) === 'dépanneur';
             case Network::NEO_FITNESS:
                 return strtolower($this->property_type) === 'fitness';
         }

@@ -7,6 +7,7 @@
  * @neo/api - contract.scss
  */
 
+
 @import "colors";
 @import "fonts";
 
@@ -17,7 +18,6 @@
 h1, h2 {
   font-family : $font-bold;
 }
-
 
 .shopping {
   color : $shopping;
@@ -425,18 +425,30 @@ h1, h2 {
 
 // Define mixin for column sizing
 @mixin detailed-col-sizing() {
-  width : 25mm;
+  td, th {
+    width : 25mm;
 
-  &:nth-child(1) {
-    width : 60mm;
+    &:nth-child(1) {
+      width : 60mm;
+    }
+
+    &.larger {
+      width : 120mm;
+    }
+
+    &:nth-child(2) {
+      width : 40mm;
+    }
   }
 
-  &.larger {
-    width : 120mm;
-  }
+  &.without-invest {
+    td:nth-child(1), th:nth-child(1) {
+      width : 110mm;
+    }
 
-  &:nth-child(2) {
-    width : 40mm;
+    td:nth-child(2), th:nth-child(2) {
+      width : 50mm;
+    }
   }
 }
 
@@ -458,6 +470,8 @@ h1, h2 {
   border-collapse : collapse;
 
   tr {
+    @include detailed-col-sizing;
+
     th {
       padding          : 2mm 0;
       background-color : $dark-blue;
@@ -468,8 +482,6 @@ h1, h2 {
       text-align       : center;
       font-size        : 10pt;
       border-right     : 2px solid #FFFFFF;
-
-      @include detailed-col-sizing;
 
       &:nth-child(11), &.last {
         border-right : none;
@@ -494,18 +506,23 @@ h1, h2 {
       font-weight      : bold;
       background-color : $ultralight-grey;
 
-      @include detailed-col-sizing;
-
       &:nth-child(1) {
         border-right : 2px solid #FFFFFF;
+        width: 60mm;
       }
 
       &:nth-child(2) {
-        width : 215mm;
+        width : 265mm;
+      }
+    }
+
+    &.without-invest {
+      td:nth-child(1) {
+        width: 110mm;
       }
 
-      &.show-investment {
-        width : 265mm;
+      td:nth-child(2) {
+        width: 225mm;
       }
     }
   }
@@ -516,12 +533,12 @@ h1, h2 {
   page-break-inside : avoid;
 
   tr {
+    @include detailed-col-sizing;
+
     th {
       width     : 25mm;
       padding   : 2mm 0 1mm;
       font-size : 9pt;
-
-      @include detailed-col-sizing;
 
       &.property-name {
         text-align  : left;
@@ -604,6 +621,8 @@ h1, h2 {
   border-collapse : collapse;
 
   tr {
+    @include detailed-col-sizing;
+
     td {
       padding          : 1mm 0;
       text-align       : center;
@@ -617,8 +636,6 @@ h1, h2 {
       &:nth-child(1) {
         border-right : 2px solid #FFFFFF;
       }
-
-      @include detailed-col-sizing;
     }
 
     &.shopping td.border-right,
@@ -642,6 +659,8 @@ h1, h2 {
   border-collapse : collapse;
 
   tr {
+    @include detailed-col-sizing;
+
     td {
       color       : #FFFFFF;
       padding     : 1mm 0;
@@ -650,8 +669,6 @@ h1, h2 {
       font-family : $font-bold;
       font-weight : bold;
       text-align  : center;
-
-      @include detailed-col-sizing;
 
       &.label-row {
         border-right : 2px solid #FFFFFF;
@@ -707,11 +724,11 @@ h1, h2 {
     }
 
     &.larger {
-      width : 120mm;
+      width : 110mm;
     }
 
     &:nth-child(2) {
-      width : 90mm;
+      width : 100mm;
     }
 
     &:nth-child(9), &.last {

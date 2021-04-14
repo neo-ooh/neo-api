@@ -1,4 +1,3 @@
-
 <section class="detailed-purchases">
     <h2 class="detailed-purchases-title">
         {{ __("order-type-$type")  }}
@@ -10,23 +9,41 @@
         <tr>
             <th>
                 <table class="detailed-purchases-table">
-                    <tr class="headers">
-                        <th class="{{ $order->show_investment ?: "larger" }}">
-                            Markets, Properties & Products
+                    <tr class="headers {{ $order->show_investment ?: "without-invest" }}">
+                        <th>
+                            {{ __("contract.table-markets-properties-products") }}
                         </th>
-                        <th>City</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Spots</th>
-                        <th>Screens / Posters</th>
-                        <th>Weeks</th>
-                        <th>Impressions</th>
+                        <th>
+                            {{ __("contract.table-city") }}
+                        </th>
+                        <th>
+                            {{ __("contract.table-start-date") }}
+                        </th>
+                        <th>
+                            {{ __("contract.table-end-date") }}
+                        </th>
+                        <th>
+                            {{ __("contract.table-spots") }}
+                        </th>
+                        <th>
+                            {{ __("contract.table-screens-posters") }}
+                        </th>
+                        <th>
+                            {{ __("contract.table-weeks") }}
+                        </th>
+                        <th>
+                            {{ __("contract.table-impressions") }}
+                        </th>
                         <th class="{{ $order->show_investment ?: "last" }}">
-                            Media Value
+                            {{ __("contract.table-media-value") }}
                         </th>
                         @if($order->show_investment)
-                            <th>Discount %</th>
-                            <th>Net Investment</th>
+                            <th>
+                                {{ __("contract.table-discount") }}
+                            </th>
+                            <th>
+                                {{ __("contract.table-net-investment") }}
+                            </th>
                         @endif
                     </tr>
                 </table>
@@ -54,11 +71,11 @@
             <tr class="region-row-wrapper">
                 <td>
                     <table class="region-row-table">
-                        <tr class="region-row">
-                            <td class="{{ $order->show_investment ?: "larger" }}">
+                        <tr class="region-row {{ $order->show_investment ?: "without-invest" }}">
+                            <td>
                                 {{ $regionOrders->first()->first()->market }}
                             </td>
-                            <td class="filler {{ $order->show_investment ? "show-investment" : "" }}"></td>
+                            <td class="filler"></td>
                         </tr>
                     </table>
                 </td>
@@ -70,12 +87,12 @@
                     <td>
                         <table class="property-purchases-table">
                             {{-- Print the property row --}}
-                            <tr class="property-row {{ $loop->first ? '' : 'first' }} {{ $network }}">
-                                <th class="property-name {{ $network }} {{ $order->show_investment ?: "larger" }}">
+                            <tr class="property-row {{ $loop->first ? '' : 'first' }} {{ $network }} {{ $order->show_investment ?: "without-invest" }}">
+                                <th class="property-name {{ $network }}">
                                     {{ $propertiesOrders->first()->property_name }}
                                 </th>
                                 <th class="property-city">
-                                    {{ strlen($propertiesOrders[0]->property_city) > 20 ? substr($propertiesOrders[0]->property_city,0,20)."..." : $propertiesOrders[0]->property_city }}
+                                    {{ strlen($propertiesOrders[0]->property_city) > 30 ? substr($propertiesOrders[0]->property_city,0,20)."..." : $propertiesOrders[0]->property_city }}
                                 </th>
                                 <th></th>
                                 <th class="border-right"></th>
@@ -107,15 +124,15 @@
                                     <td class="border-right">{{ $purchase->quantity }}</td>
                                     <td class="border-right">{{ $purchase->nb_screens }}</td>
                                     <td class="border-right">{{ $purchase->nb_weeks }}</td>
-                                    <td class="border-right">{{ number_format($purchase->impressions) }}</td>
+                                    <td class="border-right">{{ format($purchase->impressions) }}</td>
                                     <td class="{{ $order->show_investment ? "border-right" : "" }}">
-                                        $ {{ number_format($purchase->media_value) }}
+                                        $ {{ format($purchase->media_value) }}
                                     </td>
                                     @if($order->show_investment)
                                         <td class="border-right">
                                             {{ $purchase->discount == 0 ? '-' : "{$purchase->discount}%" }}
                                         </td>
-                                        <td>$ {{ number_format($purchase->net_investment) }}</td>
+                                        <td>$ {{ format($purchase->net_investment) }}</td>
                                     @endif
                                 </tr>
                             @endforeach
@@ -127,8 +144,8 @@
             <tr class="region-footer-wrapper">
                 <td>
                     <table class="region-footer-table">
-                        <tr class="region-footer-row {{ $network }}">
-                            <td class="label-row {{ $order->show_investment ?: "larger" }}">
+                        <tr class="region-footer-row {{ $network }} {{ $order->show_investment ?: "without-invest" }}">
+                            <td class="label-row">
                                 Total {{ $regionOrders->first()->first()->market }}</td>
                             <td></td>
                             <td></td>
@@ -136,20 +153,20 @@
                             <td class="border-right">{{ $regionSpots }}</td>
                             <td class="border-right">{{ $regionScreens }}</td>
                             <td class="border-right">-</td>
-                            <td class="border-right">{{ number_format($regionImpressions) }}</td>
+                            <td class="border-right">{{ format($regionImpressions) }}</td>
                             <td @if($order->show_investment)
                                 class="border-right"
                                     @endif >
-                                $ {{ number_format($regionMediaValue) }}
+                                $ {{ format($regionMediaValue) }}
                             </td>
                             @if($order->show_investment)
                                 <td class="border-right">
                                     @php
                                         $regionDiscount = ($regionMediaValue - $regionNetInvestment) / $regionMediaValue * 100;
                                     @endphp
-                                    {{ (int)floor($regionDiscount) === 0 ? '-' : number_format($regionDiscount) . "%" }}
+                                    {{ (int)floor($regionDiscount) === 0 ? '-' : format($regionDiscount) . "%" }}
                                 </td>
-                                <td>$ {{ number_format($regionNetInvestment) }}</td>
+                                <td>$ {{ format($regionNetInvestment) }}</td>
                             @endif
                         </tr>
                         @php
@@ -171,26 +188,26 @@
         <tr class="totals-row-wrapper">
             <td>
                 <table class="totals-wrapper">
-                    <tr class="{{ $network }}">
-                        <td class="label-row {{ $order->show_investment ?: "larger" }}">Total {{ $networkName }}</td>
+                    <tr class="{{ $network }} {{ $order->show_investment ?: "without-invest" }}">
+                        <td class="label-row">Total {{ $networkName }}</td>
                         <td></td>
                         <td></td>
                         <td class="border-right"></td>
                         <td class="border-right">{{ $totalSpots }}</td>
                         <td class="border-right">{{ $totalScreens }}</td>
                         <td class="border-right">-</td>
-                        <td class="border-right">{{ number_format($totalImpressions) }}</td>
+                        <td class="border-right">{{ format($totalImpressions) }}</td>
                         <td class="{{ $order->show_investment ? "border-right" : "last" }}" >
-                            $ {{ number_format($totalMediaValue) }}
+                            $ {{ format($totalMediaValue) }}
                         </td>
                         @if($order->show_investment)
                             <td class="border-right">
                                 @php
                                     $totalDiscount = ($totalMediaValue - $totalNetInvestment) / $totalMediaValue * 100;
                                 @endphp
-                                {{ (int)floor($totalDiscount) === 0 ? '-' : number_format($totalDiscount) . "%" }}
+                                {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
                             </td>
-                            <td>$ {{ number_format($totalNetInvestment) }}</td>
+                            <td>$ {{ format($totalNetInvestment) }}</td>
                         @endif
                     </tr>
                 </table>

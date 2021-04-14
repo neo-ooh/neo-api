@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Neo\Documents\Exceptions\MissingColumnException;
 
 class Order {
+    public string $locale;
     public string $reference;
     public string $date;
     public string $salesperson;
@@ -64,7 +65,8 @@ class Order {
      * @throws MissingColumnException
      */
     public function __construct(array $record) {
-        $expectedColumns = ["name",
+        $expectedColumns = ["partner_id/lang",
+                            "name",
                             "date_order",
                             "user_id",
                             "user_id/phone",
@@ -78,27 +80,28 @@ class Order {
                             "investment"];
 
         foreach ($expectedColumns as $col) {
-            if(!array_key_exists($col, $record)) {
+            if (!array_key_exists($col, $record)) {
                 throw new MissingColumnException($col);
             }
         }
 
-        $this->reference     = $record["name"];
-        $this->date          = $record["date_order"];
-        $this->salesperson   = $record["user_id"];
-        $this->salesperson_phone   = $record["user_id/phone"];
-        $this->salesperson_email   = $record["user_id/email"];
-        $this->status        = $record["state"];
-        $this->campaign_name = $record["campaign_name"];
+        $this->locale            = $record["partner_id/lang"];
+        $this->reference         = $record["name"];
+        $this->date              = $record["date_order"];
+        $this->salesperson       = $record["user_id"];
+        $this->salesperson_phone = $record["user_id/phone"];
+        $this->salesperson_email = $record["user_id/email"];
+        $this->status            = $record["state"];
+        $this->campaign_name     = $record["campaign_name"];
 //        $this->campaign_start         = $record["campaign_ids/date_start"];
 //        $this->campaign_end           = $record["campaign_ids/date_end"];
 //        $this->bonus_impression       = $record["bonus_impression"];
         $this->amount_before_discount = $record["amount_undiscounted"];
 //        $this->discount_amount        = $record["amount_discount"];
-        $this->taxes                  = $record["amount_tax"];
-        $this->total                  = $record["amount_total"];
-        $this->traffic                = $record["traffic"];
-        $this->show_investment        = $record["investment"] === "True";
+        $this->taxes           = $record["amount_tax"];
+        $this->total           = $record["amount_total"];
+        $this->traffic         = $record["traffic"];
+        $this->show_investment = $record["investment"] === "True";
 
         $this->orderLines      = new Collection();
         $this->productionLines = new Collection();
@@ -128,7 +131,7 @@ class Order {
         $guaranteedOrders                   = $this->getGuaranteedOrders();
         $this->guaranteed_impressions_count = $guaranteedOrders->sum("impressions");
         $this->guaranteed_value             = $guaranteedOrders->sum("media_value");
-        $this->guaranteed_investment          = $guaranteedOrders->sum("net_investment");
+        $this->guaranteed_investment        = $guaranteedOrders->sum("net_investment");
         $this->guaranteed_discount          = ($this->guaranteed_value - $this->guaranteed_investment) / $this->guaranteed_value * 100;
 
         // Bua orders
@@ -143,13 +146,13 @@ class Order {
         }
 
         // Orders totals
-        $this->potential_value = $this->guaranteed_value + $this->bua_value;
-        $this->potential_discount = ($this->potential_value - $this->total) / $this->potential_value * 100;
+        $this->potential_value        = $this->guaranteed_value + $this->bua_value;
+        $this->potential_discount     = ($this->potential_value - $this->total) / $this->potential_value * 100;
         $this->grand_total_investment = $this->guaranteed_investment + $this->bua_investment;
 
         // Production costs
         $this->production_costs = $this->productionLines->sum("subtotal");
-        $this->net_investment = $this->grand_total_investment + $this->production_costs;
-        $this->cpm = $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
+        $this->net_investment   = $this->grand_total_investment + $this->production_costs;
+        $this->cpm              = $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
     }
 }

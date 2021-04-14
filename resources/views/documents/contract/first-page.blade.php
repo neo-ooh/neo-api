@@ -97,15 +97,15 @@
         <table class="costs-recap-table">
             <tr>
                 <td>{!! __("contract.total-media-net") !!}</td>
-                <td class="value row-1">{{ number_format($order->grand_total_investment, 2) }} $</td>
+                <td class="value row-1">{{ format($order->grand_total_investment) }} $</td>
             </tr>
             <tr>
                 <td>{!! __("contract.production-costs") !!}</td>
-                <td class="value">{{ number_format($order->production_costs, 2) }} $</td>
+                <td class="value">{{ format($order->production_costs) }} $</td>
             </tr>
             <tr class="footer">
                 <th>{!! __("contract.grand-total-net") !!}</th>
-                <th>{{ number_format($order->net_investment, 2) }} $</th>
+                <th>{{ format($order->net_investment) }} $</th>
             </tr>
         </table>
     </div>

@@ -11,6 +11,7 @@
 namespace Neo\Documents\Contract;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
 use League\Csv\Reader;
@@ -102,6 +103,8 @@ class Contract extends Document {
     }
 
     public function build(): bool {
+        App::setLocale(substr($this->order->locale, 0, 2));
+
         // Import the stylesheet
         $this->mpdf->WriteHTML(File::get(resource_path('documents/stylesheets/contract.css')), HTMLParserMode::HEADER_CSS);
 
@@ -112,7 +115,7 @@ class Contract extends Document {
 
             $orientation = "P";
             $this->mpdf->_setPageSize([355, 355], $orientation);
-            $this->mpdf->SetMargins(0, 0, 40);
+            $this->mpdf->SetMargins(0, 0, 45);
             $this->mpdf->AddPage();
 
             $this->renderDetailedSummary(false);
@@ -149,7 +152,7 @@ class Contract extends Document {
         // Create a new letter page
         $orientation = "P";
         $this->mpdf->_setPageSize("legal", $orientation);
-        $this->mpdf->SetMargins(0, 0, 40);
+        $this->mpdf->SetMargins(0, 0, 45);
         $this->mpdf->AddPage($orientation, "", 1);
 
         $this->mpdf->WriteHTML((new ContractFirstPage($this->order, $this->customer))->render()->render());
@@ -163,7 +166,7 @@ class Contract extends Document {
         // Create a new letter page
         $orientation = "P";
         $this->mpdf->_setPageSize("legal", $orientation);
-        $this->mpdf->SetMargins(0, 0, 40);
+        $this->mpdf->SetMargins(0, 0, 45);
         $this->mpdf->AddPage($orientation, "", 1);
 
         $this->mpdf->WriteHTML((new GeneralConditions())->render()->render());
@@ -171,13 +174,13 @@ class Contract extends Document {
 
     private function makeCampaignSummary(): void {
         // Update the header
-        $this->setHeader("Campaign Summary");
+        $this->setHeader(__("contract.campaign-summary-title"));
         $this->setFooter();
 
         // Create a new letter page
         $orientation = "P";
         $this->mpdf->_setPageSize("legal", $orientation);
-        $this->mpdf->SetMargins(0, 0, 40);
+        $this->mpdf->SetMargins(0, 0, 45);
         $this->mpdf->AddPage($orientation, "", 1);
 
         $campaignSummaryOrders = view('documents.contract.campaign-summary.orders', [
@@ -194,12 +197,12 @@ class Contract extends Document {
 
     private function makeCampaignDetails(): void {
         // Update the header
-        $this->setHeader("Campaign Details");
+        $this->setHeader(__("contract.campaign-details-title"));
 
         // Create a new 14" by 14" page
         $orientation = "P";
         $this->mpdf->_setPageSize([355, 355], $orientation);
-        $this->mpdf->SetMargins(0, 0, 40);
+        $this->mpdf->SetMargins(0, 0, 45);
         $this->mpdf->AddPage($orientation, "", 1);
 
         $this->setFooter();

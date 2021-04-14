@@ -11,7 +11,7 @@
 @import "fonts";
 
 header {
-  margin: 0 -5mm;
+  margin: -5mm -5mm;
 
   .header-table {
     margin-top: -10mm;
@@ -40,7 +40,7 @@ header {
   }
 
   &-contract-data {
-    width           : 70mm;
+    width           : 80mm;
     border-collapse : collapse;
 
     tr {
@@ -50,13 +50,14 @@ header {
 
         &:nth-child(1) {
           border-right : 1px solid #000000;
-          padding      : 2px 5px 2px 15px;
+          padding      : .5mm 1mm .5mm 0;
 
           white-space: nowrap;
+          width: 35mm;
         }
 
         &:nth-child(2) {
-          padding : 2px 15px 2px 5px;
+          padding : .5mm 0 .5mm 1mm;
         }
       }
 

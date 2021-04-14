@@ -25,8 +25,6 @@ class DocumentsGenerationController extends Controller {
      * @throws UnknownDocumentException
      */
     public function make(MakeDocumentRequest $request): Response {
-        App::setLocale('en');
-
         $file = $request->file("file");
 
         if ($file === null) {

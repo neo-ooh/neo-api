@@ -88,9 +88,8 @@ class ImportCreativeInBroadSign extends BroadSignJob {
         $bsCreative->name       = $creative->owner->email . " - " . $creative->original_name;
         $bsCreative->parent_id  = $broadsign->getDefaults()["customer_id"];
         $bsCreative->url        = $creative->properties->file_url;
-        $bsCreative->import();
 
-        $creative->broadsign_ad_copy_id = $bsCreative->id;
+        $creative->broadsign_ad_copy_id = $bsCreative->import();
         $creative->save();
     }
 

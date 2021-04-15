@@ -2,7 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\NewsBackgrounds\DestroyBackgroundRequest;
 use Neo\Http\Requests\NewsBackgrounds\ListBackgroundsRequest;

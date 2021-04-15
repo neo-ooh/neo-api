@@ -26,7 +26,7 @@ class ListBackgroundsRequest extends FormRequest
     public function rules()
     {
         return [
-            "format_id" => ["sometimes", "integer"],
+            "format" => ["sometimes", "integer"],
             "locale" => ["sometimes", "string"]
         ];
     }

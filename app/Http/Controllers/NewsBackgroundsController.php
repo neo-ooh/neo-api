@@ -14,8 +14,8 @@ use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 class NewsBackgroundsController extends Controller {
     public function index(ListBackgroundsRequest $request) {
         $backgrounds = NewsBackground::query()
-                                     ->when($request->has("format_id"), function (Builder $query) use ($request) {
-                                         $query->where("format_id", "=", $request->input("format_id"));
+                                     ->when($request->has("format"), function (Builder $query) use ($request) {
+                                         $query->where("format", "=", $request->input("format"));
                                      })
                                      ->when($request->has("locale"), function (Builder $query) use ($request) {
                                          $query->where("locale", "=", $request->input("locale"));
@@ -26,14 +26,14 @@ class NewsBackgroundsController extends Controller {
     }
 
     public function store(StoreBackgroundRequest $request) {
-        $formatId = $request->input("format_id");
+        $format = $request->input("format");
         $category = $request->input("category");
         $locale   = $request->input("locale");
 
         // Check if we already have a background for the specified parameters
         $existingBackground = NewsBackground::query()
                                     ->where("category", "=", $category)
-                                    ->where("format_id", "=", $formatId)
+                                    ->where("format", "=", $format)
                                     ->where('locale', "=", $locale)
                                     ->first();
 
@@ -52,7 +52,7 @@ class NewsBackgroundsController extends Controller {
 
         $background = new NewsBackground();
         $background->category = $category;
-        $background->format_id = $formatId;
+        $background->format = $format;
         $background->locale = $locale;
         $background->path = $file->storePubliclyAs(Storage::path("dynamics/news/backgrounds/"), $file->hashName());
         $background->save();

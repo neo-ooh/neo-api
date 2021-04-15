@@ -26,7 +26,7 @@ class StoreBackgroundRequest extends FormRequest
     public function rules()
     {
         return [
-            "format_id" => ["required", "integer", "exists:formats,id"],
+            "format" => ["required", "integer"],
             "locale" => ["required", "string"],
             "category" => ["required", "integer", "min:1", "max:9"],
             "background" => ["required", "image"],

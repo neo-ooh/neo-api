@@ -5,6 +5,7 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class NewsBackground
@@ -13,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $category
- * @property int $format_id
+ * @property int $format
  * @property string $locale
  * @property string $path
  * @property Date $created_at
@@ -25,12 +26,17 @@ class NewsBackground extends Model
 
     protected $table = "news_backgrounds";
 
+    protected $appends = ["url"];
+
     protected $fillable = [
         "category",
-        "format_id",
+        "format",
         "locale",
         "path"
     ];
 
+    public function getUrlAttribute() {
+        return Storage::url($this->path);
+    }
 
 }

@@ -33,7 +33,7 @@ class RouteServiceProvider extends ServiceProvider {
 
         $this->routes(function () {
             // Heartbeat route for up-time monitoring
-            Route::get("/_heartbeat", fn() => new Response());
+            Route::get("/_heartbeat", fn() => new Response())->name("heartbeat");
 
             Route::middleware('default')->group(base_path('routes/api.php'));
 

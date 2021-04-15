@@ -35,6 +35,10 @@ class NewsBackground extends Model
         "path"
     ];
 
+    protected $casts = [
+        "category" => "integer"
+    ];
+
     public function getUrlAttribute() {
         return Storage::url($this->path);
     }

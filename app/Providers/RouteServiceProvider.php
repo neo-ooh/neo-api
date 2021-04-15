@@ -13,6 +13,7 @@ namespace Neo\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,9 @@ class RouteServiceProvider extends ServiceProvider {
         $this->configureRateLimiting();
 
         $this->routes(function () {
+            // Heartbeat route for up-time monitoring
+            Route::get("/_heartbeat", fn() => new Response());
+
             Route::middleware('default')->group(base_path('routes/api.php'));
 
             Route::middleware('guests')->group(base_path('routes/auth.php'));

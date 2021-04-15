@@ -192,10 +192,15 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
     protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, array $params) {
 
         /** @var Response $response */
-        $response = Http::withoutVerifying()
+        $request = Http::withoutVerifying()
                         ->withOptions(["cert" => storage_path('broadsign.pem')])
-                        ->withHeaders($headers)
-                        ->{$endpoint->method}(config('broadsign.api.url') . $path, $params);
+                        ->withHeaders($headers);
+
+        if($endpoint->format === "multipart") {
+            $request->asMultipart();
+        }
+
+         $response = $request->{$endpoint->method}(config('broadsign.api.url') . $path, $params);
 
         // In case the resource wasn't found (404), return null
         if ($response->status() === 404) {

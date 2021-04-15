@@ -37,6 +37,8 @@ class Endpoint {
 
     public bool $includeDomainID = true;
 
+    public string $format = "json";
+
     public ?string $transformMethod = "asSelf";
 
     /**
@@ -71,6 +73,16 @@ class Endpoint {
     | Modifiers
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * Specifies this endpoint returns only an ID. The response will be converted to an integer.
+     *
+     * @return $this
+     */
+    public function multipart (): Endpoint {
+        $this->format = "multipart";
+        return $this;
+    }
 
     /**
      * Specified if the parameter "domain_id" should be automatically added to the request or not

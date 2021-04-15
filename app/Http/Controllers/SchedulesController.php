@@ -245,7 +245,7 @@ class SchedulesController extends Controller {
                 "schedules",
                 "schedules.content",
                 "trashedSchedules",
-                "trashedSchedules.content"])->append("related_campaigns"));
+                "trashedSchedules.content"])->append("related_libraries"));
         }
 
         if ($order > $campaign->schedules_count) {

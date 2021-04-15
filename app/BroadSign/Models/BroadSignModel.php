@@ -197,7 +197,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
                         ->withHeaders($headers);
 
         if($endpoint->format === "multipart") {
-            $request->asMultipart();
+            $request->contentType("multipart/mixed");
         }
 
          $response = $request->{$endpoint->method}(config('broadsign.api.url') . $path, $params);

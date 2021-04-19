@@ -14,9 +14,7 @@ use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 class NewsBackgroundsController extends Controller {
     public function index(ListBackgroundsRequest $request) {
         $backgrounds = NewsBackground::query()
-                                     ->when($request->filled("network"), function (Builder $query) use ($request) {
-                                         $query->where("network", "=", $request->input("network"));
-                                     })
+                                     ->where("network", "=", $request->input("network", ""))
                                      ->when($request->filled("format_id"), function (Builder $query) use ($request) {
                                          $query->where("format_id", "=", $request->input("format_id"));
                                      })

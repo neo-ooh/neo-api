@@ -461,7 +461,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && Gate::allows(\Neo\Enums\Capability::libraries_edit) && !$this->limited_access));
         }
 
-        return $libraries->unique("id")->values()->sortBy("name");
+        return $libraries->unique("id")->sortBy("name")->values();
     }
 
     /**

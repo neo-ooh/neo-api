@@ -81,8 +81,8 @@ class FormatsController extends Controller {
         $formats = $locations->pluck("display_type.formats")
                              ->flatten()
                              ->unique("id")
-                             ->values()
-                             ->sortBy("name");
+                             ->sortBy("name")
+                             ->values();
 
         return new Response($formats);
     }

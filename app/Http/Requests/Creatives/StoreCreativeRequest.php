@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\Content;
 
 class StoreCreativeRequest extends FormRequest {
     /**
@@ -23,7 +24,7 @@ class StoreCreativeRequest extends FormRequest {
      */
     public function authorize(): bool {
         $gate   = Gate::allows(Capability::contents_edit);
-        $access = $this->route("content")->library->isAccessibleBy(Auth::user());
+        $access = Content::findOrFail($this->input("content_id"))->library->isAccessibleBy(Auth::user());
         return $gate && $access;
     }
 

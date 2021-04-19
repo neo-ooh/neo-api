@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Storage;
  *
  * @property int $id
  * @property int $category
- * @property int $format
+ * @property string $network
+ * @property int $format_id
  * @property string $locale
  * @property string $path
  * @property Date $created_at
@@ -30,7 +31,8 @@ class NewsBackground extends Model
 
     protected $fillable = [
         "category",
-        "format",
+        "network",
+        "format_id",
         "locale",
         "path"
     ];

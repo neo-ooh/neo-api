@@ -32,6 +32,7 @@ class StoreFormatRequest extends FormRequest {
     public function rules(): array {
         return [
             "name"          => ["required", "string"],
+            "slug"          => ["required", "string", "unique:formats,slug"],
             "is_enabled"    => ["required", "boolean"],
         ];
     }

@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\Content;
 
 class StoreCreativeRequest extends FormRequest {
     /**
@@ -23,7 +24,7 @@ class StoreCreativeRequest extends FormRequest {
      */
     public function authorize(): bool {
         $gate   = Gate::allows(Capability::contents_edit);
-        $access = $this->route("content")->library->isAccessibleBy(Auth::user());
+        $access = Content::findOrFail($this->input("content_id"))->library->isAccessibleBy(Auth::user());
         return $gate && $access;
     }
 
@@ -34,12 +35,17 @@ class StoreCreativeRequest extends FormRequest {
      */
     public function rules(): array {
         return [
+            "content_id"       => ["required", "integer", "exists:contents,id"],
             "frame_id"         => ["required", "integer", "exists:frames,id"],
             "type"             => ["required", "string"],
+
+            // Static Creative
             "file"             => ["required_if:type,static", "file"],
+
+            // Dynamic Creative
             "name"             => ["required_if:type,dynamic", "string", "min:2"],
             "url"              => ["required_if:type,dynamic", "url"],
-            "refresh-interval" => ["required_if:type,dynamic", "integer", "min:5"],
+            "refresh_interval" => ["required_if:type,dynamic", "integer", "min:5"],
         ];
     }
 }

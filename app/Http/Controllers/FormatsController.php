@@ -50,6 +50,7 @@ class FormatsController extends Controller {
                              ->when($request->has("enabled"),
                                  fn(Builder $query) => $query->where("is_enabled", "=", (bool)$request->get("enabled")))
                              ->with("display_types")
+                             ->orderBy("name")
                              ->get();
         }
 
@@ -81,6 +82,7 @@ class FormatsController extends Controller {
         $formats = $locations->pluck("display_type.formats")
                              ->flatten()
                              ->unique("id")
+                             ->sortBy("name")
                              ->values();
 
         return new Response($formats);
@@ -90,6 +92,7 @@ class FormatsController extends Controller {
         $format = new Format();
         [
             "name"       => $format->name,
+            "slug"       => $format->slug,
             "is_enabled" => $format->is_enabled,
         ] = $request->validated();
         $format->save();
@@ -117,6 +120,7 @@ class FormatsController extends Controller {
     public function update(UpdateFormatRequest $request, Format $format) {
         [
             "name"       => $format->name,
+            "slug"       => $format->slug,
             "is_enabled" => $format->is_enabled,
         ] = $request->validated();
         $format->save();

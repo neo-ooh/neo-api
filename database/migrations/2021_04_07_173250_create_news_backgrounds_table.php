@@ -23,7 +23,7 @@ class CreateNewsBackgroundsTable extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
             $table->unsignedSmallInteger("category")->index();
-            $table->foreignId("format_id")->index()->constrained("formats");
+            $table->string("format", 8)->index();
             $table->string('locale', 5)->index();
             $table->text('path');
             $table->timestamps();

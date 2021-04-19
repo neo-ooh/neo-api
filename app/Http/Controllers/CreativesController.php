@@ -39,12 +39,14 @@ use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 class CreativesController extends Controller {
     /**
      * @param StoreCreativeRequest $request
-     * @param Content              $content
      *
      * @return ResponseFactory|Response
-     * @throws IncompatibleFrameAndFormat
+     * @throws IncompatibleFrameAndFormat|FileNotFoundException
      */
-    public function store(StoreCreativeRequest $request, Content $content) {
+    public function store(StoreCreativeRequest $request) {
+        /** @var Content $content */
+        $content = Content::query()->find($request->get("content_id"));
+
         // Start by checking the given frame matched the content layout
         /** @var Frame $frame */
         $frame = Frame::query()->find($request->get("frame_id"));
@@ -80,7 +82,7 @@ class CreativesController extends Controller {
         if ($type === Creative::TYPE_DYNAMIC) {
             $name            = $request->input("name");
             $url             = $request->input("url");
-            $refreshInterval = $request->input("refresh-interval");
+            $refreshInterval = $request->input("refresh_interval");
 
             return $this->handleDynamicCreative($name, $url, $refreshInterval, $creative, $content);
         }

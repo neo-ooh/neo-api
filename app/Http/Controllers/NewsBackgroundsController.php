@@ -2,7 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\NewsBackgrounds\DestroyBackgroundRequest;
 use Neo\Http\Requests\NewsBackgrounds\ListBackgroundsRequest;
@@ -14,7 +14,10 @@ use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 class NewsBackgroundsController extends Controller {
     public function index(ListBackgroundsRequest $request) {
         $backgrounds = NewsBackground::query()
-                                     ->when($request->has("format_id"), function (Builder $query) use ($request) {
+                                     ->when($request->filled("network"), function (Builder $query) use ($request) {
+                                         $query->where("network", "=", $request->input("network"));
+                                     })
+                                     ->when($request->filled("format_id"), function (Builder $query) use ($request) {
                                          $query->where("format_id", "=", $request->input("format_id"));
                                      })
                                      ->when($request->has("locale"), function (Builder $query) use ($request) {
@@ -26,6 +29,7 @@ class NewsBackgroundsController extends Controller {
     }
 
     public function store(StoreBackgroundRequest $request) {
+        $network = $request->input("network");
         $formatId = $request->input("format_id");
         $category = $request->input("category");
         $locale   = $request->input("locale");
@@ -33,6 +37,7 @@ class NewsBackgroundsController extends Controller {
         // Check if we already have a background for the specified parameters
         $existingBackground = NewsBackground::query()
                                     ->where("category", "=", $category)
+                                    ->where("network", "=", $network)
                                     ->where("format_id", "=", $formatId)
                                     ->where('locale', "=", $locale)
                                     ->first();
@@ -52,6 +57,7 @@ class NewsBackgroundsController extends Controller {
 
         $background = new NewsBackground();
         $background->category = $category;
+        $background->network = $network;
         $background->format_id = $formatId;
         $background->locale = $locale;
         $background->path = $file->storePubliclyAs(Storage::path("dynamics/news/backgrounds/"), $file->hashName());

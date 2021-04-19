@@ -352,7 +352,7 @@ Route::prefix("v1")->group(function () {
 
     Route::model("creative", Creative::class);
 
-    Route::  post("contents/{content}", CreativesController::class . "@store")->name("creatives.store");
+    Route::  post("creatives", CreativesController::class . "@store")->name("creatives.store");
     Route::delete("creatives/{creative}", CreativesController::class . "@destroy")->name("creatives.destroy");
 
 
@@ -377,7 +377,7 @@ Route::prefix("v1")->group(function () {
 
         Route::get("news/backgrounds", NewsBackgroundsController::class . "@index")->name("dynamics.news.backgrounds.index");
         Route::post("news/backgrounds", NewsBackgroundsController::class . "@store")->name("dynamics.news.backgrounds.store");
-        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@store")->name("dynamics.news.backgrounds.destroy");
+        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@destroy")->name("dynamics.news.backgrounds.destroy");
     });
 
 

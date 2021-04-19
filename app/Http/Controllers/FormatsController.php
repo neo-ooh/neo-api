@@ -90,6 +90,7 @@ class FormatsController extends Controller {
         $format = new Format();
         [
             "name"       => $format->name,
+            "slug"       => $format->slug,
             "is_enabled" => $format->is_enabled,
         ] = $request->validated();
         $format->save();
@@ -117,6 +118,7 @@ class FormatsController extends Controller {
     public function update(UpdateFormatRequest $request, Format $format) {
         [
             "name"       => $format->name,
+            "slug"       => $format->slug,
             "is_enabled" => $format->is_enabled,
         ] = $request->validated();
         $format->save();

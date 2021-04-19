@@ -27,7 +27,7 @@ class ListBackgroundsRequest extends FormRequest
     {
         return [
             "network" => ["sometimes", "nullable", "integer"],
-            "format_id" => ["sometimes", "integer", "exists:formats,id"],
+            "format_id" => ["sometimes", "nullable", "integer", "exists:formats,id"],
             "locale" => ["sometimes", "string"]
         ];
     }

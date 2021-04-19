@@ -352,7 +352,7 @@ Route::prefix("v1")->group(function () {
 
     Route::model("creative", Creative::class);
 
-    Route::  post("contents/{content}", CreativesController::class . "@store")->name("creatives.store");
+    Route::  post("creatives", CreativesController::class . "@store")->name("creatives.store");
     Route::delete("creatives/{creative}", CreativesController::class . "@destroy")->name("creatives.destroy");
 
 

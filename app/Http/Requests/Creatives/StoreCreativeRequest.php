@@ -34,12 +34,17 @@ class StoreCreativeRequest extends FormRequest {
      */
     public function rules(): array {
         return [
+            "content_id"       => ["required", "integer", "exists:contents,id"],
             "frame_id"         => ["required", "integer", "exists:frames,id"],
             "type"             => ["required", "string"],
+
+            // Static Creative
             "file"             => ["required_if:type,static", "file"],
+
+            // Dynamic Creative
             "name"             => ["required_if:type,dynamic", "string", "min:2"],
             "url"              => ["required_if:type,dynamic", "url"],
-            "refresh-interval" => ["required_if:type,dynamic", "integer", "min:5"],
+            "refresh_interval" => ["required_if:type,dynamic", "integer", "min:5"],
         ];
     }
 }

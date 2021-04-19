@@ -23,6 +23,7 @@ class NewsBackgroundsController extends Controller {
                                      ->when($request->has("locale"), function (Builder $query) use ($request) {
                                          $query->where("locale", "=", $request->input("locale"));
                                      })
+                                     ->orderBy("name")
                                      ->get();
 
         return new Response($backgrounds);

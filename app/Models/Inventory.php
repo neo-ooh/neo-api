@@ -33,12 +33,6 @@ use Neo\Models\Traits\HasCompositePrimarykey;
  */
 class Inventory extends Model {
     use HasCompositePrimarykey;
-    /*
-    |--------------------------------------------------------------------------
-    | Table properties
-    |--------------------------------------------------------------------------
-    */
-
 
     /**
      * The table associated with the model.

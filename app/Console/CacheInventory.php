@@ -106,7 +106,7 @@ class CacheInventory extends Command {
                 "name" => $dayPart->name,
                 "start_date" => $dayPart->virtual_start_date,
                 "end_date" => $dayPart->virtual_end_date,
-                "bookings"    => $inventory->inventory,
+                "bookings"    => $inventory->inventory->map(fn($booking) => $booking / $loopPolicy->default_slot_duration),
                 "max_booking" => $maxBooking,
             ]);
         }

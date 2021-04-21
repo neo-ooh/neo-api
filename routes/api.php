@@ -29,6 +29,7 @@ use Neo\Http\Controllers\CapabilitiesController;
 use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContainersController;
 use Neo\Http\Controllers\ContentsController;
+use Neo\Http\Controllers\ContractsController;
 use Neo\Http\Controllers\CreativesController;
 use Neo\Http\Controllers\CustomersController;
 use Neo\Http\Controllers\DisplayTypesController;
@@ -61,6 +62,7 @@ use Neo\Models\Burst;
 use Neo\Models\Campaign;
 use Neo\Models\Client;
 use Neo\Models\Content;
+use Neo\Models\Contract;
 use Neo\Models\Creative;
 use Neo\Models\Format;
 use Neo\Models\FormatLayout;
@@ -325,6 +327,18 @@ Route::prefix("v1")->group(function () {
 
     /*
     |----------------------------------------------------------------------
+    | Clients
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("client", Client::class);
+
+    Route::get("clients", ClientsController::class . "@index")->name("clients.index");
+    Route::get("clients/{client}", ClientsController::class . "@show")->name("clients.show");
+
+
+    /*
+    |----------------------------------------------------------------------
     | Containers
     |----------------------------------------------------------------------
     */
@@ -346,6 +360,17 @@ Route::prefix("v1")->group(function () {
     Route::   put("contents/{content}/swap", ContentsController::class . "@swap")->name("contents.swap");
     Route::delete("contents/{content}", ContentsController::class . "@destroy")->name("contents.destroy");
 
+
+    /*
+    |----------------------------------------------------------------------
+    | Contracts
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("contract", Contract::class);
+
+    Route::get("contracts/{contract}", ContractsController::class . "@show")->name("contracts.show");
+
     /*
     |----------------------------------------------------------------------
     | Creatives
@@ -356,18 +381,6 @@ Route::prefix("v1")->group(function () {
 
     Route::  post("creatives", CreativesController::class . "@store")->name("creatives.store");
     Route::delete("creatives/{creative}", CreativesController::class . "@destroy")->name("creatives.destroy");
-
-
-    /*
-    |----------------------------------------------------------------------
-    | Customers
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("client", Client::class);
-
-    Route::get("clients", ClientsController::class . "@index")->name("clients.index");
-    Route::get("clients/{client}", ClientsController::class . "@show")->name("clients.show");
 
 
     /*

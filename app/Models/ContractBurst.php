@@ -6,6 +6,7 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class ContractBurst
@@ -62,7 +63,7 @@ class ContractBurst extends Model
     }
 
     public function reservation(): BelongsTo {
-        return $this->belongsTo(ContractReservation::class, "reservation_id", "id");
+        return $this->belongsTo(ContractReservation::class, "reservation_id", "id")->orderBy("name");
     }
 
     public function actor(): BelongsTo {
@@ -71,5 +72,9 @@ class ContractBurst extends Model
 
     public function location(): BelongsTo {
         return $this->belongsTo(Location::class, "player_id", "id");
+    }
+
+    public function screenshots(): HasMany {
+        return $this->hasMany(ContractScreenshot::class, "burst_id", "id")->orderBy("created_at");
     }
 }

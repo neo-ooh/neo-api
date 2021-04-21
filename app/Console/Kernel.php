@@ -47,7 +47,7 @@ class Kernel extends ConsoleKernel {
      */
     protected function schedule(Schedule $schedule) {
         /* -----------------
-         * Every-second tasks
+         * Every-minute tasks
          */
 
         // Send screenshots requests to player

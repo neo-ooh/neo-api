@@ -25,18 +25,18 @@ use Illuminate\Support\Carbon as Date;
  *
  * @package Neo\Models
  *
- * @property int      id
- * @property int      report_id
- * @property int      location_id
- * @property int      requested_by
- * @property Date     start_at
- * @property bool     started
- * @property bool     is_finished
- * @property int      scale_factor
- * @property int      duration_ms
- * @property int      frequency_ms
- * @property Date     created_at
- * @property Date     updated_at
+ * @property int      $id
+ * @property int      $report_id
+ * @property int      $location_id
+ * @property int      $requested_by
+ * @property Date     $start_at
+ * @property bool     $started
+ * @property bool     $is_finished
+ * @property int      $scale_factor
+ * @property int      $duration_ms
+ * @property int      $frequency_ms
+ * @property Date     $created_at
+ * @property Date     $updated_at
  *
  * @property Report   report
  * @property Location location

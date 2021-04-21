@@ -478,6 +478,7 @@ Route::prefix("v1")->group(function () {
     Route::model("library", Library::class);
 
     Route::   get("libraries", LibrariesController::class . "@index")->name("libraries.index");
+    Route::   get("libraries/_query", LibrariesController::class . "@query")->name("libraries.query");
     Route::  post("libraries", LibrariesController::class . "@store")->name("libraries.store");
 
     Route::   get("libraries/{library}", LibrariesController::class . "@show")->name("libraries.show");

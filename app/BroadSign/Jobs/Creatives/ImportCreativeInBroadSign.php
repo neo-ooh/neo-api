@@ -94,21 +94,18 @@ class ImportCreativeInBroadSign extends BroadSignJob {
     }
 
     protected function importDynamicCreative(Creative $creative, BroadSign $broadsign): void {
-        $attributes = "expire_on_empty_remote_dir=false\n";                        // Do not expire if connection lost
-        $attributes .= "io_strategy=esf\n";                                        // ???
-        $attributes .= "source={$creative->properties->url}\n";                    // URL to the resource
-        $attributes .= "source_append_id=false\n";                                 // Append player ID to url (no)
-        $attributes .= "source_expiry=0\n";                                        // Not sure
-        $attributes .= "source_refresh={$creative->properties->refresh_interval}"; // URL refresh interval (minutes)
+        $attributes = [
+            "expire_on_empty_remote_dir" => "false",                        // Do not expire if connection lost
+            "io_strategy" => "esf",                                         // ???
+            "source" => $creative->properties->url,                         // URL to the resource
+            "source_append_id" => "false",                                  // Append player ID to url (no)
+            "source_expiry" => "0",                                         // Not sure
+            "source_refresh" => $creative->properties->refresh_interval     // URL refresh interval (minutes)
+        ];
 
-        $bsCreative             = new BSCreative();
-        $bsCreative->attributes = $attributes;
-        $bsCreative->name       = $creative->owner->email . " - " . $creative->original_name;
-        $bsCreative->parent_id  = $broadsign->getDefaults()["customer_id"];
-        $bsCreative->size       = -1;
-        $bsCreative->create();
+        $bsCreativeId = BSCreative::makeDynamic($creative->owner->email . " - " . $creative->original_name, $attributes);
 
-        $creative->broadsign_ad_copy_id = $bsCreative->id;
+        $creative->broadsign_ad_copy_id = $bsCreativeId;
         $creative->save();
     }
 }

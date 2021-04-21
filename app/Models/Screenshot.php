@@ -55,7 +55,6 @@ class Screenshot extends Model {
         'burst_id',
     ];
 
-
     public static function boot() {
         parent::boot();
 

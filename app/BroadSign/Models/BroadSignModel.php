@@ -12,6 +12,7 @@ namespace Neo\BroadSign\Models;
 
 use BadMethodCallException;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
+use GuzzleHttp\Psr7\MultipartStream;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use Illuminate\Http\Client\Response;
@@ -182,14 +183,14 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
 
     /**
      * @param Endpoint $endpoint
-     * @param          $path
-     * @param          $headers
-     * @param          $params
-     * @return array|BroadSignModel
+     * @param string   $path
+     * @param array    $headers
+     * @param mixed    $payload // Either URL params for HEAD/GET requests or request body for POST, PUT, etc.
+     * @return integer|array|BroadSignModel
      * @throws BadResponse
      * @throws JsonException
      */
-    protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, array $params) {
+    protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, array $payload) {
 
         /** @var Response $response */
         $request = Http::withoutVerifying()
@@ -197,10 +198,12 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
                         ->withHeaders($headers);
 
         if($endpoint->format === "multipart") {
-            $request->contentType("multipart/mixed");
+            $boundary = "__X__BROADSIGN_REQUEST__";
+            $request->contentType("multipart/mixed; boundary=$boundary");
+            $payload = new MultipartStream($payload, $boundary);
         }
 
-         $response = $request->{$endpoint->method}(config('broadsign.api.url') . $path, $params);
+         $response = $request->{$endpoint->method}(config('broadsign.api.url') . $path, $payload);
 
         // In case the resource wasn't found (404), return null
         if ($response->status() === 404) {
@@ -209,7 +212,7 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
 
         if (!$response->successful()) {
             // Request was not successful, log th exchange
-            Log::channel("broadsign")->debug("request:{$endpoint->method} [{$path}] " . json_encode($params, JSON_THROW_ON_ERROR));
+            Log::channel("broadsign")->debug("request:{$endpoint->method} [{$path}] " . json_encode($payload, JSON_THROW_ON_ERROR));
             Log::channel("broadsign")
                ->log($response->status() === 200 ? "debug" : "error", "response:{$response->status()} [{$path}] " . $response->body());
 

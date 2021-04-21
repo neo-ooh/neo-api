@@ -23,7 +23,13 @@ use Neo\BroadSign\Models\Player as BSPlayer;
 use Neo\Models\Burst;
 use Neo\Models\Player;
 
-
+/**
+ * Class RequestScreenshotsBursts
+ *
+ * @package Neo\BroadSign\Jobs\Players
+ *
+ * Screenshots requests are made asynchronously and batched every minutes for performances.
+ */
 class RequestScreenshotsBursts extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 

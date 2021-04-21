@@ -38,6 +38,8 @@ class ContractScreenshot extends Model
         "id",
         "burst_id",
         "is_locked",
+        "created_at",
+        "updated_at",
     ];
 
     protected $appends = [

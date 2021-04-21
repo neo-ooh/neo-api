@@ -51,7 +51,9 @@ class ContractBurst extends Model
         "status",
         "scale_percent",
         "duration_ms",
-        "frequency_ms"
+        "frequency_ms",
+        "created_at",
+        "updated_at",
     ];
 
     /**

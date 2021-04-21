@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/app/Models/ContractBurst.php">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/app/Models/Creative.php">
           <value>
             <Attribute>

@@ -13,26 +13,28 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @package Neo\Models
  *
- * @property integer $id
- * @property integer $contract_id
- * @property integer $reservation_id
- * @property ?integer $actor_id
- * @property integer $location_id
- * @property Date $start_at
- * @property string $status
- * @property int $scale_percent
- * @property int $duration_ms
- * @property int $frequency_ms
- * @property Date $created_at
- * @property Date $updated_at
+ * @property integer             $id
+ * @property integer             $contract_id
+ * @property integer             $reservation_id
+ * @property ?integer            $actor_id
+ * @property integer             $location_id
+ * @property Date                $start_at
+ * @property string              $status
+ * @property int                 $scale_percent
+ * @property int                 $duration_ms
+ * @property int                 $frequency_ms
+ * @property Date                $created_at
+ * @property Date                $updated_at
  *
- * @property Contract $contract
+ * @property integer             $expected_screenshots
+ * @property integer             $screenshots_count
+ *
+ * @property Contract            $contract
  * @property ContractReservation $reservation
- * @property Actor $actor
- * @property Location $location
+ * @property Actor               $actor
+ * @property Location            $location
  */
-class ContractBurst extends Model
-{
+class ContractBurst extends Model {
     use HasFactory;
 
     protected $table = "contracts_bursts";

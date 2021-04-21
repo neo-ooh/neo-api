@@ -20,8 +20,8 @@ class CreateContractsReservationsTable extends Migration
             $table->string("network", 16);
             $table->string("name", 256);
             $table->string("original_name", 256);
-            $table->timestamp("start_date");
-            $table->timestamp("end_date");
+            $table->timestamp("start_date")->default("0");
+            $table->timestamp("end_date")->default("0");
             $table->timestamps();
         });
     }

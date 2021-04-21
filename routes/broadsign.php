@@ -21,8 +21,8 @@
 */
 
 use Illuminate\Support\Facades\Route;
-use Neo\Http\Controllers\BurstsController;
-use Neo\Models\Burst;
+use Neo\Http\Controllers\ContractBurstsController;
+use Neo\Models\ContractBurst;
 
 Route::prefix("v1/broadsign")->group(function () {
     /*
@@ -31,7 +31,7 @@ Route::prefix("v1/broadsign")->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    Route::model("burst", Burst::class);
+    Route::model("burst", ContractBurst::class);
 
-    Route::any("burst_callback/{burst}", BurstsController::class . "@receive")->name('broadsign.bursts.receive');
+    Route::any("burst_callback/{burst}", ContractBurstsController::class . "@receive")->name('broadsign.bursts.receive');
 });

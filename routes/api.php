@@ -23,7 +23,7 @@ use Neo\Http\Controllers\BrandingsFilesController;
 use Neo\Http\Controllers\BroadSignCriteriaController;
 use Neo\Http\Controllers\BroadSignSeparationsController;
 use Neo\Http\Controllers\BroadSignTriggersController;
-use Neo\Http\Controllers\BurstsController;
+use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\CampaignsController;
 use Neo\Http\Controllers\CapabilitiesController;
 use Neo\Http\Controllers\ClientsController;
@@ -63,6 +63,7 @@ use Neo\Models\Campaign;
 use Neo\Models\Client;
 use Neo\Models\Content;
 use Neo\Models\Contract;
+use Neo\Models\ContractBurst;
 use Neo\Models\ContractScreenshot;
 use Neo\Models\Creative;
 use Neo\Models\Format;
@@ -287,11 +288,22 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::model("burst", Burst::class);
+    Route::model("burst", ContractBurst::class);
 
-    Route::  post("bursts", BurstsController::class . "@store")->name("bursts.store");
-    Route::   get("bursts/{burst}", BurstsController::class . "@show")->name("bursts.show");
-    Route::delete("bursts/{burst}", BurstsController::class . "@destroy")->name("bursts.destroy");
+    Route::  post("bursts", ContractBurstsController::class . "@store")->name("bursts.store");
+    Route::   get("bursts/{burst}", ContractBurstsController::class . "@show")->name("bursts.show");
+    Route::delete("bursts/{burst}", ContractBurstsController::class . "@destroy")->name("bursts.destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Bursts Screenshots
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("screenshot", ContractScreenshot::class);
+
+    Route::delete("screenshots/{screenshot}", ContractsScreenshotsController::class . "@destroy")->name("screenshots.destroy");
 
 
     /*
@@ -371,17 +383,6 @@ Route::prefix("v1")->group(function () {
     Route::model("contract", Contract::class);
 
     Route::get("contracts/{contract}", ContractsController::class . "@show")->name("contracts.show");
-
-
-    /*
-    |----------------------------------------------------------------------
-    | Contracts Screenshots
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("screenshot", ContractScreenshot::class);
-
-    Route::delete("contracts/{contract}/screenshots/{screenshot}", ContractsScreenshotsController::class . "@destroy")->name("screenshots.destroy");
 
 
     /*

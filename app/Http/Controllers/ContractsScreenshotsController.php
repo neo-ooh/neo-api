@@ -12,11 +12,10 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Screenshots\DestroyScreenshotsRequest;
-use Neo\Models\Contract;
 use Neo\Models\ContractScreenshot;
 
 class ContractsScreenshotsController extends Controller {
-    public function destroy(DestroyScreenshotsRequest $request, Contract $contract, ContractScreenshot $screenshot) {
+    public function destroy(DestroyScreenshotsRequest $request, ContractScreenshot $screenshot) {
         $screenshot->delete();
 
         return new Response([]);

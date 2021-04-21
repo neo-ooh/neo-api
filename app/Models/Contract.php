@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\BroadSign\Models\Location as BSLocation;
 use Neo\BroadSign\Models\ReservablePerformance;
 
 /**
@@ -74,5 +75,12 @@ class Contract extends Model {
                                                                          ->toArray());
 
         return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
+    }
+
+    public function loadReservationsLocations(): void {
+        foreach ($this->reservations as $reservation) {
+            $bsLocations = BSLocation::byReservable(["reservable_id" => $reservation->broadsign_reservation_id])->pluck('id');
+            $reservation->locations = Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
+        }
     }
 }

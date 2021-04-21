@@ -12,7 +12,6 @@ namespace Neo\BroadSign\Models;
 
 use Illuminate\Support\Collection;
 use Neo\BroadSign\Endpoint;
-use Neo\Models\Report;
 
 /**
  * Class Inventory

@@ -14,7 +14,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\BroadSign\Jobs\Players\RequestScreenshotsBursts;
 use Neo\Jobs\NotifyEndOfSchedules;
-use Neo\Jobs\RefreshReportReservations;
+use Neo\Jobs\RefreshContractsReservations;
 use Neo\Services\News\NewsService;
 
 class Kernel extends ConsoleKernel {
@@ -78,6 +78,9 @@ class Kernel extends ConsoleKernel {
 
         // Update network from broadsign
         $schedule->command('network:update')->daily();
+
+        // Refresh Contracts reservations
+        $schedule->job(RefreshContractsReservations::class)->daily();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()

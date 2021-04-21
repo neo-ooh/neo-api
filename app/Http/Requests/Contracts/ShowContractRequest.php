@@ -30,7 +30,7 @@ class ShowContractRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "with" => ["sometimes", "array"]
         ];
     }
 }

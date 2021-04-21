@@ -2,14 +2,14 @@
 
 namespace Neo\Http\Controllers;
 
-use http\Env\Response;
-use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Models\Contract;
 
-class ContractsController extends Controller
-{
-    public function store() {}
+class ContractsController extends Controller {
+    public function store() {
+    }
+
     public function show(ShowContractRequest $request, Contract $contract) {
         $with = $request->get("with", []);
         if (in_array("client", $with, true)) {
@@ -20,11 +20,17 @@ class ContractsController extends Controller
             $contract->load("reservations");
         }
 
+        if (in_array("performances", $with, true)) {
+            $contract->append("performances");
+        }
+
         if (in_array("bursts", $with, true)) {
             $contract->load("bursts", "bursts.screenshots", "bursts.location");
         }
 
-        return new \Illuminate\Http\Response($contract);
+        return new Response($contract);
     }
-    public function update() {}
+
+    public function update() {
+    }
 }

@@ -21,7 +21,7 @@ class ContractsController extends Controller {
         }
 
         if (in_array("reservations.locations", $with, true)) {
-            $contract->load("reservations.locations");
+            $contract->loadReservationsLocations();
         }
 
         if (in_array("performances", $with, true)) {

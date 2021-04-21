@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="/app/Models/ReportReservation.php">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="/database/migrations/2021_04_20_134416_create_contracts_table.php">
           <value>
             <Attribute>

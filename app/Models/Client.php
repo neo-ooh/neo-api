@@ -39,6 +39,6 @@ class Client extends Model
     */
 
     public function contracts(): HasMany {
-        return $this->hasMany(Contract::class, "client_id", "id");
+        return $this->hasMany(Contract::class, "client_id", "id")->orderBy("contract_id");
     }
 }

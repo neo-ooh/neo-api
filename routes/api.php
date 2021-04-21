@@ -51,7 +51,7 @@ use Neo\Http\Controllers\RolesActorsController;
 use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
-use Neo\Http\Controllers\ScreenshotsController;
+use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Http\Controllers\StatsController;
 use Neo\Models\AccessToken;
 use Neo\Models\Actor;
@@ -63,6 +63,7 @@ use Neo\Models\Campaign;
 use Neo\Models\Client;
 use Neo\Models\Content;
 use Neo\Models\Contract;
+use Neo\Models\ContractScreenshot;
 use Neo\Models\Creative;
 use Neo\Models\Format;
 use Neo\Models\FormatLayout;
@@ -371,6 +372,18 @@ Route::prefix("v1")->group(function () {
 
     Route::get("contracts/{contract}", ContractsController::class . "@show")->name("contracts.show");
 
+
+    /*
+    |----------------------------------------------------------------------
+    | Contracts Screenshots
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("screenshot", ContractScreenshot::class);
+
+    Route::delete("contracts/{contract}/screenshots/{screenshot}", ContractsScreenshotsController::class . "@destroy")->name("screenshots.destroy");
+
+
     /*
     |----------------------------------------------------------------------
     | Creatives
@@ -638,18 +651,6 @@ Route::prefix("v1")->group(function () {
     Route::  post("campaigns/{campaign}/reorder", SchedulesController::class . "@reorder")->name("schedules.reorder");
     Route::  post("campaigns/{campaign}/schedules", SchedulesController::class . "@store")->name("schedules.store");
     Route::  post("campaigns/{campaign}/insert", SchedulesController::class . "@insert")->name("schedules.insert");
-
-
-    /*
-    |----------------------------------------------------------------------
-    | Screenshots
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("screenshot", Screenshot::class);
-
-    Route::delete("screenshots/{screenshot}", ScreenshotsController::class . "@destroy")->name("screenshots.destroy");
-
 
     /*
     |----------------------------------------------------------------------

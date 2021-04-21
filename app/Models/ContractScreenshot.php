@@ -46,6 +46,14 @@ class ContractScreenshot extends Model
         "url"
     ];
 
+    public static function boot() {
+        parent::boot();
+
+        static::deleting(static function (Screenshot $screenshot) {
+            Storage::delete($screenshot->file_path);
+        });
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relations
@@ -75,7 +83,7 @@ class ContractScreenshot extends Model
     }
 
     public function getUrlAttribute() {
-        return Storage::url("/bursts/{$this->burst_id}/{$this->id}.jpg");
+        return Storage::url($this->file_path);
     }
 
 }

@@ -5,17 +5,18 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ScreenshotsController.php
+ * @neo/api - ContractsScreenshotsController.php
  */
 
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Screenshots\DestroyScreenshotsRequest;
-use Neo\Models\Screenshot;
+use Neo\Models\Contract;
+use Neo\Models\ContractScreenshot;
 
-class ScreenshotsController extends Controller {
-    public function destroy(DestroyScreenshotsRequest $request, Screenshot $screenshot) {
+class ContractsScreenshotsController extends Controller {
+    public function destroy(DestroyScreenshotsRequest $request, Contract $contract, ContractScreenshot $screenshot) {
         $screenshot->delete();
 
         return new Response([]);

@@ -88,6 +88,7 @@ class MigrateReportsToContracts extends Migration {
                         "burst_id"  => $burst->id,
                         "is_locked" => false,
                     ]);
+                    $screenshot->timestamps = false;
                     $screenshot->save();
                 }
 

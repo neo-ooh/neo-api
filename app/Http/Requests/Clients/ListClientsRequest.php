@@ -7,16 +7,14 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Neo\Enums\Capability;
 
-class ListClientsRequest extends FormRequest
-{
+class ListClientsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::contracts_edit) || Gate::allows(Capability::contracts_manage) ;
+    public function authorize() {
+        return Gate::allows(Capability::contracts_edit) || Gate::allows(Capability::contracts_manage);
     }
 
     /**
@@ -24,10 +22,10 @@ class ListClientsRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "with" => ["sometimes", "present", Rule::in(["contracts"])]
+            "with"   => ["sometimes", "present", "nullable", "array"],
+            "with.*" => ["string", Rule::in(["contracts"])],
         ];
     }
 }

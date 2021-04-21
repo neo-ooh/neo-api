@@ -20,6 +20,10 @@ class ContractsController extends Controller {
             $contract->load("reservations");
         }
 
+        if (in_array("reservations.locations", $with, true)) {
+            $contract->load("reservations.locations");
+        }
+
         if (in_array("performances", $with, true)) {
             $contract->append("performances");
         }

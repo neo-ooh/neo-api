@@ -42,6 +42,7 @@ class ContractBurst extends Model
     ];
 
     protected $fillable = [
+        "id",
         "contract_id",
         "actor_id",
         "player_id",

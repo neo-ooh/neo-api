@@ -10,7 +10,6 @@ use Neo\Models\ContractReservation;
 use Neo\Models\ContractScreenshot;
 use Neo\Models\Report;
 use Neo\Models\ReportReservation;
-use Neo\Models\Screenshot;
 
 class MigrateReportsToContracts extends Migration {
     /**
@@ -66,6 +65,7 @@ class MigrateReportsToContracts extends Migration {
             /** @var Burst $reportBurst */
             foreach ($reportBursts as $reportBurst) {
                 $burst = new ContractBurst([
+                    "id"            => $reportBurst->id,
                     "contract_id"   => $contract->id,
                     "actor_id"      => $reportBurst->requested_by,
                     "location_id"   => $reportBurst->location_id,
@@ -77,6 +77,7 @@ class MigrateReportsToContracts extends Migration {
                     "created_at"    => $reportBurst->created_at,
                     "updated_at"    => $reportBurst->updated_at,
                 ]);
+                $burst->timestamps = false;
                 $burst->save();
                 DB::enableQueryLog();
 

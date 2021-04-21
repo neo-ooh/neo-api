@@ -6,6 +6,7 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class ContractScreenshot
@@ -39,6 +40,10 @@ class ContractScreenshot extends Model
         "is_locked",
     ];
 
+    protected $appends = [
+        "url"
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations
@@ -55,7 +60,20 @@ class ContractScreenshot extends Model
     |--------------------------------------------------------------------------
     */
 
-    public function getFilePathAttribute() {}
-    public function getUrlAttribute() {}
+    public function getFilePathAttribute() {
+        return "/bursts/{$this->burst_id}/{$this->id}.jpg";
+    }
+
+    /**
+     * @param resource $screenshot
+     */
+    public function store($screenshot) {
+        // And store the request
+        Storage::writeStream($this->file_path, $screenshot, ["visibility" => "public"]);
+    }
+
+    public function getUrlAttribute() {
+        return Storage::url("/bursts/{$this->burst_id}/{$this->id}.jpg");
+    }
 
 }

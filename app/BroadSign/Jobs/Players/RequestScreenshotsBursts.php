@@ -21,6 +21,7 @@ use Illuminate\Queue\SerializesModels;
 use Neo\BroadSign\Jobs\BroadSignJob;
 use Neo\BroadSign\Models\Player as BSPlayer;
 use Neo\Models\Burst;
+use Neo\Models\ContractBurst;
 use Neo\Models\Player;
 
 /**
@@ -43,7 +44,7 @@ class RequestScreenshotsBursts extends BroadSignJob {
 
         // Load bursts starting now or up to one minute in the future
         /** @var Collection $bursts */
-        $bursts = Burst::query()->where("started", "=", false)
+        $bursts = ContractBurst::query()->where("status", "=", "PENDING")
                        ->whereDate("start_at", "<=", Date::now()->addMinute())
                        ->distinct()
                        ->get();
@@ -55,7 +56,7 @@ class RequestScreenshotsBursts extends BroadSignJob {
      * @param Burst $burst
      * @throws Exception
      */
-    protected function sendRequest(Burst $burst): void {
+    protected function sendRequest(ContractBurst $burst): void {
         // Get one random player for the location of the burst
         /** @var Player|null $player */
         $player = $burst->location->players()->inRandomOrder()->first();
@@ -71,7 +72,7 @@ class RequestScreenshotsBursts extends BroadSignJob {
 
         // Update the start date to reflect the effective start date.
         $burst->start_at = Date::now();
-        $burst->started  = true;
+        $burst->status  = "ACTIVE";
         $burst->save();
     }
 }

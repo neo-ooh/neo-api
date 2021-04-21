@@ -26,6 +26,7 @@ use Neo\Http\Controllers\BroadSignTriggersController;
 use Neo\Http\Controllers\BurstsController;
 use Neo\Http\Controllers\CampaignsController;
 use Neo\Http\Controllers\CapabilitiesController;
+use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContainersController;
 use Neo\Http\Controllers\ContentsController;
 use Neo\Http\Controllers\CreativesController;
@@ -58,6 +59,7 @@ use Neo\Models\BroadSignSeparation;
 use Neo\Models\BroadSignTrigger;
 use Neo\Models\Burst;
 use Neo\Models\Campaign;
+use Neo\Models\Client;
 use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Format;
@@ -362,8 +364,10 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::get("customers", CustomersController::class . "@index")->name("customers.index");
-    Route::get("customers/{customer}", CustomersController::class . "@show")->name("customers.show");
+    Route::model("client", Client::class);
+
+    Route::get("clients", ClientsController::class . "@index")->name("clients.index");
+    Route::get("clients/{client}", ClientsController::class . "@show")->name("clients.show");
 
 
     /*

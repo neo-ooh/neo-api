@@ -53,6 +53,15 @@ class ContractBurst extends Model
         "frequency_ms"
     ];
 
+    /**
+     * The attributes that should always be loaded
+     *
+     * @var array
+     */
+    protected $appends = [
+        "expected_screenshots",
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations
@@ -72,10 +81,21 @@ class ContractBurst extends Model
     }
 
     public function location(): BelongsTo {
-        return $this->belongsTo(Location::class, "player_id", "id");
+        return $this->belongsTo(Location::class, "location_id", "id");
     }
 
     public function screenshots(): HasMany {
         return $this->hasMany(ContractScreenshot::class, "burst_id", "id")->orderBy("created_at");
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Burst Mechanism
+    |--------------------------------------------------------------------------
+    */
+
+
+    public function getExpectedScreenshotsAttribute() {
+        return ceil($this->duration_ms / $this->frequency_ms) + 1;
     }
 }

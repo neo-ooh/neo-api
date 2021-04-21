@@ -45,6 +45,7 @@ class ContractBurst extends Model
         "contract_id",
         "actor_id",
         "player_id",
+        "location_id",
         "start_at",
         "status",
         "scale_percent",

@@ -124,8 +124,8 @@ class Burst extends Model {
     /**
      * @return BelongsTo
      */
-    public function report(): BelongsTo {
-        return $this->belongsTo(Report::class, "report_id");
+    public function contract(): BelongsTo {
+        return $this->belongsTo(Contract::class, "contract");
     }
 
     /**
@@ -146,7 +146,7 @@ class Burst extends Model {
      * @return BelongsTo
      */
     public function owner(): BelongsTo {
-        return $this->belongsTo(Actor::class, "requested_by");
+        return $this->belongsTo(Actor::class, "actor_id");
     }
 
     /*

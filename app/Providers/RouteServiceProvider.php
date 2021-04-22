@@ -32,23 +32,35 @@ class RouteServiceProvider extends ServiceProvider {
         $this->configureRateLimiting();
 
         $this->routes(function () {
-            // Heartbeat route for up-time monitoring
-            Route::get("/_heartbeat", fn() => new Response())->name("heartbeat");
-
-            Route::middleware('default')->group(function () {
-                Route::group([], base_path('routes/api.php'));
-                Route::group([], base_path('routes/documents.php'));
-            });
-
+            // Guests and not fully authenticated routes
             Route::middleware('guests')->group(base_path('routes/auth.php'));
 
-            Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
 
+            // Authenticated human users routes
+            Route::middleware('default')->group(function () {
+                Route::group([], base_path('routes/api.php'));
+            });
+
+
+            // Routes accessible only by access tokens
             Route::middleware('access-tokens')->group(function () {
-                Route::group([], base_path('routes/documents.php'));
                 Route::group([], base_path('routes/dynamics.php'));
             });
-        });
+
+
+            // Routes accessible by human users and access-tokens
+            Route::middleware("auth:neo-loa-4,access-token")->group(function () {
+                Route::group([], base_path('routes/documents.php'));
+            });
+
+
+            // Broadsign only routes
+            Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
+
+
+            // Heartbeat route for up-time monitoring
+            Route::get("/_heartbeat", fn() => new Response())->name("heartbeat");
+        }
     }
 
     /**

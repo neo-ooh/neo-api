@@ -22,7 +22,7 @@ class POP extends Document {
     }
 
     public function build(): bool {
-        $this->mpdf->WriteHTML("<strong>{$this->contract["contract_id"]}</strong>");
+        $this->mpdf->WriteHTML("<strong>{$this->contract}</strong>");
 
         return true;
     }

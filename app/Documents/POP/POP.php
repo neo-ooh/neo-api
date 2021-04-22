@@ -16,10 +16,14 @@ class POP extends Document {
     }
 
     protected function ingest($data): bool {
-        // TODO: Implement ingest() method.
+        $this->contract = $data;
+
+        return true;
     }
 
     public function build(): bool {
-        // TODO: Implement build() method.
+        $this->mpdf->WriteHTML("<strong>{$this->contract["contract_id"]}</strong>");
+
+        return true;
     }
 }

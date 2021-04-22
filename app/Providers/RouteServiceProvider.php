@@ -60,7 +60,7 @@ class RouteServiceProvider extends ServiceProvider {
 
             // Heartbeat route for up-time monitoring
             Route::get("/_heartbeat", fn() => new Response())->name("heartbeat");
-        }
+        });
     }
 
     /**

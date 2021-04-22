@@ -557,20 +557,6 @@ Route::prefix("v1")->group(function () {
 
     /*
     |----------------------------------------------------------------------
-    | Reports
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("report", Report::class);
-
-    Route::  post("reports", ReportsController::class . "@store")->name("reports.store");
-    Route::   get("reports/{report}", ReportsController::class . "@show")->name("reports.show");
-    Route::   get("reports/{report}/refresh", ReportsController::class . "@refresh")->name("reports.refresh");
-    Route::delete("reports/{report}", ReportsController::class . "@destroy")->name("reports.destroy");
-
-
-    /*
-    |----------------------------------------------------------------------
     | Reviews
     |----------------------------------------------------------------------
     */

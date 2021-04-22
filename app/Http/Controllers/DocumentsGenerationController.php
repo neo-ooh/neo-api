@@ -60,6 +60,9 @@ class DocumentsGenerationController extends Controller {
             throw new UnknownDocumentException();
         }
 
-        return new Response($document->output(), 200, ["Content-Type" => "application/pdf"]);
+        return new Response($document->output(), 200, [
+            "Content-Type" => "application/pdf",
+            "Access-Control-Allow-Origin"=> "*"
+        ]);
     }
 }

@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Neo\Documents\Contract\Contract;
+use Neo\Documents\POP\POP;
 use Neo\Exceptions\UnknownDocumentException;
 use Neo\Http\Requests\Documents\MakeDocumentRequest;
 
@@ -25,26 +26,39 @@ class DocumentsGenerationController extends Controller {
      * @throws UnknownDocumentException
      */
     public function make(MakeDocumentRequest $request): Response {
+        // Input can either be done using a file or a json object named data
         $file = $request->file("file");
-
-        if ($file === null) {
-            return new Response(["error" => "Missing file"], 400);
-        }
+        $data = $request->input("data");
 
         $document = null;
 
         switch ($request->route('document')) {
             case "contract":
+                if ($file === null) {
+                    return new Response(["error" => "Missing file"], 400);
+                }
+
                 $document = Contract::makeContract($file->getContent());
                 break;
             case "proposal":
+                if ($file === null) {
+                    return new Response(["error" => "Missing file"], 400);
+                }
+
                 $document = Contract::makeProposal($file->getContent());
+                break;
+            case "pop":
+                if ($data === null) {
+                    return new Response(["error" => "Missing data"], 400);
+                }
+
+                $document = POP::make($data);
                 break;
             default:
                 throw new UnknownDocumentException();
         }
 
-        if (!$document->build()) {
+        if (!$document || !$document->build()) {
             throw new UnknownDocumentException();
         }
 

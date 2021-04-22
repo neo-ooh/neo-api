@@ -62,7 +62,6 @@ class DocumentsGenerationController extends Controller {
 
         return new Response($document->output(), 200, [
             "Content-Type" => "application/pdf",
-            "access-control-allow-origin"=> "localhost:3000"
         ]);
     }
 }

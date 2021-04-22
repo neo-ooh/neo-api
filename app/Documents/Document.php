@@ -12,6 +12,7 @@ namespace Neo\Documents;
 
 use ErrorException;
 use Mpdf\Mpdf;
+use Mpdf\Output\Destination;
 use Neo\Documents\Exceptions\UnknownGenerationException;
 
 abstract class Document {
@@ -87,6 +88,6 @@ abstract class Document {
     abstract public function build(): bool;
 
     public function output() {
-        return $this->mpdf->Output();
+        return $this->mpdf->Output("", Destination::STRING_RETURN);
     }
 }

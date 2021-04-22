@@ -11,6 +11,7 @@
 namespace Neo\Exceptions;
 
 class UnknownDocumentException extends BaseException {
+    protected int $status = 400;
     protected $code = "document.unknown";
     protected $message = "Unknown document";
 }

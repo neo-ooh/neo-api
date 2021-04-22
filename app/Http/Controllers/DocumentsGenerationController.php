@@ -30,8 +30,6 @@ class DocumentsGenerationController extends Controller {
         $file = $request->file("file");
         $data = $request->input("data");
 
-        $document = null;
-
         switch ($request->route('document')) {
             case "contract":
                 if ($file === null) {

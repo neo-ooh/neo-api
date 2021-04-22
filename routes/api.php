@@ -23,13 +23,14 @@ use Neo\Http\Controllers\BrandingsFilesController;
 use Neo\Http\Controllers\BroadSignCriteriaController;
 use Neo\Http\Controllers\BroadSignSeparationsController;
 use Neo\Http\Controllers\BroadSignTriggersController;
-use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\CampaignsController;
 use Neo\Http\Controllers\CapabilitiesController;
 use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContainersController;
 use Neo\Http\Controllers\ContentsController;
+use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractsController;
+use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Http\Controllers\CreativesController;
 use Neo\Http\Controllers\CustomersController;
 use Neo\Http\Controllers\DisplayTypesController;
@@ -51,14 +52,12 @@ use Neo\Http\Controllers\RolesActorsController;
 use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
-use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Http\Controllers\StatsController;
 use Neo\Models\AccessToken;
 use Neo\Models\Actor;
 use Neo\Models\BroadSignCriteria;
 use Neo\Models\BroadSignSeparation;
 use Neo\Models\BroadSignTrigger;
-use Neo\Models\Burst;
 use Neo\Models\Campaign;
 use Neo\Models\Client;
 use Neo\Models\Content;
@@ -75,11 +74,9 @@ use Neo\Models\Library;
 use Neo\Models\Location;
 use Neo\Models\NewsBackground;
 use Neo\Models\Param;
-use Neo\Models\Report;
 use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
-use Neo\Models\Screenshot;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,11 +98,11 @@ Route::prefix("v1")->group(function () {
 
     Route::model("accessToken", AccessToken::class);
 
-    Route::   get("access-tokens", AccessTokensController::class ."@index"                )->name("access-tokens.index");
-    Route::  post("access-tokens", AccessTokensController::class ."@store"                )->name("access-tokens.store");
-    Route::   get("access-tokens/{accessToken}", AccessTokensController::class ."@show"   )->name("access-tokens.show");
-    Route::   put("access-tokens/{accessToken}", AccessTokensController::class ."@update" )->name("access-tokens.update");
-    Route::delete("access-tokens/{accessToken}", AccessTokensController::class ."@destroy")->name("access-tokens.destroy2   ");
+    Route::   get("access-tokens", AccessTokensController::class . "@index")->name("access-tokens.index");
+    Route::  post("access-tokens", AccessTokensController::class . "@store")->name("access-tokens.store");
+    Route::   get("access-tokens/{accessToken}", AccessTokensController::class . "@show")->name("access-tokens.show");
+    Route::   put("access-tokens/{accessToken}", AccessTokensController::class . "@update")->name("access-tokens.update");
+    Route::delete("access-tokens/{accessToken}", AccessTokensController::class . "@destroy")->name("access-tokens.destroy2   ");
 
     /*
     |----------------------------------------------------------------------
@@ -408,7 +405,8 @@ Route::prefix("v1")->group(function () {
 
         Route::get("news/backgrounds", NewsBackgroundsController::class . "@index")->name("dynamics.news.backgrounds.index");
         Route::post("news/backgrounds", NewsBackgroundsController::class . "@store")->name("dynamics.news.backgrounds.store");
-        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@destroy")->name("dynamics.news.backgrounds.destroy");
+        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@destroy")
+             ->name("dynamics.news.backgrounds.destroy");
     });
 
 
@@ -481,13 +479,14 @@ Route::prefix("v1")->group(function () {
     Route::model("headline", Headline::class);
     Route::model("headlineMessage", HeadlineMessage::class);
 
-    Route::   get("headlines"           , HeadlinesController::class . "@index"  )->name("headlines.index");
-    Route::   get("headlines/_current"  , HeadlinesController::class . "@current")->name("headlines.current");
-    Route::   get("headlines/{headline}", HeadlinesController::class . "@show"   )->name("headlines.show");
-    Route::  post("headlines"           , HeadlinesController::class . "@store"  )->name("headlines.store");
-    Route::   put("headlines/{headline}", HeadlinesController::class . "@update" )->name("headlines.update");
-    Route::delete("headlines/{headline}", HeadlinesController::class . "@delete" )->name("headlines.destroy");
-    Route::put("headlines/{headline}/messages/{headlineMessage}", HeadlinesController::class . "@updateMessage" )->name("headlines.messages.update");
+    Route::   get("headlines", HeadlinesController::class . "@index")->name("headlines.index");
+    Route::   get("headlines/_current", HeadlinesController::class . "@current")->name("headlines.current");
+    Route::   get("headlines/{headline}", HeadlinesController::class . "@show")->name("headlines.show");
+    Route::  post("headlines", HeadlinesController::class . "@store")->name("headlines.store");
+    Route::   put("headlines/{headline}", HeadlinesController::class . "@update")->name("headlines.update");
+    Route::delete("headlines/{headline}", HeadlinesController::class . "@delete")->name("headlines.destroy");
+    Route::put("headlines/{headline}/messages/{headlineMessage}", HeadlinesController::class . "@updateMessage")
+         ->name("headlines.messages.update");
 
 
     /*
@@ -527,11 +526,11 @@ Route::prefix("v1")->group(function () {
 
     Route::model("location", Location::class);
 
-    Route::get("locations"           , LocationsController::class . "@index"       )->name("locations.index");
-    Route::get("locations/_search"   , LocationsController::class . "@search"      )->name("locations.search");
-    Route::get("locations/_network"  , LocationsController::class . "@allByNetwork")->name("locations.network");
-    Route::get("locations/{location}", LocationsController::class . "@show"        )->name("locations.show");
-    Route::put("locations/{location}", LocationsController::class . "@update"      )->name("locations.update");
+    Route::get("locations", LocationsController::class . "@index")->name("locations.index");
+    Route::get("locations/_search", LocationsController::class . "@search")->name("locations.search");
+    Route::get("locations/_network", LocationsController::class . "@allByNetwork")->name("locations.network");
+    Route::get("locations/{location}", LocationsController::class . "@show")->name("locations.show");
+    Route::put("locations/{location}", LocationsController::class . "@update")->name("locations.update");
 
 
     /*

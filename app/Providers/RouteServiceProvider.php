@@ -28,14 +28,17 @@ class RouteServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot (): void {
+    public function boot(): void {
         $this->configureRateLimiting();
 
         $this->routes(function () {
             // Heartbeat route for up-time monitoring
             Route::get("/_heartbeat", fn() => new Response())->name("heartbeat");
 
-            Route::middleware('default')->group(base_path('routes/api.php'));
+            Route::middleware('default')->group(function () {
+                Route::group([], base_path('routes/api.php'));
+                Route::group([], base_path('routes/documents.php'));
+            });
 
             Route::middleware('guests')->group(base_path('routes/auth.php'));
 
@@ -53,7 +56,7 @@ class RouteServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    protected function configureRateLimiting (): void {
+    protected function configureRateLimiting(): void {
         RateLimiter::for('api',
             function (Request $request) {
                 return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());

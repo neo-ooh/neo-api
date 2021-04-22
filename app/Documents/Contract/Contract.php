@@ -134,10 +134,6 @@ class Contract extends Document {
         return true;
     }
 
-    public function output() {
-        return $this->mpdf->Output();
-    }
-
     private function makeContractFirstPage(): void {
         $this->setLayout("", "legal");
 

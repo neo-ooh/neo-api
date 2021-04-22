@@ -85,4 +85,8 @@ abstract class Document {
      * @return bool A boolean value indicating if the document generation was successful or not
      */
     abstract public function build(): bool;
+
+    public function output() {
+        return $this->mpdf->Output();
+    }
 }

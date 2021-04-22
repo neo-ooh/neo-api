@@ -49,7 +49,7 @@ class RouteServiceProvider extends ServiceProvider {
 
 
             // Routes accessible by human users and access-tokens
-            Route::middleware("auth:neo-loa-4,access-token")->group(function () {
+            Route::middleware("default+ac")->group(function () {
                 Route::group([], base_path('routes/documents.php'));
             });
 

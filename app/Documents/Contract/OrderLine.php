@@ -26,7 +26,7 @@ class OrderLine {
     public string $market;
     public string $market_name;
 
-    public int $nb_weeks;
+    public float $nb_weeks;
     public int $nb_screens;
     public int $quantity;
 
@@ -125,7 +125,7 @@ class OrderLine {
         }
 
         if($this->isBonusUponAvailability() && Str::endsWith(trim($this->description), "(bonus)")) {
-            $this->product = substr($this->description, -7);
+            $this->product = substr($this->description, 0, -7);
         }
     }
 
@@ -143,7 +143,7 @@ class OrderLine {
     }
 
     public function isGuaranteedPurchase(): int {
-        return (float)$this->discount < 100 && !str_ends_with($this->product, "(bonus)");
+        return $this->discount < 100 && !str_ends_with($this->product, "(bonus)");
     }
 
     public function isGuaranteedBonus(): int {

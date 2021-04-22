@@ -14,11 +14,15 @@
                                    network="fitness"
                                    :purchases="$orders"/>
 <table class="detailed-purchases-summary-table" autosize="1">
-    <tr class="headers">
+    <tr class="headers" @if($order->show_investment)
+    class="with-invest"
+            @endif>
         <td @if(!$order->show_investment)
             class="larger"
                 @endif >Total {{ __("order-type-$type") }}</td>
-        <td></td>
+        <td @if(!$order->show_investment)
+            class="larger-2"
+        @endif></td>
         <td>{{ $totalSpots }}</td>
         <td>{{ $totalScreens }}</td>
         <td>-</td>
@@ -33,7 +37,7 @@
                 @endphp
                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
             </td>
-            <td>$ {{ format($totalInvestment) }}</td>
+            <td>$ {{ format(round($totalInvestment)) }}</td>
         @endif
     </tr>
 </table>

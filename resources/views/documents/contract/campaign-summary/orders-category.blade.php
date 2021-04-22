@@ -33,7 +33,7 @@
                 <td>{{ format($networkOrders->sum('impressions')) }}</td>
                 <td>$ {{ format($networkOrders->sum('media_value')) }}</td>
                 @if($order->show_investment)
-                    <td>$ {{ format($networkOrders->sum("net_investment")) }}</td>
+                    <td>$ {{ format(round($networkOrders->sum("net_investment"))) }}</td>
                 @endif
             </tr>
         @endforeach
@@ -47,7 +47,7 @@
             <td>{{ format($orders->sum('impressions')) }}</td>
             <td>$ {{ format($orders->sum('media_value')) }}</td>
             @if($order->show_investment)
-                <td>$ {{ format($orders->sum("net_investment")) }}</td>
+                <td>$ {{ format(round($orders->sum("net_investment"))) }}</td>
             @endif
         </tr>
         </tfoot>

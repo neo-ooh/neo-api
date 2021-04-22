@@ -17,18 +17,19 @@ footer {
 }
 
 .footer-company-branding-logo {
-  width : 30mm;
+  width : 20mm;
 }
 
 .footer-folio {
+  width: 100%;
   text-align: right;
 
   &-current {
-    font-size : 1.802rem;
+    font-size : 1.2rem;
   }
 
   &-group {
-    font-size : 1.125rem;
+    font-size : .75rem;
     color     : $idle-grey;
   }
 }

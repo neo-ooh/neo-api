@@ -6,31 +6,31 @@
     </p>
     <h3>{!! __("contract.conditions-payment-title") !!}</h3>
     <p>
-        {!! __("contract.conditions-cancellation-desc") !!}
+        {!! __("contract.conditions-payment-desc") !!}
     </p>
     <h3>{!! __("contract.conditions-delivery-title") !!}</h3>
     <p>
-        {!! __("contract.conditions-cancellation-desc") !!}
+        {!! __("contract.conditions-delivery-desc") !!}
     </p>
     <h3>{!! __("contract.conditions-force-majeure-title") !!}</h3>
     <p>
-        {!! __("contract.conditions-cancellation-desc") !!}
+        {!! __("contract.conditions-force-majeure-desc") !!}
     </p>
     <h3>{!! __("contract.conditions-guarantee-title") !!}</h3>
     <p>
-        {!! __("contract.conditions-cancellation-desc") !!}
+        {!! __("contract.conditions-guarantee-desc") !!}
     </p>
     <h3>{!! __("contract.conditions-maintenance-title") !!}</h3>
     <p>
-        {!! __("contract.conditions-cancellation-desc") !!}
+        {!! __("contract.conditions-maintenance-desc") !!}
     </p>
     <h3>{!! __("contract.conditions-storage-title") !!}</h3>
     <p>
-        {!! __("contract.conditions-cancellation-desc") !!}
+        {!! __("contract.conditions-storage-desc") !!}
     </p>
     <h3>{!! __("contract.conditions-transfer-title") !!}</h3>
     <p>
-        {!! __("contract.conditions-cancellation-desc") !!}
+        {!! __("contract.conditions-transfer-desc") !!}
     </p>
     <table class="signature">
         <tr>

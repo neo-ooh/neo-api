@@ -33,7 +33,7 @@
             @endif
             <td class="investment">
                 @if($showInvestment)
-                    $ {{ format($guaranteedInvestment) }}
+                    $ {{ format(round($guaranteedInvestment)) }}
                 @else
                     -
                 @endif
@@ -41,7 +41,7 @@
         </tr>
         @if($hasBua)
             <tr>
-                <td>{!! __("contract.totals-bua-total") !!}/td>
+                <td>{!! __("contract.totals-bua-total") !!}</td>
                 @if($size === 'full')
                     <td class="placeholder">-</td>
                     <td class="placeholder">-</td>
@@ -76,7 +76,7 @@
                 @endif
                 <td class="investment">
                     @if($showInvestment)
-                        $ {{ format($grandTotalInvestment) }}
+                        $ {{ format(round($grandTotalInvestment)) }}
                     @else
                         -
                     @endif
@@ -116,7 +116,7 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ format($grandTotalInvestment + $productionCosts) }}</td>
+                $ {{ format(round($grandTotalInvestment + $productionCosts)) }}</td>
         </tr>
     @endif
     @if($size === 'small' && $orders->count() > 0)

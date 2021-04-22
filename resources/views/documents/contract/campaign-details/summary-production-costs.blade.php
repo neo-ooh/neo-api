@@ -14,7 +14,7 @@
         @foreach($production as $p)
             <tr>
                 <td>{{ substr($p->description, strlen("[production]")) }}</td>
-                <td>{{ $p->nb_screens }}</td>
+                <td>{{ $p->quantity }}</td>
                 <td>$ {{ format($p->subtotal)  }}</td>
             </tr>
         @endforeach
@@ -22,7 +22,7 @@
         <tfoot>
             <tr>
                 <td>{!! __("contract.total") !!}</td>
-                <td>{{ $production->sum("nb_screens") }}</td>
+                <td>{{ $production->sum("quantity") }}</td>
                 <td>$ {{ format($production->sum("subtotal")) }}</td>
             </tr>
         </tfoot>

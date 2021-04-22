@@ -41,6 +41,7 @@ h1, h2 {
 
 .contract-home-page {
   h1 {
+    margin-bottom: 0;
     text-align  : center;
     color       : $dark-blue;
     font-size   : 1.5rem;
@@ -347,7 +348,7 @@ h1, h2 {
   margin-bottom   : 5mm;
 
   thead tr th {
-    width            : 24mm;
+    width            : 24.5mm;
     padding          : 2mm 1mm;
 
     color            : #FFFFFF;
@@ -359,7 +360,7 @@ h1, h2 {
     border-left      : 1px solid #FFFFFF;
 
     &:nth-child(1) {
-      width       : 40mm;
+      width       : 39mm;
       border-left : none;
     }
   }
@@ -702,37 +703,50 @@ h1, h2 {
   border-collapse : collapse;
   margin-top      : -5mm;
 
-  tr td {
-    width            : 25mm;
-    padding          : 1.5mm 0;
-
-    background-color : $dark-blue;
-    border-right     : 1px solid #FFFFFF;
-
-    color            : #FFFFFF;
-    font-family      : $font-bold;
-    font-weight      : bold;
-    text-align       : center;
-    font-size        : 10pt;
-    text-transform   : uppercase;
-
-    letter-spacing   : -.025em;
-
-    &:nth-child(1) {
-      width              : 60mm;
-      border-right-width : 2px;
+  tr {
+    td {
+      width            : 24.5mm;
     }
 
-    &.larger {
-      width : 110mm;
+    &.with-invest td {
+      width            : 25mm;
     }
 
-    &:nth-child(2) {
-      width : 100mm;
-    }
+    td {
+      padding          : 1.5mm 0;
 
-    &:nth-child(9), &.last {
-      border-right : none;
+      background-color : $dark-blue;
+      border-right     : 1px solid #FFFFFF;
+
+      color            : #FFFFFF;
+      font-family      : $font-bold;
+      font-weight      : bold;
+      text-align       : center;
+      font-size        : 10pt;
+      text-transform   : uppercase;
+
+      letter-spacing   : -.025em;
+
+      &:nth-child(1) {
+        width              : 60mm;
+        border-right-width : 2px;
+      }
+
+      &:nth-child(2) {
+        width : 90mm;
+      }
+
+      &.larger {
+        width : 108mm;
+      }
+
+      &.larger-2 {
+        width : 98mm;
+      }
+
+      &:nth-child(9), &.last {
+        border-right : none;
+      }
     }
   }
 }

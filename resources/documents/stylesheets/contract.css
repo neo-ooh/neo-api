@@ -66,7 +66,8 @@ h1, h2 {
  * @neo/api - _fonts.scss
  */
 header {
-  margin: -5mm -5mm;
+  margin: -5mm 0;
+  width: 100%;
 }
 header .header-table {
   margin-top: -10mm;
@@ -147,21 +148,23 @@ footer {
 }
 
 .footer-company-branding-logo {
-  width: 30mm;
+  width: 20mm;
 }
 
 .footer-folio {
+  width: 100%;
   text-align: right;
 }
 .footer-folio-current {
-  font-size: 1.802rem;
+  font-size: 1.2rem;
 }
 .footer-folio-group {
-  font-size: 1.125rem;
+  font-size: 0.75rem;
   color: #888888;
 }
 
 .contract-home-page h1 {
+  margin-bottom: 0;
   text-align: center;
   color: #252734;
   font-size: 1.5rem;
@@ -387,7 +390,7 @@ footer {
   margin-bottom: 5mm;
 }
 .summary-purchases-table thead tr th {
-  width: 24mm;
+  width: 24.5mm;
   padding: 2mm 1mm;
   color: #FFFFFF;
   font-family: "poppins-bold";
@@ -397,7 +400,7 @@ footer {
   border-left: 1px solid #FFFFFF;
 }
 .summary-purchases-table thead tr th:nth-child(1) {
-  width: 40mm;
+  width: 39mm;
   border-left: none;
 }
 .summary-purchases-table tbody tr td {
@@ -698,7 +701,12 @@ footer {
   margin-top: -5mm;
 }
 .detailed-purchases-summary-table tr td {
+  width: 24.5mm;
+}
+.detailed-purchases-summary-table tr.with-invest td {
   width: 25mm;
+}
+.detailed-purchases-summary-table tr td {
   padding: 1.5mm 0;
   background-color: #252734;
   border-right: 1px solid #FFFFFF;
@@ -714,11 +722,14 @@ footer {
   width: 60mm;
   border-right-width: 2px;
 }
-.detailed-purchases-summary-table tr td.larger {
-  width: 110mm;
-}
 .detailed-purchases-summary-table tr td:nth-child(2) {
-  width: 100mm;
+  width: 90mm;
+}
+.detailed-purchases-summary-table tr td.larger {
+  width: 108mm;
+}
+.detailed-purchases-summary-table tr td.larger-2 {
+  width: 98mm;
 }
 .detailed-purchases-summary-table tr td:nth-child(9), .detailed-purchases-summary-table tr td.last {
   border-right: none;

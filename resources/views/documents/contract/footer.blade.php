@@ -13,7 +13,7 @@
                 <img class="footer-company-branding-logo"
                      src="{{ resource_path('/logos/fitness.dark@2x.png')  }}" alt="Neo-Fitness logo"/>
             </td>
-            <td class="footer-folio" style="width: {{ $width - 110 }}mm">
+            <td class="footer-folio" style="width: {{ $width - 80 }}mm">
                 <span class="footer-folio-current">{PAGENO}</span>
                 <span class="footer-folio-group">/{nbpg}</span>
             </td>

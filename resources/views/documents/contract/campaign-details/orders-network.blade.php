@@ -5,7 +5,9 @@
     </h2>
     <table class="detailed-purchases-wrapper" autosize="1">
         <thead>
-        <tr><th></th></tr>
+        <tr>
+            <th></th>
+        </tr>
         <tr>
             <th>
                 <table class="detailed-purchases-table">
@@ -82,7 +84,13 @@
             </tr>
             {{-- Loop over each property in the region --}}
             @foreach($regionOrders as $propertiesOrders)
-                @php $isLastProperty = $loop->last; @endphp
+                @php
+                    $isLastProperty = $loop->last;
+                    $cityCutoff = $order->show_investment ? 20 : 30;
+                    $cityName = strlen($propertiesOrders[0]->property_city) > $cityCutoff
+                        ? substr($propertiesOrders[0]->property_city, 0, $cityCutoff - 3) . "..."
+                        : $propertiesOrders[0]->property_city;
+                @endphp
                 <tr>
                     <td>
                         <table class="property-purchases-table">
@@ -92,7 +100,7 @@
                                     {{ $propertiesOrders->first()->property_name }}
                                 </th>
                                 <th class="property-city">
-                                    {{ strlen($propertiesOrders[0]->property_city) > 30 ? substr($propertiesOrders[0]->property_city,0,20)."..." : $propertiesOrders[0]->property_city }}
+                                    {{ $cityName }}
                                 </th>
                                 <th></th>
                                 <th class="border-right"></th>
@@ -132,7 +140,7 @@
                                         <td class="border-right">
                                             {{ $purchase->discount == 0 ? '-' : "{$purchase->discount}%" }}
                                         </td>
-                                        <td>$ {{ format($purchase->net_investment) }}</td>
+                                        <td>$ {{ format(round($purchase->net_investment)) }}</td>
                                     @endif
                                 </tr>
                             @endforeach
@@ -166,7 +174,7 @@
                                     @endphp
                                     {{ (int)floor($regionDiscount) === 0 ? '-' : format($regionDiscount) . "%" }}
                                 </td>
-                                <td>$ {{ format($regionNetInvestment) }}</td>
+                                <td>$ {{ format(round($regionNetInvestment)) }}</td>
                             @endif
                         </tr>
                         @php
@@ -197,7 +205,7 @@
                         <td class="border-right">{{ $totalScreens }}</td>
                         <td class="border-right">-</td>
                         <td class="border-right">{{ format($totalImpressions) }}</td>
-                        <td class="{{ $order->show_investment ? "border-right" : "last" }}" >
+                        <td class="{{ $order->show_investment ? "border-right" : "last" }}">
                             $ {{ format($totalMediaValue) }}
                         </td>
                         @if($order->show_investment)
@@ -207,7 +215,7 @@
                                 @endphp
                                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
                             </td>
-                            <td>$ {{ format($totalNetInvestment) }}</td>
+                            <td>$ {{ format(round($totalNetInvestment)) }}</td>
                         @endif
                     </tr>
                 </table>

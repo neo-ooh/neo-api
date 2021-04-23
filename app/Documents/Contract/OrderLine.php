@@ -15,6 +15,10 @@ use Neo\Documents\Exceptions\MissingColumnException;
 use Neo\Documents\Network;
 
 class OrderLine {
+    const TYPE_GUARANTEED_PURCHASE = 1;
+    const TYPE_GUARANTEED_BONUS = 2;
+    const TYPE_BONUS_UPON_AVAIL = 3;
+
     public string $orderLine;
     public string $description;
     public float $discount;
@@ -49,6 +53,8 @@ class OrderLine {
     public string $property_lat;
     public string $property_lng;
     public string $property_city;
+
+    protected int $type
 
 
     public function __construct(array $record) {
@@ -120,6 +126,9 @@ class OrderLine {
 
         $this->net_investment = $this->subtotal;
 
+        // Set the order type before modifying anything;
+        $this->inferOrderType();
+
         if ($this->isGuaranteedBonus() || $this->isBonusUponAvailability()) {
             $this->net_investment = 0;
         }
@@ -127,6 +136,20 @@ class OrderLine {
         if($this->isBonusUponAvailability() && Str::endsWith(trim($this->description), "(bonus)")) {
             $this->product = substr($this->description, 0, -7);
         }
+    }
+
+    protected function inferOrderType() {
+        if(str_ends_with($this->product, "(bonus)")) {
+            $this->type = static::TYPE_BONUS_UPON_AVAIL;
+            return;
+        }
+
+        if(round($this->discount) === 100) {
+            $this->type = static::TYPE_GUARANTEED_BONUS;
+            return;
+        }
+
+        $this->type = static::TYPE_GUARANTEED_PURCHASE;
     }
 
     public function isNetwork(string $network) {
@@ -143,14 +166,14 @@ class OrderLine {
     }
 
     public function isGuaranteedPurchase(): int {
-        return $this->discount < 100 && !str_ends_with($this->product, "(bonus)");
+        return $this->type === static::TYPE_GUARANTEED_PURCHASE;
     }
 
     public function isGuaranteedBonus(): int {
-        return (int)$this->discount === 100;
+        return $this->type === static::TYPE_GUARANTEED_BONUS;
     }
 
     public function isBonusUponAvailability(): int {
-        return str_ends_with($this->product, "(bonus)");
+        return $this->type === static::TYPE_BONUS_UPON_AVAIL;
     }
 }

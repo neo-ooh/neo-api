@@ -101,7 +101,7 @@ class Order {
         $this->taxes           = $record["amount_tax"];
         $this->total           = $record["amount_total"];
         $this->traffic         = $record["traffic"];
-        $this->show_investment = $record["investment"] === "0";
+        $this->show_investment = $record["investment"] === "True";
 
         $this->orderLines      = new Collection();
         $this->productionLines = new Collection();

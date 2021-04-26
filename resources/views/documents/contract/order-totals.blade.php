@@ -25,7 +25,7 @@
                 <td class="placeholder">-</td>
             @endif
             <td>{{ format($guaranteedImpressions) }}</td>
-            <td>$ {{ format($guaranteedValue) }}</td>
+            <td>{{ formatCurrency($guaranteedValue) }}</td>
             @if($size === 'small' && $showInvestment)
                 <td>
                     {{ round($guaranteedDiscount) === 0 ? '-' : format($guaranteedDiscount) . "%" }}
@@ -33,7 +33,7 @@
             @endif
             <td class="investment">
                 @if($showInvestment)
-                    $ {{ format(round($guaranteedInvestment)) }}
+                    {{ formatCurrency(round($guaranteedInvestment)) }}
                 @else
                     -
                 @endif
@@ -48,13 +48,13 @@
                     <td class="placeholder">-</td>
                 @endif
                 <td>{{ format($buaImpressions) }}</td>
-                <td>$ {{ format($buaValue) }}</td>
+                <td>{{ formatCurrency($buaValue) }}</td>
                 @if($size === 'small' && $showInvestment)
                     <td> 100% </td>
                 @endif
                 <td class="investment">
                     @if($showInvestment)
-                        $ 0
+                        {{ formatCurrency(0) }}
                     @else
                         -
                     @endif
@@ -68,15 +68,15 @@
                     <td class="placeholder">-</td>
                 @endif
                 <td>{{ format($guaranteedImpressions + $buaImpressions) }}</td>
-                <td>$ {{ format($guaranteedValue + $buaValue) }}</td>
+                <td>{{ formatCurrency($guaranteedValue + $buaValue) }}</td>
                 @if($size === 'small' && $showInvestment)
                     <td>
-                        {{ round($potentialDiscount) === 0 ? '-' : format($potentialDiscount) . "%" }}
+                        {{ (int)round($potentialDiscount) === 0 ? '-' : format($potentialDiscount) . "%" }}
                     </td>
                 @endif
                 <td class="investment">
                     @if($showInvestment)
-                        $ {{ format(round($grandTotalInvestment)) }}
+                        {{ formatCurrency(round($grandTotalInvestment)) }}
                     @else
                         -
                     @endif
@@ -98,7 +98,7 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ format($productionCosts) }}
+                $ {{ formatCurrency($productionCosts) }}
             </td>
         </tr>
     @endif
@@ -116,13 +116,13 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ format(round($grandTotalInvestment + $productionCosts)) }}</td>
+                $ {{ formatCurrency(round($grandTotalInvestment + $productionCosts)) }}</td>
         </tr>
     @endif
     @if($size === 'small' && $orders->count() > 0)
         <tr class="cpm">
             <td>CPM:
-                $ {{ format($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000, 2) }}</td>
+                $ {{ formatCurrency($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000, 2) }}</td>
         </tr>
     @endif
     </tbody>

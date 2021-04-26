@@ -18,7 +18,6 @@ class Customer {
     public string $email;
     public string $parent_name;
     public string $account;
-    public string $company;
     public string $reference;
 
     public string $address_street;
@@ -33,7 +32,6 @@ class Customer {
                             "partner_id/parent_name",
                             "partner_id/phone",
                             "partner_id/email",
-                            "company_id/name",
                             "analytic_account_id/display_name",
                             "partner_id/street",
                             "partner_id/city",

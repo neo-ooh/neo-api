@@ -15,6 +15,7 @@ use Neo\Documents\Exceptions\MissingColumnException;
 
 class Order {
     public string $locale;
+    public string $company_name;
     public string $reference;
     public string $date;
     public string $salesperson;
@@ -66,6 +67,7 @@ class Order {
      */
     public function __construct(array $record) {
         $expectedColumns = ["partner_id/lang",
+                            "company_id/name",
                             "name",
                             "date_order",
                             "user_id",
@@ -86,6 +88,7 @@ class Order {
         }
 
         $this->locale            = $record["partner_id/lang"];
+        $this->company_name            = $record["company_id/name"];
         $this->reference         = $record["name"];
         $this->date              = $record["date_order"];
         $this->salesperson       = $record["user_id"];
@@ -147,8 +150,8 @@ class Order {
 
         // Orders totals
         $this->potential_value        = $this->guaranteed_value + $this->bua_value;
-        $this->potential_discount     = ($this->potential_value - $this->total) / $this->potential_value * 100;
         $this->grand_total_investment = $this->guaranteed_investment + $this->bua_investment;
+        $this->potential_discount     = (1 - $this->grand_total_investment / $this->potential_value) * 100;
 
         // Production costs
         $this->production_costs = $this->productionLines->sum("subtotal");

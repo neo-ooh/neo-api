@@ -7,7 +7,6 @@
  * @neo/api - contract.scss
  */
 
-
 @import "colors";
 @import "fonts";
 
@@ -41,11 +40,11 @@ h1, h2 {
 
 .contract-home-page {
   h1 {
-    margin-bottom: 0;
-    text-align  : center;
-    color       : $dark-blue;
-    font-size   : 1.5rem;
-    font-family : $font-regular;
+    margin-bottom : 0;
+    text-align    : center;
+    color         : $dark-blue;
+    font-size     : 1.5rem;
+    font-family   : $font-regular;
   }
 
   h2 {
@@ -76,9 +75,9 @@ h1, h2 {
         tr {
           td {
             &:nth-child(2) {
-              padding-left: 2mm;
-              font-family : $font-bold;
-              color       : $dark-blue;
+              padding-left : 2mm;
+              font-family  : $font-bold;
+              color        : $dark-blue;
             }
           }
         }
@@ -156,7 +155,7 @@ h1, h2 {
       width           : 80mm;
       border-collapse : collapse;
       border          : 1px solid $dark-blue;
-      font-size: 9pt;
+      font-size       : 9pt;
 
       tr {
         td, th {
@@ -226,8 +225,8 @@ h1, h2 {
     border-collapse : collapse;
     border          : 1px solid $dark-blue;
     width           : 200mm;
-    font-size: 9pt;
-    margin-top: 5mm;
+    font-size       : 9pt;
+    margin-top      : 5mm;
 
     tr {
       td, th {
@@ -242,13 +241,13 @@ h1, h2 {
       }
 
       .v-separator, .end-spacing {
-        width: 10mm;
+        width : 10mm;
       }
 
       &.client-top-row, &.neo-top-row {
         td:nth-child(1) {
-          padding: 0 2mm;
-          width : 65mm;
+          padding : 0 2mm;
+          width   : 65mm;
         }
 
         td.date-placeholder {
@@ -256,33 +255,33 @@ h1, h2 {
         }
 
         td.signed-by {
-          width: 16mm;
-          padding: 0 2mm;
+          width   : 16mm;
+          padding : 0 2mm;
         }
 
         td.signature-placeholder {
-          width: 55mm;
-          border-bottom: 1px solid $light-grey;
+          width         : 55mm;
+          border-bottom : 1px solid $light-grey;
         }
       }
 
       &.client-bottom-row, &.neo-bottom-row {
         td.date, td.client-name {
-          text-align: center;
+          text-align : center;
         }
       }
 
       &.client-bottom-row td {
-        border-bottom: 1px solid $dark-blue;
+        border-bottom : 1px solid $dark-blue;
       }
 
       &.client-top-row, &.client-bottom-row {
         .v-separator {
-          border-right: 1px solid $dark-grey;
+          border-right : 1px solid $dark-grey;
         }
 
         .signed-by, .signed-by-spacer, .signature-placeholder, .client-name, .end-spacing {
-          background-color: $ultralight-grey;
+          background-color : $ultralight-grey;
         }
       }
     }
@@ -290,7 +289,7 @@ h1, h2 {
 }
 
 #general-conditions {
-  border-top: 1px solid $ultralight-grey;
+  border-top : 1px solid $ultralight-grey;
 
   h1 {
     text-align  : center;
@@ -307,38 +306,39 @@ h1, h2 {
   }
 
   p {
-    font-size: 9pt;
+    font-size : 9pt;
   }
 
   .signature {
-    margin-top: 20mm;
-    border-collapse: collapse;
-    font-size: 9pt;
+    margin-top      : 20mm;
+    border-collapse : collapse;
+    font-size       : 9pt;
 
     tr {
       td {
         &:nth-child(1) {
-          padding-right: 5mm;
+          padding-right : 5mm;
         }
 
         &.date-placeholder {
-          width: 25mm;
-          border-bottom: 1px solid $idle-grey;
+          width         : 25mm;
+          border-bottom : 1px solid $idle-grey;
         }
 
         &:nth-child(3) {
-          padding: 0 5mm;
+          padding : 0 5mm;
         }
 
         &.signature-placeholder {
-          width: 50mm;
-          border-bottom: 1px solid $idle-grey;
+          width         : 50mm;
+          border-bottom : 1px solid $idle-grey;
         }
       }
     }
+
     .date-placeholder {
-      border-left: 5mm solid $white;
-      border-right: 5mm solid $white;
+      border-left  : 5mm solid $white;
+      border-right : 5mm solid $white;
     }
   }
 }
@@ -430,7 +430,7 @@ h1, h2 {
     width : 25mm;
 
     &:nth-child(1) {
-      width : 60mm;
+      width : 57.5mm;
     }
 
     &.larger {
@@ -439,6 +439,10 @@ h1, h2 {
 
     &:nth-child(2) {
       width : 40mm;
+    }
+
+    &.investment-col {
+      width: 27.5mm;
     }
   }
 
@@ -481,7 +485,7 @@ h1, h2 {
       font-family      : $font-bold;
       font-weight      : bold;
       text-align       : center;
-      font-size        : 10pt;
+      font-size        : 9pt;
       border-right     : 2px solid #FFFFFF;
 
       &:nth-child(11), &.last {
@@ -509,21 +513,21 @@ h1, h2 {
 
       &:nth-child(1) {
         border-right : 2px solid #FFFFFF;
-        width: 60mm;
+        width        : 57.5mm;
       }
 
       &:nth-child(2) {
-        width : 265mm;
+        width : 267.5mm;
       }
     }
 
     &.without-invest {
       td:nth-child(1) {
-        width: 110mm;
+        width : 110mm;
       }
 
       td:nth-child(2) {
-        width: 225mm;
+        width : 225mm;
       }
     }
   }
@@ -705,11 +709,11 @@ h1, h2 {
 
   tr {
     td {
-      width            : 24.5mm;
+      width : 24.5mm;
     }
 
     &.with-invest td {
-      width            : 25mm;
+      width : 25mm;
     }
 
     td {
@@ -728,7 +732,7 @@ h1, h2 {
       letter-spacing   : -.025em;
 
       &:nth-child(1) {
-        width              : 60mm;
+        width              : 57.5mm;
         border-right-width : 2px;
       }
 
@@ -742,6 +746,10 @@ h1, h2 {
 
       &.larger-2 {
         width : 98mm;
+      }
+
+      &.investment-col {
+        width : 27.5mm;
       }
 
       &:nth-child(9), &.last {

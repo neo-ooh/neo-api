@@ -43,8 +43,8 @@
                             <th>
                                 {{ __("contract.table-discount") }}
                             </th>
-                            <th>
-                                {{ __("contract.table-net-investment") }}
+                            <th class="investment-col">
+                                {!! __("contract.table-net-investment") !!}
                             </th>
                         @endif
                     </tr>
@@ -134,13 +134,13 @@
                                     <td class="border-right">{{ $purchase->nb_weeks }}</td>
                                     <td class="border-right">{{ format($purchase->impressions) }}</td>
                                     <td class="{{ $order->show_investment ? "border-right" : "" }}">
-                                        $ {{ format($purchase->media_value) }}
+                                        {{ formatCurrency($purchase->media_value) }}
                                     </td>
                                     @if($order->show_investment)
                                         <td class="border-right">
                                             {{ $purchase->discount == 0 ? '-' : "{$purchase->discount}%" }}
                                         </td>
-                                        <td>$ {{ format(round($purchase->net_investment)) }}</td>
+                                        <td class="investment-col">{{ formatCurrency(round($purchase->net_investment)) }}</td>
                                     @endif
                                 </tr>
                             @endforeach
@@ -165,7 +165,7 @@
                             <td @if($order->show_investment)
                                 class="border-right"
                                     @endif >
-                                $ {{ format($regionMediaValue) }}
+                                {{ formatCurrency($regionMediaValue) }}
                             </td>
                             @if($order->show_investment)
                                 <td class="border-right">
@@ -174,7 +174,7 @@
                                     @endphp
                                     {{ (int)floor($regionDiscount) === 0 ? '-' : format($regionDiscount) . "%" }}
                                 </td>
-                                <td>$ {{ format(round($regionNetInvestment)) }}</td>
+                                <td class="investment-col">{{ formatCurrency(round($regionNetInvestment)) }}</td>
                             @endif
                         </tr>
                         @php
@@ -206,7 +206,7 @@
                         <td class="border-right">-</td>
                         <td class="border-right">{{ format($totalImpressions) }}</td>
                         <td class="{{ $order->show_investment ? "border-right" : "last" }}">
-                            $ {{ format($totalMediaValue) }}
+                            {{ formatCurrency($totalMediaValue) }}
                         </td>
                         @if($order->show_investment)
                             <td class="border-right">
@@ -215,7 +215,7 @@
                                 @endphp
                                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
                             </td>
-                            <td>$ {{ format(round($totalNetInvestment)) }}</td>
+                            <td class="investment-col">{{ formatCurrency(round($totalNetInvestment)) }}</td>
                         @endif
                     </tr>
                 </table>

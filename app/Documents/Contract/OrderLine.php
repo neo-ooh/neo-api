@@ -54,7 +54,7 @@ class OrderLine {
     public string $property_lng;
     public string $property_city;
 
-    protected int $type
+    protected int $type;
 
 
     public function __construct(array $record) {
@@ -144,7 +144,7 @@ class OrderLine {
             return;
         }
 
-        if(round($this->discount) === 100) {
+        if((int)round($this->discount) === 100) {
             $this->type = static::TYPE_GUARANTEED_BONUS;
             return;
         }

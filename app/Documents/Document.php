@@ -10,7 +10,6 @@
 
 namespace Neo\Documents;
 
-use ErrorException;
 use Mpdf\Mpdf;
 use Mpdf\Output\Destination;
 use Neo\Documents\Exceptions\UnknownGenerationException;
@@ -44,21 +43,21 @@ abstract class Document {
         set_time_limit(60);
 
         $this->mpdf = new Mpdf(array_merge([
-            "fontDir" => [resource_path('fonts/')],
-            "fontdata" => [
-                "poppins-bold" => [
-                    "R" => "Poppins-SemiBold.ttf",
-                    "I" => "Poppins-SemiBoldItalic.ttf",
-                    "B" => "Poppins-Bold.ttf",
+            "fontDir"      => [resource_path('fonts/')],
+            "fontdata"     => [
+                "poppins-bold"        => [
+                    "R"  => "Poppins-SemiBold.ttf",
+                    "I"  => "Poppins-SemiBoldItalic.ttf",
+                    "B"  => "Poppins-Bold.ttf",
                     "BI" => "Poppins-BoldItalic.ttf",
                 ],
-                "poppins-regular" => [
-                    "R" => "Poppins-Regular.ttf",
-                    "I" => "Poppins-Italic.ttf",
-                    "B" => "Poppins-Medium.ttf",
+                "poppins-regular"     => [
+                    "R"  => "Poppins-Regular.ttf",
+                    "I"  => "Poppins-Italic.ttf",
+                    "B"  => "Poppins-Medium.ttf",
                     "BI" => "Poppins-MediumItalic.ttf",
                 ],
-                "poppins-light" => [
+                "poppins-light"       => [
                     "R" => "Poppins-Light.ttf",
                     "I" => "Poppins-Italic.ttf",
                 ],
@@ -68,7 +67,7 @@ abstract class Document {
                 ]
             ],
             'default_font' => 'poppins-regular',
-            ], $mpdfConfiguration
+        ], $mpdfConfiguration
         ));
     }
 
@@ -89,5 +88,31 @@ abstract class Document {
 
     public function output() {
         return $this->mpdf->Output("", Destination::STRING_RETURN);
+    }
+
+
+    /*
+     * Useful methods for document building
+     */
+
+    protected string $header_view = "";
+    protected string $footer_view = "";
+
+    protected function setLayout(string $title, $dimensions, $context = []): void {
+        $this->mpdf->SetHTMLHeader(view($this->header_view, [
+            "title"    => $title,
+            ...$context
+        ])->render());
+
+        // Create a new 14" by 14" page
+        $orientation = "P";
+        $this->mpdf->_setPageSize($dimensions, $orientation);
+        $this->mpdf->SetMargins(0, 0, 45);
+        $this->mpdf->AddPage($orientation, "", 1);
+
+        $this->mpdf->SetHTMLFooter(view($this->footer_view, [
+            "width" => is_array($dimensions) ? $dimensions[0]-5 : 210,
+            ...$context
+        ])->render());
     }
 }

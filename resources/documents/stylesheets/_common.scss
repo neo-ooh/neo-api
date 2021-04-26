@@ -1,0 +1,57 @@
+@import "colors";
+@import "fonts";
+
+@page {
+  margin-left : 1mm;
+}
+
+h1, h2 {
+  font-family : $font-bold;
+  text-transform: uppercase;
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+h1.head {
+  margin-bottom : 0;
+  text-align    : center;
+  color         : $dark-blue;
+  font-size     : 1.5rem;
+  font-family   : $font-regular;
+  text-transform: uppercase;
+}
+
+.subtitle.head {
+  margin-top: -3mm;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: .8rem;
+  font-family   : $font-bold;
+}
+
+h2.head {
+  text-transform : uppercase;
+  font-size      : 1.125rem;
+  font-weight    : 500;
+  margin-bottom  : 0;
+}
+
+.shopping {
+  color : $shopping;
+}
+
+.otg {
+  color : $otg;
+}
+
+.fitness {
+  color : $fitness;
+}
+
+@mixin debug-style {
+  border           : 3px solid rgba(255, 0, 0, .75);
+  background-color : rgba(0, 255, 0, .25);
+}
+
+@import "header";
+@import "footer";

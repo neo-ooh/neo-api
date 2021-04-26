@@ -1,0 +1,148 @@
+@import "common";
+
+#summary {
+  margin-top: 5mm;
+}
+
+.summary-network-table {
+  border-collapse : collapse;
+  margin-bottom   : 5mm;
+
+  thead tr th {
+    width            : 24.5mm;
+    padding          : 2mm 1mm;
+
+    color            : #FFFFFF;
+    font-family      : $font-bold;
+    text-align       : center;
+    font-size        : .85em;
+
+    background-color : $dark-blue;
+    border-left      : 1px solid #FFFFFF;
+
+    &:nth-child(1) {
+      width       : 39mm;
+      border-left : none;
+    }
+  }
+
+  tbody tr {
+    td {
+      padding     : 3mm 0;
+
+      color       : #FFFFFF;
+      font-family : $font-bold;
+      text-align  : center;
+      font-size   : .889em;
+
+      border-left : 1px solid #FFFFFF;
+      border-top  : 1px solid #FFFFFF;
+
+
+      &:nth-child(1) {
+        border-left : none;
+      }
+    }
+
+    &.shopping td {
+      background-color : $shopping;
+    }
+
+    &.otg td {
+      background-color : $otg;
+    }
+
+    &.fitness td {
+      background-color : $fitness;
+    }
+  }
+
+  tfoot tr td {
+    padding     : 4mm 0;
+    color       : $dark-blue;
+    font-family : $font-bold;
+    font-weight : bold;
+    text-align  : center;
+    font-size   : .889em;
+  }
+}
+
+.summary-totals-table {
+  border-collapse : collapse;
+
+  thead {
+    tr th {
+      width            : 25mm;
+      padding          : 2mm 0;
+
+      color            : #FFFFFF;
+      text-align       : center;
+      font-family      : $font-bold;
+      font-size        : .889em;
+
+      background-color : $dark-blue;
+      border-bottom    : 1px solid $dark-blue;
+
+      &.placeholder {
+        background-color : transparent;
+      }
+
+      &:nth-child(1) {
+        width : 40mm;
+
+        background-color : #FFFFFF;
+        font-size        : 1.125em;
+        color            : $dark-blue;
+        text-transform   : uppercase;
+      }
+    }
+  }
+
+  tbody tr {
+    td {
+      height        : 12mm;
+
+      text-align    : center;
+      color         : $dark-blue;
+      font-family   : $font-bold;
+      font-weight   : bold;
+      font-size     : .889em;
+
+      border-bottom : 1px solid $idle-grey;
+
+      &:nth-child(1) {
+        border-right : 1px solid $idle-grey;
+      }
+    }
+
+    &:nth-child(odd) td {
+      background-color : $ultralight-grey;
+    }
+
+    &.cpm td {
+      border-bottom : none;
+    }
+
+    &:nth-child(1) td {
+      background-color: lighten($light-blue, 40%);
+    }
+  }
+
+  tfoot tr {
+    td {
+      height        : 12mm;
+
+      text-align    : center;
+      color         : $dark-blue;
+      font-family   : $font-bold;
+      font-weight   : bold;
+      font-size     : .889em;
+
+      background-color: #FFF;
+
+      &:nth-child(1) {
+        border-right : 1px solid $idle-grey;
+      }
+    }
+  }
+}

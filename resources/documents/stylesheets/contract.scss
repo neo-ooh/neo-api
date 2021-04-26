@@ -7,36 +7,7 @@
  * @neo/api - contract.scss
  */
 
-@import "colors";
-@import "fonts";
-
-@page {
-  margin-left : 1mm;
-}
-
-h1, h2 {
-  font-family : $font-bold;
-}
-
-.shopping {
-  color : $shopping;
-}
-
-.otg {
-  color : $otg;
-}
-
-.fitness {
-  color : $fitness;
-}
-
-@mixin debug-style {
-  border           : 3px solid rgba(255, 0, 0, .75);
-  background-color : rgba(0, 255, 0, .25);
-}
-
-@import "header";
-@import "footer";
+@import "common";
 
 .contract-home-page {
   h1 {

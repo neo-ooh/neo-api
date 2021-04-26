@@ -466,13 +466,16 @@ footer {
   width: 25mm;
 }
 .detailed-purchases-table tr td:nth-child(1), .detailed-purchases-table tr th:nth-child(1) {
-  width: 60mm;
+  width: 57.5mm;
 }
 .detailed-purchases-table tr td.larger, .detailed-purchases-table tr th.larger {
   width: 120mm;
 }
 .detailed-purchases-table tr td:nth-child(2), .detailed-purchases-table tr th:nth-child(2) {
   width: 40mm;
+}
+.detailed-purchases-table tr td.investment-col, .detailed-purchases-table tr th.investment-col {
+  width: 27.5mm;
 }
 .detailed-purchases-table tr.without-invest td:nth-child(1), .detailed-purchases-table tr.without-invest th:nth-child(1) {
   width: 110mm;
@@ -487,7 +490,7 @@ footer {
   font-family: "poppins-bold";
   font-weight: bold;
   text-align: center;
-  font-size: 10pt;
+  font-size: 9pt;
   border-right: 2px solid #FFFFFF;
 }
 .detailed-purchases-table tr th:nth-child(11), .detailed-purchases-table tr th.last {
@@ -511,10 +514,10 @@ footer {
 }
 .region-row-table tr td:nth-child(1) {
   border-right: 2px solid #FFFFFF;
-  width: 60mm;
+  width: 57.5mm;
 }
 .region-row-table tr td:nth-child(2) {
-  width: 265mm;
+  width: 267.5mm;
 }
 .region-row-table tr.without-invest td:nth-child(1) {
   width: 110mm;
@@ -531,13 +534,16 @@ footer {
   width: 25mm;
 }
 .property-purchases-table tr td:nth-child(1), .property-purchases-table tr th:nth-child(1) {
-  width: 60mm;
+  width: 57.5mm;
 }
 .property-purchases-table tr td.larger, .property-purchases-table tr th.larger {
   width: 120mm;
 }
 .property-purchases-table tr td:nth-child(2), .property-purchases-table tr th:nth-child(2) {
   width: 40mm;
+}
+.property-purchases-table tr td.investment-col, .property-purchases-table tr th.investment-col {
+  width: 27.5mm;
 }
 .property-purchases-table tr.without-invest td:nth-child(1), .property-purchases-table tr.without-invest th:nth-child(1) {
   width: 110mm;
@@ -610,13 +616,16 @@ footer {
   width: 25mm;
 }
 .region-footer-table tr td:nth-child(1), .region-footer-table tr th:nth-child(1) {
-  width: 60mm;
+  width: 57.5mm;
 }
 .region-footer-table tr td.larger, .region-footer-table tr th.larger {
   width: 120mm;
 }
 .region-footer-table tr td:nth-child(2), .region-footer-table tr th:nth-child(2) {
   width: 40mm;
+}
+.region-footer-table tr td.investment-col, .region-footer-table tr th.investment-col {
+  width: 27.5mm;
 }
 .region-footer-table tr.without-invest td:nth-child(1), .region-footer-table tr.without-invest th:nth-child(1) {
   width: 110mm;
@@ -653,13 +662,16 @@ footer {
   width: 25mm;
 }
 .totals-wrapper tr td:nth-child(1), .totals-wrapper tr th:nth-child(1) {
-  width: 60mm;
+  width: 57.5mm;
 }
 .totals-wrapper tr td.larger, .totals-wrapper tr th.larger {
   width: 120mm;
 }
 .totals-wrapper tr td:nth-child(2), .totals-wrapper tr th:nth-child(2) {
   width: 40mm;
+}
+.totals-wrapper tr td.investment-col, .totals-wrapper tr th.investment-col {
+  width: 27.5mm;
 }
 .totals-wrapper tr.without-invest td:nth-child(1), .totals-wrapper tr.without-invest th:nth-child(1) {
   width: 110mm;
@@ -719,7 +731,7 @@ footer {
   letter-spacing: -0.025em;
 }
 .detailed-purchases-summary-table tr td:nth-child(1) {
-  width: 60mm;
+  width: 57.5mm;
   border-right-width: 2px;
 }
 .detailed-purchases-summary-table tr td:nth-child(2) {
@@ -730,6 +742,9 @@ footer {
 }
 .detailed-purchases-summary-table tr td.larger-2 {
   width: 98mm;
+}
+.detailed-purchases-summary-table tr td.investment-col {
+  width: 27.5mm;
 }
 .detailed-purchases-summary-table tr td:nth-child(9), .detailed-purchases-summary-table tr td.last {
   border-right: none;

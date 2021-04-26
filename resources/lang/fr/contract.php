@@ -4,7 +4,7 @@ return [
     "campaign-summary-title"   => "Campagne Sommaire",
     "campaign-details-title"   => "Campagne Détails",
     "contract-number-title"    => "Numéro de Contrat :number",
-    "first-party-desc"         => "<strong>NEO OOH</strong>, corporation légalement constituée ayant son siège social au : 3700 St-Patrick, local 318, Montréal, Québec, H4E 1A2",
+    "first-party-desc"         => "<strong>:company</strong>, corporation légalement constituée ayant son siège social au : 3700 St-Patrick, local 318, Montréal, Québec, H4E 1A2",
     "first-party-referred-as"  => "Dûment autorisé tel qu’il le déclare : (Ci-après appelé : « <strong>NEO</strong> » )",
     "first-party-title"        => "ENTRE",
     "network-shopping"         => "Neo Shopping",

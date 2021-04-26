@@ -29,7 +29,7 @@
         <td>{{ format($totalImpressions) }}</td>
         <td @if(!$order->show_investment)
             class="last"
-                @endif>$ {{ format($totalValue) }}</td>
+                @endif>{{ formatCurrency($totalValue) }}</td>
         @if($order->show_investment)
             <td>
                 @php
@@ -37,7 +37,7 @@
                 @endphp
                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
             </td>
-            <td>$ {{ format(round($totalInvestment)) }}</td>
+            <td class="investment-col">{{ formatCurrency(round($totalInvestment)) }}</td>
         @endif
     </tr>
 </table>

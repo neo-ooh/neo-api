@@ -5,7 +5,7 @@
             <div class="contract-party-left-column">{!! __("contract.first-party-title") !!}</div>
             <div class="contract-party-right-column">
                 <p class="first-party-name">
-                    {!! __("contract.first-party-desc") !!}
+                    {!! __("contract.first-party-desc", ["company" => $order->company_name]) !!}
                 </p>
                 <table class="party-infos">
                     <tr>

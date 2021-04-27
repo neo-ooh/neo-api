@@ -62,6 +62,9 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::bursts_request,
                 \Neo\Enums\Capability::bursts_quality,
 
+                \Neo\Enums\Capability::contracts_edit,
+                \Neo\Enums\Capability::contracts_manage,
+
                 \Neo\Enums\Capability::documents_generation,
                 \Neo\Enums\Capability::inventory_read,
             ],

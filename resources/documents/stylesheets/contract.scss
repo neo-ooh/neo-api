@@ -9,6 +9,16 @@
 
 @import "common";
 
+
+@page {
+  size: portrait;
+  background-color: #FFFFFF;
+
+  margin-top: 15mm;
+  margin-left : 15mm;
+  margin-right: 15mm;
+}
+
 .contract-home-page {
   h1 {
     margin-bottom : 0;

@@ -5,13 +5,13 @@
     <table class="summary-network-table">
         <thead>
         <tr class="headers">
-            <th>{!! __("pop.table-network") !!}</th>
-            <th>{!! __("pop.table-start-date") !!}</th>
-            <th>{!! __("pop.table-end-date") !!}</th>
-            <th>{!! __("pop.table-contracted-impressions") !!}</th>
-            <th>{!! __("pop.table-received-impressions") !!}</th>
-            <th>{!! __("pop.table-media-value") !!}</th>
-            <th>{!! __("pop.table-net-investment") !!}</th>
+            <th class="network">{!! __("pop.table-network") !!}</th>
+            <th class="start-date">{!! __("pop.table-start-date") !!}</th>
+            <th class="end-date">{!! __("pop.table-end-date") !!}</th>
+            <th class="contracted-impressions">{!! __("pop.table-contracted-impressions") !!}</th>
+            <th class="received-impressions">{!! __("pop.table-received-impressions") !!}</th>
+            <th class="media-value">{!! __("pop.table-media-value") !!}</th>
+            <th class="net-investment">{!! __("pop.table-net-investment") !!}</th>
         </tr>
         </thead>
         <tbody>

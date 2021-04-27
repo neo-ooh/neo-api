@@ -22,9 +22,6 @@
  *
  * @neo/api - _fonts.scss
  */
-@page {
-  margin-left: 1mm;
-}
 h1, h2 {
   font-family: "poppins-bold";
   text-transform: uppercase;
@@ -108,7 +105,6 @@ header .header-table {
   width: 40mm;
 }
 .header-title {
-  width: calc(100% - 150mm);
   text-align: center;
   font-family: "poppins-extra-light";
   font-size: 24pt;
@@ -133,7 +129,7 @@ header .header-table {
 .header-contract-data tr td:nth-child(2) {
   padding: 0.5mm 0 0.5mm 1mm;
 }
-.header-contract-data tr:nth-child(6) td {
+.header-contract-data tr.last td {
   border-bottom: none;
 }
 .header-contract-data-label {
@@ -190,6 +186,13 @@ footer {
   color: #888888;
 }
 
+@page {
+  size: portrait;
+  background-color: #FFFFFF;
+  margin-top: 15mm;
+  margin-left: 15mm;
+  margin-right: 15mm;
+}
 .contract-home-page h1 {
   margin-bottom: 0;
   text-align: center;

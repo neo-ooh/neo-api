@@ -2,6 +2,7 @@
 
 namespace Neo\Documents\POP;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use Mpdf\HTMLParserMode;
@@ -69,13 +70,33 @@ class POP extends Document {
     }
 
     public function build(): bool {
+        App::setLocale($this->contract["locale"]);
+
         // Import styling
         $this->mpdf->WriteHTML(File::get(resource_path('documents/stylesheets/pop.css')), HTMLParserMode::HEADER_CSS);
 
-        // Set the layout
-        $this->setLayout("", "legal");
+        // First, the preface
+        // Build the cover page
+        $this->mpdf->AddPageByArray([
+            "sheet-size" => "Legal-L",
+            "pageselector" => "preface"
+        ]);
+
+        $this->mpdf->WriteHTML(view("documents.pop.coverpage", [
+            "locale" => $this->contract["locale"]
+        ])->render());
+
+        // Build the preface page
+        $this->mpdf->WriteHTML(view("documents.pop.preface", [
+            "contract" => $this->contract,
+            "start_date" => $this->contract["reservations"]->where("type", "!==", "bua")->min("start_date")->format("Y-m-d"),
+            "end_date" => $this->contract["reservations"]->where("type", "!==", "bua")->max("end_date")->format("Y-m-d"),
+        ])->render());
+
 
         // Print the summary page
+        $this->setLayout(__("pop.title"), "Legal-L", ["contract" => $this->contract], "_BLANK");
+
         $this->mpdf->WriteHTML(view("documents.pop.summary-page", [
             "contract" => $this->contract,
             "purchaseReservations" => $this->contract["reservations"]->where("type", "guaranteed"),
@@ -86,5 +107,10 @@ class POP extends Document {
         $this->mpdf->Close();
 
         return true;
+    }
+
+    public function getName(): string {
+        $name = __("pop.title") . " • " . __("pop.subtitle", ["contract" => $this->contract["contract_id"]]);
+        return $name . " • Neo-OOH";
     }
 }

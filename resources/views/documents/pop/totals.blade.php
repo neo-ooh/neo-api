@@ -18,7 +18,7 @@
             <td>{{ formatCurrency($contract["net_investment"]) }}</td>
             <td>{{ formatCurrency($contract["contracted_cpm"]) }}</td>
             <td>{{ format($contract["contracted_impressions"]) }}</td>
-            <td>{{ format($contract["contracted_media_value"]) }}</td>
+            <td>{{ formatCurrency($contract["contracted_media_value"]) }}</td>
         </tr>
         <tr>
             <td></td>

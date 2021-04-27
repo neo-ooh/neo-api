@@ -35,10 +35,30 @@
         <tr>
             <td class="header-company-logo">
                 <img class="header-neo-logo"
-                     src="{{ resource_path('/logos/main.dark.'.$locale.'@2x.png')  }}" alt="Neo-OOH logo"/>
+                     src="{{ resource_path('/logos/main.dark.'.$locale.'.svg')  }}" alt="Neo-OOH logo"/>
             </td>
             <td class="header-title">
                 {{ $title }}
+            </td>
+            <td class="header-contract">
+                <table class="header-contract-data">
+                    <tr>
+                        <td class="header-contract-data-label">{!! __("common.header-contract") !!}</td>
+                        <td class="header-contract-data-value">{{ $contract["contract_id"] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-contract-data-label">{!! __("common.header-advertiser") !!}</td>
+                        <td class="header-contract-data-value">{{ $contract["advertiser"]["name"] }}</td>
+                    </tr>
+                    <tr>
+                        <td class="header-contract-data-label">{!! __("common.header-client") !!}</td>
+                        <td class="header-contract-data-value">{{ $contract["client"]["name"] }}</td>
+                    </tr>
+                    <tr class="last">
+                        <td class="header-contract-data-label">{!! __("common.header-account-executive") !!}</td>
+                        <td class="header-contract-data-value">{{ $contract["executive"] }}</td>
+                    </tr>
+                </table>
             </td>
         </tr>
     </table>

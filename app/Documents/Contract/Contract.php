@@ -140,11 +140,19 @@ class Contract extends Document {
         return true;
     }
 
+    public function getName(): string {
+        $name = $this->documentType === static::TYPE_CONTRACT
+            ? __("contract.contract", ["contract" => $this->order->reference])
+            : __("contract.proposal", ["contract" => $this->order->reference]);
+
+        return $name . " • " . $this->order->company_name;
+    }
+
     private function makeContractFirstPage(): void {
         $this->setLayout("", "legal", [
             "customer" => $this->customer,
-            "order"    => $this->order
-        ]);
+            "order"    => $this->order,
+        ], "BLANK");
 
         $this->mpdf->WriteHTML((new ContractFirstPage($this->order, $this->customer))->render()->render());
     }

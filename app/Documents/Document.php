@@ -86,8 +86,10 @@ abstract class Document {
      */
     abstract public function build(): bool;
 
+    abstract public function getName(): string;
+
     public function output() {
-        return $this->mpdf->Output("", Destination::STRING_RETURN);
+        return $this->mpdf->Output($this->getName(), Destination::STRING_RETURN);
     }
 
 
@@ -98,21 +100,23 @@ abstract class Document {
     protected string $header_view = "";
     protected string $footer_view = "";
 
-    protected function setLayout(string $title, $dimensions, $context = []): void {
-        $this->mpdf->SetHTMLHeader(view($this->header_view, [
+    protected function setLayout(string $title, $dimensions, $context = [], $pageselector = ""): void {
+
+        $this->mpdf->DefHTMLHeaderByName("default_header", view($this->header_view, array_merge([
             "title"    => $title,
-            ...$context
-        ])->render());
+        ], $context))->render());
 
-        // Create a new 14" by 14" page
-        $orientation = "P";
-        $this->mpdf->_setPageSize($dimensions, $orientation);
-        $this->mpdf->SetMargins(0, 0, 45);
-        $this->mpdf->AddPage($orientation, "", 1);
+        $this->mpdf->SetHTMLHeaderByName("default_header");
 
-        $this->mpdf->SetHTMLFooter(view($this->footer_view, [
+        // Add a new page
+        $this->mpdf->AddPageByArray([
+            "orientation" => "P",
+            "sheet-size" => $dimensions,
+            "pageselector" => $pageselector,
+        ]);
+
+        $this->mpdf->SetHTMLFooter(view($this->footer_view, array_merge([
             "width" => is_array($dimensions) ? $dimensions[0]-5 : 210,
-            ...$context
-        ])->render());
+        ], $context))->render());
     }
 }

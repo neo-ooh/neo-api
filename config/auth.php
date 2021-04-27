@@ -66,7 +66,7 @@ return [
         ],
         'access-tokens' => [
             'driver'   => 'access-tokens',
-            'provider' => 'actors',
+            'provider' => 'access_tokens',
             'hash'     => false,
         ],
         'test' => [

@@ -16,4 +16,14 @@ return [
     "network-shopping"    => "Neo Shopping",
     "network-otg"         => "Neo On the Go",
     "network-fitness"     => "Neo Fitness",
+
+    "header-campaign-dates" => "Campaign dates",
+    "header-contract" => "Contract",
+    "header-client" => "Client",
+    "header-customer" => "Customer",
+    "header-advertiser" => "Advertiser",
+    "header-proposal" => "Proposal #",
+    "header-presented-to" => "Presented to",
+    "header-date" => "Date",
+    "header-account-executive" => "Account Executive",
 ];

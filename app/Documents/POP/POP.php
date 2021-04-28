@@ -27,10 +27,16 @@ class POP extends Document {
 
         $this->contract["reservations"] = collect($this->contract["reservations"])
             ->values()
-            ->filter(fn($reservation) => $reservation["show"])
-            ->map(function($reservation) {
+            ->filter(fn($reservation) => $reservation["show"]) // Ignore hidden reservations
+            ->filter(fn($reservation) => !(
+                ($reservation["type"] === "guaranteed" && !$this->contract["show_guaranteed_reservations"]) ||
+                ($reservation["type"] === "bonus" && !$this->contract["show_bonus_reservations"]) ||
+                ($reservation["type"] === "bua" && !$this->contract["show_bua_reservations"])
+            )) // Ignore reservations whose type are hidden
+            ->filter(fn($reservation) => $reservation["type"] !== "" && $reservation["network"] !== "") // Ignore reservations without proper type or network
+            ->map(function ($reservation) {
                 $reservation["start_date"] = Date::make($reservation["start_date"]);
-                $reservation["end_date"] = Date::make($reservation["end_date"]);
+                $reservation["end_date"]   = Date::make($reservation["end_date"]);
                 return $reservation;
             });
 
@@ -39,9 +45,9 @@ class POP extends Document {
         // Calculate contract properties
         $this->contract["guaranteed_impressions"] = $this->contract["networks"]->sum("guaranteed_impressions");
         $this->contract["guaranteed_media_value"] = $this->contract["networks"]->sum("guaranteed_media_value");
-        $this->contract["net_investment"] = $this->contract["networks"]->sum("guaranteed_net_investment");
-        $this->contract["bonus_impressions"] = $this->contract["networks"]->sum("bonus_impressions");
-        $this->contract["bonus_media_value"] = $this->contract["networks"]->sum("bonus_media_value");
+        $this->contract["net_investment"]         = $this->contract["networks"]->sum("guaranteed_net_investment");
+        $this->contract["bonus_impressions"]      = $this->contract["networks"]->sum("bonus_impressions");
+        $this->contract["bonus_media_value"]      = $this->contract["networks"]->sum("bonus_media_value");
 
         $this->contract["contracted_impressions"] = $this->contract["guaranteed_impressions"] + $this->contract["bonus_impressions"];
         $this->contract["contracted_media_value"] = $this->contract["guaranteed_media_value"] + $this->contract["bonus_media_value"];
@@ -49,21 +55,24 @@ class POP extends Document {
         $this->contract["total_received_impressions"] = $this->contract["reservations"]->sum("received_impressions");
 
         $this->contract["contracted_cpm"] = 0;
-        $this->contract["current_cpm"] = 0;
+        $this->contract["current_cpm"]    = 0;
 
         // calculate cpm if possible
-        if($this->contract["contracted_impressions"] !== 0) {
+        if ($this->contract["contracted_impressions"] !== 0) {
             $this->contract["contracted_cpm"] = $this->contract["net_investment"] / $this->contract["contracted_impressions"] * 1000;
         }
 
-        if($this->contract["total_received_impressions"] !== 0) {
+        if ($this->contract["total_received_impressions"] !== 0) {
             $this->contract["current_cpm"] = $this->contract["net_investment"] / $this->contract["total_received_impressions"] * 1000;
 
             // Calculate current media value per network
-            $this->contract["current_guaranteed_value"] = ($this->contract["reservations"]->where("type", "guaranteed")->sum("received_impressions") / 1000) * $this->contract["current_cpm"];
-            $this->contract["current_bonus_value"] = ($this->contract["reservations"]->where("network", "bonus")->sum("received_impressions") / 1000) * $this->contract["current_cpm"];
-            $this->contract["current_bua_value"] = ($this->contract["reservations"]->where("network", "otg")->sum("received_impressions") / 1000) * $this->contract["current_cpm"];
-            $this->contract["current_value"] = $this->contract["current_guaranteed_value"] + $this->contract["current_bonus_value"] + $this->contract["current_bua_value"];
+            $this->contract["current_guaranteed_value"] = ($this->contract["reservations"]->where("type", "guaranteed")
+                                                                                          ->sum("received_impressions") / 1000) * $this->contract["current_cpm"];
+            $this->contract["current_bonus_value"]      = ($this->contract["reservations"]->where("network", "bonus")
+                                                                                          ->sum("received_impressions") / 1000) * $this->contract["current_cpm"];
+            $this->contract["current_bua_value"]        = ($this->contract["reservations"]->where("network", "otg")
+                                                                                          ->sum("received_impressions") / 1000) * $this->contract["current_cpm"];
+            $this->contract["current_value"]            = $this->contract["current_guaranteed_value"] + $this->contract["current_bonus_value"] + $this->contract["current_bua_value"];
         }
 
         return true;
@@ -78,7 +87,7 @@ class POP extends Document {
         // First, the preface
         // Build the cover page
         $this->mpdf->AddPageByArray([
-            "sheet-size" => "Legal-L",
+            "sheet-size"   => "Legal-L",
             "pageselector" => "preface"
         ]);
 
@@ -88,9 +97,9 @@ class POP extends Document {
 
         // Build the preface page
         $this->mpdf->WriteHTML(view("documents.pop.preface", [
-            "contract" => $this->contract,
+            "contract"   => $this->contract,
             "start_date" => $this->contract["reservations"]->where("type", "!==", "bua")->min("start_date")->format("Y-m-d"),
-            "end_date" => $this->contract["reservations"]->where("type", "!==", "bua")->max("end_date")->format("Y-m-d"),
+            "end_date"   => $this->contract["reservations"]->where("type", "!==", "bua")->max("end_date")->format("Y-m-d"),
         ])->render());
 
 
@@ -98,10 +107,10 @@ class POP extends Document {
         $this->setLayout(__("pop.title"), "Legal-L", ["contract" => $this->contract], "_BLANK");
 
         $this->mpdf->WriteHTML(view("documents.pop.summary-page", [
-            "contract" => $this->contract,
+            "contract"             => $this->contract,
             "purchaseReservations" => $this->contract["reservations"]->where("type", "guaranteed"),
-            "bonusReservations" => $this->contract["reservations"]->where("type", "bonus"),
-            "buaReservations" => $this->contract["reservations"]->where("type", "bua")
+            "bonusReservations"    => $this->contract["reservations"]->where("type", "bonus"),
+            "buaReservations"      => $this->contract["reservations"]->where("type", "bua")
         ])->render());
 
         $this->mpdf->Close();

@@ -81,7 +81,7 @@ class ContentsController extends Controller {
             $library = Library::query()->find($request->validated()["library_id"]);
 
             // Check if the new library has enough space available
-            if ($library->content_limit <= $library->contents_count) {
+            if ($library->content_limit > 0 && $library->content_limit <= $library->contents_count) {
                 throw new LibraryStorageFullException();
             }
         }

@@ -17,62 +17,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="/app/Http/Controllers/CreativesController.php">
-          <value>
-            <Attribute>
-              <option name="separator" value=";" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/app/Http/Requests/Creatives/StoreCreativeRequest.php">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/app/Models/ContractBurst.php">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/app/Models/Creative.php">
-          <value>
-            <Attribute>
-              <option name="separator" value=":" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/app/Models/ReportReservation.php">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/database/migrations/2021_04_20_134416_create_contracts_table.php">
-          <value>
-            <Attribute>
-              <option name="separator" value=";" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/database/migrations/2021_04_20_162008_migrate_reports_to_contracts.php">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="/resources/lang/en/contract.php">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
       </map>
     </option>
   </component>

@@ -15,7 +15,7 @@
             <tr>
                 <td>{{ substr($p->description, strlen("[production]")) }}</td>
                 <td>{{ $p->quantity }}</td>
-                <td>$ {{ formatCurrency($p->subtotal)  }}</td>
+                <td>{{ formatCurrency($p->subtotal)  }}</td>
             </tr>
         @endforeach
         </tbody>
@@ -23,7 +23,7 @@
             <tr>
                 <td>{!! __("contract.total") !!}</td>
                 <td>{{ $production->sum("quantity") }}</td>
-                <td>$ {{ formatCurrency($production->sum("subtotal")) }}</td>
+                <td>{{ formatCurrency($production->sum("subtotal")) }}</td>
             </tr>
         </tfoot>
     </table>

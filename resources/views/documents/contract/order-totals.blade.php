@@ -98,7 +98,7 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ formatCurrency($productionCosts) }}
+                {{ formatCurrency($productionCosts) }}
             </td>
         </tr>
     @endif
@@ -116,13 +116,13 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                $ {{ formatCurrency(round($grandTotalInvestment + $productionCosts)) }}</td>
+                {{ formatCurrency(round($grandTotalInvestment + $productionCosts)) }}</td>
         </tr>
     @endif
     @if($size === 'small' && $orders->count() > 0)
         <tr class="cpm">
             <td>CPM:
-                $ {{ formatCurrency($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000, 2) }}</td>
+                {{ formatCurrency($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000, 2) }}</td>
         </tr>
     @endif
     </tbody>

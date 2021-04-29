@@ -49,7 +49,7 @@ class ContractScreenshot extends Model
     public static function boot() {
         parent::boot();
 
-        static::deleting(static function (Screenshot $screenshot) {
+        static::deleting(static function (ContractScreenshot $screenshot) {
             Storage::delete($screenshot->file_path);
         });
     }

@@ -104,22 +104,27 @@ class Creative extends BroadSignModel {
      */
     public static function makeDynamic(string $name, array $attributes) {
         $endpoint = Endpoint::post("/content/v11/add")->multipart()->id();
-        $payload = [
-            [
-                "name" => "metadata",
-                "contents" => json_encode([
-                    "name"      => $name,
-                    "parent_id" => BroadSign::getDefaults()["customer_id"],
-                    "size"      => -1,
-                    "mime"      => "",
-                    "attributes" => http_build_query($attributes, '', '\n')
-                ], JSON_THROW_ON_ERROR),
-            ],
-            [
-                "name" => "file",
-                "contents" => "/void"
-            ]
-        ];
+        $boundary = "__X__BROADSIGN_REQUEST__";
+        $metadata = json_encode([
+                "name"      => $name,
+                "parent_id" => BroadSign::getDefaults()["customer_id"],
+                "size"      => "-1",
+                "mime"      => "",
+                "attributes" => http_build_query($attributes, '', '\n')
+            ], JSON_THROW_ON_ERROR);
+
+        $payload = "
+        
+        
+--$boundary
+Content-Disposition: form-data; name=\"metadata\"
+
+$metadata
+--$boundary
+Content-Disposition: form-data; name=\"file\"
+
+C:\\void
+--$boundary--";
 
         return static::executeCallAndGetResponse($endpoint, $endpoint->path, [], $payload);
     }

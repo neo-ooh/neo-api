@@ -12,6 +12,8 @@ namespace Neo\BroadSign\Models;
 
 use BadMethodCallException;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\MultipartStream;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\JsonEncodingException;
@@ -190,20 +192,37 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
      * @throws BadResponse
      * @throws JsonException
      */
-    protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, array $payload) {
+    protected static function executeCallAndGetResponse(Endpoint $endpoint, string $path, array $headers, $payload) {
 
         /** @var Response $response */
         $request = Http::withoutVerifying()
                         ->withOptions(["cert" => storage_path('broadsign.pem')])
                         ->withHeaders($headers);
 
+        $container = [];
+        $history = Middleware::history($container);
+
+        $stack = HandlerStack::create();
+// Add the history middleware to the handler stack.
+        $stack->push($history);
+
+        $options = ['handler' => $stack, "debug" => true];
+
         if($endpoint->format === "multipart") {
             $boundary = "__X__BROADSIGN_REQUEST__";
-            $request->contentType("multipart/mixed; boundary=$boundary");
-            $payload = new MultipartStream($payload, $boundary);
+            $request->withHeaders(["Content-Type" => "multipart/mixed; boundary=$boundary"]);
+            $options["body"] = $payload;
+        } else {
+            $options["json"] = $payload;
         }
 
-         $response = $request->{$endpoint->method}(config('broadsign.api.url') . $path, $payload);
+        $response = $request->send($endpoint->method, config('broadsign.api.url') . $path, $options);
+
+        foreach ($container as $transaction) {
+            var_dump((string)$transaction['request']->getBody()); // Hello World
+        }
+
+        dd($response->body());
 
         // In case the resource wasn't found (404), return null
         if ($response->status() === 404) {

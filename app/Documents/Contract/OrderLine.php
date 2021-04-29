@@ -90,39 +90,39 @@ class OrderLine {
         }
 
 //        $this->orderLine           = $record["Order Lines"];
-        $this->description         = $record["order_line/name"];
+        $this->description = $record["order_line/name"];
 
-        $this->discount            = (float)($record["order_line/discount"] ?? 0);
-        $this->date_start          = $record["order_line/rental_start"];
-        $this->date_end            = $record["order_line/rental_end"];
-        $this->impressions         = (int)($record["order_line/impression"] ?? 0);
-        $this->traffic             = $record["order_line/traffic"];
-        $this->market              = $record["order_line/market_id"];
-        $this->market_name         = $record["order_line/market_id/name"];
-        $this->nb_weeks            = (float)($record["order_line/nb_weeks"] ?? 0);
-        $this->nb_screens          = (int)($record["order_line/nb_screen"] ?? 0);
-        $this->quantity            = $record["order_line/product_uom_qty"];
+        $this->discount    = (float)($record["order_line/discount"] ?? 0);
+        $this->date_start  = $record["order_line/rental_start"];
+        $this->date_end    = $record["order_line/rental_end"];
+        $this->impressions = (int)($record["order_line/impression"] ?? 0);
+        $this->traffic     = $record["order_line/traffic"];
+        $this->market      = $record["order_line/market_id"];
+        $this->market_name = $record["order_line/market_id/name"];
+        $this->nb_weeks    = (float)($record["order_line/nb_weeks"] ?? 0);
+        $this->nb_screens  = (int)($record["order_line/nb_screen"] ?? 0);
+        $this->quantity    = $record["order_line/product_uom_qty"];
 
-        $this->is_production       = $record["order_line/product_id/production"] === "True";
+        $this->is_production = $record["order_line/product_id/production"] === "True";
 
-        $this->product             = $record["order_line/product_id"];
+        $this->product = $record["order_line/product_id"];
 //        $this->product_category    = $record["order_line/product_id/description"];
         $this->product_description = $record["order_line/product_id/description"];
         $this->product_rental      = $record["order_line/is_product_rentable"] === "True";
         $this->product_type        = $record["order_line/product_type"];
 
-        $this->unit_price          = (float)$record["order_line/price_unit"];
-        $this->subtotal            = (float)$record["order_line/price_subtotal"];
-        $this->price_tax           = (float)$record["order_line/price_tax"];
+        $this->unit_price = (float)$record["order_line/price_unit"];
+        $this->subtotal   = (float)$record["order_line/price_subtotal"];
+        $this->price_tax  = (float)$record["order_line/price_tax"];
 
-        $this->property_type       = $record["order_line/shopping_center_id/center_type"];
+        $this->property_type = $record["order_line/shopping_center_id/center_type"];
 
-        $this->property_name       = $record["order_line/shopping_center_id/name"];
-        $this->property_city       = $record["order_line/shopping_center_id/city"];
-        $this->property_lat        = $record["order_line/shopping_center_id/partner_latitude"];
-        $this->property_lng        = $record["order_line/shopping_center_id/partner_longitude"];
+        $this->property_name = $record["order_line/shopping_center_id/name"];
+        $this->property_city = $record["order_line/shopping_center_id/city"];
+        $this->property_lat  = $record["order_line/shopping_center_id/partner_latitude"];
+        $this->property_lng  = $record["order_line/shopping_center_id/partner_longitude"];
 
-        $this->media_value    = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
+        $this->media_value = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
 
         $this->net_investment = $this->subtotal;
 
@@ -133,18 +133,18 @@ class OrderLine {
             $this->net_investment = 0;
         }
 
-        if($this->isBonusUponAvailability() && Str::endsWith(trim($this->description), "(bonus)")) {
+        if ($this->isBonusUponAvailability() && Str::endsWith(trim($this->description), "(bonus)")) {
             $this->product = substr($this->description, 0, -7);
         }
     }
 
     protected function inferOrderType() {
-        if(str_ends_with($this->product, "(bonus)")) {
+        if (str_ends_with($this->product, "(bonus)")) {
             $this->type = static::TYPE_BONUS_UPON_AVAIL;
             return;
         }
 
-        if((int)round($this->discount) === 100) {
+        if ((int)round($this->discount) === 100) {
             $this->type = static::TYPE_GUARANTEED_BONUS;
             return;
         }

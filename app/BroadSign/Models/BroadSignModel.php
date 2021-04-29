@@ -222,8 +222,6 @@ abstract class BroadSignModel implements JsonSerializable, Arrayable {
             var_dump((string)$transaction['request']->getBody()); // Hello World
         }
 
-        dd($response->body());
-
         // In case the resource wasn't found (404), return null
         if ($response->status() === 404) {
             return null;

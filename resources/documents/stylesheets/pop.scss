@@ -4,11 +4,12 @@
   size             : landscape;
   background-color : #FFFFFF;
 
-  margin-top       : 35mm;
+  margin-top       : 40mm;
   margin-left      : 15mm;
   margin-right     : 15mm;
 
   header           : html_default_header;
+  footer           : html_default_footer;
 }
 
 @page preface {
@@ -20,9 +21,7 @@
   footer           : _blank;
 }
 
-@page preface
-
-:first {
+@page preface :first {
   size             : landscape;
   background-color : $dark-blue;
   margin-top       : 45mm;
@@ -197,6 +196,7 @@
 .summary-totals-table {
   border-collapse : collapse;
   width           : 100%;
+  page-break-inside: avoid;
 
   thead {
     tr th {
@@ -274,4 +274,64 @@
       }
     }
   }
+}
+
+#screenshots {
+  .screenshot-card {
+    page-break-inside: avoid;
+
+    float       : left;
+    width       : 75mm;
+    margin-left : 7.5mm;
+
+    border      : 2px solid $dark-blue;
+    border-radius: 5px;
+
+    &.flush-left {
+      margin-top  : 7.5mm;
+      margin-left : 0;
+    }
+
+    .thumbnail-wrapper {
+      background-color    : $ultralight-grey;
+      padding: 2mm;
+
+      .thumbnail {
+        width               : 71mm;
+        height              : 45mm;
+
+        background-position : center center;
+        background-repeat   : no-repeat;
+        background-size     : contain;
+      }
+    }
+
+    .info {
+      width: 100%;
+      padding: 2.5mm 2mm;
+
+      .location {
+        width: 100%;
+        text-align: center;
+        font-size: .79rem;
+        font-family: $font-bold;
+      }
+
+      .date {
+        margin-top: 1mm;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.screenshot-card-date-icon {
+  margin-right: 1mm;
+  vertical-align: middle;
+}
+
+
+.screenshot-card-date-component {
+  color: $idle-grey;
+  font-size: .79rem;
 }

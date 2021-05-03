@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icons/formats/video-wall</title>
+    <g id="icons/formats/video-wall" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Rectangle" stroke="#2B2C43" stroke-width="4" x="2" y="9.22222222" width="46" height="31.5555556" rx="3"></rect>
+        <rect id="Rectangle-Copy" fill="#00AAF3" x="6" y="17.7407407" width="38" height="4"></rect>
+        <rect id="Rectangle-Copy-2" fill="#00AAF3" x="6" y="28.2592593" width="38" height="4"></rect>
+        <rect id="Rectangle-Copy-4" fill="#00AAF3" x="15.3333333" y="13.222222" width="4" height="23.555556"></rect>
+        <rect id="Rectangle-Copy-5" fill="#00AAF3" x="30.6666667" y="13.222222" width="4" height="23.555556"></rect>
+    </g>
+</svg>

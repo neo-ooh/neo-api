@@ -101,7 +101,6 @@ abstract class Document {
     protected string $footer_view = "";
 
     protected function setLayout(string $title, $dimensions, $context = [], $pageselector = ""): void {
-
         $this->mpdf->DefHTMLHeaderByName("default_header", view($this->header_view, array_merge([
             "title"    => $title,
         ], $context))->render());
@@ -114,9 +113,12 @@ abstract class Document {
             "sheet-size" => $dimensions,
             "pageselector" => $pageselector,
         ]);
-
-        $this->mpdf->SetHTMLFooter(view($this->footer_view, array_merge([
+        $this->mpdf->DefHTMLFooterByName("default_footer", view($this->footer_view, array_merge([
             "width" => is_array($dimensions) ? $dimensions[0]-5 : 210,
         ], $context))->render());
+
+
+
+        $this->mpdf->SetHTMLFooterByName("default_footer");
     }
 }

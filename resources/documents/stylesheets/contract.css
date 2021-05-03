@@ -165,17 +165,20 @@ header .header-table {
  * @neo/api - _fonts.scss
  */
 footer {
-  position: absolute;
-  left: 10mm;
-  bottom: 10mm;
+  width: 100%;
+}
+footer .footer-table {
+  width: 100%;
 }
 
-.footer-company-branding-logo {
+.footer-logo {
+  width: 20mm;
+}
+.footer-logo .footer-company-branding-logo {
   width: 20mm;
 }
 
 .footer-folio {
-  width: 100%;
   text-align: right;
 }
 .footer-folio-current {
@@ -192,6 +195,8 @@ footer {
   margin-top: 15mm;
   margin-left: 15mm;
   margin-right: 15mm;
+  header: html_default_header;
+  footer: html_default_footer;
 }
 .contract-home-page h1 {
   margin-bottom: 0;

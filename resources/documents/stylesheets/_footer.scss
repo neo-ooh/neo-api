@@ -11,18 +11,23 @@
 @import "fonts";
 
 footer {
-  position: absolute;
-  left: 10mm;
-  bottom: 10mm;
+  width : 100%;
+
+  .footer-table {
+    width : 100%;
+  }
 }
 
-.footer-company-branding-logo {
+.footer-logo {
   width : 20mm;
+
+  .footer-company-branding-logo {
+    width : 20mm;
+  }
 }
 
 .footer-folio {
-  width: 100%;
-  text-align: right;
+  text-align : right;
 
   &-current {
     font-size : 1.2rem;

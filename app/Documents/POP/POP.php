@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use Mpdf\HTMLParserMode;
 use Neo\Documents\Document;
+use Neo\Models\ContractScreenshot;
 
 class POP extends Document {
     protected array $contract;
@@ -31,6 +32,11 @@ class POP extends Document {
             ->map(function($reservation) {
                 $reservation["start_date"] = Date::make($reservation["start_date"]);
                 $reservation["end_date"] = Date::make($reservation["end_date"]);
+
+                if($reservation["type"] === "guaranteed" || $reservation["type"] === "bonus") {
+                    $reservation["received_impressions"] = round($reservation["received_impressions"] * $this->contract[$reservation["type"] . "_reservations_impressions_factor"]);
+                }
+
                 return $reservation;
             });
 
@@ -66,6 +72,9 @@ class POP extends Document {
             $this->contract["current_value"] = $this->contract["current_guaranteed_value"] + $this->contract["current_bonus_value"] + $this->contract["current_bua_value"];
         }
 
+        // Map the screenshots Ids to their model counterpart
+        $this->contract["screenshots"] = collect($this->contract["screenshots"])->map(fn($id) => ContractScreenshot::find($id)->load("burst", "burst.location"));
+
         return true;
     }
 
@@ -95,7 +104,7 @@ class POP extends Document {
 
 
         // Print the summary page
-        $this->setLayout(__("pop.title"), "Legal-L", ["contract" => $this->contract], "_BLANK");
+        $this->setLayout(__("pop.title"), "Legal-L", ["contract" => $this->contract], "BLANK");
 
         $this->mpdf->WriteHTML(view("documents.pop.summary-page", [
             "contract" => $this->contract,
@@ -103,6 +112,13 @@ class POP extends Document {
             "bonusReservations" => $this->contract["reservations"]->where("type", "bonus"),
             "buaReservations" => $this->contract["reservations"]->where("type", "bua")
         ])->render());
+
+        // If we have screenshots, display them
+        if(count($this->contract["screenshots"]) > 0) {
+            $this->mpdf->WriteHTML(view("documents.pop.screenshots", [
+                "screenshots" => $this->contract["screenshots"]
+            ]));
+        }
 
         $this->mpdf->Close();
 

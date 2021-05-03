@@ -157,17 +157,20 @@ header .header-table {
  * @neo/api - _fonts.scss
  */
 footer {
-  position: absolute;
-  left: 10mm;
-  bottom: 10mm;
+  width: 100%;
+}
+footer .footer-table {
+  width: 100%;
 }
 
-.footer-company-branding-logo {
+.footer-logo {
+  width: 20mm;
+}
+.footer-logo .footer-company-branding-logo {
   width: 20mm;
 }
 
 .footer-folio {
-  width: 100%;
   text-align: right;
 }
 .footer-folio-current {
@@ -181,10 +184,11 @@ footer {
 @page {
   size: landscape;
   background-color: #FFFFFF;
-  margin-top: 35mm;
+  margin-top: 40mm;
   margin-left: 15mm;
   margin-right: 15mm;
   header: html_default_header;
+  footer: html_default_footer;
 }
 @page preface {
   size: landscape;
@@ -193,9 +197,7 @@ footer {
   header: _blank;
   footer: _blank;
 }
-@page preface
-
-:first {
+@page preface :first {
   size: landscape;
   background-color: #252734;
   margin-top: 45mm;
@@ -326,6 +328,7 @@ footer {
 .summary-totals-table {
   border-collapse: collapse;
   width: 100%;
+  page-break-inside: avoid;
 }
 .summary-totals-table thead tr th {
   width: 42.5mm;
@@ -380,6 +383,54 @@ footer {
 }
 .summary-totals-table tfoot tr td:nth-child(1) {
   border-right: 1px solid #888888;
+}
+
+#screenshots .screenshot-card {
+  page-break-inside: avoid;
+  float: left;
+  width: 75mm;
+  margin-left: 7.5mm;
+  border: 2px solid #252734;
+  border-radius: 5px;
+}
+#screenshots .screenshot-card.flush-left {
+  margin-top: 7.5mm;
+  margin-left: 0;
+}
+#screenshots .screenshot-card .thumbnail-wrapper {
+  background-color: #EEEEEE;
+  padding: 2mm;
+}
+#screenshots .screenshot-card .thumbnail-wrapper .thumbnail {
+  width: 71mm;
+  height: 45mm;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+#screenshots .screenshot-card .info {
+  width: 100%;
+  padding: 2.5mm 2mm;
+}
+#screenshots .screenshot-card .info .location {
+  width: 100%;
+  text-align: center;
+  font-size: 0.79rem;
+  font-family: "poppins-bold";
+}
+#screenshots .screenshot-card .info .date {
+  margin-top: 1mm;
+  text-align: center;
+}
+
+.screenshot-card-date-icon {
+  margin-right: 1mm;
+  vertical-align: middle;
+}
+
+.screenshot-card-date-component {
+  color: #888888;
+  font-size: 0.79rem;
 }
 
 /*# sourceMappingURL=pop.css.map */

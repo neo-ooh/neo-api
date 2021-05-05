@@ -52,8 +52,13 @@ class POP extends Document {
 
         $this->contract["total_received_impressions"] = $this->contract["reservations"]->sum("received_impressions");
 
-        $this->contract["contracted_cpm"] = 0;
-        $this->contract["current_cpm"]    = 0;
+        $this->contract["contracted_cpm"]           = 0;
+        $this->contract["current_cpm"]              = 0;
+        $this->contract["current_guaranteed_value"] = 0;
+        $this->contract["current_bonus_value"]      = 0;
+        $this->contract["current_bua_value"]        = 0;
+        $this->contract["current_value"]            = 0;
+
 
         // calculate cpm if possible
         if ($this->contract["contracted_impressions"] > 0) {

@@ -59,11 +59,11 @@ class POP extends Document {
 
         // calculate cpm if possible
         if($this->contract["contracted_impressions"] > 0) {
-            $this->contract["contracted_cpm"] = $this->contract["net_investment"] / ($this->contract["contracted_impressions"] * 1000);
+            $this->contract["contracted_cpm"] = $this->contract["net_investment"] / ($this->contract["contracted_impressions"] / 1000);
         }
 
         if($this->contract["total_received_impressions"] > 0) {
-            $this->contract["current_cpm"] = $this->contract["net_investment"] / ($this->contract["total_received_impressions"] * 1000);
+            $this->contract["current_cpm"] = $this->contract["net_investment"] / ($this->contract["total_received_impressions"] / 1000);
 
             $imprValue = $this->contract["contracted_media_value"] / $this->contract["contracted_impressions"];
 

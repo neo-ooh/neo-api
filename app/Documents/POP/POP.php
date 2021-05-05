@@ -29,6 +29,7 @@ class POP extends Document {
         $this->contract["reservations"] = collect($this->contract["reservations"])
             ->values()
             ->filter(fn($reservation) => $reservation["show"])
+            ->filter(fn($reservation) => $this->contract["show_".$reservation["type"]."_reservations"])
             ->map(function ($reservation) {
                 $reservation["start_date"] = Date::make($reservation["start_date"]);
                 $reservation["end_date"]   = Date::make($reservation["end_date"]);

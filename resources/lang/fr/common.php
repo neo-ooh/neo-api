@@ -21,9 +21,9 @@ return [
     "header-contract" => "Contrat",
     "header-client" => "Client",
     "header-customer" => "Client",
-    "header-advertiser" => "Diffuseur",
+    "header-advertiser" => "Annonceur",
     "header-proposal" => "Proposition #",
     "header-presented-to" => "Présenté à",
     "header-date" => "Date",
-    "header-account-executive" => "Compte Exécutif",
+    "header-account-executive" => "Chef de comptes",
 ];

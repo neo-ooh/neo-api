@@ -363,6 +363,9 @@ footer .footer-table {
 .summary-totals-table tbody tr td:nth-child(1) {
   border-right: 1px solid #888888;
 }
+.summary-totals-table tbody tr td.media-value {
+  color: #888888;
+}
 .summary-totals-table tbody tr:nth-child(odd) td {
   background-color: #EEEEEE;
 }
@@ -383,6 +386,9 @@ footer .footer-table {
 }
 .summary-totals-table tfoot tr td:nth-child(1) {
   border-right: 1px solid #888888;
+}
+.summary-totals-table tfoot tr td.media-value {
+  color: #888888;
 }
 
 #screenshots .screenshot-card {

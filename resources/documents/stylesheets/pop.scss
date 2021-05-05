@@ -242,6 +242,10 @@
       &:nth-child(1) {
         border-right : 1px solid $idle-grey;
       }
+
+      &.media-value {
+        color: $idle-grey;
+      }
     }
 
     &:nth-child(odd) td {
@@ -271,6 +275,10 @@
 
       &:nth-child(1) {
         border-right : 1px solid $idle-grey;
+      }
+
+      &.media-value {
+        color: $idle-grey;
       }
     }
   }

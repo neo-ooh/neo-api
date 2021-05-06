@@ -23,6 +23,10 @@ class ContractsController extends Controller {
         $contract->save();
 
         RefreshContractsReservations::dispatch($contract->id);
+
+        return app()->call(static::class, [
+            "with" => ["reservations", "bursts"]
+        ]);
     }
 
     public function show(ShowContractRequest $request, Contract $contract) {

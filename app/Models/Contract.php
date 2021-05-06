@@ -20,6 +20,7 @@ use Neo\BroadSign\Models\ReservablePerformance;
  *           the contract inside Connect)
  * @property integer                         $client_id
  * @property integer                         $owner_id
+ * @property array                           $data
  * @property integer                         $created_at
  * @property integer                         $updated_at
  *

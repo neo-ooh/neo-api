@@ -21,6 +21,10 @@
             <td>{{ __("common.header-account-executive") }}</td>
             <td>{{ $contract["executive"] }}</td>
         </tr>
+        <tr>
+            <td>{{ __("common.header-presented-to") }}</td>
+            <td>{{ $contract["presented_to"] }}</td>
+        </tr>
     </table>
 </section>
 <div class="neo-logo-footer">

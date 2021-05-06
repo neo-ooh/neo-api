@@ -23,8 +23,6 @@ class ContractsController extends Controller {
         $contract->save();
 
         RefreshContractsReservations::dispatch($contract->id);
-
-        return
     }
 
     public function show(ShowContractRequest $request, Contract $contract) {

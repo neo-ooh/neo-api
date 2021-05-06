@@ -24,7 +24,7 @@ class ContractsController extends Controller {
 
         RefreshContractsReservations::dispatch($contract->id);
 
-        return app()->call(static::class, [
+        return app()->call(static::class . '@show', [
             "with" => ["reservations", "bursts"]
         ]);
     }

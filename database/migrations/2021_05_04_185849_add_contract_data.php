@@ -18,7 +18,7 @@ class AddContractData extends Migration
             $table->string("executive_account_name", 64)->after("advertiser_name");
             $table->timestamp("start_date")->useCurrent()->after("executive_account_name");
             $table->timestamp("end_date")->useCurrent()->after("start_date");
-            $table->json("data")->after("end_date");
+            $table->json("data")->nullable()->after("end_date");
         });
     }
 

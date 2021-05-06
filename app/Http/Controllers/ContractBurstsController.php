@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\ContractBurst;
+use Neo\Models\ContractScreenshot;
 use Neo\Models\Screenshot;
 
 class ContractBurstsController extends Controller {
@@ -58,7 +59,7 @@ class ContractBurstsController extends Controller {
     }
 
     public function receive(Request $request, ContractBurst $burst): void {
-        $screenshot           = new Screenshot();
+        $screenshot           = new ContractScreenshot();
         $screenshot->burst_id = $burst->id;
         $screenshot->save();
 

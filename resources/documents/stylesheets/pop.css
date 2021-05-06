@@ -1,0 +1,442 @@
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _fonts.scss
+ */
+h1, h2 {
+  font-family: "poppins-bold";
+  text-transform: uppercase;
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+h1.head {
+  margin-bottom: 0;
+  text-align: center;
+  color: #252734;
+  font-size: 1.5rem;
+  font-family: "poppins-regular";
+  text-transform: uppercase;
+}
+
+.subtitle.head {
+  margin-top: -3mm;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-family: "poppins-bold";
+}
+
+h2.head {
+  text-transform: uppercase;
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.shopping {
+  color: #3e9cca;
+}
+
+.otg {
+  color: #e5782c;
+}
+
+.fitness {
+  color: #d63641;
+}
+
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _header.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _fonts.scss
+ */
+header {
+  margin: -5mm 0;
+  width: 100%;
+}
+header .header-table {
+  margin-top: -10mm;
+  width: 100%;
+}
+
+.header-company-logo {
+  width: 40mm;
+}
+.header-neo-logo {
+  width: 40mm;
+}
+.header-title {
+  text-align: center;
+  font-family: "poppins-extra-light";
+  font-size: 24pt;
+}
+.header-contract {
+  width: 70mm;
+}
+.header-contract-data {
+  width: 80mm;
+  border-collapse: collapse;
+}
+.header-contract-data tr td {
+  border-bottom: 1px solid #000000;
+  font-size: 8pt;
+}
+.header-contract-data tr td:nth-child(1) {
+  border-right: 1px solid #000000;
+  padding: 0.5mm 1mm 0.5mm 0;
+  white-space: nowrap;
+  width: 35mm;
+}
+.header-contract-data tr td:nth-child(2) {
+  padding: 0.5mm 0 0.5mm 1mm;
+}
+.header-contract-data tr.last td {
+  border-bottom: none;
+}
+.header-contract-data-label {
+  font-family: "poppins-light";
+  text-align: right;
+}
+.header-contract-data-value {
+  font-weight: bold;
+}
+
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _footer.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _fonts.scss
+ */
+footer {
+  width: 100%;
+}
+footer .footer-table {
+  width: 100%;
+}
+
+.footer-logo {
+  width: 20mm;
+}
+.footer-logo .footer-company-branding-logo {
+  width: 20mm;
+}
+
+.footer-folio {
+  text-align: right;
+}
+.footer-folio-current {
+  font-size: 1.2rem;
+}
+.footer-folio-group {
+  font-size: 0.75rem;
+  color: #888888;
+}
+
+@page {
+  size: landscape;
+  background-color: #FFFFFF;
+  margin-top: 40mm;
+  margin-left: 15mm;
+  margin-right: 15mm;
+  header: html_default_header;
+  footer: html_default_footer;
+}
+@page preface {
+  size: landscape;
+  background-color: #FFFFFF;
+  margin-top: 70mm;
+  header: _blank;
+  footer: _blank;
+}
+@page preface :first {
+  size: landscape;
+  background-color: #252734;
+  margin-top: 45mm;
+  header: _blank;
+  footer: _blank;
+}
+#cover-page .jumbo-logo {
+  text-align: center;
+}
+#cover-page .jumbo-logo .jumbo-neo-logo {
+  width: 110mm;
+}
+#cover-page .divider {
+  width: 75mm;
+  height: 1mm;
+  margin-top: 15mm;
+  margin-bottom: 12mm;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #FFFFFF;
+}
+#cover-page .document-title {
+  color: #FFFFFF;
+  font-size: 3rem;
+  font-family: "poppins-light";
+  text-align: center;
+  margin: 0;
+}
+#cover-page .document-subtitle {
+  margin-top: -5mm;
+  color: #FFFFFF;
+  font-size: 2rem;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+}
+
+@page preface {
+  size: landscape;
+  background-color: #FFFFFF;
+  margin-top: 70mm;
+}
+#preface .preface-table {
+  margin: 0 auto 0;
+  width: 180mm;
+  border-collapse: collapse;
+}
+#preface .preface-table tr td {
+  border-bottom: 1px solid #000000;
+  font-size: 1.4rem;
+}
+#preface .preface-table tr td:nth-child(1) {
+  text-align: right;
+  border-right: 1px solid #000000;
+  padding: 3mm 5mm 3mm 0;
+  white-space: nowrap;
+  width: 90mm;
+}
+#preface .preface-table tr td:nth-child(2) {
+  padding: 3mm 0 3mm 5mm;
+  width: 90mm;
+  font-family: "poppins-bold";
+  color: #252734;
+}
+#preface .preface-table tr:nth-child(6) td {
+  border-bottom: none;
+}
+
+.neo-logo-footer {
+  position: absolute;
+  bottom: 10mm;
+  left: 10mm;
+  width: 35mm;
+}
+#summary {
+  margin-top: 5mm;
+}
+
+.summary-network-table {
+  border-collapse: collapse;
+  margin-bottom: 5mm;
+  width: 100%;
+}
+.summary-network-table thead tr th {
+  padding: 2mm 1mm;
+  width: 42.5mm;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  text-align: center;
+  font-size: 0.85em;
+  background-color: #252734;
+  border-left: 1px solid #FFFFFF;
+}
+.summary-network-table thead tr th.network {
+  width: 70mm;
+  border-left: none;
+}
+.summary-network-table tbody tr td {
+  padding: 3mm 0;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  text-align: center;
+  font-size: 0.889em;
+  border-left: 1px solid #FFFFFF;
+  border-top: 1px solid #FFFFFF;
+}
+.summary-network-table tbody tr td:nth-child(1) {
+  border-left: none;
+}
+.summary-network-table tbody tr.shopping td {
+  background-color: #3e9cca;
+}
+.summary-network-table tbody tr.otg td {
+  background-color: #e5782c;
+}
+.summary-network-table tbody tr.fitness td {
+  background-color: #d63641;
+}
+.summary-network-table tfoot tr td {
+  padding: 4mm 0;
+  color: #252734;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.889em;
+}
+
+.summary-totals-table {
+  border-collapse: collapse;
+  width: 100%;
+  page-break-inside: avoid;
+}
+.summary-totals-table thead tr th {
+  width: 42.5mm;
+  height: 12mm;
+  padding: 2mm 0;
+  color: #FFFFFF;
+  text-align: center;
+  font-family: "poppins-bold";
+  font-size: 0.889em;
+  background-color: #252734;
+  border-bottom: 1px solid #252734;
+}
+.summary-totals-table thead tr th.placeholder {
+  background-color: transparent;
+}
+.summary-totals-table thead tr th:nth-child(1) {
+  width: 70mm;
+  background-color: #FFFFFF;
+  font-size: 1.125em;
+  color: #252734;
+  text-transform: uppercase;
+}
+.summary-totals-table tbody tr td {
+  height: 12mm;
+  text-align: center;
+  color: #252734;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  font-size: 0.889em;
+  border-bottom: 1px solid #888888;
+}
+.summary-totals-table tbody tr td:nth-child(1) {
+  border-right: 1px solid #888888;
+}
+.summary-totals-table tbody tr td.media-value {
+  color: #888888;
+}
+.summary-totals-table tbody tr:nth-child(odd) td {
+  background-color: #EEEEEE;
+}
+.summary-totals-table tbody tr.cpm td {
+  border-bottom: none;
+}
+.summary-totals-table tbody tr:nth-child(1) td {
+  background-color: #deeef6;
+}
+.summary-totals-table tfoot tr td {
+  height: 12mm;
+  text-align: center;
+  color: #252734;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  font-size: 0.889em;
+  background-color: #FFFFFF;
+}
+.summary-totals-table tfoot tr td:nth-child(1) {
+  border-right: 1px solid #888888;
+}
+.summary-totals-table tfoot tr td.media-value {
+  color: #888888;
+}
+
+#screenshots .screenshot-card {
+  page-break-inside: avoid;
+  float: left;
+  width: 75mm;
+  margin-left: 7.5mm;
+  border: 2px solid #252734;
+  border-radius: 5px;
+}
+#screenshots .screenshot-card.flush-left {
+  margin-top: 7.5mm;
+  margin-left: 0;
+}
+#screenshots .screenshot-card .thumbnail-wrapper {
+  background-color: #EEEEEE;
+  padding: 2mm;
+}
+#screenshots .screenshot-card .thumbnail-wrapper .thumbnail {
+  width: 71mm;
+  height: 45mm;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+#screenshots .screenshot-card .info {
+  width: 100%;
+  padding: 2.5mm 2mm;
+}
+#screenshots .screenshot-card .info .location {
+  width: 100%;
+  text-align: center;
+  font-size: 0.79rem;
+  font-family: "poppins-bold";
+}
+#screenshots .screenshot-card .info .date {
+  margin-top: 1mm;
+  text-align: center;
+}
+
+.screenshot-card-date-icon {
+  margin-right: 1mm;
+  vertical-align: middle;
+}
+
+.screenshot-card-date-component {
+  color: #888888;
+  font-size: 0.79rem;
+}
+
+/*# sourceMappingURL=pop.css.map */

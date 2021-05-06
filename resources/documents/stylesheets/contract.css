@@ -22,11 +22,35 @@
  *
  * @neo/api - _fonts.scss
  */
-@page {
-  margin-left: 1mm;
-}
 h1, h2 {
   font-family: "poppins-bold";
+  text-transform: uppercase;
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+h1.head {
+  margin-bottom: 0;
+  text-align: center;
+  color: #252734;
+  font-size: 1.5rem;
+  font-family: "poppins-regular";
+  text-transform: uppercase;
+}
+
+.subtitle.head {
+  margin-top: -3mm;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-family: "poppins-bold";
+}
+
+h2.head {
+  text-transform: uppercase;
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-bottom: 0;
 }
 
 .shopping {
@@ -81,7 +105,6 @@ header .header-table {
   width: 40mm;
 }
 .header-title {
-  width: calc(100% - 150mm);
   text-align: center;
   font-family: "poppins-extra-light";
   font-size: 24pt;
@@ -106,7 +129,7 @@ header .header-table {
 .header-contract-data tr td:nth-child(2) {
   padding: 0.5mm 0 0.5mm 1mm;
 }
-.header-contract-data tr:nth-child(6) td {
+.header-contract-data tr.last td {
   border-bottom: none;
 }
 .header-contract-data-label {
@@ -142,17 +165,20 @@ header .header-table {
  * @neo/api - _fonts.scss
  */
 footer {
-  position: absolute;
-  left: 10mm;
-  bottom: 10mm;
+  width: 100%;
+}
+footer .footer-table {
+  width: 100%;
 }
 
-.footer-company-branding-logo {
+.footer-logo {
+  width: 20mm;
+}
+.footer-logo .footer-company-branding-logo {
   width: 20mm;
 }
 
 .footer-folio {
-  width: 100%;
   text-align: right;
 }
 .footer-folio-current {
@@ -163,6 +189,15 @@ footer {
   color: #888888;
 }
 
+@page {
+  size: portrait;
+  background-color: #FFFFFF;
+  margin-top: 15mm;
+  margin-left: 15mm;
+  margin-right: 15mm;
+  header: html_default_header;
+  footer: html_default_footer;
+}
 .contract-home-page h1 {
   margin-bottom: 0;
   text-align: center;

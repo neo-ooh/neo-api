@@ -10,8 +10,8 @@
 
 namespace Neo\Documents;
 
-use ErrorException;
 use Mpdf\Mpdf;
+use Mpdf\Output\Destination;
 use Neo\Documents\Exceptions\UnknownGenerationException;
 
 abstract class Document {
@@ -43,21 +43,21 @@ abstract class Document {
         set_time_limit(60);
 
         $this->mpdf = new Mpdf(array_merge([
-            "fontDir" => [resource_path('fonts/')],
-            "fontdata" => [
-                "poppins-bold" => [
-                    "R" => "Poppins-SemiBold.ttf",
-                    "I" => "Poppins-SemiBoldItalic.ttf",
-                    "B" => "Poppins-Bold.ttf",
+            "fontDir"      => [resource_path('fonts/')],
+            "fontdata"     => [
+                "poppins-bold"        => [
+                    "R"  => "Poppins-SemiBold.ttf",
+                    "I"  => "Poppins-SemiBoldItalic.ttf",
+                    "B"  => "Poppins-Bold.ttf",
                     "BI" => "Poppins-BoldItalic.ttf",
                 ],
-                "poppins-regular" => [
-                    "R" => "Poppins-Regular.ttf",
-                    "I" => "Poppins-Italic.ttf",
-                    "B" => "Poppins-Medium.ttf",
+                "poppins-regular"     => [
+                    "R"  => "Poppins-Regular.ttf",
+                    "I"  => "Poppins-Italic.ttf",
+                    "B"  => "Poppins-Medium.ttf",
                     "BI" => "Poppins-MediumItalic.ttf",
                 ],
-                "poppins-light" => [
+                "poppins-light"       => [
                     "R" => "Poppins-Light.ttf",
                     "I" => "Poppins-Italic.ttf",
                 ],
@@ -67,7 +67,7 @@ abstract class Document {
                 ]
             ],
             'default_font' => 'poppins-regular',
-            ], $mpdfConfiguration
+        ], $mpdfConfiguration
         ));
     }
 
@@ -85,4 +85,40 @@ abstract class Document {
      * @return bool A boolean value indicating if the document generation was successful or not
      */
     abstract public function build(): bool;
+
+    abstract public function getName(): string;
+
+    public function output() {
+        return $this->mpdf->Output($this->getName(), Destination::STRING_RETURN);
+    }
+
+
+    /*
+     * Useful methods for document building
+     */
+
+    protected string $header_view = "";
+    protected string $footer_view = "";
+
+    protected function setLayout(string $title, $dimensions, $context = [], $pageselector = ""): void {
+        $this->mpdf->DefHTMLHeaderByName("default_header", view($this->header_view, array_merge([
+            "title"    => $title,
+        ], $context))->render());
+
+        $this->mpdf->SetHTMLHeaderByName("default_header");
+
+        // Add a new page
+        $this->mpdf->AddPageByArray([
+            "orientation" => "P",
+            "sheet-size" => $dimensions,
+            "pageselector" => $pageselector,
+        ]);
+        $this->mpdf->DefHTMLFooterByName("default_footer", view($this->footer_view, array_merge([
+            "width" => is_array($dimensions) ? $dimensions[0]-5 : 210,
+        ], $context))->render());
+
+
+
+        $this->mpdf->SetHTMLFooterByName("default_footer");
+    }
 }

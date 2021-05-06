@@ -39,6 +39,11 @@ class LibrariesController extends Controller
         return new Response($libraries);
     }
 
+    public function query()
+    {
+        // TODO: #CONNECT-72
+    }
+
     /**
      * @param StoreLibraryRequest $request
      *

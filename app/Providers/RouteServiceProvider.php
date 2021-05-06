@@ -28,23 +28,38 @@ class RouteServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot (): void {
+    public function boot(): void {
         $this->configureRateLimiting();
 
         $this->routes(function () {
-            // Heartbeat route for up-time monitoring
-            Route::get("/_heartbeat", fn() => new Response())->name("heartbeat");
-
-            Route::middleware('default')->group(base_path('routes/api.php'));
-
+            // Guests and not fully authenticated routes
             Route::middleware('guests')->group(base_path('routes/auth.php'));
 
-            Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
 
+            // Authenticated human users routes
+            Route::middleware('default')->group(function () {
+                Route::group([], base_path('routes/api.php'));
+            });
+
+
+            // Routes accessible only by access tokens
             Route::middleware('access-tokens')->group(function () {
-                Route::group([], base_path('routes/documents.php'));
                 Route::group([], base_path('routes/dynamics.php'));
             });
+
+
+            // Routes accessible by human users and access-tokens
+            Route::middleware("default+ac")->group(function () {
+                Route::group([], base_path('routes/documents.php'));
+            });
+
+
+            // Broadsign only routes
+            Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
+
+
+            // Heartbeat route for up-time monitoring
+            Route::get("/_heartbeat", fn() => new Response())->name("heartbeat");
         });
     }
 
@@ -53,7 +68,7 @@ class RouteServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    protected function configureRateLimiting (): void {
+    protected function configureRateLimiting(): void {
         RateLimiter::for('api',
             function (Request $request) {
                 return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());

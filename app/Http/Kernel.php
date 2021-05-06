@@ -80,6 +80,11 @@ class Kernel extends HttpKernel {
             'auth:access-tokens',
             SubstituteBindings::class,
         ],
+        'default+ac'   => [
+            'throttle:api',
+            'auth:neo-loa-4,access-tokens',
+            SubstituteBindings::class,
+        ],
     ];
 
     /**

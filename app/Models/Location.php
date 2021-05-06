@@ -114,12 +114,8 @@ class Location extends SecuredModel {
 
     /* Reports */
 
-    public function bursts(): HasManyThrough {
-        return $this->hasManyThrough(Burst::class, Player::class);
-    }
-
-    public function reports(): HasManyThrough {
-        return $this->hasManyThrough(Report::class, Player::class);
+    public function bursts(): HasMany {
+        return $this->hasMany(ContractBurst::class, "location_id");
     }
 
 

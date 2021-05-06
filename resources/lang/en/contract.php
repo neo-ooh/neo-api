@@ -1,6 +1,8 @@
 <?php
 
 return [
+    "contract" => "Contract :contract",
+    "proposal" => "Proposal :contract",
     "campaign-summary-title"   => "Campaign Summary",
     "campaign-details-title"   => "Campaign Details",
     "contract-number-title"    => "Contract Number :number",

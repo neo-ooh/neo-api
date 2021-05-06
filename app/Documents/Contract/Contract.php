@@ -33,6 +33,9 @@ class Contract extends Document {
     protected Customer $customer;
     protected Order $order;
 
+    protected string $header_view = "documents.contract.header";
+    protected string $footer_view = "documents.contract.footer";
+
     public function __construct() {
         parent::__construct([
             "margin_bottom" => 25,
@@ -110,7 +113,10 @@ class Contract extends Document {
 
         if ($this->order->orderLines->count() === 0) {
             // Production Contract
-            $this->setLayout("Production Details", [355, 355]);
+            $this->setLayout("Production Details", [355, 355], [
+                "customer" => $this->customer,
+                "order"    => $this->order
+            ]);
 
             $this->renderDetailedSummary(false);
 
@@ -134,24 +140,37 @@ class Contract extends Document {
         return true;
     }
 
-    public function output() {
-        return $this->mpdf->Output();
+    public function getName(): string {
+        $name = $this->documentType === static::TYPE_CONTRACT
+            ? __("contract.contract", ["contract" => $this->order->reference])
+            : __("contract.proposal", ["contract" => $this->order->reference]);
+
+        return $name . " • " . $this->order->company_name;
     }
 
     private function makeContractFirstPage(): void {
-        $this->setLayout("", "legal");
+        $this->setLayout("", "legal", [
+            "customer" => $this->customer,
+            "order"    => $this->order,
+        ], "BLANK");
 
         $this->mpdf->WriteHTML((new ContractFirstPage($this->order, $this->customer))->render()->render());
     }
 
     private function makeGeneralConditions(): void {
-        $this->setLayout("", "legal");
+        $this->setLayout("", "legal", [
+            "customer" => $this->customer,
+            "order"    => $this->order
+        ]);
 
         $this->mpdf->WriteHTML((new GeneralConditions())->render()->render());
     }
 
     private function makeCampaignSummary(): void {
-        $this->setLayout(__("contract.campaign-summary-title"), "legal");
+        $this->setLayout(__("contract.campaign-summary-title"), "legal", [
+            "customer" => $this->customer,
+            "order"    => $this->order
+        ]);
 
         $campaignSummaryOrders = view('documents.contract.campaign-summary.orders', [
             "purchaseOrders" => $this->order->getPurchasedOrders(),
@@ -166,7 +185,10 @@ class Contract extends Document {
     }
 
     private function makeCampaignDetails(): void {
-        $this->setLayout(__("contract.campaign-details-title"), [355, 355]);
+        $this->setLayout(__("contract.campaign-details-title"), [355, 355], [
+            "customer" => $this->customer,
+            "order"    => $this->order
+        ]);
 
         foreach (["purchase", "bonus", "bua"] as $orderType) {
             $orders = new DetailedOrdersCategory($orderType, $this->order, $this->order->orderLines);
@@ -181,23 +203,5 @@ class Contract extends Document {
     private function renderDetailedSummary(bool $renderDisclaimers) {
         $campaignDetailedSummary = new DetailedSummary($this->order, $this->order->orderLines, $this->order->productionLines, $renderDisclaimers);
         $this->mpdf->WriteHTML($campaignDetailedSummary->render()->render());
-    }
-
-    protected function setLayout(string $title, $dimensions) {
-        $this->mpdf->SetHTMLHeader(view('documents.contract.header', [
-            "title"    => $title,
-            "customer" => $this->customer,
-            "order"    => $this->order
-        ])->render());
-
-        // Create a new 14" by 14" page
-        $orientation = "P";
-        $this->mpdf->_setPageSize($dimensions, $orientation);
-        $this->mpdf->SetMargins(0, 0, 45);
-        $this->mpdf->AddPage($orientation, "", 1);
-
-        $this->mpdf->SetHTMLFooter(view('documents.contract.footer', [
-            "width" => is_array($dimensions) ? $dimensions[0]-5 : 210
-        ])->render());
     }
 }

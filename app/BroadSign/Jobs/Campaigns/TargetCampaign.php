@@ -11,6 +11,7 @@
 namespace Neo\BroadSign\Jobs\Campaigns;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -28,10 +29,12 @@ use Neo\Models\Campaign;
  *
  * @package Neo\Jobs
  */
-class TargetCampaign extends BroadSignJob {
+class TargetCampaign extends BroadSignJob implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected int $campaignID;
+
+    public int $uniqueId;
 
 
     /**
@@ -43,6 +46,7 @@ class TargetCampaign extends BroadSignJob {
      */
     public function __construct(int $campaignID) {
         $this->campaignID = $campaignID;
+        $this->uniqueId = $campaignID;
     }
 
     /**

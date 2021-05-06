@@ -28,6 +28,8 @@ use BenSampo\Enum\Enum;
  * @method static self locations_edit()
  * @method static self bursts_request()
  * @method static self bursts_quality()
+ * @method static self contracts_edit()
+ * @method static self contracts_manage()
  * @method static self reports_create()
  * @method static self reports_edit()
  * @method static self inventory_read()
@@ -79,11 +81,16 @@ final class Capability extends Enum {
     // Customers
     public const customers_edit = "customers.edit";
 
-    // Reports & bursts
+    // Contracts
     public const reports_create = "reports.create";
     public const reports_edit = "reports.edit";
+
+    public const contracts_edit = "contracts.edit";
+    public const contracts_manage = "contracts.manage";
+
     public const bursts_request = "bursts.request";
     public const bursts_quality = "bursts.quality";
+
 
     public const inventory_read = "inventory.read";
 

@@ -10,6 +10,9 @@
 
 namespace Neo\BroadSign\Models;
 
+use Facade\FlareClient\Http\Exceptions\BadResponse;
+use JsonException;
+use Neo\BroadSign\BroadSign;
 use Neo\BroadSign\Endpoint;
 
 /**
@@ -68,7 +71,6 @@ class Creative extends BroadSignModel {
     protected static function actions(): array {
         return [
             "all"                 => Endpoint::get("/content/v11")->multiple(),
-            "create"              => Endpoint::post("/content/v11/add")->multipart()->id(),
             "import_from_url"     => Endpoint::post("/content/v11/import_from_url")->id(),
             "get"                 => Endpoint::get("/content/v11/{id}"),
             "update"              => Endpoint::put("/content/v11"),
@@ -76,6 +78,12 @@ class Creative extends BroadSignModel {
         ];
     }
 
+    /**
+     * Imports the creative in BroadSign.
+     * The `attributes`, `name`, `parent_id` and `url` are required to be set to use thi smethod
+     * The `url` attribute must be a valid URL to the creative file.
+     * @return mixed
+     */
     public function import() {
         return static::import_from_url([
             "attributes" => $this->attributes,
@@ -83,6 +91,42 @@ class Creative extends BroadSignModel {
             "parent_id" => $this->parent_id,
             "url" => $this->url,
         ]);
+    }
+
+    /**
+     * Creates a new dynamic creative (External Ad-Copy) in broadsign and returns its ID.
+     *
+     * @param string $name
+     * @param array  $attributes
+     * @return array|BroadSignModel|null
+     * @throws BadResponse
+     * @throws JsonException
+     */
+    public static function makeDynamic(string $name, array $attributes) {
+        $endpoint = Endpoint::post("/content/v11/add")->multipart()->id();
+        $boundary = "__X__BROADSIGN_REQUEST__";
+        $metadata = json_encode([
+                "name"      => $name,
+                "parent_id" => BroadSign::getDefaults()["customer_id"],
+                "size"      => "-1",
+                "mime"      => "",
+                "attributes" => http_build_query($attributes, '', '\n')
+            ], JSON_THROW_ON_ERROR);
+
+        $payload = "
+        
+        
+--$boundary
+Content-Disposition: form-data; name=\"metadata\"
+
+$metadata
+--$boundary
+Content-Disposition: form-data; name=\"file\"
+
+C:\\void
+--$boundary--";
+
+        return static::executeCallAndGetResponse($endpoint, $endpoint->path, [], $payload);
     }
 
     /**

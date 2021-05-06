@@ -62,7 +62,7 @@
                         <td class="header-contract-data-label">{!! __("contract.header-date") !!}</td>
                         <td class="header-contract-data-value">{{ $order->date }}</td>
                     </tr>
-                    <tr>
+                    <tr class="last">
                         <td class="header-contract-data-label">{!! __("contract.header-account-executive") !!}</td>
                         <td class="header-contract-data-value">{{ $order->salesperson }}</td>
                     </tr>

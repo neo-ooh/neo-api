@@ -30,7 +30,7 @@ header {
   }
 
   &-title {
-    width       : calc(100% - 150mm);
+    //width       : calc(100% - 150mm);
     text-align  : center;
     font-family : $font-extra-light;
     font-size   : 24pt;
@@ -62,7 +62,7 @@ header {
         }
       }
 
-      &:nth-child(6) td {
+      &.last td {
         border-bottom : none;
       }
     }

@@ -192,7 +192,7 @@ footer .footer-table {
 @page {
   size: portrait;
   background-color: #FFFFFF;
-  margin-top: 15mm;
+  margin-top: 40mm;
   margin-left: 15mm;
   margin-right: 15mm;
   header: html_default_header;

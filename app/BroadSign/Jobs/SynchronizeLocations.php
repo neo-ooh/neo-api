@@ -67,7 +67,7 @@ class SynchronizeLocations implements ShouldQueue {
                 $address = trim($matches[4]);
                 $city = trim($matches[3]);
             } else {
-                Log::info("No address available for Display Unit $bslocation->name");
+//                Log::info("No address available for Display Unit $bslocation->name");
                 $address = "--";
                 $city = "--";
             }

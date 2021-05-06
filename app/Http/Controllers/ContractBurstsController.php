@@ -43,6 +43,7 @@ class ContractBurstsController extends Controller {
             $burst->location_id   = $locationId;
             $burst->actor_id      = Auth::id();
             $burst->start_at      = $startAt;
+            $burst->status        = "PENDING";
             $burst->scale_percent = $scalePercent;
             $burst->duration_ms   = $duration;
             $burst->frequency_ms  = $frequency;

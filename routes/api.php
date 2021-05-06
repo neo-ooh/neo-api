@@ -379,6 +379,7 @@ Route::prefix("v1")->group(function () {
 
     Route::model("contract", Contract::class);
 
+    Route::post("contracts", ContractsController::class . "@store")->name("contracts.store");
     Route::get("contracts/{contract}", ContractsController::class . "@show")->name("contracts.show");
 
 

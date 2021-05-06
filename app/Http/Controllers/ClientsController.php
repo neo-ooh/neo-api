@@ -14,19 +14,19 @@ use Neo\Models\Client;
 class ClientsController extends Controller {
     public function index(ListClientsRequest $request) {
         // If the user has the contracts_manage capability, we list all clients, otherwise we limit results to clients with a contract associated to the current user.
-        if (Gate::allows(Capability::contracts_manage)) {
-            $query = Client::query();
-        } else {
-            $query = Client::query()->whereHas("contracts", function (Builder $query) {
-                $query->where("owner_id", "=", Auth::id());
-            });
-        }
+        $query = Client::query();
 
         /** @var array $with */
-        $with    = $request->input("with", []);
+        $with = $request->input("with", []);
 
-        $clients = $query->when(in_array("contracts", $with, true), function(Builder $query) {
+        $clients = $query->when(in_array("contracts", $with, true), function (Builder $query) {
             $query->with("contracts");
+
+            if (!Gate::allows(Capability::contracts_manage)) {
+                $query->whereHas("contracts", function (Builder $query) {
+                    $query->where("owner_id", "=", Auth::id());
+                });
+            }
         })
                          ->orderBy("name")
                          ->get();

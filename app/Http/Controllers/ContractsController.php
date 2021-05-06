@@ -3,14 +3,28 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
+use Neo\Jobs\RefreshContractsReservations;
 use Neo\Models\Client;
 use Neo\Models\Contract;
 
 class ContractsController extends Controller {
     public function store(StoreContractRequest $request) {
         $contractId = $request->input("contract_id");
+        $clientId = $request->input("client_id");
+
+        $contract = new Contract([
+            "contract_id" => strtoupper($contractId),
+            "client_id" => $clientId,
+            "owner_id" => Auth::id(),
+        ]);
+        $contract->save();
+
+        RefreshContractsReservations::dispatch($contract->id);
+
+        return
     }
 
     public function show(ShowContractRequest $request, Contract $contract) {

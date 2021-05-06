@@ -18,7 +18,7 @@ class ContractsController extends Controller {
             "contract_id"   => strtoupper($contractId),
             "client_id"     => $clientId,
             "owner_id"      => Auth::id(),
-            "contract_data" => []
+            "data" => []
         ]);
         $contract->save();
 

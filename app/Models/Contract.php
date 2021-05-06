@@ -40,7 +40,7 @@ class Contract extends Model {
     ];
 
     protected $casts = [
-        "contract_data" => "array",
+        "data" => "array",
     ];
 
     /*

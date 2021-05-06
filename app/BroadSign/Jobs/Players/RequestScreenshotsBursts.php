@@ -68,7 +68,7 @@ class RequestScreenshotsBursts extends BroadSignJob {
         }
 
         $bsPlayer = new BSPlayer(["id" => $player->broadsign_player_id]);
-        $bsPlayer->requestScreenshotsBurst($burst->id, $burst->scale_factor, $burst->duration_ms, $burst->frequency_ms);
+        $bsPlayer->requestScreenshotsBurst($burst->id, $burst->scale_percent, $burst->duration_ms, $burst->frequency_ms);
 
         // Update the start date to reflect the effective start date.
         $burst->start_at = Date::now();

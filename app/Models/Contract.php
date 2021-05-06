@@ -39,6 +39,10 @@ class Contract extends Model {
         "owner_id"
     ];
 
+    protected $casts = [
+        "contract_data" => "array",
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations

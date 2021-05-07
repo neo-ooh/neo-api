@@ -32,7 +32,7 @@ class OrderLine {
 
     public float $nb_weeks;
     public int $nb_screens;
-    public int $quantity;
+    public float $quantity;
 
     public bool $is_production;
     public string $product;

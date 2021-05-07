@@ -22,7 +22,7 @@ class ContractsController extends Controller {
         ]);
         $contract->save();
 
-        RefreshContractsReservations::dispatch($contract->id);
+        RefreshContractsReservations::dispatch();
 
         return new Response($contract, 201);
     }

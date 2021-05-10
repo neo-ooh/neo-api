@@ -3,6 +3,7 @@
 return [
     "contract" => "Contract :contract",
     "proposal" => "Proposal :contract",
+    "production-details" => "Production Details",
     "campaign-summary-title"   => "Campaign Summary",
     "campaign-details-title"   => "Campaign Details",
     "contract-number-title"    => "Contract Number :number",

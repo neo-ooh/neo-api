@@ -155,11 +155,12 @@ class Order {
             $this->potential_value        = $this->guaranteed_value + $this->bua_value;
             $this->grand_total_investment = $this->guaranteed_investment + $this->bua_investment;
             $this->potential_discount     = (1 - $this->grand_total_investment / $this->potential_value) * 100;
+            $this->cpm              = $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
         }
 
         // Production costs
         $this->production_costs = $this->productionLines->sum("subtotal");
+
         $this->net_investment   = $this->grand_total_investment + $this->production_costs;
-        $this->cpm              = $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
     }
 }

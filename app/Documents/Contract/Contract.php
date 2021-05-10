@@ -113,11 +113,12 @@ class Contract extends Document {
 
         if ($this->order->orderLines->count() === 0) {
             // Production Contract
-            $this->setLayout("Production Details", [355, 355], [
+            $this->setLayout(__("contract.production-details"), [355, 355], [
                 "customer" => $this->customer,
                 "order"    => $this->order
             ]);
 
+            $this->mpdf->SetMargins(15, 15, 40);
             $this->renderDetailedSummary(false);
 
             return true;

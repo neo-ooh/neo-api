@@ -132,10 +132,12 @@ class Order {
     public function computeValues(): void {
         // Guaranteed orders
         $guaranteedOrders                   = $this->getGuaranteedOrders();
-        $this->guaranteed_impressions_count = $guaranteedOrders->sum("impressions");
-        $this->guaranteed_value             = $guaranteedOrders->sum("media_value");
-        $this->guaranteed_investment        = $guaranteedOrders->sum("net_investment");
-        $this->guaranteed_discount          = ($this->guaranteed_value - $this->guaranteed_investment) / $this->guaranteed_value * 100;
+        if($guaranteedOrders->isNotEmpty()) {
+            $this->guaranteed_impressions_count = $guaranteedOrders->sum("impressions");
+            $this->guaranteed_value             = $guaranteedOrders->sum("media_value");
+            $this->guaranteed_investment        = $guaranteedOrders->sum("net_investment");
+            $this->guaranteed_discount          = ($this->guaranteed_value - $this->guaranteed_investment) / $this->guaranteed_value * 100;
+        }
 
         // Bua orders
         $buaOrders     = $this->getBuaOrders();
@@ -148,10 +150,12 @@ class Order {
             $this->bua_investment        = $buaOrders->sum("net_investment");
         }
 
-        // Orders totals
-        $this->potential_value        = $this->guaranteed_value + $this->bua_value;
-        $this->grand_total_investment = $this->guaranteed_investment + $this->bua_investment;
-        $this->potential_discount     = (1 - $this->grand_total_investment / $this->potential_value) * 100;
+        if($guaranteedOrders->isNotEmpty() || $this->has_bua) {
+            // Orders totals
+            $this->potential_value        = $this->guaranteed_value + $this->bua_value;
+            $this->grand_total_investment = $this->guaranteed_investment + $this->bua_investment;
+            $this->potential_discount     = (1 - $this->grand_total_investment / $this->potential_value) * 100;
+        }
 
         // Production costs
         $this->production_costs = $this->productionLines->sum("subtotal");

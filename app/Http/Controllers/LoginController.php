@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Neo\Http\Requests\Auth\LoginRequest;
 use Neo\Models\Actor;
+use Neo\Models\SignupToken;
 
 class LoginController extends Controller {
     /**
@@ -42,7 +43,7 @@ class LoginController extends Controller {
         }
 
         // Make sure the user is allowed to log in
-        if ($actor->password === '' || $actor->is_group || $actor->is_locked || !is_null($actor->signupToken)) {
+        if ($actor->password === null || $actor->is_group || $actor->is_locked) {
             // This user cannot be used directly.
             return new Response([
                 "code"    => "auth.not-allowed",
@@ -62,6 +63,9 @@ class LoginController extends Controller {
         }
 
         // Credentials are ok.
+
+        // Cleanup
+        SignupToken::query()->where("actor_id", "=", $actor->id)->delete();
 
         // Log the user inside Laravel
         Auth::setUser($actor);

@@ -29,7 +29,7 @@ class POP extends Document {
         $this->contract["reservations"] = collect($this->contract["reservations"])
             ->values()
             ->filter(fn($reservation) => $reservation["show"])
-            ->filter(fn($reservation) => $this->contract["show_".$reservation["type"]."_reservations"])
+            ->filter(fn($reservation) => $this->contract["show_" . $reservation["type"] . "_reservations"])
             ->map(function ($reservation) {
                 $reservation["start_date"] = Date::make($reservation["start_date"]);
                 $reservation["end_date"]   = Date::make($reservation["end_date"]);
@@ -47,6 +47,8 @@ class POP extends Document {
         $this->contract["net_investment"]         = $this->contract["networks"]->sum("guaranteed_net_investment");
         $this->contract["bonus_impressions"]      = $this->contract["networks"]->sum("bonus_impressions");
         $this->contract["bonus_media_value"]      = $this->contract["networks"]->sum("bonus_media_value");
+        $this->contract["bua_impressions"]        = $this->contract["networks"]->sum("bua_impressions");
+        $this->contract["bua_media_value"]        = $this->contract["networks"]->sum("bua_media_value");
 
         $this->contract["contracted_impressions"] = $this->contract["guaranteed_impressions"] + $this->contract["bonus_impressions"];
         $this->contract["contracted_media_value"] = $this->contract["guaranteed_media_value"] + $this->contract["bonus_media_value"];
@@ -60,29 +62,39 @@ class POP extends Document {
         $this->contract["current_bua_value"]        = 0;
         $this->contract["current_value"]            = 0;
 
+        // If we received any impression, we are able to deduce the current cpm
+        if ($this->contract["total_received_impressions"] > 0) {
+            $this->contract["current_cpm"] = $this->contract["net_investment"] / ($this->contract["total_received_impressions"] / 1000);
+        }
 
-        // calculate cpm if possible
+        // Execute calculations for each type of buys if possible
         if ($this->contract["contracted_impressions"] > 0) {
+            // Deduce contracted CPM
             $this->contract["contracted_cpm"] = $this->contract["net_investment"] / ($this->contract["contracted_impressions"] / 1000);
 
-            if ($this->contract["total_received_impressions"] > 0) {
-                $this->contract["current_cpm"] = $this->contract["net_investment"] / ($this->contract["total_received_impressions"] / 1000);
+            // Deduce current media value for the type of buy
+            $imprValue = $this->contract["contracted_media_value"] / $this->contract["contracted_impressions"];
 
-                $imprValue = $this->contract["contracted_media_value"] / $this->contract["contracted_impressions"];
-
-                // Calculate current media value per type of buy
-                $this->contract["current_guaranteed_value"] = $imprValue * $this->contract["reservations"]->where("type", "guaranteed")
-                                                                                                          ->sum("received_impressions");
-
-                $this->contract["current_bonus_value"] = $imprValue * $this->contract["reservations"]->where("type", "bonus")
-                                                                                                     ->sum("received_impressions");
-
-                $this->contract["current_bua_value"] = $imprValue * $this->contract["reservations"]->where("type", "bua")
-                                                                                                   ->sum("received_impressions");
-
-                $this->contract["current_value"] = $this->contract["current_guaranteed_value"] + $this->contract["current_bonus_value"] + $this->contract["current_bua_value"];
-            }
+            $this->contract["current_guaranteed_value"] = $imprValue * $this->contract["reservations"]->where("type", "guaranteed")->sum("received_impressions");
         }
+
+        if($this->contract["bonus_impressions"] > 0) {
+            // Deduce current media value for the type of buy
+            $imprValue = $this->contract["bonus_media_value"] / $this->contract["bonus_impressions"];
+
+            $this->contract["current_bonus_value"] = $imprValue * $this->contract["reservations"]->where("type", "bonus")
+                                                                                                 ->sum("received_impressions");
+        }
+
+        if($this->contract["bua_impressions"] > 0) {
+            // Deduce current media value for the type of buy
+            $imprValue = $this->contract["bua_media_value"] / $this->contract["bua_impressions"];
+
+            $this->contract["current_bua_value"] = $imprValue * $this->contract["reservations"]->where("type", "bua")
+                                                                                               ->sum("received_impressions");
+        }
+
+        $this->contract["current_value"] = $this->contract["current_guaranteed_value"] + $this->contract["current_bonus_value"] + $this->contract["current_bua_value"];
 
         // Map the screenshots Ids to their model counterpart
         $this->contract["screenshots"] = collect($this->contract["screenshots"])->map(fn($id) => ContractScreenshot::find($id)

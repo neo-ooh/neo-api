@@ -29,9 +29,7 @@
                 <td>{{ format($contract["networks"][$network]["{$category}_impressions"] ?? 0) }}</td>
                 <td>{{ format($networkReservations->sum("received_impressions")) }}</td>
                 <td>
-                    {{ formatCurrency($category === "bua"
-                           ? $contract["guaranteed_media_value"] + $contract["bonus_media_value"]
-                           : $contract["networks"][$network]["{$category}_media_value"]) }}
+                    {{ formatCurrency($contract["networks"][$network]["{$category}_media_value"]) }}
                 </td>
                 <td>{{ formatCurrency($contract["networks"][$network]["{$category}_net_investment"] ?? 0) }}</td>
             </tr>
@@ -42,10 +40,10 @@
             <td></td>
             <td>{{ $reservations->min("start_date")->format("Y-m-d") }}</td>
             <td>{{ $reservations->max("end_date")->format("Y-m-d") }}</td>
-            <td>{{ format($contract["guaranteed_impressions"]) }}</td>
+            <td>{{ format($contract["{$category}_impressions"]) }}</td>
             <td>{{ format($reservations->sum("received_impressions")) }}</td>
-            <td>{{ formatCurrency($contract["guaranteed_media_value"]) }}</td>
-            <td>{{ formatCurrency($contract["net_investment"]) }}</td>
+            <td>{{ formatCurrency($contract["{$category}_media_value"]) }}</td>
+            <td>{{ formatCurrency($category === "guaranteed" ? $contract["net_investment"] : 0) }}</td>
         </tr>
         </tfoot>
     </table>

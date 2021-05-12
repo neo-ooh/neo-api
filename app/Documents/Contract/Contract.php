@@ -18,6 +18,7 @@ use League\Csv\Reader;
 use Mpdf\HTMLParserMode;
 use Neo\Documents\Contract\Components\ContractFirstPage;
 use Neo\Documents\Contract\Components\DetailedOrdersCategory;
+use Neo\Documents\Contract\Components\DetailedOrdersTable;
 use Neo\Documents\Contract\Components\DetailedSummary;
 use Neo\Documents\Contract\Components\GeneralConditions;
 use Neo\Documents\Contract\Components\Totals;
@@ -45,6 +46,9 @@ class Contract extends Document {
 
         // Register our components
         Blade::componentNamespace("Neo\\Documents\\Contract\\Components", "contract");
+
+        // Some very large contracts exceeds the PCRE backtrack limit. So we increase it to prevent crash
+        ini_set("pcre.backtrack_limit", "5000000");
     }
 
     public static function makeContract($data): Document {
@@ -173,14 +177,38 @@ class Contract extends Document {
             "order"    => $this->order
         ]);
 
-        $campaignSummaryOrders = view('documents.contract.campaign-summary.orders', [
-            "purchaseOrders" => $this->order->getPurchasedOrders(),
-            "bonusOrders"    => $this->order->getBonusOrders(),
-            "buaOrders"      => $this->order->getBuaOrders(),
-            "order"          => $this->order
-        ])->render();
+        // Purchase summary
+        $purchaseOrders = $this->order->getPurchasedOrders();
 
-        $this->mpdf->WriteHTML($campaignSummaryOrders);
+        if ($purchaseOrders->isNotEmpty()) {
+            $this->mpdf->WriteHTML(view("documents.contract.campaign-summary.orders-category", [
+                "category" => "purchase",
+                "orders"   => $purchaseOrders,
+                "order"    => $this->order,
+            ])->render());
+        }
+
+        // Bonus summary
+        $bonusOrders = $this->order->getBonusOrders();
+
+        if ($bonusOrders->isNotEmpty()) {
+            $this->mpdf->WriteHTML(view("documents.contract.campaign-summary.orders-category", [
+                "category" => "bonus",
+                "orders"   => $bonusOrders,
+                "order"    => $this->order,
+            ])->render());
+        }
+
+        // Bonus summary
+        $buaOrders = $this->order->getBonusOrders();
+
+        if ($buaOrders->isNotEmpty()) {
+            $this->mpdf->WriteHTML(view("documents.contract.campaign-summary.orders-category", [
+                "category" => "bua",
+                "orders"   => $buaOrders,
+                "order"    => $this->order,
+            ])->render());
+        }
 
         $this->mpdf->WriteHTML((new Totals($this->order, $this->order->orderLines, "full", $this->order->productionLines))->render());
     }
@@ -192,6 +220,14 @@ class Contract extends Document {
         ]);
 
         foreach (["purchase", "bonus", "bua"] as $orderType) {
+            if ($orderType !== "purchase") {
+                $this->mpdf->AddPage();
+            }
+
+            foreach (["shopping", "otg", "fitness"] as $network) {
+                $this->mpdf->WriteHTML(new DetailedOrdersTable($orderType, $this->order, $network));
+            }
+
             $orders = new DetailedOrdersCategory($orderType, $this->order, $this->order->orderLines);
             $this->mpdf->WriteHTML($orders);
         }

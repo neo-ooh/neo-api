@@ -48,16 +48,15 @@ class DetailedOrdersTable extends Component {
     /**
      * Create the component instance.
      *
-     * @param string     $type
-     * @param Order      $order
-     * @param string     $network
-     * @param Collection $purchases
+     * @param string $type
+     * @param Order  $order
+     * @param string $network
      */
-    public function __construct(string $type, Order $order, string $network, Collection $purchases) {
+    public function __construct(string $type, Order $order, string $network) {
         $this->type      = $type;
         $this->order     = $order;
         $this->network   = $network;
-        $this->purchases = $purchases;
+        $this->purchases = $order->orderLines;
     }
 
     /**
@@ -76,7 +75,6 @@ class DetailedOrdersTable extends Component {
                 ][$this->type])
             ->sortBy(['property_name'])
             ->groupBy(['market', 'property_name']);
-
 
 
         if ($purchases->count() === 0) {
@@ -108,6 +106,16 @@ class DetailedOrdersTable extends Component {
                    Network::NEO_OTG      => "Neo On the Go",
                    Network::NEO_FITNESS  => "Neo Fitness",
                ][$this->network];
+    }
+
+    public function __toString(): string {
+        $temp = $this->render();
+
+        if (is_string($temp)) {
+            return $temp;
+        }
+
+        return $temp->render();
     }
 
 }

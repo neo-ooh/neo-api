@@ -1,18 +1,3 @@
-@if($type !== 'purchase')
-    <pagebreak/>
-@endif
-<x-contract::detailed-orders-table :type="$type"
-                                   :order="$order"
-                                   network="shopping"
-                                   :purchases="$orders"/>
-<x-contract::detailed-orders-table :type="$type"
-                                   :order="$order"
-                                   network="otg"
-                                   :purchases="$orders"/>
-<x-contract::detailed-orders-table :type="$type"
-                                   :order="$order"
-                                   network="fitness"
-                                   :purchases="$orders"/>
 <table class="detailed-purchases-summary-table" autosize="1">
     <tr class="headers" @if($order->show_investment)
     class="with-invest"

@@ -67,7 +67,6 @@ class DetailedOrdersCategory extends Component {
     }
 
     public function __toString(): string {
-        // TODO: Implement __toString() method.
         $temp = $this->render();
 
         if(is_string($temp)) {

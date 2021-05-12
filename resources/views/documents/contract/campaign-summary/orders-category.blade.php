@@ -29,7 +29,7 @@
                 <td>{{ __("network-$network") }}</td>
                 <td>{{ $networkOrders->groupBy('property_name')->count() }}</td>
                 <td>{{ $networkOrders->pluck('nb_weeks')->unique()->join(" & ") }}</td>
-                <td>{{ $networkOrders->sum('nb_screens') }}</td>
+                <td>{{ format($networkOrders->sum('nb_screens')) }}</td>
                 <td>{{ format($networkOrders->sum('impressions')) }}</td>
                 <td>{{ formatCurrency($networkOrders->sum('media_value')) }}</td>
                 @if($order->show_investment)
@@ -43,7 +43,7 @@
             <td></td>
             <td>{{ $orders->groupBy('property_name')->count() }}</td>
             <td>-</td>
-            <td>{{ $orders->sum('nb_screens') }}</td>
+            <td>{{ format($orders->sum('nb_screens')) }}</td>
             <td>{{ format($orders->sum('impressions')) }}</td>
             <td>{{ formatCurrency($orders->sum('media_value')) }}</td>
             @if($order->show_investment)

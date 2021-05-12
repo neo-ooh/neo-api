@@ -30,6 +30,7 @@ class DetailedOrdersTable extends Component {
         "Center of Quebec",
         "Hull - Gatineau",
         "Quebec City & Region",
+        "Northwest of Quebec",
         "Northeast of Quebec",
         "Greater Toronto",
         "North-Western Ontario",

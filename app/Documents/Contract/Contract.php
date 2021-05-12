@@ -115,28 +115,20 @@ class Contract extends Document {
         // Import the stylesheet
         $this->mpdf->WriteHTML(File::get(resource_path('documents/stylesheets/contract.css')), HTMLParserMode::HEADER_CSS);
 
-        if ($this->order->orderLines->count() === 0) {
-            // Production Contract
-            $this->setLayout(__("contract.production-details"), [355, 355], [
-                "customer" => $this->customer,
-                "order"    => $this->order
-            ]);
+        // Build the document
 
-            $this->mpdf->SetMargins(15, 15, 40);
-            $this->renderDetailedSummary(false);
-
-            return true;
-        }
-
-        // Build each section
-
-        // A contract has additional sections at the beginning and end of the document
+        // Contracts have an additional firsst page
         if ($this->documentType === self::TYPE_CONTRACT) {
             $this->makeContractFirstPage();
         }
 
-        $this->makeCampaignSummary();
-        $this->makeCampaignDetails();
+        // If there is no order lines, we assume its a production export, and only show the detailed summary
+        if ($this->order->orderLines->count() === 0) {
+            $this->renderProductionDocument();
+        } else {
+            $this->makeCampaignSummary();
+            $this->makeCampaignDetails();
+        }
 
         if ($this->documentType === self::TYPE_CONTRACT) {
             $this->makeGeneralConditions();
@@ -235,6 +227,16 @@ class Contract extends Document {
         $this->mpdf->AddPage();
 
         $this->renderDetailedSummary(true);
+    }
+
+    private function renderProductionDocument() {
+        $this->setLayout(__("contract.production-details"), [355, 355], [
+            "customer" => $this->customer,
+            "order"    => $this->order
+        ]);
+
+        $this->mpdf->SetMargins(15, 15, 40);
+        $this->renderDetailedSummary(false);
     }
 
     private function renderDetailedSummary(bool $renderDisclaimers) {

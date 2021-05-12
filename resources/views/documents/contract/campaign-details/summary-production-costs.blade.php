@@ -1,5 +1,5 @@
 @if($production->count() > 0)
-    <h2 class="technical-specs-title">
+    <h2>
         {!! __("contract.production-costs") !!}
     </h2>
     <table class="production-specs-table">
@@ -14,7 +14,7 @@
         @foreach($production as $p)
             <tr>
                 <td>{{ substr($p->description, strlen("[production]")) }}</td>
-                <td>{{ $p->quantity }}</td>
+                <td>{{ format($p->quantity) }}</td>
                 <td>{{ formatCurrency($p->subtotal)  }}</td>
             </tr>
         @endforeach
@@ -22,7 +22,7 @@
         <tfoot>
             <tr>
                 <td>{!! __("contract.total") !!}</td>
-                <td>{{ $production->sum("quantity") }}</td>
+                <td>{{ format($production->sum("quantity")) }}</td>
                 <td>{{ formatCurrency($production->sum("subtotal")) }}</td>
             </tr>
         </tfoot>

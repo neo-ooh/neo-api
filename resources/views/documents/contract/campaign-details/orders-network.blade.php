@@ -202,7 +202,7 @@
                         <td></td>
                         <td class="border-right"></td>
                         <td class="border-right">{{ $totalSpots }}</td>
-                        <td class="border-right">{{ $totalScreens }}</td>
+                        <td class="border-right">{{ format($totalScreens) }}</td>
                         <td class="border-right">-</td>
                         <td class="border-right">{{ format($totalImpressions) }}</td>
                         <td class="{{ $order->show_investment ? "border-right" : "last" }}">

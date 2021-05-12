@@ -40,7 +40,7 @@ abstract class Document {
 
     protected function __construct(array $mpdfConfiguration) {
         // before doing anything, update the max execution time to prevent timeout
-        set_time_limit(60);
+        set_time_limit(120);
 
         $this->mpdf = new Mpdf(array_merge([
             "fontDir"      => [resource_path('fonts/')],
@@ -66,7 +66,7 @@ abstract class Document {
                     "I" => "Poppins-ExtraItalic.ttf",
                 ]
             ],
-            'default_font' => 'poppins-regular',
+            "default_font" => "poppins-regular",
         ], $mpdfConfiguration
         ));
     }

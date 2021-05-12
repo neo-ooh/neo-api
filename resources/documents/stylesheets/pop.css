@@ -82,7 +82,7 @@ h2.head {
  * @neo/api - _fonts.scss
  */
 header {
-  margin: -5mm 0;
+  margin: -5mm 0 3mm;
   width: 100%;
 }
 header .header-table {

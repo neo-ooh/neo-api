@@ -39,9 +39,10 @@ class Contract extends Document {
 
     public function __construct() {
         parent::__construct([
-            "margin_bottom" => 25,
-            "packTableData" => true,
-            "use_kwt"       => true,
+            "margin_bottom"     => 25,
+            "packTableData"     => true,
+            "use_kwt"           => true,
+            "setAutoTopMargin"  => "pad",
         ]);
 
         // Register our components
@@ -149,7 +150,7 @@ class Contract extends Document {
         $this->setLayout("", "legal", [
             "customer" => $this->customer,
             "order"    => $this->order,
-        ], "BLANK");
+        ]);
 
         $this->mpdf->WriteHTML((new ContractFirstPage($this->order, $this->customer))->render()->render());
     }
@@ -212,7 +213,9 @@ class Contract extends Document {
         ]);
 
         foreach (["purchase", "bonus", "bua"] as $orderType) {
-            if ($orderType !== "purchase") {
+            if ($orderType === 'bonus' && $this->order->getBonusOrders()->isNotEmpty()) {
+                $this->mpdf->AddPage();
+            } else if ($orderType === 'bua' && $this->order->getBuaOrders()->isNotEmpty()) {
                 $this->mpdf->AddPage();
             }
 

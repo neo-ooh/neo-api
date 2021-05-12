@@ -90,7 +90,7 @@ h2.head {
  * @neo/api - _fonts.scss
  */
 header {
-  margin: -5mm 0;
+  margin: -5mm 0 3mm;
   width: 100%;
 }
 header .header-table {
@@ -192,7 +192,6 @@ footer .footer-table {
 @page {
   size: portrait;
   background-color: #FFFFFF;
-  margin-top: 40mm;
   margin-left: 15mm;
   margin-right: 15mm;
   header: html_default_header;
@@ -845,7 +844,7 @@ footer .footer-table {
 
 .summary-right-col {
   position: fixed;
-  top: 0;
+  top: 5mm;
   left: 170mm;
 }
 

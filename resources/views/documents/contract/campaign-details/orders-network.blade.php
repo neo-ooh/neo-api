@@ -75,7 +75,7 @@
                     <table class="region-row-table">
                         <tr class="region-row {{ $order->show_investment ?: "without-invest" }}">
                             <td>
-                                {{ __("common.region-" . $regionOrders->first()->first()->market) }}
+                                {{ $regionOrders->first()->first()->market }}
                             </td>
                             <td class="filler"></td>
                         </tr>

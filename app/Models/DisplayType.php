@@ -10,19 +10,23 @@
 
 namespace Neo\Models;
 
+use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Neo\Models\DisplayType
  *
- * @property int                      id
- * @property int                      broadsign_display_type
- * @property string                   name
+ * @property int    $id
+ * @property int    $connection_id
+ * @property int    $external_id
+ * @property string $name
+ * @property string $internal_name
+ * @property Date   $created_at
+ * @property Date   $updated_at
  *
  * @mixin Builder
  */
@@ -32,7 +36,6 @@ class DisplayType extends Model {
     | Table properties
     |--------------------------------------------------------------------------
     */
-
 
     /**
      * The table associated with the model.
@@ -47,7 +50,7 @@ class DisplayType extends Model {
      * @var array
      */
     protected $fillable = [
-        "broadsign_display_type_id",
+        "external_id",
         "name",
     ];
 
@@ -59,6 +62,14 @@ class DisplayType extends Model {
     */
 
     /* Network */
+
+    public function network(): BelongsTo {
+        return $this->belongsTo(Network::class, "network_id")->orderBy("name");
+    }
+
+    public function locations(): HasMany {
+        return $this->hasMany(Location::class, "display_type_id", "id");
+    }
 
     public function formats(): BelongsToMany {
         return $this->belongsToMany(Format::class, "formats_display_types", "display_type_id", "format_id");

@@ -10,10 +10,10 @@
 
 namespace Neo\Documents\Contract\Components;
 
-use Closure;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
-use Illuminate\View\View;
 use Neo\Documents\Contract\Order;
 use Neo\Documents\Contract\OrderLine;
 
@@ -39,15 +39,15 @@ class DetailedOrdersCategory extends Component {
     /**
      * Get the view / contents that represent the component.
      *
-     * @return View|Closure|string
+     * @return Application|Factory|\Illuminate\Contracts\View\View|string
      */
     public function render() {
         $purchases = $this
             ->purchases
             ->filter(fn(/**@var OrderLine $order */ $order) => [
-                "purchase" => $order->isGuaranteedPurchase(),
-                "bonus"    => $order->isGuaranteedBonus(),
-                "bua"      => $order->isBonusUponAvailability(),][$this->type]);
+                                                                   "purchase" => $order->isGuaranteedPurchase(),
+                                                                   "bonus"    => $order->isGuaranteedBonus(),
+                                                                   "bua"      => $order->isBonusUponAvailability(),][$this->type]);
 
         if ($purchases->count() === 0) {
             return "";
@@ -69,7 +69,7 @@ class DetailedOrdersCategory extends Component {
     public function __toString(): string {
         $temp = $this->render();
 
-        if(is_string($temp)) {
+        if (is_string($temp)) {
             return $temp;
         }
 

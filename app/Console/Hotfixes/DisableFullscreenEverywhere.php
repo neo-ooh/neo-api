@@ -38,7 +38,7 @@ class DisableFullscreenEverywhere extends Command {
      */
     public function handle(): int {
         // We start by loading all campaigns on connect who have a counterpart on BroadSign
-        $campaigns = Campaign::query()->whereNotNull('broadsign_reservation_id')->get();
+        $campaigns = Campaign::query()->whereNotNull('external_id')->get();
 
         $progressBar = $this->makeProgressBar(count($campaigns));
         $progressBar->start();
@@ -47,9 +47,9 @@ class DisableFullscreenEverywhere extends Command {
         /** @var Campaign $campaign */
         foreach ($campaigns as $campaign) {
             $progressBar->advance();
-            $progressBar->setMessage("{$campaign->name} ($campaign->broadsign_reservation_id)");
+            $progressBar->setMessage("$campaign->name ($campaign->external_id)");
 
-            $bundles = Bundle::byReservable($campaign->broadsign_reservation_id);
+            $bundles = Bundle::byReservable($campaign->external_id);
 
             /** @var Bundle $bundle */
             foreach ($bundles as $bundle) {

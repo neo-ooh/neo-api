@@ -20,6 +20,7 @@ use Neo\Http\Controllers\ActorsRolesController;
 use Neo\Http\Controllers\ActorsSharingsController;
 use Neo\Http\Controllers\BrandingsController;
 use Neo\Http\Controllers\BrandingsFilesController;
+use Neo\Http\Controllers\BroadcasterConnectionsController;
 use Neo\Http\Controllers\BroadSignCriteriaController;
 use Neo\Http\Controllers\BroadSignSeparationsController;
 use Neo\Http\Controllers\BroadSignTriggersController;
@@ -32,7 +33,6 @@ use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Http\Controllers\CreativesController;
-use Neo\Http\Controllers\CustomersController;
 use Neo\Http\Controllers\DisplayTypesController;
 use Neo\Http\Controllers\FormatsController;
 use Neo\Http\Controllers\FormatsDisplayTypesController;
@@ -42,10 +42,9 @@ use Neo\Http\Controllers\HeadlinesController;
 use Neo\Http\Controllers\InventoryController;
 use Neo\Http\Controllers\LibrariesController;
 use Neo\Http\Controllers\LocationsController;
-use Neo\Http\Controllers\NetworkController;
+use Neo\Http\Controllers\NetworksController;
 use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\ParamsController;
-use Neo\Http\Controllers\ReportsController;
 use Neo\Http\Controllers\ReviewsController;
 use Neo\Http\Controllers\ReviewsTemplatesController;
 use Neo\Http\Controllers\RolesActorsController;
@@ -55,6 +54,7 @@ use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\StatsController;
 use Neo\Models\AccessToken;
 use Neo\Models\Actor;
+use Neo\Models\BroadcasterConnection;
 use Neo\Models\BroadSignCriteria;
 use Neo\Models\BroadSignSeparation;
 use Neo\Models\BroadSignTrigger;
@@ -226,10 +226,23 @@ Route::prefix("v1")->group(function () {
 
     /*
     |----------------------------------------------------------------------
-    | Broadsign
+    | Broadcasters Connections
     |----------------------------------------------------------------------
     */
 
+    Route::model("connection", BroadcasterConnection::class);
+
+    Route::get("broadcasters/", BroadcasterConnectionsController::class . "@index")->name("broadcasters.index");
+    Route::post("broadcasters/", BroadcasterConnectionsController::class . "@store")->name("broadcasters.store");
+    Route::get("broadcasters/{connection}", BroadcasterConnectionsController::class . "@show")->name("broadcasters.show");
+    Route::put("broadcasters/{connection}", BroadcasterConnectionsController::class . "@update")->name("broadcasters.update");
+    Route::delete("broadcasters/{connection}", BroadcasterConnectionsController::class . "@destroy")->name("broadcasters.destroy");
+
+    /*
+    |----------------------------------------------------------------------
+    | Broadsign
+    |----------------------------------------------------------------------
+    */
 
     Route::prefix("broadsign")->group(function () {
 
@@ -540,7 +553,7 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route:: get("network/refresh", NetworkController::class . "@refresh")->name("network.refresh");
+    Route:: get("network/refresh", NetworksController::class . "@refresh")->name("network.refresh");
 
     /*
     |----------------------------------------------------------------------

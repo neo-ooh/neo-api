@@ -175,7 +175,7 @@ abstract class JwtGuard implements Guard {
     /**
      * Get the ID for the currently authenticated user.
      *
-     * @return int|string|null
+     * @return int|null
      */
     public function id () {
         if (is_null($this->user())) {

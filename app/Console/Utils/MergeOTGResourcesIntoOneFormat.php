@@ -44,7 +44,7 @@ class MergeOTGResourcesIntoOneFormat extends Command {
         $oldFormatsIds = $this->argument("from");
         $newFormatId   = $this->argument("to");
         /** @var Format $newFormat */
-        $newFormat = Format::find($newFormatId);
+        $newFormat = Format::query()->find($newFormatId);
         /** @var FormatLayout $newLayout */
         $newLayout = $newFormat->layouts()->first();
 

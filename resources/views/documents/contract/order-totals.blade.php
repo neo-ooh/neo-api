@@ -28,7 +28,7 @@
             <td>{{ formatCurrency($guaranteedValue) }}</td>
             @if($size === 'small' && $showInvestment)
                 <td>
-                    {{ round($guaranteedDiscount) === 0 ? '-' : format($guaranteedDiscount) . "%" }}
+                    {{ round($guaranteedDiscount) === 0.0 ? '-' : format($guaranteedDiscount) . "%" }}
                 </td>
             @endif
             <td class="investment">

@@ -15,11 +15,13 @@ return new class extends Migration
     {
         Schema::table("display_types", function (Blueprint $table) {
             $table->renameColumn("broadsign_display_type_id", "external_id");
-            $table->foreignId("network_id")->after("id")->index()->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId("connectin_id")->nullable()->after("id")->index()->constrained("broadcasters_connection")->cascadeOnUpdate()->cascadeOnDelete();
+            // The network id column accept null value because this migration is happening on a DDB with already defined display types.
+            // The column should be set back to `NOT NULL` once the networks/connection feature is live.
         });
 
         Schema::table("display_types", function (Blueprint $table) {
-            $table->text("external_id")->change();
+            $table->text("external_id")->nullable()->change();
         });
     }
 

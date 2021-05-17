@@ -2,7 +2,6 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Neo\Exceptions\InvalidLocationException;
 use Neo\Http\Requests\Hourly\ForecastWeatherRequest;
@@ -31,6 +30,7 @@ class WeatherController extends Controller {
      * Gives the national weather
      *
      * @param NationalWeatherRequest $request
+     * @param WeatherService         $weather
      * @return Response
      */
     public function national(NationalWeatherRequest $request, WeatherService $weather): Response {
@@ -51,12 +51,13 @@ class WeatherController extends Controller {
     /**
      * Give the current weather for the specified city
      *
-     * @param Request $request
+     * @param CurrentWeatherRequest $request
+     * @param WeatherService        $weather
      * @return Response
      */
     public function current(CurrentWeatherRequest $request, WeatherService $weather): Response {
-        $location           = new Location($request->input("country"), $request->input("province"), $request->input("city"));
-        $locale             = $request->input('locale');
+        $location = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $locale   = $request->input('locale');
 
         try {
             $now      = $weather->getCurrentWeather($location, $locale);
@@ -73,12 +74,13 @@ class WeatherController extends Controller {
     /**
      * Give the next day weather for the specified location
      *
-     * @param Request $request The request
+     * @param NextDayWeatherRequest $request The request
+     * @param WeatherService        $weather
      * @return Response
      */
     public function nextDay(NextDayWeatherRequest $request, WeatherService $weather): Response {
-        $location           = new Location($request->input("country"), $request->input("province"), $request->input("city"));
-        $locale             = $request->input('locale');
+        $location = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $locale   = $request->input('locale');
 
         try {
             $longTerm = $weather->getForecastWeather($location, $locale);
@@ -95,12 +97,13 @@ class WeatherController extends Controller {
     /**
      * Give the seven days weather for the specified location
      *
-     * @param Request $request The request
+     * @param ForecastWeatherRequest $request The request
+     * @param WeatherService         $weather
      * @return Response
      */
     public function forecast(ForecastWeatherRequest $request, WeatherService $weather): Response {
-        $location           = new Location($request->input("country"), $request->input("province"), $request->input("city"));
-        $locale             = $request->input('locale');
+        $location = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $locale   = $request->input('locale');
 
         try {
             $forecast = $weather->getForecastWeather($location, $locale);
@@ -116,12 +119,13 @@ class WeatherController extends Controller {
     /**
      * Give the next hours weather forecast for the specified location
      *
-     * @param Request $request The request
+     * @param HourlyWeatherRequest $request The request
+     * @param WeatherService       $weather
      * @return Response
      */
     public function hourly(HourlyWeatherRequest $request, WeatherService $weather): Response {
-        $location           = new Location($request->input("country"), $request->input("province"), $request->input("city"));
-        $locale             = $request->input('locale');
+        $location = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $locale   = $request->input('locale');
 
         try {
             $hourly = $weather->getHourlyWeather($location, $locale);

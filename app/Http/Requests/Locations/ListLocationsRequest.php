@@ -32,8 +32,8 @@ class ListLocationsRequest extends FormRequest {
         return [
             "with"      => ["sometimes", "array"],
             "with.*"    => ["string"],
-            "format"    => ["sometimes", "integer", "exists:formats,id"],
-            "container" => ["sometimes", "integer"]
+            "format_id"    => ["sometimes", "integer", "exists:formats,id"],
+            "network_id"    => ["sometimes", "integer", "exists:networks,id"],
         ];
     }
 }

@@ -45,13 +45,13 @@ class LocationsController extends Controller {
         $query = Location::query()->with(["display_type"])->orderBy("name");
 
         // Should we  scope by container ?
-        $query->when($request->has("container"), function (Builder $query) use ($request) {
-            $query->where("container_id", "=", $request->input("container"));
+        $query->when($request->has("network_id"), function (Builder $query) use ($request) {
+            $query->where("network_id", "=", $request->input("network_id"));
         });
 
         // Should we scope by format ?
-        $query->when($request->has("format"), function (Builder $query) use ($request) {
-            $displayTypes = Format::find($request->input("format"))->display_types->pluck("id");
+        $query->when($request->has("format_id"), function (Builder $query) use ($request) {
+            $displayTypes = Format::query()->find($request->input("format_id"))->display_types->pluck("id");
             $query->whereIn("display_type_id", $displayTypes);
         });
 
@@ -75,7 +75,7 @@ class LocationsController extends Controller {
         $q         = strtolower($request->query("q"));
         $locations = Location::query()
                              ->with("display_type")
-                             ->where('locations.name', 'LIKE', "%{$q}%")
+                             ->where('locations.name', 'LIKE', "%$q%")
                              ->get();
 
         return new Response($locations);
@@ -92,7 +92,7 @@ class LocationsController extends Controller {
         $locations = [];
 
         foreach (["NETWORK_SHOPPING", "NETWORK_FITNESS", "NETWORK_OTG"] as $networkID) {
-            $root = Actor::find(Param::find($networkID)->value);
+            $root = Actor::query()->find(Param::query()->find($networkID)->value);
 
             if(!$root) {
                 // Ignore network if root is missing

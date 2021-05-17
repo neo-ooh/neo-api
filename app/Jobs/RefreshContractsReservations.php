@@ -67,7 +67,7 @@ class RefreshContractsReservations implements ShouldQueue {
             foreach ($reservations as $reservation) {
                 /** @var ContractReservation $rr */
                 $rr = ContractReservation::query()->firstOrCreate([
-                    "broadsign_reservation_id" => $reservation->id
+                    "external_id" => $reservation->id
                 ], [
                     "contract_id" => $contract->id,
                     "name"        => $reservation->name,

@@ -34,9 +34,9 @@ class InventoryController extends Controller {
                               ->values();
 
         if ($request->has("location_id")) {
-            $locations = Location::where("id", "=", $request->validated()["location_id"])->get();
+            $locations = Location::query()->where("id", "=", $request->validated()["location_id"])->get();
         } else {
-            $locations = Actor::find(Param::find(Network::coerce($network)->value)->value)->getLocations(true, false, true, true);
+            $locations = Actor::query()->find(Param::query()->find(Network::coerce($network)->value)->value)->getLocations(true, false, true, true);
 
             if ($request->has("province")) {
                 $province  = $request->validated()["province"];

@@ -10,22 +10,35 @@
 
 namespace Neo\Models;
 
+use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * NeoModels\Branding
  *
- * @property int                  id
- * @property string               name
+ * @property int                                               $id
+ * @property string                                            $uuid
+ * @property int                                               $connection_id
+ * @property string                                            $name
+ * @property Date                                              $created_at
+ * @property Date                                              $updated_at
+ * @property Date                                              $deleted_at
  *
- * @property Collection<Location> locations
+ * @property NetworkSettingsBroadSign|NetworkSettingsPiSignage $settings
+ * @property BroadcasterConnection                             $broadcaster_connection
+ * @property Collection<Location>                              $locations
+ * @property Collection<Campaign>                              $campaigns
  *
  * @mixin Builder
  */
 class Network extends Model {
+    use SoftDeletes;
+
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -40,30 +53,21 @@ class Network extends Model {
      */
     protected $table = 'networks';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-    ];
-
-    /**
-     * The relationship counts that should always be loaded.
-     *
-     * @var array
-     */
-    protected $withCount = [ "locations" ];
-
-
     /*
     |--------------------------------------------------------------------------
     | Relations
     |--------------------------------------------------------------------------
     */
 
-    public function locations (): HasMany {
-        return $this->hasMany(Location::class, 'network_id', 'id');
+    public function broadcasterConnection(): BelongsTo {
+        return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
+    }
+
+    public function locations(): HasMany {
+        return $this->hasMany(Location::class, 'network_id', 'id')->orderBy("name");
+    }
+
+    public function campaigns(): HasMany {
+        return $this->hasMany(Campaign::class, 'network_id', 'id')->orderBy("name");
     }
 }

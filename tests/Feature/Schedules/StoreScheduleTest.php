@@ -83,7 +83,7 @@ class StoreScheduleTest extends TestCase {
         }
 
         $response = $this->json("POST",
-            "/v1/campaigns/{$campaign->id}/insert",
+            "/v1/campaigns/$campaign->id/insert",
             [
                 "content_id" => $content->id,
                 "order" => 1

@@ -11,7 +11,6 @@
 namespace Neo\Http\Controllers;
 
 use Exception;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
@@ -28,7 +27,7 @@ class ContentsController extends Controller {
     /**
      * @param StoreContentRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      * @throws LibraryStorageFullException
      */
     public function store(StoreContentRequest $request) {
@@ -56,7 +55,7 @@ class ContentsController extends Controller {
     /**
      * @param Content $content
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
     public function show(Content $content) {
         return new Response($content->load([
@@ -70,9 +69,9 @@ class ContentsController extends Controller {
 
     /**
      * @param UpdateContentRequest $request
-     * @param Content                     $content
+     * @param Content              $content
      *
-     * @return ResponseFactory|Response
+     * @return Response
      * @throws LibraryStorageFullException
      */
     public function update(UpdateContentRequest $request, Content $content) {
@@ -119,8 +118,8 @@ class ContentsController extends Controller {
 
         // Creatives are named left and right for ease of comprehension. Actual swaping could happen between any two frames as long as they have the same dimensions.
         [$leftId, $rightId] = $request->validated()["creatives"];
-        $left  = Creative::findOrFail($leftId);
-        $right = Creative::findOrFail($rightId);
+        $left  = Creative::query()->findOrFail($leftId);
+        $right = Creative::query()->findOrFail($rightId);
 
         // Make sure the two creatives are part of the same content
         if ($left->content_id !== $content->id || $right->content_id !== $content->id) {
@@ -156,7 +155,7 @@ class ContentsController extends Controller {
      * @param DestroyContentRequest $request
      * @param Content               $content
      *
-     * @return ResponseFactory|Response
+     * @return Response
      * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */

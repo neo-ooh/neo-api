@@ -48,7 +48,7 @@ class RetargetAllCreatives extends Command {
         /** @var Creative $creative */
         foreach ($creatives as $creative) {
             $progressBar->advance();
-            $progressBar->setMessage("Creative #({$creative->broadsign_ad_copy_id}) {$creative->id}");
+            $progressBar->setMessage("Creative #($creative->broadsign_ad_copy_id) $creative->id");
 
             $criteria = ResourceCriteria::for($creative->broadsign_ad_copy_id);
 

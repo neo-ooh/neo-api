@@ -68,7 +68,7 @@ class ListBrandingsTest extends TestCase {
         $actor = Actor::factory()->create()->addCapability(Capability::brandings_edit());
         $this->actingAs($actor);
 
-        $startingCount = Branding::count();
+        $startingCount = Branding::query()->count();
 
         $brandingsCount = 5;
         $filesCount = 5;

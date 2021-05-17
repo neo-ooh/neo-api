@@ -64,13 +64,6 @@ class AccessToken extends Model implements AuthenticatableContract, Authorizable
         "capabilities",
     ];
 
-    /**
-     * The accessors to append to the model"s array form.
-     *
-     * @var array
-     */
-    protected $appends = [];
-
     public static function boot() {
         parent::boot();
 

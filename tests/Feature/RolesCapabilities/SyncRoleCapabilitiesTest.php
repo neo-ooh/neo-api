@@ -62,7 +62,7 @@ class SyncRoleCapabilitiesTest extends TestCase {
         $this->actingAs($actor);
 
         $role = Role::factory()->create();
-        $capability = Capability::where("slug", "=", CapabilitiesEnum::tests)->first();
+        $capability = Capability::query()->where("slug", "=", CapabilitiesEnum::tests)->first();
 
         $response = $this->json('PUT',
             '/v1/roles/' . $role->id . '/capabilities',

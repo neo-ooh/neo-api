@@ -10,24 +10,21 @@
 
 namespace Neo\Exceptions;
 
-use Auth;
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
 
-class Handler extends ExceptionHandler
-{
+class Handler extends ExceptionHandler {
     /**
      * Register the exception handling callbacks for the application.
      *
      * @return void
      */
-    public function register()
-    {
+    public function register() {
         $this->renderable(function (Exception $e, Request $request) {
-            if(!$request->expectsJson()) {
+            if (!$request->expectsJson()) {
                 return new Response(["message" => $e->getMessage(), "code" => $e->getCode()], 500);
             }
 
@@ -37,10 +34,5 @@ class Handler extends ExceptionHandler
         $this->reportable(static function (Throwable $e) {
             //
         });
-    }
-
-    public function report(Throwable $exception)
-    {
-        parent::report($exception);
     }
 }

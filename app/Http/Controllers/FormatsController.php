@@ -10,11 +10,8 @@
 
 namespace Neo\Http\Controllers;
 
-use Egulias\EmailValidator\Exception\LocalOrReservedDomain;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Neo\Enums\Network;
 use Neo\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Http\Requests\Formats\QueryFormatsRequest;
@@ -29,7 +26,7 @@ class FormatsController extends Controller {
     /**
      * @param ListFormatsRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
     public function index(ListFormatsRequest $request) {
         if ($request->has("actor")) {
@@ -61,7 +58,7 @@ class FormatsController extends Controller {
         // we list locations matching the query terms and only keep their formats
         if ($request->has("network")) {
             $network   = Network::coerce($request->validated()["network"])->value;
-            $locations = Actor::find(Param::find($network)->value)->getLocations(true, false, true, true);
+            $locations = Actor::query()->find(Param::query()->find($network)->value)->getLocations(true, false, true, true);
 
             if ($request->has("province")) {
                 $province  = $request->validated()["province"];
@@ -74,7 +71,8 @@ class FormatsController extends Controller {
             }
         } else {
             // If no network is specified, we load all locations in each network
-            $locations = collect(array_map(static fn($network) => Actor::find(Param::find(Network::coerce($network)))
+            $locations = collect(array_map(static fn($network) => Actor::query()->find(Param::query()
+                                                                                            ->find(Network::coerce($network)))
                                                                        ->getLocations(true, false, true, true), Network::getValues()))->flatten();
         }
 
@@ -104,7 +102,7 @@ class FormatsController extends Controller {
      * @param ShowFormatRequest $request
      * @param Format            $format
      *
-     * @return ResponseFactory|Response
+     * @return Response
      * @noinspection PhpUnusedParameterInspection
      */
     public function show(ShowFormatRequest $request, Format $format) {
@@ -115,7 +113,7 @@ class FormatsController extends Controller {
      * @param UpdateFormatRequest $request
      * @param Format              $format
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
     public function update(UpdateFormatRequest $request, Format $format) {
         [

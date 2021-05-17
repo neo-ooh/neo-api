@@ -8,7 +8,6 @@
  * @neo/api - logging.php
  */
 
-use Monolog\Handler\StreamHandler;
 use Neo\Logging\BroadSignLogFormatter;
 use Neo\Logging\LaravelLogFormatter;
 
@@ -44,24 +43,24 @@ return [
 
     'channels' => [
         'stack' => [
-            'driver' => 'stack',
-            'channels' => ['daily'],
+            'driver'            => 'stack',
+            'channels'          => ['daily'],
             'ignore_exceptions' => false,
         ],
 
         'daily' => [
             'driver' => 'daily',
-            'tap' => [LaravelLogFormatter::class],
-            'path' => storage_path('logs/laravel.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-            'days' => 14,
+            'tap'    => [LaravelLogFormatter::class],
+            'path'   => storage_path('logs/laravel.log'),
+            'level'  => env('LOG_LEVEL', 'debug'),
+            'days'   => 14,
         ],
 
         'broadsign' => [
             'driver' => 'daily',
-            'tap' => [BroadSignLogFormatter::class],
-            'path' => storage_path('logs/broadsign.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
+            'tap'    => [BroadSignLogFormatter::class],
+            'path'   => storage_path('logs/broadsign.log'),
+            'level'  => env('LOG_LEVEL', 'debug'),
         ],
     ],
 

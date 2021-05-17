@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->uuid("uuid")->index()->default("UUID()");
             $table->set("broadcaster", ["broadsign", "pisignage"]);
+            $table->string("name", 64);
             $table->boolean("active")->default("1");
             $table->timestamps();
             $table->softDeletes();

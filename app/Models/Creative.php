@@ -10,27 +10,24 @@
 
 namespace Neo\Models;
 
-use FFMpeg\Coordinate\TimeCode;
-use FFMpeg\FFMpeg;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
 use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
+use Neo\Services\Broadcast\Broadcast;
 
 /**
  * Neo\Models\Branding
  *
  * @property int                            $id
- * @property int                            $type
- * @property int                            $broadsign_ad_copy_id
+ * @property string                         $type
+ * @property int                            $external_id_broadsign
+ * @property int                            $external_id_pisignage
  * @property int                            $owner_id
  * @property int                            $content_id
  * @property int                            $frame_id
@@ -50,8 +47,8 @@ class Creative extends Model {
     use HasFactory;
     use SoftDeletes;
 
-    const TYPE_STATIC = "static";
-    const TYPE_DYNAMIC = "dynamic";
+    public const TYPE_STATIC = "static";
+    public const TYPE_DYNAMIC = "dynamic";
 
     /*
     |--------------------------------------------------------------------------
@@ -95,12 +92,12 @@ class Creative extends Model {
         static::deleting(function (Creative $creative) {
             // Disabled the creative in Broadsign
             if ($creative->broadsign_ad_copy_id !== null) {
-                DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
+                Broadcast::network($creative->external_id_broadsign)DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
             }
 
             // If the content has no more creatives attached to it, we reset its duration
             // We check for 1 creative and not zero has we are not deleted yet
-            if ($creative->content->duration !== 0 && $creative->content->creatives_count === 1) {
+            if (($creative->content->duration) !== 0.0 && $creative->content->creatives_count === 1) {
                 $creative->content->duration = 0;
                 $creative->content->save();
             }

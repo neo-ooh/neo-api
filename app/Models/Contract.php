@@ -75,7 +75,7 @@ class Contract extends Model {
 
     public function getPerformancesAttribute(): array {
         $reservations = $this->reservations;
-        $performances = ReservablePerformance::byReservable($reservations->pluck('broadsign_reservation_id')
+        $performances = ReservablePerformance::byReservable($reservations->pluck('external_id')
                                                                          ->values()
                                                                          ->toArray());
 
@@ -84,8 +84,8 @@ class Contract extends Model {
 
     public function loadReservationsLocations(): void {
         foreach ($this->reservations as $reservation) {
-            $bsLocations = BSLocation::byReservable(["reservable_id" => $reservation->broadsign_reservation_id])->pluck('id');
-            $reservation->locations = Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
+            $bsLocations = BSLocation::byReservable(["reservable_id" => $reservation->external_id])->pluck('id');
+            $reservation->locations = Location::query()->whereIn("external_id", $bsLocations)->get();
         }
     }
 }

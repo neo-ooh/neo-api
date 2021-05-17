@@ -15,9 +15,9 @@ use Neo\Documents\Exceptions\MissingColumnException;
 use Neo\Documents\Network;
 
 class OrderLine {
-    const TYPE_GUARANTEED_PURCHASE = 1;
-    const TYPE_GUARANTEED_BONUS = 2;
-    const TYPE_BONUS_UPON_AVAIL = 3;
+    public const TYPE_GUARANTEED_PURCHASE = 1;
+    public const TYPE_GUARANTEED_BONUS = 2;
+    public const TYPE_BONUS_UPON_AVAIL = 3;
 
     public string $orderLine;
     public string $description;

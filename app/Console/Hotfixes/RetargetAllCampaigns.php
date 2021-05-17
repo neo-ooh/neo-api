@@ -39,7 +39,7 @@ class RetargetAllCampaigns extends Command {
      */
     public function handle(): int {
         // We start by loading all campaigns on connect who have a counterpart on BroadSign
-        $campaigns = Campaign::query()->whereNotNull('broadsign_reservation_id')->get();
+        $campaigns = Campaign::query()->whereNotNull('external_id')->get();
 
         $progressBar = $this->makeProgressBar(count($campaigns));
         $progressBar->start();
@@ -48,11 +48,11 @@ class RetargetAllCampaigns extends Command {
         /** @var Campaign $campaign */
         foreach ($campaigns as $campaign) {
             $progressBar->advance();
-            $progressBar->setMessage("{$campaign->name} ($campaign->broadsign_reservation_id)");
+            $progressBar->setMessage("$campaign->name ($campaign->external_id)");
 
-            $locations = Location::byReservable(["reservable_id" => $campaign->broadsign_reservation_id]);
+            $locations = Location::byReservable(["reservable_id" => $campaign->external_id]);
             \Neo\BroadSign\Models\Campaign::dropSkinSlots([
-                "id"           => $campaign->broadsign_reservation_id,
+                "id"           => $campaign->external_id,
                 "sub_elements" => [
                     "display_unit" => $locations->map(fn($du) => ["id" => $du->id])->values()->toArray(),
                 ]

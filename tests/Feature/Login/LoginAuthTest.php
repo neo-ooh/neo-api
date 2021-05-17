@@ -128,7 +128,7 @@ class LoginAuthTest extends TestCase {
     public function testNewActorCannotLogIn(): void {
         /** @var Actor $actor */
         $actor = Actor::factory()->create();
-        SignupToken::create(["actor_id" => $actor->id]);
+        SignupToken::query()->create(["actor_id" => $actor->id]);
 
         $response = $this->json("POST", "/v1/auth/login", [
             "email" => $actor->email,

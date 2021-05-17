@@ -68,11 +68,11 @@ class RebuildResources extends Command {
         // Second step is to deactivate all campaigns
         $campaigns = Campaign::all();
         foreach ($campaigns as $campaign) {
-            if($campaign->broadsign_reservation_id === null) {
+            if($campaign->external_id === null) {
                 continue;
             }
 
-            $bsCampaign = BSCampaign::get($campaign->broadsign_reservation_id);
+            $bsCampaign = BSCampaign::get($campaign->external_id);
             $bsCampaign->active = false;
 
             if($bsCampaign->state !== 3) {
@@ -80,7 +80,7 @@ class RebuildResources extends Command {
                 $bsCampaign->save();
             }
 
-            $campaign->broadsign_reservation_id = null;
+            $campaign->external_id = null;
             $campaign->save();
         }
 

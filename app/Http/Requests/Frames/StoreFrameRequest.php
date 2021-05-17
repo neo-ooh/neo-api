@@ -35,7 +35,10 @@ class StoreFrameRequest extends FormRequest {
             "name"        => ["required", "string"],
             "width"       => ["required", "integer", "min:1"],
             "height"      => ["required", "integer", "min:1"],
-            "criteria_id" => ["required", "integer", "exists:broadsign_criteria,id"],
+
+            "criteria_id" => ["sometimes", "integer", "exists:broadsign_criteria,id"],
+
+            "zone_name" => ["sometimes", "string"],
         ];
     }
 }

@@ -26,7 +26,8 @@
     "predis/predis": "^1.1",
     "ramsey/uuid": "^4.1",
     "spatie/image": "^1.10",
-    "ext-intl": "*"
+    "ext-intl": "*",
+    "ext-simplexml": "*"
   },
   "require-dev": {
     "facade/ignition": "^2.5",

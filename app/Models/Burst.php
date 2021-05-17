@@ -8,8 +8,6 @@
  * @neo/api - Burst.php
  */
 
-/** @noinspection PhpMissingFieldTypeInspection */
-
 namespace Neo\Models;
 
 

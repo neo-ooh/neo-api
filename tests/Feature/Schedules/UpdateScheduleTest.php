@@ -37,7 +37,7 @@ class UpdateScheduleTest extends TestCase {
         $this->content = Content::factory()->create([ "owner_id"   => $this->actor->id,
                                                       "library_id" => $this->library->id ]);
         $this->campaign = Campaign::factory()->create([ "owner_id" => $this->actor->id ]);
-        $this->schedule = Schedule::create([
+        $this->schedule = Schedule::query()->create([
             "owner_id"    => $this->actor->id,
             "campaign_id" => $this->campaign->id,
             "content_id"  => $this->content->id,

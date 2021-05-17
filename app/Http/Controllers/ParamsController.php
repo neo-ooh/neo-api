@@ -10,8 +10,6 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
@@ -33,7 +31,7 @@ class ParamsController extends Controller {
      * @param Param $parameter
      * @return Response
      */
-    public function show (Param $parameter): Response {
+    public function show(Param $parameter): Response {
         return new Response($parameter);
     }
 
@@ -41,12 +39,21 @@ class ParamsController extends Controller {
      * @param Request $request
      * @param Param   $parameter
      *
-     * @return Application|ResponseFactory|Response
+     * @return Response
      * @throws ValidationException
      */
-    public function update (Request $request, Param $parameter) {
+    public function update(Request $request, Param $parameter) {
         if (Str::startsWith($parameter->format, "file:")) {
             $file = $request->file("value");
+
+            // Confirm upload success
+            if (!$file->isValid()) {
+                return new Response([
+                    "code"    => "upload.error",
+                    "message" => "Error during upload",
+                ],
+                    400);
+            }
 
             $this->handleFileParameter($parameter, $file);
         }
@@ -61,19 +68,10 @@ class ParamsController extends Controller {
     }
 
     protected function handleFileParameter(Param $parameter, UploadedFile $file) {
-        // Confirm upload success
-        if (!$file->isValid()) {
-            return new Response([
-                "code"    => "upload.error",
-                "message" => "Error during upload",
-            ],
-                400);
-        }
-
         $fileType = explode(":", $parameter->format)[1];
 
         // Validate the file
-        $validator = Validator::make([ "value" => $file ], [ "value" => "file|mimes:{$fileType}" ]);
+        $validator = Validator::make(["value" => $file], ["value" => "file|mimes:$fileType"]);
         if ($validator->fails()) {
             throw new ValidationException($validator);
         }

@@ -13,7 +13,6 @@ namespace Neo\Models;
 use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Traits\HasCompositePrimarykey;
 
 /**

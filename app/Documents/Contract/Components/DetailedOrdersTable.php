@@ -10,10 +10,10 @@
 
 namespace Neo\Documents\Contract\Components;
 
-use Closure;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
-use Illuminate\View\View;
 use Neo\Documents\Contract\Order;
 use Neo\Documents\Contract\OrderLine;
 use Neo\Documents\Network;
@@ -63,7 +63,7 @@ class DetailedOrdersTable extends Component {
     /**
      * Get the view / contents that represent the component.
      *
-     * @return View|Closure|string
+     * @return Application|Factory|\Illuminate\Contracts\View\View|string
      */
     public function render() {
         $purchases = $this

@@ -15,7 +15,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Neo\Models\Actor;
 use Neo\Models\RecoveryToken;
-use Neo\Models\TwoFactorToken;
 
 class RecoverPasswordEmail extends ReliableEmail {
     use Queueable, SerializesModels;
@@ -31,9 +30,9 @@ class RecoverPasswordEmail extends ReliableEmail {
      * @param Actor         $actor
      * @param RecoveryToken $recoveryToken
      */
-    public function __construct (Actor $actor, RecoveryToken $recoveryToken) {
+    public function __construct(Actor $actor, RecoveryToken $recoveryToken) {
         parent::__construct();
-        $this->actor = $actor;
+        $this->actor         = $actor;
         $this->recoveryToken = $recoveryToken->token;
     }
 
@@ -42,7 +41,7 @@ class RecoverPasswordEmail extends ReliableEmail {
      *
      * @return $this
      */
-    public function build (): self {
+    public function build(): self {
         App::setLocale($this->actor->locale);
 
         return $this->view('emails.auth.password-recovery');

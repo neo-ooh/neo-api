@@ -138,7 +138,7 @@ class TwoFactorToken extends Model {
      * @return bool
      */
     public function validate (string $token): bool {
-        if ($this->token !== $token) {
+        if ($this->token !== (int)$token) {
             // Bad token
             return false;
         }

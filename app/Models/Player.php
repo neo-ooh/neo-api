@@ -11,6 +11,7 @@
 namespace Neo\Models;
 
 
+use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -20,12 +21,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @package Neo\Models
  *
- * @property int      id
- * @property string   broadsign_player_id
- * @property int      location_id
- * @property string   name
+ * @property int      $id
+ * @property int      $network_id
+ * @property string   $external_id
+ * @property int      $location_id
+ * @property string   $name
+ * @property Date   $created_at
+ * @property Date   $updated_at
  *
- * @property Location location
+ * @property Network $network
+ * @property Location $location
  *
  * @mixin Builder
  */
@@ -60,6 +65,10 @@ class Player extends Model {
     | Relations
     |--------------------------------------------------------------------------
     */
+
+    public function network(): BelongsTo {
+        return $this->belongsTo(Network::class, "network_id");
+    }
 
     public function location (): BelongsTo {
         return $this->belongsTo(Location::class, "location_id");

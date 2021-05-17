@@ -2,21 +2,18 @@
 
 namespace Neo\Http\Requests\Contracts;
 
-use Auth;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 use Neo\Models\Contract;
 
-class StoreContractRequest extends FormRequest
-{
+class StoreContractRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         /** @var Contract $contract */
         return Gate::allows(Capability::contracts_edit);
     }
@@ -26,11 +23,10 @@ class StoreContractRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             "contract_id" => ["required", "string"],
-            "client_id" => ["required", "exists:clients,id"],
+            "client_id"   => ["required", "exists:clients,id"],
         ];
     }
 }

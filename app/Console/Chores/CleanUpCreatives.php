@@ -42,7 +42,7 @@ class CleanUpCreatives extends Command {
 
         $activeCreativesWithNoMatch = $allCreatives
             ->filter(fn($creative) => $creative->creation_user_id === 415059000)
-            ->filter(fn($c) => !Creative::where("broadsign_ad_copy_id", "=", $c->id)->exists() && $c->active);
+            ->filter(fn($c) => !Creative::query()->where("broadsign_ad_copy_id", "=", $c->id)->exists() && $c->active);
 
         foreach ($activeCreativesWithNoMatch as $creative) {
             DisableBroadSignCreative::dispatchSync($creative->id);

@@ -8,8 +8,6 @@
  * @neo/api - ReportReservation.php
  */
 
-/** @noinspection PhpMissingFieldTypeInspection */
-
 namespace Neo\Models;
 
 use Carbon\Carbon;
@@ -21,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Neo\Models\Branding
  *
  * @property int    id
- * @property int    broadsign_reservation_id
+ * @property int    external_id
  * @property int    report_id
  * @property string name
  * @property string internal_name
@@ -51,7 +49,7 @@ class ReportReservation extends Model {
      * @var array
      */
     protected $fillable = [
-        'broadsign_reservation_id',
+        'external_id',
         'report_id',
         'name',
         'start_date',

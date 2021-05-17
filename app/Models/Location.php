@@ -10,24 +10,26 @@
 
 namespace Neo\Models;
 
+use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Neo\Rules\AccessibleLocation;
 
 /**
  * Neo\Models\ActorsLocations
  *
- * @property int        id
- * @property int        broadsign_display_unit
- * @property int        display_type_id
- * @property int        network
- * @property string     name
- * @property string     internal_name
- * @property int        container_id
- * @property string     province [QC, ON, ...]
- * @property string     city
+ * @property int        $id
+ * @property int        $network_id
+ * @property string     $external_id
+ * @property int        $display_type_id
+ * @property string     $name
+ * @property string     $internal_name
+ * @property int        $container_id
+ * @property string     $province [QC, ON, ...]
+ * @property string     $city
+ * @property Date       $created_at
+ * @property Date       $updated_at
  *
  * @property ?Container container
  *
@@ -54,7 +56,7 @@ class Location extends SecuredModel {
      * @var array
      */
     protected $fillable = [
-        "broadsign_display_unit",
+        "external_id",
         "format_id",
         "name",
         "internal_name",
@@ -67,7 +69,7 @@ class Location extends SecuredModel {
      * @var array
      */
     protected $hidden = [
-        "broadsign_display_unit",
+        "external_id",
         "internal_name",
     ];
 
@@ -94,10 +96,12 @@ class Location extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    /* Network */
+    public function network(): BelongsTo {
+        return $this->belongsTo(Network::class, "network_id");
+    }
 
     public function players(): HasMany {
-        return $this->hasMany(Player::class);
+        return $this->hasMany(Player::class, "location_id");
     }
 
     public function display_type(): BelongsTo {
@@ -105,7 +109,7 @@ class Location extends SecuredModel {
     }
 
     public function container(): BelongsTo {
-        return $this->belongsTo(Container::class);
+        return $this->belongsTo(Container::class, "container_id");
     }
 
     public function inventory(): HasMany {

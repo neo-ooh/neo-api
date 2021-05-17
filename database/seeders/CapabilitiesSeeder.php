@@ -25,7 +25,7 @@ class CapabilitiesSeeder extends Seeder {
 
         Role::query()->firstOrCreate(["name" => "Admin"]);
 
-        foreach ($allCapabilities as $capability => $value) {
+        foreach ($allCapabilities as $value) {
             Capability::query()->firstOrCreate(["slug" => $value], ["service" => "", "standalone" => true]);
         }
 

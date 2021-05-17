@@ -89,7 +89,7 @@
                     $cityCutoff = $order->show_investment ? 20 : 30;
                     $cityName = strlen($propertiesOrders[0]->property_city) > $cityCutoff
                         ? substr($propertiesOrders[0]->property_city, 0, $cityCutoff - 3) . "..."
-                        : $propertiesOrders[0]->property_city;
+                        : $propertiesOrders[0]->property_city
                 @endphp
                 <tr>
                     <td>
@@ -138,7 +138,7 @@
                                     </td>
                                     @if($order->show_investment)
                                         <td class="border-right">
-                                            {{ $purchase->discount == 0 ? '-' : "{$purchase->discount}%" }}
+                                            {{ round($purchase->discount) === 0 ? '-' : "$purchase->discount%" }}
                                         </td>
                                         <td class="investment-col">{{ formatCurrency(round($purchase->net_investment)) }}</td>
                                     @endif
@@ -170,7 +170,7 @@
                             @if($order->show_investment)
                                 <td class="border-right">
                                     @php
-                                        $regionDiscount = ($regionMediaValue - $regionNetInvestment) / $regionMediaValue * 100;
+                                        $regionDiscount = ($regionMediaValue - $regionNetInvestment) / $regionMediaValue * 100
                                     @endphp
                                     {{ (int)floor($regionDiscount) === 0 ? '-' : format($regionDiscount) . "%" }}
                                 </td>
@@ -211,7 +211,7 @@
                         @if($order->show_investment)
                             <td class="border-right">
                                 @php
-                                    $totalDiscount = ($totalMediaValue - $totalNetInvestment) / $totalMediaValue * 100;
+                                    $totalDiscount = ($totalMediaValue - $totalNetInvestment) / $totalMediaValue * 100
                                 @endphp
                                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
                             </td>

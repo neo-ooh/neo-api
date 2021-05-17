@@ -22,7 +22,8 @@ return new class extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->foreignId("network_id")->primary()->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedBigInteger("customer_id");
-            $table->unsignedBigInteger("availability_tracking_id");
+            $table->unsignedBigInteger("container_id");
+            $table->unsignedBigInteger("tracking_id");
         });
     }
 

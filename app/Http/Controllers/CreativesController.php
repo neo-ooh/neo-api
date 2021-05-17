@@ -256,7 +256,7 @@ class CreativesController extends Controller {
      * @param DestroyCreativeRequest $request
      * @param Creative               $creative
      *
-     * @return ResponseFactory|Response
+     * @return Response
      * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */

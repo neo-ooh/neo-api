@@ -99,15 +99,15 @@ class Report extends Model {
 
     public function getPerformancesAttribute(): array {
         $reservations = $this->reservations;
-        $performances = ReservablePerformance::byReservable($reservations->pluck('broadsign_reservation_id')->values()->toArray());
+        $performances = ReservablePerformance::byReservable($reservations->pluck('external_id')->values()->toArray());
 
         return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
     }
 
     public function loadReservationsLocations(): void {
         foreach ($this->reservations as $reservation) {
-            $bsLocations = BSLocation::byReservable(["reservable_id" => $reservation->broadsign_reservation_id])->pluck('id');
-            $reservation->locations = Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
+            $bsLocations = BSLocation::byReservable(["reservable_id" => $reservation->external_id])->pluck('id');
+            $reservation->locations = Location::query()->whereIn("external_id", $bsLocations)->get();
         }
     }
 }

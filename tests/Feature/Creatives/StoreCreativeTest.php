@@ -35,7 +35,7 @@ class StoreCreativeTest extends TestCase
             "owner_id" => $actor->id,
             "library_id" => $library->id,
         ]);
-        $response = $this->json("POST", "/v1/contents/{$content->id}");
+        $response = $this->json("POST", "/v1/contents/$content->id");
         $response->assertUnauthorized();
     }
 
@@ -53,7 +53,7 @@ class StoreCreativeTest extends TestCase
             "library_id" => $library->id,
         ]);
 
-        $response = $this->json("POST", "/v1/contents/{$content->id}");
+        $response = $this->json("POST", "/v1/contents/$content->id");
         $response->assertForbidden();
     }
 
@@ -106,7 +106,7 @@ class StoreCreativeTest extends TestCase
             "library_id" => $library->id,
         ]);
 
-        $response = $this->json("POST", "/v1/contents/{$content->id}");
+        $response = $this->json("POST", "/v1/contents/$content->id");
         $response->assertStatus(422)
                  ->assertJsonValidationErrors([
                      "frame_id",
@@ -141,7 +141,7 @@ class StoreCreativeTest extends TestCase
         ]);
 
         $response = $this->json("POST",
-            "/v1/contents/{$content->id}",
+            "/v1/contents/$content->id",
             [
                 "frame_id" => $content->layout->frames[0]->id,
                 "file" => UploadedFile::fake()->image("ad-01",

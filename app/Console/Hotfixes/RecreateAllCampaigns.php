@@ -43,7 +43,7 @@ class RecreateAllCampaigns extends Command {
      */
     public function handle(): int {
         // We start by loading all campaigns on connect who have a counterpart on BroadSign
-        $campaigns = Campaign::query()->whereNotNull('broadsign_reservation_id')->get();
+        $campaigns = Campaign::query()->whereNotNull('external_id')->get();
 
         $progressBar = $this->makeProgressBar(count($campaigns));
         $progressBar->start();
@@ -52,7 +52,7 @@ class RecreateAllCampaigns extends Command {
         /** @var Campaign $campaign */
         foreach ($campaigns as $campaign) {
             $progressBar->advance();
-            $progressBar->setMessage("{$campaign->name} (#$campaign->id) Removing Schedules...");
+            $progressBar->setMessage("$campaign->name (#$campaign->id) Removing Schedules...");
 
             // Start by disabling all the campaigns schedules in BroadSign
             /** @var Schedule $schedule */
@@ -65,14 +65,14 @@ class RecreateAllCampaigns extends Command {
                 $schedule->broadsign_schedule_id = null;
                 $schedule->save();
             }
-            $progressBar->setMessage("{$campaign->name} (#$campaign->id) Removing Campaign...");
+            $progressBar->setMessage("$campaign->name (#$campaign->id) Removing Campaign...");
 
             // Now disable the campaign itself
-            DisableBroadSignCampaign::dispatchSync($campaign->broadsign_reservation_id);
-            $campaign->broadsign_reservation_id = null;
+            DisableBroadSignCampaign::dispatchSync($campaign->external_id);
+            $campaign->external_id = null;
             $campaign->save();
 
-            $progressBar->setMessage("{$campaign->name} (#$campaign->id) Creating new Campaign...");
+            $progressBar->setMessage("$campaign->name (#$campaign->id) Creating new Campaign...");
 
             // Now we create a brand new Campaign
             CreateBroadSignCampaign::dispatchSync($campaign->id);
@@ -80,7 +80,7 @@ class RecreateAllCampaigns extends Command {
             // Pull the newly created BroadSign Campaign
             $campaign->refresh();
 
-            $progressBar->setMessage("{$campaign->name} (#$campaign->id) Creating new Schedules...");
+            $progressBar->setMessage("$campaign->name (#$campaign->id) Creating new Schedules...");
 
             // Re-create all the schedules in BroadSign
             /** @var Schedule $schedule */

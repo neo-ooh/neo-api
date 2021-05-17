@@ -127,7 +127,7 @@ class ShowLibrariesTest extends TestCase {
         $actor = Actor::factory()->create()->moveTo($parent);
         $this->actingAs($actor);
 
-        $response = $this->json("GET", "/v1/libraries/{$library->id}");
+        $response = $this->json("GET", "/v1/libraries/$library->id");
         $response->assertOk()
                  ->assertJsonStructure([
                      "id",

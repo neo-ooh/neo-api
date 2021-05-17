@@ -150,7 +150,7 @@ class Order {
             $this->bua_investment        = $buaOrders->sum("net_investment");
         }
 
-        if($guaranteedOrders->isNotEmpty() || $this->has_bua) {
+        if($this->has_bua || $guaranteedOrders->isNotEmpty()) {
             // Orders totals
             $this->potential_value        = $this->guaranteed_value + $this->bua_value;
             $this->grand_total_investment = $this->guaranteed_investment + $this->bua_investment;

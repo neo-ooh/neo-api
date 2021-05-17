@@ -16,38 +16,38 @@ use Neo\Models\Param;
 class ParamsSeeder extends Seeder {
     public static function run (): void {
         // Terms of service
-        Param::insertOrIgnore([
+        Param::query()->insertOrIgnore([
             "slug" => "tos",
             "format" => "file:pdf",
             "value" => ""
         ]);
 
         // English welcome text
-        Param::insertOrIgnore([
+        Param::query()->insertOrIgnore([
             "slug" => "WELCOME_TEXT_EN",
             "format" => "text",
             "value" => "..."
         ]);
 
         // French welcome text
-        Param::insertOrIgnore([
+        Param::query()->insertOrIgnore([
             "slug" => "WELCOME_TEXT_FR",
             "format" => "text",
             "value" => "..."
         ]);
 
         // Network actors references
-        Param::insertOrIgnore([
+        Param::query()->insertOrIgnore([
             "slug" => "NETWORK_SHOPPING",
             "format" => "actor",
             "value" => null
         ]);
-        Param::insertOrIgnore([
+        Param::query()->insertOrIgnore([
             "slug" => "NETWORK_FITNESS",
             "format" => "actor",
             "value" => null
         ]);
-        Param::insertOrIgnore([
+        Param::query()->insertOrIgnore([
             "slug" => "NETWORK_OTG",
             "format" => "actor",
             "value" => null

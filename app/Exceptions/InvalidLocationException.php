@@ -2,7 +2,6 @@
 
 namespace Neo\Exceptions;
 
-use Exception;
 use Neo\Services\Weather\Location;
 use Throwable;
 

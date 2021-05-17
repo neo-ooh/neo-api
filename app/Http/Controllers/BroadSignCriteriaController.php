@@ -10,7 +10,6 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\BroadSignCriteria\ListBroadSignCriteriaRequest;
 use Neo\Http\Requests\BroadSignCriteria\ShowBroadSignCriteriaRequest;
@@ -18,8 +17,7 @@ use Neo\Http\Requests\BroadSignCriteria\StoreBroadSignCriteriaRequest;
 use Neo\Http\Requests\BroadSignCriteria\UpdateBroadSignCriteriaRequest;
 use Neo\Models\BroadSignCriteria;
 
-class BroadSignCriteriaController extends Controller
-{
+class BroadSignCriteriaController extends Controller {
     public function index(ListBroadSignCriteriaRequest $request) {
         return new Response(BroadSignCriteria::query()->orderBy("name")->get()->values());
     }
@@ -31,7 +29,7 @@ class BroadSignCriteriaController extends Controller
     public function store(StoreBroadSignCriteriaRequest $request) {
         $criteria = new BroadSignCriteria();
         [
-            "name" => $criteria->name,
+            "name"                  => $criteria->name,
             "broadsign_criteria_id" => $criteria->broadsign_criteria_id,
         ] = $request->validated();
         $criteria->save();
@@ -41,7 +39,7 @@ class BroadSignCriteriaController extends Controller
 
     public function update(UpdateBroadSignCriteriaRequest $request, BroadSignCriteria $criteria) {
         [
-            "name" => $criteria->name,
+            "name"                  => $criteria->name,
             "broadsign_criteria_id" => $criteria->broadsign_criteria_id,
         ] = $request->validated();
         $criteria->save();

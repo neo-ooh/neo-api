@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -24,6 +25,7 @@ class LoginController extends Controller {
      *
      * @param LoginRequest $request
      * @return Response
+     * @throws Exception
      */
     public function login(LoginRequest $request): Response {
         // Get the submitted credentials.

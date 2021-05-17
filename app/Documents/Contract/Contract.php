@@ -29,7 +29,7 @@ class Contract extends Document {
     public const TYPE_PROPOSAL = 'proposal';
     public const TYPE_CONTRACT = 'contract';
 
-    protected $documentType = null;
+    protected string $documentType;
 
     protected Customer $customer;
     protected Order $order;

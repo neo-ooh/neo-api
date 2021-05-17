@@ -9,22 +9,19 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\LibrariesShares\DestroyLibraryShareRequest;
 use Neo\Http\Requests\LibrariesShares\StoreLibraryShareRequest;
 use Neo\Models\Library;
 
-class LibrariesSharesController extends Controller
-{
+class LibrariesSharesController extends Controller {
     /**
      * @param StoreLibraryShareRequest $request
-     * @param Library $library
+     * @param Library                  $library
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function store(StoreLibraryShareRequest $request, Library $library)
-    {
+    public function store(StoreLibraryShareRequest $request, Library $library) {
         $library->shares()->attach($request->validated()["actor_id"]);
 
         return new Response($library->shares);
@@ -32,12 +29,11 @@ class LibrariesSharesController extends Controller
 
     /**
      * @param DestroyLibraryShareRequest $request
-     * @param Library $library
+     * @param Library                    $library
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function destroy(DestroyLibraryShareRequest $request, Library $library)
-    {
+    public function destroy(DestroyLibraryShareRequest $request, Library $library) {
         $library->shares()->detach($request->validated()["actor_id"]);
 
         return new Response($library->shares);

@@ -14,12 +14,14 @@ return new class extends Migration
     public function up()
     {
         Schema::table("campaigns", function (Blueprint $table) {
-            $table->renameColumn("broadsign_reservation_id", "external_id");
-            $table->foreignId("network_id")->after("id")->index()->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->renameColumn("external_id", "external_id");
+            $table->foreignId("network_id")->nullable()->after("id")->index()->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
+            // The network id column accept null value because this migration is happening on a DDB with already defined campaigns.
+            // The column should be set back to `NOT NULL` once the networks/connection feature is live.
         });
 
         Schema::table("campaigns", function (Blueprint $table) {
-            $table->text("external_id")->change();
+            $table->text("external_id")->nullable()->change();
         });
     }
 

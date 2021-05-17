@@ -26,7 +26,7 @@
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
  * @neo/api - Branding.php
- */ /** @noinspection PhpMissingFieldTypeInspection */
+ */
 
 namespace Neo\Models;
 

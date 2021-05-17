@@ -64,7 +64,7 @@ trait HasRoles {
 
     public function addCapabilities(array $capabilities): self {
         foreach ($capabilities as $capability) {
-            ActorCapability::create([
+            ActorCapability::query()->create([
                 "actor_id"      => $this->getKey(),
                 "capability_id" => $capability,
             ]);
@@ -97,7 +97,7 @@ trait HasRoles {
      */
     public function addRoles(array $roles): self {
         foreach ($roles as $roleID) {
-            ActorRole::create([
+            ActorRole::query()->create([
                 "actor_id" => $this->getKey(),
                 "role_id"  => $roleID,
             ]);
@@ -114,7 +114,7 @@ trait HasRoles {
      */
     public function removeRoles(array $roles): self {
         $binds = implode(", ", array_fill(0, count($roles), "?"));
-        DB::delete("DELETE FROM `actors_roles` WHERE `actor_id` = ? AND `role_id` IN ({$binds})",
+        DB::delete("DELETE FROM `actors_roles` WHERE `actor_id` = ? AND `role_id` IN ($binds)",
             [
                 $this->getKey(),
                 ...$roles

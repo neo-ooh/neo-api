@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class FrameSettingsBroadSign extends Model {
     use HasFactory;
 
-    protected $table = "frames_settings_broadsign";
+    protected $table = "frame_settings_broadsign";
     protected $primaryKey = "frame_id";
     public $incrementing = false;
 

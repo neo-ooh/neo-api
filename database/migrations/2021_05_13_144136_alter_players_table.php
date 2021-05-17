@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-//        Schema::table("players", function (Blueprint $table) {
-//            $table->renameColumn("broadsign_player_id", "external_id");
-//            $table->foreignId("network_id")->after("id")->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
-//        });
+        Schema::table("players", function (Blueprint $table) {
+            $table->renameColumn("broadsign_player_id", "external_id");
+            $table->foreignId("network_id")->after("id")->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
+        });
 
         Schema::table("players", function (Blueprint $table) {
             $table->text("external_id")->change();

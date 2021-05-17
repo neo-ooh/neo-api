@@ -23,6 +23,7 @@ class FrameSettingsBroadSign extends Model {
     protected $table = "frame_settings_broadsign";
     protected $primaryKey = "frame_id";
     public $incrementing = false;
+    public $timestamps = false;
 
     public $touches = ["frame"];
 

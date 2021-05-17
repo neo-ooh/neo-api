@@ -22,6 +22,7 @@ class FrameSettingsPiSignage extends Model {
     protected $table = "frames_settings_pisignage";
     public $primaryKey = "frame_id";
     public $incrementing = false;
+    public $timestamps = false;
 
     public $touches = ["frame"];
 

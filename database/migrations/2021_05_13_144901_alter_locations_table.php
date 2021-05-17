@@ -14,11 +14,11 @@ return new class extends Migration
     public function up()
     {
         Schema::table("locations", function (Blueprint $table) {
-            $table->renameColumn("broadsign_display_unit", "external_id");
-            $table->foreignId("network_id")->nullable()->after("id")->index()->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
+//            $table->renameColumn("broadsign_display_unit", "external_id");
+//            $table->foreignId("network_id")->nullable()->after("id")->index()->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
             // The network id column accept null value because this migration is happening on a DDB with already defined locations.
             // The column should be set back to `NOT NULL` once the networks/connection feature is live.
-            $table->dropIndex("locations_external_id_index");
+            $table->dropIndex("locations_broadsign_display_unit_index");
         });
 
 

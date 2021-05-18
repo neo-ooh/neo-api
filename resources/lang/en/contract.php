@@ -7,7 +7,7 @@ return [
     "campaign-summary-title"   => "Campaign Summary",
     "campaign-details-title"   => "Campaign Details",
     "contract-number-title"    => "Contract Number :number",
-    "first-party-desc"         => "<strong>NEO OOH</strong>, a legally constituted corporation having its head office at:<br />3700 St-Patrick, Local 318, Montreal, Quebec (CA), H4E 1A2",
+    "first-party-desc"         => "<strong>:company</strong>, a legally constituted corporation having its head office at:<br />3700 St-Patrick, Local 318, Montreal, Quebec (CA), H4E 1A2",
     "first-party-referred-as"  => "Duly authorized as he/she so declares; (Hereinafter referred to as “<strong>NEO</strong>”)",
     "first-party-title"        => "Between",
     "network-shopping"         => "Neo Shopping",

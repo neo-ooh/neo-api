@@ -3,6 +3,20 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="$USER_HOME$/Downloads/sale.order (3) (1).csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Downloads/sale.order (4).csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Library/Mobile Documents/com~apple~CloudDocs/Work/Neo-Traffic/Projets/Documents Generation/Run 09/quotation.csv">
           <value>
             <Attribute>

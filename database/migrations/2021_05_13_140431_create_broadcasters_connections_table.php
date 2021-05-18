@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('broadcasters_connections', function (Blueprint $table) {
             $table->id();
-            $table->uuid("uuid")->index()->default("UUID()");
+            $table->uuid("uuid")->index()->default(DB::raw('(UUID())'));
             $table->set("broadcaster", ["broadsign", "pisignage"]);
             $table->string("name", 64);
             $table->boolean("active")->default("1");

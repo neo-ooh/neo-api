@@ -21,7 +21,7 @@ return new class extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
-            $table->uuid("uuid")->index()->default("UUID()");
+            $table->uuid("uuid")->index()->default(DB::raw('(UUID())'));
             $table->foreignId("connection_id")->index()->constrained("broadcasters_connections")->cascadeOnUpdate()->cascadeOnDelete();
             $table->string("name", 64);
             $table->timestamps();

@@ -18,7 +18,7 @@ use Storage;
  * @property string                $certificate_path
  *
  * @property int                   $connection_id
- * @property BroadcasterConnection $connection
+ * @property BroadcasterConnection $broadcaster_connection
  */
 class ConnectionSettingsBroadSign extends Model {
     use HasFactory;
@@ -30,13 +30,13 @@ class ConnectionSettingsBroadSign extends Model {
 
     public $timestamps = false;
 
-    protected $touches = ["connection"];
+    protected $touches = ["broadcaster_connection"];
 
-    public function connection(): BelongsTo {
+    public function broadcasterConnection(): BelongsTo {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id");
     }
 
     public function getCertificatePathAttribute() {
-        Storage::path("secure/certs/{$this->connection->uuid}.pem");
+        Storage::path("secure/certs/{$this->broadcaster_connection->uuid}.pem");
     }
 }

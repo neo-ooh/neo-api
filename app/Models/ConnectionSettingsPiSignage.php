@@ -27,9 +27,9 @@ class ConnectionSettingsPiSignage extends Model {
 
     protected $hidden = ["token"];
 
-    protected $touches = ["connection"];
+    protected $touches = ["broadcaster_connection"];
 
-    public function connection(): BelongsTo {
+    public function broadcasterConnection(): BelongsTo {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id");
     }
 }

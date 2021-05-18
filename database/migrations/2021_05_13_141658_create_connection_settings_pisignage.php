@@ -21,6 +21,7 @@ return new class extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->foreignId("connection_id")->primary()->constrained("broadcasters_connections")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->string("server_url", 256);
             $table->string("token", 256);
         });
     }

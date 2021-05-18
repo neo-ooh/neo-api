@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * Class ConnectionSettingsPiSignage
  *
  * @package Neo\Models
+ * @property string $server_url
  * @property string $token
  *
  * @property int    $connection_id

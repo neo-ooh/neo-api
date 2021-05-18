@@ -34,7 +34,8 @@ class StoreConnectionRequest extends FormRequest {
             "default_tracking_id" => ["required_if:type,broadsign", "nullable", "integer"],
 
             // PiSignage connection parameters
-            "token"               => ["required_if:type,broadsign", "string"]
+            "server_url"               => ["required_if:type,pisignage", "url"],
+            "token"               => ["required_if:type,pisignage", "string"],
         ];
     }
 }

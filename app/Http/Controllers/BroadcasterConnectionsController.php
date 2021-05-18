@@ -35,8 +35,9 @@ class BroadcasterConnectionsController extends Controller {
             $settings->default_customer_id = $request->input("default_customer_id");
             $settings->default_tracking_id = $request->input("default_tracking_id");
         } else { // if ($type === 'pisignage')
-            $settings        = new ConnectionSettingsPiSignage();
-            $settings->token = $request->input("token");
+            $settings             = new ConnectionSettingsPiSignage();
+            $settings->server_url = $request->input("server_url");
+            $settings->token      = $request->input("token");
         }
 
         $settings->connection_id = $connection->id;

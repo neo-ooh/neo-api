@@ -13,6 +13,7 @@ use Neo\Models\ConnectionSettingsBroadSign;
 use Neo\Models\ConnectionSettingsPiSignage;
 use Storage;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
+use function Ramsey\Uuid\v4;
 
 class BroadcasterConnectionsController extends Controller {
     public function index(): Response {
@@ -24,6 +25,7 @@ class BroadcasterConnectionsController extends Controller {
         $type = $request->input("type");
 
         $connection              = new BroadcasterConnection();
+        $connection->uuid = v4();
         $connection->name        = $name;
         $connection->broadcaster = $type;
         $connection->save();
@@ -43,6 +45,7 @@ class BroadcasterConnectionsController extends Controller {
 
         $settings->connection_id = $connection->id;
         $settings->save();
+        $settings->refresh();
 
         if ($type === 'broadsign') {
             // Store the broadsign certificate

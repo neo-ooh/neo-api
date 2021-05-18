@@ -27,6 +27,7 @@ class BroadcasterConnectionsController extends Controller {
         $connection->name        = $name;
         $connection->broadcaster = $type;
         $connection->save();
+        $connection->refresh();
 
         // Set up settings for the connection depending on the provider
         if ($type === 'broadsign') {

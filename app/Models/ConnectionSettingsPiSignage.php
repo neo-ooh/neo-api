@@ -4,6 +4,7 @@ namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class ConnectionSettingsPiSignage
@@ -28,7 +29,7 @@ class ConnectionSettingsPiSignage extends Model {
 
     protected $touches = ["connection"];
 
-    public function connection() {
-        $this->belongsTo(BroadcasterConnection::class, "connection_id");
+    public function connection(): BelongsTo {
+        return $this->belongsTo(BroadcasterConnection::class, "connection_id");
     }
 }

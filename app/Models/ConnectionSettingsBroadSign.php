@@ -32,7 +32,7 @@ class ConnectionSettingsBroadSign extends Model {
 
     protected $touches = ["broadcaster_connection"];
 
-    public function broadcasterConnection(): BelongsTo {
+    public function broadcaster_connection(): BelongsTo {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id");
     }
 

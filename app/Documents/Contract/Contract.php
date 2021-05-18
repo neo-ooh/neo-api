@@ -118,7 +118,7 @@ class Contract extends Document {
 
         // Build the document
 
-        // Contracts have an additional firsst page
+        // Contracts have an additional first page
         if ($this->documentType === self::TYPE_CONTRACT) {
             $this->makeContractFirstPage();
         }

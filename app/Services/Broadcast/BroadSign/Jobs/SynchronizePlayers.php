@@ -43,7 +43,8 @@ class SynchronizePlayers extends BroadSignJob {
 
             if (!$bsPlayer->active) {
                 // Player is inactive, make sure it is not present in our DB
-                Player::query()->where('external_id', '=', $bsPlayer->id)->delete();
+                Player::query()->where('external_id', '=', $bsPlayer->id)
+                               ->where("network_id", "=", $this->config->networkID)->delete();
                 continue;
             }
 
@@ -54,6 +55,7 @@ class SynchronizePlayers extends BroadSignJob {
                                 ->first(["id"]);
 
             if ($location === null) {
+                dump("ignore ". $bsPlayer->name);
                 // No location uses this player, ignore
                 continue;
             }

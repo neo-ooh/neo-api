@@ -40,7 +40,10 @@ class Format extends BroadSignModel {
         return [
             "all" => Endpoint::get("/display_unit_type/v6")
                              ->unwrap(static::$unwrapKey)
-                             ->parser(new MultipleResourcesParser(static::class))
+                             ->parser(new MultipleResourcesParser(static::class)),
+            "get" => Endpoint::get("/display_unit_type/v6/{id}")
+                             ->unwrap(static::$unwrapKey)
+                             ->parser(new MultipleResourcesParser(static::class)),
         ];
     }
 

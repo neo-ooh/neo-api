@@ -25,7 +25,14 @@ use Neo\Services\Broadcast\Broadcaster;
 
 class NetworksController extends Controller {
     public function index(ListNetworksRequest $request) {
-        return new Response(Network::all());
+
+        $query = Network::query()->orderBy('name');
+
+        $query->when($request->has("with") && in_array("connection", $request->input("with"), true), function ($query) {
+            $query->load('broadcaster_connection');
+        });
+
+        return new Response($query->get());
     }
 
     public function store(StoreNetworkRequest $request) {

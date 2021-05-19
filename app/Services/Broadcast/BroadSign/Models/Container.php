@@ -46,8 +46,7 @@ class Container extends BroadSignModel {
                              ->cache(3600*23),
             "byParent" => Endpoint::get("/container/v9/scoped")
                                   ->unwrap(static::$unwrapKey)
-                                  ->parser(new MultipleResourcesParser(static::class))
-                                  ->cache(3600*23),
+                                  ->parser(new MultipleResourcesParser(static::class)),
         ];
     }
 

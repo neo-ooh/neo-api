@@ -17,7 +17,7 @@ use function Ramsey\Uuid\v4;
 
 class BroadcasterConnectionsController extends Controller {
     public function index(): Response {
-        return new Response(BroadcasterConnection::all()->sortBy("name"));
+        return new Response(BroadcasterConnection::query()->with("settings")->orderBy("name")->get());
     }
 
     public function store(StoreConnectionRequest $request): Response {
@@ -25,7 +25,7 @@ class BroadcasterConnectionsController extends Controller {
         $type = $request->input("type");
 
         $connection              = new BroadcasterConnection();
-        $connection->uuid = v4();
+        $connection->uuid        = v4();
         $connection->name        = $name;
         $connection->broadcaster = $type;
         $connection->save();

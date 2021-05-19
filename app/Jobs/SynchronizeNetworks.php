@@ -31,7 +31,8 @@ class SynchronizeNetworks extends Command {
 
         foreach ($networks as $network) {
             $network = Broadcast::network($network->id);
-            $network->synchronizeLocations();
+//            $network->synchronizeLocations();
+            $network->synchronizePlayers();
         }
     }
 }

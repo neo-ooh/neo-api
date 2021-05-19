@@ -4,6 +4,7 @@ namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class NetworkSettingsBroadSign
@@ -28,7 +29,7 @@ class NetworkSettingsBroadSign extends Model {
 
     protected $touches = ["network"];
 
-    public function network() {
-        $this->belongsTo(Network::class, "network_id");
+    public function network(): BelongsTo {
+        return $this->belongsTo(Network::class, "network_id");
     }
 }

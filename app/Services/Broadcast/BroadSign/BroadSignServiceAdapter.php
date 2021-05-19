@@ -16,6 +16,7 @@ use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\UpdateBroadSignSchedule;
 use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\UpdateBroadSignScheduleStatus;
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizeFormats;
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizeLocations;
+use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizePlayers;
 
 class BroadSignServiceAdapter implements BroadcastService {
 
@@ -30,6 +31,13 @@ class BroadSignServiceAdapter implements BroadcastService {
      */
     public function synchronizeLocations() {
         SynchronizeLocations::dispatchSync($this->config);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function synchronizePlayers() {
+        SynchronizePlayers::dispatchSync($this->config);
     }
 
     /**

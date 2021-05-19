@@ -22,6 +22,13 @@ class PiSignageServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
+    public function synchronizePlayers() {
+        // TODO: Implement synchronizePlayers() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function createSchedule(int $scheduleId, int $actorId) {
         // TODO: Implement createSchedule() method.
     }

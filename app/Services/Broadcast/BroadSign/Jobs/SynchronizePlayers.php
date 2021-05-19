@@ -14,10 +14,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
 use Neo\Models\Location;
 use Neo\Models\Player;
+use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
@@ -48,18 +47,21 @@ class SynchronizePlayers extends BroadSignJob {
                 continue;
             }
 
-            $location = Location::query()->where("external_id",
-                "=", $bsPlayer->display_unit_id)->first(["id"]);
+            // Check if the player match a location in the network
+            $location = Location::query()
+                                ->where("external_id", "=", $bsPlayer->display_unit_id)
+                                ->where("network_id", "=", $this->config->networkID)
+                                ->first(["id"]);
 
             if ($location === null) {
-                // Ignore player
-                Log::warning("Could not find display unit $bsPlayer->display_unit_id for player $bsPlayer->name ($bsPlayer->id). Ignoring...");
+                // No location uses this player, ignore
                 continue;
             }
 
             /** @var Player $player */
             $player = Player::query()->firstOrCreate([
-                "broadsign_player_id" => $bsPlayer->id,
+                "network_id"  => $this->config->networkID,
+                "external_id" => $bsPlayer->id,
             ], [
                 "location_id" => $location->id,
                 "name"        => $bsPlayer->name,
@@ -73,6 +75,9 @@ class SynchronizePlayers extends BroadSignJob {
         (new ConsoleOutput())->writeln("");
 
         // Erase missing players
-        Player::query()->whereNotIn("id", $players)->delete();
+        Player::query()
+              ->whereNotIn("id", $players)
+              ->where("network_id", "=", $this->config->networkID)
+              ->delete();
     }
 }

@@ -9,6 +9,12 @@ interface BroadcastService {
      * @return mixed
      */
     public function synchronizeLocations();
+    /**
+     * Synchronize stored players with the players of the network
+     *
+     * @return mixed
+     */
+    public function synchronizePlayers();
 
     /*
     |--------------------------------------------------------------------------

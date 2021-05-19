@@ -37,8 +37,13 @@ class SynchronizeLocations extends BroadSignJob {
         // recursively parse containers
         $this->parseContainer($this->config->containerId);
 
+        dump($this->parsedLocations);
+
         // Erase missing locations
-        Location::query()->whereNotIn("id", $this->parsedLocations)->delete();
+        Location::query()
+                ->whereNotIn("id", $this->parsedLocations)
+                ->where("network_id", "=", $this->config->networkID)
+                ->delete();
     }
 
     protected function parseContainer(int $containerId) {
@@ -57,7 +62,7 @@ class SynchronizeLocations extends BroadSignJob {
     }
 
     protected function parseLocations($broadSignLocations) {
-        if(count($broadSignLocations) === 0) {
+        if (count($broadSignLocations) === 0) {
             return;
         }
 

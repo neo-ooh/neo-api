@@ -28,7 +28,6 @@ class BroadSignServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function synchronizeLocations() {
-        dump("dispath ". $this->config->connectionUUID);
         SynchronizeLocations::dispatchSync($this->config);
     }
 

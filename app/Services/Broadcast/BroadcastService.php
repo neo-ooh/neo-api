@@ -9,6 +9,12 @@ interface BroadcastService {
      */
     public function synchronizeLocations();
 
+    /**
+     * Synchronize stored formats with the formats of the network
+     * @return mixed
+     */
+    public function synchronizeFormats();
+
     /*
     |--------------------------------------------------------------------------
     | Schedules

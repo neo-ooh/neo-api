@@ -30,8 +30,9 @@ class SynchronizeNetworks extends Command {
         $networks = Network::all(["id", "name"]);
 
         foreach ($networks as $network) {
-            dump($network->name);
-            Broadcast::network($network->id)->synchronizeLocations();
+            $network = Broadcast::network($network->id);
+            $network->synchronizeLocations();
+            $network->synchronizeLocations();
         }
     }
 }

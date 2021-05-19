@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Neo\Services\Broadcast\Broadcaster;
 
 /**
  * NeoModels\Branding
@@ -61,6 +62,17 @@ class Network extends Model {
 
     public function broadcasterConnection(): BelongsTo {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
+    }
+
+    public function getSettingsAttribute() {
+        switch ($this->broadcaster_connection->broadcaster) {
+            case Broadcaster::BROADSIGN:
+                return $this->hasOne(NetworkSettingsBroadSign::class, "connection_id")->getResults();
+            case Broadcaster::PISIGNAGE:
+                return $this->hasOne(NetworkSettingsPiSignage::class, "connection_id")->getResults();
+            default:
+                return null;
+        }
     }
 
     public function locations(): HasMany {

@@ -235,7 +235,7 @@ Route::prefix("v1")->group(function () {
     Route::get("broadcasters/", BroadcasterConnectionsController::class . "@index")->name("broadcasters.index");
     Route::post("broadcasters/", BroadcasterConnectionsController::class . "@store")->name("broadcasters.store");
     Route::get("broadcasters/{connection}", BroadcasterConnectionsController::class . "@show")->name("broadcasters.show");
-    Route::put("broadcasters/{connection}", BroadcasterConnectionsController::class . "@update")->name("broadcasters.update");
+    Route::post("broadcasters/{connection}", BroadcasterConnectionsController::class . "@update")->name("broadcasters.update");
     Route::delete("broadcasters/{connection}", BroadcasterConnectionsController::class . "@destroy")->name("broadcasters.destroy");
 
     /*

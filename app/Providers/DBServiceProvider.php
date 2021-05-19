@@ -32,34 +32,6 @@ class DBServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Relation::morphMap([
-            'broadsign' => ConnectionSettingsBroadSign::class,
-            'pisignage' => ConnectionSettingsPiSignage::class,
-        ]);
-        // Define dynamic relationships required by Eloquent
-//        BroadcasterConnection::resolveRelationUsing("settings", function (BroadcasterConnection $connection) {
-//            dump($connection);
-//            switch ($connection->broadcaster) {
-//                case Broadcaster::BROADSIGN:
-//                    dump("broadsign");
-//                    return $connection->hasOne(ConnectionSettingsBroadSign::class, "connection_id");
-//                case Broadcaster::PISIGNAGE:
-//                    dump("pisignage");
-//                    return $connection->hasOne(ConnectionSettingsPiSignage::class, "connection_id");
-//                default:
-//                    return null;
-//            }
-//        });
-
-        Network::resolveRelationUsing("settings", function (Network $network) {
-            switch ($network->broadcaster_connection->broadcaster) {
-                case Broadcaster::BROADSIGN:
-                    return $network->hasOne(NetworkSettingsBroadSign::class, "connection_id");
-                case Broadcaster::PISIGNAGE:
-                    return $network->hasOne(NetworkSettingsPiSignage::class, "connection_id");
-                default:
-                    return null;
-            }
-        });
+        //
     }
 }

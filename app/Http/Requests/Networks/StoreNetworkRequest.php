@@ -33,9 +33,9 @@ class StoreNetworkRequest extends FormRequest
             "connection_id" => ["required", "exists:broadcasters_connections,id"],
 
             // Broadsign network settings
-            "container_id" => [Rule::requiredIf(fn() => BroadcasterConnection::query()->findOrFail($this->route("connection_id"))->broadcaster === Broadcaster::BROADSIGN), "integer"],
-            "customer_id" => [Rule::requiredIf(fn() => BroadcasterConnection::query()->findOrFail($this->route("connection_id"))->broadcaster === Broadcaster::BROADSIGN), "integer"],
-            "tracking_id" => [Rule::requiredIf(fn() => BroadcasterConnection::query()->findOrFail($this->route("connection_id"))->broadcaster === Broadcaster::BROADSIGN), "integer"],
+            "container_id" => [Rule::requiredIf(fn() => BroadcasterConnection::query()->findOrFail($this->input("connection_id"))->broadcaster === Broadcaster::BROADSIGN), "integer"],
+            "customer_id" => [Rule::requiredIf(fn() => BroadcasterConnection::query()->findOrFail($this->input("connection_id"))->broadcaster === Broadcaster::BROADSIGN), "integer"],
+            "tracking_id" => [Rule::requiredIf(fn() => BroadcasterConnection::query()->findOrFail($this->input("connection_id"))->broadcaster === Broadcaster::BROADSIGN), "integer"],
         ];
     }
 }

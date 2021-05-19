@@ -94,7 +94,7 @@ class BroadcasterConnectionsController extends Controller {
 
             $connectionSettings->domain_id           = $request->input("domain_id");
             $connectionSettings->default_customer_id = $request->input("default_customer_id");
-            $connectionSettings->default_tracking_id = $request->input("default_tracking_id_id");
+            $connectionSettings->default_tracking_id = $request->input("default_tracking_id");
         } else { // if ($connection->broadcaster === 'pisignage')
             $connectionSettings->token = $request->input("token", $connectionSettings->token);
         }

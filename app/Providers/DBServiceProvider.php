@@ -10,6 +10,7 @@ use Neo\Models\Enums\Broadcaster;
 use Neo\Models\Network;
 use Neo\Models\NetworkSettingsBroadSign;
 use Neo\Models\NetworkSettingsPiSignage;
+use Neo\Services\Broadcast\Broadcaster;
 
 class DBServiceProvider extends ServiceProvider
 {

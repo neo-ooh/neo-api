@@ -22,6 +22,7 @@ use Neo\Models\Network;
 use Neo\Models\NetworkSettingsBroadSign;
 use Neo\Models\NetworkSettingsPiSignage;
 use Neo\Services\Broadcast\Broadcaster;
+use function Ramsey\Uuid\v4;
 
 class NetworksController extends Controller {
     public function index(ListNetworksRequest $request) {
@@ -43,6 +44,7 @@ class NetworksController extends Controller {
 
     public function store(StoreNetworkRequest $request) {
         $network = new Network();
+        $network->uuid = v4();
         $network->name = $request->input("name");
         $network->connection_id = $request->input("connection_id");
         $network->save();

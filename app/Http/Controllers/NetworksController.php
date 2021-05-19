@@ -33,7 +33,7 @@ class NetworksController extends Controller {
         });
 
         $query->when($request->has("with") && in_array("settings", $request->input("with"), true), function ($query) {
-            $query->with("settings");
+            $query->append("settings");
         });
 
         return new Response($query->get());

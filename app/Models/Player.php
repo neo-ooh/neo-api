@@ -55,6 +55,7 @@ class Player extends Model {
      * @var array
      */
     protected $fillable = [
+        'network_id',
         'external_id',
         'location_id',
         'name',

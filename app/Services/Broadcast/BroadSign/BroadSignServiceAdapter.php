@@ -34,6 +34,13 @@ class BroadSignServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
+    public function synchronizeFormats() {
+        // TODO: Implement synchronizeFormats() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function destroyCreative(int $externalId) {
         DisableBroadSignCreative::dispatch($this->config, $externalId);
     }

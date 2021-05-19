@@ -26,10 +26,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string   $external_id
  * @property int      $location_id
  * @property string   $name
- * @property Date   $created_at
- * @property Date   $updated_at
+ * @property Date     $created_at
+ * @property Date     $updated_at
  *
- * @property Network $network
+ * @property Network  $network
  * @property Location $location
  *
  * @mixin Builder
@@ -55,7 +55,7 @@ class Player extends Model {
      * @var array
      */
     protected $fillable = [
-        'broadsign_player_id',
+        'external_id',
         'location_id',
         'name',
     ];
@@ -70,7 +70,7 @@ class Player extends Model {
         return $this->belongsTo(Network::class, "network_id");
     }
 
-    public function location (): BelongsTo {
+    public function location(): BelongsTo {
         return $this->belongsTo(Location::class, "location_id");
     }
 }

@@ -33,7 +33,6 @@ class BroadSignConfig {
 
         // We need a local copy of the certificate to be able to use it with Broadsign
         if(!Storage::disk("local")->exists($path)) {
-            dump("copy certificate");
             Storage::disk("local")->put($path, Storage::get($path));
         }
 

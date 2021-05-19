@@ -55,7 +55,6 @@ class SynchronizePlayers extends BroadSignJob {
                                 ->first(["id"]);
 
             if ($location === null) {
-                dump("ignore ". $bsPlayer->name);
                 // No location uses this player, ignore
                 continue;
             }

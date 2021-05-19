@@ -57,7 +57,7 @@ class BroadcasterConnectionsController extends Controller {
 
             // !! IMPORTANT !! Visibility has to be set to private, this key has no password
             // The key is stored on the shared storage to be accessible by all the API nodes
-            Storage::putFile($settings->certificate_path, $cert, ["visibility" => "private"]);
+            $cert->storeAs($connection->settings->certificate_path, $connection->settings->file_name, ["visibility" => "private"]);
         }
 
         // We are good, return the ID of the created resource
@@ -90,7 +90,7 @@ class BroadcasterConnectionsController extends Controller {
                     throw new UploadException($cert->getErrorMessage(), $cert->getError());
                 }
 
-                Storage::putFile($connection->settings->certificate_path, $cert, ["visibility" => "private"]);
+                $cert->storeAs($connection->settings->certificate_path, $connection->settings->file_name, ["visibility" => "private"]);
             }
         } else { // if ($type === 'pisignage')
             $connection->settings->token = $request->input("token", $connection->settings->token);

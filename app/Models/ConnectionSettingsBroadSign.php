@@ -16,6 +16,8 @@ use Storage;
  * @property int                   $default_tracking_id
  *
  * @property string                $certificate_path
+ * @property string                $file_name
+ * @property string                $file_path
  *
  * @property int                   $connection_id
  * @property BroadcasterConnection $broadcaster_connection
@@ -37,6 +39,13 @@ class ConnectionSettingsBroadSign extends Model {
     }
 
     public function getCertificatePathAttribute() {
-        Storage::path("secure/certs/{$this->broadcaster_connection->uuid}.pem");
+        return Storage::path("/secure/certs/");
+    }
+
+    public function getFileNameAttribute() {
+        return "{$this->broadcaster_connection->uuid}.pem";
+    }
+    public function getFilePathAttribute() {
+        return $this->certificate_path . $this->file_name;
     }
 }

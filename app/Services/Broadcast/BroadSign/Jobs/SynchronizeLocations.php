@@ -137,7 +137,7 @@ class SynchronizeLocations extends BroadSignJob {
             return $displayType;
         }
 
-        $bsDisplayType = Format::get($displayTypeId);
+        $bsDisplayType = Format::get($this->getAPIClient(), $displayTypeId);
 
         $displayType = new DisplayType([
             "connection_id" => $this->config->connectionID,

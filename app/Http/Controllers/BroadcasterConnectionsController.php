@@ -2,6 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Exception;
 use Illuminate\Http\Response;
 use InvalidArgumentException;
 use Neo\Http\Requests\BroadcasterConnections\DestroyConnectionRequest;
@@ -78,11 +79,9 @@ class BroadcasterConnectionsController extends Controller {
         $connection->name = $request->input("name");
         $connection->save();
 
-        if ($type === 'broadsign') {
-            $connection->settings->domain_id           = $request->input("domain_id");
-            $connection->settings->default_customer_id = $request->input("default_customer_id");
-            $connection->settings->default_tracking_id = $request->input("default_tracking_id_id");
+        $connectionSettings = $connection->settings;
 
+        if ($connection->broadcaster === 'broadsign') {
             if ($request->hasFile("certificate")) {
                 $cert = $request->file("certificate");
 
@@ -90,13 +89,17 @@ class BroadcasterConnectionsController extends Controller {
                     throw new UploadException($cert->getErrorMessage(), $cert->getError());
                 }
 
-                $cert->storeAs($connection->settings->certificate_path, $connection->settings->file_name, ["visibility" => "private"]);
+                $cert->storeAs($connectionSettings->certificate_path, $connectionSettings->file_name, ["visibility" => "private"]);
             }
-        } else { // if ($type === 'pisignage')
-            $connection->settings->token = $request->input("token", $connection->settings->token);
+
+            $connectionSettings->domain_id           = $request->input("domain_id");
+            $connectionSettings->default_customer_id = $request->input("default_customer_id");
+            $connectionSettings->default_tracking_id = $request->input("default_tracking_id_id");
+        } else { // if ($connection->broadcaster === 'pisignage')
+            $connectionSettings->token = $request->input("token", $connectionSettings->token);
         }
 
-        $connection->settings->save();
+        $connectionSettings->save();
 
         return new Response($connection->append("settings"));
     }

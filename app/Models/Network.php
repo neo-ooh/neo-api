@@ -60,7 +60,7 @@ class Network extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function broadcasterConnection(): BelongsTo {
+    public function broadcaster_connection(): BelongsTo {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
     }
 

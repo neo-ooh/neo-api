@@ -46,9 +46,7 @@ class BroadsignClient {
         if (count($uriParams) > 0) {
             if ($uriParams[0] === "id" && is_numeric($payload)) {
                 $endpoint->setParam("id", $payload);
-            }
-
-            if(is_array($payload)) {
+            } else if(is_array($payload)) {
                 foreach ($uriParams as $param) {
                     $endpoint->setParam($param, $payload[$param]);
                 }

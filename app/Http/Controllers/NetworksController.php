@@ -58,17 +58,14 @@ class NetworksController extends Controller {
         $network->save();
 
         if($network->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN) {
-            $settings = new NetworkSettingsBroadSign();
+            $settings = $network->settings;
             $settings->container_id = $request->input("container_id");
             $settings->customer_id = $request->input("customer_id");
             $settings->tracking_id = $request->input("tracking_id");
-        } else { // if ($network->broadcaster_connection->broadcaster === Broadcaster::PISIGNAGE)
-            $settings = new NetworkSettingsPiSignage();
+            $settings->save();
         }
 
-        $settings->save();
-
-        return new Response($network->load(["settings", "broadcaster_connection"]), 200);
+        return new Response($network->load(["broadcaster_connection"])->append("settings"));
     }
 
     public function destroy(DestroyNetworkRequest $request, Network $network) {

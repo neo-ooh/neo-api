@@ -72,6 +72,7 @@ use Neo\Models\Headline;
 use Neo\Models\HeadlineMessage;
 use Neo\Models\Library;
 use Neo\Models\Location;
+use Neo\Models\Network;
 use Neo\Models\NewsBackground;
 use Neo\Models\Param;
 use Neo\Models\ReviewTemplate;
@@ -552,6 +553,8 @@ Route::prefix("v1")->group(function () {
     | Networks
     |----------------------------------------------------------------------
     */
+
+    Route::model("network", Network::class);
 
     Route:: get("networks", NetworksController::class . "@index")->name("networks.index");
     Route::post("networks", NetworksController::class . "@store")->name("networks.store");

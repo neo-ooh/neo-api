@@ -6,8 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Neo\Enums\Capability;
-use Neo\Enums\Network;
-use Neo\Models\BroadcasterConnection;
+use Neo\Models\Network;
 use Neo\Services\Broadcast\Broadcaster;
 
 class UpdateNetworkRequest extends FormRequest

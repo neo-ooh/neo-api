@@ -89,7 +89,7 @@ return [
             'region'     => env('DO_SPACE_REGION'),
             'bucket'     => env('DO_SPACE_BUCKET'),
             'url'        => env('DO_SPACE_URL'),
-            'root'       => "ooh-dev",
+            'root'       => "/ooh-dev",
             'visibility' => 'public',
         ],
 

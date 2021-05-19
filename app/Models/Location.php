@@ -57,6 +57,7 @@ class Location extends SecuredModel {
      */
     protected $fillable = [
         "external_id",
+        "network_id",
         "format_id",
         "name",
         "internal_name",

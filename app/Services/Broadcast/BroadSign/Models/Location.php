@@ -82,7 +82,7 @@ class Location extends BroadSignModel {
             return null;
         }
 
-        return Container::query()->get($this->api, $this->container_id);
+        return Container::get($this->api, $this->container_id);
     }
 
     public static function inContainer(BroadsignClient $client, int $containerId) {

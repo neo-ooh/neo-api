@@ -11,7 +11,7 @@ class SingleResourcesParser extends ResponseParser {
         $this->type = $type;
     }
 
-    public function handle(array $responseBody): array {
-        return new $this->type($responseBody[0]);
+    public function handle(array $responseBody, ...$args) {
+        return new $this->type($args[0], $responseBody[0]);
     }
 }

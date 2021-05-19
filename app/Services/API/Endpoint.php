@@ -129,7 +129,7 @@ class Endpoint {
 
     public function getParamsList(): array {
         preg_match_all("/{([a-zA-Z]+)}/", $this->path, $matches);
-        return array_filter($matches);
+        return $matches[1];
     }
 
     public function setParam(string $parameter, $value): void {

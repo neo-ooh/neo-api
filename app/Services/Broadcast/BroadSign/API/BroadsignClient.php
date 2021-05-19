@@ -48,9 +48,15 @@ class BroadsignClient {
                 $endpoint->setParam("id", $payload);
             }
 
-            foreach ($uriParams as $param) {
-                $endpoint->setParam($param, $payload[$param]);
+            if(is_array($payload)) {
+                foreach ($uriParams as $param) {
+                    $endpoint->setParam($param, $payload[$param]);
+                }
             }
+        }
+
+        if(is_numeric($payload)) {
+            $payload = null;
         }
 
         if ($endpoint->cache === 0 || strtolower($endpoint->method) !== 'get') {
@@ -90,7 +96,7 @@ class BroadsignClient {
         // Execute post-request transformation if needed
         if ($endpoint->parse) {
             // Execute the parse on the response
-            $responseBody = call_user_func($endpoint->parse, $responseBody);
+            $responseBody = call_user_func($endpoint->parse, $responseBody, $this);
         }
 
         return $responseBody;

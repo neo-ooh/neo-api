@@ -23,7 +23,9 @@ abstract class Broadcast {
         switch($broadcasterType) {
             case Broadcaster::BROADSIGN:
                 $config = new BroadSignConfig();
+                $config->connectionID = $network->broadcaster_connection->id;
                 $config->connectionUUID = $network->broadcaster_connection->uuid;
+                $config->networkID = $network->id;
                 $config->networkUUID = $network->uuid;
                 $config->apiURL = config("broadsign.api.url");
                 $config->domainId = $network->broadcaster_connection->settings->domain_id;

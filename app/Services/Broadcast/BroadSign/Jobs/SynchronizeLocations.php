@@ -15,7 +15,6 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 use Neo\Models\DisplayType;
 use Neo\Models\Location;
 use Neo\Services\Broadcast\BroadSign\Models\Container;
@@ -32,16 +31,41 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class SynchronizeLocations extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected array $parsedLocations = [];
+
     public function handle(): void {
-        $broadsignLocation = $this->parseContainer($this->config->containerId, new Collection());
+        // recursively parse containers
+        $this->parseContainer($this->config->containerId);
 
-        $locations = [];
+        // Erase missing locations
+        Location::query()->whereNotIn("id", $this->parsedLocations)->delete();
+    }
 
-        $progressBar = $this->makeProgressBar(count($broadsignLocation));
+    protected function parseContainer(int $containerId) {
+        (new ConsoleOutput())->writeLn("Parsing container #$containerId...");
+        $this->parseLocations(BSLocation::inContainer($this->getAPIClient(), $containerId));
+
+        $containers = Container::inContainer($this->getAPIClient(), $containerId);
+
+        foreach ($containers as $container) {
+            if ($container->id === $containerId || $container->container_id !== $containerId) {
+                continue;
+            }
+
+            $this->parseContainer($container->id);
+        }
+    }
+
+    protected function parseLocations($broadSignLocations) {
+        if(count($broadSignLocations) === 0) {
+            return;
+        }
+
+        $progressBar = $this->makeProgressBar(count($broadSignLocations));
         $progressBar->start();
 
         /** @var BSLocation $bslocation */
-        foreach ($broadsignLocation as $bslocation) {
+        foreach ($broadSignLocations as $bslocation) {
             $progressBar->setMessage("$bslocation->name ($bslocation->id)");
 
             // Make sure the location's container is present in the DB
@@ -65,7 +89,7 @@ class SynchronizeLocations extends BroadSignJob {
                 $address = trim($matches[4]);
                 $city    = trim($matches[3]);
             } else {
-//                Log::info("No address available for Display Unit $bslocation->name");
+                // Address could not be determined
                 $address = "--";
                 $city    = "--";
             }
@@ -78,6 +102,7 @@ class SynchronizeLocations extends BroadSignJob {
             /** @var Location $location */
             $location = Location::query()->firstOrCreate([
                 "external_id" => $bslocation->id,
+                "network_id"  => $this->config->networkID
             ], [
                 "name"          => $bslocation->name,
                 "internal_name" => $bslocation->name,
@@ -88,29 +113,14 @@ class SynchronizeLocations extends BroadSignJob {
             $location->province        = $address;
             $location->city            = $city;
             $location->save();
-            $locations[] = $location->id;
+            $this->parsedLocations[] = $location->id;
 
             /** @noinspection DisconnectedForeachInstructionInspection */
             $progressBar->advance();
         }
 
-        $progressBar->setMessage("Locations syncing done!");
+        $progressBar->setMessage("Done.\n");
         $progressBar->finish();
-        (new ConsoleOutput())->writeln("");
-
-        // Erase missing locations
-        Location::query()->whereNotIn("id", $locations)->delete();
     }
 
-    protected function parseContainer(int $containerId, Collection $locations): Collection {
-        $locations = $locations->merge(BSLocation::inContainer($this->getAPIClient(), $containerId));
-
-        $containers = Container::inContainer($this->getAPIClient(), $containerId);
-
-        foreach ($containers as $container) {
-            $locations = $locations->merge($this->parseContainer($container->id, $locations));
-        }
-
-        return $locations;
-    }
 }

@@ -29,7 +29,11 @@ class NetworksController extends Controller {
         $query = Network::query()->orderBy('name');
 
         $query->when($request->has("with") && in_array("connection", $request->input("with"), true), function ($query) {
-            $query->with('broadcaster_connection');
+            $query->with("broadcaster_connection");
+        });
+
+        $query->when($request->has("with") && in_array("settings", $request->input("with"), true), function ($query) {
+            $query->with("settings");
         });
 
         return new Response($query->get());

@@ -26,13 +26,15 @@ class SynchronizeNetworks extends Command {
      *
      * @return int
      */
-    public function handle() {
+    public function handle(): int {
         $networks = Network::all(["id", "name"]);
 
         foreach ($networks as $network) {
             $network = Broadcast::network($network->id);
-//            $network->synchronizeLocations();
+            $network->synchronizeLocations();
             $network->synchronizePlayers();
         }
+
+        return 0;
     }
 }

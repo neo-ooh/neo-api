@@ -67,9 +67,9 @@ class Network extends Model {
     public function getSettingsAttribute() {
         switch ($this->broadcaster_connection->broadcaster) {
             case Broadcaster::BROADSIGN:
-                return $this->hasOne(NetworkSettingsBroadSign::class, "connection_id")->getResults();
+                return $this->hasOne(NetworkSettingsBroadSign::class, "network_id")->getResults();
             case Broadcaster::PISIGNAGE:
-                return $this->hasOne(NetworkSettingsPiSignage::class, "connection_id")->getResults();
+                return $this->hasOne(NetworkSettingsPiSignage::class, "network_id")->getResults();
             default:
                 return null;
         }

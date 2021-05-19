@@ -34,10 +34,10 @@ class SynchronizeLocations extends BroadSignJob {
     protected array $parsedLocations = [];
 
     public function handle(): void {
+        (new ConsoleOutput())->writeLn("Synchronizing network {$this->config->networkUUID}...\n\n");
+
         // recursively parse containers
         $this->parseContainer($this->config->containerId);
-
-        dump($this->parsedLocations);
 
         // Erase missing locations
         Location::query()

@@ -39,7 +39,7 @@ class ConnectionSettingsBroadSign extends Model {
     }
 
     public function getCertificatePathAttribute() {
-        return Storage::path("secure/certs/");
+        return "secure/certs/";
     }
 
     public function getFileNameAttribute() {

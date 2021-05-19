@@ -32,9 +32,9 @@ class UpdateNetworkRequest extends FormRequest
             "name" => ["required", "string"],
 
             // Broadsign network settings
-            "container_id" => [Rule::requiredIf(fn() => Network::findOrFail($this->route("network"))->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
-            "customer_id" => [Rule::requiredIf(fn() => Network::findOrFail($this->route("network"))->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
-            "tracking_id" => [Rule::requiredIf(fn() => Network::findOrFail($this->route("network"))->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
+            "container_id" => [Rule::requiredIf(fn() => $this->route("network")->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
+            "customer_id" => [Rule::requiredIf(fn() => $this->route("network")->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
+            "tracking_id" => [Rule::requiredIf(fn() => $this->route("network")->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
         ];
     }
 }

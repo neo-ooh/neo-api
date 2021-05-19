@@ -27,7 +27,9 @@ abstract class BroadSignJob implements ShouldQueue {
      * @return array
      */
     public function middleware() {
-        return [new BlockJobOutsideProduction()];
+        return [
+//            new BlockJobOutsideProduction()
+        ];
     }
 
     public function __construct(BroadSignConfig $config) {

@@ -29,7 +29,7 @@ abstract class Broadcast {
                 $config->domainId = $network->broadcaster_connection->settings->domain_id;
                 $config->customerId = $network->settings->customer_id;
                 $config->containerId = $network->settings->container_id;
-                $config->trackingId = $network->settings->availability_tracking_id;
+                $config->trackingId = $network->settings->tracking_id;
 
                 return new BroadSignServiceAdapter($config);
 

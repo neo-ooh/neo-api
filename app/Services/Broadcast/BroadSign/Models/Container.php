@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 
@@ -42,7 +43,11 @@ class Container extends BroadSignModel {
             "get" => Endpoint::get("/container/v9/{id}")
                              ->unwrap(static::$unwrapKey)
                              ->parser(new SingleResourcesParser(static::class))
-                             ->cache(3600*24),
+                             ->cache(3600*23),
+            "byParent" => Endpoint::get("/container/v9/{id}/scoped")
+                                  ->unwrap(static::$unwrapKey)
+                                  ->parser(new MultipleResourcesParser(static::class))
+                                  ->cache(3600*23),
         ];
     }
 
@@ -52,11 +57,10 @@ class Container extends BroadSignModel {
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * Get all locations (display_unit) associated with this campaign
-     *
-     * @return Container|null
-     */
+    public static function inContainer(BroadsignClient $client, $containerId) {
+        return static::byParent($client, ["parent_container_ids" => $containerId]);
+    }
+
     public function parent (): ?Container {
         if ($this->container_id === 0) {
             return null;

@@ -81,7 +81,7 @@ class Endpoint {
     }
 
     public static function __callStatic($verb, $args): Endpoint {
-        return new Endpoint($verb, ...$args);
+        return new static($verb, ...$args);
     }
 
     public function __toString(): string {
@@ -129,7 +129,7 @@ class Endpoint {
 
     public function getParamsList(): array {
         preg_match_all("/{([a-zA-Z]+)}/", $this->path, $matches);
-        return $matches;
+        return array_filter($matches);
     }
 
     public function setParam(string $parameter, $value): void {

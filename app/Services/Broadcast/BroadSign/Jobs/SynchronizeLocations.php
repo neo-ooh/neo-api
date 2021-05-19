@@ -15,8 +15,10 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Neo\Models\DisplayType;
 use Neo\Models\Location;
+use Neo\Services\Broadcast\BroadSign\Models\Container;
 use Neo\Services\Broadcast\BroadSign\Models\Location as BSLocation;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -31,7 +33,7 @@ class SynchronizeLocations extends BroadSignJob {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle(): void {
-        $broadsignLocation = BSLocation::all($this->getAPIClient());
+        $broadsignLocation = $this->parseContainer($this->config->containerId, new Collection());
 
         $locations = [];
 
@@ -98,5 +100,17 @@ class SynchronizeLocations extends BroadSignJob {
 
         // Erase missing locations
         Location::query()->whereNotIn("id", $locations)->delete();
+    }
+
+    protected function parseContainer(int $containerId, Collection $locations): Collection {
+        $locations = $locations->merge(BSLocation::inContainer($this->getAPIClient(), $containerId));
+
+        $containers = Container::inContainer($this->getAPIClient(), $containerId);
+
+        foreach ($containers as $container) {
+            $locations = $locations->merge($this->parseContainer($container->id, $locations));
+        }
+
+        return $locations;
     }
 }

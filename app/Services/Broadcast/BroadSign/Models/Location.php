@@ -56,6 +56,9 @@ class Location extends BroadSignModel {
             "all"          => Endpoint::get("/display_unit/v12")
                                       ->unwrap(static::$unwrapKey)
                                       ->parser(new MultipleResourcesParser(static::class)),
+            "byContainer"          => Endpoint::get("/display_unit/v12/by_container")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
             "byReservable" => Endpoint::get("/display_unit/v12/by_reservable")
                                       ->domain(false)
                                       ->unwrap(static::$unwrapKey)
@@ -80,5 +83,9 @@ class Location extends BroadSignModel {
         }
 
         return Container::query()->get($this->api, $this->container_id);
+    }
+
+    public static function inContainer(BroadsignClient $client, int $containerId) {
+        return static::byContainer($client, ["container_id" => $containerId]);
     }
 }

@@ -95,4 +95,11 @@ class PiSignageServiceAdapter implements BroadcastService {
     public function rebuildCampaign(int $campaignId) {
         // TODO: Implement rebuildCampaign() method.
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function destroyCreative(int $externalId) {
+        // TODO: Implement destroyCreative() method.
+    }
 }

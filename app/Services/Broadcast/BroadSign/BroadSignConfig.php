@@ -25,6 +25,6 @@ class BroadSignConfig {
      * @return string
      */
     public function getCertPath(): string {
-        return Storage::path("secure/certs/$this->connectionUUID.pem");
+        return Storage::url("secure/certs/$this->connectionUUID.pem");
     }
 }

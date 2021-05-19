@@ -27,6 +27,6 @@ class NetworkSettingsPiSignage extends Model {
     protected $touches = ["network"];
 
     public function network() {
-        $this->belongsTo(Network::class, "network_id");
+        return $this->belongsTo(Network::class, "network_id");
     }
 }

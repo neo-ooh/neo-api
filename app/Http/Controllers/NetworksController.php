@@ -36,9 +36,9 @@ class NetworksController extends Controller {
 
         if($request->has("with") && in_array("settings", $request->input("with"), true)) {
             $networks->append("settings");
-        };
+        }
 
-        return new Response();
+        return new Response($networks);
     }
 
     public function store(StoreNetworkRequest $request) {

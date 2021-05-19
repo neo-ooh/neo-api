@@ -98,7 +98,7 @@ class BroadcasterConnectionsController extends Controller {
 
         $connection->settings->save();
 
-        return new Response($connection->load("settings"));
+        return new Response($connection->append("settings"));
     }
 
     public function destroy(DestroyConnectionRequest $request, BroadcasterConnection $connection): Response {

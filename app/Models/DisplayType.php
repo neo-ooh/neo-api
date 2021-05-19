@@ -51,6 +51,7 @@ class DisplayType extends Model {
      */
     protected $fillable = [
         "external_id",
+        "connection_id",
         "name",
     ];
 

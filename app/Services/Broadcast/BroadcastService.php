@@ -5,15 +5,10 @@ namespace Neo\Services\Broadcast;
 interface BroadcastService {
     /**
      * Synchronize stored locations with the location of the network
+     *
      * @return mixed
      */
     public function synchronizeLocations();
-
-    /**
-     * Synchronize stored formats with the formats of the network
-     * @return mixed
-     */
-    public function synchronizeFormats();
 
     /*
     |--------------------------------------------------------------------------
@@ -23,6 +18,7 @@ interface BroadcastService {
 
     /**
      * Deletes the specified creative from the broadcaster's servers
+     *
      * @param int $externalId
      * @return mixed
      */
@@ -36,6 +32,7 @@ interface BroadcastService {
 
     /**
      * replicate the schedule in the broadcast Service
+     *
      * @param int $scheduleId
      * @return mixed
      */
@@ -43,6 +40,7 @@ interface BroadcastService {
 
     /**
      * Update the schedule
+     *
      * @param int $scheduleId
      * @return mixed
      */
@@ -50,6 +48,7 @@ interface BroadcastService {
 
     /**
      * Enable the schedule for broadcasting. Schedule broadcasting is still dependant on the conditions set on the schedule.
+     *
      * @param int $scheduleId
      * @return mixed
      */
@@ -57,6 +56,7 @@ interface BroadcastService {
 
     /**
      * Remove the schedule from broadcasting
+     *
      * @param int $scheduleId
      * @return mixed
      */
@@ -64,6 +64,7 @@ interface BroadcastService {
 
     /**
      * Destroy the schedule, it will need to be re-created to broadcast it again
+     *
      * @param int $scheduleId
      * @return mixed
      */
@@ -77,6 +78,7 @@ interface BroadcastService {
 
     /**
      * Replicate the campaign in the broadcast service
+     *
      * @param int $campaignId
      * @return mixed
      */
@@ -84,6 +86,7 @@ interface BroadcastService {
 
     /**
      * Update the campaign information
+     *
      * @param int $campaignId
      * @return mixed
      */
@@ -91,6 +94,7 @@ interface BroadcastService {
 
     /**
      * Properly target, or retarget the campaign
+     *
      * @param int $campaignId
      * @return mixed
      */
@@ -98,6 +102,7 @@ interface BroadcastService {
 
     /**
      * Update the order of the schedules in the campaign to match the one specified by Connect
+     *
      * @param int $campaignId
      * @return mixed
      */
@@ -113,6 +118,7 @@ interface BroadcastService {
 
     /**
      * Rebuild the campaign. The campaign will be deleted then re-created and targeted
+     *
      * @param int $campaignId
      * @return mixed
      */

@@ -18,6 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Neo\Models\DisplayType;
 use Neo\Models\Location;
 use Neo\Services\Broadcast\BroadSign\Models\Container;
+use Neo\Services\Broadcast\BroadSign\Models\Format;
 use Neo\Services\Broadcast\BroadSign\Models\Location as BSLocation;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -100,9 +101,7 @@ class SynchronizeLocations extends BroadSignJob {
             }
 
             /** @var DisplayType $displayType */
-            $displayType = DisplayType::query()
-                                      ->where("external_id", "=", $bslocation->display_unit_type_id)
-                                      ->first();
+            $displayType = $this->getDisplayType($bslocation->display_unit_type_id);
 
             /** @var Location $location */
             $location = Location::query()->firstOrCreate([
@@ -126,6 +125,28 @@ class SynchronizeLocations extends BroadSignJob {
 
         $progressBar->setMessage("Done.\n");
         $progressBar->finish();
+    }
+
+    protected function getDisplayType($displayTypeId) {
+        $displayType = DisplayType::query()
+                                  ->where("external_id", "=", $displayTypeId)
+                                  ->where("connection_id", "=", $this->config->connectionID)
+                                  ->first();
+
+        if($displayType) {
+            return $displayType;
+        }
+
+        $bsDisplayType = Format::get($displayTypeId);
+
+        $displayType = new DisplayType([
+            "connection_id" => $this->config->connectionID,
+            "external_id" => $bsDisplayType->id,
+            "name" => $bsDisplayType->name,
+        ]);
+        $displayType->save();
+
+        return $displayType;
     }
 
 }

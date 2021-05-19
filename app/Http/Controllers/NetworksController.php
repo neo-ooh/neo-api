@@ -32,11 +32,13 @@ class NetworksController extends Controller {
             $query->with("broadcaster_connection");
         });
 
-        $query->when($request->has("with") && in_array("settings", $request->input("with"), true), function ($query) {
-            $query->append("settings");
-        });
+        $networks = $query->get();
 
-        return new Response($query->get());
+        if($request->has("with") && in_array("settings", $request->input("with"), true)) {
+            $networks->append("settings");
+        };
+
+        return new Response();
     }
 
     public function store(StoreNetworkRequest $request) {

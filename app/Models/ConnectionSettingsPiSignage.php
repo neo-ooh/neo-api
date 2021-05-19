@@ -10,10 +10,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Class ConnectionSettingsPiSignage
  *
  * @package Neo\Models
- * @property string $server_url
- * @property string $token
+ * @property string                $server_url
+ * @property string                $token
  *
- * @property int    $connection_id
+ * @property int                   $connection_id
+ * @property BroadcasterConnection $broadcaster_connection
  */
 class ConnectionSettingsPiSignage extends Model {
     use HasFactory;
@@ -29,7 +30,7 @@ class ConnectionSettingsPiSignage extends Model {
 
     protected $touches = ["broadcaster_connection"];
 
-    public function broadcasterConnection(): BelongsTo {
+    public function broadcaster_connection(): BelongsTo {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id");
     }
 }

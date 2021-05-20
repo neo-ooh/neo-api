@@ -75,17 +75,13 @@ class DetailedOrdersTable extends Component {
                     "bua"      => $order->isBonusUponAvailability(),
                 ][$this->type])
             ->sortBy(['property_name'])
-            ->groupBy(['market', 'property_name']);
+            ->groupBy(['market_sequence', 'property_name'])
+            ->sort();
 
 
         if ($purchases->count() === 0) {
             return "";
         }
-
-        $purchases = (new Collection($this->regions))
-            ->flip()
-            ->replace($purchases)
-            ->filter(fn($region) => !is_int($region));
 
         return view('documents.contract.campaign-details.orders-network', [
             "type"        => $this->type,

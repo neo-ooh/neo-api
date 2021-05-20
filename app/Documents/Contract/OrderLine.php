@@ -29,6 +29,7 @@ class OrderLine {
 
     public string $market;
     public string $market_name;
+    public string $market_order;
 
     public float $nb_weeks;
     public int $nb_screens;
@@ -66,6 +67,7 @@ class OrderLine {
                             "order_line/traffic",
                             "order_line/market_id",
                             "order_line/market_id/name",
+                            "order_line/market_id/sequence",
                             "order_line/nb_weeks",
                             "order_line/nb_screen",
                             "order_line/product_uom_qty",
@@ -99,6 +101,7 @@ class OrderLine {
         $this->traffic     = $record["order_line/traffic"];
         $this->market      = $record["order_line/market_id"];
         $this->market_name = $record["order_line/market_id/name"];
+        $this->market_order = $record["order_line/market_id/sequence"];
         $this->nb_weeks    = (float)($record["order_line/nb_weeks"] ?? 0);
         $this->nb_screens  = (int)($record["order_line/nb_screen"] ?? 0);
         $this->quantity    = $record["order_line/product_uom_qty"];

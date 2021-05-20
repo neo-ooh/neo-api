@@ -65,7 +65,7 @@ class CampaignsController extends Controller {
         // Get the display types associated with the format that matches the campaign's network's connection.
         $displayTypes = $campaign->format->display_types()
                                          ->join("broadcasters_connections", "display_types.connection_id", "=", "broadcasters_connections.id")
-                                         ->where("broadcasters_connections.id", "=", $campaign->network->connection_id);
+                                         ->where("broadcasters_connections.id", "=", $campaign->network->connection_id)->get();
 
 
         $locations = $campaign->owner->locations->whereIn("display_type_id", $displayTypes->pluck('id'));

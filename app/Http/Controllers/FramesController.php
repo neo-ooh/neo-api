@@ -35,8 +35,6 @@ class FramesController extends Controller {
         $frame->height    = $request->input("height");
         $frame->save();
 
-        $broadcasters = $frame->layout->format->display_types->load("broadcaster_connections")->pluck("broadcaster_connections.broadcaster")->values()->unique();
-
         if($request->has("criteria_id")) {
             $settings = new FrameSettingsBroadSign();
             $settings->frame_id = $frame->id;
@@ -51,7 +49,7 @@ class FramesController extends Controller {
             $settings->save();
         }
 
-        return new Response($frame, 201);
+        return new Response($frame->refresh(), 201);
     }
 
     /**
@@ -80,7 +78,7 @@ class FramesController extends Controller {
             $settings->save();
         }
 
-        return new Response($frame);
+        return new Response($frame->refresh());
     }
 
     /**

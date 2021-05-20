@@ -37,21 +37,18 @@ class FramesController extends Controller {
 
         $broadcasters = $frame->layout->format->display_types->load("broadcaster_connections")->pluck("broadcaster_connections.broadcaster")->values()->unique();
 
-        foreach ($broadcasters as $broadcaster) {
-            switch ($broadcaster) {
-                case Broadcaster::BROADSIGN:
-                    $settings = new FrameSettingsBroadSign();
-                    $settings->frame_id = $frame->id;
-                    $settings->criteria_id = $request->input("criteria_id");
-                    $settings->save();
-                    break;
-                case Broadcaster::PISIGNAGE:
-                    $settings = new FrameSettingsPiSignage();
-                    $settings->frame_id = $frame->id;
-                    $settings->zone_name = $request->input("zone_name");
-                    $settings->save();
-                    break;
-            }
+        if($request->has("criteria_id")) {
+            $settings = new FrameSettingsBroadSign();
+            $settings->frame_id = $frame->id;
+            $settings->criteria_id = $request->input("criteria_id");
+            $settings->save();
+        }
+
+        if($request->has("zone_name")) {
+            $settings = new FrameSettingsPiSignage();
+            $settings->frame_id = $frame->id;
+            $settings->zone_name = $request->input("zone_name");
+            $settings->save();
         }
 
         return new Response($frame, 201);
@@ -71,21 +68,16 @@ class FramesController extends Controller {
         ] = $request->validated();
         $frame->save();
 
-        $broadcasters = $frame->layout->format->display_types->load("broadcaster_connection")->pluck("broadcaster_connection.broadcaster")->values()->unique();
+        if($request->has("criteria_id")) {
+            $settings = FrameSettingsBroadSign::findOrNew($frame->id);
+            $settings->criteria_id = $request->input("criteria_id");
+            $settings->save();
+        }
 
-        foreach ($broadcasters as $broadcaster) {
-            switch ($broadcaster) {
-                case Broadcaster::BROADSIGN:
-                    $settings = FrameSettingsBroadSign::findOrNew($frame->id);
-                    $settings->criteria_id = $request->input("criteria_id");
-                    $settings->save();
-                    break;
-                case Broadcaster::PISIGNAGE:
-                    $settings = FrameSettingsPiSignage::findOrNew($frame->id);
-                    $settings->zone_name = $request->input("zone_name");
-                    $settings->save();
-                    break;
-            }
+        if($request->has("zone_name")) {
+            $settings = FrameSettingsPiSignage::findOrNew($frame->id);
+            $settings->zone_name = $request->input("zone_name");
+            $settings->save();
         }
 
         return new Response($frame);

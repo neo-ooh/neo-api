@@ -95,7 +95,7 @@ class Frame extends Model {
     }
 
     public function settings_pisignage() {
-        return $this->hasOne(FrameSettingsBroadSign::class, "frame_id", "id");
+        return $this->hasOne(FrameSettingsPiSignage::class, "frame_id", "id");
     }
 
     public function layout(): BelongsTo {

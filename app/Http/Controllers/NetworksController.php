@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Artisan;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Networks\DestroyNetworkRequest;
@@ -21,6 +22,7 @@ use Neo\Models\BroadcasterConnection;
 use Neo\Models\Network;
 use Neo\Models\NetworkSettingsBroadSign;
 use Neo\Models\NetworkSettingsPiSignage;
+use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
 use function Ramsey\Uuid\v4;
 
@@ -60,6 +62,11 @@ class NetworksController extends Controller {
 
         $settings->network_id = $network->id;
         $settings->save();
+
+        // trigger an update of the network to populate the new one
+        $broadcastNetwork = Broadcast::network($network->id);
+        $broadcastNetwork->synchronizePlayers();
+        $broadcastNetwork->synchronizeLocations();
 
         return new Response(["id" => $network->id], 201);
     }

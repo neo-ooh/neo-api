@@ -109,4 +109,8 @@ class PiSignageServiceAdapter implements BroadcastService {
     public function destroyCreative(int $externalId) {
         // TODO: Implement destroyCreative() method.
     }
+
+    public function searchCampaigns(array $query) {
+        // TODO: Implement searchCampaigns() method.
+    }
 }

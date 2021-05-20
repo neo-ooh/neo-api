@@ -35,7 +35,7 @@ class FramesController extends Controller {
         $frame->height    = $request->input("height");
         $frame->save();
 
-        $broadcasters = $frame->layout->format->display_types->load("connection")->pluck("connection.broadcaster")->values()->unique();
+        $broadcasters = $frame->layout->format->display_types->load("broadcaster_connections")->pluck("broadcaster_connections.broadcaster")->values()->unique();
 
         foreach ($broadcasters as $broadcaster) {
             switch ($broadcaster) {
@@ -71,7 +71,7 @@ class FramesController extends Controller {
         ] = $request->validated();
         $frame->save();
 
-        $broadcasters = $frame->layout->format->display_types->load("connection")->pluck("connection.broadcaster")->values()->unique();
+        $broadcasters = $frame->layout->format->display_types->load("broadcaster_connections")->pluck("broadcaster_connections.broadcaster")->values()->unique();
 
         foreach ($broadcasters as $broadcaster) {
             switch ($broadcaster) {

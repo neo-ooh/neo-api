@@ -242,7 +242,7 @@ class Campaign extends SecuredModel {
 
     }
 
-    public function getAvailableOptionsAttribute() {
+    public function getAvailableOptionsAttribute(): array {
         $options = [];
 
         switch ($this->network->broadcaster_connection->broadcaster) {

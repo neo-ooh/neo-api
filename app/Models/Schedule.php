@@ -225,7 +225,7 @@ class Schedule extends Model {
         return $this->hasMany(Review::class, 'schedule_id', 'id')->orderByDesc("created_at");
     }
 
-    public function getAvailableOptionsAttribute(): HasMany {
+    public function getAvailableOptionsAttribute(): array {
 //        $network = $this->campaign->network;
 
         $options = ["dates", "time"];

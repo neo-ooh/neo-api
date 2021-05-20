@@ -10,7 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Networks\DestroyNetworkRequest;
 use Neo\Http\Requests\Networks\ListNetworksRequest;

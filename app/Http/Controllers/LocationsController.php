@@ -77,6 +77,10 @@ class LocationsController extends Controller {
                              ->with("network")
                              ->when($request->has("network"), function (Builder $query) use ($request) {
                                  $query->where("network_id", "=", $request->input("network"));
+                             })->when($request->has("format"), function (Builder $query) use ($request) {
+                                 $query->whereHas("display_type.formats", function(Builder $query) use ($request) {
+                                     $query->where("id", "=", $request->input("format"));
+                                 });
                              })
                              ->where('locations.name', 'LIKE', "%$q%")
                              ->get();

@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table("players", function (Blueprint $table) {
             $table->renameColumn("broadsign_player_id", "external_id");
-            $table->foreignId("network_id")->after("id")->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId("network_id")->after("id")->nullable()->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
         });
 
         Schema::table("players", function (Blueprint $table) {

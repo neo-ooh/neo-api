@@ -17,12 +17,12 @@ return new class extends Migration
     {
         $frames = Frame::all();
 
-        foreach ($frames as $frame) {
-            $broadSignSetting = new FrameSettingsBroadSign();
-            $broadSignSetting->frame_id = $frame->id;
-            $broadSignSetting->criteria_id = $frame->criteria_id;
-            $broadSignSetting->save();
-        }
+//        foreach ($frames as $frame) {
+//            $broadSignSetting = new FrameSettingsBroadSign();
+//            $broadSignSetting->frame_id = $frame->id;
+//            $broadSignSetting->criteria_id = $frame->criteria_id;
+//            $broadSignSetting->save();
+//        }
 
         Schema::table("frames", function (Blueprint $table) {
             $table->dropConstrainedForeignId("criteria_id");

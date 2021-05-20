@@ -43,15 +43,19 @@ class SynchronizePlayers extends BroadSignJob {
 
             if (!$bsPlayer->active) {
                 // Player is inactive, make sure it is not present in our DB
+
+                // We ignore network identification here until the migration to thee new networks setup is done.
+                // TODO: Add the network identification back.
                 Player::query()->where('external_id', '=', $bsPlayer->id)
-                               ->where("network_id", "=", $this->config->networkID)->delete();
+//                               ->where("network_id", "=", $this->config->networkID)
+                               ->delete();
                 continue;
             }
 
             // Check if the player match a location in the network
             $location = Location::query()
                                 ->where("external_id", "=", $bsPlayer->display_unit_id)
-                                ->where("network_id", "=", $this->config->networkID)
+//                                ->where("network_id", "=", $this->config->networkID)
                                 ->first(["id"]);
 
             if ($location === null) {
@@ -61,12 +65,14 @@ class SynchronizePlayers extends BroadSignJob {
 
             /** @var Player $player */
             $player = Player::query()->firstOrCreate([
-                "network_id"  => $this->config->networkID,
                 "external_id" => $bsPlayer->id,
             ], [
                 "location_id" => $location->id,
                 "name"        => $bsPlayer->name,
             ]);
+
+            $player->network_id = $this->config->networkID;
+            $player->save();
 
             $players[] = $player->id;
         }

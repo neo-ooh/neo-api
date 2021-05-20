@@ -41,9 +41,8 @@ class SkinSlot extends BroadSignModel {
     protected static function actions(): array {
         return [
             "forCampaign" => Endpoint::get("/skin_slot/v7/by_reservable")
-                                     ->unwrap(static::class)
-                                     ->parser(new MultipleResourcesParser(static::class))
-                                     ->multiple(),
+                                     ->unwrap(static::$unwrapKey)
+                                     ->parser(new MultipleResourcesParser(static::class)),
         ];
     }
 }

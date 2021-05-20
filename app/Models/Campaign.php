@@ -245,7 +245,9 @@ class Campaign extends SecuredModel {
     public function getAvailableOptionsAttribute(): array {
         $options = [];
 
-        switch ($this->network->broadcaster_connection->broadcaster ?? Broadcaster::BROADSIGN) {
+        $service = $this->network ? $this->network->broadcaster_connection->broadcaster : Broadcaster::BROADSIGN;
+
+        switch ($service) {
             case Broadcaster::BROADSIGN:
                 $options[] = "loop_saturation";
                 break;

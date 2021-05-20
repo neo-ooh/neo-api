@@ -75,6 +75,9 @@ class LocationsController extends Controller {
         $q         = strtolower($request->query("q"));
         $locations = Location::query()
                              ->with("network")
+                             ->when($request->has("network"), function (Builder $query) use ($request) {
+                                 $query->where("network_id", "id", $request->input("network"));
+                             })
                              ->where('locations.name', 'LIKE', "%$q%")
                              ->get();
 

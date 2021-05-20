@@ -150,7 +150,7 @@ class Campaign extends BroadSignModel {
      * @return Collection
      */
     public function locations(): Collection {
-        return Location::byReservable(["reservable_id" => $this->id]);
+        return Location::byReservable($this->api, ["reservable_id" => $this->id]);
     }
 
     public function addCriteria(int $criteriaID, int $type): void {
@@ -177,7 +177,7 @@ class Campaign extends BroadSignModel {
         $this->addSkinSlots($request);
 
         // Load the campaign skin slots
-        $skinSlots   = SkinSlot::forCampaign(["reservable_id" => $this->id]);
+        $skinSlots   = SkinSlot::forCampaign($this->api, ["reservable_id" => $this->id]);
         $skinSlotsID = $skinSlots->filter(fn($skinSlot) => (bool)$skinSlot->active)
                                  ->map(fn($skinSlot) => $skinSlot->id);
 
@@ -239,10 +239,10 @@ class Campaign extends BroadSignModel {
             return new Collection();
         }
 
-        return static::byId(["ids" => $results->pluck("id")->values()->join(",")]);
+        return static::byId($client, ["ids" => $results->pluck("id")->values()->join(",")]);
     }
 
-    public static function inContainer(int $containerId) {
-        return static::by_container(["container_id" => $containerId]);
+    public static function inContainer(BroadsignClient $client, int $containerId) {
+        return static::by_container($client, ["container_id" => $containerId]);
     }
 }

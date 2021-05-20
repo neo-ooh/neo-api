@@ -33,7 +33,7 @@ class NetworksController extends Controller {
         // If an actor is specified, we only return network accessible by the actor through its associated locations
         $query->when($request->has("actor"), function (Builder $query) use ($request) {
             $query->whereIn("id", Actor::find($request->input('actor'))
-                                       ->getLocations()
+                                       ->getLocations(true, true, true, true)
                                        ->pluck('network_id'));
         });
 

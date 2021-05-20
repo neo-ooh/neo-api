@@ -33,7 +33,7 @@ class FormatsController extends Controller {
             // An actor is specified, we only return formats accessible by the user
             $formats = Actor::query()
                             ->findOrFail($request->query("actor"))
-                            ->getLocations()
+                            ->getLocations(true, true, true, true)
                             ->pluck("display_type.formats")
                             ->flatten()
                             ->unique("id")

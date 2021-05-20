@@ -88,7 +88,7 @@ class BroadsignClient {
         $responseBody = $response->json();
 
         // Unwrap response content if needed
-        if ($endpoint->unwrapKey) {
+        if (isset($endpoint->unwrapKey)) {
             $responseBody = $responseBody[$endpoint->unwrapKey];
         }
 

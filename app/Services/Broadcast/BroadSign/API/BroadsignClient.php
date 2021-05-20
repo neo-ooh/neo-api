@@ -77,7 +77,8 @@ class BroadsignClient {
 
         if (!$response->successful()) {
             // Request was not successful, log the exchange
-            Log::channel("broadsign")->debug("request:$endpoint->method [{$endpoint->getPath()}]", $payload);
+            $jsonPaylod = json_encode($payload, JSON_THROW_ON_ERROR);
+            Log::channel("broadsign")->debug("request:$endpoint->method [{$endpoint->getPath()}] $jsonPaylod", );
             Log::channel("broadsign")
                ->error("response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 

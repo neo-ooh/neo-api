@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\BroadSign\Models\Campaign;
 use Neo\Models\Contract;
 use Neo\Models\ContractReservation;
 
@@ -41,6 +40,7 @@ class RefreshContractsReservations implements ShouldQueue {
      * @return void
      */
     public function handle(): void {
+        // TODO: We need a connection
         $contracts = Contract::all();
 
         /** @var Contract $contract */

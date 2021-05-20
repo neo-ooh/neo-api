@@ -231,8 +231,8 @@ class Campaign extends BroadSignModel {
             ]);
     }
 
-    public static function search($search) {
-        $results = ResourceQuery::byName($search, "reservation");
+    public static function search(BroadsignClient $client, array $query) {
+        $results = ResourceQuery::byName($client, $query["name"], "reservation");
 
         if (count($results) === 0) {
             return new Collection();

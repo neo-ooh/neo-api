@@ -2,7 +2,9 @@
 
 namespace Neo\Services\Broadcast\BroadSign;
 
+use Illuminate\Support\Collection;
 use Neo\Services\Broadcast\BroadcastService;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\CreateBroadSignCampaign;
 use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\DisableBroadSignCampaign;
 use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\RebuildBroadSignCampaign;
@@ -17,6 +19,7 @@ use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\UpdateBroadSignScheduleStatu
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizeFormats;
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizeLocations;
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizePlayers;
+use Neo\Services\Broadcast\BroadSign\Models\Campaign;
 
 class BroadSignServiceAdapter implements BroadcastService {
 
@@ -80,6 +83,14 @@ class BroadSignServiceAdapter implements BroadcastService {
      */
     public function destroySchedule(int $scheduleId) {
         DisableBroadSignSchedule::dispatch($this->config, $scheduleId);
+    }
+
+    /**
+     * @param array $query
+     * @return Collection
+     */
+    public function searchCampaigns(array $query) {
+        return Campaign::search(new BroadsignClient($this->config), $query);
     }
 
     /**

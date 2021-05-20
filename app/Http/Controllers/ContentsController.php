@@ -60,6 +60,7 @@ class ContentsController extends Controller {
     public function show(Content $content) {
         return new Response($content->load([
             "creatives",
+            "creatives.external_ids",
             "schedules",
             "schedules.campaign",
             "layout",

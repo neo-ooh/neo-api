@@ -82,6 +82,8 @@ interface BroadcastService {
     |--------------------------------------------------------------------------
     */
 
+    public function searchCampaigns(array $query);
+
     /**
      * Replicate the campaign in the broadcast service
      *

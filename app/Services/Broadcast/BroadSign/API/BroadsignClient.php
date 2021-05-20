@@ -85,11 +85,12 @@ class BroadsignClient {
             throw new BadResponse($response->body(), $response->status());
         }
 
-        $responseBody = $response->json();
-
         // Unwrap response content if needed
         if (isset($endpoint->unwrapKey)) {
+            $responseBody = $response->json();
             $responseBody = $responseBody[$endpoint->unwrapKey];
+        } else {
+            $responseBody = $response->body();
         }
 
         // Execute post-request transformation if needed

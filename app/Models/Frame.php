@@ -78,7 +78,7 @@ class Frame extends Model {
      *
      * @var array
      */
-    protected $appends = [
+    protected $with = [
         'settings_broadsign',
         'settings_pisignage',
     ];

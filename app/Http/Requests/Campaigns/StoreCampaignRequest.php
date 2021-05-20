@@ -33,6 +33,7 @@ class StoreCampaignRequest extends FormRequest {
     public function rules(): array {
         return [
             "owner_id"         => ["required", "integer", new AccessibleActor()],
+            "network_id"       => ["required", "integer", "exists:networks,id"],
             "format_id"        => ["required", "integer", "exists:formats,id"],
             "name"             => ["nullable", "string"],
             "display_duration" => ["required", "numeric", "min:1"],

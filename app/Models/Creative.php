@@ -17,17 +17,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
-use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
 use Neo\Services\Broadcast\Broadcast;
+use Ramsey\Collection\Collection;
 
 /**
  * Neo\Models\Branding
  *
  * @property int                            $id
  * @property string                         $type
- * @property int                            $external_id_broadsign
- * @property int                            $external_id_pisignage
  * @property int                            $owner_id
  * @property int                            $content_id
  * @property int                            $frame_id
@@ -40,6 +38,7 @@ use Neo\Services\Broadcast\Broadcast;
  * @property Frame                          $frame
  *
  * @property DynamicCreative|StaticCreative $properties
+ * @property Collection<CreativeExternalId> $external_ids
  *
  * @mixin Builder
  */
@@ -90,9 +89,10 @@ class Creative extends Model {
         parent::boot();
 
         static::deleting(function (Creative $creative) {
-            // Disabled the creative in Broadsign
-            if ($creative->broadsign_ad_copy_id !== null) {
-                Broadcast::network($creative->external_id_broadsign)DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
+            // Tell services to disable the creative
+            /** @var CreativeExternalId $externalId */
+            foreach ($creative->external_ids as $externalId) {
+                Broadcast::network($externalId->network_id)->destroyCreative($externalId->external_id);
             }
 
             // If the content has no more creatives attached to it, we reset its duration
@@ -129,6 +129,10 @@ class Creative extends Model {
 
     public function properties(): MorphTo {
         return $this->morphTo("properties", "type", "id", "creative_id");
+    }
+
+    public function external_ids() {
+        return $this->hasMany(CreativeExternalId::class, "creative_id");
     }
 
     public function owner(): BelongsTo {

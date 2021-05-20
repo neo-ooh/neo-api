@@ -82,7 +82,7 @@ class BroadsignClient {
             Log::channel("broadsign")
                ->error("response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 
-            throw new BadResponse("", $response->status());
+            throw new BadResponse($response->body(), $response->status());
         }
 
         $responseBody = $response->json();

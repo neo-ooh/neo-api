@@ -50,7 +50,7 @@ use Neo\Services\Broadcast\Broadcaster;
  *
  * @property EloquentCollection  $related_campaigns
  *
- * @property Collection<integer> $targeted_broadsign_frames Frame targeting criteria required by the campaign
+ * @property Collection<integer> $targeted_frames Frame targeting criteria required by the campaign
  *           schedule
  *
  * @mixin Builder
@@ -206,7 +206,7 @@ class Campaign extends SecuredModel {
         return $this->owner->getLibraries(true, false, false)->pluck('id');
     }
 
-    public function getTargetedBroadsignFramesAttribute(): Collection {
+    public function getTargetedFramesAttribute(): Collection {
 
         // List the required criteria
         return $this

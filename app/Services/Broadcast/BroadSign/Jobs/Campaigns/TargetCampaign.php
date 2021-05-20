@@ -73,8 +73,8 @@ class TargetCampaign extends BroadSignJob implements ShouldBeUnique {
         $bsCampaign = BSCampaign::get($this->getAPIClient(), $campaign->external_id);
 
         // List the frames targeted by the campaign
-        $targetedFrames    = $campaign->targeted_broadsign_frames;
-        $requestedCriteria = $targetedFrames->pluck("criteria")->values();
+        $targetedFrames    = $campaign->targeted_frames;
+        $requestedCriteria = $targetedFrames->pluck("settings_broadsign")->pluck("criteria")->unique("id")->values();
 
         // Make sure the campaign has the proper criteria applied to it
         $this->validateCampaignCriteria($campaign, $requestedCriteria);

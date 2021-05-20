@@ -73,6 +73,16 @@ class Frame extends Model {
         'height' => 'integer',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'settings_broadsign',
+        'settings_pisignage',
+    ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -80,11 +90,11 @@ class Frame extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function settingsBroadsign() {
+    public function settings_broadsign() {
         return $this->hasOne(FrameSettingsBroadSign::class, "frame_id", "id");
     }
 
-    public function settingsPisignage() {
+    public function settings_pisignage() {
         return $this->hasOne(FrameSettingsBroadSign::class, "frame_id", "id");
     }
 

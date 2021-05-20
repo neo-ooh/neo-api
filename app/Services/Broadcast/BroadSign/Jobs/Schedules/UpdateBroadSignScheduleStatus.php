@@ -61,13 +61,13 @@ class UpdateBroadSignScheduleStatus extends BroadSignJob {
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 
-        if (!$schedule || !$schedule->broadsign_schedule_id) {
+        if (!$schedule || !$schedule->external_id_2) {
             // This schedule doesn't exist or doesn't have a BroadSign ID, do nothing.
             return;
         }
 
         // We update the broadsign schedule based on its Access counterpart's status
-        $bsSchedule         = BSSchedule::get($this->getAPIClient(), $schedule->broadsign_schedule_id);
+        $bsSchedule         = BSSchedule::get($this->getAPIClient(), $schedule->external_id_2);
         $bsSchedule->active = $schedule->is_approved;
         $bsSchedule->save();
 

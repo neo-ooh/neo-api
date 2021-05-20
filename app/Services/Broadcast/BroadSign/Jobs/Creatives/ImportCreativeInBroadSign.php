@@ -55,8 +55,8 @@ class ImportCreativeInBroadSign extends BroadSignJob {
         /** @var Creative $creative */
         $creative = Creative::query()->findOrFail($this->creativeID);
 
-        if ($creative->broadsign_ad_copy_id) {
-            // This creative already has a BroadSign ID, do nothing.
+        if ($creative->getExternalId($this->config->networkID) !== null) {
+            // This creative already has an id, do nothing.
             return;
         }
 
@@ -92,8 +92,10 @@ class ImportCreativeInBroadSign extends BroadSignJob {
         $bsCreative->parent_id  = $this->config->customerId;
         $bsCreative->url        = $creative->properties->file_url;
 
-        $creative->broadsign_ad_copy_id = $bsCreative->import();
-        $creative->save();
+        $creative->external_ids()->create([
+            "network_id" => $this->config->networkID,
+            "external_id" => $bsCreative->import(),
+        ]);
     }
 
     protected function importDynamicCreative(Creative $creative): void {
@@ -108,7 +110,10 @@ class ImportCreativeInBroadSign extends BroadSignJob {
 
         $bsCreativeId = BSCreative::makeDynamic($creative->owner->email . " - " . $creative->original_name, $attributes);
 
-        $creative->broadsign_ad_copy_id = $bsCreativeId;
+        $creative->external_ids()->create([
+            "network_id" => $this->config->networkID,
+            "external_id" => $bsCreativeId,
+        ]);
         $creative->save();
     }
 }

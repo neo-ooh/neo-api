@@ -63,7 +63,7 @@ class UpdateBroadSignSchedule extends BroadSignJob {
             return; // Schedule does not exist
         }
 
-        if (!$schedule->broadsign_schedule_id) {
+        if (!$schedule->external_id_2) {
             // This schedule doesn't have a known counterpart in broadsign, create it
             CreateBroadSignSchedule::dispatch($this->config, $this->scheduleID, $schedule->owner_id);
             return;
@@ -76,7 +76,7 @@ class UpdateBroadSignSchedule extends BroadSignJob {
         }
 
         // Get and update the schedule
-        $bsSchedule             = BSSchedule::get($this->getAPIClient(), $schedule->broadsign_schedule_id);
+        $bsSchedule             = BSSchedule::get($this->getAPIClient(), $schedule->external_id_2);
         $bsSchedule->name       = $schedule->content->name . " Schedules";
         $bsSchedule->start_date = $schedule->start_date->toDateString();
         $bsSchedule->start_time = $schedule->start_date->setSecond(0)->toTimeString();

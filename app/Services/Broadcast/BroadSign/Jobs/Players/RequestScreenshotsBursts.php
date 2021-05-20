@@ -65,7 +65,7 @@ class RequestScreenshotsBursts extends BroadSignJob {
             return;
         }
 
-        $bsPlayer = new BSPlayer($this->getAPIClient(), ["id" => $player->broadsign_player_id]);
+        $bsPlayer = new BSPlayer($this->getAPIClient(), ["id" => $player->external_id]);
         $bsPlayer->requestScreenshotsBurst($burst->id, $burst->scale_percent, $burst->duration_ms, $burst->frequency_ms);
 
         // Update the start date to reflect the effective start date.

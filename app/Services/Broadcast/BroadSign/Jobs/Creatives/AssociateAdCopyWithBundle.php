@@ -12,10 +12,12 @@ namespace Neo\Services\Broadcast\BroadSign\Jobs\Creatives;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Bus\Queueable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Creative;
+use Neo\Models\CreativeExternalId;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Bundle;
@@ -71,8 +73,12 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
             return;
         }
 
-        if ($creative->broadsign_ad_copy_id === null) {
-            // No Ad-copy id, try again late
+        // Here we only take the first Id as there should only be one per network.
+        /** @var ?CreativeExternalId $externalId */
+        $externalId = $creative->getExternalId($this->config->networkID);
+
+        if (!$externalId) {
+            // No Ad-copy for this creative, try again later
             $this->release(60);
             return;
         }
@@ -82,7 +88,7 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
         // Try the association. If it fails, try again later.
         // Broadsign Do not allow an ad-copy to be associated with a bundle until it has finished uploading, which is done async.
         try {
-            $bundle->associateCreative($creative->broadsign_ad_copy_id);
+            $bundle->associateCreative($externalId->external_id);
         } catch (BadResponse $exception) {
             $this->release(120);
         }

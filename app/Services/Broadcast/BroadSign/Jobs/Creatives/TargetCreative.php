@@ -56,7 +56,9 @@ class TargetCreative extends BroadSignJob {
         /** @var Creative $creative */
         $creative = Creative::query()->findOrFail($this->creativeID);
 
-        if ($creative->external_id_broadsign === null) {
+        $externalId = $creative->getExternalId($this->config->networkID);
+
+        if ($externalId === null) {
             // This creative doesn't have a Broadsign counterpart, cannot target
             return;
         }
@@ -67,7 +69,7 @@ class TargetCreative extends BroadSignJob {
             return;
         }
 
-        $bsCreative = new BSCreative($this->getAPIClient(), ["id" => $creative->external_id_broadsign]);
+        $bsCreative = new BSCreative($this->getAPIClient(), ["id" => $externalId->external_id]);
 
         if (!$creative->frame->criteria_id) {
             // All done
@@ -76,7 +78,7 @@ class TargetCreative extends BroadSignJob {
 
         // Add the frame criteria
         try {
-            $bsCreative->addCriteria($creative->frame->criteria->broadsign_criteria_id, 0);
+            $bsCreative->addCriteria($creative->frame->settings_broadsign->criteria->broadsign_criteria_id, 0);
         } catch (BadResponse $exception) {
             // Creative could not be targeted. It is most probably still uploading
             $this->release(60);

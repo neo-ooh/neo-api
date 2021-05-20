@@ -72,13 +72,13 @@ class CreateBroadSignSchedule extends BroadSignJob {
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->findOrFail($this->scheduleID);
 
-        if ($schedule->broadsign_schedule_id || !$schedule->campaign) {
+        if ($schedule->external_id_2 || !$schedule->campaign) {
             // This schedule already has a BroadSign ID, do nothing. OR
             // This schedule's campaign do not have a schedule ID, do nothing
             return;
         }
 
-        // Make sure the campaign has a broadsign id, if not, release and retry later
+        // Make sure the campaign has a an external id, if not, release and retry later
         if ($schedule->campaign->external_id === null) {
             // Wait 30s before trying again
             $this->release(30);
@@ -119,7 +119,7 @@ class CreateBroadSignSchedule extends BroadSignJob {
         $bsSchedule->weight           = 1;
         $bsSchedule->create();
 
-        $schedule->broadsign_schedule_id = $bsSchedule->id;
+        $schedule->external_id_2 = $bsSchedule->id;
         $schedule->save();
 
         // Create the broadsign bundle that will be broadcast by the schedule
@@ -162,14 +162,14 @@ class CreateBroadSignSchedule extends BroadSignJob {
         $bundle->create();
 
         // Assign the bundle ID to the content
-        $schedule->broadsign_bundle_id = $bundle->id;
+        $schedule->external_id_1 = $bundle->id;
         $schedule->save();
 
         // Import the content's creatives
         /** @var Creative $creative */
         foreach ($content->creatives as $creative) {
             // If the creative has no ad_copy ID, it needs to be imported in BroadSign
-            if ($creative->broadsign_ad_copy_id === null) {
+            if ($creative->getExternalId($this->config->networkID) === null) {
                 ImportCreativeInBroadSign::withChain([new AssociateAdCopyWithBundle($this->config, $bundle->id, $creative->id)])
                                          ->dispatch($this->config, $creative->id);
                 continue;

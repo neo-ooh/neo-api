@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
+use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
 use Response;
 
@@ -149,8 +150,8 @@ class Schedule extends Model {
 
         static::deleting(function (Schedule $schedule) {
             // Execute the deletion on broadsign side
-            if ($schedule->broadsign_schedule_id !== null) {
-                DisableBroadSignSchedule::dispatch($schedule->broadsign_schedule_id);
+            if ($schedule->external_id_2 !== null) {
+                Broadcast::network($this->campaign->network_id)->disableSchedule($schedule->external_id_2);
             }
         });
     }

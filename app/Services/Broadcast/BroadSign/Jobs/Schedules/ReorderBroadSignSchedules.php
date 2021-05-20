@@ -59,7 +59,7 @@ class ReorderBroadSignSchedules extends BroadSignJob {
         // Get all the schedules of the campaign
         $schedules = Schedule::query()
                              ->where("id", "=", $this->campaignId)
-                             ->whereNotNull("broadsign_schedule_id")->get();
+                             ->whereNotNull("external_id_2")->get();
 
         // For each schedule, we need to retrieve its bundle, and update its position.
         /** @var Schedule $schedule */

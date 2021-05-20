@@ -79,7 +79,7 @@ class BroadsignClient {
             // Request was not successful, log the exchange
             Log::channel("broadsign")->debug("request:$endpoint->method [{$endpoint->getPath()}]", $payload);
             Log::channel("broadsign")
-               ->error("response:{$response->status()} [{$endpoint->getPath()}] ", [$response->body()]);
+               ->error("response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 
             throw new BadResponse("", $response->status());
         }

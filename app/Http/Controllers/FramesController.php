@@ -69,13 +69,13 @@ class FramesController extends Controller {
         $frame->save();
 
         if($request->has("criteria_id")) {
-            $settings = FrameSettingsBroadSign::findOrNew($frame->id);
+            $settings = FrameSettingsBroadSign::findOrNew(["frame_id" => $frame->id]);
             $settings->criteria_id = $request->input("criteria_id");
             $settings->save();
         }
 
         if($request->has("zone_name")) {
-            $settings = FrameSettingsPiSignage::findOrNew($frame->id);
+            $settings = FrameSettingsPiSignage::query()->firstOrNew(["frame_id" => $frame->id]);
             $settings->zone_name = $request->input("zone_name");
             $settings->save();
         }

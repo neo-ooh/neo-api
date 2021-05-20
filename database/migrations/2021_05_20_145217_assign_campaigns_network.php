@@ -2,6 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Neo\Models\Campaign;
+use Neo\Models\DisplayType;
+use Neo\Models\Location;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -14,7 +16,7 @@ return new class extends Migration {
      */
     public function up() {
         // Start by syncing the networks data
-        Artisan::call("network:sync");
+//        Artisan::call("network:sync");
 
         // Now, for each campaign, we need to look at its associated location, and apply the same network as the locations to the campaign
         $campaigns = Campaign::all();
@@ -23,9 +25,13 @@ return new class extends Migration {
         $progressBar->start();
 
         foreach ($campaigns as $campaign) {
-            $progressBar->setMessage($campaign->name . " (~" . $progressBar->getEstimated() . "s remaining)");
+            $progressBar->setMessage($campaign->name . " (" . $progressBar->getProgressPercent() . "%)");
 
-            $location = $campaign->locations()->first("network_id");
+            $location = $campaign->locations()->first(["network_id"]);
+
+            if($location === null) {
+                continue;
+            }
 
             $campaign->network_id = $location->network_id;
             $campaign->save();
@@ -33,7 +39,14 @@ return new class extends Migration {
             $progressBar->advance();
         }
 
+        $progressBar->setMessage("Done! \n");
         $progressBar->finish();
+
+        // Clean up
+        // Remove any location, player, display type not associated with a network
+
+        Location::query()->whereNull("network_id")->delete();
+        DisplayType::query()->whereNull("connection_id")->delete();
     }
 
     /**

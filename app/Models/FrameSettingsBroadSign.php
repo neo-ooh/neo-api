@@ -27,6 +27,10 @@ class FrameSettingsBroadSign extends Model {
 
     public $touches = ["frame"];
 
+    protected $fillable = [
+        "frame_id"
+    ];
+
     public function frame(): BelongsTo {
         return $this->belongsTo(Frame::class, "frame_id", "id");
     }

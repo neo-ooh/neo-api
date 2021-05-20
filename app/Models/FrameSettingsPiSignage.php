@@ -24,6 +24,10 @@ class FrameSettingsPiSignage extends Model {
     public $incrementing = false;
     public $timestamps = false;
 
+    protected $fillable = [
+        "frame_id"
+    ];
+
     public $touches = ["frame"];
 
     public function frame(): BelongsTo {

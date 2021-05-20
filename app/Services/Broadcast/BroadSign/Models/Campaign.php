@@ -15,6 +15,7 @@ use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 
 /**
  * Class Campaigns
@@ -112,7 +113,7 @@ class Campaign extends BroadSignModel {
                                              ->parser(new ResourceIDParser()),
             "get"                 => Endpoint::get("/reservation/v21/{id}")
                                              ->unwrap(static::$unwrapKey)
-                                             ->parser(new ResourceIDParser())
+                                             ->parser(new SingleResourcesParser(static::class))
                                              ->cache(3600),
             "byId"                => Endpoint::get("/reservation/v21/by_id")
                                              ->unwrap(static::$unwrapKey)

@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class FrameSettingsPiSignage extends Model {
     use HasFactory;
 
-    protected $table = "frames_settings_pisignage";
+    protected $table = "frame_settings_pisignage";
     public $primaryKey = "frame_id";
     public $incrementing = false;
     public $timestamps = false;

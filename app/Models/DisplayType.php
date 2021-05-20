@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Ramsey\Collection\Collection;
 
 /**
  * Neo\Models\DisplayType
@@ -27,6 +28,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $internal_name
  * @property Date   $created_at
  * @property Date   $updated_at
+ *
+ * @property BroadcasterConnection   $broadcaster_connection
  *
  * @mixin Builder
  */
@@ -64,8 +67,8 @@ class DisplayType extends Model {
 
     /* Network */
 
-    public function network(): BelongsTo {
-        return $this->belongsTo(Network::class, "network_id")->orderBy("name");
+    public function broadcaster_connection(): BelongsTo {
+        return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
     }
 
     public function locations(): HasMany {

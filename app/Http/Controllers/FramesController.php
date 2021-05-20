@@ -71,7 +71,7 @@ class FramesController extends Controller {
         ] = $request->validated();
         $frame->save();
 
-        $broadcasters = $frame->layout->format->display_types->load("broadcaster_connections")->pluck("broadcaster_connections.broadcaster")->values()->unique();
+        $broadcasters = $frame->layout->format->display_types->load("broadcaster_connection")->pluck("broadcaster_connection.broadcaster")->values()->unique();
 
         foreach ($broadcasters as $broadcaster) {
             switch ($broadcaster) {

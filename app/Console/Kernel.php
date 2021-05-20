@@ -25,7 +25,9 @@ class Kernel extends ConsoleKernel {
      * @var array
      */
     protected $commands = [
+        // network:sync
         SynchronizeNetworks::class,
+
         RebuildResources::class,
         CacheInventory::class,
 
@@ -78,7 +80,7 @@ class Kernel extends ConsoleKernel {
          */
 
         // Update network from broadsign
-        $schedule->command('network:update')->daily();
+        $schedule->command('network:sync')->daily();
 
         // Refresh Contracts reservations
         $schedule->job(RefreshContractsReservations::class)->daily();

@@ -74,7 +74,7 @@ class LocationsController extends Controller {
     public function search(SearchLocationsRequest $request) {
         $q         = strtolower($request->query("q"));
         $locations = Location::query()
-                             ->with("display_type")
+                             ->with("network")
                              ->where('locations.name', 'LIKE', "%$q%")
                              ->get();
 

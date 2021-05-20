@@ -26,7 +26,8 @@ class ListNetworksRequest extends FormRequest
     public function rules()
     {
         return [
-            "with" => ["sometimes", "array"]
+            "with" => ["sometimes", "array"],
+            "actor" => ["sometimes", "integer", "exists:actors,id"]
         ];
     }
 }

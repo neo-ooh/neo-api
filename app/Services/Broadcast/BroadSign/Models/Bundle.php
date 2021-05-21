@@ -12,12 +12,11 @@ namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Support\Collection;
-use JsonException;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
-use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint;
 
 /**
  * A Bundle is Broadsign terminology for a Contents
@@ -100,7 +99,6 @@ class Bundle extends BroadSignModel {
      *
      * @return void
      * @throws BadResponse
-     * @throws JsonException
      */
     public function associateCreative(int $creativeID): void {
         $this->callAction("associate",

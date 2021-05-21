@@ -147,7 +147,11 @@ class Creative extends Model {
         return $this->belongsTo(Frame::class, 'frame_id', 'id');
     }
 
-    public function getExternalId(int $networkId) {
+    /**
+     * @param int $networkId
+     * @return string|null
+     */
+    public function getExternalId(int $networkId): ?string {
         $externalId = $this->external_ids()->where("network_id", "=", $networkId)->first();
 
         return $externalId->external_id ?? null;

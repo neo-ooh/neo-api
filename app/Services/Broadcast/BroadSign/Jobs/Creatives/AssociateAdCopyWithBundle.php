@@ -74,7 +74,6 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
         }
 
         // Here we only take the first Id as there should only be one per network.
-        /** @var ?CreativeExternalId $externalId */
         $externalId = $creative->getExternalId($this->config->networkID);
 
         if (!$externalId) {
@@ -88,7 +87,7 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
         // Try the association. If it fails, try again later.
         // Broadsign Do not allow an ad-copy to be associated with a bundle until it has finished uploading, which is done async.
         try {
-            $bundle->associateCreative($externalId->external_id);
+            $bundle->associateCreative($externalId);
         } catch (BadResponse $exception) {
             $this->release(120);
         }

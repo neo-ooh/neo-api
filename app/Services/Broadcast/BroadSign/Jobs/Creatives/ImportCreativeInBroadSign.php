@@ -71,7 +71,7 @@ class ImportCreativeInBroadSign extends BroadSignJob {
         }
 
         // Schedule job to target the creative accordingly
-        TargetCreative::dispatch($creative->id);
+        TargetCreative::dispatch($this->config, $creative->id);
     }
 
     /**

@@ -11,8 +11,6 @@
 namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\Jobs\Creatives\TargetCreative;
-use Neo\BroadSign\Models\ResourceCriteria;
 use Neo\Models\Creative;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;

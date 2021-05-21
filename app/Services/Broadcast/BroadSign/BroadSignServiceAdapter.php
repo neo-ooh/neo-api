@@ -16,7 +16,6 @@ use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
 use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\ReorderBroadSignSchedules;
 use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\UpdateBroadSignSchedule;
 use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\UpdateBroadSignScheduleStatus;
-use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizeFormats;
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizeLocations;
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizePlayers;
 use Neo\Services\Broadcast\BroadSign\Models\Campaign;
@@ -81,8 +80,8 @@ class BroadSignServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroySchedule(int $scheduleId) {
-        DisableBroadSignSchedule::dispatch($this->config, $scheduleId);
+    public function destroySchedule(string $schedule_external_id) {
+        DisableBroadSignSchedule::dispatch($this->config, (int)$schedule_external_id);
     }
 
     /**
@@ -124,8 +123,8 @@ class BroadSignServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroyCampaign(int $externalId) {
-        DisableBroadSignCampaign::dispatch($this->config, $externalId);
+    public function destroyCampaign(string $campaign_external_id) {
+        DisableBroadSignCampaign::dispatch($this->config, (int)$campaign_external_id);
     }
 
     /**

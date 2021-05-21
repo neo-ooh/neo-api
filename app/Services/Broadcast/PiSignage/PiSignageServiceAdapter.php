@@ -57,7 +57,7 @@ class PiSignageServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroySchedule(int $scheduleId) {
+    public function destroySchedule(string $schedule_external_id) {
         // TODO: Implement destroySchedule() method.
     }
 
@@ -92,7 +92,7 @@ class PiSignageServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroyCampaign(int $externalId) {
+    public function destroyCampaign(string $campaign_external_id) {
         // TODO: Implement destroyCampaign() method.
     }
 

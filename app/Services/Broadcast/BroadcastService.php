@@ -71,10 +71,10 @@ interface BroadcastService {
     /**
      * Destroy the schedule, it will need to be re-created to broadcast it again
      *
-     * @param int $scheduleId
+     * @param string $schedule_external_id
      * @return mixed
      */
-    public function destroySchedule(int $scheduleId);
+    public function destroySchedule(string $schedule_external_id);
 
     /*
     |--------------------------------------------------------------------------
@@ -119,10 +119,10 @@ interface BroadcastService {
     /**
      * Delete, or disable, the campaign. A disabled campaign has to be created again to be broadcasted again.
      *
-     * @param int $externalId
+     * @param string $campaign_external_id
      * @return mixed
      */
-    public function destroyCampaign(int $externalId);
+    public function destroyCampaign(string $campaign_external_id);
 
     /**
      * Rebuild the campaign. The campaign will be deleted then re-created and targeted

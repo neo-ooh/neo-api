@@ -63,7 +63,7 @@ class Bundle extends BroadSignModel {
                                                ->parser(new SingleResourcesParser(static::class)),
             "associate"    => BroadSignEndpoint::post("/bundle_content/v5/add")
                                                ->unwrap(static::$unwrapKey)
-                                               ->parser(new SingleResourcesParser(static::class)),
+                                               ->parser(new ResourceIDParser()),
             "bySchedule"   => BroadSignEndpoint::get("/bundle/v12/by_schedule")
                                                ->unwrap(static::$unwrapKey)
                                                ->parser(new MultipleResourcesParser(static::class)),

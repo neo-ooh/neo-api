@@ -45,8 +45,8 @@ class BroadSignServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroyCreative(int $externalId) {
-        DisableBroadSignCreative::dispatch($this->config, $externalId);
+    public function destroyCreative(string $creative_external_id) {
+        DisableBroadSignCreative::dispatch($this->config, (int)$creative_external_id);
     }
 
     /**
@@ -88,7 +88,7 @@ class BroadSignServiceAdapter implements BroadcastService {
      * @param array $query
      * @return Collection
      */
-    public function searchCampaigns(array $query) {
+    public function searchCampaigns(array $query): Collection {
         return Campaign::search(new BroadsignClient($this->config), $query);
     }
 

@@ -25,10 +25,10 @@ interface BroadcastService {
     /**
      * Deletes the specified creative from the broadcaster's servers
      *
-     * @param int $externalId
+     * @param string $creative_external_id
      * @return mixed
      */
-    public function destroyCreative(int $externalId);
+    public function destroyCreative(string $creative_external_id);
 
     /*
     |--------------------------------------------------------------------------

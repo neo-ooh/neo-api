@@ -93,6 +93,7 @@ class Creative extends Model {
             /** @var CreativeExternalId $externalId */
             foreach ($creative->external_ids as $externalId) {
                 Broadcast::network($externalId->network_id)->destroyCreative($externalId->external_id);
+                $externalId->delete();
             }
 
             // If the content has no more creatives attached to it, we reset its duration

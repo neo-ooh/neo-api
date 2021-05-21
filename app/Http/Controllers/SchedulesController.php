@@ -72,7 +72,7 @@ class SchedulesController extends Controller {
         $schedule->refresh();
 
         // Replicate the schedule in BroadSign
-        Broadcast::network($campaign->network_id)->createSchedule($schedule->id);
+        Broadcast::network($campaign->network_id)->createSchedule($schedule->id, Auth::id());
 
         // Return a response
         return new Response($schedule->loadMissing(["content"]), 201);

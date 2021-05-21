@@ -67,7 +67,7 @@ class DisableBroadSignSchedule extends BroadSignJob {
         $bsSchedule->save();
 
         // Deactivate the schedule's bundles
-        $bsBundles = BSBundle::bySchedule($this->getAPIClient(), $this->broadsignScheduleId);
+        $bsBundles = BSBundle::getBySchedule($this->getAPIClient(), $this->broadsignScheduleId);
 
         if ($bsBundles->count() === 0) {
             // We do not throw error on bundle not found here as we are already trying to deactivate it.

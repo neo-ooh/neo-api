@@ -12,6 +12,7 @@ namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\MultipleResourcesParser;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 
@@ -63,9 +64,10 @@ class Schedule extends BroadSignModel {
                                 ->parser(new MultipleResourcesParser(static::class)),
             "create" => Endpoint::post("/schedule/v8/add")
                                 ->unwrap(static::$unwrapKey)
-                                ->parser(new SingleResourcesParser(static::class)),
+                                ->parser(new ResourceIDParser()),
             "get"    => Endpoint::get("/schedule/v8/{id}")
-                                ->unwrap(static::$unwrapKey),
+                                ->unwrap(static::$unwrapKey)
+                                ->parser(new SingleResourcesParser(static::class)),
             "update" => Endpoint::put("/schedule/v8")
                                 ->unwrap(static::$unwrapKey)
                                 ->parser(new SingleResourcesParser(static::class))

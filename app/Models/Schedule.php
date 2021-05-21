@@ -19,8 +19,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
 use Neo\Services\Broadcast\Broadcast;
-use Neo\Services\Broadcast\Broadcaster;
-use Response;
 
 /**
  * Neo\Models\Branding
@@ -150,10 +148,14 @@ class Schedule extends Model {
 
         static::deleting(function (Schedule $schedule) {
             // Execute the deletion on broadsign side
-            if ($schedule->external_id_2 !== null) {
-                Broadcast::network($schedule->campaign->network_id)->destroySchedule($schedule->external_id_2);
-                Broadcast::network($schedule->campaign->network_id)->updateCampaignSchedulesOrder($schedule->campaign_id);
+            if ($schedule->external_id_2 === null || $schedule->campaign->network_id === null) {
+                return;
             }
+
+            $network = Broadcast::network($schedule->campaign->network_id);
+
+            $network->destroySchedule($schedule->external_id_2);
+            $network->updateCampaignSchedulesOrder($schedule->campaign_id);
         });
     }
 

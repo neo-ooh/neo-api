@@ -13,6 +13,7 @@ namespace Neo\Services\Broadcast\BroadSign\Models;
 use JsonException;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\MultipleResourcesParser;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 
@@ -72,10 +73,10 @@ class Creative extends BroadSignModel {
                                              ->parser(new MultipleResourcesParser(static::class)),
             "import_from_url"     => Endpoint::post("/content/v11/import_from_url")
                                              ->unwrap(static::$unwrapKey)
-                                             ->parser(new SingleResourcesParser(static::class)),
+                                             ->parser(new ResourceIDParser()),
             "create_dynamic"      => Endpoint::post("/content/v11/add")
                                              ->unwrap(static::$unwrapKey)
-                                             ->parser(new SingleResourcesParser(static::class))
+                                             ->parser(new ResourceIDParser())
                                              ->multipart(),
             "get"                 => Endpoint::get("/content/v11/{id}")
                                              ->unwrap(static::$unwrapKey)

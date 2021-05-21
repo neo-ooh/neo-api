@@ -77,8 +77,6 @@ class DetailedOrdersTable extends Component {
             ->sortBy(['market_order', 'property_name'])
             ->groupBy(['market_order', 'property_name']);
 
-        dd($purchases);
-
         if ($purchases->count() === 0) {
             return "";
         }

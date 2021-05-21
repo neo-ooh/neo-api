@@ -27,6 +27,12 @@ class CreativeExternalId extends Model
 
     public $incrementing = false;
 
+    protected $fillable = [
+        "creative_id",
+        "network_id",
+        "external_id",
+    ];
+
     public function creative() {
         return $this->belongsTo(Creative::class, "creative_id");
     }

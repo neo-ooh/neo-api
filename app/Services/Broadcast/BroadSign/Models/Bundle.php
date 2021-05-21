@@ -108,11 +108,11 @@ class Bundle extends BroadSignModel {
             ]);
     }
 
-    public static function getBySchedule(int $scheduleId, BroadsignClient $client): Collection {
+    public static function getBySchedule(BroadsignClient $client, int $scheduleId): Collection {
         return static::bySchedule($client, ["schedule_id" => $scheduleId]);
     }
 
-    public static function getByReservable(int $reservableId, BroadsignClient $client) {
+    public static function getByReservable(BroadsignClient $client, int $reservableId) {
         return static::bySchedule($client, ["reservable_id" => $reservableId]);
     }
 }

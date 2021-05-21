@@ -64,7 +64,7 @@ class ReorderBroadSignSchedules extends BroadSignJob {
         // For each schedule, we need to retrieve its bundle, and update its position.
         /** @var Schedule $schedule */
         foreach ($schedules as $schedule) {
-            $bundles = Bundle::bySchedule($this->getAPIClient(), $schedule->id);
+            $bundles = Bundle::getBySchedule($this->getAPIClient(), $schedule->external_id_2);
 
             if (count($bundles) === 0) {
                 return;

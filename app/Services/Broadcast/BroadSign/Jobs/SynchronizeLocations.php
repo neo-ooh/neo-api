@@ -12,6 +12,8 @@ namespace Neo\Services\Broadcast\BroadSign\Jobs;
 
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -29,10 +31,14 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  *
  * @package Neo\Jobs
  */
-class SynchronizeLocations extends BroadSignJob {
+class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected array $parsedLocations = [];
+
+    public function uniqueId(): int {
+        return $this->config->networkID;
+    }
 
     public function handle(): void {
         (new ConsoleOutput())->writeLn("Synchronizing network {$this->config->networkUUID}...\n\n");

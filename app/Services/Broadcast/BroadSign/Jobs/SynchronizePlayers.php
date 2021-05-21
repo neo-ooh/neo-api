@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -26,8 +27,12 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  *
  * @package Neo\Jobs
  */
-class SynchronizePlayers extends BroadSignJob {
+class SynchronizePlayers extends BroadSignJob implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function uniqueId(): int {
+        return $this->config->networkID;
+    }
 
     public function handle(): void {
         $broadsignPlayers = BSPlayer::all($this->getAPIClient());

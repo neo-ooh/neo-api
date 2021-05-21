@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Schedules;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -28,13 +29,17 @@ use Neo\Services\Broadcast\BroadSign\Models\Bundle;
  * @warning This does not update the broadcasting status of the schedule, only its properties.
  * @see     UpdateBroadSignScheduleStatus
  */
-class ReorderBroadSignSchedules extends BroadSignJob {
+class ReorderBroadSignSchedules extends BroadSignJob implements ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * @var int Id of the campaign whose schedules needs to be updated
      */
     protected int $campaignId;
+
+    public function uniqueId(): int {
+        return $this->campaignId;
+    }
 
 
     /**

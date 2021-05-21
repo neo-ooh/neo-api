@@ -13,6 +13,7 @@ namespace Neo\Services\Broadcast\BroadSign\Jobs\Creatives;
 use Exception;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -28,10 +29,14 @@ use Neo\Services\Broadcast\BroadSign\Models\Creative as BSCreative;
  *
  * Imports the specified creative in BroadSign and register its BroadSign ID.
  */
-class TargetCreative extends BroadSignJob {
+class TargetCreative extends BroadSignJob implements ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected int $creativeID;
+
+    public function uniqueId(): int {
+        return $this->creativeID;
+    }
 
     /**
      * Create a new job instance.

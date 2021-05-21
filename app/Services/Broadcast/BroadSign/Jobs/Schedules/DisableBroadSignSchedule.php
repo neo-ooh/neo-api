@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Schedules;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -26,13 +27,17 @@ use Symfony\Component\Translation\Exception\InvalidResourceException;
  *
  * @package Neo\Jobs
  */
-class DisableBroadSignSchedule extends BroadSignJob {
+class DisableBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * @var int ID of the schedule in Access
      */
     protected int $broadsignScheduleId;
+
+    public function uniqueId(): int {
+        return $this->broadsignScheduleId;
+    }
 
 
     /**

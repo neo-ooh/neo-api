@@ -14,6 +14,7 @@ namespace Neo\Services\Broadcast\BroadSign\Jobs\Players;
 use Carbon\Carbon as Date;
 use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -30,7 +31,7 @@ use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
  *
  * Screenshots requests are made asynchronously and batched every minutes for performances.
  */
-class RequestScreenshotsBursts extends BroadSignJob {
+class RequestScreenshotsBursts extends BroadSignJob implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**

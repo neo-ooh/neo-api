@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Campaigns;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -24,13 +25,17 @@ use Neo\Services\Broadcast\BroadSign\Models\Campaign as BSCampaign;
  *
  * @package Neo\Jobs
  */
-class DisableBroadSignCampaign extends BroadSignJob {
+class DisableBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
      * @var int ID of the campaign in Access
      */
     protected int $reservationId;
+
+    public function uniqueId(): int {
+        return $this->reservationId;
+    }
 
 
     /**

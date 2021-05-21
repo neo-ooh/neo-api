@@ -13,6 +13,7 @@ namespace Neo\Services\Broadcast\BroadSign\Jobs\Creatives;
 use DateInterval;
 use Exception;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -28,11 +29,15 @@ use Neo\Services\Broadcast\BroadSign\Models\Creative as BSCreative;
  *
  * Imports the specified creative in BroadSign and register its BroadSign ID.
  */
-class ImportCreativeInBroadSign extends BroadSignJob {
+class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected int $creativeID;
     protected string $creativeName;
+
+    public function uniqueId(): int {
+        return $this->creativeID;
+    }
 
     /**
      * Create a new job instance.

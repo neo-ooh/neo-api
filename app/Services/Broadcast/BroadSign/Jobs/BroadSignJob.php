@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\Middlewares\BlockJobOutsideProduction;
@@ -36,15 +37,15 @@ abstract class BroadSignJob implements ShouldQueue {
         $this->config = $config;
     }
 
-    public function getAPIClient(): BroadsignClient {
-        return new BroadsignClient($this->config);
-    }
-
     /*
     |--------------------------------------------------------------------------
     | Misc
     |--------------------------------------------------------------------------
     */
+
+    public function getAPIClient(): BroadsignClient {
+        return new BroadsignClient($this->config);
+    }
 
     /**
      * Create a Symfony console progress bar ready to be used!

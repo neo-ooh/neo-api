@@ -74,10 +74,8 @@ class DetailedOrdersTable extends Component {
                     "bonus"    => $order->isGuaranteedBonus(),
                     "bua"      => $order->isBonusUponAvailability(),
                 ][$this->type])
-            ->sortBy(['property_name'])
-            ->groupBy(['market_sequence', 'property_name'])
-            ->sort();
-
+            ->sortBy(['market_order', 'property_name'])
+            ->groupBy(['market_order', 'property_name']);
 
         if ($purchases->count() === 0) {
             return "";

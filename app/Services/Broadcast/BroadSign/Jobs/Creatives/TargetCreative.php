@@ -69,7 +69,7 @@ class TargetCreative extends BroadSignJob {
             return;
         }
 
-        $bsCreative = new BSCreative($this->getAPIClient(), ["id" => $externalId]);
+        $bsCreative = new BSCreative($this->getAPIClient(), ["id" => (int)$externalId]);
 
         if (!$creative->frame->criteria_id) {
             // All done

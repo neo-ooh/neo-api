@@ -151,7 +151,8 @@ class Schedule extends Model {
         static::deleting(function (Schedule $schedule) {
             // Execute the deletion on broadsign side
             if ($schedule->external_id_2 !== null) {
-                Broadcast::network($this->campaign->network_id)->disableSchedule($schedule->external_id_2);
+                Broadcast::network($schedule->campaign->network_id)->destroySchedule($schedule->external_id_2);
+                Broadcast::network($schedule->campaign->network_id)->updateCampaignSchedulesOrder($schedule->campaign_id);
             }
         });
     }

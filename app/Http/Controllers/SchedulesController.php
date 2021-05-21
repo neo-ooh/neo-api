@@ -288,8 +288,6 @@ class SchedulesController extends Controller {
      * @throws Exception
      */
     public function destroy(DestroyScheduleRequest $request, Schedule $schedule): Response {
-        Broadcast::network($schedule->campaign->network_id)->destroySchedule($schedule->external_id_2);
-        Broadcast::network($schedule->campaign->network_id)->updateCampaignSchedulesOrder($schedule->campaign_id);
 
         // If a schedule has not be reviewed, we want to completely remove it
         if ($schedule->status === 'draft' || $schedule->status === 'pending') {

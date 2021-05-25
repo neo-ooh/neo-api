@@ -6,6 +6,7 @@ use Neo\Models\Network;
 use Neo\Services\Broadcast\BroadcastService;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\CreateCampaign;
+use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\TargetCampaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\SynchronizeLocations;
 
 class PiSignageServiceAdapter implements BroadcastService {
@@ -83,7 +84,7 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function targetCampaign(int $campaignId) {
-        // TODO: Implement targetCampaign() method.
+        TargetCampaign::dispatch($this->config, $campaignId);
     }
 
     /**

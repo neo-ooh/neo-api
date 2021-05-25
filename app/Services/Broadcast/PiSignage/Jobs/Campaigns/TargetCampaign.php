@@ -54,14 +54,24 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
         /** @var Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignId);
 
-        if ($campaign === null || $campaign->external_id) {
+        if ($campaign === null || !$campaign->external_id) {
             // this campaign either doesn't exist or already has a reservation ID, do nothing.
             return;
         }
 
         // Get the playlist in PiSignage representing the campaign
         $playlist = Playlist::get($this->getAPIClient(), ["name" => $campaign->external_id]);
+        $playlist->name = $campaign->external_id;
         $groupIds = $campaign->locations->pluck("external_id");
+
+        // Configure the playlist
+        $playlist->settings["plType"] = "regular";
+        $playlist->settings["durationEnable"] = true;
+        $playlist->settings["startdate"] = $campaign->start_date->toDateString();
+        $playlist->settings["enddate"] = $campaign->end_date->toDateString();
+        $playlist->settings["timeEnable"] = true;
+        $playlist->settings["starttime"] = $campaign->start_date->toTimeString();
+        $playlist->settings["endtime"] = $campaign->end_date->toTimeString();
 
         // Assigned the playlist to all desired locations and remove it from other
         $groups = Group::all($this->getAPIClient());

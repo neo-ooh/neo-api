@@ -112,9 +112,9 @@ class Group extends PiSignageModel {
         return [
             "all"    => Endpoint::get("/groups")->parser(new MultipleResourcesParser(static::class)),
             "create" => Endpoint::post("/groups")->parser(new SingleResourcesParser(static::class)),
-            "get"    => Endpoint::get("/groups/{id}")->parser(new SingleResourcesParser(static::class)),
-            "update" => Endpoint::post("/groups/{id}")->parser(new SingleResourcesParser(static::class)),
-            "delete" => Endpoint::post("/groups/{id}"),
+            "get"    => Endpoint::get("/groups/{_id}")->parser(new SingleResourcesParser(static::class)),
+            "update" => Endpoint::post("/groups/{_id}")->parser(new SingleResourcesParser(static::class)),
+            "delete" => Endpoint::post("/groups/{_id}"),
         ];
     }
 

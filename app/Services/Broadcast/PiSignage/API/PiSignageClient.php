@@ -86,8 +86,6 @@ class PiSignageClient implements APIClientInterface {
             throw new BadResponse($response->body(), $response->status());
         }
 
-//        dump($response->json());
-
         // Unwrap response content
         $responseBody = $response->json()["data"];
 

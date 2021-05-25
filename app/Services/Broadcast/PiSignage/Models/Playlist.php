@@ -93,6 +93,10 @@ class Playlist extends PiSignageModel {
         $playlist->file = $name;
         $playlist->create();
 
-        return static::get($client, ["name" => $name]);
+        $playlist = static::get($client, ["name" => $name]);
+        // Plot-twist, single response from the API do NOT include the playlist name
+        $playlist->name = $name;
+
+        return $playlist;
     }
 }

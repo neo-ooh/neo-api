@@ -67,19 +67,12 @@ class CreateCampaign extends PiSignageJob implements ShouldBeUnique {
         $playlist = Playlist::make($this->getAPIClient(), $this->getCampaignNameInPiSignage($campaign));
 
         // Configure the playlist
-        $playlist->schedule["durationEnable"] = true;
-        $playlist->schedule["startDate"] = $campaign->start_date->toDateString();
-        $playlist->schedule["endDate"] = $campaign->end_date->toDateString();
-        $playlist->schedule["timeEnable"] = true;
-        $playlist->schedule["startTime"] = $campaign->start_date->toTimeString();
-        $playlist->schedule["endTime"] = $campaign->end_date->toTimeString();
-        $playlist->save();
 
         $campaign->external_id = $playlist->name;
         $campaign->save();
 
         // Now, target the campaign
-        TargetCampaign::dispatch($this->config, $this->campaignId);
+        TargetCampaign::dispatchSync($this->config, $this->campaignId);
     }
 
 }

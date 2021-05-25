@@ -22,7 +22,7 @@ use Neo\Services\Broadcast\Broadcast;
 use Ramsey\Collection\Collection;
 
 /**
- * Neo\Models\Branding
+ * Neo\Models\Creative
  *
  * @property int                            $id
  * @property string                         $type

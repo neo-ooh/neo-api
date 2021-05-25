@@ -2,7 +2,6 @@
 
 namespace Neo\Services\API;
 
-use GuzzleHttp\Psr7\MultipartStream;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -20,10 +19,13 @@ class APIClient implements APIClientInterface {
                        ->withOptions($endpoint->options)
                        ->withHeaders($headers);
 
+        $request->asMultipart();
+
         if ($endpoint->format === "multipart") {
-            $boundary = "__X__CONNECT_REQUEST__";
-            $request->contentType("multipart/mixed; boundary=$boundary");
-            $payload = new MultipartStream($payload, $boundary);
+            $request->asMultipart();
+//            $boundary = "__X__CONNECT_REQUEST__";
+//            $request->contentType("multipart/mixed; boundary=$boundary");
+//            $payload = new MultipartStream($payload, $boundary);
         }
 
         return $request->{strtolower($endpoint->method)}($endpoint->getUrl(), $payload);

@@ -46,7 +46,7 @@ abstract class APIModel implements JsonSerializable, Arrayable {
      *
      * @return mixed
      */
-    public function __get(string $name) {
+    public function &__get(string $name) {
         // Check if a method with the specified name exists
         if (method_exists($this, $name)) {
             // Yes call it and return

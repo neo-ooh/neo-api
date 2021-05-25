@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Neo\Services\API\Endpoint;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\API\Parsers\SingleResourcesParser;
+use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
 
 /**
  * Class Group
@@ -50,8 +51,9 @@ use Neo\Services\API\Parsers\SingleResourcesParser;
  * @property boolean  $disableWebUi             Disable player webUI
  * @property boolean  $disableWarnings          Disable Pi firmware power and temperature warnings (Not recommended)
  * @property boolean  $disableAp                Disable Pi Access Point
+ * @property array  $playlists
  *
- * @method static Collection all();
+ * @method static Collection all(PiSignageClient $client);
  *
  */
 class Group extends PiSignageModel {
@@ -113,5 +115,9 @@ class Group extends PiSignageModel {
             "update" => Endpoint::post("/groups/{id}")->parser(new SingleResourcesParser(static::class)),
             "delete" => Endpoint::post("/groups/{id}"),
         ];
+    }
+
+    public function hasPlaylist(string $playlistName): bool {
+        return collect($this->playlists)->contains("name", "=", $playlistName);
     }
 }

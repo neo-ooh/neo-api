@@ -52,6 +52,7 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @property boolean  $disableWarnings          Disable Pi firmware power and temperature warnings (Not recommended)
  * @property boolean  $disableAp                Disable Pi Access Point
  * @property array  $playlists
+ * @property array  $deployedPlaylists
  *
  * @method static Collection all(PiSignageClient $client);
  *

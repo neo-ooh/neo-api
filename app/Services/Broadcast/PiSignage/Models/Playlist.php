@@ -52,6 +52,9 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @property string[] $groupIds
  * @property string[] $labels
  *
+ *
+ * @method static get(PiSignageClient $client, array $name)
+ *
  */
 class Playlist extends PiSignageModel {
     protected static string $key = "name";
@@ -74,9 +77,9 @@ class Playlist extends PiSignageModel {
         return [
             "all"    => Endpoint::get("/playlists")->parser(new MultipleResourcesParser(static::class)),
             "create" => Endpoint::post("/playlists"),
-            "get"    => Endpoint::get("/playlists/{id}")->parser(new SingleResourcesParser(static::class)),
-            "update" => Endpoint::post("/playlists/{id}")->parser(new SingleResourcesParser(static::class)),
-            "delete" => Endpoint::post("/playlists/{id}"),
+            "get"    => Endpoint::get("/playlists/{name}")->parser(new SingleResourcesParser(static::class)),
+            "update" => Endpoint::post("/playlists/{name}")->parser(new SingleResourcesParser(static::class)),
+            "delete" => Endpoint::post("/playlists/{name}"),
         ];
     }
 

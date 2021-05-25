@@ -60,7 +60,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
         }
 
         // Get the playlist in PiSignage representing the campaign
-        $playlist = Playlist::get($this->getAPIClient(), $campaign->external_id);
+        $playlist = Playlist::get($this->getAPIClient(), ["name" => $campaign->external_id]);
         $groupIds = $campaign->locations->pluck("external_id");
 
         // Assigned the playlist to all desired locations and remove it from other
@@ -78,11 +78,13 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             if($groupIsTargeted && !$playlistIsPresent) {
                 // Add the playlist
                 $group->playlists[] = $playlist;
+                $group->deployedPlaylists[] = $playlist;
             }
 
             if(!$groupIsTargeted && $playlist) {
                 // Remove the playlist
                 $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name);
+                $group->deployedPlaylists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name);
             }
 
             $group->save();

@@ -76,7 +76,9 @@ class PiSignageClient implements APIClientInterface {
             return null;
         }
 
-        if (!$response->successful()) {
+        $responseBody = $response->json();
+
+        if (!$response->successful() || !array_key_exists("data", $responseBody)) {
             // Request was not successful, log the exchange
             $jsonPaylod = json_encode($payload, JSON_THROW_ON_ERROR);
             Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPaylod", );
@@ -87,7 +89,7 @@ class PiSignageClient implements APIClientInterface {
         }
 
         // Unwrap response content
-        $responseBody = $response->json()["data"];
+        $responseBody = $responseBody["data"];
 
         // Execute post-request transformation if needed
         if ($endpoint->parse) {

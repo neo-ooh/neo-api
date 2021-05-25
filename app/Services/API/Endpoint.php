@@ -130,7 +130,7 @@ class Endpoint {
     */
 
     public function getParamsList(): array {
-        preg_match_all("/{([a-zA-Z]+)}/", $this->path, $matches);
+        preg_match_all("/{([_a-zA-Z]+)}/", $this->path, $matches);
         return $matches[1];
     }
 

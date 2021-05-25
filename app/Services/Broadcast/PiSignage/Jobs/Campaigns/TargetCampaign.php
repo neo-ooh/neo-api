@@ -81,22 +81,26 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             $playlistIsPresent = $group->hasPlaylist($playlist->name);
             $groupIsTargeted = $groupIds->contains($group->getKey());
 
-            if(($playlistIsPresent && $groupIsTargeted) || (!$playlistIsPresent && !$groupIsTargeted)) {
+            $group->deploy = true;
+
+            if((!$playlistIsPresent && !$groupIsTargeted)) {
+                // we do not target this group, and the playlist is absent from it, ignore.
                 continue;
             }
 
-            if($groupIsTargeted && !$playlistIsPresent) {
-                // Add the playlist
-                $group->playlists[] = $playlist;
-                $group->deployedPlaylists[] = $playlist;
-            }
-
-            if(!$groupIsTargeted && $playlist) {
-                // Remove the playlist
+            if($playlistIsPresent) {
+                // We remove the playlist if it is present, even if we target the group, as we will re-insert it after to update it.
                 $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name);
-                $group->deployedPlaylists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name);
             }
 
+            if(!$groupIsTargeted) {
+                // No playlist in group, and group not targeted, stop here.
+                $group->save();
+                continue;
+            }
+
+            // Add the playlist
+            $group->playlists[] = $playlist;
             $group->save();
         }
     }

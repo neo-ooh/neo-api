@@ -19,10 +19,10 @@ class APIClient implements APIClientInterface {
                        ->withOptions($endpoint->options)
                        ->withHeaders($headers);
 
-        $request->asMultipart();
-
         if ($endpoint->format === "multipart") {
-            $request->asMultipart();
+//            $request->asMultipart();
+            $request->withOptions($request->mergeOptions($payload));
+            $payload = [];
 //            $boundary = "__X__CONNECT_REQUEST__";
 //            $request->contentType("multipart/mixed; boundary=$boundary");
 //            $payload = new MultipartStream($payload, $boundary);

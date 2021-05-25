@@ -12,7 +12,7 @@ namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Illuminate\Support\Collection;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\API\Parsers\MultipleResourcesParser;
+use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;

@@ -14,7 +14,7 @@ use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Support\Collection;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint;
-use Neo\Services\Broadcast\BroadSign\API\Parsers\MultipleResourcesParser;
+use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 

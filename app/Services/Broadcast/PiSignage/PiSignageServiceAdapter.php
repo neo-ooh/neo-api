@@ -4,19 +4,22 @@ namespace Neo\Services\Broadcast\PiSignage;
 
 use Neo\Models\Network;
 use Neo\Services\Broadcast\BroadcastService;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Services\Broadcast\PiSignage\Jobs\SynchronizeLocations;
 
 class PiSignageServiceAdapter implements BroadcastService {
-    protected Network $network;
 
-    public function __construct(Network $network) {
-        $this->network = $network;
+    public PiSignageConfig $config;
+
+    public function __construct(PiSignageConfig $config) {
+        $this->config = $config;
     }
 
     /**
      * @inheritDoc
      */
     public function synchronizeLocations() {
-        // TODO: Implement synchronizeLocations() method.
+        SynchronizeLocations::dispatchSync($this->config);
     }
 
     /**
@@ -106,7 +109,7 @@ class PiSignageServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroyCreative(int $externalId) {
+    public function destroyCreative(string $external_creative_id) {
         // TODO: Implement destroyCreative() method.
     }
 

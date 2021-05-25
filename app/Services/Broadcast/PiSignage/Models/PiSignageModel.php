@@ -5,10 +5,10 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - BroadSignModel.php
+ * @neo/api - PiSignageModel.php
  */
 
-namespace Neo\Services\Broadcast\BroadSign\Models;
+namespace Neo\Services\Broadcast\PiSignage\Models;
 
 use Neo\Services\API\APIModel;
 
@@ -17,7 +17,7 @@ use Neo\Services\API\APIModel;
  *
  * @package Neo\BroadSign\Models
  */
-abstract class BroadSignModel extends APIModel {
+abstract class PiSignageModel extends APIModel {
     protected static string $unwrapKey;
-    protected static string $key = "id";
+    protected static string $key = "_id";
 }

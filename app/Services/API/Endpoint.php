@@ -10,6 +10,8 @@
 
 namespace Neo\Services\API;
 
+use Neo\Services\API\Parsers\ResponseParser;
+
 /**
  * Represent an API endpoint and its specificities. By default, the body of the response is returned as-is, but can be
  * transformed automatically by defining a parser.

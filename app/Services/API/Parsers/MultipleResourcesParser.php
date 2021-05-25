@@ -1,10 +1,9 @@
 <?php
 
-namespace Neo\Services\Broadcast\BroadSign\API\Parsers;
+namespace Neo\Services\API\Parsers;
 
 use Illuminate\Support\Collection;
-use Neo\Services\API\ResponseParser;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\API\Parsers\ResponseParser;
 
 class MultipleResourcesParser extends ResponseParser {
     protected string $type;

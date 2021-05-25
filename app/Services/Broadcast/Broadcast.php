@@ -6,6 +6,7 @@ use Neo\Exceptions\InvalidBroadcastServiceException;
 use Neo\Models\Network;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\BroadSignServiceAdapter;
+use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 use Neo\Services\Broadcast\PiSignage\PiSignageServiceAdapter;
 
 abstract class Broadcast {
@@ -36,7 +37,15 @@ abstract class Broadcast {
                 return new BroadSignServiceAdapter($config);
 
             case Broadcaster::PISIGNAGE:
-                return new PiSignageServiceAdapter($network);
+                $config = new PiSignageConfig();
+                $config->connectionID = $network->broadcaster_connection->id;
+                $config->connectionUUID = $network->broadcaster_connection->uuid;
+                $config->networkID = $network->id;
+                $config->networkUUID = $network->uuid;
+                $config->apiURL = $network->broadcaster_connection->settings->server_url;
+                $config->apiToken = $network->broadcaster_connection->settings->token;
+
+                return new PiSignageServiceAdapter($config);
 
             default:
                 throw new InvalidBroadcastServiceException($broadcasterType);

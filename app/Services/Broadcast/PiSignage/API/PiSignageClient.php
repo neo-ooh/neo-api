@@ -1,57 +1,56 @@
 <?php
 
-namespace Neo\Services\Broadcast\BroadSign\API;
+namespace Neo\Services\Broadcast\PiSignage\API;
 
 use Cache;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Log;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Services\API\Endpoint;
+use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
-class BroadsignClient implements APIClientInterface {
+class PiSignageClient implements APIClientInterface {
 
     protected APIClient $client;
-    protected BroadSignConfig $config;
+    protected PiSignageConfig $config;
 
-    public function __construct(BroadSignConfig $config) {
+    public function __construct(PiSignageConfig $config) {
         $this->client = new APIClient();
         $this->config = $config;
     }
 
-    public function getConfig(): BroadSignConfig {
+    public function getConfig(): PiSignageConfig {
         return $this->config;
     }
 
     /**
-     * @param BroadSignEndpoint $endpoint
+     * @param Endpoint $endpoint
      * @param mixed             $payload
      * @param array             $headers
+     * @return Response
+     * @throws BadResponse
      */
     public function call($endpoint, $payload, array $headers = []) {
         // Set the base path for the request to the API.
         $endpoint->base = $this->config->apiURL;
 
-        // Add the connection certificate to the endpoint
-        $endpoint->options["cert"] = $this->config->getCertPath();
-
-        // Add the domain Id if requested
-        if ($endpoint->includeDomainID && is_array($payload)) {
-            $payload["domain_id"] = $this->config->domainId;
-        }
+        // Add the connection auth header
+        $headers["Authorization"] = "Basic " . $this->config->apiToken;
 
         $uriParams = $endpoint->getParamsList();
         if (count($uriParams) > 0) {
             if ($uriParams[0] === "id" && is_numeric($payload)) {
                 $endpoint->setParam("id", $payload);
-            } else if (is_array($payload)) {
+            } else if(is_array($payload)) {
                 foreach ($uriParams as $param) {
                     $endpoint->setParam($param, $payload[$param]);
                 }
             }
         }
 
-        if (is_numeric($payload)) {
+        if(is_numeric($payload)) {
             $payload = null;
         }
 
@@ -65,14 +64,10 @@ class BroadsignClient implements APIClientInterface {
     }
 
     /**
-     * @param BroadSignEndpoint $endpoint
-     * @param                   $payload
-     * @param array             $headers
-     * @return false|mixed|string|null
      * @throws BadResponse
      * @throws \JsonException
      */
-    protected function call_impl__(BroadSignEndpoint $endpoint, $payload, array $headers) {
+    protected function call_impl__(Endpoint $endpoint, $payload, array $headers) {
         // Execute the request
         $response = $this->client->call($endpoint, $payload, $headers);
 
@@ -84,20 +79,15 @@ class BroadsignClient implements APIClientInterface {
         if (!$response->successful()) {
             // Request was not successful, log the exchange
             $jsonPaylod = json_encode($payload, JSON_THROW_ON_ERROR);
-            Log::channel("broadsign")->debug("request:$endpoint->method [{$endpoint->getPath()}] $jsonPaylod",);
+            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPaylod", );
             Log::channel("broadsign")
-               ->error("response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
+               ->error("pisignage response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 
             throw new BadResponse($response->body(), $response->status());
         }
 
-        // Unwrap response content if needed
-        if (isset($endpoint->unwrapKey)) {
-            $responseBody = $response->json();
-            $responseBody = $responseBody[$endpoint->unwrapKey];
-        } else {
-            $responseBody = $response->body();
-        }
+        // Unwrap response content
+        $responseBody = $response->json()["data"];
 
         // Execute post-request transformation if needed
         if ($endpoint->parse) {

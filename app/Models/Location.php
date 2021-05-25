@@ -62,6 +62,8 @@ class Location extends SecuredModel {
         "name",
         "internal_name",
         "container_id",
+        "province",
+        "city",
     ];
 
     /**

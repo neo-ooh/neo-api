@@ -1,6 +1,6 @@
 <?php
 
-namespace Neo\Services\API;
+namespace Neo\Services\API\Parsers;
 
 abstract class ResponseParser {
 

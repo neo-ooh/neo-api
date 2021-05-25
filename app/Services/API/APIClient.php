@@ -6,7 +6,7 @@ use GuzzleHttp\Psr7\MultipartStream;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
-class APIClient {
+class APIClient implements APIClientInterface {
     /**
      * Execute a call to the given endpoint using with given body and headers
      *
@@ -15,7 +15,7 @@ class APIClient {
      * @param array    $headers
      * @return Response
      */
-    public function call(Endpoint $endpoint, $payload, array $headers = []): Response {
+    public function call($endpoint, $payload, array $headers = []) {
         $request = Http::withoutVerifying()
                        ->withOptions($endpoint->options)
                        ->withHeaders($headers);

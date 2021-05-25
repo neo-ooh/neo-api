@@ -79,7 +79,7 @@ class CreateCampaign extends PiSignageJob implements ShouldBeUnique {
         $campaign->save();
 
         // Now, target the campaign
-
+        TargetCampaign::dispatch($this->config, $this->campaignId);
     }
 
 }

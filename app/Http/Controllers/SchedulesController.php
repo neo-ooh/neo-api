@@ -295,13 +295,6 @@ class SchedulesController extends Controller {
             $schedule->delete();
         }
 
-        // Adjust order of remaining schedules in the campaign
-        foreach ($schedule->campaign->schedules as $s) {
-            if ($s->order >= $schedule->order) {
-                $s->decrement('order', 1);
-            }
-        }
-
         return new Response([]);
     }
 

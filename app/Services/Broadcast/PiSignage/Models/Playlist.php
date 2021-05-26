@@ -23,7 +23,7 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  *  "yoffset" => "integer"
  * ]
  * @property array $zoneVideoWindow
- * @property array $asset = [
+ * @property array $assets = [
  *      [
  *          "filename" => "string",
  *          "duration" => "integer",
@@ -93,10 +93,18 @@ class Playlist extends PiSignageModel {
         $playlist->file = $name;
         $playlist->create();
 
-        $playlist = static::get($client, ["name" => $name]);
+        $playlist = static::get($client, $name);
         // Plot-twist, single response from the API do NOT include the playlist name
         $playlist->name = $name;
 
+        return $playlist;
+    }
+
+    public static function get(PiSignageClient $client, $name): Playlist {
+        $playlist = (new static($client))->callAction("get", ["name" => $name]);
+
+        // Playlist name of the playlist is not included in the response
+        $playlist->name = $name;
         return $playlist;
     }
 }

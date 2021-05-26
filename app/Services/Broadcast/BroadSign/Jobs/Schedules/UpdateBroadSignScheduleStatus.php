@@ -71,7 +71,7 @@ class UpdateBroadSignScheduleStatus extends BroadSignJob implements ShouldBeUniq
             return;
         }
 
-        // We update the broadsign schedule based on its Access counterpart's status
+        // We update the broadsign schedule based on its Connect counterpart's status
         $bsSchedule         = BSSchedule::get($this->getAPIClient(), $schedule->external_id_2);
         $bsSchedule->active = $schedule->is_approved;
         $bsSchedule->save();

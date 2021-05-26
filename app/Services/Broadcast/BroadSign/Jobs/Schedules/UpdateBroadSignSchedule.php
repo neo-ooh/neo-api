@@ -22,7 +22,7 @@ use Neo\Services\Broadcast\BroadSign\Models\Schedule as BSSchedule;
 
 /**
  * Class UpdateBroadSignSchedule
- * Update a BroadSign schedule to reflect the changes made to its counterpart in Access.
+ * Update a BroadSign schedule to reflect the changes made to its counterpart in Connectt.
  *
  * @package Neo\Jobs
  *
@@ -33,7 +33,7 @@ class UpdateBroadSignSchedule extends BroadSignJob implements ShouldBeUniqueUnti
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var int ID of the updated schedule in Access
+     * @var int ID of the updated schedule in Connect
      */
     protected int $scheduleID;
 
@@ -45,7 +45,7 @@ class UpdateBroadSignSchedule extends BroadSignJob implements ShouldBeUniqueUnti
     /**
      * Create a new job instance.
      *
-     * @param int $scheduleID ID of the updated schedule in Access
+     * @param int $scheduleID ID of the updated schedule in Connect
      *
      * @return void
      */

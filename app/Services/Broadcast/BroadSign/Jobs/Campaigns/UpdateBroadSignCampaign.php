@@ -41,7 +41,7 @@ class UpdateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
     /**
      * Create a new job instance.
      *
-     * @param int $campaignID ID of the campaign created on Access
+     * @param int $campaignID ID of the campaign created on Connect
      *
      * @return void
      */
@@ -56,7 +56,7 @@ class UpdateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
      * @return void
      */
     public function handle(): void {
-        // Get the Access and Broadsign campaign
+        // Get the Connect and Broadsign campaign
         /** @var Campaign $campaign */
         $campaign = Campaign::query()->findOrFail($this->campaignID);
 

@@ -3,9 +3,11 @@
 namespace Neo\Services\Broadcast\PiSignage;
 
 use Neo\Models\Network;
+use Neo\Models\Schedule;
 use Neo\Services\Broadcast\BroadcastService;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\CreateCampaign;
+use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\SetCampaignSchedules;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\TargetCampaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\Schedules\CreateSchedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\SynchronizeLocations;
@@ -50,14 +52,14 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function enableSchedule(int $scheduleId) {
-        // TODO: Implement enableSchedule() method.
+        SetCampaignSchedules::dispatch(Schedule::query()->find($scheduleId)->campaign_id);
     }
 
     /**
      * @inheritDoc
      */
     public function disableSchedule(int $scheduleId) {
-        // TODO: Implement disableSchedule() method.
+        SetCampaignSchedules::dispatch(Schedule::query()->find($scheduleId)->campaign_id);
     }
 
     /**
@@ -92,7 +94,7 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function updateCampaignSchedulesOrder(int $campaignId) {
-        // TODO: Implement updateCampaignSchedulesOrder() method.
+        SetCampaignSchedules::dispatch($campaignId);
     }
 
     /**

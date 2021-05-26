@@ -29,7 +29,7 @@ class DisableBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnt
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
-     * @var int ID of the campaign in Access
+     * @var int ID of the campaign in Connect
      */
     protected int $reservationId;
 

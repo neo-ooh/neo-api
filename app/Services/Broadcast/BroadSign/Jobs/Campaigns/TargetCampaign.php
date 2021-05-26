@@ -44,7 +44,7 @@ class TargetCampaign extends BroadSignJob implements ShouldBeUniqueUntilProcessi
     /**
      * Create a new job instance.
      *
-     * @param int $campaignID ID of the campaign created on Access
+     * @param int $campaignID ID of the campaign created on Connect
      *
      * @return void
      */

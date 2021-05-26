@@ -19,9 +19,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Creative;
 use Neo\Models\Schedule;
+use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\SetCampaignSchedules;
 use Neo\Services\Broadcast\PiSignage\Jobs\Creatives\AssignCreativeValidity;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
 use Neo\Services\Broadcast\PiSignage\Models\Asset;
+use Neo\Services\Broadcast\PiSignage\Models\Playlist;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 /**
@@ -46,13 +48,13 @@ class CreateSchedule extends PiSignageJob implements ShouldBeUnique {
     }
 
     public function handle(): void {
-        // In PiSignage, Schedules have equivalent representation. Scheduling dates and times are instead stored in assets, meaning assets have to be imported for each schedule that they belong to
+        // in PiSignage, since Schedule do not exist there, we place the creatives in the playlist only if the schedule is approved.
 
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleId);
 
         if (!$schedule) {
-            // Schedule doesn't exist
+            // schedule does not exist
             return;
         }
 
@@ -66,5 +68,7 @@ class CreateSchedule extends PiSignageJob implements ShouldBeUnique {
 
             AssignCreativeValidity::dispatchSync($this->config, $creative->id, $schedule->id);
         }
+
+        SetCampaignSchedules::dispatch($this->config, $schedule->campaign_id);
     }
 }

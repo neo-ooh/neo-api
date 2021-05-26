@@ -193,7 +193,7 @@ class Contract extends Document {
         }
 
         // Bonus summary
-        $buaOrders = $this->order->getBonusOrders();
+        $buaOrders = $this->order->getBuaOrders();
 
         if ($buaOrders->isNotEmpty()) {
             $this->mpdf->WriteHTML(view("documents.contract.campaign-summary.orders-category", [

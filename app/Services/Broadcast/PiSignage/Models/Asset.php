@@ -47,7 +47,7 @@ class Asset extends PiSignageModel {
     }
 
     public static function makeStatic(PiSignageClient $client, string $filename, $file_content) {
-        $asset = static::createStatic($client, [
+        static::createStatic($client, [
             [
                 "name"     => "assets",
                 "contents" => $file_content,
@@ -62,8 +62,6 @@ class Asset extends PiSignageModel {
                 ]
             ]
         ]);
-
-        return;
     }
 
     public static function get(...$args) {

@@ -2,10 +2,8 @@
 
 namespace Neo\Services\Broadcast\PiSignage;
 
-use Neo\Models\Network;
 use Neo\Models\Schedule;
 use Neo\Services\Broadcast\BroadcastService;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\CreateCampaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\SetCampaignSchedules;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\TargetCampaign;

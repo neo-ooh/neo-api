@@ -153,6 +153,6 @@ class LocationsController extends Controller {
         $location->name = $request->input('name');
         $location->save();
 
-        return new Response($location->load('format'));
+        return new Response($location->load('display_type'));
     }
 }

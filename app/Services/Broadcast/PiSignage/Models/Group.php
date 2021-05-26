@@ -14,6 +14,7 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @package Neo\Services\Broadcast\PiSignage\Models
  *
  * @property string   $_id
+ * @property boolean  $deploy                   Deploy state of group to players
  * @property string   $name                     Name of the group
  * @property string   $playlistToSchedule       Playlist name to be used as starting name for adding to scheduling group
  * @property boolean  $combineDefaultPlaylist   Play default playlist first along with scheduled playlist(s)
@@ -51,8 +52,8 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @property boolean  $disableWebUi             Disable player webUI
  * @property boolean  $disableWarnings          Disable Pi firmware power and temperature warnings (Not recommended)
  * @property boolean  $disableAp                Disable Pi Access Point
- * @property array  $playlists
- * @property array  $deployedPlaylists
+ * @property array    $playlists
+ * @property array    $deployedPlaylists
  *
  * @method static Collection all(PiSignageClient $client);
  *

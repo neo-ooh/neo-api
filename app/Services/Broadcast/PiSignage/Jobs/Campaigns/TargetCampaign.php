@@ -82,6 +82,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             $groupIsTargeted = $groupIds->contains($group->getKey());
 
             $group->deploy = true;
+            $group->playAllEligiblePlaylists = true;
 
             if((!$playlistIsPresent && !$groupIsTargeted)) {
                 // we do not target this group, and the playlist is absent from it, ignore.

@@ -65,6 +65,10 @@ class CreateSchedule extends PiSignageJob implements ShouldBeUnique {
             AssignCreativeValidity::dispatchSync($this->config, $creative->id, $schedule->id);
         }
 
+        // Assign a value to the schedule external_id as to now it has been replicated in PiSignage
+        $schedule->external_id_2 = $schedule->id;
+        $schedule->save();
+
         SetCampaignSchedules::dispatch($this->config, $schedule->campaign_id);
     }
 }

@@ -116,7 +116,7 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function destroyCreative(string $external_creative_id) {
-        // TODO: Implement destroyCreative() method.
+        // Method ignored for PiSignage as creatives are tied to schedules and are deleted with them from the server
     }
 
     public function searchCampaigns(array $query) {

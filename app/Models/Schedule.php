@@ -154,7 +154,7 @@ class Schedule extends Model {
 
             $network = Broadcast::network($schedule->campaign->network_id);
 
-            $network->destroySchedule($schedule->external_id_2);
+            $network->destroySchedule($schedule->id);
             $network->updateCampaignSchedulesOrder($schedule->campaign_id);
         });
     }

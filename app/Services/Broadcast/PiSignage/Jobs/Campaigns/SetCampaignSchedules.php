@@ -11,7 +11,6 @@
 namespace Neo\Services\Broadcast\PiSignage\Jobs\Campaigns;
 
 
-use GuzzleHttp\Psr7\Utils;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -20,17 +19,11 @@ use Illuminate\Queue\SerializesModels;
 use Neo\Models\Campaign;
 use Neo\Models\Creative;
 use Neo\Models\Schedule;
-use Neo\Services\Broadcast\PiSignage\Jobs\Creatives\AssignCreativeValidity;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
-use Neo\Services\Broadcast\PiSignage\Models\Asset;
 use Neo\Services\Broadcast\PiSignage\Models\Playlist;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 /**
- * This job synchronises locations in the Network DB with the Display Units in BroadSign. New Display Units are added,
- * old ones are removed, and others gets updated as needed. Each ActorsLocations is associated of format, and its location in
- * the containers tree in BroadSign is carried on to the Network DB.
- *
  * @package Neo\Jobs
  */
 class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
@@ -53,12 +46,12 @@ class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
         /** @var ?Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignId);
 
-        if(!$campaign) {
+        if (!$campaign) {
             // No campaign
             return;
         }
 
-        if(!$campaign->external_id) {
+        if (!$campaign->external_id) {
             // Campaign is not replicated yet
             $this->release(60);
             return;
@@ -71,7 +64,7 @@ class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
 
         /** @var Schedule $schedule */
         foreach ($campaign->schedules as $schedule) {
-            if(!$schedule->is_approved) {
+            if (!$schedule->is_approved) {
                 // Schedule is not approved, ignore
                 continue;
             }
@@ -87,9 +80,9 @@ class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
             $assetArray[] = [
                 "filename" => $assetName,
                 "duration" => $schedule->campaign->display_duration,
-                "isVideo" => $creative->properties->extension === "mp4",
+                "isVideo"  => $creative->properties->extension === "mp4",
                 "selected" => false,
-                "option" => [
+                "option"   => [
                     "main" => false, // True => Mute sound; False => Don't mute
                 ]
             ];

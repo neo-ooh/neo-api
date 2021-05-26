@@ -29,7 +29,7 @@ use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 /**
  * @package Neo\Jobs
  */
-class CreateSchedule extends PiSignageJob implements ShouldBeUnique {
+class DestroySchedule extends PiSignageJob implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected int $scheduleId;
@@ -58,11 +58,8 @@ class CreateSchedule extends PiSignageJob implements ShouldBeUnique {
 
         /** @var Creative $creative */
         foreach ($creatives as $creative) {
-            /** @var Asset $asset */
             $assetName = $schedule->id . "@" . $creative->id . "." . $creative->properties->extension;
-            Asset::makeStatic($this->getAPIClient(), $assetName, Utils::tryFopen($creative->properties->file_url, 'r'));
-
-            AssignCreativeValidity::dispatchSync($this->config, $creative->id, $schedule->id);
+            Asset::delete($this->getAPIClient(), ["name" => $assetName]);
         }
 
         SetCampaignSchedules::dispatch($this->config, $schedule->campaign_id);

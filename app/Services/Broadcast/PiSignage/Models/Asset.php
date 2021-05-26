@@ -41,8 +41,8 @@ class Asset extends PiSignageModel {
                                       ->parser(new MultipleResourcesParser(static::class)),
             "get"          => Endpoint::get("/files/{name}")->parser(new SingleResourcesParser(static::class)),
             "update"       => Endpoint::post("/files/{name}")->parser(new SingleResourcesParser(static::class)),
-            "delete"       => Endpoint::post("/files/{name}"),
-            "postupload"       => Endpoint::post("/postupload"),
+            "delete"       => Endpoint::delete("/files/{name}"),
+            "postupload"   => Endpoint::post("/postupload"),
         ];
     }
 
@@ -69,7 +69,7 @@ class Asset extends PiSignageModel {
     public static function get(...$args) {
         $asset = parent::get(...$args);
 
-        if($asset->dbdata) {
+        if ($asset->dbdata) {
             $asset->_id = $asset->dbdata["_id"];
         }
 

@@ -71,10 +71,10 @@ interface BroadcastService {
     /**
      * Destroy the schedule, it will need to be re-created to broadcast it again
      *
-     * @param string $schedule_external_id
+     * @param string $scheduleId
      * @return mixed
      */
-    public function destroySchedule(string $schedule_external_id);
+    public function destroySchedule(string $scheduleId);
 
     /*
     |--------------------------------------------------------------------------

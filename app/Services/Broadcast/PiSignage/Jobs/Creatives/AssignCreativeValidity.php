@@ -24,10 +24,6 @@ use Neo\Services\Broadcast\PiSignage\Models\Asset;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 /**
- * This job synchronises locations in the Network DB with the Display Units in BroadSign. New Display Units are added,
- * old ones are removed, and others gets updated as needed. Each ActorsLocations is associated of format, and its location in
- * the containers tree in BroadSign is carried on to the Network DB.
- *
  * @package Neo\Jobs
  */
 class AssignCreativeValidity extends PiSignageJob implements ShouldBeUnique {

@@ -3,6 +3,7 @@
 namespace Neo\Services\Broadcast\BroadSign;
 
 use Illuminate\Support\Collection;
+use Neo\Models\Schedule;
 use Neo\Services\Broadcast\BroadcastService;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\CreateBroadSignCampaign;
@@ -80,8 +81,8 @@ class BroadSignServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroySchedule(string $schedule_external_id) {
-        DisableBroadSignSchedule::dispatch($this->config, (int)$schedule_external_id);
+    public function destroySchedule(string $scheduleId) {
+        DisableBroadSignSchedule::dispatch($this->config, Schedule::find($scheduleId)->external_id_2);
     }
 
     /**

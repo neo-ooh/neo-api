@@ -13,27 +13,15 @@ namespace Neo\Services\Broadcast\PiSignage\Jobs\Campaigns;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Campaign;
-use Neo\Models\DisplayType;
-use Neo\Models\Location;
-use Neo\Services\Broadcast\BroadSign\Models\Container;
-use Neo\Services\Broadcast\BroadSign\Models\Format;
-use Neo\Services\Broadcast\BroadSign\Models\Location as BSLocation;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
-use Neo\Services\Broadcast\PiSignage\Models\Group;
 use Neo\Services\Broadcast\PiSignage\Models\Playlist;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * This job synchronises locations in the Network DB with the Display Units in BroadSign. New Display Units are added,
- * old ones are removed, and others gets updated as needed. Each ActorsLocations is associated of format, and its location in
- * the containers tree in BroadSign is carried on to the Network DB.
- *
  * @package Neo\Jobs
  */
 class CreateCampaign extends PiSignageJob implements ShouldBeUnique {
@@ -51,7 +39,7 @@ class CreateCampaign extends PiSignageJob implements ShouldBeUnique {
     }
 
     protected function getCampaignNameInPiSignage(Campaign $campaign) {
-        return "connect_" . $campaign->id . " - " . $campaign->name . "@" .$campaign->owner->name;
+        return "connect_" . $campaign->id . " - " . $campaign->name . "@" . $campaign->owner->name;
     }
 
     public function handle(): void {

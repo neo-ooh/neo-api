@@ -275,7 +275,7 @@ class SchedulesController extends Controller {
         $schedule->order = $order;
         $schedule->save();
 
-        Broadcast::network($campaign->network_id)->updateCampaignSchedulesOrder($schedule->id);
+        Broadcast::network($campaign->network_id)->updateCampaignSchedulesOrder($campaign->id);
 
         return (new CampaignsController())->show($campaign);
     }

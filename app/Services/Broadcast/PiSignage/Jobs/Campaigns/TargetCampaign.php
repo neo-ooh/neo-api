@@ -50,6 +50,11 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
 
         // Get the playlist in PiSignage representing the campaign
         $playlist       = Playlist::get($this->getAPIClient(), $campaign->external_id);
+
+        if(!$playlist) {
+            return;
+        }
+
         $playlist->name = $campaign->external_id;
         $groupIds       = $campaign->locations->pluck("external_id");
 

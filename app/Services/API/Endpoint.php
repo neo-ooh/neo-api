@@ -48,7 +48,9 @@ class Endpoint {
     /**
      * @var array Options to pass along when querying the endpoint, a defined by GuzzleHTTP
      */
-    public array $options = [];
+    public array $options = [
+        "verify" => false
+    ];
 
     protected array $urlParameters = [];
 
@@ -146,7 +148,7 @@ class Endpoint {
 
     public function getPath(): string {
         $parameters = array_map(static fn($key) => '/{' . $key . '}/', array_keys($this->urlParameters));
-        $values     = array_values($this->urlParameters);
+        $values     = array_map("urlencode", array_values($this->urlParameters));
         return preg_replace($parameters, $values, $this->path);
     }
 

@@ -2,8 +2,11 @@
 
 namespace Neo\Services\API;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\MultipartStream;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Request;
 
 class APIClient implements APIClientInterface {
     /**
@@ -15,19 +18,19 @@ class APIClient implements APIClientInterface {
      * @return Response
      */
     public function call($endpoint, $payload, array $headers = []) {
-        $request = Http::withoutVerifying()
-                       ->withOptions($endpoint->options)
-                       ->withHeaders($headers);
+        $client = new Client($endpoint->options);
+        $request = new \GuzzleHttp\Psr7\Request($endpoint->method, $endpoint->getUrl(), $headers);
 
-        if ($endpoint->format === "multipart") {
-//            $request->asMultipart();
-            $request->withOptions($request->mergeOptions($payload));
-            $payload = [];
-//            $boundary = "__X__CONNECT_REQUEST__";
-//            $request->contentType("multipart/mixed; boundary=$boundary");
-//            $payload = new MultipartStream($payload, $boundary);
+        dump($endpoint->getUrl());
+
+        $options = [];
+
+        if($endpoint->format === 'multipart') {
+            $options["multipart"] = $payload;
+        } else {
+            $options["json"] = $payload;
         }
 
-        return $request->{strtolower($endpoint->method)}($endpoint->getUrl(), $payload);
+        return new Response($client->send($request, $options));
     }
 }

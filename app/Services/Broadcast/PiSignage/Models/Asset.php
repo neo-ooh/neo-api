@@ -17,16 +17,18 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @property string $ctime
  * @property string $path
  * @property string $type
- * @property string $dbdata
+ * @property ?array $dbdata
  *
  */
 class Asset extends PiSignageModel {
     protected static array $updatable = [
+        "_id",
         "name",
         "type",
         "duration",
         "size",
         "thumbnails",
+        "dbdata",
         "validity",
         "playlists",
     ];
@@ -36,22 +38,41 @@ class Asset extends PiSignageModel {
             "all"          => Endpoint::get("/files")->parser(new MultipleResourcesParser(static::class)),
             "createStatic" => Endpoint::post("/files")
                                       ->multipart()
-                                      ->parser(new SingleResourcesParser(static::class)),
-            "get"          => Endpoint::get("/files/{id}")->parser(new SingleResourcesParser(static::class)),
-            "update"       => Endpoint::post("/files/{id}")->parser(new SingleResourcesParser(static::class)),
-            "delete"       => Endpoint::post("/files/{id}"),
+                                      ->parser(new MultipleResourcesParser(static::class)),
+            "get"          => Endpoint::get("/files/{name}")->parser(new SingleResourcesParser(static::class)),
+            "update"       => Endpoint::post("/files/{name}")->parser(new SingleResourcesParser(static::class)),
+            "delete"       => Endpoint::post("/files/{name}"),
+            "postupload"       => Endpoint::post("/postupload"),
         ];
     }
 
     public static function makeStatic(PiSignageClient $client, string $filename, $file_content) {
-        return static::createStatic($client, [
-            "multipart" => [
+        $asset = static::createStatic($client, [
+            [
+                "name"     => "assets",
+                "contents" => $file_content,
+                "filename" => $filename,
+            ]
+        ], ["Accept" => "application/json"])[0];
+
+        static::postupload($client, [
+            "files" => [
                 [
-                    "name"     => "assets",
-                    "contents" => $file_content,
-                    "filename" => $filename
+                    "name" => $filename,
                 ]
             ]
         ]);
+
+        return;
+    }
+
+    public static function get(...$args) {
+        $asset = parent::get(...$args);
+
+        if($asset->dbdata) {
+            $asset->_id = $asset->dbdata["_id"];
+        }
+
+        return $asset;
     }
 }

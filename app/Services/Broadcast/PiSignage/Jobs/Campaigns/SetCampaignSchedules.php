@@ -59,6 +59,10 @@ class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
 
         $playlist = Playlist::get($this->getAPIClient(), $campaign->external_id);
 
+        if(!$playlist) {
+            return;
+        }
+
         // Build the asset array
         $assetArray = [];
 

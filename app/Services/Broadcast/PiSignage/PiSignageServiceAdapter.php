@@ -5,6 +5,7 @@ namespace Neo\Services\Broadcast\PiSignage;
 use Neo\Models\Schedule;
 use Neo\Services\Broadcast\BroadcastService;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\CreateCampaign;
+use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\DestroyCampaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\SetCampaignSchedules;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\TargetCampaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\Schedules\CreateSchedule;
@@ -65,7 +66,7 @@ class PiSignageServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroySchedule(string $scheduleId) {
+    public function destroySchedule(int $scheduleId) {
         // This job has tot run synchronously has we need the relation between the schedule and its creatives to know which one to remove
         DestroySchedule::dispatchSync($this->config, $scheduleId);
     }
@@ -101,8 +102,8 @@ class PiSignageServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroyCampaign(string $campaign_external_id) {
-        // TODO: Implement destroyCampaign() method.
+    public function destroyCampaign(int $campaignId) {
+        DestroyCampaign::dispatchSync($this->config, $campaignId);
     }
 
     /**

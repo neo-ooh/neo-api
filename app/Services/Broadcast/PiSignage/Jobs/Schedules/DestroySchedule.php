@@ -62,6 +62,9 @@ class DestroySchedule extends PiSignageJob implements ShouldBeUnique {
             Asset::delete($this->getAPIClient(), ["name" => $assetName]);
         }
 
+        $schedule->external_id_2 = null;
+        $schedule->save();
+
         SetCampaignSchedules::dispatch($this->config, $schedule->campaign_id);
     }
 }

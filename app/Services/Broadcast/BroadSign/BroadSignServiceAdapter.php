@@ -81,8 +81,8 @@ class BroadSignServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroySchedule(string $scheduleId) {
-        DisableBroadSignSchedule::dispatch($this->config, Schedule::find($scheduleId)->external_id_2);
+    public function destroySchedule(int $scheduleId) {
+        DisableBroadSignSchedule::dispatch($this->config, (int)Schedule::find($scheduleId)->external_id_2);
     }
 
     /**
@@ -124,8 +124,8 @@ class BroadSignServiceAdapter implements BroadcastService {
     /**
      * @inheritDoc
      */
-    public function destroyCampaign(string $campaign_external_id) {
-        DisableBroadSignCampaign::dispatch($this->config, (int)$campaign_external_id);
+    public function destroyCampaign(int $campaignId) {
+        DisableBroadSignCampaign::dispatch($this->config, (int)\Neo\Models\Campaign::query()->find($campaignId)->external_id);
     }
 
     /**

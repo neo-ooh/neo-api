@@ -131,7 +131,7 @@ class Campaign extends SecuredModel {
         static::deleting(function (Campaign $campaign) {
             // Disable the campaign in BroadSign
             if ($campaign->external_id !== null) {
-                Broadcast::network($campaign->network_id)->destroyCampaign($campaign->external_id);
+                Broadcast::network($campaign->network_id)->destroyCampaign($campaign->id);
             }
 
             // Delete all schedules in the campaign

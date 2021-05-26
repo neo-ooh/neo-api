@@ -100,8 +100,12 @@ class Playlist extends PiSignageModel {
         return $playlist;
     }
 
-    public static function get(PiSignageClient $client, $name): Playlist {
+    public static function get(PiSignageClient $client, $name): ?Playlist {
         $playlist = (new static($client))->callAction("get", ["name" => $name]);
+
+        if(!$playlist) {
+            return null;
+        }
 
         // Playlist name of the playlist is not included in the response
         $playlist->name = $name;

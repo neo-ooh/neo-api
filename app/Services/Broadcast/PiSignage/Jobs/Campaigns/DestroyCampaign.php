@@ -40,10 +40,6 @@ class DestroyCampaign extends PiSignageJob implements ShouldBeUnique {
         $this->campaignId = $campaignId;
     }
 
-    protected function getCampaignNameInPiSignage(Campaign $campaign) {
-        return "connect_" . $campaign->id . " - " . $campaign->name . "@" . $campaign->owner->name;
-    }
-
     public function handle(): void {
         /** @var Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignId);
@@ -55,16 +51,17 @@ class DestroyCampaign extends PiSignageJob implements ShouldBeUnique {
 
         // We want to delete the playlist AND deploy all the configuration of all associated players so they are up to date.
         Playlist::delete($this->getAPIClient(), ["name" => $campaign->external_id]);
-        $campaign->external_id = null;
-        $campaign->save();
 
         /** @var Location $location */
         foreach ($campaign->locations as $location) {
             $group = Group::get($this->getAPIClient(), $location->external_id);
+            $group->playlists = collect($group->playlists)->filter(fn($playlist) => $playlist["name"] !== $campaign->external_id);
             $group->deploy = true;
             $group->save();
         }
 
+        $campaign->external_id = null;
+        $campaign->save();
         // Done!
     }
 

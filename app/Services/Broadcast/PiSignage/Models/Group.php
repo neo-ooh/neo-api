@@ -122,4 +122,8 @@ class Group extends PiSignageModel {
     public function hasPlaylist(string $playlistName): bool {
         return collect($this->playlists)->contains("name", "=", $playlistName);
     }
+
+    public static function get(PiSignageClient $client, $groupId) {
+        return (new static($client))->callAction("get", ["_id" => $groupId]);
+    }
 }

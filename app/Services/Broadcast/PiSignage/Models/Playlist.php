@@ -79,7 +79,7 @@ class Playlist extends PiSignageModel {
             "create" => Endpoint::post("/playlists"),
             "get"    => Endpoint::get("/playlists/{name}")->parser(new SingleResourcesParser(static::class)),
             "update" => Endpoint::post("/playlists/{name}")->parser(new SingleResourcesParser(static::class)),
-            "delete" => Endpoint::post("/playlists/{name}"),
+            "delete" => Endpoint::delete("/files/__{name}.json"),
         ];
     }
 

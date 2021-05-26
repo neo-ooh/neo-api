@@ -50,14 +50,14 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function enableSchedule(int $scheduleId) {
-        SetCampaignSchedules::dispatch(Schedule::query()->find($scheduleId)->campaign_id);
+        SetCampaignSchedules::dispatch($this->config, Schedule::query()->find($scheduleId)->campaign_id);
     }
 
     /**
      * @inheritDoc
      */
     public function disableSchedule(int $scheduleId) {
-        SetCampaignSchedules::dispatch(Schedule::query()->find($scheduleId)->campaign_id);
+        SetCampaignSchedules::dispatch($this->config, Schedule::query()->find($scheduleId)->campaign_id);
     }
 
     /**
@@ -92,7 +92,7 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function updateCampaignSchedulesOrder(int $campaignId) {
-        SetCampaignSchedules::dispatch($campaignId);
+        SetCampaignSchedules::dispatch($this->config, $campaignId);
     }
 
     /**

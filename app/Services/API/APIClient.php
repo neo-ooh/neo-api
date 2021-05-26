@@ -21,8 +21,6 @@ class APIClient implements APIClientInterface {
         $client = new Client($endpoint->options);
         $request = new \GuzzleHttp\Psr7\Request($endpoint->method, $endpoint->getUrl(), $headers);
 
-        dump($endpoint->getUrl());
-
         $options = [];
 
         if($endpoint->format === 'multipart') {

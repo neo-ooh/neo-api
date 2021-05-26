@@ -54,8 +54,6 @@ class PiSignageClient implements APIClientInterface {
             $payload = null;
         }
 
-        dump($payload);
-
         if ($endpoint->cache === 0 || strtolower($endpoint->method) !== 'get') {
             // Bypass the cache if we are not making a `get` request
             return $this->call_impl__($endpoint, $payload, $headers);
@@ -72,8 +70,6 @@ class PiSignageClient implements APIClientInterface {
     protected function call_impl__(Endpoint $endpoint, $payload, array $headers) {
         // Execute the request
         $response = $this->client->call($endpoint, $payload, $headers);
-
-        dump($response->body());
 
         // In case the resource wasn't found (404), return null
         if ($response->status() === 404) {

@@ -288,14 +288,6 @@ class SchedulesController extends Controller {
      * @throws Exception
      */
     public function destroy(DestroyScheduleRequest $request, Schedule $schedule): Response {
-
-        // Adjust order of other schedules in the campaign
-        foreach ($schedule->campaign->schedules as $s) {
-            if ($s->order >= $schedule->order) {
-                $s->decrement('order', 1);
-            }
-        }
-
         // If a schedule has not be reviewed, we want to completely remove it
         if ($schedule->status === 'draft' || $schedule->status === 'pending') {
             $schedule->forceDelete();
@@ -303,6 +295,12 @@ class SchedulesController extends Controller {
             $schedule->delete();
         }
 
+        // Adjust order of remaining schedules in the campaign
+        foreach ($schedule->campaign->schedules as $s) {
+            if ($s->order >= $schedule->order) {
+                $s->decrement('order', 1);
+            }
+        }
 
         return new Response([]);
     }

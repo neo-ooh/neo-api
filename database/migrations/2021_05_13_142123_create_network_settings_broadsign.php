@@ -17,8 +17,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    public function up(): void {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->foreignId("network_id")->primary()->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
             $table->unsignedBigInteger("customer_id");
@@ -32,8 +31,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down(): void {
         Schema::dropIfExists($this->tableName);
     }
 };

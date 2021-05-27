@@ -33,14 +33,16 @@ class BroadSignServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function synchronizeLocations() {
-        SynchronizeLocations::dispatch($this->config);
+        // TODO: switch `dispatchSync` to `dispatch` once migration 2021_05_20_145217_assign_campaigns_network has run
+        SynchronizeLocations::dispatchSync($this->config);
     }
 
     /**
      * @inheritDoc
      */
     public function synchronizePlayers() {
-        SynchronizePlayers::dispatch($this->config);
+        // TODO: switch `dispatchSync` to `dispatch` once migration 2021_05_20_145217_assign_campaigns_network has run
+        SynchronizePlayers::dispatchSync($this->config);
     }
 
     /**

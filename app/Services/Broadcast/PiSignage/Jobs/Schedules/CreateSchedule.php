@@ -57,9 +57,17 @@ class CreateSchedule extends PiSignageJob implements ShouldBeUnique {
 
         /** @var Creative $creative */
         foreach ($creatives as $creative) {
-            /** @var Asset $asset */
-            $assetName = $schedule->id . "@" . $creative->id . "." . $creative->properties->extension;
-            Asset::makeStatic($this->getAPIClient(), $assetName, Utils::tryFopen($creative->properties->file_url, 'r'));
+            $assetName = Asset::inferNameFromCreative($creative, $schedule->id);
+
+            switch ($creative->type) {
+                case Creative::TYPE_STATIC:
+                    Asset::makeStatic($this->getAPIClient(), $assetName, Utils::tryFopen($creative->properties->file_url, 'r'));
+                    break;
+                case Creative::TYPE_DYNAMIC:
+                    Asset::makeDynamic($this->getAPIClient(), $assetName, $creative->properties->url);
+                    break;
+            }
+
 
             AssignCreativeValidity::dispatchSync($this->config, $creative->id, $schedule->id);
         }

@@ -11,7 +11,6 @@
 namespace Neo\Services\Broadcast\PiSignage\Jobs\Schedules;
 
 
-use GuzzleHttp\Psr7\Utils;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -22,8 +21,6 @@ use Neo\Models\Schedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\SetCampaignSchedules;
 use Neo\Services\Broadcast\PiSignage\Jobs\Creatives\AssignCreativeValidity;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
-use Neo\Services\Broadcast\PiSignage\Models\Asset;
-use Neo\Services\Broadcast\PiSignage\Models\Playlist;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 /**

@@ -58,7 +58,7 @@ class DestroySchedule extends PiSignageJob implements ShouldBeUnique {
 
         /** @var Creative $creative */
         foreach ($creatives as $creative) {
-            $assetName = $schedule->id . "@" . $creative->id . "." . $creative->properties->extension;
+            $assetName = Asset::inferNameFromCreative($creative, $schedule->id);
             Asset::delete($this->getAPIClient(), ["name" => $assetName]);
         }
 

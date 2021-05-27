@@ -13,13 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table("creatives", function (Blueprint $table) {
-            $table->renameColumn("broadsign_ad_copy_id", "external_id_broadsign");
-        });
-
-        Schema::table("creatives", function (Blueprint $table) {
-            $table->unsignedBigInteger("external_id_broadsign")->change();
-        });
+        Schema::dropColumns("creatives", ["external_id_broadsign"]);
     }
 
     /**

@@ -56,7 +56,7 @@ class AssignCreativeValidity extends PiSignageJob implements ShouldBeUnique {
             return;
         }
 
-        $assetName = $schedule->id . "@" . $creative->id . "." . $creative->properties->extension;
+        $assetName = Asset::inferNameFromCreative($creative, $schedule->id);
         $asset = Asset::get($this->getAPIClient(), ["name" => $assetName]);
 
         if(!$asset->dbdata) {

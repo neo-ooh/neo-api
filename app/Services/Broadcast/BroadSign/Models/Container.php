@@ -60,7 +60,7 @@ class Container extends BroadSignModel {
         return static::byParent($client, ["parent_container_ids" => $containerId]);
     }
 
-    public function parent (): ?Container {
+    public function getParent(): ?Container {
         if ($this->container_id === 0) {
             return null;
         }
@@ -78,16 +78,17 @@ class Container extends BroadSignModel {
      * Replicate itself inside our own database with all its parents. These methods can be called even if the container
      * has already been replicated, handling errors and duplications.
      */
-    public function replicate (): void {
+    public function replicate (int $networkId): void {
         // Make sure our parent container is already in the DDB if we have one
         if ($this->container_id !== 0) {
-            $this->parent->replicate();
+            $this->getParent()->replicate($networkId);
         }
 
         \Neo\Models\Container::query()->updateOrInsert([
             "id" => $this->id,
         ],
             [
+                "network_id" => $networkId,
                 "parent_id" => $this->container_id === 0 ? null : $this->container_id,
                 "name"      => $this->name,
             ]);

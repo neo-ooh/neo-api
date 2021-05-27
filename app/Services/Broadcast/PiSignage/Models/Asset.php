@@ -2,6 +2,8 @@
 
 namespace Neo\Services\Broadcast\PiSignage\Models;
 
+use Illuminate\Support\Str;
+use Neo\Models\Creative;
 use Neo\Services\API\Endpoint;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\API\Parsers\SingleResourcesParser;
@@ -39,6 +41,8 @@ class Asset extends PiSignageModel {
             "createStatic" => Endpoint::post("/files")
                                       ->multipart()
                                       ->parser(new MultipleResourcesParser(static::class)),
+            "createDynamic" => Endpoint::post("/links")
+                                      ->parser(new MultipleResourcesParser(static::class)),
             "get"          => Endpoint::get("/files/{name}")->parser(new SingleResourcesParser(static::class)),
             "update"       => Endpoint::post("/files/{name}")->parser(new SingleResourcesParser(static::class)),
             "delete"       => Endpoint::delete("/files/{name}"),
@@ -64,6 +68,16 @@ class Asset extends PiSignageModel {
         ]);
     }
 
+    public static function makeDynamic(PiSignageClient $client, string $filename, $url) {
+        static::createDynamic($client, [
+            "details" => [
+                "name" => Str::endsWith($filename, ".link") ? substr($filename, 0, -5): $filename,
+                "type" => ".link",
+                "link" => $url,
+              ]
+        ]);
+    }
+
     public static function get(...$args) {
         $asset = parent::get(...$args);
 
@@ -72,5 +86,16 @@ class Asset extends PiSignageModel {
         }
 
         return $asset;
+    }
+
+    public static function inferNameFromCreative(Creative $creative, int $scheduleId): ?string {
+        switch ($creative->type) {
+            case Creative::TYPE_STATIC:
+                return $creative->id . "@" . $scheduleId . "." . $creative->properties->extension;
+            case Creative::TYPE_DYNAMIC:
+                return $creative->id . "@" . $scheduleId . ".link";
+        }
+
+        return null;
     }
 }

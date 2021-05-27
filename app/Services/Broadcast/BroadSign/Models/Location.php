@@ -77,7 +77,7 @@ class Location extends BroadSignModel {
      *
      * @return Container|null
      */
-    public function container(): ?Container {
+    public function getContainer(): ?Container {
         if ($this->container_id === 0) {
             return null;
         }

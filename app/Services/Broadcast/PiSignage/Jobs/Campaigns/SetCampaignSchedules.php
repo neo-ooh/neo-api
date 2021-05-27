@@ -20,6 +20,7 @@ use Neo\Models\Campaign;
 use Neo\Models\Creative;
 use Neo\Models\Schedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
+use Neo\Services\Broadcast\PiSignage\Models\Asset;
 use Neo\Services\Broadcast\PiSignage\Models\Playlist;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
@@ -78,8 +79,7 @@ class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
 
             /** @var Creative $creative */
             $creative = $schedule->content->creatives()->first();
-
-            $assetName = $schedule->id . "@" . $creative->id . "." . $creative->properties->extension;
+            $assetName = Asset::inferNameFromCreative($creative, $schedule->id);
 
             $assetArray[] = [
                 "filename" => $assetName,

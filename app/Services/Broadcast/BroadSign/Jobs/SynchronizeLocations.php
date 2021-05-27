@@ -81,11 +81,11 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
             $progressBar->setMessage("$bslocation->name ($bslocation->id)");
 
             // Make sure the location's container is present in the DB
-            $bsContainer = $bslocation->container;
+            $bsContainer = $bslocation->getContainer();
             $containerID = null;
 
             if ($bsContainer !== null) {
-                $bsContainer->replicate();
+                $bsContainer->replicate($this->config->networkID);
                 $containerID = $bsContainer->id;
             }
 

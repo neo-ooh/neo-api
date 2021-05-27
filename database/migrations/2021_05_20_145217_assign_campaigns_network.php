@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Neo\Models\Campaign;
+use Neo\Models\Container;
 use Neo\Models\DisplayType;
 use Neo\Models\Location;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -16,7 +17,7 @@ return new class extends Migration {
      */
     public function up() {
         // Start by syncing the networks data
-//        Artisan::call("network:sync");
+        Artisan::call("network:sync");
 
         // Now, for each campaign, we need to look at its associated location, and apply the same network as the locations to the campaign
         $campaigns = Campaign::all();
@@ -44,9 +45,9 @@ return new class extends Migration {
 
         // Clean up
         // Remove any location, player, display type not associated with a network
-
         Location::query()->whereNull("network_id")->delete();
         DisplayType::query()->whereNull("connection_id")->delete();
+        Container::query()->whereNull("network_id")->delete();
     }
 
     /**

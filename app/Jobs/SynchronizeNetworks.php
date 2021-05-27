@@ -5,6 +5,7 @@ namespace Neo\Jobs;
 use Illuminate\Console\Command;
 use Neo\Models\Network;
 use Neo\Services\Broadcast\Broadcast;
+use Queue;
 
 class SynchronizeNetworks extends Command {
     /**
@@ -30,13 +31,9 @@ class SynchronizeNetworks extends Command {
         $networks = Network::all();
 
         foreach ($networks as $network) {
-            if($network->broadcaster_connection->broadcaster !== 'pisignage') {
-                continue;
-            }
-
             $network = Broadcast::network($network->id);
             $network->synchronizeLocations();
-//            $network->synchronizePlayers();
+            $network->synchronizePlayers();
         }
 
         return 0;

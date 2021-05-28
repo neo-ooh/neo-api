@@ -47,10 +47,17 @@ class ParamsSeeder extends Seeder {
             "format" => "actor",
             "value" => null
         ]);
+
         Param::query()->insertOrIgnore([
             "slug" => "NETWORK_OTG",
             "format" => "actor",
             "value" => null
+        ]);
+
+        Param::query()->insertOrIgnore([
+            "slug" => "CONTRACTS_CONNECTION",
+            "format" => "broadcaster_connection",
+            "value" => 1
         ]);
     }
 }

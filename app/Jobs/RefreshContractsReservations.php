@@ -16,8 +16,15 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\Models\Network;
 use Neo\Models\Contract;
 use Neo\Models\ContractReservation;
+use Neo\Models\Param;
+use Neo\Services\Broadcast\Broadcast;
+use Neo\Services\Broadcast\Broadcaster;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\Models\Campaign;
+use RuntimeException;
 
 /**
  * Class CreateSignupToken
@@ -40,25 +47,27 @@ class RefreshContractsReservations implements ShouldQueue {
      * @return void
      */
     public function handle(): void {
-        // TODO: We need a connection
+        $config = Contract::getConnectionConfig();
+        $broadsignClient = new BroadsignClient($config);
+
         $contracts = Contract::all();
 
         /** @var Contract $contract */
         foreach ($contracts as $contract) {
             // Get all the Broadsign Reservations matching the report's contract Id
-            $reservations = Campaign::search(strtoupper($contract->contract_id));
+            $reservations = Campaign::search($broadsignClient, ["name" => strtoupper($contract->contract_id)]);
 
             if (count($reservations) === 0) {
                 // No campaigns where found, let's try again, replacing hyphens with hyphen-minus...
                 $utfContract = str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id);
 
-                $reservations = Campaign::search(strtoupper($utfContract));
+                $reservations = Campaign::search($broadsignClient, ["name" => strtoupper($utfContract)]);
 
                 if (count($reservations) === 0) {
                     // Still nothing, let's try with an underscore this time
                     $utfContract = str_replace('-', '_', $contract->contract_id);
 
-                    $reservations = Campaign::search(strtoupper($utfContract));
+                    $reservations = Campaign::search($broadsignClient, ["name" => strtoupper($utfContract)]);
                 }
             }
 

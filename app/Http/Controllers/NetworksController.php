@@ -78,7 +78,7 @@ class NetworksController extends Controller {
     }
 
     public function show(ShowNetworkRequest $request, Network $network) {
-        return new Response($network->load(["settings", "broadcaster_connection"]));
+        return new Response($network->load(["broadcaster_connection"])->append(["settings"]));
     }
 
     public function update(UpdateNetworkRequest $request, Network $network) {

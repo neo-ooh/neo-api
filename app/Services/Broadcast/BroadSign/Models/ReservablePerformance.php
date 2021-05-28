@@ -53,7 +53,7 @@ class ReservablePerformance extends BroadSignModel {
      * @param array           $reservableIds
      * @return Collection
      */
-    public static function byReservable(BroadsignClient $client, array $reservableIds) {
+    public static function byReservable(BroadsignClient $client, array $reservableIds): Collection {
         return static::manyByReservable($client, [
             "reservable_ids" => implode(", ", $reservableIds),
         ]);

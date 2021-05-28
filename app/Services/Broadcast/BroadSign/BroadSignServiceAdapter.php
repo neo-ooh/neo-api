@@ -29,6 +29,10 @@ class BroadSignServiceAdapter implements BroadcastService {
         $this->config = $config;
     }
 
+    public function getConfig(): BroadSignConfig {
+        return $this->config;
+    }
+
     /**
      * @inheritDoc
      */

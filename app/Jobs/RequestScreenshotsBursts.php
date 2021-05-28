@@ -8,7 +8,7 @@
  * @neo/api - RequestScreenshotsBursts.php
  */
 
-namespace Neo\Services\Broadcast\BroadSign\Jobs\Players;
+namespace Neo\Jobs;
 
 
 use Carbon\Carbon as Date;
@@ -19,8 +19,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\Models\Contract;
 use Neo\Models\ContractBurst;
 use Neo\Models\Player;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
 
@@ -31,7 +33,7 @@ use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
  *
  * Screenshots requests are made asynchronously and batched every minutes for performances.
  */
-class RequestScreenshotsBursts extends BroadSignJob implements ShouldBeUnique {
+class RequestScreenshotsBursts implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     /**
@@ -66,7 +68,10 @@ class RequestScreenshotsBursts extends BroadSignJob implements ShouldBeUnique {
             return;
         }
 
-        $bsPlayer = new BSPlayer($this->getAPIClient(), ["id" => $player->external_id]);
+        $config = Contract::getConnectionConfig();
+        $broadsignClient = new BroadsignClient($config);
+
+        $bsPlayer = new BSPlayer($broadsignClient, ["id" => $player->external_id]);
         $bsPlayer->requestScreenshotsBurst($burst->id, $burst->scale_percent, $burst->duration_ms, $burst->frequency_ms);
 
         // Update the start date to reflect the effective start date.

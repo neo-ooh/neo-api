@@ -71,10 +71,7 @@ class Location extends SecuredModel {
      *
      * @var array
      */
-    protected $hidden = [
-        "external_id",
-        "internal_name",
-    ];
+    protected $hidden = [];
 
     /**
      * The relationships that should always be loaded.

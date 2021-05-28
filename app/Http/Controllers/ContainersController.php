@@ -10,11 +10,19 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Neo\Http\Requests\ListContainersRequest;
 use Neo\Models\Container;
 
 class ContainersController extends Controller {
-    public function index(): Response {
-        return new Response(Container::all());
+    public function index(ListContainersRequest $request): Response {
+        $query = Container::query();
+
+        $query->when($request->has("network_id"), function (Builder $query) use ($request) {
+            $query->where("network_id", "=", $request->input("network_id"));
+        });
+
+        return new Response($query->get());
     }
 }

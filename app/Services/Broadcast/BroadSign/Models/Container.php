@@ -77,19 +77,22 @@ class Container extends BroadSignModel {
     /**
      * Replicate itself inside our own database with all its parents. These methods can be called even if the container
      * has already been replicated, handling errors and duplications.
+     * This method takes into account the network's root container and WILL NOT replicate it in the database. Direct children containers' parent's id will be set to NULL to denote their position at the root of the hierarchy.
      */
     public function replicate (int $networkId): void {
-        // Make sure our parent container is already in the DDB if we have one
-        if ($this->container_id !== 0) {
+        // Make sure our parent container is already in the DDB if we have one and it is not the network rroot
+        if ($this->container_id !== 0 && $this->id !== $this->api->getConfig()->container_id) {
             $this->getParent()->replicate($networkId);
         }
+
+        $parentId = $this->container_id === 0 || $this->container_id === $this->api->getConfig()->container_id ? null : $this->container_id;
 
         \Neo\Models\Container::query()->updateOrInsert([
             "id" => $this->id,
         ],
             [
                 "network_id" => $networkId,
-                "parent_id" => $this->container_id === 0 ? null : $this->container_id,
+                "parent_id" => $parentId,
                 "name"      => $this->name,
             ]);
     }

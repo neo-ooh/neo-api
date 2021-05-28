@@ -44,7 +44,7 @@ class LocationsController extends Controller {
 
         $query = Location::query()->with(["display_type"])->orderBy("name");
 
-        // Should we  scope by container ?
+        // Should we  scope by network ?
         $query->when($request->has("network_id"), function (Builder $query) use ($request) {
             $query->where("network_id", "=", $request->input("network_id"));
         });

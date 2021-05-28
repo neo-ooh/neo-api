@@ -13,7 +13,6 @@ namespace Neo\Services\Broadcast\BroadSign\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -86,7 +85,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
 
             if ($bsContainer !== null) {
                 $bsContainer->replicate($this->config->networkID);
-                $containerID = $bsContainer->id;
+                $containerID = $containerID !== $this->config->containerId ? $bsContainer->id : null;
             }
 
             // Extract the province from the DisplayType address
@@ -119,7 +118,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
                 "internal_name" => $bslocation->name,
             ]);
 
-            $location->network_id      = $this->config->networkID;
+            $location->network_id      = $this->config->networkID; // <-s
             $location->display_type_id = $displayType->id;
             $location->container_id    = $containerID;
             $location->province        = $address;

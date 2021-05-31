@@ -24,7 +24,8 @@ use Neo\Http\Requests\Locations\UpdateLocationRequest;
 use Neo\Models\Actor;
 use Neo\Models\Format;
 use Neo\Models\Location;
-use Neo\Models\Param;
+use Neo\Models\Network;
+use Neo\Services\Broadcast\Broadcaster;
 
 class LocationsController extends Controller {
     /**
@@ -34,7 +35,7 @@ class LocationsController extends Controller {
      *
      * @return Response
      */
-    public function index (ListLocationsRequest $request): Response {
+    public function index(ListLocationsRequest $request): Response {
         /** @var Actor $actor */
         $actor = Auth::user();
 
@@ -78,10 +79,10 @@ class LocationsController extends Controller {
                              ->when($request->has("network"), function (Builder $query) use ($request) {
                                  $query->where("network_id", "=", $request->input("network"));
                              })->when($request->has("format"), function (Builder $query) use ($request) {
-                                 $query->whereHas("display_type.formats", function(Builder $query) use ($request) {
-                                     $query->where("id", "=", $request->input("format"));
-                                 });
-                             })
+                $query->whereHas("display_type.formats", function (Builder $query) use ($request) {
+                    $query->where("id", "=", $request->input("format"));
+                });
+            })
                              ->where('locations.name', 'LIKE', "%$q%")
                              ->get();
 
@@ -98,22 +99,20 @@ class LocationsController extends Controller {
         // retrieve our networks roots
         $locations = [];
 
-        foreach (["NETWORK_SHOPPING", "NETWORK_FITNESS", "NETWORK_OTG"] as $networkID) {
-            $root = Actor::query()->find(Param::query()->find($networkID)->value);
+        $networks = Network::query()->whereHas("broadcaster_connection", function (Builder $query) {
+            $query->where("broadcaster", "=", Broadcaster::BROADSIGN);
+        });
 
-            if(!$root) {
-                // Ignore network if root is missing
-                continue;
-            }
-
-            $locations[$networkID] = $root->getLocations(true, false, true, true)
-                                          ->map(fn($location) => [
-                                              "id" => $location->id,
-                                              "name" => $location->name,
-                                              "province" => $location->province,
-                                              "city" => $location->city,
-                                          ])
-                                          ->groupBy(["province", "city"]);
+        /** @var Network $network */
+        foreach ($networks as $network) {
+            $locations[$network->id] = $network->locations
+                ->map(fn($location) => [
+                    "id"       => $location->id,
+                    "name"     => $location->name,
+                    "province" => $location->province,
+                    "city"     => $location->city,
+                ])
+                ->groupBy(["province", "city"]);
         }
 
         return new Response($locations);
@@ -146,10 +145,10 @@ class LocationsController extends Controller {
 
     /**
      * @param UpdateLocationRequest $request
-     * @param Location $location
+     * @param Location              $location
      * @return Response
      */
-    public function update (UpdateLocationRequest $request, Location $location): Response {
+    public function update(UpdateLocationRequest $request, Location $location): Response {
         $location->name = $request->input('name');
         $location->save();
 

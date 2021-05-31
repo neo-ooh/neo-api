@@ -34,7 +34,7 @@ class PiSignageClient implements APIClientInterface {
      */
     public function call($endpoint, $payload, array $headers = []) {
         // Set the base path for the request to the API.
-        $endpoint->base = $this->config->apiURL;
+        $endpoint->base = $this->config->apiURL . "/api";
 
         // Add the connection auth header
         $headers["Authorization"] = "Basic " . $this->config->apiToken;

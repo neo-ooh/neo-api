@@ -31,7 +31,7 @@ class QueryFormatsRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "network"  => ["sometimes", "integer", "exists:formats,id"],
+            "network"  => ["sometimes", "integer", "exists:networks,id"],
             "province" => ["sometimes", "string"],
             "city"     => ["sometimes", "string"],
         ];

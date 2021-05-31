@@ -25,7 +25,7 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function synchronizeLocations() {
-        SynchronizeLocations::dispatchSync($this->config);
+        SynchronizeLocations::dispatch($this->config);
     }
 
     /**

@@ -110,7 +110,7 @@ class Contract extends Model {
         // As any requests with Broadsign requires a valid connection, and valid network, we will use any network already setup with the connection specified for the network.
         // Also, since all the contracts work is reading information, we don't care about the customer, container and tracking information specified for the network
         /** @var ?Network $network */
-        $network = Network::query()->where("broadcaster_connection_id", "=", Param::find("CONTRACTS_CONNECTION")->value)->first();
+        $network = Network::query()->where("connection_id", "=", Param::find("CONTRACTS_CONNECTION")->value)->first();
 
         if (!$network) {
             throw new RuntimeException("No network setup for the contracts connection");

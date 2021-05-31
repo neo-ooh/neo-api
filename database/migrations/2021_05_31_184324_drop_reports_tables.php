@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::drop("reports");
         Schema::drop("reports_reservations");
+        Schema::drop("reports");
     }
 
     /**

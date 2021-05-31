@@ -101,7 +101,7 @@ class LocationsController extends Controller {
 
         $networks = Network::query()->whereHas("broadcaster_connection", function (Builder $query) {
             $query->where("broadcaster", "=", Broadcaster::BROADSIGN);
-        });
+        })->get();
 
         /** @var Network $network */
         foreach ($networks as $network) {

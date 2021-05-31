@@ -12,7 +12,6 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
-use Neo\Enums\Network;
 use Neo\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Http\Requests\Formats\QueryFormatsRequest;
 use Neo\Http\Requests\Formats\ShowFormatRequest;
@@ -20,7 +19,7 @@ use Neo\Http\Requests\Formats\StoreFormatRequest;
 use Neo\Http\Requests\Formats\UpdateFormatRequest;
 use Neo\Models\Actor;
 use Neo\Models\Format;
-use Neo\Models\Param;
+use Neo\Models\Network;
 
 class FormatsController extends Controller {
     /**
@@ -57,7 +56,7 @@ class FormatsController extends Controller {
     public function query(QueryFormatsRequest $request) {
         // we list locations matching the query terms and only keep their formats
         if ($request->has("network")) {
-            $network   = \Neo\Models\Network::find($request->input("network"));
+            $network   = Network::find($request->input("network"));
             $locations = $network->locations;
 
             if ($request->has("province")) {
@@ -71,7 +70,7 @@ class FormatsController extends Controller {
             }
         } else {
             // If no network is specified, we load all locations in each network
-                $locations = \Neo\Models\Network::with("locations")->get()->pluck("locations")->flatten();
+            $locations = Network::with("locations")->get()->pluck("locations")->flatten();
         }
 
         // Now that we have ou locations, extract the formats

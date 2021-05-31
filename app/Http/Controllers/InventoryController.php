@@ -35,7 +35,7 @@ class InventoryController extends Controller {
         if ($request->has("location_id")) {
             $locations = Location::query()->where("id", "=", $request->validated()["location_id"])->get();
         } else {
-            $locations = \Neo\Models\Network::with("locations")->find($request->input("network"));
+            $locations = \Neo\Models\Network::with("locations")->find($request->input("network"))->locations;
 
             if ($request->has("province")) {
                 $province  = $request->validated()["province"];

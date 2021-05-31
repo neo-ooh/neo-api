@@ -57,7 +57,7 @@ class FormatsController extends Controller {
     public function query(QueryFormatsRequest $request) {
         // we list locations matching the query terms and only keep their formats
         if ($request->has("network")) {
-            $network   = Network::find($request->input("network"));
+            $network   = \Neo\Models\Network::find($request->input("network"));
             $locations = $network->locations;
 
             if ($request->has("province")) {
@@ -71,9 +71,7 @@ class FormatsController extends Controller {
             }
         } else {
             // If no network is specified, we load all locations in each network
-            $locations = collect(array_map(static fn($network) => Actor::query()->find(Param::query()
-                                                                                            ->find(Network::coerce($network)))
-                                                                       ->getLocations(true, false, true, true), Network::getValues()))->flatten();
+                $locations = \Neo\Models\Network::with("locations")->get()->pluck("locations")->flatten();
         }
 
         // Now that we have ou locations, extract the formats

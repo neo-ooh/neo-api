@@ -57,8 +57,8 @@ class FormatsController extends Controller {
     public function query(QueryFormatsRequest $request) {
         // we list locations matching the query terms and only keep their formats
         if ($request->has("network")) {
-            $network   = Network::coerce($request->validated()["network"])->value;
-            $locations = Actor::query()->find(Param::query()->find($network)->value)->getLocations(true, false, true, true);
+            $network   = Network::find($request->input("network"));
+            $locations = $network->locations;
 
             if ($request->has("province")) {
                 $province  = $request->validated()["province"];

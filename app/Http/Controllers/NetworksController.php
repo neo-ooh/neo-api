@@ -58,10 +58,12 @@ class NetworksController extends Controller {
         $network->save();
 
         if ($network->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN) {
-            $settings               = new NetworkSettingsBroadSign();
-            $settings->container_id = $request->input("container_id");
-            $settings->customer_id  = $request->input("customer_id");
-            $settings->tracking_id  = $request->input("tracking_id");
+            $settings                            = new NetworkSettingsBroadSign();
+            $settings->container_id              = $request->input("container_id");
+            $settings->customer_id               = $request->input("customer_id");
+            $settings->tracking_id               = $request->input("tracking_id");
+            $settings->reservations_container_id = $request->input("reservations_container_id");
+            $settings->ad_copies_container_id    = $request->input("ad_copies_container_id");
         } else { // if ($network->broadcaster_connection->broadcaster === Broadcaster::PISIGNAGE)
             $settings = new NetworkSettingsPiSignage();
         }
@@ -86,10 +88,12 @@ class NetworksController extends Controller {
         $network->save();
 
         if ($network->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN) {
-            $settings               = $network->settings;
-            $settings->container_id = $request->input("container_id");
-            $settings->customer_id  = $request->input("customer_id");
-            $settings->tracking_id  = $request->input("tracking_id");
+            $settings                            = $network->settings;
+            $settings->container_id              = $request->input("container_id");
+            $settings->customer_id               = $request->input("customer_id");
+            $settings->tracking_id               = $request->input("tracking_id");
+            $settings->reservations_container_id = $request->input("reservations_container_id");
+            $settings->ad_copies_container_id    = $request->input("ad_copies_container_id");
             $settings->save();
         }
 

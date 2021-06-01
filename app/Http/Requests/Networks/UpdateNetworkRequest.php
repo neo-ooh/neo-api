@@ -5,7 +5,9 @@ namespace Neo\Http\Requests\Networks;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\RequiredIf;
 use Neo\Enums\Capability;
+use Neo\Models\BroadcasterConnection;
 use Neo\Models\Network;
 use Neo\Services\Broadcast\Broadcaster;
 
@@ -32,9 +34,16 @@ class UpdateNetworkRequest extends FormRequest
             "name" => ["required", "string"],
 
             // Broadsign network settings
-            "container_id" => [Rule::requiredIf(fn() => $this->route("network")->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
-            "customer_id" => [Rule::requiredIf(fn() => $this->route("network")->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
-            "tracking_id" => [Rule::requiredIf(fn() => $this->route("network")->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN), "integer"],
+            "container_id"              => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "customer_id"               => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "tracking_id"               => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "reservations_container_id" => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "ad_copies_container_id"    => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
         ];
+    }
+
+    public static function broadcaster(string $broadcaster): RequiredIf {
+        return Rule::requiredIf(fn() => BroadcasterConnection::query()
+                                                             ->findOrFail($this->input("connection_id"))->broadcaster === $broadcaster);
     }
 }

@@ -40,8 +40,8 @@ class LibrariesController extends Controller {
     public function query(SearchLibrariesRequest $request) {
         $q = strtolower($request->input("q"));
 
-        $libraries = Auth::user()->getLibraries()
-                                 ->filter(fn($lib) => str_contains($lib->name, $q));
+        $libraries = Auth::user()->getLibraries();
+//                                 ->filter(fn($lib) => str_contains($lib->name, $q));
 
         return new Response($libraries);
     }

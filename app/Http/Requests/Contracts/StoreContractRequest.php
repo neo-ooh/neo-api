@@ -26,7 +26,7 @@ class StoreContractRequest extends FormRequest {
     public function rules() {
         return [
             "contract_id" => ["required", "string"],
-            "client_id"   => ["required", "exists:clients,id"],
+            "client_id"   => ["required"],
         ];
     }
 }

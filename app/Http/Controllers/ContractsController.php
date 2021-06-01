@@ -2,17 +2,32 @@
 
 namespace Neo\Http\Controllers;
 
+use http\Exception\InvalidArgumentException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
 use Neo\Jobs\RefreshContractsReservations;
+use Neo\Models\Client;
 use Neo\Models\Contract;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\Models\Customer;
 
 class ContractsController extends Controller {
     public function store(StoreContractRequest $request) {
         $contractId = $request->input("contract_id");
         $clientId   = $request->input("client_id");
+
+        if(!Client::query()->where("id", "=", $clientId)->exists()) {
+            $customer = Customer::get(new BroadsignClient(Contract::getConnectionConfig()), $clientId);
+
+            if($customer !== null) {
+                $client = Contract::query()->create(["broadsign_customer_id" => $clientId, "name" => $customer->name]);
+                $clientId = $client->id;
+            } else {
+                throw new \InvalidArgumentException("Invalid value for client_id");
+            }
+        }
 
         $contract = new Contract([
             "contract_id"   => strtoupper($contractId),

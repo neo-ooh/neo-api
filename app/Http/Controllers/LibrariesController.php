@@ -16,6 +16,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Libraries\DestroyLibraryRequest;
 use Neo\Http\Requests\Libraries\ListLibrariesRequest;
+use Neo\Http\Requests\Libraries\SearchLibrariesRequest;
 use Neo\Http\Requests\Libraries\StoreLibraryRequest;
 use Neo\Http\Requests\Libraries\UpdateLibraryRequest;
 use Neo\Models\Library;
@@ -36,8 +37,13 @@ class LibrariesController extends Controller {
         return new Response($libraries);
     }
 
-    public function query() {
-        // TODO: #CONNECT-72
+    public function query(SearchLibrariesRequest $request) {
+        $q = strtolower($request->input("q"));
+
+        $libraries = Auth::user()->getLibraries()
+                                 ->filter(fn($lib) => str_contains($lib->name, $q));
+
+        return new Response($libraries);
     }
 
     /**

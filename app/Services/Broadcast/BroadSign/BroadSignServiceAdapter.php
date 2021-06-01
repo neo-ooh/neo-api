@@ -141,8 +141,4 @@ class BroadSignServiceAdapter implements BroadcastService {
     public function rebuildCampaign(int $campaignId) {
         RebuildBroadSignCampaign::dispatch($this->config, $campaignId);
     }
-
-    public function listCustomers(): Collection {
-        return ;
-    }
 }

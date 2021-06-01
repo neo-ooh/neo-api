@@ -1,4 +1,3 @@
-
 <?php
 
 namespace Neo\Http\Requests\Clients;

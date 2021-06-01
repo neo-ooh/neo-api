@@ -12,6 +12,7 @@
 namespace Neo\Http\Controllers;
 
 use Exception;
+use Fuse\Fuse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Libraries\DestroyLibraryRequest;
@@ -41,9 +42,13 @@ class LibrariesController extends Controller {
         $q = strtolower($request->input("q"));
 
         $libraries = Auth::user()->getLibraries();
-//                                 ->filter(fn($lib) => str_contains($lib->name, $q));
+        $searchEngine = new Fuse($libraries, [
+            "keys" => [
+                "name"
+            ]
+        ]);
 
-        return new Response($libraries);
+        return new Response($searchEngine->search($q));
     }
 
     /**

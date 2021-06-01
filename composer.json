@@ -7,8 +7,10 @@
   "require": {
     "php": "^7.4",
     "ext-gd": "*",
+    "ext-intl": "*",
     "ext-json": "*",
     "ext-pdo": "*",
+    "ext-simplexml": "*",
     "bensampo/laravel-enum": "^3.1",
     "doctrine/dbal": "^3.0",
     "fideloper/proxy": "^4.4",
@@ -21,13 +23,12 @@
     "laravel/tinker": "^2.5",
     "league/csv": "^9.6",
     "league/flysystem-aws-s3-v3": "^1.0",
+    "loilo/fuse": "^4.0",
     "mpdf/mpdf": "^8.0",
     "php-ffmpeg/php-ffmpeg": "^0.18.0",
     "predis/predis": "^1.1",
     "ramsey/uuid": "^4.1",
-    "spatie/image": "^1.10",
-    "ext-intl": "*",
-    "ext-simplexml": "*"
+    "spatie/image": "^1.10"
   },
   "require-dev": {
     "facade/ignition": "^2.5",

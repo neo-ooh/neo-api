@@ -42,7 +42,7 @@ class LibrariesController extends Controller {
         $q = strtolower($request->input("q"));
 
         $libraries = Auth::user()->getLibraries();
-        $searchEngine = new Fuse($libraries, [
+        $searchEngine = new Fuse($libraries->toArray(), [
             "keys" => [
                 "name"
             ]

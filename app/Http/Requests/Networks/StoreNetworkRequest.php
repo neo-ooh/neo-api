@@ -31,15 +31,15 @@ class StoreNetworkRequest extends FormRequest {
             "connection_id"             => ["required", "exists:broadcasters_connections,id"],
 
             // Broadsign network settings
-            "container_id"              => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
-            "customer_id"               => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
-            "tracking_id"               => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
-            "reservations_container_id" => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
-            "ad_copies_container_id"    => [static::broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "container_id"              => [$this->broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "customer_id"               => [$this->broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "tracking_id"               => [$this->broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "reservations_container_id" => [$this->broadcaster(Broadcaster::BROADSIGN), "integer"],
+            "ad_copies_container_id"    => [$this->broadcaster(Broadcaster::BROADSIGN), "integer"],
         ];
     }
 
-    public static function broadcaster(string $broadcaster): RequiredIf {
+    public function broadcaster(string $broadcaster): RequiredIf {
         return Rule::requiredIf(fn() => BroadcasterConnection::query()
                                                              ->findOrFail($this->input("connection_id"))->broadcaster === $broadcaster);
     }

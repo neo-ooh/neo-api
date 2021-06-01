@@ -6,15 +6,34 @@ use Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
+use Neo\BroadSign\Models\Customer;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Clients\ListClientsRequest;
 use Neo\Http\Requests\Clients\ShowClientRequest;
 use Neo\Models\Client;
+use Str;
 
 class ClientsController extends Controller {
     public function index(ListClientsRequest $request) {
+        if ($request->input("distant", false)) {
+
+            $clients = Customer::all();
+
+            return new Response($clients
+                ->filter(fn($client) => !Str::startsWith($client->name, ["~", "*"]))
+                ->map(fn($client) => [
+                    "id"                    => $client->id,
+                    "broadsign_customer_id" => $client->id,
+                    "name"                  => $client->name
+                ])
+                ->sortBy("name")
+                ->values()
+                ->toArray());
+        }
+
         // If the user has the contracts_manage capability, we list all clients, otherwise we limit results to clients with a contract associated to the current user.
         $query = Client::query();
+
 
         /** @var array $with */
         $with = $request->input("with", []);

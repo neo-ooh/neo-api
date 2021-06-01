@@ -20,6 +20,7 @@ use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\UpdateBroadSignScheduleStatu
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizeLocations;
 use Neo\Services\Broadcast\BroadSign\Jobs\SynchronizePlayers;
 use Neo\Services\Broadcast\BroadSign\Models\Campaign;
+use Neo\Services\Broadcast\BroadSign\Models\Customer;
 
 class BroadSignServiceAdapter implements BroadcastService {
 
@@ -139,5 +140,9 @@ class BroadSignServiceAdapter implements BroadcastService {
      */
     public function rebuildCampaign(int $campaignId) {
         RebuildBroadSignCampaign::dispatch($this->config, $campaignId);
+    }
+
+    public function listCustomers(): Collection {
+        return ;
     }
 }

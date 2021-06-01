@@ -31,7 +31,8 @@ use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
  *
  * @package Neo\BroadSign\Jobs\Players
  *
- * Screenshots requests are made asynchronously and batched every minutes for performances.
+ * Screenshots requests are made asynchronously an
+ * d batched every minutes for performances.
  */
 class RequestScreenshotsBursts implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

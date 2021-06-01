@@ -14,8 +14,8 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\RefreshContractsReservations;
+use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\SynchronizeNetworks;
-use Neo\Services\Broadcast\BroadSign\Jobs\Players\RequestScreenshotsBursts;
 use Neo\Services\News\NewsService;
 
 class Kernel extends ConsoleKernel {

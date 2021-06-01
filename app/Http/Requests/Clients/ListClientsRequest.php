@@ -1,3 +1,4 @@
+
 <?php
 
 namespace Neo\Http\Requests\Clients;
@@ -26,6 +27,7 @@ class ListClientsRequest extends FormRequest {
         return [
             "with"   => ["sometimes", "present", "nullable", "array"],
             "with.*" => ["string", Rule::in(["contracts"])],
+            "distant"=> ["sometimes", "boolean"]
         ];
     }
 }

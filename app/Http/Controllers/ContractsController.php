@@ -22,7 +22,9 @@ class ContractsController extends Controller {
             $customer = Customer::get(new BroadsignClient(Contract::getConnectionConfig()), $clientId);
 
             if($customer !== null) {
-                $client = Contract::query()->create(["broadsign_customer_id" => $clientId, "name" => $customer->name]);
+                $client = Client::query()->create([
+                    "broadsign_customer_id" => $clientId,
+                    "name" => $customer->name]);
                 $clientId = $client->id;
             } else {
                 throw new \InvalidArgumentException("Invalid value for client_id");

@@ -94,6 +94,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
         $bsCreative             = new BSCreative($this->getAPIClient());
         $bsCreative->attributes = $attributes;
         $bsCreative->name       = $creative->owner->email . " - " . $creative->original_name;
+        $bsCreative->container_id       = $this->config->adCopiesContainerId;
         $bsCreative->parent_id  = $this->config->customerId;
         $bsCreative->url        = $creative->properties->file_url;
 

@@ -68,6 +68,7 @@ class CreateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
         // Create the campaign
         $bsCampaign                           = new BSCampaign($this->getAPIClient());
         $bsCampaign->auto_synchronize_bundles = true;
+        $bsCampaign->container_id             = $this->config->reservationsContainerId;
         $bsCampaign->duration_msec            = $campaign->display_duration * 1000;
         $bsCampaign->end_date                 = $campaign->end_date->toDateString();
         $bsCampaign->end_time                 = $campaign->end_date->toTimeString();

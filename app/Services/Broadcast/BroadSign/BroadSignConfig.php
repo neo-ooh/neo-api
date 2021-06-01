@@ -23,6 +23,10 @@ class BroadSignConfig {
 
     public int $trackingId;
 
+    public int $reservationsContainerId;
+
+    public int $adCopiesContainerId;
+
     /**
      * Give the path to the certificate used to authenticate requests.
      *

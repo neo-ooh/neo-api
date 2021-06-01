@@ -11,11 +11,11 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use JsonException;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
-use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 
 /**
  * Class Creatives
@@ -117,11 +117,12 @@ class Creative extends BroadSignModel {
     public static function makeDynamic(BroadSignClient $client, string $name, array $attributes) {
         $boundary = "__X__BROADSIGN_REQUEST__";
         $metadata = json_encode([
-            "name"       => $name,
-            "parent_id"  => $client->getConfig()->customerId,
-            "size"       => "-1",
-            "mime"       => "",
-            "attributes" => http_build_query($attributes, '', '\n')
+            "name"         => $name,
+            "parent_id"    => $client->getConfig()->customerId,
+            "container_id" => $client->getConfig()->adCopiesContainerId,
+            "size"         => "-1",
+            "mime"         => "",
+            "attributes"   => http_build_query($attributes, '', '\n')
         ], JSON_THROW_ON_ERROR);
 
         $payload = "

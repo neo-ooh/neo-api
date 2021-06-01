@@ -12,6 +12,7 @@ use Neo\Services\Broadcast\PiSignage\PiSignageServiceAdapter;
 abstract class Broadcast {
     /**
      * Get the appropriate broadcaster adapter for the specified network
+     *
      * @throws InvalidBroadcastServiceException
      */
     public static function network(int $networkId): BroadcastService {
@@ -21,29 +22,31 @@ abstract class Broadcast {
         $broadcasterType = $network->broadcaster_connection->broadcaster;
 
         // Build the appropriate service adapter
-        switch($broadcasterType) {
+        switch ($broadcasterType) {
             case Broadcaster::BROADSIGN:
-                $config = new BroadSignConfig();
-                $config->connectionID = $network->broadcaster_connection->id;
-                $config->connectionUUID = $network->broadcaster_connection->uuid;
-                $config->networkID = $network->id;
-                $config->networkUUID = $network->uuid;
-                $config->apiURL = config("broadsign.api.url");
-                $config->domainId = $network->broadcaster_connection->settings->domain_id;
-                $config->customerId = $network->settings->customer_id;
-                $config->containerId = $network->settings->container_id;
-                $config->trackingId = $network->settings->tracking_id;
+                $config                          = new BroadSignConfig();
+                $config->connectionID            = $network->broadcaster_connection->id;
+                $config->connectionUUID          = $network->broadcaster_connection->uuid;
+                $config->networkID               = $network->id;
+                $config->networkUUID             = $network->uuid;
+                $config->apiURL                  = config("broadsign.api.url");
+                $config->domainId                = $network->broadcaster_connection->settings->domain_id;
+                $config->customerId              = $network->settings->customer_id;
+                $config->containerId             = $network->settings->container_id;
+                $config->trackingId              = $network->settings->tracking_id;
+                $config->reservationsContainerId = $network->settings->reservations_container_id;
+                $config->adCopiesContainerId     = $network->settings->ad_copies_container_id;
 
                 return new BroadSignServiceAdapter($config);
 
             case Broadcaster::PISIGNAGE:
-                $config = new PiSignageConfig();
-                $config->connectionID = $network->broadcaster_connection->id;
+                $config                 = new PiSignageConfig();
+                $config->connectionID   = $network->broadcaster_connection->id;
                 $config->connectionUUID = $network->broadcaster_connection->uuid;
-                $config->networkID = $network->id;
-                $config->networkUUID = $network->uuid;
-                $config->apiURL = $network->broadcaster_connection->settings->server_url;
-                $config->apiToken = $network->broadcaster_connection->settings->token;
+                $config->networkID      = $network->id;
+                $config->networkUUID    = $network->uuid;
+                $config->apiURL         = $network->broadcaster_connection->settings->server_url;
+                $config->apiToken       = $network->broadcaster_connection->settings->token;
 
                 return new PiSignageServiceAdapter($config);
 

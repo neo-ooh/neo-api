@@ -15,7 +15,7 @@ class ListNetworksRequest extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows(Capability::networks_edit);
+        return Gate::allows(Capability::networks_edit) || Gate::allows(Capability::campaigns_edit);
     }
 
     /**

@@ -31,7 +31,7 @@ use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
  * @property Skin       skin
  * @property LoopPolicy loop_policy
  *
- * @method static Inventory[] all(array $params)
+ * @method static Inventory[] all(BroadsignClient $client, array $params)
  */
 class Inventory extends BroadSignModel {
 

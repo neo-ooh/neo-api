@@ -13,18 +13,19 @@ namespace Neo\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
-use Neo\BroadSign\BroadSign;
-use Neo\BroadSign\Models\Inventory as BSInventory;
-use Neo\BroadSign\Models\LoopPolicy;
-use Neo\BroadSign\Models\ResourceCriteria;
-use Neo\BroadSign\Models\Skin;
+use Neo\Models\Contract;
 use Neo\Models\Inventory;
 use Neo\Models\Location;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\Models\Inventory as BSInventory;
+use Neo\Services\Broadcast\BroadSign\Models\LoopPolicy;
+use Neo\Services\Broadcast\BroadSign\Models\ResourceCriteria;
+use Neo\Services\Broadcast\BroadSign\Models\Skin;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * This job caches the Invenotry endpoint of BroadSign in the `inventory` table of the DB.
+ * This job caches the Inventory endpoint of BroadSign in the `inventory` table of the DB.
  * The goal of this is to leverage the computation needed to get actual meaningful information
  * from BroadSign Inventory report. This ensure minimal response time when querying availabilities.
  *
@@ -54,7 +55,10 @@ class CacheInventory extends Command {
         $this->info("Inventory synced!");
     }
 
-    protected function cacheInventory(int $year) {
+    protected function cacheInventory(int $year): void {
+
+        $config = Contract::getConnectionConfig();
+        $client = new BroadsignClient($config);
 
         $this->info("Caching inventory for year $year...");
 
@@ -62,30 +66,28 @@ class CacheInventory extends Command {
         $progressBar->start();
 
         // Start by loading the latest version of the inventory
-        $allInventory = BSInventory::all(["year" => $year]);
+        $allInventory = BSInventory::all($client, ["year" => $year]);
 
         $progressBar->setMaxSteps(count($allInventory));
         $progressBar->setMessage("Caching inventory...");
 
         // We now need to do some processing for each and every value output in order to extract meaningful values
         foreach ($allInventory as $inventory) {
-            $progressBar->advance();
-
             // Before doing anything, we want to check that the current skin has the advertising criteria associated with it
-            $resourceCriteria = ResourceCriteria::forResource(["parent_id" => $inventory->skin_id]);
+            $resourceCriteria = ResourceCriteria::forResource($client, ["parent_id" => $inventory->skin_id]);
 
             // If none of the criteria applied to the skin is the advertising criteria, we skip it.
-            if (!$resourceCriteria->some(fn($criteria) => $criteria->criteria_id === BroadSign::getDefaults()["advertising_criteria_id"])) {
+            if (!$resourceCriteria->some(fn($criteria) => $criteria->criteria_id === $config->trackingId)) {
                 continue;
             }
 
             // Get the skin specified by the current report
             /** @var Skin $skin */
-            $skin = Skin::get($inventory->skin_id);
+            $skin = Skin::get($client, $inventory->skin_id);
 
             // Calculate the maximum booking allowed for the frame using its LoopPolicy
             /** @var LoopPolicy $loopPolicy */
-            $loopPolicy = LoopPolicy::get($skin->loop_policy_id);
+            $loopPolicy = LoopPolicy::get($client, $skin->loop_policy_id);
 
             $maxBooking = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
 
@@ -103,12 +105,15 @@ class CacheInventory extends Command {
                 "year"    => $year,
             ], [
                 "location_id" => Location::query()->where("external_id", "=", $dayPart->parent_id)->first()->id,
-                "name" => $dayPart->name,
-                "start_date" => $dayPart->virtual_start_date,
-                "end_date" => $dayPart->virtual_end_date,
+                "name"        => $dayPart->name,
+                "start_date"  => $dayPart->virtual_start_date,
+                "end_date"    => $dayPart->virtual_end_date,
                 "bookings"    => $inventory->inventory->map(fn($booking) => $booking / $loopPolicy->default_slot_duration),
                 "max_booking" => $maxBooking,
             ]);
+
+            /** @noinspection DisconnectedForeachInstructionInspection */
+            $progressBar->advance();
         }
 
         $progressBar->finish();

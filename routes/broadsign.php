@@ -33,5 +33,5 @@ Route::prefix("v1/broadsign")->group(function () {
 
     Route::model("burst", ContractBurst::class);
 
-    Route::any("burst_callback/{burst}", ContractBurstsController::class . "@receive")->name('broadsign.bursts.receive');
+    Route::post("burst_callback/{burst}", ContractBurstsController::class . "@receive")->name('broadsign.bursts.receive');
 });

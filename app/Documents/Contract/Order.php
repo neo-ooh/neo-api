@@ -155,7 +155,11 @@ class Order {
             $this->potential_value        = $this->guaranteed_value + $this->bua_value;
             $this->grand_total_investment = $this->guaranteed_investment + $this->bua_investment;
             $this->potential_discount     = (1 - $this->grand_total_investment / $this->potential_value) * 100;
-            $this->cpm              = $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
+
+            // Only calculate the cpm if
+            if(($this->guaranteed_impressions_count + $this->bua_impressions_count) > 0) {
+                $this->cpm = $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
+            }
         }
 
         // Production costs

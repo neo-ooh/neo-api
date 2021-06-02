@@ -61,6 +61,7 @@ class Totals extends Component {
 
             "production"      => $this->production,
             "productionCosts" => $this->order->production_costs,
+            "cpm" => $this->order->cpm,
         ]);
     }
 

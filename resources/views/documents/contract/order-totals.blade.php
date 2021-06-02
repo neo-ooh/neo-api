@@ -122,7 +122,7 @@
     @if($size === 'small' && $orders->count() > 0)
         <tr class="cpm">
             <td>CPM:
-                {{ formatCurrency($grandTotalInvestment / ($guaranteedImpressions + $buaImpressions) * 1000, 2) }}</td>
+                {{ formatCurrency($cpm, 2) }}</td>
         </tr>
     @endif
     </tbody>

@@ -56,17 +56,23 @@ class CreateSignupToken implements ShouldQueue {
             return;
         }
 
+        // Load the user to make sure it is not a group and indeed is a human
         $actor = Actor::query()->findOrFail($this->actorID);
 
         if ($actor->is_group) {
             return;
         }
 
+        // Delete any leftover signup token for this user
+        SignupToken::query()->where("actor_id", "=", $actor->id)->delete();
+
+        // And create a new one
         $token = new SignupToken([
             "actor_id" => $actor->id,
         ]);
         $token->save();
 
+        // Send an email with the token to the user.
         Mail::to($actor)->send(new ActorWelcomeEmail($token));
     }
 }

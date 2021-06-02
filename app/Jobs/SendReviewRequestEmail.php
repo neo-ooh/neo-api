@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Neo\Enums\Capability;
 use Neo\Mails\ReviewRequestEmail;
@@ -25,6 +24,7 @@ use Neo\Models\Schedule;
 /**
  * Class SendReviewRequestEmail
  * Send an email for a schedule review to the appropriate actor
+ *
  * @package Neo\Jobs
  *
  */
@@ -44,7 +44,7 @@ class SendReviewRequestEmail implements ShouldQueue {
      *
      * @return void
      */
-    public function __construct (int $scheduleID) {
+    public function __construct(int $scheduleID) {
         $this->scheduleID = $scheduleID;
     }
 
@@ -53,20 +53,19 @@ class SendReviewRequestEmail implements ShouldQueue {
      *
      * @return void
      */
-    public function handle (): void {
+    public function handle(): void {
         /** @var Schedule $schedule */
         $schedule = Schedule::query()->findOrFail($this->scheduleID);
 
         // If the schedule is not locked, do nothing.
-        if(!$schedule->locked) {
+        if (!$schedule->locked) {
             return;
         }
 
         // We need to determine who is responsible for reviewing this schedule
         $reviewers = $this->getReviewers($schedule);
 
-        $reviewers->each(fn($reviewer) =>
-            Mail::to($reviewer)->send(new ReviewRequestEmail($reviewer, $schedule))
+        $reviewers->each(fn($reviewer) => Mail::to($reviewer)->send(new ReviewRequestEmail($reviewer, $schedule))
         );
     }
 
@@ -76,25 +75,25 @@ class SendReviewRequestEmail implements ShouldQueue {
 
         do {
             // Is this actor a group ?
-            if($actor->is_group) {
+            if ($actor->is_group) {
                 // Does this group has actor with the proper capability ?
                 $reviewers = $actor->getAccessibleActors(true, true, false, false)
                                    ->filter(fn($child) => !$child->is_group && $child->hasCapability(Capability::contents_review()))
                                    ->each(fn($actor) => $actor->unsetRelations());
 
-                if($reviewers->count() > 0) {
+                if ($reviewers->count() > 0) {
                     return $reviewers;
                 }
             }
 
-            if($actor->hasCapability(Capability::contents_review())) {
+            if ($actor->hasCapability(Capability::contents_review())) {
                 // This actor has the proper capability, use it
                 return (new Collection())->push($actor);
             }
 
             // No match, go up
             $actor = $actor->parent;
-        } while($actor !== null);
+        } while ($actor !== null);
 
         return new Collection();
     }

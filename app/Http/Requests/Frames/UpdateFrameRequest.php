@@ -31,10 +31,13 @@ class UpdateFrameRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "name"        => ["required", "string"],
-            "width"       => ["required", "integer", "min:1"],
-            "height"      => ["required", "integer", "min:1"],
-            "criteria_id" => ["required", "integer", "exists:broadsign_criteria,id"],
+            "name"   => ["required", "string"],
+            "width"  => ["required", "integer", "min:1"],
+            "height" => ["required", "integer", "min:1"],
+
+            "criteria_id" => ["sometimes", "integer", "exists:broadsign_criteria,id"],
+
+            "zone_name" => ["sometimes", "string"],
         ];
     }
 }

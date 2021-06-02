@@ -11,11 +11,15 @@
 namespace Neo\Http\Controllers;
 
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Frames\DestroyFrameRequest;
 use Neo\Http\Requests\Frames\StoreFrameRequest;
 use Neo\Http\Requests\Frames\UpdateFrameRequest;
 use Neo\Models\Frame;
+use Neo\Models\FrameSettingsBroadSign;
+use Neo\Models\FrameSettingsPiSignage;
+use Neo\Services\Broadcast\Broadcaster;
 
 class FramesController extends Controller {
     /**
@@ -24,17 +28,28 @@ class FramesController extends Controller {
      * @return Response
      */
     public function store(StoreFrameRequest $request): Response {
-        $frame = new Frame();
-        [
-            "layout_id"   => $frame->layout_id,
-            "name"        => $frame->name,
-            "width"       => $frame->width,
-            "height"      => $frame->height,
-            "criteria_id" => $frame->criteria_id,
-        ] = $request->validated();
+        $frame            = new Frame();
+        $frame->layout_id = $request->input("layout_id");
+        $frame->name      = $request->input("name");
+        $frame->width     = $request->input("width");
+        $frame->height    = $request->input("height");
         $frame->save();
 
-        return new Response($frame, 201);
+        if($request->has("criteria_id")) {
+            $settings = new FrameSettingsBroadSign();
+            $settings->frame_id = $frame->id;
+            $settings->criteria_id = $request->input("criteria_id");
+            $settings->save();
+        }
+
+        if($request->has("zone_name")) {
+            $settings = new FrameSettingsPiSignage();
+            $settings->frame_id = $frame->id;
+            $settings->zone_name = $request->input("zone_name");
+            $settings->save();
+        }
+
+        return new Response($frame->refresh(), 201);
     }
 
     /**
@@ -48,11 +63,22 @@ class FramesController extends Controller {
             "name"        => $frame->name,
             "width"       => $frame->width,
             "height"      => $frame->height,
-            "criteria_id" => $frame->criteria_id,
         ] = $request->validated();
         $frame->save();
 
-        return new Response($frame);
+        if($request->has("criteria_id")) {
+            $settings = FrameSettingsBroadSign::firstOrNew(["frame_id" => $frame->id]);
+            $settings->criteria_id = $request->input("criteria_id");
+            $settings->save();
+        }
+
+        if($request->has("zone_name")) {
+            $settings = FrameSettingsPiSignage::firstOrNew(["frame_id" => $frame->id]);
+            $settings->zone_name = $request->input("zone_name");
+            $settings->save();
+        }
+
+        return new Response($frame->refresh());
     }
 
     /**

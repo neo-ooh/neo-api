@@ -15,22 +15,22 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Neo\Models\Frame Model
  *
- * @property int                  id
- * @property int                  layout_id
- * @property string               name
- * @property int                  width
- * @property int                  height
- * @property int                  criteria_id
+ * @property int                    $id
+ * @property int                    $layout_id
+ * @property string                 $name
+ * @property int                    $width
+ * @property int                    $height
+ * @property int                    $criteria_id
  *
- * @property FormatLayout         layout
- * @property Collection<Creative> creatives
- * @property ?BroadSignCriteria   criteria
+ * @property FrameSettingsBroadSign $settings_broadsign
+ * @property FrameSettingsPiSignage $settings_pisignage
+ * @property FormatLayout           $layout
+ * @property Collection<Creative>   $creatives
  *
  * @mixin Builder
  */
@@ -61,7 +61,6 @@ class Frame extends Model {
         'name',
         'width',
         'height',
-        'criteria_id'
     ];
 
     /**
@@ -74,6 +73,16 @@ class Frame extends Model {
         'height' => 'integer',
     ];
 
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $with = [
+        'settings_broadsign',
+        'settings_pisignage',
+    ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -81,15 +90,19 @@ class Frame extends Model {
     |--------------------------------------------------------------------------
     */
 
+    public function settings_broadsign() {
+        return $this->hasOne(FrameSettingsBroadSign::class, "frame_id", "id");
+    }
+
+    public function settings_pisignage() {
+        return $this->hasOne(FrameSettingsPiSignage::class, "frame_id", "id");
+    }
+
     public function layout(): BelongsTo {
         return $this->belongsTo(FormatLayout::class, 'layout_id', 'id');
     }
 
     public function creatives(): HasMany {
         return $this->hasMany(Creative::class, 'frame_id', 'id');
-    }
-
-    public function criteria(): BelongsTo {
-        return $this->belongsTo(BroadSignCriteria::class, "criteria_id", "id");
     }
 }

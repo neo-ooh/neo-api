@@ -8,8 +8,6 @@
  * @neo/api - Review.php
  */
 
-/** @noinspection PhpMissingFieldTypeInspection */
-
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;

@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @property integer $id
  * @property integer $contract_id
- * @property integer $broadsign_reservation_id
+ * @property integer $external_id
  * @property string $network
  * @property string $name
  * @property string $original_name
@@ -36,7 +36,7 @@ class ContractReservation extends Model
 
     protected $fillable = [
         "contract_id",
-        "broadsign_reservation_id",
+        "external_id",
         "network",
         "name",
         "original_name",

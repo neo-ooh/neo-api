@@ -436,7 +436,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      *                       if its a group.
      * @return Collection
      */
-    public function getLibraries($own = true, $shared = true, $children = true, $parent = true): Collection {
+    public function getLibraries(bool $own = true, bool $shared = true, bool $children = true, bool $parent  = true): Collection {
         $libraries = new Collection();
 
         // Actor's own libraries

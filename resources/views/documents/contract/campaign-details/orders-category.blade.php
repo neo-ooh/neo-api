@@ -18,7 +18,7 @@
         @if($order->show_investment)
             <td>
                 @php
-                    $totalDiscount = ($totalValue - $totalInvestment) / $totalValue * 100;
+                    $totalDiscount = ($totalValue - $totalInvestment) / $totalValue * 100
                 @endphp
                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
             </td>

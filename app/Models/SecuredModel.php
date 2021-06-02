@@ -62,6 +62,6 @@ abstract class SecuredModel extends Model {
             $key = $this->getKey();
         }
 
-        throw new AuthorizationException("Your are not allowed to access this resource: " . static::class . "#{$key}.", 403);
+        throw new AuthorizationException("Your are not allowed to access this resource: " . static::class . "#$key.", 403);
     }
 }

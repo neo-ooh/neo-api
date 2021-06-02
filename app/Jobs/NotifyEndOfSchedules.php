@@ -47,7 +47,7 @@ class NotifyEndOfSchedules implements ShouldQueue {
                 ->direct_children
                 ->filter(fn($actor) => !$actor->is_group && !$actor->is_locked));
 
-            $dest = $dest->map(fn($actor) => is_int($actor) ? Actor::find($actor) : $actor);
+            $dest = $dest->map(fn($actor) => is_int($actor) ? Actor::query()->find($actor) : $actor);
 
             $dest->each(fn($recipient) =>
                 Mail::to($recipient)->send(new EndOfScheduleNotificationEmail($recipient, $schedule))

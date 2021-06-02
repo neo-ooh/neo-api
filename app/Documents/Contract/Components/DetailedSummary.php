@@ -10,10 +10,10 @@
 
 namespace Neo\Documents\Contract\Components;
 
-use Closure;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
-use Illuminate\View\View;
 use Neo\Documents\Contract\Order;
 
 class DetailedSummary extends Component {
@@ -31,22 +31,22 @@ class DetailedSummary extends Component {
      * @param bool       $renderDisclaimers
      */
     public function __construct(Order $order, Collection $orders, Collection $production, bool $renderDisclaimers) {
-        $this->order     = $order;
-        $this->orders     = $orders;
-        $this->production = $production;
+        $this->order             = $order;
+        $this->orders            = $orders;
+        $this->production        = $production;
         $this->renderDisclaimers = $renderDisclaimers;
     }
 
     /**
      * Get the view / contents that represent the component.
      *
-     * @return View|Closure|string
+     * @return Application|Factory|\Illuminate\Contracts\View\View
      */
     public function render() {
         return view('documents.contract.campaign-details.summary', [
-            "order"     => $this->order,
-            "orders"     => $this->orders,
-            "production" => $this->production,
+            "order"             => $this->order,
+            "orders"            => $this->orders,
+            "production"        => $this->production,
             "renderDisclaimers" => $this->renderDisclaimers,
         ]);
     }

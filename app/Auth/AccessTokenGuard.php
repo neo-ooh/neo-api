@@ -10,14 +10,10 @@
 
 namespace Neo\Auth;
 
-use Exception;
-use Firebase\JWT\JWT;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Request;
 use Neo\Models\AccessToken;
-use Neo\Models\Actor;
 
 /**
  * This guard is used to authenticate third-party services wanting to connect to the API.
@@ -36,7 +32,7 @@ class AccessTokenGuard implements Guard {
     /**
      * JwtGuard constructor.
      */
-    public function __construct () {
+    public function __construct() {
         // Get the token from the request
         $requestToken = Request::bearerToken();
 
@@ -52,7 +48,7 @@ class AccessTokenGuard implements Guard {
                             ->where("token", "=", $requestToken)
                             ->first();
 
-        if($token === null) {
+        if ($token === null) {
             // No token matching the given one
             return;
         }
@@ -66,7 +62,7 @@ class AccessTokenGuard implements Guard {
      *
      * @return bool
      */
-    public function check (): bool {
+    public function check(): bool {
         return !is_null($this->token);
     }
 
@@ -75,7 +71,7 @@ class AccessTokenGuard implements Guard {
      *
      * @return bool
      */
-    public function guest (): bool {
+    public function guest(): bool {
         // A guest is everything but a user
         return !$this->check();
     }
@@ -85,16 +81,16 @@ class AccessTokenGuard implements Guard {
      *
      * @return Authenticatable|null
      */
-    public function user () {
+    public function user() {
         return $this->token;
     }
 
     /**
      * Get the ID for the currently authenticated user.
      *
-     * @return int|string|null
+     * @return int|null
      */
-    public function id () {
+    public function id() {
         if (is_null($this->user())) {
             return null;
         }
@@ -109,7 +105,7 @@ class AccessTokenGuard implements Guard {
      *
      * @return bool
      */
-    public function validate (array $credentials = []): bool {
+    public function validate(array $credentials = []): bool {
         /** @var ?AccessToken $token */
         $token = AccessToken::query()
                             ->where("token", "=", $credentials["token"])
@@ -130,12 +126,13 @@ class AccessTokenGuard implements Guard {
      * @param Authenticatable|null $token
      *
      * @return void
+     * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
-    public function setUser (?Authenticatable $token): void {
+    public function setUser(?Authenticatable $token): void {
         /* Authenticatable => AccessToken */
         $this->token = $token;
 
-        if($this->token) {
+        if ($this->token) {
             // Update the token last used at property
             $this->token->last_used_at = $this->token->freshTimestamp();
             $this->token->save();

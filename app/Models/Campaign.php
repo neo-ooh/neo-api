@@ -8,8 +8,6 @@
  * @neo/api - Campaign.php
  */
 
-/** @noinspection PhpMissingFieldTypeInspection */
-
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;
@@ -21,35 +19,38 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon as Date;
 use Illuminate\Support\Collection;
-use Neo\BroadSign\Jobs\Campaigns\DisableBroadSignCampaign;
 use Neo\Models\Factories\CampaignFactory;
 use Neo\Rules\AccessibleCampaign;
+use Neo\Services\Broadcast\Broadcast;
+use Neo\Services\Broadcast\Broadcaster;
 
 /**
  * Neo\Models\Campaigns
  *
- * @property int                 id
- * @property string              broadsign_reservation_id
- * @property int                 owner_id
- * @property int                 format_id
- * @property string              name
- * @property int                 display_duration
- * @property int                 loop_saturation
- * @property Date                start_date
- * @property Date                end_date
+ * @property int                 $id
+ * @property int                 $network_id
+ * @property string              $external_id
+ * @property int                 $owner_id
+ * @property int                 $format_id
+ * @property string              $name
+ * @property int                 $display_duration
+ * @property int                 $loop_saturation
+ * @property Date                $start_date
+ * @property Date                $end_date
  *
- * @property Actor               owner
- * @property Format              format
- * @property EloquentCollection  schedules
- * @property EloquentCollection  locations
- * @property EloquentCollection  shares
+ * @property Network             $network
+ * @property Actor               $owner
+ * @property Format              $format
+ * @property EloquentCollection  $schedules
+ * @property EloquentCollection  $locations
+ * @property EloquentCollection  $shares
  *
- * @property int                 locations_count
- * @property int                 schedules_count
+ * @property int                 $locations_count
+ * @property int                 $schedules_count
  *
- * @property EloquentCollection  related_campaigns
+ * @property EloquentCollection  $related_campaigns
  *
- * @property Collection<integer> targeted_broadsign_frames Frame targeting criteria required by the campaign
+ * @property Collection<integer> $targeted_frames Frame targeting criteria required by the campaign
  *           schedule
  *
  * @mixin Builder
@@ -113,6 +114,7 @@ class Campaign extends SecuredModel {
 
     protected $appends = [
         "status",
+        "available_options"
     ];
 
     /**
@@ -128,8 +130,8 @@ class Campaign extends SecuredModel {
 
         static::deleting(function (Campaign $campaign) {
             // Disable the campaign in BroadSign
-            if ($campaign->broadsign_reservation_id !== null) {
-                DisableBroadSignCampaign::dispatch($campaign->broadsign_reservation_id);
+            if ($campaign->external_id !== null) {
+                Broadcast::network($campaign->network_id)->destroyCampaign($campaign->id);
             }
 
             // Delete all schedules in the campaign
@@ -174,6 +176,10 @@ class Campaign extends SecuredModel {
 
     /* Network */
 
+    public function network(): BelongsTo {
+        return $this->belongsTo(Network::class, "network_id");
+    }
+
     public function format(): BelongsTo {
         return $this->belongsTo(Format::class, 'format_id', 'id');
     }
@@ -200,7 +206,7 @@ class Campaign extends SecuredModel {
         return $this->owner->getLibraries(true, false, false)->pluck('id');
     }
 
-    public function getTargetedBroadsignFramesAttribute(): Collection {
+    public function getTargetedFramesAttribute(): Collection {
 
         // List the required criteria
         return $this
@@ -214,28 +220,42 @@ class Campaign extends SecuredModel {
 
     public function getStatusAttribute() {
         // Is the campaign expired ?
-        if($this->end_date->isBefore(Date::now())) {
+        if ($this->end_date->isBefore(Date::now())) {
             return static::STATUS_EXPIRED;
         }
 
-        if($this->schedules->count() === 0) {
+        if ($this->schedules->count() === 0) {
             return static::STATUS_OFFLINE;
         }
 
         // Does it has a pending schedule in it?
-        if($this->schedules->some("status", Schedule::STATUS_PENDING)) {
+        if ($this->schedules->some("status", Schedule::STATUS_PENDING)) {
             return static::STATUS_PENDING;
         }
 
         // Does it has a valid schedule in it ?
-        if($this->schedules->some("status", Schedule::STATUS_LIVE) || $this->schedules->some("status", Schedule::STATUS_APPROVED))  {
+        if ($this->schedules->some("status", Schedule::STATUS_LIVE) || $this->schedules->some("status", Schedule::STATUS_APPROVED)) {
             return static::STATUS_LIVE;
         }
 
-        if($this->start_date->isAfter(Date::now())) {
-            return static::STATUS_OFFLINE;
+        return static::STATUS_OFFLINE;
+
+    }
+
+    public function getAvailableOptionsAttribute(): array {
+        $options = [];
+
+        $service = $this->network ? $this->network->broadcaster_connection->broadcaster : Broadcaster::BROADSIGN;
+
+        switch ($service) {
+            case Broadcaster::BROADSIGN:
+                $options[] = "loop_saturation";
+                break;
+            case Broadcaster::PISIGNAGE:
+                break;
         }
 
-        return static::STATUS_OFFLINE;
+        return $options;
     }
+
 }

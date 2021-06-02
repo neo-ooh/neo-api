@@ -46,7 +46,7 @@ class DestroyCreativeTest extends TestCase {
             "frame_id"   => $content->layout->frames[0]->id,
         ]);
 
-        $response = $this->json("DELETE", "/v1/creatives/{$creative->id}");
+        $response = $this->json("DELETE", "/v1/creatives/$creative->id");
         $response->assertUnauthorized();
     }
 
@@ -76,7 +76,7 @@ class DestroyCreativeTest extends TestCase {
             "frame_id"   => $content->layout->frames[0]->id,
         ]);
 
-        $response = $this->json("DELETE", "/v1/creatives/{$creative->id}");
+        $response = $this->json("DELETE", "/v1/creatives/$creative->id");
         $response->assertForbidden();
     }
 

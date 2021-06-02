@@ -62,7 +62,7 @@ class StoreRoleCapabilityTest extends TestCase {
         $this->actingAs($actor);
 
         $role = Role::factory()->create();
-        $capability = Capability::where("slug", "=", CapabilitiesEnum::tests)->first();
+        $capability = Capability::query()->where("slug", "=", CapabilitiesEnum::tests)->first();
 
         $response = $this->json('POST',
             '/v1/roles/' . $role->id . '/capabilities',
@@ -82,7 +82,7 @@ class StoreRoleCapabilityTest extends TestCase {
         $this->actingAs($actor);
 
         $role = Role::factory()->create();
-        $capability = Capability::where("slug", "=", CapabilitiesEnum::tests)->first();
+        $capability = Capability::query()->where("slug", "=", CapabilitiesEnum::tests)->first();
 
         $response = $this->json('POST',
             '/v1/roles/' . $role->id . '/capabilities',
@@ -104,7 +104,7 @@ class StoreRoleCapabilityTest extends TestCase {
         $this->actingAs($actor);
 
         $role = Role::factory()->create();
-        $capability = Capability::where("slug", "=", CapabilitiesEnum::tests)->first();
+        $capability = Capability::query()->where("slug", "=", CapabilitiesEnum::tests)->first();
 
         $response = $this->json('POST',
             '/v1/roles/' . $role->id . '/capabilities',

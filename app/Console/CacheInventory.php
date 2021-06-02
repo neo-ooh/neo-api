@@ -102,7 +102,7 @@ class CacheInventory extends Command {
                 "skin_id" => $inventory->skin_id,
                 "year"    => $year,
             ], [
-                "location_id" => Location::query()->where("broadsign_display_unit", "=", $dayPart->parent_id)->first()->id,
+                "location_id" => Location::query()->where("external_id", "=", $dayPart->parent_id)->first()->id,
                 "name" => $dayPart->name,
                 "start_date" => $dayPart->virtual_start_date,
                 "end_date" => $dayPart->virtual_end_date,

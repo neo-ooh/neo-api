@@ -54,7 +54,7 @@ class SignupTokenCheckTest extends TestCase {
         /** @var Actor $actor */
         $actor = Actor::factory()->create();
 
-        SignupToken::create(["actor_id" => $actor->id]);
+        SignupToken::query()->create(["actor_id" => $actor->id]);
 
         $response = $this->json('GET', '/v1/auth/welcome', [
             "token" => $actor->signupToken->token,

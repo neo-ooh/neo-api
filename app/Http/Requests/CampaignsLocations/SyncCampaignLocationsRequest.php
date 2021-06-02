@@ -20,7 +20,7 @@ class SyncCampaignLocationsRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         // User needs to be connected , have the `campaigns_edit` capability and has access to the referenced campaign
         return Gate::allows(Capability::campaigns_edit);
     }
@@ -30,7 +30,7 @@ class SyncCampaignLocationsRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
             "locations"   => ["nullable", "array"],
             "locations.*" => ["integer", "exists:locations,id", "distinct"],

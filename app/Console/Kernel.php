@@ -12,9 +12,10 @@ namespace Neo\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Neo\BroadSign\Jobs\Players\RequestScreenshotsBursts;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\RefreshContractsReservations;
+use Neo\Jobs\RequestScreenshotsBursts;
+use Neo\Jobs\SynchronizeNetworks;
 use Neo\Services\News\NewsService;
 
 class Kernel extends ConsoleKernel {
@@ -24,7 +25,9 @@ class Kernel extends ConsoleKernel {
      * @var array
      */
     protected $commands = [
-        NetworkUpdate::class,
+        // network:sync
+        SynchronizeNetworks::class,
+
         RebuildResources::class,
         CacheInventory::class,
 
@@ -77,7 +80,7 @@ class Kernel extends ConsoleKernel {
          */
 
         // Update network from broadsign
-        $schedule->command('network:update')->daily();
+        $schedule->command('network:sync')->daily();
 
         // Refresh Contracts reservations
         $schedule->job(RefreshContractsReservations::class)->daily();

@@ -13,17 +13,13 @@
 namespace Neo\Http\Controllers;
 
 use Exception;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Neo\BroadSign\Jobs\Campaigns\TargetCampaign;
-use Neo\BroadSign\Jobs\Schedules\CreateBroadSignSchedule;
-use Neo\BroadSign\Jobs\Schedules\ReorderBroadSignSchedules;
-use Neo\BroadSign\Jobs\Schedules\UpdateBroadSignSchedule;
 use Neo\Enums\Capability;
+use Neo\Exceptions\InvalidBroadcastServiceException;
 use Neo\Http\Requests\Schedules\DestroyScheduleRequest;
 use Neo\Http\Requests\Schedules\InsertScheduleRequest;
 use Neo\Http\Requests\Schedules\ListPendingSchedulesRequest;
@@ -34,15 +30,17 @@ use Neo\Jobs\SendReviewRequestEmail;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
 use Neo\Models\Schedule;
+use Neo\Services\Broadcast\Broadcast;
 
 class SchedulesController extends Controller {
     /**
      * @param StoreScheduleRequest $request
      * @param Campaign             $campaign
      *
-     * @return ResponseFactory|Response
+     * @return Response
+     * @throws InvalidBroadcastServiceException
      */
-    public function store(StoreScheduleRequest $request, Campaign $campaign) {
+    public function store(StoreScheduleRequest $request, Campaign $campaign): Response {
         // User has access to both the campaign and the piece of content, we now need to check
         // if it is possible to schedule the later in the former.
         /** @var Content $content */
@@ -74,7 +72,7 @@ class SchedulesController extends Controller {
         $schedule->refresh();
 
         // Replicate the schedule in BroadSign
-        CreateBroadSignSchedule::dispatch($schedule->id, Auth::id());
+        Broadcast::network($campaign->network_id)->createSchedule($schedule->id, Auth::id());
 
         // Return a response
         return new Response($schedule->loadMissing(["content"]), 201);
@@ -84,9 +82,9 @@ class SchedulesController extends Controller {
      * @param Content  $content
      * @param Campaign $campaign
      *
-     * @return ResponseFactory|Response|null
+     * @return Response|null
      */
-    private function validateContent(Content $content, Campaign $campaign) {
+    private function validateContent(Content $content, Campaign $campaign): ?Response {
         // Is the content full ?
         if ($content->layout->frames->count() !== $content->creatives()->count()) {
             return new Response(["An incomplete content cannot be scheduled"], 422);
@@ -107,14 +105,17 @@ class SchedulesController extends Controller {
 
         // Is the content the correct length
         if ($content->duration !== 0.0 && $content->duration > $campaign->display_duration) {
-            return new Response(["This content has not the correct length ({$content->duration} ≠ {$campaign->display_duration})"],
+            return new Response(["This content has not the correct length ($content->duration ≠ $campaign->display_duration)"],
                 422);
         }
 
         return null;
     }
 
-    public function insert(InsertScheduleRequest $request, Campaign $campaign) {
+    /**
+     * @throws InvalidBroadcastServiceException
+     */
+    public function insert(InsertScheduleRequest $request, Campaign $campaign): Response {
         // User has access to both the campaign and the piece of content, we now need to check
         // if it is possible to schedule the later in the former.
         /** @var Content $content */
@@ -165,7 +166,7 @@ class SchedulesController extends Controller {
         $schedule->refresh();
 
         // Replicate the schedule in BroadSign
-        CreateBroadSignSchedule::dispatch($schedule->id, Auth::id());
+        Broadcast::network($schedule->campaign->network_id)->createSchedule($schedule->id, Auth::id());
 
         return new Response($schedule->loadMissing(["content", "reviews"]), 201);
     }
@@ -174,9 +175,10 @@ class SchedulesController extends Controller {
      * @param UpdateScheduleRequest $request
      * @param Schedule              $schedule
      *
-     * @return ResponseFactory|Response
+     * @return Response
+     * @throws InvalidBroadcastServiceException
      */
-    public function update(UpdateScheduleRequest $request, Schedule $schedule) {
+    public function update(UpdateScheduleRequest $request, Schedule $schedule): Response {
         $startDate = new Carbon($request->input("start_date"));
         $endDate   = new Carbon($request->input("end_date"));
 
@@ -205,7 +207,7 @@ class SchedulesController extends Controller {
         if ($request->has("locked") && $request->validated()["locked"] === true) {
             $schedule->locked = true;
 
-            if(Auth::user()->hasCapability(Capability::contents_review())) {
+            if (Auth::user()->hasCapability(Capability::contents_review())) {
                 $schedule->is_approved = true;
             }
 
@@ -218,7 +220,7 @@ class SchedulesController extends Controller {
         $schedule->refresh();
 
         // Propagate the update to the associated BroadSign Schedule
-        UpdateBroadSignSchedule::dispatch($schedule->id);
+        Broadcast::network($schedule->campaign->network_id)->updateSchedule($schedule->id);
 
         return new Response($schedule->load("content", "owner"));
     }
@@ -227,9 +229,10 @@ class SchedulesController extends Controller {
      * @param ReorderScheduleRequest $request
      * @param Campaign               $campaign
      *
-     * @return ResponseFactory|Response
+     * @return Response
+     * @throws InvalidBroadcastServiceException
      */
-    public function reorder(ReorderScheduleRequest $request, Campaign $campaign) {
+    public function reorder(ReorderScheduleRequest $request, Campaign $campaign): Response {
         ["schedule_id" => $scheduleID, "order" => $order] = $request->validated();
 
         /** @var Schedule $schedule */
@@ -259,12 +262,10 @@ class SchedulesController extends Controller {
             }
 
             if ($s->order >= $schedule->order) {
-                /** @noinspection Annotator */
                 $s->decrement('order');
             }
 
             if ($s->order >= $order) {
-                /** @noinspection Annotator */
                 $s->increment('order');
             }
 
@@ -274,7 +275,7 @@ class SchedulesController extends Controller {
         $schedule->order = $order;
         $schedule->save();
 
-        ReorderBroadSignSchedules::dispatch($campaign->id);
+        Broadcast::network($campaign->network_id)->updateCampaignSchedulesOrder($campaign->id);
 
         return (new CampaignsController())->show($campaign);
     }
@@ -283,12 +284,10 @@ class SchedulesController extends Controller {
      * @param DestroyScheduleRequest $request
      * @param Schedule               $schedule
      *
-     * @return ResponseFactory|Response
+     * @return Response
      * @throws Exception
      */
-    public function destroy(DestroyScheduleRequest $request, Schedule $schedule) {
-        TargetCampaign::dispatch($schedule->campaign_id);
-
+    public function destroy(DestroyScheduleRequest $request, Schedule $schedule): Response {
         // If a schedule has not be reviewed, we want to completely remove it
         if ($schedule->status === 'draft' || $schedule->status === 'pending') {
             $schedule->forceDelete();
@@ -296,22 +295,15 @@ class SchedulesController extends Controller {
             $schedule->delete();
         }
 
-        foreach ($schedule->campaign->schedules as $s) {
-            if ($s->order >= $schedule->order) {
-                $s->decrement('order', 1);
-            }
-        }
-
-
         return new Response([]);
     }
 
     /**
      * @param ListPendingSchedulesRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function pending(ListPendingSchedulesRequest $request) {
+    public function pending(ListPendingSchedulesRequest $request): Response {
         // List all accessible schedules pending review
         // A schedule pending review is a schedule who is locked, is not pre-approved, and who doesn't have any reviews
 

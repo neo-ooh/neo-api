@@ -18,36 +18,37 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
+use Neo\Services\Broadcast\Broadcast;
 
 /**
  * Neo\Models\Branding
  *
  * - Model Attributes
  *
- * @property int                id
- * @property int                campaign_id
- * @property int                content_id
- * @property int                owner_id
- * @property int                broadsign_bundle_id
- * @property int                broadsign_schedule_id
- * @property Date               start_date
- * @property Date               end_date
- * @property int                order
- * @property bool               locked
- * @property bool               is_approved
- * @property int                print_count
+ * @property int                $id
+ * @property int                $campaign_id
+ * @property int                $content_id
+ * @property int                $owner_id
+ * @property int                $external_id_1
+ * @property int                $external_id_2
+ * @property Date               $start_date
+ * @property Date               $end_date
+ * @property int                $order
+ * @property bool               $locked
+ * @property bool               $is_approved
+ * @property int                $print_count
  *
  * - Custom Attributes
- * @property string             status
+ * @property string             $status
  *
  * - Relations
- * @property Campaign           campaign
- * @property Content            content
- * @property Actor              owner
- * @property Collection<Review> reviews
+ * @property Campaign           $campaign
+ * @property Content            $content
+ * @property Actor              $owner
+ * @property Collection<Review> $reviews
  *
  * - Relations Count
- * @property int                reviews_count
+ * @property int                $reviews_count
  *
  * @mixin Builder
  */
@@ -133,6 +134,7 @@ class Schedule extends Model {
      */
     protected $appends = [
         "status",
+        "available_options"
     ];
 
     /*
@@ -146,8 +148,25 @@ class Schedule extends Model {
 
         static::deleting(function (Schedule $schedule) {
             // Execute the deletion on broadsign side
-            if ($schedule->broadsign_schedule_id !== null) {
-                DisableBroadSignSchedule::dispatch($schedule->broadsign_schedule_id);
+            if ($schedule->external_id_2 === null || $schedule->campaign->network_id === null) {
+                return;
+            }
+
+            $network = Broadcast::network($schedule->campaign->network_id);
+
+            $network->destroySchedule($schedule->id);
+            $network->updateCampaignSchedulesOrder($schedule->campaign_id);
+
+
+            // Adjust order of remaining schedules in the campaign
+            foreach ($schedule->campaign->schedules as $s) {
+                if($s->id === $schedule->id) {
+                    continue;
+                }
+
+                if ($s->order >= $schedule->order) {
+                    $s->decrement('order', 1);
+                }
             }
         });
     }
@@ -220,5 +239,17 @@ class Schedule extends Model {
 
     public function reviews(): HasMany {
         return $this->hasMany(Review::class, 'schedule_id', 'id')->orderByDesc("created_at");
+    }
+
+    public function getAvailableOptionsAttribute(): array {
+//        $network = $this->campaign->network;
+
+        $options = ["dates", "time"];
+
+//        switch ($network->broadcaster_connection->broadcaster) {
+//            case Broadcaster::BROADSIGN:
+//        }
+
+        return $options;
     }
 }

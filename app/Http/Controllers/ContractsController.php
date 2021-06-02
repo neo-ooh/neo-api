@@ -11,6 +11,8 @@ use Neo\Http\Requests\Contracts\StoreContractRequest;
 use Neo\Jobs\RefreshContractsReservations;
 use Neo\Models\Client;
 use Neo\Models\Contract;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\Models\Customer;
 
 class ContractsController extends Controller {
     public function store(StoreContractRequest $request) {
@@ -18,7 +20,7 @@ class ContractsController extends Controller {
         $clientId   = $request->input("client_id");
 
         if(!Client::query()->where("id", "=", $clientId)->exists()) {
-            $customer = Customer::get($clientId);
+            $customer = Customer::get(new BroadsignClient(Contract::getConnectionConfig()), $clientId);
 
             if($customer !== null) {
                 $client = Client::query()->create([

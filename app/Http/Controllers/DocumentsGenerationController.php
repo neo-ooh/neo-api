@@ -10,10 +10,9 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\App;
 use Neo\Documents\Contract\Contract;
+use Neo\Documents\Exceptions\UnknownGenerationException;
 use Neo\Documents\POP\POP;
 use Neo\Exceptions\UnknownDocumentException;
 use Neo\Http\Requests\Documents\MakeDocumentRequest;
@@ -21,9 +20,10 @@ use Neo\Http\Requests\Documents\MakeDocumentRequest;
 class DocumentsGenerationController extends Controller {
 
     /**
-     * @param Request $request
+     * @param MakeDocumentRequest $request
      * @return Response
      * @throws UnknownDocumentException
+     * @throws UnknownGenerationException
      */
     public function make(MakeDocumentRequest $request): Response {
         // Input can either be done using a file or a json object named data

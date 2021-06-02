@@ -11,7 +11,6 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -22,15 +21,13 @@ use Neo\Http\Requests\ReviewsTemplates\UpdateReviewTemplateRequest;
 use Neo\Models\Actor;
 use Neo\Models\ReviewTemplate;
 
-class ReviewsTemplatesController extends Controller
-{
+class ReviewsTemplatesController extends Controller {
     /**
      * @param ListReviewTemplatesRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function index(ListReviewTemplatesRequest $request)
-    {
+    public function index(ListReviewTemplatesRequest $request): Response {
         /** @var Actor $actor */
         $actor = Auth::user();
         return new Response(ReviewTemplate::query()
@@ -43,12 +40,11 @@ class ReviewsTemplatesController extends Controller
     /**
      * @param StoreReviewTemplateRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function store(StoreReviewTemplateRequest $request)
-    {
+    public function store(StoreReviewTemplateRequest $request): Response {
         $template = new ReviewTemplate([
-            "text" => $request->validated()["text"],
+            "text"     => $request->validated()["text"],
             "owner_id" => $request->validated()["owner_id"],
         ]);
         $template->save();
@@ -59,21 +55,19 @@ class ReviewsTemplatesController extends Controller
 
     /**
      * @param UpdateReviewTemplateRequest $request
-     * @param ReviewTemplate $template
+     * @param ReviewTemplate              $template
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function update(UpdateReviewTemplateRequest $request, ReviewTemplate $template)
-    {
-        $template->text = $request->validated()["text"];
+    public function update(UpdateReviewTemplateRequest $request, ReviewTemplate $template) {
+        $template->text     = $request->validated()["text"];
         $template->owner_id = $request->validated()["owner_id"];
         $template->save();
 
         return new Response($template);
     }
 
-    public function destroy(DestroyReviewTemplateRequest $request, ReviewTemplate $template): void
-    {
+    public function destroy(DestroyReviewTemplateRequest $request, ReviewTemplate $template): void {
         $template->delete();
     }
 }

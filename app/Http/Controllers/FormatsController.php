@@ -10,12 +10,8 @@
 
 namespace Neo\Http\Controllers;
 
-use Egulias\EmailValidator\Exception\LocalOrReservedDomain;
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
-use Neo\Enums\Network;
 use Neo\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Http\Requests\Formats\QueryFormatsRequest;
 use Neo\Http\Requests\Formats\ShowFormatRequest;
@@ -23,20 +19,20 @@ use Neo\Http\Requests\Formats\StoreFormatRequest;
 use Neo\Http\Requests\Formats\UpdateFormatRequest;
 use Neo\Models\Actor;
 use Neo\Models\Format;
-use Neo\Models\Param;
+use Neo\Models\Network;
 
 class FormatsController extends Controller {
     /**
      * @param ListFormatsRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
     public function index(ListFormatsRequest $request) {
         if ($request->has("actor")) {
             // An actor is specified, we only return formats accessible by the user
             $formats = Actor::query()
                             ->findOrFail($request->query("actor"))
-                            ->getLocations()
+                            ->getLocations(true, true, true, true)
                             ->pluck("display_type.formats")
                             ->flatten()
                             ->unique("id")
@@ -60,8 +56,8 @@ class FormatsController extends Controller {
     public function query(QueryFormatsRequest $request) {
         // we list locations matching the query terms and only keep their formats
         if ($request->has("network")) {
-            $network   = Network::coerce($request->validated()["network"])->value;
-            $locations = Actor::find(Param::find($network)->value)->getLocations(true, false, true, true);
+            $network   = Network::find($request->input("network"));
+            $locations = $network->locations;
 
             if ($request->has("province")) {
                 $province  = $request->validated()["province"];
@@ -74,8 +70,7 @@ class FormatsController extends Controller {
             }
         } else {
             // If no network is specified, we load all locations in each network
-            $locations = collect(array_map(static fn($network) => Actor::find(Param::find(Network::coerce($network)))
-                                                                       ->getLocations(true, false, true, true), Network::getValues()))->flatten();
+            $locations = Network::with("locations")->get()->pluck("locations")->flatten();
         }
 
         // Now that we have ou locations, extract the formats
@@ -104,7 +99,7 @@ class FormatsController extends Controller {
      * @param ShowFormatRequest $request
      * @param Format            $format
      *
-     * @return ResponseFactory|Response
+     * @return Response
      * @noinspection PhpUnusedParameterInspection
      */
     public function show(ShowFormatRequest $request, Format $format) {
@@ -115,7 +110,7 @@ class FormatsController extends Controller {
      * @param UpdateFormatRequest $request
      * @param Format              $format
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
     public function update(UpdateFormatRequest $request, Format $format) {
         [

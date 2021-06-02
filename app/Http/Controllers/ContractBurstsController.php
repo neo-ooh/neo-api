@@ -18,7 +18,6 @@ use Neo\Enums\Capability;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\ContractBurst;
 use Neo\Models\ContractScreenshot;
-use Neo\Models\Screenshot;
 
 class ContractBurstsController extends Controller {
     public function store(StoreBurstRequest $request): Response {

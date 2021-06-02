@@ -74,7 +74,7 @@ class UpdateContentTest extends TestCase {
             "library_id" => $library->id,
         ]);
 
-        $response = $this->json("PUT", "/v1/contents/{$content->id}", [
+        $response = $this->json("PUT", "/v1/contents/$content->id", [
             "owner_id"   => $actor->id,
             "library_id" => $library->id,
             "name"       => "library-test",

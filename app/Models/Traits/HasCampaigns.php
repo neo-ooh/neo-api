@@ -92,7 +92,7 @@ trait HasCampaigns {
      */
     public function getChildrenCampaignsAttribute (): \Illuminate\Support\Collection {
         $descendants = $this->getAccessibleActors(true, false, false, false)->pluck('id');
-        return Campaign::whereIn("owner_id", $descendants)->get();
+        return Campaign::query()->whereIn("owner_id", $descendants)->get();
     }
 
     /*

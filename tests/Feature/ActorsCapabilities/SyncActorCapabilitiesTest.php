@@ -58,7 +58,7 @@ class SyncActorCapabilitiesTest extends TestCase {
         $actor = Actor::factory()->create()->addCapability(CapabilityEnum::actors_edit());
         $this->actingAs($actor);
 
-        $testCapability = Capability::where("slug", "=", "test.capability")->first();
+        $testCapability = Capability::query()->where("slug", "=", "test.capability")->first();
         $testCapability->standalone = true;
         $testCapability->save();
 
@@ -81,7 +81,7 @@ class SyncActorCapabilitiesTest extends TestCase {
         $actor = Actor::factory()->create()->addCapability(CapabilityEnum::actors_edit());
         $this->actingAs($actor);
 
-        $testCapability = Capability::where("slug", "=", "test.capability")->first();
+        $testCapability = Capability::query()->where("slug", "=", "test.capability")->first();
 
         $otherActor = Actor::factory()->create();
 
@@ -102,7 +102,7 @@ class SyncActorCapabilitiesTest extends TestCase {
         $actor = Actor::factory()->create()->addCapability(CapabilityEnum::actors_edit());
         $this->actingAs($actor);
 
-        $testCapability = Capability::where("slug", "=", "test.capability")->first();
+        $testCapability = Capability::query()->where("slug", "=", "test.capability")->first();
         $testCapability->standalone = false;
         $testCapability->save();
 

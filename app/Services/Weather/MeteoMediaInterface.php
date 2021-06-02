@@ -3,42 +3,41 @@
 namespace Neo\Services\Weather;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Cache;
+use JsonException;
 use Neo\Exceptions\InvalidLocationException;
 
 class MeteoMediaInterface implements WeatherService {
     protected string $endpoint;
 
-    const ENDPOINT_OBS = ["id" => "obs", "url" => "/Observations"];
-    const ENDPOINT_LNG = ["id" => "lng", "url" => "/LongTermForecasts"];
-    const ENDPOINT_HLY = ["id" => "hly", "url" => "/HourlyForecasts"];
+    public const ENDPOINT_OBS = ["id" => "obs", "url" => "/Observations"];
+    public const ENDPOINT_LNG = ["id" => "lng", "url" => "/LongTermForecasts"];
+    public const ENDPOINT_HLY = ["id" => "hly", "url" => "/HourlyForecasts"];
 
     public function __construct() {
         $this->endpoint = config("services.meteo-media.endpoint");
     }
 
 
-    function getCurrentWeather(Location $location, string $locale) {
+    public function getCurrentWeather(Location $location, string $locale) {
         return $this->getRecord(self::ENDPOINT_OBS, $location, $locale);
     }
 
-    function getHourlyWeather(Location $location, string $locale) {
+    public function getHourlyWeather(Location $location, string $locale) {
         return $this->getRecord(self::ENDPOINT_HLY, $location, $locale);
     }
 
-    function getForecastWeather(Location $location, string $locale) {
+    public function getForecastWeather(Location $location, string $locale) {
         return $this->getRecord(self::ENDPOINT_LNG, $location, $locale);
     }
 
     /**
-     * @param        $endpoint
-     * @param string $locale
-     * @param string $country
-     * @param string $province
-     * @param string $city
+     * @param          $endpoint
+     * @param Location $location
+     * @param string   $locale
      * @return mixed
-     * @throws GuzzleException
+     * @throws InvalidLocationException
+     * @throws JsonException
      */
     private function getRecord($endpoint, Location $location, string $locale) {
         // get the fully-formed endpoint url

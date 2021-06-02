@@ -12,24 +12,23 @@
 namespace Neo\Http\Controllers;
 
 use Exception;
-use Illuminate\Contracts\Routing\ResponseFactory;
+use Fuse\Fuse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Libraries\DestroyLibraryRequest;
 use Neo\Http\Requests\Libraries\ListLibrariesRequest;
+use Neo\Http\Requests\Libraries\SearchLibrariesRequest;
 use Neo\Http\Requests\Libraries\StoreLibraryRequest;
 use Neo\Http\Requests\Libraries\UpdateLibraryRequest;
 use Neo\Models\Library;
 
-class LibrariesController extends Controller
-{
+class LibrariesController extends Controller {
     /**
      * @param ListLibrariesRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function index(ListLibrariesRequest $request)
-    {
+    public function index(ListLibrariesRequest $request) {
         $libraries = Auth::user()->getLibraries();
 
         if ($request->has("withContent")) {
@@ -39,22 +38,29 @@ class LibrariesController extends Controller
         return new Response($libraries);
     }
 
-    public function query()
-    {
-        // TODO: #CONNECT-72
+    public function query(SearchLibrariesRequest $request) {
+        $q = strtolower($request->input("q"));
+
+        $libraries = Auth::user()->getLibraries()->load("contents", "contents.layout");
+        $searchEngine = new Fuse($libraries->toArray(), [
+            "keys" => [
+                "name"
+            ]
+        ]);
+
+        return new Response($searchEngine->search($q));
     }
 
     /**
      * @param StoreLibraryRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function store(StoreLibraryRequest $request)
-    {
+    public function store(StoreLibraryRequest $request) {
         // Passed data have been cleared by the FormRequest
         $library = new Library();
         [
-            "name" => $library->name,
+            "name"     => $library->name,
             "owner_id" => $library->owner_id,
             "capacity" => $library->content_limit,
         ] = $request->validated();
@@ -66,10 +72,9 @@ class LibrariesController extends Controller
     /**
      * @param Library $library
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function show(Library $library)
-    {
+    public function show(Library $library) {
         // User authorization has been cleared by the FormRequest
         $library->append("available_formats");
         return new Response($library->load(["contents", "contents.layout", "shares"]));
@@ -77,16 +82,15 @@ class LibrariesController extends Controller
 
     /**
      * @param UpdateLibraryRequest $request
-     * @param Library $library
+     * @param Library              $library
      *
      * @return Response
      */
-    public function update(UpdateLibraryRequest $request, Library $library): Response
-    {
+    public function update(UpdateLibraryRequest $request, Library $library): Response {
         // Passed data have been cleared by the FormRequest
         [
-            "name" => $library->name,
-            "owner_id" => $library->owner_id,
+            "name"          => $library->name,
+            "owner_id"      => $library->owner_id,
             "content_limit" => $library->content_limit,
         ] = $request->validated();
         $library->save();
@@ -97,13 +101,12 @@ class LibrariesController extends Controller
 
     /**
      * @param DestroyLibraryRequest $request
-     * @param Library $library
+     * @param Library               $library
      *
      * @return Response
      * @throws Exception
      */
-    public function destroy(DestroyLibraryRequest $request, Library $library): Response
-    {
+    public function destroy(DestroyLibraryRequest $request, Library $library): Response {
         // User authorization has been cleared by the FormRequest
         // The library takes care of destroying all its related resources
         $library->delete();
@@ -118,8 +121,7 @@ class LibrariesController extends Controller
      *
      * @return Response
      */
-    public function contents(Library $library): Response
-    {
+    public function contents(Library $library): Response {
         return new Response($library->contents);
     }
 }

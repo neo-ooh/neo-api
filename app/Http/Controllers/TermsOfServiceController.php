@@ -24,7 +24,7 @@ use Neo\Models\Param;
 class TermsOfServiceController extends Controller {
     public function show(): Response {
         /** @var Param $tos */
-        $tos = Param::find('tos');
+        $tos = Param::query()->find('tos');
 
         return new Response(["url" => $tos->value, "updated" => $tos->updated_at]);
     }

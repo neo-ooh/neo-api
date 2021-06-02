@@ -10,10 +10,10 @@
 
 namespace Neo\Documents\Contract\Components;
 
-use Closure;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
-use Illuminate\View\View;
 use Neo\Documents\Contract\Order;
 
 class SummaryOrdersCategory extends Component {
@@ -31,19 +31,19 @@ class SummaryOrdersCategory extends Component {
     public function __construct(string $category, Collection $orders, Order $order) {
         $this->category = $category;
         $this->orders   = $orders;
-        $this->order   = $order;
+        $this->order    = $order;
     }
 
     /**
      * Get the view / contents that represent the component.
      *
-     * @return View|Closure|string
+     * @return Application|Factory|\Illuminate\Contracts\View\View
      */
     public function render() {
         return view('documents.contract.campaign-summary.orders-category', [
             "category" => $this->category,
             "orders"   => $this->orders,
-            "order"   => $this->order,
+            "order"    => $this->order,
         ]);
     }
 

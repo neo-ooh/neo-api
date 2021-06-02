@@ -10,27 +10,22 @@
 
 namespace Neo\Models;
 
-use FFMpeg\Coordinate\TimeCode;
-use FFMpeg\FFMpeg;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
-use Neo\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
 use Neo\Models\Factories\CreativeFactory;
+use Neo\Services\Broadcast\Broadcast;
+use Ramsey\Collection\Collection;
 
 /**
- * Neo\Models\Branding
+ * Neo\Models\Creative
  *
  * @property int                            $id
- * @property int                            $type
- * @property int                            $broadsign_ad_copy_id
+ * @property string                         $type
  * @property int                            $owner_id
  * @property int                            $content_id
  * @property int                            $frame_id
@@ -43,6 +38,7 @@ use Neo\Models\Factories\CreativeFactory;
  * @property Frame                          $frame
  *
  * @property DynamicCreative|StaticCreative $properties
+ * @property Collection<CreativeExternalId> $external_ids
  *
  * @mixin Builder
  */
@@ -50,8 +46,8 @@ class Creative extends Model {
     use HasFactory;
     use SoftDeletes;
 
-    const TYPE_STATIC = "static";
-    const TYPE_DYNAMIC = "dynamic";
+    public const TYPE_STATIC = "static";
+    public const TYPE_DYNAMIC = "dynamic";
 
     /*
     |--------------------------------------------------------------------------
@@ -93,14 +89,16 @@ class Creative extends Model {
         parent::boot();
 
         static::deleting(function (Creative $creative) {
-            // Disabled the creative in Broadsign
-            if ($creative->broadsign_ad_copy_id !== null) {
-                DisableBroadSignCreative::dispatch($creative->broadsign_ad_copy_id);
+            // Tell services to disable the creative
+            /** @var CreativeExternalId $externalId */
+            foreach ($creative->external_ids as $externalId) {
+                Broadcast::network($externalId->network_id)->destroyCreative($externalId->external_id);
+                $externalId->delete();
             }
 
             // If the content has no more creatives attached to it, we reset its duration
             // We check for 1 creative and not zero has we are not deleted yet
-            if ($creative->content->duration !== 0 && $creative->content->creatives_count === 1) {
+            if (($creative->content->duration) !== 0.0 && $creative->content->creatives_count === 1) {
                 $creative->content->duration = 0;
                 $creative->content->save();
             }
@@ -134,6 +132,10 @@ class Creative extends Model {
         return $this->morphTo("properties", "type", "id", "creative_id");
     }
 
+    public function external_ids() {
+        return $this->hasMany(CreativeExternalId::class, "creative_id");
+    }
+
     public function owner(): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
     }
@@ -144,5 +146,15 @@ class Creative extends Model {
 
     public function frame(): BelongsTo {
         return $this->belongsTo(Frame::class, 'frame_id', 'id');
+    }
+
+    /**
+     * @param int $networkId
+     * @return string|null
+     */
+    public function getExternalId(int $networkId): ?string {
+        $externalId = $this->external_ids()->where("network_id", "=", $networkId)->first();
+
+        return $externalId->external_id ?? null;
     }
 }

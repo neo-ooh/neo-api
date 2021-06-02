@@ -20,7 +20,7 @@ class ShowInventoryRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::inventory_read);
     }
 
@@ -29,15 +29,15 @@ class ShowInventoryRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "year" => ["required", "integer"],
-            "network" => ["required", "string"],
-            "province" => ["sometimes", "string"],
-            "city" => ["sometimes", "string"],
+            "year"        => ["required", "integer"],
+            "network"     => ["required", "integer", "exists:networks,id"],
+            "province"    => ["sometimes", "string"],
+            "city"        => ["sometimes", "string"],
             "location_id" => ["sometimes", "exists:locations,id"],
-            "formats" => ["array", "required"],
-            "formats.*" => ["integer", "exists:formats,id"],
+            "formats"     => ["array", "required"],
+            "formats.*"   => ["integer", "exists:formats,id"],
         ];
     }
 }

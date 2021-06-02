@@ -11,13 +11,18 @@ use Neo\Enums\Capability;
 use Neo\Http\Requests\Clients\ListClientsRequest;
 use Neo\Http\Requests\Clients\ShowClientRequest;
 use Neo\Models\Client;
+use Neo\Models\Contract;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\Models\Customer;
 use Str;
 
 class ClientsController extends Controller {
     public function index(ListClientsRequest $request) {
         if ($request->input("distant", false)) {
+            $config          = Contract::getConnectionConfig();
+            $broadsignClient = new BroadsignClient($config);
 
-            $clients = Customer::all();
+            $clients = Customer::all($broadsignClient);
 
             return new Response($clients
                 ->filter(fn($client) => !Str::startsWith($client->name, ["~", "*"]))

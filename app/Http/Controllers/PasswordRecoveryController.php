@@ -96,7 +96,7 @@ class PasswordRecoveryController extends Controller {
         RecoveryToken::destroy($actor->email);
 
         // And all two factor tokens
-        TwoFactorToken::where("actor_id", "=", $actor->id)->delete();
+        TwoFactorToken::query()->where("actor_id", "=", $actor->id)->delete();
 
         return new Response([]);
     }

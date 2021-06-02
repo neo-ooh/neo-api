@@ -20,7 +20,7 @@ class QueryFormatsRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::formats_edit) || Gate::allows(Capability::inventory_read);
     }
 
@@ -29,11 +29,11 @@ class QueryFormatsRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "network" => ["sometimes", "string"],
+            "network"  => ["sometimes", "integer", "exists:networks,id"],
             "province" => ["sometimes", "string"],
-            "city" => ["sometimes", "string"],
+            "city"     => ["sometimes", "string"],
         ];
     }
 }

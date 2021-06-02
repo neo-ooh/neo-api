@@ -21,7 +21,6 @@ use Neo\Models\Param;
 class InventoryController extends Controller {
     public function index(ShowInventoryRequest $request) {
         $year    = $request->validated()["year"];
-        $network = $request->validated()["network"];
 
         // Load all the display types matching the formats specified in the request
         $displayTypes = Format::query()
@@ -34,9 +33,9 @@ class InventoryController extends Controller {
                               ->values();
 
         if ($request->has("location_id")) {
-            $locations = Location::where("id", "=", $request->validated()["location_id"])->get();
+            $locations = Location::query()->where("id", "=", $request->validated()["location_id"])->get();
         } else {
-            $locations = Actor::find(Param::find(Network::coerce($network)->value)->value)->getLocations(true, false, true, true);
+            $locations = \Neo\Models\Network::with("locations")->find($request->input("network"))->locations;
 
             if ($request->has("province")) {
                 $province  = $request->validated()["province"];

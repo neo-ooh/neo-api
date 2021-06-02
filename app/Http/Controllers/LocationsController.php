@@ -24,7 +24,8 @@ use Neo\Http\Requests\Locations\UpdateLocationRequest;
 use Neo\Models\Actor;
 use Neo\Models\Format;
 use Neo\Models\Location;
-use Neo\Models\Param;
+use Neo\Models\Network;
+use Neo\Services\Broadcast\Broadcaster;
 
 class LocationsController extends Controller {
     /**
@@ -34,7 +35,7 @@ class LocationsController extends Controller {
      *
      * @return Response
      */
-    public function index (ListLocationsRequest $request): Response {
+    public function index(ListLocationsRequest $request): Response {
         /** @var Actor $actor */
         $actor = Auth::user();
 
@@ -44,14 +45,14 @@ class LocationsController extends Controller {
 
         $query = Location::query()->with(["display_type"])->orderBy("name");
 
-        // Should we  scope by container ?
-        $query->when($request->has("container"), function (Builder $query) use ($request) {
-            $query->where("container_id", "=", $request->input("container"));
+        // Should we  scope by network ?
+        $query->when($request->has("network_id"), function (Builder $query) use ($request) {
+            $query->where("network_id", "=", $request->input("network_id"));
         });
 
         // Should we scope by format ?
-        $query->when($request->has("format"), function (Builder $query) use ($request) {
-            $displayTypes = Format::find($request->input("format"))->display_types->pluck("id");
+        $query->when($request->has("format_id"), function (Builder $query) use ($request) {
+            $displayTypes = Format::query()->find($request->input("format_id"))->display_types->pluck("id");
             $query->whereIn("display_type_id", $displayTypes);
         });
 
@@ -74,8 +75,15 @@ class LocationsController extends Controller {
     public function search(SearchLocationsRequest $request) {
         $q         = strtolower($request->query("q"));
         $locations = Location::query()
-                             ->with("display_type")
-                             ->where('locations.name', 'LIKE', "%{$q}%")
+                             ->with("network")
+                             ->when($request->has("network"), function (Builder $query) use ($request) {
+                                 $query->where("network_id", "=", $request->input("network"));
+                             })->when($request->has("format"), function (Builder $query) use ($request) {
+                $query->whereHas("display_type.formats", function (Builder $query) use ($request) {
+                    $query->where("id", "=", $request->input("format"));
+                });
+            })
+                             ->where('locations.name', 'LIKE', "%$q%")
                              ->get();
 
         return new Response($locations);
@@ -91,22 +99,20 @@ class LocationsController extends Controller {
         // retrieve our networks roots
         $locations = [];
 
-        foreach (["NETWORK_SHOPPING", "NETWORK_FITNESS", "NETWORK_OTG"] as $networkID) {
-            $root = Actor::find(Param::find($networkID)->value);
+        $networks = Network::query()->whereHas("broadcaster_connection", function (Builder $query) {
+            $query->where("broadcaster", "=", Broadcaster::BROADSIGN);
+        })->get();
 
-            if(!$root) {
-                // Ignore network if root is missing
-                continue;
-            }
-
-            $locations[$networkID] = $root->getLocations(true, false, true, true)
-                                          ->map(fn($location) => [
-                                              "id" => $location->id,
-                                              "name" => $location->name,
-                                              "province" => $location->province,
-                                              "city" => $location->city,
-                                          ])
-                                          ->groupBy(["province", "city"]);
+        /** @var Network $network */
+        foreach ($networks as $network) {
+            $locations[$network->id] = $network->locations
+                ->map(fn($location) => [
+                    "id"       => $location->id,
+                    "name"     => $location->name,
+                    "province" => $location->province,
+                    "city"     => $location->city,
+                ])
+                ->groupBy(["province", "city"]);
         }
 
         return new Response($locations);
@@ -139,13 +145,13 @@ class LocationsController extends Controller {
 
     /**
      * @param UpdateLocationRequest $request
-     * @param Location $location
+     * @param Location              $location
      * @return Response
      */
-    public function update (UpdateLocationRequest $request, Location $location): Response {
+    public function update(UpdateLocationRequest $request, Location $location): Response {
         $location->name = $request->input('name');
         $location->save();
 
-        return new Response($location->load('format'));
+        return new Response($location->load('display_type'));
     }
 }

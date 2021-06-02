@@ -29,8 +29,9 @@ class SearchLocationsRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "q"            => ["required", "string"],
-            "display_unit" => ["sometimes", "integer", "exists:display_units,id"],
+            "q"       => ["required", "string"],
+            "network" => ["sometimes", "integer", "exists:networks,id"],
+            "format"  => ["sometimes", "integer", "exists:formats,id"],
         ];
     }
 }

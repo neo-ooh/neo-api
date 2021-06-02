@@ -8,8 +8,6 @@
  * @neo/api - Screenshot.php
  */
 
-/** @noinspection PhpMissingFieldTypeInspection */
-
 namespace Neo\Models;
 
 use Carbon\Carbon as Date;
@@ -82,7 +80,7 @@ class Screenshot extends Model {
     */
 
     public function getFilePathAttribute() {
-        return "/bursts/{$this->burst_id}/{$this->id}.jpg";
+        return "/bursts/$this->burst_id/$this->id.jpg";
     }
 
     /**

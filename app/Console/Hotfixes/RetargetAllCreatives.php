@@ -11,8 +11,6 @@
 namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
-use Neo\BroadSign\Jobs\Creatives\TargetCreative;
-use Neo\BroadSign\Models\ResourceCriteria;
 use Neo\Models\Creative;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -48,7 +46,7 @@ class RetargetAllCreatives extends Command {
         /** @var Creative $creative */
         foreach ($creatives as $creative) {
             $progressBar->advance();
-            $progressBar->setMessage("Creative #({$creative->broadsign_ad_copy_id}) {$creative->id}");
+            $progressBar->setMessage("Creative #($creative->broadsign_ad_copy_id) $creative->id");
 
             $criteria = ResourceCriteria::for($creative->broadsign_ad_copy_id);
 

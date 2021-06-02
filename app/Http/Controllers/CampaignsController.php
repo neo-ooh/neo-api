@@ -10,14 +10,9 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use Neo\BroadSign\Jobs\Campaigns\CreateBroadSignCampaign;
-use Neo\BroadSign\Jobs\Campaigns\UpdateBroadSignCampaign;
-use Neo\BroadSign\Jobs\Campaigns\TargetCampaign;
-use Neo\Enums\Capability;
+use Neo\Exceptions\InvalidBroadcastServiceException;
 use Neo\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Http\Requests\Campaigns\ListCampaignsRequest;
 use Neo\Http\Requests\Campaigns\StoreCampaignRequest;
@@ -27,15 +22,16 @@ use Neo\Http\Requests\CampaignsLocations\SyncCampaignLocationsRequest;
 use Neo\Models\Campaign;
 use Neo\Models\Format;
 use Neo\Models\Location;
+use Neo\Services\Broadcast\Broadcast;
 
 class CampaignsController extends Controller {
     /**
      * @param ListCampaignsRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
      * @noinspection PhpUnusedParameterInspection
      */
-    public function index(ListCampaignsRequest $request) {
+    public function index(ListCampaignsRequest $request): Response {
         return new Response(Auth::user()->getCampaigns()->load("format:id,name",
             "owner"));
     }
@@ -43,11 +39,13 @@ class CampaignsController extends Controller {
     /**
      * @param StoreCampaignRequest $request
      *
-     * @return ResponseFactory|Response
+     * @return Response
+     * @throws InvalidBroadcastServiceException
      */
-    public function store(StoreCampaignRequest $request) {
+    public function store(StoreCampaignRequest $request): Response {
         $campaign = new Campaign();
         [
+            "network_id"       => $campaign->network_id,
             "owner_id"         => $campaign->owner_id,
             "format_id"        => $campaign->format_id,
             "name"             => $campaign->name,
@@ -64,7 +62,13 @@ class CampaignsController extends Controller {
 
         $campaign->save();
 
-        $locations = $campaign->owner->locations->whereIn("display_type_id", $campaign->format->display_types->pluck('id'));
+        // Get the display types associated with the format that matches the campaign's network's connection.
+        $displayTypes = $campaign->format->display_types()
+                                         ->join("broadcasters_connections", "display_types.connection_id", "=", "broadcasters_connections.id")
+                                         ->where("broadcasters_connections.id", "=", $campaign->network->connection_id)->get();
+
+
+        $locations = $campaign->owner->locations->whereIn("display_type_id", $displayTypes->pluck('id'));
 
         // Copy over the locations of the campaign owner to the campaign itself
         if (count($locations) > 0) {
@@ -72,8 +76,8 @@ class CampaignsController extends Controller {
             $campaign->refresh();
         }
 
-        // Replicate the campaign in BroadSign
-        CreateBroadSignCampaign::dispatch($campaign->id);
+        // Replicate the campaign in the appropriate broadcaster
+        Broadcast::network($campaign->network_id)->createCampaign($campaign->id);
 
         return new Response($campaign->loadMissing(["format", "owner", "schedules"]), 201);
     }
@@ -81,14 +85,15 @@ class CampaignsController extends Controller {
     /**
      * @param Campaign $campaign
      *
-     * @return ResponseFactory|Response
+     * @return Response
      */
-    public function show(Campaign $campaign) {
+    public function show(Campaign $campaign): Response {
         return new Response($campaign->loadMissing([
             "format",
             "format.layouts",
             "format.display_types",
             "locations",
+            "network",
             "owner",
             "shares",
             "schedules",
@@ -102,9 +107,10 @@ class CampaignsController extends Controller {
      * @param UpdateCampaignRequest $request
      * @param Campaign              $campaign
      *
-     * @return ResponseFactory|Response
+     * @return Response
+     * @throws InvalidBroadcastServiceException
      */
-    public function update(UpdateCampaignRequest $request, Campaign $campaign) {
+    public function update(UpdateCampaignRequest $request, Campaign $campaign): Response {
         [
             "owner_id"         => $campaign->owner_id,
             "name"             => $campaign->name,
@@ -117,7 +123,7 @@ class CampaignsController extends Controller {
         $campaign->refresh();
 
         // Propagate the changes in BroadSign
-        UpdateBroadSignCampaign::dispatch($campaign->id);
+        Broadcast::network($campaign->network_id)->updateCampaign($campaign->id);
 
         return $this->show($campaign);
     }
@@ -126,33 +132,39 @@ class CampaignsController extends Controller {
      * @param SyncCampaignLocationsRequest $request
      * @param Campaign                     $campaign
      *
-     * @return ResponseFactory|Response
+     * @return Response
+     * @throws InvalidBroadcastServiceException
      */
-    public function syncLocations(SyncCampaignLocationsRequest $request, Campaign $campaign) {
+    public function syncLocations(SyncCampaignLocationsRequest $request, Campaign $campaign): Response {
         $locations = $request->validated()['locations'];
 
-        // All good, add the capabilities
+        // All good, sync the locations
         $campaign->locations()->sync($locations);
         $campaign->refresh();
 
         // Propagate the changes in BroadSign
-        TargetCampaign::dispatch($campaign->id);
+        Broadcast::network($campaign->network_id)->targetCampaign($campaign->id);
 
         return new Response($campaign->locations);
     }
 
+    /**
+     * @throws InvalidBroadcastServiceException
+     */
     public function removeLocation(RemoveCampaignLocationRequest $request, Campaign $campaign, Location $location): Response {
         $campaign->locations()->detach($location);
         $campaign->refresh();
 
         // Propagate the changes in BroadSign
-        TargetCampaign::dispatch($campaign->id);
+        Broadcast::network($campaign->network_id)->targetCampaign($campaign->id);
 
         return new Response($campaign->locations);
     }
 
     /** @noinspection PhpUnusedParameterInspection */
-    public function destroy(DestroyCampaignRequest $request, Campaign $campaign): void {
+    public function destroy(DestroyCampaignRequest $request, Campaign $campaign): Response {
         $campaign->delete();
+
+        return new Response(["result" => "ok"]);
     }
 }

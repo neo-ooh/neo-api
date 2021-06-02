@@ -22,7 +22,7 @@ class ActorsCampaignsController extends Controller {
         if(is_object($routeActor)) {
             $actor = $routeActor;
         } else {
-            $actor = Actor::findOrFail($routeActor);
+            $actor = Actor::query()->findOrFail($routeActor);
         }
 
         return new Response($actor->getCampaigns(true, true, false, false)

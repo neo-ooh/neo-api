@@ -10,20 +10,20 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Neo\BroadSign\Jobs\Schedules\UpdateBroadSignScheduleStatus;
 use Neo\Http\Requests\Reviews\StoreReviewRequest;
 use Neo\Models\Review;
 use Neo\Models\Schedule;
+use Neo\Services\Broadcast\Broadcast;
 
 class ReviewsController extends Controller {
     /**
      * @param StoreReviewRequest $request
      * @param Schedule           $schedule
      *
-     * @return ResponseFactory|Response
+     * @return Response
+     * @throws \Neo\Exceptions\InvalidBroadcastServiceException
      */
     public function store(StoreReviewRequest $request, Schedule $schedule) {
         $review              = new Review();
@@ -40,7 +40,11 @@ class ReviewsController extends Controller {
         $schedule->refresh();
 
         // Update the schedule in BroadSign to reflect the new status
-        UpdateBroadSignScheduleStatus::dispatch($schedule->id);
+        if($schedule->status === Schedule::STATUS_APPROVED || $schedule->status  === Schedule::STATUS_LIVE) {
+            Broadcast::network($schedule->campaign->network_id)->enableSchedule($schedule->id);
+        }  else {
+            Broadcast::network($schedule->campaign->network_id)->disableSchedule($schedule->id);
+        }
 
         return new Response($schedule->load("content", "owner:id,name", "campaign", "campaign.owner:id,name"), 201);
     }

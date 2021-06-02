@@ -7,8 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Neo\BroadSign\Models\Location as BSLocation;
-use Neo\BroadSign\Models\ReservablePerformance;
+use Neo\Services\Broadcast\Broadcast;
+use Neo\Services\Broadcast\Broadcaster;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Services\Broadcast\BroadSign\Models\Location as BSLocation;
+use Neo\Services\Broadcast\BroadSign\Models\ReservablePerformance;
+use RuntimeException;
 
 /**
  * Class Contract
@@ -74,18 +79,48 @@ class Contract extends Model {
     */
 
     public function getPerformancesAttribute(): array {
+        $config          = static::getConnectionConfig();
+        $broadsignClient = new BroadsignClient($config);
+
         $reservations = $this->reservations;
-        $performances = ReservablePerformance::byReservable($reservations->pluck('broadsign_reservation_id')
-                                                                         ->values()
-                                                                         ->toArray());
+        $performances = ReservablePerformance::byReservable($broadsignClient, $reservations->pluck('external_id')
+                                                                                           ->values()
+                                                                                           ->toArray());
 
         return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
     }
 
     public function loadReservationsLocations(): void {
+        $config          = static::getConnectionConfig();
+        $broadsignClient = new BroadsignClient($config);
+
         foreach ($this->reservations as $reservation) {
-            $bsLocations = BSLocation::byReservable(["reservable_id" => $reservation->broadsign_reservation_id])->pluck('id');
-            $reservation->locations = Location::query()->whereIn("broadsign_display_unit", $bsLocations)->get();
+            $bsLocations            = BSLocation::byReservable($broadsignClient, ["reservable_id" => $reservation->external_id])->pluck('id');
+            $reservation->locations = Location::query()->whereIn("external_id", $bsLocations)->get();
         }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Utils
+    |--------------------------------------------------------------------------
+    */
+
+    public static function getConnectionConfig(): BroadSignConfig {
+        // As any requests with Broadsign requires a valid connection, and valid network, we will use any network already setup with the connection specified for the network.
+        // Also, since all the contracts work is reading information, we don't care about the customer, container and tracking information specified for the network
+        /** @var ?Network $network */
+        $network = Network::query()->where("connection_id", "=", Param::find("CONTRACTS_CONNECTION")->value)->first();
+
+        if (!$network) {
+            throw new RuntimeException("No network setup for the contracts connection");
+        }
+
+
+        if ($network->broadcaster_connection->broadcaster !== Broadcaster::BROADSIGN) {
+            throw new RuntimeException("Contracts connection MUST be aa broadsign connection");
+        }
+
+        return Broadcast::network($network->id)->getConfig();
     }
 }

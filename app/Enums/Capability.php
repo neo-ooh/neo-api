@@ -34,6 +34,9 @@ use BenSampo\Enum\Enum;
  * @method static self reports_edit()
  * @method static self inventory_read()
  *
+ * @method static self networks_edit()
+ * @method static self networks_connections()
+ *
  * @method static self chores_broadsign()
  * @method static self tests()
  */
@@ -90,6 +93,9 @@ final class Capability extends Enum {
 
     public const bursts_request = "bursts.request";
     public const bursts_quality = "bursts.quality";
+
+    public const networks_edit = "networks.edit";
+    public const networks_connections = "networks.connections";
 
 
     public const inventory_read = "inventory.read";

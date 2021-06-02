@@ -45,7 +45,7 @@ class ActorsCapabilitiesController extends Controller {
         $toRemove = array_diff($capabilitiesID, $capabilities);
 
         foreach ($toAdd as $cID) {
-            ActorCapability::create([
+            ActorCapability::query()->create([
                 "actor_id"       => $actor->getKey(),
                 "capability_id" => $cID,
             ]);
@@ -54,7 +54,7 @@ class ActorsCapabilitiesController extends Controller {
         if(count($toRemove) > 0) {
             $binds = implode(", ", array_fill(0, count($toRemove), "?"));
 
-            DB::delete("DELETE FROM `actors_capabilities` WHERE `capability_id` IN ({$binds}) AND `actor_id` = ?",
+            DB::delete("DELETE FROM `actors_capabilities` WHERE `capability_id` IN ($binds) AND `actor_id` = ?",
                 [
                     ...$toRemove,
                     $actor->getKey(),

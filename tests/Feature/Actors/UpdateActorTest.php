@@ -35,7 +35,7 @@ class UpdateActorTest extends TestCase {
         /** @var Actor $actor */
         $actor = Actor::factory()->create();
 
-        $response = $this->json("PUT", "/v1/actors/{$actor->id}");
+        $response = $this->json("PUT", "/v1/actors/$actor->id");
         $response->assertUnauthorized();
     }
 
@@ -54,7 +54,7 @@ class UpdateActorTest extends TestCase {
         $newActor = Actor::factory()->create()->moveTo($actor);
 
         // Fails because user is not authorized to create other users
-        $response = $this->json("PUT", "/v1/actors/{$newActor->id}", [
+        $response = $this->json("PUT", "/v1/actors/$newActor->id", [
             'name'        => $newActor->name,
             'email'       => $newActor->email,
             'parent_id'   => $actor->id,
@@ -80,7 +80,7 @@ class UpdateActorTest extends TestCase {
         ];
 
         // Fails -> newActor is not a child
-        $response = $this->json("PUT", "/v1/actors/{$newActor->id}", $requestBody);
+        $response = $this->json("PUT", "/v1/actors/$newActor->id", $requestBody);
         $response->assertForbidden();
 
         $newActor->moveTo($actor);
@@ -89,7 +89,7 @@ class UpdateActorTest extends TestCase {
         $actor->refresh();
 
         // Succeeds -> newActor is a child
-        $response = $this->json("PUT", "/v1/actors/{$newActor->id}", $requestBody);
+        $response = $this->json("PUT", "/v1/actors/$newActor->id", $requestBody);
         $response->assertOk();
     }
 
@@ -100,7 +100,7 @@ class UpdateActorTest extends TestCase {
 
         /** @var Actor $newActor */
         $newActor = Actor::factory()->make();
-        $response = $this->json("PUT", "/v1/actors/{$actor->id}", [
+        $response = $this->json("PUT", "/v1/actors/$actor->id", [
             "name"        => $newActor->name,
             "email"       => $newActor->email,
             "branding_id" => null,
@@ -120,7 +120,7 @@ class UpdateActorTest extends TestCase {
         $newActor = Actor::factory()->create()->moveTo($actor);
 
         // Fails -> bad body
-        $response = $this->json("PUT", "/v1/actors/{$newActor->id}", []);
+        $response = $this->json("PUT", "/v1/actors/$newActor->id", []);
         $response->assertStatus(422);
     }
 
@@ -134,7 +134,7 @@ class UpdateActorTest extends TestCase {
         $newActor = Actor::factory()->create()->moveTo($actor);
 
         // Fails -> bad body
-        $response = $this->json("PUT", "/v1/actors/{$newActor->id}", [
+        $response = $this->json("PUT", "/v1/actors/$newActor->id", [
             "name"        => $newActor->name,
             "email"       => $newActor->email,
             "password"    => "foobar",
@@ -165,7 +165,7 @@ class UpdateActorTest extends TestCase {
         $bActor = Actor::factory()->create()->moveTo($aActor);
 
         // Fails -> bad body
-        $response = $this->json("PUT", "/v1/actors/{$aActor->id}", [
+        $response = $this->json("PUT", "/v1/actors/$aActor->id", [
             "name"        => $aActor->name,
             "email"       => $aActor->email,
             "is_locked"   => false,
@@ -186,7 +186,7 @@ class UpdateActorTest extends TestCase {
         $aActor = Actor::factory()->create()->moveTo($actor);
 
         // Fails -> bad body
-        $response = $this->json("PUT", "/v1/actors/{$aActor->id}", [
+        $response = $this->json("PUT", "/v1/actors/$aActor->id", [
             "name"        => $aActor->name,
             "email"       => $aActor->email,
             "is_locked"   => false,
@@ -209,7 +209,7 @@ class UpdateActorTest extends TestCase {
         $bActor = Actor::factory()->create()->moveTo($actor);
 
         // Fails -> bad body
-        $response = $this->json("PUT", "/v1/actors/{$aActor->id}", [
+        $response = $this->json("PUT", "/v1/actors/$aActor->id", [
             "name"        => $aActor->name,
             "email"       => $aActor->email,
             "is_locked"   => false,
@@ -232,7 +232,7 @@ class UpdateActorTest extends TestCase {
         $aActor = Actor::factory()->create()->moveTo($actor);
 
         // Fails -> bad body
-        $response = $this->json("PUT", "/v1/actors/{$aActor->id}", [
+        $response = $this->json("PUT", "/v1/actors/$aActor->id", [
             "name"        => $aActor->name,
             "email"       => $aActor->email,
             "is_locked"   => true,
@@ -260,7 +260,7 @@ class UpdateActorTest extends TestCase {
         $branding = Branding::factory()->create();
 
         // Fails -> bad body
-        $response = $this->json("PUT", "/v1/actors/{$aActor->id}", [
+        $response = $this->json("PUT", "/v1/actors/$aActor->id", [
             "name"        => $aActor->name,
             "email"       => $aActor->email,
             "is_locked"   => false,

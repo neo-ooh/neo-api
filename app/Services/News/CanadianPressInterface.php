@@ -84,7 +84,7 @@ class CanadianPressInterface implements NewsService {
                 $cpFiles = $cpStorage->files($subject);
 
                 // Filter to only get articles (XML Files)
-                $cpRecords = array_filter($cpFiles, function ($item) {
+                $cpRecords = array_filter($cpFiles, static function ($item) {
                     return strpos($item, '.xml');
                 });
 

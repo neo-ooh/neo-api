@@ -14,6 +14,7 @@ use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Neo\Mails\TwoFactorTokenEmail;
 
@@ -138,6 +139,8 @@ class TwoFactorToken extends Model {
      * @return bool
      */
     public function validate (string $token): bool {
+        Log::debug("stored token : " . $this->token);
+        Log::debug("given token : " . (int)$token);
         if ($this->token !== (int)$token) {
             // Bad token
             return false;

@@ -41,11 +41,11 @@ class Inventory extends BroadSignModel {
         return [
             "all" => Endpoint::get("/inventory/v1")
                              ->unwrap(static::$unwrapKey)
-                             ->parser(fn($response) => $this->processInventory($response))
+                             ->parser(fn($response) => static::processInventory($response))
         ];
     }
 
-    protected function processInventory($inventory): Collection {
+    protected static function processInventory($inventory): Collection {
         $reports = (new MultipleResourcesParser(static::class))($inventory);
 
         $reports->map(fn(Inventory $inventory) => $inventory->processReport());

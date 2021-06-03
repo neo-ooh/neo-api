@@ -140,7 +140,6 @@ class TwoFactorToken extends Model {
      * @return bool
      */
     public function validate (string $token): bool {
-        Log::debug((string)($this->token === (int)$token));
         if ($this->token !== (int)$token) {
             // Bad token
             return false;

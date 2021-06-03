@@ -80,8 +80,9 @@ class Container extends BroadSignModel {
      * This method takes into account the network's root container and WILL NOT replicate it in the database. Direct children containers' parent's id will be set to NULL to denote their position at the root of the hierarchy.
      */
     public function replicate (int $networkId): void {
-        // Make sure our parent container is already in the DDB if we have one and it is not the network rroot
-        if ($this->container_id !== 0 && $this->id !== $this->api->getConfig()->containerId) {
+        // Make sure our parent container is already in the DDB if we have one and it is not the network root
+        $isRoot = $this->id === $this->api->getConfig()->containerId
+        if ($this->container_id !== 0 && ) {
             $this->getParent()->replicate($networkId);
         }
 

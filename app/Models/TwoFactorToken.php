@@ -96,6 +96,7 @@ class TwoFactorToken extends Model {
      * @var array
      */
     protected $casts = [
+        'token' => 'integer',
         'validated' => 'boolean',
     ];
 
@@ -139,8 +140,7 @@ class TwoFactorToken extends Model {
      * @return bool
      */
     public function validate (string $token): bool {
-        Log::debug("stored token : " . $this->token);
-        Log::debug("given token : " . (int)$token);
+        Log::debug((string)($this->token === (int)$token));
         if ($this->token !== (int)$token) {
             // Bad token
             return false;
@@ -148,7 +148,7 @@ class TwoFactorToken extends Model {
 
         // Good token
         $this->validated = true;
-        $this->validated_at = Date::now("America/Toronto");
+        $this->validated_at = $this->freshTimestamp();
         $this->save();
 
         return true;

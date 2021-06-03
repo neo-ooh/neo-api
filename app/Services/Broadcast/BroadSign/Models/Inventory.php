@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Illuminate\Support\Collection;
+use Neo\Models\Contract;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
@@ -46,7 +47,7 @@ class Inventory extends BroadSignModel {
     }
 
     protected static function processInventory($inventory): Collection {
-        $reports = (new MultipleResourcesParser(static::class))($inventory);
+        $reports = (new MultipleResourcesParser(static::class))($inventory, new BroadsignClient(Contract::getConnectionConfig()));
 
         $reports->map(fn(Inventory $inventory) => $inventory->processReport());
 

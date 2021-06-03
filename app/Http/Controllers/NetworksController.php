@@ -12,11 +12,13 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
 use Neo\Http\Requests\Networks\DestroyNetworkRequest;
 use Neo\Http\Requests\Networks\ListNetworksRequest;
 use Neo\Http\Requests\Networks\ShowNetworkRequest;
 use Neo\Http\Requests\Networks\StoreNetworkRequest;
 use Neo\Http\Requests\Networks\UpdateNetworkRequest;
+use Neo\Jobs\SynchronizeNetworks;
 use Neo\Models\Actor;
 use Neo\Models\Network;
 use Neo\Models\NetworkSettingsBroadSign;
@@ -104,5 +106,12 @@ class NetworksController extends Controller {
         $network->delete();
 
         return new Response(["result" => "ok"], 200);
+    }
+
+
+    public function refresh() {
+        Artisan::queue("network:sync");
+
+        return new Response(["status" => "ok"]);
     }
 }

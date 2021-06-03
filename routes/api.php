@@ -558,6 +558,7 @@ Route::prefix("v1")->group(function () {
 
     Route:: get("networks", NetworksController::class . "@index")->name("networks.index");
     Route::post("networks", NetworksController::class . "@store")->name("networks.store");
+    Route::post("networks/_refresh", NetworksController::class . "@refresh")->name("networks.refresh");
     Route:: get("networks/{network}", NetworksController::class . "@show")->name("networks.show");
     Route:: put("networks/{network}", NetworksController::class . "@update")->name("networks.update");
     Route::delete("networks/{network}", NetworksController::class . "@destroy")->name("networks.destroy");

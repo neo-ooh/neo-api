@@ -28,7 +28,8 @@ class ListBackgroundsRequest extends FormRequest
         return [
             "network" => ["required", "string"],
             "format_id" => ["sometimes", "nullable", "integer", "exists:formats,id"],
-            "categories" => ["sometimes", "string"]
+            "categories" => ["sometimes", "array"],
+            "categories.*" => ["integer"]
         ];
     }
 }

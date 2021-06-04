@@ -19,7 +19,7 @@ class DynamicsMiddleware {
     public function handle(Request $request, Closure $next) {
         /** @var Response $response */
         $response     = $next($request);
-        $responseJSON = json_decode($response->content(), true, 512, JSON_THROW_ON_ERROR) ?: [];
+        $responseJSON = $response->getOriginalContent();
 
         if (array_key_exists('content', $responseJSON)) {
             $responseJSON = $responseJSON['content'];

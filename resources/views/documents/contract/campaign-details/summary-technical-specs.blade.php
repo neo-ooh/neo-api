@@ -7,7 +7,7 @@
     <thead>
         <tr>
             <th>{!! __("contract.table-product") !!}</th>
-            <th>{!! __("contract.table-sport-duration") !!}</th>
+            <th>{!! __("contract.table-spot-duration") !!}</th>
             <th>{!! __("contract.table-loop-duration") !!}</th>
             <th>{!! __("contract.table-loop-holiday") !!}</th>
         </tr>
@@ -43,7 +43,7 @@
     <thead>
     <tr>
         <th>{!! __("contract.table-product") !!}</th>
-        <th>{!! __("contract.table-sport-duration") !!}</th>
+        <th>{!! __("contract.table-spot-duration") !!}</th>
         <th>{!! __("contract.table-loop-duration") !!}</th>
         <th>{!! __("contract.table-loop-holiday") !!}</th>
     </tr>
@@ -79,7 +79,7 @@
     <thead>
     <tr>
         <th>{!! __("contract.table-product") !!}</th>
-        <th>{!! __("contract.table-sport-duration") !!}</th>
+        <th>{!! __("contract.table-spot-duration") !!}</th>
         <th>{!! __("contract.table-loop-duration") !!}</th>
         <th>{!! __("contract.table-loop-holiday") !!}</th>
     </tr>

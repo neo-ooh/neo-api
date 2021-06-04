@@ -16,6 +16,7 @@ return [
     "network-shopping"      => "Neo Shopping",
     "network-otg"           => "Neo On the Go",
     "network-fitness"       => "Neo Fitness",
+    "network-mobile"        => "Neo Mobile",
 
 
     "header-campaign-dates"    => "Dates de la campagne",
@@ -27,4 +28,7 @@ return [
     "header-presented-to"      => "Présenté à",
     "header-date"              => "Date",
     "header-account-executive" => "Directeur de comptes",
+
+    "weeks"             => "semaine|semaines",
+    "broadcast-periods" => "Période d'affichage|Périodes d'affichage",
 ];

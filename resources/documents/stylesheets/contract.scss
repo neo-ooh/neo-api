@@ -11,8 +11,8 @@
 
 
 @page {
-  size: portrait;
-  background-color: #FFFFFF;
+  size             : portrait;
+  background-color : #FFFFFF;
 
   //margin-top       : 15mm;
   margin-left      : 15mm;
@@ -390,6 +390,57 @@
   }
 }
 
+.extension-strategy-cpm {
+  width: 100%;
+  text-align: right;
+  font-style: italic;
+  font-size: .889rem;
+}
+
+.audience-extension-table {
+  border-spacing: 1px;
+  width         : 100%;
+  margin-bottom : 5mm;
+
+  thead tr th {
+    width            : 24.5mm;
+    padding          : 2mm 1mm;
+
+    color            : #FFFFFF;
+    font-family      : $font-bold;
+    text-align       : center;
+    font-size        : .85em;
+
+    background-color : $dark-blue;
+    //border-left      : 1px solid #FFFFFF;
+  }
+
+  tbody tr {
+    td {
+      padding     : 2mm 0;
+
+      color       : #000000;
+      text-align  : center;
+      font-size   : .79em;
+
+      border-bottom: 1px solid $dark-blue;
+      //border-left : 1px solid #FFFFFF;
+      //border-top  : 1px solid #FFFFFF;
+    }
+
+    &.strategy-type-row td {
+      padding          : .5mm 0;
+      text-align       : center;
+      border-bottom: none;
+
+      font-size   : .889em;
+      color            : #FFFFFF;
+      background-color : $dark-blue;
+    }
+  }
+}
+
+
 .detailed-purchases-title {
   margin-bottom  : 0;
   text-transform : uppercase;
@@ -426,7 +477,7 @@
     }
 
     &.investment-col {
-      width: 27.5mm;
+      width : 27.5mm;
     }
   }
 

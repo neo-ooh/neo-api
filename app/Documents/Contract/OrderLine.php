@@ -10,6 +10,7 @@
 
 namespace Neo\Documents\Contract;
 
+use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Neo\Documents\Exceptions\MissingColumnException;
 use Neo\Documents\Network;
@@ -18,12 +19,18 @@ class OrderLine {
     public const TYPE_GUARANTEED_PURCHASE = 1;
     public const TYPE_GUARANTEED_BONUS = 2;
     public const TYPE_BONUS_UPON_AVAIL = 3;
+    public const TYPE_EXTENSION_STRATEGY = 4;
 
     public string $orderLine;
     public string $description;
     public float $discount;
+
+
     public string $date_start;
     public string $date_end;
+    public float $nb_weeks;
+    public string $rangeLengthString;
+
     public int $impressions;
     public string $traffic;
 
@@ -31,7 +38,9 @@ class OrderLine {
     public string $market_name;
     public string $market_order;
 
-    public float $nb_weeks;
+    public string $audience_segment;
+    public string $impression_format;
+
     public int $nb_screens;
     public float $quantity;
 
@@ -40,8 +49,10 @@ class OrderLine {
     public string $product_category;
     public string $product_description;
     public string $product_rental;
+    public bool $isMobileProduct;
     public string $product_type;
     public float $unit_price;
+    public float $cpm;
 
     public float $media_value;
     public float $net_investment;
@@ -65,6 +76,8 @@ class OrderLine {
                             "order_line/rental_end",
                             "order_line/impression",
                             "order_line/traffic",
+                            "order_line/impression_format",
+                            "order_line/cpm",
                             "order_line/market_id",
                             "order_line/market_id/name",
                             "order_line/market_id/sequence",
@@ -74,11 +87,13 @@ class OrderLine {
                             "order_line/product_id/production",
                             "order_line/product_id",
                             "order_line/product_id/description",
+                            "order_line/is_mobile_product",
                             "order_line/is_product_rentable",
                             "order_line/product_type",
                             "order_line/price_unit",
                             "order_line/price_subtotal",
                             "order_line/price_tax",
+                            "order_line/segment",
                             "order_line/shopping_center_id/center_type",
                             "order_line/shopping_center_id/name",
                             "order_line/shopping_center_id/city",
@@ -91,27 +106,30 @@ class OrderLine {
             }
         }
 
-//        $this->orderLine           = $record["Order Lines"];
         $this->description = $record["order_line/name"];
 
-        $this->discount    = (float)($record["order_line/discount"] ?? 0);
-        $this->date_start  = $record["order_line/rental_start"];
-        $this->date_end    = $record["order_line/rental_end"];
-        $this->impressions = (int)($record["order_line/impression"] ?? 0);
-        $this->traffic     = $record["order_line/traffic"];
-        $this->market      = $record["order_line/market_id"];
-        $this->market_name = $record["order_line/market_id/name"];
+        $this->discount = (float)($record["order_line/discount"] ?? 0);
+
+        $this->date_start        = $record["order_line/rental_start"];
+        $this->date_end          = $record["order_line/rental_end"];
+        $this->nb_weeks          = (float)($record["order_line/nb_weeks"] ?? 0);
+        $this->rangeLengthString = Carbon::make($this->date_start)
+                                         ->format("d F") . " x " . $this->nb_weeks . " " . trans_choice("common.weeks", $this->nb_weeks);
+
+        $this->impressions  = (int)($record["order_line/impression"] ?? 0);
+        $this->traffic      = $record["order_line/traffic"];
+        $this->market       = $record["order_line/market_id"];
+        $this->market_name  = $record["order_line/market_id/name"];
         $this->market_order = $record["order_line/market_id/sequence"];
-        $this->nb_weeks    = (float)($record["order_line/nb_weeks"] ?? 0);
-        $this->nb_screens  = (int)($record["order_line/nb_screen"] ?? 0);
-        $this->quantity    = $record["order_line/product_uom_qty"];
+        $this->nb_screens   = (int)($record["order_line/nb_screen"] ?? 0);
+        $this->quantity     = $record["order_line/product_uom_qty"];
 
         $this->is_production = $record["order_line/product_id/production"] === "True";
 
-        $this->product = $record["order_line/product_id"];
-//        $this->product_category    = $record["order_line/product_id/description"];
+        $this->product             = $record["order_line/product_id"];
         $this->product_description = $record["order_line/product_id/description"];
         $this->product_rental      = $record["order_line/is_product_rentable"] === "True";
+        $this->isMobileProduct     = $record["order_line/is_mobile_product"] === "True";
         $this->product_type        = $record["order_line/product_type"];
 
         $this->unit_price = (float)$record["order_line/price_unit"];
@@ -139,6 +157,12 @@ class OrderLine {
         if ($this->isBonusUponAvailability() && Str::endsWith(trim($this->description), "(bonus)")) {
             $this->product = substr($this->description, 0, -7);
         }
+
+        if ($this->isExtensionStrategy()) {
+            $this->audience_segment  = $record["order_line/segment"];
+            $this->impression_format = $record["order_line/impression_format"];
+            $this->cpm               = (float)$record["order_line/cpm"];
+        }
     }
 
     protected function inferOrderType() {
@@ -149,6 +173,11 @@ class OrderLine {
 
         if ((int)round($this->discount) === 100) {
             $this->type = static::TYPE_GUARANTEED_BONUS;
+            return;
+        }
+
+        if ($this->isMobileProduct) {
+            $this->type = static::TYPE_EXTENSION_STRATEGY;
             return;
         }
 
@@ -178,5 +207,9 @@ class OrderLine {
 
     public function isBonusUponAvailability(): int {
         return $this->type === static::TYPE_BONUS_UPON_AVAIL;
+    }
+
+    public function isExtensionStrategy(): int {
+        return $this->type === static::TYPE_EXTENSION_STRATEGY;
     }
 }

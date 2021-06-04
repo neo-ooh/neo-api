@@ -181,6 +181,24 @@ footer .footer-table {
   color: #888888;
 }
 
+.broadcast-periods-table {
+  margin: -1.5mm 0 3mm -1mm;
+}
+.broadcast-periods-table.no-space-after {
+  margin-bottom: 0;
+}
+.broadcast-periods-table tr td {
+  font-style: italic;
+  vertical-align: top;
+  font-size: 9pt;
+}
+.broadcast-periods-table tr td.label {
+  font-weight: bold;
+}
+.broadcast-periods-table tr td.periods-col {
+  padding-left: 3mm;
+}
+
 @page {
   size: landscape;
   background-color: #FFFFFF;

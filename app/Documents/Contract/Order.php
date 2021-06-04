@@ -128,14 +128,19 @@ class Order {
         return $this->orderLines->filter(fn($order) => $order->isBonusUponAvailability());
     }
 
+    public function getAudienceExtensionLines(): Collection {
+        return $this->orderLines->filter(fn($order) => $order->isExtensionStrategy());
+    }
+
     // Compute values
     public function computeValues(): void {
         // Guaranteed orders
         $guaranteedOrders                   = $this->getGuaranteedOrders();
+        $extensionOrders                   = $this->getAudienceExtensionLines();
         if($guaranteedOrders->isNotEmpty()) {
-            $this->guaranteed_impressions_count = $guaranteedOrders->sum("impressions");
-            $this->guaranteed_value             = $guaranteedOrders->sum("media_value");
-            $this->guaranteed_investment        = $guaranteedOrders->sum("net_investment");
+            $this->guaranteed_impressions_count = $guaranteedOrders->sum("impressions") + $extensionOrders->sum("impressions");
+            $this->guaranteed_value             = $guaranteedOrders->sum("media_value") + $extensionOrders->sum("media_value");
+            $this->guaranteed_investment        = $guaranteedOrders->sum("net_investment") + $extensionOrders->sum("net_investment");
             $this->guaranteed_discount          = ($this->guaranteed_value - $this->guaranteed_investment) / $this->guaranteed_value * 100;
         }
 

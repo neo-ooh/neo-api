@@ -18,8 +18,8 @@ class NewsBackgroundsController extends Controller {
                                      ->when($request->filled("format_id"), function (Builder $query) use ($request) {
                                          $query->where("format_id", "=", $request->input("format_id"));
                                      })
-                                     ->when($request->has("locale"), function (Builder $query) use ($request) {
-                                         $query->where("locale", "=", $request->input("locale"));
+                                     ->when($request->has("categories"), function (Builder $query) use ($request) {
+                                         $query->whereIn("category", $request->input("categories"));
                                      })
                                      ->get();
 

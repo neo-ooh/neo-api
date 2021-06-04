@@ -3,6 +3,24 @@
     <h1 class="detailed-purchases-title">
         {{ __("contract.order-type-$category")  }}
     </h1>
+    <table class="broadcast-periods-table">
+        <tr>
+            <td class="label">
+                {{ trans_choice("common.broadcast-periods", $orders->pluck("rangeLengthString")->unique()) }}
+            </td>
+            <td class="periods-col">
+                @foreach($orders->pluck("rangeLengthString")->unique() as $rangeString)
+                    {{ $rangeString }}
+                    @if($loop->index % 2 !== 0)
+                        </td>
+                        <td class="periods-col">
+                    @else
+                        <br />
+                    @endif
+                @endforeach
+            </td>
+        </tr>
+    </table>
     <table class="summary-purchases-table">
         <thead>
         <tr class="headers">

@@ -10,6 +10,7 @@
 
 namespace Neo\Documents\Contract;
 
+use Carbon\CarbonInterval;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
@@ -43,6 +44,14 @@ class Contract extends Document {
             "packTableData"     => true,
             "use_kwt"           => true,
             "setAutoTopMargin"  => "pad",
+        ]);
+
+        CarbonInterval::setCascadeFactors([
+            'minute' => [60, 'seconds'],
+            'hour' => [60, 'minutes'],
+            'day' => [8, 'hours'],
+            'week' => [5, 'days'],
+            'month' => [999999, 'weeks'],
         ]);
 
         // Register our components
@@ -111,7 +120,9 @@ class Contract extends Document {
     }
 
     public function build(): bool {
-        App::setLocale(substr($this->order->locale, 0, 2));
+        $locale = substr($this->order->locale, 0, 2);
+        App::setLocale($locale);
+        CarbonInterval::setLocale($locale);
 
         // Import the stylesheet
         $this->mpdf->WriteHTML(File::get(resource_path('documents/stylesheets/contract.css')), HTMLParserMode::HEADER_CSS);
@@ -199,6 +210,16 @@ class Contract extends Document {
             $this->mpdf->WriteHTML(view("documents.contract.campaign-summary.orders-category", [
                 "category" => "bua",
                 "orders"   => $buaOrders,
+                "order"    => $this->order,
+            ])->render());
+        }
+
+        // Audience extension strategy summary
+        $audienceExtensionLines = $this->order->getAudienceExtensionLines();
+
+        if ($audienceExtensionLines->isNotEmpty()) {
+            $this->mpdf->WriteHTML(view("documents.contract.campaign-summary.audience-extension", [
+                "lines"   => $audienceExtensionLines,
                 "order"    => $this->order,
             ])->render());
         }

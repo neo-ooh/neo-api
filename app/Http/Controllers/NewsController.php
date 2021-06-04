@@ -3,7 +3,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Neo\Http\Requests\Weather\ListRecordsRequest;
+use Neo\Http\Requests\News\ListRecordsRequest;
 use Neo\Services\News\NewsService;
 
 class NewsController extends Controller {

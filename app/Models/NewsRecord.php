@@ -33,4 +33,12 @@ class NewsRecord extends Model {
     protected $fillable = [
         "cp_id", "date", "headline", "media", "subject", "locale", "width", "height"
     ];
+
+    public function getMediaUrlAttribute() {
+        if($this->media === null) {
+            return null;
+        }
+
+        return config("services.canadian-press.storage.path") . $this->media;
+    }
 }

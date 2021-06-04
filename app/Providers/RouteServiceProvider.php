@@ -43,7 +43,7 @@ class RouteServiceProvider extends ServiceProvider {
 
 
             // Routes accessible only by access tokens
-            Route::middleware('access-tokens')->group(function () {
+            Route::middleware(['access-tokens', 'dynamics'])->group(function () {
                 Route::group([], base_path('routes/dynamics.php'));
             });
 

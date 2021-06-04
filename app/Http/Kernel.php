@@ -24,6 +24,7 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Neo\Http\Middleware\Authenticate;
+use Neo\Http\Middleware\DynamicsMiddleware;
 use Neo\Http\Middleware\PreventRequestsDuringMaintenance;
 use Neo\Http\Middleware\TrimStrings;
 use Neo\Http\Middleware\TrustProxies;
@@ -104,6 +105,7 @@ class Kernel extends HttpKernel {
         'signed'           => ValidateSignature::class,
         'throttle'         => ThrottleRequests::class,
         'verified'         => EnsureEmailIsVerified::class,
+        'dynamics'         => DynamicsMiddleware::class,
     ];
 
     /**

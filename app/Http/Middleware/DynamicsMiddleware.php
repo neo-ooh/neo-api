@@ -21,10 +21,6 @@ class DynamicsMiddleware {
         $response     = $next($request);
         $responseJSON = $response->getOriginalContent();
 
-        if (array_key_exists('content', $responseJSON)) {
-            $responseJSON = $responseJSON['content'];
-        }
-
         $factor = random_int(90, 110) / 100.0;
 
         $formatted = [

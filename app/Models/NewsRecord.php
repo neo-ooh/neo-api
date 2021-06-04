@@ -5,6 +5,7 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Storage;
 
 /**
  * Class NewsRecord
@@ -34,11 +35,15 @@ class NewsRecord extends Model {
         "cp_id", "date", "headline", "media", "subject", "locale", "width", "height"
     ];
 
+    protected $appends = [
+        "media_url"
+    ];
+
     public function getMediaUrlAttribute() {
         if($this->media === null) {
             return null;
         }
 
-        return config("services.canadian-press.storage.path") . $this->media;
+        return Storage::disk("public")->url(config("services.canadian-press.storage.path") . $this->media);
     }
 }

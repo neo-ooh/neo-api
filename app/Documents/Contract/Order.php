@@ -158,7 +158,7 @@ class Order {
 
             // Only calculate the cpm if
             if(($this->guaranteed_impressions_count + $this->bua_impressions_count) > 0) {
-                $this->cpm = $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
+                $this->cpm = 1000 * $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
             }
         }
 

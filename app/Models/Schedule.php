@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
 use Neo\Services\Broadcast\Broadcast;
 
 /**
@@ -160,7 +159,7 @@ class Schedule extends Model {
 
             // Adjust order of remaining schedules in the campaign
             foreach ($schedule->campaign->schedules as $s) {
-                if($s->id === $schedule->id) {
+                if ($s->id === $schedule->id) {
                     continue;
                 }
 

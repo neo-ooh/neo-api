@@ -437,7 +437,7 @@ Route::prefix("v1")->group(function () {
              ->name("dynamics.weather.backgrounds.destroy");
 
         Route::get("weather/locations", WeatherLocationsController::class . "@index")
-             ->name("dynamics.weather.backgrounds.index");
+             ->name("dynamics.weather.locations.index");
     });
 
 

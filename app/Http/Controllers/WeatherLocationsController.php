@@ -12,7 +12,7 @@ class WeatherLocationsController extends Controller {
         return new Response(WeatherLocation::query()->orderBy("country")->orderBy("province")->orderBy("city")->get());
     }
 
-    public function show(ShowWeatherLocationRequest $request, int $country, int $province, $city) {
+    public function show(ShowWeatherLocationRequest $request, string $country, string $province, string $city) {
         return new Response(WeatherLocation::fromComponents($country, $province, $country));
     }
 }

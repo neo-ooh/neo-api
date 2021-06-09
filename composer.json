@@ -29,7 +29,8 @@
     "predis/predis": "^1.1",
     "ramsey/uuid": "^4.1",
     "spatie/image": "^1.10",
-    "vyuldashev/laravel-openapi": "0.24.1"
+    "vyuldashev/laravel-openapi": "0.24.1",
+    "": ""
   },
   "require-dev": {
     "facade/ignition": "^2.5",

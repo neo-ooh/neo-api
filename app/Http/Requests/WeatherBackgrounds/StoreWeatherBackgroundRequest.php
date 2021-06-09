@@ -27,7 +27,7 @@ class StoreWeatherBackgroundRequest extends FormRequest
     {
         return [
             "country" => ["required", "string", "size:2"],
-            "province" => ["required", "string", "size:2"],
+            "province" => ["required", "string", "max:2"],
             "city" => ["required", "string"],
             "period" => ["required", "string"],
             "weather" => ["required_unless:period,RANDOM", "string"],

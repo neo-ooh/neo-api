@@ -53,7 +53,7 @@ class WeatherBackgroundsController extends Controller {
     }
 
     public function store(StoreWeatherBackgroundRequest $request) {
-        $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"));
+        $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"), true);
 
         if ($request->input("period") !== "RANDOM") {
             // Is there already a background for the specified properties ?
@@ -94,11 +94,11 @@ class WeatherBackgroundsController extends Controller {
         $locations = [$location];
 
         if($location->city !== WeatherLocation::NULL_COMPONENT) {
-            $locations[] = WeatherLocation::fromComponents($location->country, $location->province, WeatherLocation::NULL_COMPONENT);
+            $locations[] = WeatherLocation::fromComponents($location->country, $location->province, WeatherLocation::NULL_COMPONENT, true);
         }
 
         if($location->province !== WeatherLocation::NULL_COMPONENT) {
-            $locations[] = WeatherLocation::fromComponents($location->country, WeatherLocation::NULL_COMPONENT, WeatherLocation::NULL_COMPONENT);
+            $locations[] = WeatherLocation::fromComponents($location->country, WeatherLocation::NULL_COMPONENT, WeatherLocation::NULL_COMPONENT, true);
         }
 
         return $locations;

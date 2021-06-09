@@ -36,14 +36,13 @@
                 <th>{!! __("contract.table-net-investment") !!}</th>
             @endif
         </tr>
+        </thead>
+        <tbody>
         <tr class="strategy-type-row">
-            <td colspan="{{ 5 }}">
+            <td colspan="{{ $order->show_investment ? 6 : 5 }}">
                 {{ __("common.network-mobile") }}
             </td>
         </tr>
-        </thead>
-        <tbody>
-        <!--
             @foreach($lines as $line)
             <tr class="strategy-row">
                 <td>{{$line->market_name}}</td>
@@ -56,7 +55,6 @@
                 @endif
             </tr>
         @endforeach
-                -->
         </tbody>
     </table>
 </section>

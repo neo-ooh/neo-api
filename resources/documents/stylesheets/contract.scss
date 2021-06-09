@@ -398,7 +398,7 @@
 }
 
 .audience-extension-table {
-  border-collapse: collapse;
+  border-spacing: 0;
   width         : 100%;
   margin-bottom : 5mm;
 
@@ -412,7 +412,11 @@
     font-size        : .85em;
 
     background-color : $dark-blue;
-    //border-left      : 1px solid #FFFFFF;
+    border-left      : 1px solid #FFFFFF;
+
+    &:nth-child(1) {
+      border-left: none;
+    }
   }
 
   tbody tr {
@@ -424,8 +428,12 @@
       font-size   : .79em;
 
       border-bottom: 1px solid $dark-blue;
-      //border-left : 1px solid #FFFFFF;
-      //border-top  : 1px solid #FFFFFF;
+      border-left : 1px solid #FFFFFF;
+      border-top  : 1px solid #FFFFFF;
+
+      &:nth-child(1) {
+        border-left: none;
+      }
     }
 
     &.strategy-type-row td {
@@ -436,6 +444,7 @@
       font-size   : .889em;
       color            : #FFFFFF;
       background-color : $dark-blue;
+      border-top  : 1px solid #FFFFFF;
     }
   }
 }

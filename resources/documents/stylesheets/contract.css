@@ -493,7 +493,7 @@ footer .footer-table {
 }
 
 .audience-extension-table {
-  border-collapse: collapse;
+  border-spacing: 0;
   width: 100%;
   margin-bottom: 5mm;
 }
@@ -505,6 +505,10 @@ footer .footer-table {
   text-align: center;
   font-size: 0.85em;
   background-color: #252734;
+  border-left: 1px solid #FFFFFF;
+}
+.audience-extension-table thead tr th:nth-child(1) {
+  border-left: none;
 }
 .audience-extension-table tbody tr td {
   padding: 2mm 0;
@@ -512,6 +516,11 @@ footer .footer-table {
   text-align: center;
   font-size: 0.79em;
   border-bottom: 1px solid #252734;
+  border-left: 1px solid #FFFFFF;
+  border-top: 1px solid #FFFFFF;
+}
+.audience-extension-table tbody tr td:nth-child(1) {
+  border-left: none;
 }
 .audience-extension-table tbody tr.strategy-type-row td {
   padding: 0.5mm 0;
@@ -520,6 +529,7 @@ footer .footer-table {
   font-size: 0.889em;
   color: #FFFFFF;
   background-color: #252734;
+  border-top: 1px solid #FFFFFF;
 }
 
 .detailed-purchases-title {

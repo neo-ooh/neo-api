@@ -85,6 +85,7 @@ class OrderLine {
                             "order_line/cpm",
                             "order_line/market_id",
                             "order_line/market_id/name",
+                            "order_line/market_name",
                             "order_line/market_id/sequence",
                             "order_line/nb_weeks",
                             "order_line/nb_screen",
@@ -165,6 +166,7 @@ class OrderLine {
         if ($this->isExtensionStrategy()) {
             $this->audience_segment  = $record["order_line/segment"];
             $this->impression_format = $record["order_line/impression_format"];
+            $this->market_name       = $record["order_line/market_name"];
             $this->cpm               = (float)$record["order_line/cpm"];
         }
     }

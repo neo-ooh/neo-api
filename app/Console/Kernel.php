@@ -13,6 +13,7 @@ namespace Neo\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Jobs\NotifyEndOfSchedules;
+use Neo\Jobs\RefreshAllContracts;
 use Neo\Jobs\RefreshContractsReservations;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\SynchronizeNetworks;
@@ -28,8 +29,14 @@ class Kernel extends ConsoleKernel {
         // network:sync
         SynchronizeNetworks::class,
 
+        // network:rebuild
         RebuildResources::class,
+
+        // network:cache-inventory
         CacheInventory::class,
+
+        // network:update-contracts
+        RefreshAllContracts::class,
 
         Hotfixes\DisableFullscreenEverywhere::class,
         Hotfixes\RetargetAllCampaigns::class,
@@ -73,6 +80,9 @@ class Kernel extends ConsoleKernel {
         // Cache Broadsign inventory for fast access in Connect
         $schedule->command('network:cache-inventory')->everyThreeHours();
 
+        // Refresh Contracts reservations
+        $schedule->command('network:update-contracts')->everyThreeHours();
+
 
 
         /* -----------------
@@ -81,9 +91,6 @@ class Kernel extends ConsoleKernel {
 
         // Update network from broadsign
         $schedule->command('network:sync')->daily();
-
-        // Refresh Contracts reservations
-        $schedule->job(RefreshContractsReservations::class)->everyMinute();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()

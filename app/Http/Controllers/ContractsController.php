@@ -5,9 +5,10 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
+use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
-use Neo\Jobs\RefreshContractsReservations;
+use Neo\Jobs\RefreshContractReservations;
 use Neo\Models\Client;
 use Neo\Models\Contract;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
@@ -43,7 +44,7 @@ class ContractsController extends Controller {
         ]);
         $contract->save();
 
-        RefreshContractsReservations::dispatch();
+        RefreshContractReservations::dispatch($contract->id);
 
         return new Response($contract, 201);
     }
@@ -73,6 +74,9 @@ class ContractsController extends Controller {
         return new Response($contract);
     }
 
-    public function update() {
+    public function refresh(RefreshContractRequest $request, Contract $contract) {
+        RefreshContractReservations::dispatchSync($contract->id);
+
+        return new Response(["status" => "ok"]);
     }
 }

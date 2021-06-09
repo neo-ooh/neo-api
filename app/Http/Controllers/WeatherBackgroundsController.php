@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 
 class WeatherBackgroundsController extends Controller {
     public function index(ListWeatherBackgroundsRequest $request) {
-        $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"));
+        $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"), true);
 
         // If the selection is set to Random, check its end_date for expiration.
         if ($location->background_selection === 'RANDOM' && $location->selection_revert_date->isPast()) {

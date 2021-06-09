@@ -13,6 +13,6 @@ class WeatherLocationsController extends Controller {
     }
 
     public function show(ShowWeatherLocationRequest $request, string $country, string $province, string $city) {
-        return new Response(WeatherLocation::fromComponents($country, $province, $city));
+        return new Response(WeatherLocation::fromComponents($country, $province, $city, true));
     }
 }

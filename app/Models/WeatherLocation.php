@@ -75,25 +75,32 @@ class WeatherLocation extends Model {
         return $this->hasMany(WeatherBackground::class, 'weather_location_id');
     }
 
-    public static function fromComponents(string $country, string $province, string $city): WeatherLocation {
+    /**
+     * @param string  $country
+     * @param string  $province
+     * @param string  $city
+     * @param boolean $allowIncomplete If set to true, no Exception will be raised if the location is not complete.
+     * @return WeatherLocation
+     * @throws InvalidLocationException
+     */
+    public static function fromComponents(string $country, string $province, string $city, $allowIncomplete = false): WeatherLocation {
 
-        [$country, $province, $city] = static::sanitizeValues($country, $province, $city
-        );
+        [$country, $province, $city] = static::sanitizeValues($country, $province, $city, $allowIncomplete);
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return static::query()
                      ->firstOrCreate([
-                         "country" => $country,
+                         "country"  => $country,
                          "province" => $province,
-                         "city" => $city,
+                         "city"     => $city,
                      ], [
-                         'background_selection' => "WEATHER",
+                         'background_selection'  => "WEATHER",
                          'selection_revert_date' => null,
                      ]);
     }
 
     /**
-     * @returns [?string $country, ?string $province, ?string $city]
+     * @returns [string $country, string $province, string $city]
      * @throws InvalidLocationException
      */
     public static function sanitizeValues(string $country, string $province, string $city, $allowIncomplete = false): array {

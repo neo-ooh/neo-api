@@ -65,7 +65,6 @@ class NewsBackgroundsController extends Controller {
     }
 
     public function destroy(DestroyBackgroundRequest $request, NewsBackground $newsBackground) {
-        Storage::delete($newsBackground->path);
         $newsBackground->delete();
 
         return new Response([]);

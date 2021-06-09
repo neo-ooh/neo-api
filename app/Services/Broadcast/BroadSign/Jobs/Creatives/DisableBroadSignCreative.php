@@ -11,9 +11,10 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Creatives;
 
 use Exception;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -57,7 +58,17 @@ class DisableBroadSignCreative extends BroadSignJob implements ShouldBeUnique {
      * @throws Exception
      */
     public function handle(): void {
-        $bsCreative = BSCreative::get($this->getAPIClient(), $this->adCopyID);
+        try {
+            $bsCreative = BSCreative::get($this->getAPIClient(), $this->adCopyID);
+        } catch (ClientException $e) {
+            if($e->getResponse()->getStatusCode() === 404) {
+                // The creative does not exist in BroadSign, this job is therefore useless
+                return;
+            }
+
+            // Another error occurred, pass the exception untouched
+            throw $e;
+        }
 
         if ($bsCreative === null) {
             // We do not throw any error on ad-copy not found as we were already trying to deactivate it.

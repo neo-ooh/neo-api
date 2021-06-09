@@ -81,7 +81,7 @@
                 <h1>{!! __("email-end-of-schedule-title") !!}</h1>
                 <p>
                     {!! __("email-end-of-schedule-body", [
-    "name" => $dest->name,
+    "name" => $actor->name,
     "campaign" => $schedule->campaign->name,
     "date" => $schedule->end_date->toDayDateTimeString(),
 ]) !!}

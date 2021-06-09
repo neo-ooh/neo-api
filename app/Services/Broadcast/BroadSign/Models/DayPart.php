@@ -10,6 +10,7 @@
 
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 
@@ -34,7 +35,7 @@ use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
  * @property string virtual_start_date
  * @property int weight
  *
- * @method static DayPart get(int $dayPartId)
+ * @method static DayPart get(BroadsignClient $client, int $dayPartId)
  */
 class DayPart extends BroadSignModel {
 

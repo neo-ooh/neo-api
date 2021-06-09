@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Collection;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint;
@@ -98,7 +99,7 @@ class Bundle extends BroadSignModel {
      * @param int $creativeID
      *
      * @return void
-     * @throws BadResponse
+     * @throws ClientException
      */
     public function associateCreative(int $creativeID): void {
         $this->callAction("associate",

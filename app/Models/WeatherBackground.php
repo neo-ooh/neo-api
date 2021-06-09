@@ -6,46 +6,33 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
-use Neo\Services\Broadcast\Broadcast;
 
 /**
- * Class NewsBackground
+ * Class WeatherBackground
  *
  * @package Neo\Models
  *
  * @property int $id
- * @property int $category
- * @property string $network
- * @property int $format_id
- * @property string $locale
+ * @property string $weather
+ * @property string $period
+ * @property string $weather_location_id
+ * @property string $format_id
  * @property string $path
  * @property Date $created_at
  * @property Date $updated_at
  */
-class NewsBackground extends Model
+class WeatherBackground extends Model
 {
     use HasFactory;
 
-    protected $table = "news_backgrounds";
+    protected $table = "weather_backgrounds";
 
     protected $appends = ["url"];
-
-    protected $fillable = [
-        "category",
-        "network",
-        "format_id",
-        "locale",
-        "path"
-    ];
-
-    protected $casts = [
-        "category" => "integer"
-    ];
 
     public static function boot(): void {
         parent::boot();
 
-        static::deleting(function (NewsBackground $background) {
+        static::deleting(function (WeatherBackground $background) {
             Storage::delete($background->path);
         });
     }

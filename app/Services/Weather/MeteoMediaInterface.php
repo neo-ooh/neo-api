@@ -5,7 +5,7 @@ namespace Neo\Services\Weather;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
 use JsonException;
-use Neo\Exceptions\InvalidLocationException;
+use Neo\Models\WeatherLocation;
 
 class MeteoMediaInterface implements WeatherService {
     protected string $endpoint;
@@ -18,28 +18,26 @@ class MeteoMediaInterface implements WeatherService {
         $this->endpoint = config("services.meteo-media.endpoint");
     }
 
-
-    public function getCurrentWeather(Location $location, string $locale) {
+    public function getCurrentWeather(WeatherLocation $location, string $locale) {
         return $this->getRecord(self::ENDPOINT_OBS, $location, $locale);
     }
 
-    public function getHourlyWeather(Location $location, string $locale) {
+    public function getHourlyWeather(WeatherLocation $location, string $locale) {
         return $this->getRecord(self::ENDPOINT_HLY, $location, $locale);
     }
 
-    public function getForecastWeather(Location $location, string $locale) {
+    public function getForecastWeather(WeatherLocation $location, string $locale) {
         return $this->getRecord(self::ENDPOINT_LNG, $location, $locale);
     }
 
     /**
-     * @param          $endpoint
-     * @param Location $location
-     * @param string   $locale
+     * @param                 $endpoint
+     * @param WeatherLocation $location
+     * @param string          $locale
      * @return mixed
-     * @throws InvalidLocationException
      * @throws JsonException
      */
-    private function getRecord($endpoint, Location $location, string $locale) {
+    private function getRecord($endpoint, WeatherLocation $location, string $locale) {
         // get the fully-formed endpoint url
         // Since all informations to the API are sent through the URL, we can use it as a key for caching the response
         $url = $this->buildURL($endpoint["url"], $location, $locale);
@@ -60,18 +58,12 @@ class MeteoMediaInterface implements WeatherService {
         return json_decode($record, true, 512, JSON_THROW_ON_ERROR);
     }
 
-    private function buildURL($path, Location $location, string $locale) {
-        [$country, $province, $city] = $location->getSanitizedValues();
-
-        if (!$country || !$province || !$city) {
-            throw new InvalidLocationException($location);
-        }
-
+    private function buildURL($path, WeatherLocation $location, string $locale) {
         $url = $this->endpoint;
         $url .= $path;
-        $url .= "/" . $country;
-        $url .= "/" . $province;
-        $url .= "/" . $city;
+        $url .= "/" . $location->country;
+        $url .= "/" . $location->province;
+        $url .= "/" . $location->city;
         $url .= "?user_key=" . config('services.meteo-media.key');
         $url .= "&locale=" . $locale;
 

@@ -93,6 +93,9 @@ class Contract extends Document {
             if ($offset === 1) {
                 $this->customer = new Customer($record);
                 $this->order    = new Order($record);
+
+                $locale = substr($this->order->locale, 0, 2);
+                App::setLocale($locale);
             }
 
             $orderLine = new OrderLine($record);
@@ -120,10 +123,6 @@ class Contract extends Document {
     }
 
     public function build(): bool {
-        $locale = substr($this->order->locale, 0, 2);
-        App::setLocale($locale);
-        CarbonInterval::setLocale($locale);
-
         // Import the stylesheet
         $this->mpdf->WriteHTML(File::get(resource_path('documents/stylesheets/contract.css')), HTMLParserMode::HEADER_CSS);
 

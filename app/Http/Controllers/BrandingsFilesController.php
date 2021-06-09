@@ -37,7 +37,7 @@ class BrandingsFilesController extends Controller {
     /**
      * Add a new file to the branding.
      *
-     * @note If another file already exist for the specified type, it will be replaced
+     * If another file already exist for the specified type, it will be replaced
      *
      * @param StoreBrandingFileRequest $request
      * @param Branding                 $branding

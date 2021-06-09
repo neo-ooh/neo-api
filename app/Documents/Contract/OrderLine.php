@@ -11,7 +11,9 @@
 namespace Neo\Documents\Contract;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
+use InvalidArgumentException;
 use Neo\Documents\Exceptions\MissingColumnException;
 use Neo\Documents\Network;
 
@@ -68,6 +70,9 @@ class OrderLine {
 
     protected int $type;
 
+    const PERIOD_FORMAT_FR = 'j F';
+    const PERIOD_FORMAT_EN = 'F jS';
+
 
     public function __construct(array $record) {
         $expectedColumns = ["order_line/name",
@@ -113,8 +118,7 @@ class OrderLine {
         $this->date_start        = $record["order_line/rental_start"];
         $this->date_end          = $record["order_line/rental_end"];
         $this->nb_weeks          = (float)($record["order_line/nb_weeks"] ?? 0);
-        $this->rangeLengthString = Carbon::make($this->date_start)
-                                         ->format("d F") . " x " . $this->nb_weeks . " " . trans_choice("common.weeks", $this->nb_weeks);
+        $this->rangeLengthString = $this->getPeriodString();
 
         $this->impressions  = (int)($record["order_line/impression"] ?? 0);
         $this->traffic      = $record["order_line/traffic"];
@@ -211,5 +215,19 @@ class OrderLine {
 
     public function isExtensionStrategy(): int {
         return $this->type === static::TYPE_EXTENSION_STRATEGY;
+    }
+
+    protected function getPeriodString() {
+        $format = App::currentLocale() === "fr" ? static::PERIOD_FORMAT_FR : static::PERIOD_FORMAT_EN;
+
+        $dateObj = Carbon::make($this->date_start);
+
+        if (!$dateObj) {
+            throw new InvalidArgumentException("date_start field is not a valid datetime representation.");
+        }
+
+        $dateObj->locale(App::getLocale());
+
+        return $dateObj->translatedFormat($format) . " x " . $this->nb_weeks . " " . trans_choice("common.weeks", $this->nb_weeks);
     }
 }

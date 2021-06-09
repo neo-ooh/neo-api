@@ -4,6 +4,8 @@ namespace Neo\Models;
 
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Exceptions\InvalidLocationException;
 
 /**
  * Class WeatherLocation
@@ -20,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property Date   $updated_at
  */
 class WeatherLocation extends Model {
+    public const NULL_COMPONENT = "-";
+
     protected $table = "weather_locations";
 
     protected $fillable = [
@@ -28,14 +32,100 @@ class WeatherLocation extends Model {
         'city',
         'background_selection',
         'selection_revert_date',
-        'endpoint'
     ];
 
     protected $dates = [
         "selection_revert_date"
     ];
 
-//	public function backgrounds() {
-//    	return $this->hasMany('App\WeatherBackground', 'location');
-//    }
+    /**
+     * List of canadian provinces 2-letters names
+     */
+    public const PROVINCES = ["NL", "PE", "NS", "NB", "QC", "ON", "MB", "SK", "AB", "BC", "YT", "NT", "NU"];
+
+    /**
+     * Full name of canadian provinces keying their abbreviated names
+     */
+    public const PROVINCES_LNG = [
+        "Terre-Neuve-et-Labrador" => "NL",
+        "Île-du-Prince-Édouard"   => "PE",
+        "Nouvelle-Écosse"         => "NS",
+        "Nouveau-Brunswick"       => "NB",
+        "Québec"                  => "QC",
+        "Ontario"                 => "ON",
+        "Manitoba"                => "MB",
+        "Saskatchewan"            => "SK",
+        "Alberta"                 => "AB",
+        "British Columbia"        => "BC",
+        "Yukon"                   => "YT",
+        "Northwest Territories"   => "NT",
+        "Nunavut"                 => "NU"
+    ];
+
+    /**
+     * List of mapping between cities.
+     * This used for specific cases where an actual town is actually referrenced under another name in meteo-media
+     */
+    public const CITIES = [
+        "Ville de Québec"   => "Québec",
+        "Boulevard Laurier" => "Québec",
+    ];
+
+    public function backgrounds(): HasMany {
+        return $this->hasMany(WeatherBackground::class, 'weather_location_id');
+    }
+
+    public static function fromComponents(string $country, string $province, string $city): WeatherLocation {
+
+        [$country, $province, $city] = static::sanitizeValues($country, $province, $country
+        );
+
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
+        return static::query()
+                     ->firstOrCreate([
+                         "country" => $country,
+                         "province" => $province,
+                         "city" => $city,
+                     ], [
+                         'background_selection' => "WEATHER",
+                         'selection_revert_date' => null,
+                     ]);
+    }
+
+    /**
+     * @returns [?string $country, ?string $province, ?string $city]
+     * @throws InvalidLocationException
+     */
+    public static function sanitizeValues(string $country, string $province, string $city): array {
+        $country  = strtoupper($country);
+        $province = strtoupper($province);
+
+        // Check if the location is valid
+        if ($country !== "CA") {
+            // Only Canada is supported as of writing (04/21)
+            throw new InvalidLocationException($country, $province, $city);
+        }
+
+        if (array_key_exists($province, self::PROVINCES_LNG)) {
+            $province = self::PROVINCES_LNG[$province];
+        } else if (!in_array($province, self::PROVINCES, true)) {
+            throw new InvalidLocationException($country, $province, $city);
+        }
+
+        // Make sure the city format is valid
+        $city = str_replace(".", "", urldecode($city));
+        if (array_key_exists($city, self::CITIES)) {
+            $city = self::CITIES[$city];
+        }
+
+        if ($city === "Repentigny") {
+            $province = 'QC';
+        }
+
+        if (!$province || !$city) {
+            throw new InvalidLocationException($country, $province, $city);
+        }
+
+        return [$country, $province, $city];
+    }
 }

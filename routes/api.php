@@ -52,6 +52,8 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\StatsController;
+use Neo\Http\Controllers\WeatherBackgroundsController;
+use Neo\Http\Controllers\WeatherLocationsController;
 use Neo\Models\AccessToken;
 use Neo\Models\Actor;
 use Neo\Models\BroadcasterConnection;
@@ -78,6 +80,7 @@ use Neo\Models\Param;
 use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
+use Neo\Models\WeatherBackground;
 
 /*
 |--------------------------------------------------------------------------
@@ -416,12 +419,25 @@ Route::prefix("v1")->group(function () {
     */
 
     Route::prefix("dynamics")->group(function () {
+        // News -------------------------
         Route::model("newsBackground", NewsBackground::class);
 
         Route::get("news/backgrounds", NewsBackgroundsController::class . "@index")->name("dynamics.news.backgrounds.index");
         Route::post("news/backgrounds", NewsBackgroundsController::class . "@store")->name("dynamics.news.backgrounds.store");
-        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@destroy")
-             ->name("dynamics.news.backgrounds.destroy");
+        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@destroy")->name("dynamics.news.backgrounds.destroy");
+
+        // Weather ----------------------
+        Route::model("weatherBackground", WeatherBackground::class);
+
+        Route::get("weather/backgrounds", WeatherBackgroundsController::class . "@index")
+             ->name("dynamics.weather.backgrounds.index");
+        Route::post("weather/backgrounds", WeatherBackgroundsController::class . "@store")
+             ->name("dynamics.weather.backgrounds.store");
+        Route::delete("weather/backgrounds/{weatherBackground}", WeatherBackgroundsController::class . "@destroy")
+             ->name("dynamics.weather.backgrounds.destroy");
+
+        Route::get("weather/locations", WeatherLocationsController::class . "@index")
+             ->name("dynamics.weather.backgrounds.index");
     });
 
 
@@ -499,7 +515,7 @@ Route::prefix("v1")->group(function () {
     Route::   get("headlines/{headline}", HeadlinesController::class . "@show")->name("headlines.show");
     Route::  post("headlines", HeadlinesController::class . "@store")->name("headlines.store");
     Route::   put("headlines/{headline}", HeadlinesController::class . "@update")->name("headlines.update");
-    Route::delete("headlines/{headline}", HeadlinesController::class . "@delete")->name("headlines.destroy");
+    Route::delete("headlines/{headline}", HeadlinesController::class . "@destroy")->name("headlines.destroy");
     Route::put("headlines/{headline}/messages/{headlineMessage}", HeadlinesController::class . "@updateMessage")
          ->name("headlines.messages.update");
 

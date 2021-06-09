@@ -12,6 +12,7 @@ namespace Neo\Services\API;
 
 use BadMethodCallException;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\JsonEncodingException;
 use JsonException;
@@ -98,7 +99,7 @@ abstract class APIModel implements JsonSerializable, Arrayable {
      * @param array  $payload
      * @param array  $headers
      * @return array|mixed
-     * @throws BadResponse
+     * @throws ClientException
      */
     public function callAction(string $action, $payload = [], $headers = []) {
         if (!array_key_exists($action, static::actions())) {

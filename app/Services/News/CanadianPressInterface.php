@@ -90,7 +90,7 @@ class CanadianPressInterface implements NewsService {
 
                 foreach ($cpRecords as $record) {
                     try {
-                        $xmlRecord = simplexml_load_string($cpStorage->get($record));
+                        $xmlRecord = @simplexml_load_string($cpStorage->get($record));
                     } catch (Exception $e) {
                         // If we cannot parse a record, just ignore it
                         continue;

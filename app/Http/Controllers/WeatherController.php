@@ -9,11 +9,11 @@ use Neo\Http\Requests\Weather\CurrentWeatherRequest;
 use Neo\Http\Requests\Weather\HourlyWeatherRequest;
 use Neo\Http\Requests\Weather\NationalWeatherRequest;
 use Neo\Http\Requests\Weather\NextDayWeatherRequest;
-use Neo\Services\Weather\Location;
+use Neo\Models\WeatherLocation;
 use Neo\Services\Weather\WeatherService;
 
 class WeatherController extends Controller {
-    public $nationalLocations = [
+    public array $nationalLocations = [
         ["CA", "ON", "Toronto"],
         ["CA", "ON", "Ottawa"],
         ["CA", "QC", "Montreal"],
@@ -39,7 +39,7 @@ class WeatherController extends Controller {
 
         try {
             foreach ($this->nationalLocations as $location) {
-                $forecasts[] = $weather->getCurrentWeather(new Location(...$location), $locale);
+                $forecasts[] = $weather->getCurrentWeather(WeatherLocation::fromComponents(...$location), $locale);
             }
         } catch (InvalidLocationException $e) {
             return new Response(null);
@@ -54,17 +54,14 @@ class WeatherController extends Controller {
      * @param CurrentWeatherRequest $request
      * @param WeatherService        $weather
      * @return Response
+     * @throws InvalidLocationException
      */
     public function current(CurrentWeatherRequest $request, WeatherService $weather): Response {
-        $location = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"));
         $locale   = $request->input('locale');
 
-        try {
-            $now      = $weather->getCurrentWeather($location, $locale);
-            $longTerm = $weather->getForecastWeather($location, $locale);
-        } catch (InvalidLocationException $e) {
-            return new Response(null);
-        }
+        $now      = $weather->getCurrentWeather($location, $locale);
+        $longTerm = $weather->getForecastWeather($location, $locale);
 
         $forecast = array_merge($longTerm["LongTermPeriod"][0], $now);
 
@@ -79,14 +76,10 @@ class WeatherController extends Controller {
      * @return Response
      */
     public function nextDay(NextDayWeatherRequest $request, WeatherService $weather): Response {
-        $location = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"));
         $locale   = $request->input('locale');
 
-        try {
-            $longTerm = $weather->getForecastWeather($location, $locale);
-        } catch (InvalidLocationException $e) {
-            return new Response(null);
-        }
+        $longTerm = $weather->getForecastWeather($location, $locale);
 
         $forecast             = $longTerm["LongTermPeriod"][1];
         $forecast["Location"] = $longTerm["Location"];
@@ -102,15 +95,10 @@ class WeatherController extends Controller {
      * @return Response
      */
     public function forecast(ForecastWeatherRequest $request, WeatherService $weather): Response {
-        $location = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"));
         $locale   = $request->input('locale');
 
-        try {
-            $forecast = $weather->getForecastWeather($location, $locale);
-        } catch (InvalidLocationException $e) {
-            return new Response(null);
-        }
-
+        $forecast = $weather->getForecastWeather($location, $locale);
         array_splice($forecast["LongTermPeriod"], 0, 1);
 
         return new Response($forecast);
@@ -124,15 +112,10 @@ class WeatherController extends Controller {
      * @return Response
      */
     public function hourly(HourlyWeatherRequest $request, WeatherService $weather): Response {
-        $location = new Location($request->input("country"), $request->input("province"), $request->input("city"));
+        $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"));
         $locale   = $request->input('locale');
 
-        try {
-            $hourly = $weather->getHourlyWeather($location, $locale);
-        } catch (InvalidLocationException $e) {
-            return new Response(null);
-        }
-
+        $hourly = $weather->getHourlyWeather($location, $locale);
         return new Response($hourly);
     }
 }

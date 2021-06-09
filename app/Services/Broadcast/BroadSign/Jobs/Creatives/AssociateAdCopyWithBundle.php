@@ -10,14 +10,12 @@
 
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Creatives;
 
-use Facade\FlareClient\Http\Exceptions\BadResponse;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Creative;
-use Neo\Models\CreativeExternalId;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Bundle;
@@ -88,8 +86,13 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
         // Broadsign Do not allow an ad-copy to be associated with a bundle until it has finished uploading, which is done async.
         try {
             $bundle->associateCreative((int)$externalId);
-        } catch (BadResponse $exception) {
-            $this->release(120);
+        } catch (ClientException $e) {
+            if ($e->getCode() === '400') {
+                // The creative has not finished uploading, let's try again later.
+                $this->release(120);
+            }
+
+            throw $e;
         }
     }
 }

@@ -12,7 +12,7 @@
     "ext-pdo": "*",
     "ext-simplexml": "*",
     "bensampo/laravel-enum": "^3.1",
-    "doctrine/dbal": "^3.0",
+    "doctrine/dbal": "^2.9",
     "fideloper/proxy": "^4.4",
     "firebase/php-jwt": "^5.2",
     "fruitcake/laravel-cors": "^2.0",
@@ -28,7 +28,8 @@
     "php-ffmpeg/php-ffmpeg": "^0.18.0",
     "predis/predis": "^1.1",
     "ramsey/uuid": "^4.1",
-    "spatie/image": "^1.10"
+    "spatie/image": "^1.10",
+    "vyuldashev/laravel-openapi": "0.24.1"
   },
   "require-dev": {
     "facade/ignition": "^2.5",

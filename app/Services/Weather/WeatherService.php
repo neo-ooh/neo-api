@@ -4,17 +4,17 @@
 namespace Neo\Services\Weather;
 
 use Neo\Exceptions\InvalidLocationException;
+use Neo\Models\WeatherLocation;
 
 interface WeatherService {
     /**
-     * @param Location $location
      * @param string   $locale
      * @throws InvalidLocationException
      * @return mixed
      */
-    public function getCurrentWeather(Location $location, string $locale);
+    public function getCurrentWeather(WeatherLocation $location, string $locale);
 
-    public function getHourlyWeather(Location $location, string $locale);
+    public function getHourlyWeather(WeatherLocation $location, string $locale);
 
-    public function getForecastWeather(Location $location, string $locale);
+    public function getForecastWeather(WeatherLocation $location, string $locale);
 }

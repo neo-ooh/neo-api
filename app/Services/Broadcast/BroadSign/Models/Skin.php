@@ -65,6 +65,6 @@ class Skin extends BroadSignModel {
     }
 
     public function dayPart(): DayPart {
-        return DayPart::get($this->parent_id);
+        return DayPart::get($this->api, $this->parent_id);
     }
 }

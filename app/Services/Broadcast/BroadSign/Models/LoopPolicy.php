@@ -52,7 +52,7 @@ class LoopPolicy extends BroadSignModel {
             "get" => Endpoint::get("/loop_policy/v10/{id}")
                              ->unwrap(static::$unwrapKey)
                              ->parser(new SingleResourcesParser(static::class))
-                             ->cache(360),
+                             ->cache(21600),
         ];
     }
 }

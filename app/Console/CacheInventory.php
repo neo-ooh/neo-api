@@ -47,7 +47,7 @@ class CacheInventory extends Command {
     protected $description = 'Cache availabilities for the entire network. Caches most of the intermediary queries for 1h. Running it more than once per hour is therefore useless.';
 
     public function handle(): void {
-        collect([2020, 2021])->each(fn($year) => $this->cacheInventory($year));
+        collect([2021])->each(fn($year) => $this->cacheInventory($year));
 
         $this->info("Cleaning up...");
         Inventory::query()->whereDate("updated_at", "<", Date::now()->subMinutes(30)->toDateString())->delete();
@@ -91,14 +91,13 @@ class CacheInventory extends Command {
 
             $maxBooking = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
 
-            // Get its day part as we need the dates of the skin as well as a better name
-            $dayPart = $skin->dayPart();
-
             if ($maxBooking === 0) {
                 // Ignore inventories with no booking space.
                 continue;
             }
 
+            // Get its day part as we need the dates of the skin as well as a better name
+            $dayPart = $skin->dayPart();
             $location = Location::query()->where("external_id", "=", $dayPart->parent_id)->first();
 
             if(!$location) {

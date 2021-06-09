@@ -58,7 +58,7 @@ class RefreshContractsReservations implements ShouldQueue {
             $reservations = Campaign::search($broadsignClient, ["name" => strtoupper($contract->contract_id)]);
 
             if (count($reservations) === 0) {
-                // No campaigns where found, let's try again, replacing hyphens with hyphen-minus...
+                // No campaigns where found, let's try again, replacing hyphen-minus with hyphen...
                 $utfContract = str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id);
 
                 $reservations = Campaign::search($broadsignClient, ["name" => strtoupper($utfContract)]);
@@ -75,7 +75,7 @@ class RefreshContractsReservations implements ShouldQueue {
             /** @var Campaign $reservation */
             foreach ($reservations as $reservation) {
                 /** @var ContractReservation $rr */
-                $rr = ContractReservation::query()->firstOrCreate([
+                $rr = ContractReservation::query()->updateOrCreate([
                     "external_id" => $reservation->id
                 ], [
                     "contract_id" => $contract->id,
@@ -83,7 +83,6 @@ class RefreshContractsReservations implements ShouldQueue {
                 ]);
 
                 // Make sure information about the campaign are up to date
-                $rr->contract_id   = $contract->id;
                 $rr->original_name = $reservation->name;
                 $rr->start_date    = Carbon::parse($reservation->start_date . " " . $reservation->start_time);
                 $rr->end_date      = Carbon::parse($reservation->end_date . " " . $reservation->end_time);

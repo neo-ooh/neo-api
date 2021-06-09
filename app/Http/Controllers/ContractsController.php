@@ -15,8 +15,11 @@ use Neo\Services\Broadcast\BroadSign\Models\Customer;
 
 class ContractsController extends Controller {
     public function store(StoreContractRequest $request) {
-        $contractId = $request->input("contract_id");
         $clientId   = $request->input("client_id");
+
+        // The contract ID is a sensitive value, as it is the one that will be used to match additional campaigns with the contract.
+        // Now, for some f***ing reason, hyphens are not made equal, and contract name are not standardized. So we want to make sure all stored contract name uses hyphen-minus, which is the default hyphen on a keyboard (looking at you Word).
+        $contractId = strtoupper(str_replace(mb_chr(8208, 'UTF-8'), '-', $request->input("contract_id")));
 
         if (!Client::query()->where("id", "=", $clientId)->exists()) {
             $customer = Customer::get(new BroadsignClient(Contract::getConnectionConfig()), $clientId);
@@ -31,8 +34,9 @@ class ContractsController extends Controller {
             }
         }
 
+
         $contract = new Contract([
-            "contract_id" => strtoupper($contractId),
+            "contract_id" => $contractId,
             "client_id"   => $clientId,
             "owner_id"    => Auth::id(),
             "data"        => []

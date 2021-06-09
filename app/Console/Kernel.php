@@ -83,7 +83,7 @@ class Kernel extends ConsoleKernel {
         $schedule->command('network:sync')->daily();
 
         // Refresh Contracts reservations
-        $schedule->job(RefreshContractsReservations::class)->daily();
+        $schedule->job(RefreshContractsReservations::class)->everyMinute();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()

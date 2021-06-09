@@ -28,7 +28,7 @@ class ListWeatherBackgroundsRequest extends FormRequest
         return [
             "period" => ["required", "string"],
             "country" => ["required", "string", "size:2"],
-            "province" => ["required", "string", "size:2"],
+            "province" => ["required", "string", "max:2"],
             "city" => ["required", "string"],
             "format_id" => ["required", "exists:formats,id"]
         ];

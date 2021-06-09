@@ -77,7 +77,7 @@ class WeatherLocation extends Model {
 
     public static function fromComponents(string $country, string $province, string $city): WeatherLocation {
 
-        [$country, $province, $city] = static::sanitizeValues($country, $province, $country
+        [$country, $province, $city] = static::sanitizeValues($country, $province, $city
         );
 
         /** @noinspection PhpIncompatibleReturnTypeInspection */

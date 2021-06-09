@@ -96,7 +96,7 @@ class WeatherLocation extends Model {
      * @returns [?string $country, ?string $province, ?string $city]
      * @throws InvalidLocationException
      */
-    public static function sanitizeValues(string $country, string $province, string $city): array {
+    public static function sanitizeValues(string $country, string $province, string $city, $allowIncomplete = false): array {
         $country  = strtoupper($country);
         $province = strtoupper($province);
 
@@ -108,7 +108,7 @@ class WeatherLocation extends Model {
 
         if (array_key_exists($province, self::PROVINCES_LNG)) {
             $province = self::PROVINCES_LNG[$province];
-        } else if (!in_array($province, self::PROVINCES, true)) {
+        } else if (!$allowIncomplete && !in_array($province, self::PROVINCES, true)) {
             throw new InvalidLocationException($country, $province, $city);
         }
 
@@ -122,7 +122,7 @@ class WeatherLocation extends Model {
             $province = 'QC';
         }
 
-        if (!$province || !$city) {
+        if (!$allowIncomplete && (!$province || !$city)) {
             throw new InvalidLocationException($country, $province, $city);
         }
 

@@ -99,12 +99,19 @@ class CacheInventory extends Command {
                 continue;
             }
 
+            $location = Location::query()->where("external_id", "=", $dayPart->parent_id)->first();
+
+            if(!$location) {
+                // This day part is not associated to one of our locations, ignore it.
+                continue;
+            }
+
             // Cache
             Inventory::query()->updateOrCreate([
                 "skin_id" => $inventory->skin_id,
                 "year"    => $year,
             ], [
-                "location_id" => Location::query()->where("external_id", "=", $dayPart->parent_id)->first()->id,
+                "location_id" => $location->id,
                 "name"        => $dayPart->name,
                 "start_date"  => $dayPart->virtual_start_date,
                 "end_date"    => $dayPart->virtual_end_date,

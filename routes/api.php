@@ -81,6 +81,7 @@ use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
 use Neo\Models\WeatherBackground;
+use Neo\Models\WeatherLocation;
 
 /*
 |--------------------------------------------------------------------------
@@ -436,10 +437,13 @@ Route::prefix("v1")->group(function () {
         Route::delete("weather/backgrounds/{weatherBackground}", WeatherBackgroundsController::class . "@destroy")
              ->name("dynamics.weather.backgrounds.destroy");
 
+        Route::model("weatherLocation", WeatherLocation::class);
+
         Route::get("weather/locations", WeatherLocationsController::class . "@index")
              ->name("dynamics.weather.locations.index");
-        Route::get("weather/locations/{country}/{province}/{city}", WeatherLocationsController::class . "@show")
-             ->name("dynamics.weather.locations.show");
+        Route::get("weather/locations/{country}/{province}/{city}", WeatherLocationsController::class . "@show");
+        Route::get("weather/locations/{weatherLocation}", WeatherLocationsController::class . "@update")
+             ->name("dynamics.weather.locations.update");
     });
 
 

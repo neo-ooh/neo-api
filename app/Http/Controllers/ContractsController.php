@@ -22,7 +22,7 @@ class ContractsController extends Controller {
         // Now, for some f***ing reason, hyphens are not made equal, and contract name are not standardized. So we want to make sure all stored contract name uses hyphen-minus, which is the default hyphen on a keyboard (looking at you Word).
         $contractId = strtoupper(str_replace(mb_chr(8208, 'UTF-8'), '-', $request->input("contract_id")));
 
-        if (!Client::query()->where("id", "=", $clientId)->exists()) {
+        if (!Client::query()->where("broadsign_customer_id", "=", $clientId)->exists()) {
             $customer = Customer::get(new BroadsignClient(Contract::getConnectionConfig()), $clientId);
 
             if ($customer !== null) {

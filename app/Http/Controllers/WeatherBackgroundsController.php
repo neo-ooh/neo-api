@@ -29,7 +29,8 @@ class WeatherBackgroundsController extends Controller {
         if ($location->background_selection === 'RANDOM') {
             $backgrounds = $location->backgrounds()
                                     ->where("format_id", "=", $request->input("format_id"))
-                                    ->where("period", "=", 'RANDOM');
+                                    ->where("period", "=", 'RANDOM')
+                                    ->get();
 
             return new Response($backgrounds);
         }
@@ -44,6 +45,7 @@ class WeatherBackgroundsController extends Controller {
                 ->where("format_id", "=", $request->input("format_id"))
                 ->where("period", "=", $request->input("period"))
                 ->whereNotIn("weather", $backgrounds->pluck("weather"))
+                ->get()
             );
         }
 

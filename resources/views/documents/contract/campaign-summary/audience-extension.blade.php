@@ -13,7 +13,7 @@
                         <br />
                     @endif
                     {{ $rangeString }}
-                    @if($loop->index % 2 !== 0)
+                    @if($loop->index % 2 !== 0 && $loop->remaining > 0)
             </td>
             <td class="periods-col">
                 @endif
@@ -39,11 +39,12 @@
         </thead>
         <tbody>
         <tr class="strategy-type-row">
-            <td colspan="@if($order->show_investment) 6 @else 5 @endif">
+            <td colspan="{{ $order->show_investment ? 6 : 5 }}">
                 {{ __("common.network-mobile") }}
             </td>
         </tr>
-        @foreach($lines as $line)
+        <!--
+            @foreach($lines as $line)
             <tr class="strategy-row">
                 <td>{{$line->market_name}}</td>
                 <td>{{$line->audience_segment}}</td>
@@ -55,6 +56,7 @@
                 @endif
             </tr>
         @endforeach
+                -->
         </tbody>
     </table>
 </section>

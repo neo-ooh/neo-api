@@ -493,7 +493,7 @@ footer .footer-table {
 }
 
 .audience-extension-table {
-  border-spacing: 1px;
+  border-collapse: collapse;
   width: 100%;
   margin-bottom: 5mm;
 }

@@ -41,8 +41,7 @@ class ReservablePerformance extends BroadSignModel {
         return [
             "manyByReservable" => Endpoint::get("/campaign_performance/v6/many_by_reservable_id")
                                           ->unwrap(static::$unwrapKey)
-                                          ->parser(new MultipleResourcesParser(static::class))
-                                          ->cache(3600*8),
+                                          ->parser(new MultipleResourcesParser(static::class)),
         ];
     }
 

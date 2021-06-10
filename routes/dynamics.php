@@ -22,21 +22,21 @@
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\NewsController;
+use Neo\Http\Controllers\WeatherBackgroundsController;
 use Neo\Http\Controllers\WeatherController;
 
 Route::prefix("dynamics")->group(function () {
-    Route::prefix("_weather")
-        /*->middleware(DynamicsMiddleware::class)*/ ->group(function () {
-            Route::get("national", WeatherController::class . "@national")->name("dynamics.weather.national");
-            Route::get("current", WeatherController::class . "@current")->name("dynamics.weather.current");
-            Route::get("nextDay", WeatherController::class . "@nextDay")->name("dynamics.weather.next-day");
-            Route::get("forecast", WeatherController::class . "@forecast")->name("dynamics.weather.forecast");
-            Route::get("hourly", WeatherController::class . "@hourly")->name("dynamics.weather.hourly");
-        });
+    Route::prefix("_weather")->group(function () {
+        Route::get("backgrounds", WeatherBackgroundsController::class . "@index")->name("dynamics.weather.backgrounds");
+        Route::get("national"   , WeatherController::class . "@national")->name("dynamics.weather.national");
+        Route::get("current"    , WeatherController::class . "@current")->name("dynamics.weather.current");
+        Route::get("nextDay"    , WeatherController::class . "@nextDay")->name("dynamics.weather.next-day");
+        Route::get("forecast"   , WeatherController::class . "@forecast")->name("dynamics.weather.forecast");
+        Route::get("hourly"     , WeatherController::class . "@hourly")->name("dynamics.weather.hourly");
+    });
 
-    Route::prefix("_news")
-        /*->middleware(DynamicsMiddleware::class)*/ ->group(function () {
-            Route::get("records", NewsController::class . "@index")->name("dynamics.news.index");
-            Route::get("backgrounds", NewsBackgroundsController::class . "@index")->name("dynamics.news.backgrounds");
-        });
+    Route::prefix("_news")->group(function () {
+        Route::get("records"    , NewsController::class . "@index")->name("dynamics.news.index");
+        Route::get("backgrounds", NewsBackgroundsController::class . "@index")->name("dynamics.news.backgrounds");
+    });
 });

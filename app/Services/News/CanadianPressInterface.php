@@ -96,15 +96,25 @@ class CanadianPressInterface implements NewsService {
                         continue;
                     }
 
+                    if(!$xmlRecord) {
+                        // Ignore record on parse error
+                        continue;
+                    }
+
                     // Extract article's infos
-                    $articleInfos = [
-                        "cp_id"    => (string)$xmlRecord->xpath("//doc-id/@id-string")[0],
-                        "date"     => Date::createFromTimestamp(strtotime((string)$xmlRecord->xpath("//story.date/@norm")[0])),
-                        "headline" => (string)$xmlRecord->xpath("//hl1")[0],
-                        "media"    => $xmlRecord->xpath("//media-reference/@source"),
-                        "subject"  => $subject,
-                        "locale"   => $category["locale"],
-                    ];
+                    try {
+                        $articleInfos = [
+                            "cp_id"    => (string)$xmlRecord->xpath("//doc-id/@id-string")[0],
+                            "date"     => Date::createFromTimestamp(strtotime((string)$xmlRecord->xpath("//story.date/@norm")[0])),
+                            "headline" => (string)$xmlRecord->xpath("//hl1")[0],
+                            "media"    => $xmlRecord->xpath("//media-reference/@source"),
+                            "subject"  => $subject,
+                            "locale"   => $category["locale"],
+                        ];
+                    } catch (Exception $e) {
+                        // ignore record on error
+                        continue;
+                    }
 
                     if (count($articleInfos["media"]) > 0) {
                         $mediaName             = "$subject/" . $articleInfos["media"][0];

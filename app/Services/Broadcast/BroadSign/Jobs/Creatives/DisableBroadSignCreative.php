@@ -60,7 +60,7 @@ class DisableBroadSignCreative extends BroadSignJob implements ShouldBeUnique {
     public function handle(): void {
         try {
             $bsCreative = BSCreative::get($this->getAPIClient(), $this->adCopyID);
-        } catch (ClientException $e) {
+        } catch (RequestException $e) {
             if($e->getResponse()->getStatusCode() === 404) {
                 // The creative does not exist in BroadSign, this job is therefore useless
                 return;

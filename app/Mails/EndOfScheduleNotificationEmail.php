@@ -46,7 +46,13 @@ class EndOfScheduleNotificationEmail extends Mailable
         App::setLocale($this->actor->locale);
 
         return $this->subject("Fin de diffusion - End of broadcast")
-                    ->view("emails.end-of-schedule")
-                    ->text("emails.end-of-schedule-text");
+                    ->view("emails.end-of-schedule", [
+                        "actor" => $this->actor,
+                        "schedule" => $this->schedule,
+                    ])
+                    ->text("emails.end-of-schedule-text", [
+                        "actor" => $this->actor,
+                        "schedule" => $this->schedule,
+                    ]);
     }
 }

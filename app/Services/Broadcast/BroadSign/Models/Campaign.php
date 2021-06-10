@@ -117,8 +117,7 @@ class Campaign extends BroadSignModel {
                                              ->cache(3600),
             "byId"                => Endpoint::get("/reservation/v21/by_id")
                                              ->unwrap(static::$unwrapKey)
-                                             ->parser(new MultipleResourcesParser(static::class))
-                                             ->cache(3600),
+                                             ->parser(new MultipleResourcesParser(static::class)),
             "by_container"        => Endpoint::get("/reservation/v21/by_container")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new MultipleResourcesParser(static::class)),

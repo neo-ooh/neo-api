@@ -443,7 +443,7 @@ Route::prefix("v1")->group(function () {
         Route::get("weather/locations", WeatherLocationsController::class . "@index")
              ->name("dynamics.weather.locations.index");
         Route::get("weather/locations/{country}/{province}/{city}", WeatherLocationsController::class . "@show");
-        Route::get("weather/locations/{weatherLocation}", WeatherLocationsController::class . "@update")
+        Route::put("weather/locations/{weatherLocation}", WeatherLocationsController::class . "@update")
              ->name("dynamics.weather.locations.update");
     });
 

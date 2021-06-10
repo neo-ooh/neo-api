@@ -28,7 +28,7 @@ class UpdateWeatherLocationRequest extends FormRequest
     {
         return [
             "background_selection" => ["required", "string", Rule::in(["WEATHER", "RANDOM"])],
-            "selection_revert_date" => ["required_if:background_selection,RANDOM", "date"]
+            "selection_revert_date" => ["required_if:background_selection,RANDOM", "nullable", "date"]
         ];
     }
 }

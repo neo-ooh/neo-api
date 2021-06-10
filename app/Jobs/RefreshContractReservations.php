@@ -76,14 +76,13 @@ class RefreshContractReservations implements ShouldQueue {
         /** @var Campaign $reservation */
         foreach ($reservations as $reservation) {
             /** @var ContractReservation $rr */
-            $rr = ContractReservation::query()->updateOrCreate([
+            $rr = ContractReservation::query()->firstOrCreate([
                 "external_id" => $reservation->id
-            ], [
-                "contract_id" => $contract->id,
-                "name"        => $reservation->name,
             ]);
 
             // Make sure information about the campaign are up to date
+            $rr->contract_id   = $contract->id;
+            $rr->name          = $reservation->name;
             $rr->original_name = $reservation->name;
             $rr->start_date    = Carbon::parse($reservation->start_date . " " . $reservation->start_time);
             $rr->end_date      = Carbon::parse($reservation->end_date . " " . $reservation->end_time);

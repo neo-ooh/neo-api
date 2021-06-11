@@ -61,7 +61,7 @@ class BroadSignServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function createSchedule(int $scheduleId, int $actorIdId) {
-        CreateBroadSignSchedule::dispatchSync($this->config, $scheduleId, $actorIdId);
+        CreateBroadSignSchedule::dispatch($this->config, $scheduleId, $actorIdId);
     }
 
     /**

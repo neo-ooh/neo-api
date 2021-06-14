@@ -24,13 +24,15 @@ use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\NewsController;
 use Neo\Http\Controllers\WeatherBackgroundsController;
 use Neo\Http\Controllers\WeatherController;
+use Neo\Http\Controllers\WeatherLocationsController;
 
 Route::prefix("dynamics")->group(function () {
     Route::prefix("_weather")->group(function () {
+        Route::get("locations/{country}/{province}/{city}", WeatherLocationsController::class . "@show");
         Route::get("backgrounds", WeatherBackgroundsController::class . "@index")->name("dynamics.weather.backgrounds");
         Route::get("national"   , WeatherController::class . "@national")->name("dynamics.weather.national");
         Route::get("current"    , WeatherController::class . "@current")->name("dynamics.weather.current");
-        Route::get("nextDay"    , WeatherController::class . "@nextDay")->name("dynamics.weather.next-day");
+        Route::get("next-day"    , WeatherController::class . "@nextDay")->name("dynamics.weather.next-day");
         Route::get("forecast"   , WeatherController::class . "@forecast")->name("dynamics.weather.forecast");
         Route::get("hourly"     , WeatherController::class . "@hourly")->name("dynamics.weather.hourly");
     });

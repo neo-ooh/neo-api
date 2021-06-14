@@ -8,7 +8,6 @@ use Neo\Http\Requests\WeatherBackgrounds\ListWeatherBackgroundsRequest;
 use Neo\Http\Requests\WeatherBackgrounds\StoreWeatherBackgroundRequest;
 use Neo\Models\WeatherBackground;
 use Neo\Models\WeatherLocation;
-use Storage;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 
 class WeatherBackgroundsController extends Controller {

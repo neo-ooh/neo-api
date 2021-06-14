@@ -215,7 +215,7 @@ footer .footer-table {
   header: _blank;
   footer: _blank;
 }
-@page preface:first {
+@page preface :first {
   size: landscape;
   background-color: #252734;
   margin-top: 45mm;

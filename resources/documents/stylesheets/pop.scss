@@ -22,7 +22,7 @@
 }
 
 //noinspection CssInvalidPseudoSelector
-@page preface:first {
+@page preface :first {
   size             : landscape;
   background-color : $dark-blue;
   margin-top       : 45mm;

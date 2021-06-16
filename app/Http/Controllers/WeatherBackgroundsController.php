@@ -3,6 +3,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Neo\Http\Requests\WeatherBackgrounds\DestroyWeatherBackgroundRequest;
 use Neo\Http\Requests\WeatherBackgrounds\ListWeatherBackgroundsRequest;
 use Neo\Http\Requests\WeatherBackgrounds\StoreWeatherBackgroundRequest;

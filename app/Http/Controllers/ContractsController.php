@@ -21,15 +21,15 @@ class ContractsController extends Controller {
         // The contract ID is a sensitive value, as it is the one that will be used to match additional campaigns with the contract.
         // Now, for some f***ing reason, hyphens are not made equal, and contract name are not standardized. So we want to make sure all stored contract name uses hyphen-minus, which is the default hyphen on a keyboard (looking at you Word).
         $contractId = strtoupper(str_replace(mb_chr(8208, 'UTF-8'), '-', $request->input("contract_id")));
+        $client = Client::query()->where("broadsign_customer_id", "=", $clientId)->first();
 
-        if (!Client::query()->where("broadsign_customer_id", "=", $clientId)->exists()) {
+        if (!$client) {
             $customer = Customer::get(new BroadsignClient(Contract::getConnectionConfig()), $clientId);
 
             if ($customer !== null) {
                 $client   = Client::query()->create([
                     "broadsign_customer_id" => $clientId,
                     "name"                  => $customer->name]);
-                $clientId = $client->id;
             } else {
                 throw new InvalidArgumentException("Invalid value for client_id");
             }
@@ -38,7 +38,7 @@ class ContractsController extends Controller {
 
         $contract = new Contract([
             "contract_id" => $contractId,
-            "client_id"   => $clientId,
+            "client_id"   => $client->id,
             "owner_id"    => Auth::id(),
             "data"        => []
         ]);

@@ -4,8 +4,8 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Exceptions\InvalidLocationException;
-use Neo\Http\Requests\Hourly\ForecastWeatherRequest;
 use Neo\Http\Requests\Weather\CurrentWeatherRequest;
+use Neo\Http\Requests\Weather\ForecastWeatherRequest;
 use Neo\Http\Requests\Weather\HourlyWeatherRequest;
 use Neo\Http\Requests\Weather\NationalWeatherRequest;
 use Neo\Http\Requests\Weather\NextDayWeatherRequest;
@@ -93,6 +93,7 @@ class WeatherController extends Controller {
      * @param ForecastWeatherRequest $request The request
      * @param WeatherService         $weather
      * @return Response
+     * @throws InvalidLocationException
      */
     public function forecast(ForecastWeatherRequest $request, WeatherService $weather): Response {
         $location = WeatherLocation::fromComponents($request->input("country"), $request->input("province"), $request->input("city"));

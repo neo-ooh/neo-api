@@ -40,7 +40,7 @@ class MeteoMediaInterface implements WeatherService {
     private function getRecord($endpoint, WeatherLocation $location, string $locale) {
         // get the fully-formed endpoint url
         // Since all informations to the API are sent through the URL, we can use it as a key for caching the response
-        $url = $this->buildURL($endpoint["url"], $location, $locale);
+        $url = $this->buildURL($endpoint["url"], $location, $locale.'-CA');
 
         $record = Cache::store("weather-cache")->remember($url, 2700, function () use ($url) {
             $client = new Client();

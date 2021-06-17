@@ -1,7 +1,7 @@
 <?php
 
 return [
-    "address"               => "Address",
+    "address"               => "Adresse",
     "billing-address"       => "Adresse de facturation",
     "total"                 => "Total",
     "complete-name"         => "Nom complet",

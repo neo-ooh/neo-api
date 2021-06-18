@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use JsonException;
+use Log;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
@@ -115,30 +116,47 @@ class Creative extends BroadSignModel {
      * @throws JsonException
      */
     public static function makeDynamic(BroadSignClient $client, string $name, array $attributes) {
+        // I haven't been able to build a Request in the format expected by BroadSign for this action.
+        // As a solution this specific request will be handled separately from the other. Instead of using GuzzleHttp, we will directly use PHP cUrl handles.
+
+        $endpoint       = static::actions()["create_dynamic"];
+        $endpoint->base = $client->getConfig()->apiURL;
+
+
         $boundary = "__X__BROADSIGN_REQUEST__";
-        $metadata = json_encode([
-            "name"         => $name,
-            "parent_id"    => $client->getConfig()->customerId,
-            "container_id" => $client->getConfig()->adCopiesContainerId,
-            "size"         => "-1",
-            "mime"         => "",
-            "attributes"   => http_build_query($attributes, '', '\n')
-        ], JSON_THROW_ON_ERROR);
 
-        $payload = "
-        
-        
---$boundary
-Content-Disposition: form-data; name=\"metadata\"
+        $req = curl_init($endpoint->getUrl());
+        curl_setopt($req, CURLOPT_SSLCERT, $client->getConfig()->getCertPath());
+        curl_setopt($req, CURLOPT_HEADER, "Content-Type: multipart/mixed; boundary=" . $boundary);
+        curl_setopt($req, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($req, CURLOPT_RETURNTRANSFER, 1);
 
-$metadata
---$boundary
-Content-Disposition: form-data; name=\"file\"
+        $body = [
+            'metadata' => [
+                "name"         => $name,
+                "parent_id"    => $client->getConfig()->customerId,
+                "container_id" => $client->getConfig()->adCopiesContainerId,
+                "size"         => "-1",
+                "mime"         => "",
+                "attributes"   => http_build_query($attributes, '', '\n')
+            ],
+            'file'     => 'C:\\void',
+        ];
+        curl_setopt($req, CURLOPT_POST, 1);
+        curl_setopt($req, CURLOPT_POSTFIELDS, $body);
 
-C:\\void
---$boundary--";
+        $response = curl_exec($req);
 
-        return static::create_dynamic($client, $payload);
+        Log::channel('broadsign')->debug('HTTP Status Code: ' . curl_getinfo($req, CURLINFO_HTTP_CODE) . PHP_EOL);
+        Log::channel('broadsign')->debug($response);
+
+        curl_close($req);
+
+        $jsonResponse = json_decode($response, true, 512, JSON_THROW_ON_ERROR);
+        $responseBody = $jsonResponse[$endpoint->unwrapKey];
+        $responseBody = call_user_func($endpoint->parse, $responseBody);
+
+        return $responseBody;
     }
 
     /**

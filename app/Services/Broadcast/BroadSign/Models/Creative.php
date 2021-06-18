@@ -147,8 +147,8 @@ class Creative extends BroadSignModel {
 
         $response = curl_exec($req);
 
-        Log::channel('broadsign')->debug('HTTP Status Code: ' . curl_getinfo($req, CURLINFO_HTTP_CODE) . PHP_EOL);
-        Log::channel('broadsign')->debug($response);
+        Log::debug('HTTP Status Code: ' . curl_getinfo($req, CURLINFO_HTTP_CODE) . PHP_EOL);
+        Log::debug($response);
 
         curl_close($req);
 

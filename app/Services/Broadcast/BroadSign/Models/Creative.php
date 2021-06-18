@@ -127,7 +127,6 @@ class Creative extends BroadSignModel {
 
         $req = curl_init($endpoint->getUrl());
         curl_setopt($req, CURLOPT_SSLCERT, $client->getConfig()->getCertPath());
-        curl_setopt($req, CURLOPT_HEADER, "Content-Type: multipart/mixed; boundary=" . $boundary);
         curl_setopt($req, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($req, CURLOPT_RETURNTRANSFER, 1);
 
@@ -144,6 +143,7 @@ class Creative extends BroadSignModel {
         ];
         curl_setopt($req, CURLOPT_POST, 1);
         curl_setopt($req, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($req, CURLOPT_HEADER, "Content-Type: multipart/mixed; boundary=" . $boundary);
 
         $response = curl_exec($req);
 

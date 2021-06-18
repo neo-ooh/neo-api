@@ -132,14 +132,14 @@ class Creative extends BroadSignModel {
         curl_setopt($req, CURLOPT_RETURNTRANSFER, 1);
 
         $body = [
-            'metadata' => [
+            'metadata' => json_encode([
                 "name"         => $name,
                 "parent_id"    => $client->getConfig()->customerId,
                 "container_id" => $client->getConfig()->adCopiesContainerId,
                 "size"         => "-1",
                 "mime"         => "",
                 "attributes"   => http_build_query($attributes, '', '\n')
-            ],
+            ], JSON_THROW_ON_ERROR),
             'file'     => 'C:\\void',
         ];
         curl_setopt($req, CURLOPT_POST, 1);

@@ -18,15 +18,27 @@ use Neo\Documents\Exceptions\MissingColumnException;
 use Neo\Documents\Network;
 
 class OrderLine {
+
     public const TYPE_GUARANTEED_PURCHASE = 1;
     public const TYPE_GUARANTEED_BONUS = 2;
     public const TYPE_BONUS_UPON_AVAIL = 3;
     public const TYPE_EXTENSION_STRATEGY = 4;
 
+    public const COVID_TRAFFIC_FACTOR = [
+        "Digital - Vertical"    => 0.5,
+        "Digital - Horizontal"  => 0.7,
+        "Digital - Spectacular" => 0.7,
+        "Column poster"         => 0.5,
+        "Mall poster"           => 0.5,
+        "Mall+ poster"          => 0.5,
+        "Rotating column"       => 0.5,
+        "Sky poster"            => 0.5,
+        "Unik poster"           => 0.5,
+    ];
+
     public string $orderLine;
     public string $description;
     public float $discount;
-
 
     public string $date_start;
     public string $date_end;
@@ -35,6 +47,8 @@ class OrderLine {
 
     public int $impressions;
     public string $traffic;
+    public int $covid_impressions = 0;
+    public float $covid_cpm = 0;
 
     public string $market;
     public string $market_name;
@@ -51,7 +65,7 @@ class OrderLine {
     public string $product_category;
     public string $product_description;
     public string $product_rental;
-    public bool $isMobileProduct;
+    public bool $isMobileProduct = false;
     public string $product_type;
     public float $unit_price;
     public float $cpm;
@@ -64,6 +78,8 @@ class OrderLine {
 
     public string $property_type;
     public string $property_name;
+    public string $property_state;
+    public float $property_annual_traffic;
     public string $property_lat;
     public string $property_lng;
     public string $property_city;
@@ -81,30 +97,33 @@ class OrderLine {
                             "order_line/rental_end",
                             "order_line/impression",
                             "order_line/traffic",
-                            "order_line/impression_format",
-                            "order_line/cpm",
+                            //                            "order_line/impression_format",
+                            //                            "order_line/cpm",
                             "order_line/market_id",
                             "order_line/market_id/name",
-                            "order_line/market_name",
+                            //                            "order_line/market_name",
                             "order_line/market_id/sequence",
                             "order_line/nb_weeks",
                             "order_line/nb_screen",
                             "order_line/product_uom_qty",
                             "order_line/product_id/production",
+                            "order_line/product_id/categ_id",
                             "order_line/product_id",
                             "order_line/product_id/description",
-                            "order_line/is_mobile_product",
+                            //                            "order_line/is_mobile_product",
                             "order_line/is_product_rentable",
                             "order_line/product_type",
                             "order_line/price_unit",
                             "order_line/price_subtotal",
                             "order_line/price_tax",
-                            "order_line/segment",
+                            //                            "order_line/segment",
+                            "order_line/shopping_center_id/annual_traffic",
                             "order_line/shopping_center_id/center_type",
-                            "order_line/shopping_center_id/name",
                             "order_line/shopping_center_id/city",
+                            "order_line/shopping_center_id/name",
                             "order_line/shopping_center_id/partner_latitude",
-                            "order_line/shopping_center_id/partner_longitude"];
+                            "order_line/shopping_center_id/partner_longitude",
+                            "order_line/shopping_center_id/state_id"];
 
         foreach ($expectedColumns as $col) {
             if (!array_key_exists($col, $record)) {
@@ -133,9 +152,13 @@ class OrderLine {
 
         $this->product             = $record["order_line/product_id"];
         $this->product_description = $record["order_line/product_id/description"];
+        $this->product_category    = $record["order_line/product_id/categ_id"];
         $this->product_rental      = $record["order_line/is_product_rentable"] === "True";
-        $this->isMobileProduct     = $record["order_line/is_mobile_product"] === "True";
-        $this->product_type        = $record["order_line/product_type"];
+
+        if (array_key_exists("order_line/is_mobile_product", $record)) {
+            $this->isMobileProduct = $record["order_line/is_mobile_product"] === "True";
+        }
+        $this->product_type = $record["order_line/product_type"];
 
         $this->unit_price = (float)$record["order_line/price_unit"];
         $this->subtotal   = (float)$record["order_line/price_subtotal"];
@@ -143,10 +166,12 @@ class OrderLine {
 
         $this->property_type = $record["order_line/shopping_center_id/center_type"];
 
-        $this->property_name = $record["order_line/shopping_center_id/name"];
-        $this->property_city = $record["order_line/shopping_center_id/city"];
-        $this->property_lat  = $record["order_line/shopping_center_id/partner_latitude"];
-        $this->property_lng  = $record["order_line/shopping_center_id/partner_longitude"];
+        $this->property_name           = $record["order_line/shopping_center_id/name"];
+        $this->property_city           = $record["order_line/shopping_center_id/city"];
+        $this->property_state          = $record["order_line/shopping_center_id/state_id"];
+        $this->property_lat            = $record["order_line/shopping_center_id/partner_latitude"];
+        $this->property_lng            = $record["order_line/shopping_center_id/partner_longitude"];
+        $this->property_annual_traffic = (float)$record["order_line/shopping_center_id/annual_traffic"];
 
         $this->media_value = $this->unit_price * $this->quantity * $this->nb_screens * $this->nb_weeks;
 
@@ -168,6 +193,13 @@ class OrderLine {
             $this->impression_format = $record["order_line/impression_format"];
             $this->market_name       = $record["order_line/market_name"];
             $this->cpm               = (float)$record["order_line/cpm"];
+        }
+
+        if ($this->impressions > 0 && isset($this->product_category) && $this->isNetwork(Network::NEO_SHOPPING)) {
+            $this->covid_impressions = $this->impressions * static::COVID_TRAFFIC_FACTOR[$this->product_category];
+             $this->covid_cpm = ($this->net_investment / $this->covid_impressions) * 1000;
+        } else {
+            $this->covid_impressions = $this->impressions;
         }
     }
 

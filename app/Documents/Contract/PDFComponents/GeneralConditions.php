@@ -8,7 +8,7 @@
  * @neo/api - GeneralConditions.php
  */
 
-namespace Neo\Documents\Contract\Components;
+namespace Neo\Documents\Contract\PDFComponents;
 
 use Illuminate\View\Component;
 

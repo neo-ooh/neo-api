@@ -50,7 +50,7 @@
                         <td class="header-contract-data-label">{!! __("contract.header-advertiser") !!}</td>
                         <td class="header-contract-data-value">{{ $customer->account }}</td>
                     </tr>
-                    <tr>
+                    <tr>[[
                         <td class="header-contract-data-label">{!! __("contract.header-proposal") !!}</td>
                         <td class="header-contract-data-value">{{ $order->reference }}</td>
                     </tr>

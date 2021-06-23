@@ -5,26 +5,32 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - DetailedSummaryProductionCosts.php
+ * @neo/api - ContractFirstPage.php
  */
 
-namespace Neo\Documents\Contract\Components;
+namespace Neo\Documents\Contract\PDFComponents;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
-use Illuminate\Support\Collection;
 use Illuminate\View\Component;
+use Neo\Documents\Contract\Customer;
+use Neo\Documents\Contract\Order;
 
-class DetailedSummaryProductionCosts extends Component {
-    protected Collection $production;
+class ContractFirstPage extends Component {
+
+    protected Order $order;
+    protected Customer $customer;
+
 
     /**
      * Create the component instance.
      *
-     * @param Collection $production
+     * @param Order    $order
+     * @param Customer $customer
      */
-    public function __construct(Collection $production) {
-        $this->production = $production;
+    public function __construct(Order $order, Customer $customer) {
+        $this->order    = $order;
+        $this->customer = $customer;
     }
 
     /**
@@ -33,8 +39,9 @@ class DetailedSummaryProductionCosts extends Component {
      * @return Application|Factory|\Illuminate\Contracts\View\View
      */
     public function render() {
-        return view('documents.contract.campaign-details.summary-production-costs', [
-            "production" => $this->production
+        return view('documents.contract.first-page', [
+            "order"    => $this->order,
+            "customer" => $this->customer,
         ]);
     }
 

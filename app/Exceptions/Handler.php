@@ -25,7 +25,7 @@ class Handler extends ExceptionHandler {
     public function register() {
         $this->renderable(function (Exception $e, Request $request) {
             if (!$request->expectsJson()) {
-                return new Response(["message" => $e->getMessage(), "code" => $e->getCode()], 500);
+//                return new Response(["message" => $e->getMessage(), "code" => $e->getCode()], 500);
             }
 
             return null;

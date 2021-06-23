@@ -35,7 +35,7 @@ class TwoFactorTokenEmail extends ReliableEmail {
         parent::__construct();
 
         $this->actor = $actor;
-        $this->token = $token->token;
+        $this->token = str_pad((string)$token->token, 6, '0', STR_PAD_LEFT);
     }
 
     /**

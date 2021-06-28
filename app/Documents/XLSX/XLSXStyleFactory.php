@@ -95,7 +95,7 @@ class XLSXStyleFactory {
                 "name"  => "Calibri"
             ],
             "numberFormat" => [
-                "formatCode" => '# ##0_-'
+                "formatCode" => '#,##0_-'
             ],
             'alignment' => [
                 'vertical' => Alignment::VERTICAL_CENTER,
@@ -119,7 +119,7 @@ class XLSXStyleFactory {
                 "name"  => "Calibri"
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0'
+                "formatCode" => '#,##0_-'
             ],
             'alignment' => [
                 'vertical' => Alignment::VERTICAL_CENTER,
@@ -149,7 +149,7 @@ class XLSXStyleFactory {
                 "name"  => "Calibri"
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0'
+                "formatCode" => '#,##0_-'
             ],
             'alignment' => [
                 'vertical' => Alignment::VERTICAL_CENTER,

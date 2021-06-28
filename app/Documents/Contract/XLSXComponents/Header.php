@@ -24,7 +24,7 @@ class Header extends Component {
         $drawing->setName('Neo-OOH');
         $drawing->setDescription('Neo Out of Home');
         $drawing->setPath(resource_path("logos/main.dark.en@2x.png"));
-        $drawing->setHeight(100);
+        $drawing->setHeight(60);
         $drawing->setWorksheet($ws);
         $drawing->setCoordinates('F2');
 
@@ -63,8 +63,10 @@ class Header extends Component {
         $ws->mergeCellsRelative(2);
         $ws->moveCursor(-1, 0);
 
+        $periods = $this->order->orderLines->pluck("rangeLengthString")->unique();
+
         // Period
-        $ws->printRow([__("common.broadcast-periods"), $this->order->orderLines->pluck("rangeLengthString")->unique()->join("\n")]);
+        $ws->printRow([trans_choice("common.broadcast-periods", $periods->count()), $periods->join("\n")]);
         $ws->moveCursor(1, 0);
         $ws->mergeCellsRelative(2);
         $ws->moveCursor(-1, 0);

@@ -41,14 +41,20 @@ class XLSXProposal extends XLSXDocument {
             $this->ws->getColumnDimensionByColumn($i)->setWidth(15);
         }
 
+        $totalCampaignTraffic = 0;
+        $totalAnnualTraffic = 0;
+
         // Print orderlines for eeach network
         foreach(["shopping", "otg", "fitness"] as $network ) {
             $networkPrinter = new NetworkOrders($network, $this->order);
             $networkPrinter->render($this->ws);
+
+            $totalCampaignTraffic += $networkPrinter->networkTotalTraffic;
+            $totalAnnualTraffic += $networkPrinter->totalAnnualTraffic;
         }
 
         // Print the totals
-        $totalsPrinter = new Totals($this->order);
+        $totalsPrinter = new Totals($this->order, $totalAnnualTraffic, $totalCampaignTraffic);
         $totalsPrinter->render($this->ws);
 
         // Print the technical specifications
@@ -59,10 +65,11 @@ class XLSXProposal extends XLSXDocument {
         $productionFeesPrinter = new ProductionFees($this->order);
         $productionFeesPrinter->render($this->ws);
 
-        // Autosize all columns
-//        foreach($this->ws->getColumnDimensions() as $column) {
-//            $column->setAutoSize(true);
-//        }
+        // Autosize columns
+        $this->ws->getColumnDimension("A")->setAutoSize(true);
+        $this->ws->getColumnDimension("B")->setAutoSize(true);
+        $this->ws->getColumnDimension("E")->setAutoSize(true);
+        $this->ws->getColumnDimension("K")->setAutoSize(true);
 
         return true;
     }

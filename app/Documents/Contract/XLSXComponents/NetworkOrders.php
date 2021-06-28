@@ -16,6 +16,9 @@ class NetworkOrders extends Component {
     protected string $network;
     protected Order $order;
 
+    public $networkTotalTraffic;
+    public $totalAnnualTraffic = 0;
+
     public function __construct(string $network, Order $order) {
         $this->network = $network;
         $this->order   = $order;
@@ -55,9 +58,13 @@ class NetworkOrders extends Component {
         // Group orders by state and by market
         $states = $orderLines->groupBy(["property_state", "market_name"]);
 
+        $networkPropertiesTraffic = 0;
+
         foreach ($states as $state => $markets) {
             // Print the table headers
             $ws->moveCursor(0, 2);
+
+            $statePropertiesTraffic = 0;
 
             $ws->getStyle($ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::tableHeader());
             $ws->getRowDimension($ws->getCursorRow())->setRowHeight(30);
@@ -91,6 +98,7 @@ class NetworkOrders extends Component {
             $ws->getCurrentCell()->setValue(substr(trim($state), 0, -5));
             $ws->getRowDimension($ws->getCursorRow())->setRowHeight(20);
 
+            /** @var Collection $lines */
             foreach ($markets as $market => $lines) {
                 // Print the market name
                 $ws->moveCursor(0, 2);
@@ -118,6 +126,9 @@ class NetworkOrders extends Component {
 
                 $ws->popPosition();
 
+                $lines = $lines->sortBy(['property_city', 'property_name']);
+                $lastLine = null;
+
                 // Print the lines
                 /** @var OrderLine $line */
                 foreach ($lines as $line) {
@@ -132,12 +143,52 @@ class NetworkOrders extends Component {
                     $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
                     $ws->setRelativeCellFormat('$#,##0.00', 15, 0);
 
+                    // Handle merging of rows for the annual traffic column
+                    $annualTraffic = $line->property_annual_traffic;
+                    if($lastLine && $lastLine->property_name === $line->property_name) {
+                        $annualTraffic = null;
+
+                        $ws->pushPosition();
+                        $ws->moveCursor(2, -1);
+                        $acc = 0;
+                        while($ws->getCurrentCell()->isInMergeRange() && !$ws->getCurrentCell()->isMergeRangeValueCell()) {
+                            $ws->moveCursor(0, -1);
+                            $acc++;
+                        }
+                        if($ws->getCurrentCell()->isMergeRangeValueCell()) {
+                            $ws->unmergeCells($ws->getCurrentCell()->getMergeRange());
+                        }
+                        $ws->mergeCellsRelative(1, 2 + $acc);
+                        $ws->popPosition();
+                    }
+
+                    // Handle merging of rows for the campaign traffic column
+                    $campaignTraffic = $line->traffic;
+                    if($lastLine && $lastLine->property_name === $line->property_name) {
+                        $ws->pushPosition();
+                        $ws->moveCursor(3, 0);
+                        $acc = 1;
+
+                        do {
+                            $ws->moveCursor(0, -1);
+                            $campaignTraffic = max($campaignTraffic, $ws->getCurrentCell()->getValue());
+                            $acc++;
+                        } while($ws->getCurrentCell()->isInMergeRange() && !$ws->getCurrentCell()->isMergeRangeValueCell());
+
+                        if($ws->getCurrentCell()->isMergeRangeValueCell()) {
+                            $ws->unmergeCells($ws->getCurrentCell()->getMergeRange());
+                            $ws->getCurrentCell()->setValue($campaignTraffic);
+                            $campaignTraffic = null;
+                        }
+                        $ws->mergeCellsRelative(1, $acc);
+                        $ws->popPosition();
+                    }
 
                     $ws->printRow([
                         $line->property_city,
                         $line->property_name,
-                        $line->property_annual_traffic,
-                        $line->traffic,
+                        $annualTraffic,
+                        $campaignTraffic,
                         $line->product,
                         $line->date_start,
                         $line->date_end,
@@ -151,8 +202,11 @@ class NetworkOrders extends Component {
                         $this->network === 'shopping' ? $line->covid_impressions : null,
                         $this->network === 'shopping' ? $line->covid_cpm : null,
                     ]);
+
+                    $lastLine = $line;
                 }
 
+                // ------------------------
                 // Print our market footer
                 $ws->pushPosition();
 
@@ -184,9 +238,11 @@ class NetworkOrders extends Component {
 
                 $lines = collect($lines);
 
+                $propertiesTraffic = $lines->groupBy('property_name')->map(fn($properties) => collect($properties)->max("traffic"))->sum();
+
                 $ws->printRow([
-                    $lines->sum("property_annual_traffic"),
-                    $lines->sum("traffic"),
+                    $lines->unique("property_name")->sum("property_annual_traffic"),
+                    $propertiesTraffic,
                     null,
                     null,
                     null,
@@ -201,9 +257,12 @@ class NetworkOrders extends Component {
                     $this->network === 'shopping' ? $lines->sum("covid_cpm") : null,
                 ]);
 
+                $statePropertiesTraffic += $propertiesTraffic;
+
                 $ws->popPosition();
             }
 
+            // ---------------------
             // Print our state footer
             $ws->moveCursor(0, 2);
             $ws->pushPosition();
@@ -238,8 +297,8 @@ class NetworkOrders extends Component {
             $lines = collect($markets)->flatten();
 
             $ws->printRow([
-                $lines->sum("property_annual_traffic"),
-                $lines->sum("traffic"),
+                $lines->unique("property_name")->sum("property_annual_traffic"),
+                $statePropertiesTraffic,
                 null,
                 null,
                 null,
@@ -256,14 +315,17 @@ class NetworkOrders extends Component {
 
             $ws->popPosition();
             $ws->moveCursor(0, 1);
+
+            $networkPropertiesTraffic += $statePropertiesTraffic;
         }
+
 
         // Print our network guaranteed orders footer
         $ws->moveCursor(0, 2);
         $ws->pushPosition();
 
         // Stylize the network footer
-        $ws->getStyle($ws->getRelativeRange(13, 1))->applyFromArray(XLSXStyleFactory::networkFooter());
+        $ws->getStyle($ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::networkFooter());
         $ws->getRowDimension($ws->getCursorRow())->setRowHeight(20);
 
         $ws->mergeCellsRelative(2);
@@ -272,14 +334,15 @@ class NetworkOrders extends Component {
         // Monetary values
         $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
         $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
+        $ws->setRelativeCellFormat('$#,##0.00', 15, 0);
 
         $ws->moveCursor(2, 0);
 
         $lines = collect($states)->flatten();
 
         $ws->printRow([
-            $lines->sum("property_annual_traffic"),
-            $lines->sum("traffic"),
+            $lines->unique("property_name")->sum("property_annual_traffic"),
+            $networkPropertiesTraffic,
             null,
             null,
             null,
@@ -288,11 +351,17 @@ class NetworkOrders extends Component {
             null,
             null,
             $lines->sum("media_value"),
-            $lines->sum("net_investment")
+            $lines->sum("net_investment"),
+            $lines->sum("impressions"),
+            $lines->sum("covid_impressions"),
+             $lines->sum("covid_cpm"),
         ]);
 
         $ws->popPosition();
         $ws->moveCursor(0, 1);
+
+        $this->networkTotalTraffic = $networkPropertiesTraffic;
+        $this->totalAnnualTraffic = $lines->unique("property_name")->sum("property_annual_traffic");
     }
 
     public function printBuaOrderLinee(Collection $orderLines, Worksheet $ws) {
@@ -333,7 +402,7 @@ class NetworkOrders extends Component {
                 null,
                 null,
                 $periodLines->first()->date_start,
-                null,
+                $periodLines->first()->date_end,
                 null,
                 null,
                 $periodLines->first()->nb_weeks,

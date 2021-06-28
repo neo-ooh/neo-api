@@ -14,15 +14,19 @@ class Totals extends Component {
 
     protected Order $order;
 
-    public function __construct(Order $order) {
-        $this->order = $order;
+    protected int $annualTraffic;
+    protected int $campaignTraffic;
+
+    public function __construct(Order $order, int $annualTraffic, int $campaignTraffic) {
+        $this->order           = $order;
+        $this->annualTraffic   = $annualTraffic;
+        $this->campaignTraffic = $campaignTraffic;
     }
 
     public function render(Worksheet $ws) {
         // First the bonus totals
         $ws->moveCursor(0, 2);
         $ws->pushPosition();
-
 
         // Stylize the row
         $ws->getStyle($ws->getRelativeRange(13, 1))->applyFromArray(XLSXStyleFactory::tableFooter("shopping"));
@@ -59,8 +63,8 @@ class Totals extends Component {
         $ws->moveCursor(2, 0);
 
         $ws->printRow([
-            $this->order->orderLines->sum("property_annual_traffic"),
-            $this->order->orderLines->sum("traffic"),
+            $this->annualTraffic,
+            $this->campaignTraffic,
             null,
             null,
             null,

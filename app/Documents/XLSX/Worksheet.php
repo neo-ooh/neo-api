@@ -88,7 +88,7 @@ class Worksheet extends \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet {
     }
 
     /**
-     * Mov e the cursor by the specified offsets. Accepts negative values
+     * Move the cursor by the specified offsets. Accepts negative values
      *
      * @param int $dcol How many columns to the right the cursor should be moved.
      * @param int $drow How many rows downward the cursor should be moved.

@@ -20,8 +20,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Services\Broadcast\Broadcaster;
 
 /**
- * NeoModels\Branding
- *
  * @property int                                               $id
  * @property string                                            $uuid
  * @property int                                               $connection_id

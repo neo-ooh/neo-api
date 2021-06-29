@@ -46,21 +46,22 @@ use Neo\Rules\AccessibleActor;
  * @property string         email
  * @property string         password
  * @property string         locale
- * @property bool           is_group          Tell if the current actor is a group
- * @property bool           is_locked         Tell if the current actor has been locked. A locked actor cannot login
- * @property int|null       locked_by         Tell who locke this actor, if applicable
- * @property int|null       branding_id       ID of the branding applied to this user
+ * @property bool           is_group             Tell if the current actor is a group
+ * @property bool           is_property          Tell if the current actor is a property. A property is always  group, never a user.
+ * @property bool           is_locked            Tell if the current actor has been locked. A locked actor cannot login
+ * @property int|null       locked_by            Tell who locke this actor, if applicable
+ * @property int|null       branding_id          ID of the branding applied to this user
  *
  * @property Date           created_at
  * @property Date           updated_at
  * @property Date           last_login_at
  *
- * @property bool           registration_sent Tell if the registration email was sent to the actor. Not applicable to groups
- * @property bool           is_registered     Tell if the user has registered its account. Not applicable to groups
- * @property bool           tos_accepted      Tell if the actor has accepted the current version of the TOS. Not applicable to
+ * @property bool           registration_sent    Tell if the registration email was sent to the actor. Not applicable to groups
+ * @property bool           is_registered        Tell if the user has registered its account. Not applicable to groups
+ * @property bool           tos_accepted         Tell if the actor has accepted the current version of the TOS. Not applicable to
  *           groups
- * @property bool           limited_access    If set, the actor does not have access to its group and group's children campaigns.
- *           Only to its own, its children campaigns and with user shared with it.
+ * @property bool           limited_access       If set, the actor does not have access to its group and group's children
+ *           campaigns. Only to its own, its children campaigns and with user shared with it.
  *
  *
  * @property TwoFactorToken twoFactorToken
@@ -384,6 +385,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->details->parent_is_group;
     }
 
+    public function getIsPropertyAttribute(): ?int {
+        return $this->details->parent_id;
+    }
+
     public function getDirectChildrenCountAttribute(): int {
         return $this->details->direct_children_count;
     }
@@ -436,7 +441,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      *                       if its a group.
      * @return Collection
      */
-    public function getLibraries(bool $own = true, bool $shared = true, bool $children = true, bool $parent  = true): Collection {
+    public function getLibraries(bool $own = true, bool $shared = true, bool $children = true, bool $parent = true): Collection {
         $libraries = new Collection();
 
         // Actor's own libraries

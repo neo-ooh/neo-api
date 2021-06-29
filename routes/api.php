@@ -45,6 +45,7 @@ use Neo\Http\Controllers\LocationsController;
 use Neo\Http\Controllers\NetworksController;
 use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\ParamsController;
+use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\ReviewsController;
 use Neo\Http\Controllers\ReviewsTemplatesController;
 use Neo\Http\Controllers\RolesActorsController;
@@ -77,6 +78,7 @@ use Neo\Models\Location;
 use Neo\Models\Network;
 use Neo\Models\NewsBackground;
 use Neo\Models\Param;
+use Neo\Models\Property;
 use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
@@ -241,7 +243,8 @@ Route::prefix("v1")->group(function () {
     Route::post("broadcasters/", BroadcasterConnectionsController::class . "@store")->name("broadcasters.store");
     Route::get("broadcasters/{connection}", BroadcasterConnectionsController::class . "@show")->name("broadcasters.show");
     Route::post("broadcasters/{connection}", BroadcasterConnectionsController::class . "@update")->name("broadcasters.update");
-    Route::delete("broadcasters/{connection}", BroadcasterConnectionsController::class . "@destroy")->name("broadcasters.destroy");
+    Route::delete("broadcasters/{connection}", BroadcasterConnectionsController::class . "@destroy")
+         ->name("broadcasters.destroy");
 
     /*
     |----------------------------------------------------------------------
@@ -426,7 +429,8 @@ Route::prefix("v1")->group(function () {
 
         Route::get("news/backgrounds", NewsBackgroundsController::class . "@index")->name("dynamics.news.backgrounds.index");
         Route::post("news/backgrounds", NewsBackgroundsController::class . "@store")->name("dynamics.news.backgrounds.store");
-        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@destroy")->name("dynamics.news.backgrounds.destroy");
+        Route::delete("news/backgrounds/{newsBackground}", NewsBackgroundsController::class . "@destroy")
+             ->name("dynamics.news.backgrounds.destroy");
 
         // Weather ----------------------
         Route::model("weatherBackground", WeatherBackground::class);
@@ -597,6 +601,19 @@ Route::prefix("v1")->group(function () {
     Route::  get("params/{parameter:slug}", ParamsController::class . "@show")->name("params.show");
     Route::  post("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update");
     Route::  put("params/{parameter:slug}", ParamsController::class . "@update")->name("params.update-put");
+
+    /*
+    |----------------------------------------------------------------------
+    | Properties
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("property", Property::class);
+
+    Route::  post("properties"           , PropertiesController::class . "@store"  )->name("properties.store");
+    Route::   get("properties/{property}", PropertiesController::class . "@show"   )->name("properties.show");
+    Route::   put("properties/{property}", PropertiesController::class . "@update" )->name("properties.update");
+    Route::delete("properties/{property}", PropertiesController::class . "@destroy")->name("properties.destroy");
 
 
     /*

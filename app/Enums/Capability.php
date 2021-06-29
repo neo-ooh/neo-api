@@ -111,5 +111,22 @@ final class Capability extends Enum {
     public const access_token_edit = "access-token.edit";
 
     // Broadsign administration
+    // TODO: Rename this capability to `broadcasters.broadsign`
     public const chores_broadsign = "chores.broadsign";
+
+    // Broadsign administration
+    /**
+     * Allow user to see information about properties he can access
+     */
+    public const properties_view = "properties.view";
+
+    /**
+     * Allow user to create, edit and remove properties in its accessible hierarchy
+     */
+    public const properties_edit = "properties.edit";
+
+    /**
+     * Allow user to fill in traffic information for accessible properties. Redundant with `properties_edit`
+     */
+    public const properties_traffic = "properties.traffic";
 }

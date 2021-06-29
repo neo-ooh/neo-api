@@ -199,8 +199,8 @@ class NetworkOrders extends Component {
                         $line->media_value,
                         $line->net_investment,
                         $line->impressions,
-                        $this->network === 'shopping' ? $line->covid_impressions : null,
-                        $this->network === 'shopping' ? $line->covid_cpm : null,
+                        $line->covid_impressions,
+                        $line->covid_cpm,
                     ]);
 
                     $lastLine = $line;
@@ -253,8 +253,8 @@ class NetworkOrders extends Component {
                     $lines->sum("media_value"),
                     $lines->sum("net_investment"),
                     $lines->sum("impressions"),
-                    $this->network === 'shopping' ? $lines->sum("covid_impressions") : null,
-                    $this->network === 'shopping' ? $lines->sum("covid_cpm") : null,
+                    $lines->sum("covid_impressions"),
+                    $lines->sum("covid_cpm"),
                 ]);
 
                 $statePropertiesTraffic += $propertiesTraffic;
@@ -309,8 +309,8 @@ class NetworkOrders extends Component {
                 $lines->sum("media_value"),
                 $lines->sum("net_investment"),
                 $lines->sum("impressions"),
-                $this->network === 'shopping' ? $lines->sum("covid_impressions") : null,
-                $this->network === 'shopping' ? $lines->sum("covid_cpm") : null,
+                $lines->sum("covid_impressions"),
+                $lines->sum("covid_cpm"),
             ]);
 
             $ws->popPosition();

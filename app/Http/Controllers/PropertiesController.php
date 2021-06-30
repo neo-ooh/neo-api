@@ -36,8 +36,7 @@ class PropertiesController extends Controller {
         return new Response($property->load(["actor", "traffic_data"]), 201);
     }
 
-    public function show(ShowPropertyRequest $request) {
-        $propertyId = $request->input("property_id");
+    public function show(ShowPropertyRequest $request, int $propertyId) {
         // Is this group a property ?
         $property = Property::query()->find($propertyId);
 

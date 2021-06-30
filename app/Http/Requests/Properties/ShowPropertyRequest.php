@@ -26,7 +26,7 @@ class ShowPropertyRequest extends FormRequest
     public function rules()
     {
         return [
-            "property_id" => ["required", "exists:actors,id"]
+            //
         ];
     }
 }

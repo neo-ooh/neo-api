@@ -48,6 +48,13 @@ class PropertyTraffic extends Model {
      */
     public $incrementing = false;
 
+    public $fillable = [
+        "property_id",
+        "year",
+        "month",
+        "traffic"
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations

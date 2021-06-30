@@ -615,6 +615,15 @@ Route::prefix("v1")->group(function () {
     Route::   put("properties/{property}", PropertiesController::class . "@update" )->name("properties.update");
     Route::delete("properties/{property}", PropertiesController::class . "@destroy")->name("properties.destroy");
 
+    /*
+    |----------------------------------------------------------------------
+    | Properties Traffic
+    |----------------------------------------------------------------------
+    */
+
+    Route::   get("properties/{property}/traffic", PropertiesController::class . "@index"   )->name("properties.traffic.index");
+    Route::  post("properties/{property}/traffic", PropertiesController::class . "@store" )->name("properties.traffic.store");
+
 
     /*
     |----------------------------------------------------------------------

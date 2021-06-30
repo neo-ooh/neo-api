@@ -31,7 +31,7 @@ class PropertiesController extends Controller {
         $property->actor_id = $actorId;
         $property->save();
 
-        return new Response($property, 201);
+        return new Response($property->load(["actor", "traffic_data"]), 201);
     }
 
     public function show(ShowPropertyRequest $request, Property $property) {

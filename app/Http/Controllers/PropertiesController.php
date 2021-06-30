@@ -35,7 +35,7 @@ class PropertiesController extends Controller {
     }
 
     public function show(ShowPropertyRequest $request, Property $property) {
-        return new Response($property->load("traffic_data"));
+        return new Response($property->load(["actor", "traffic_data"]));
     }
 
     public function update(UpdatePropertyRequest $request, Property $property) {

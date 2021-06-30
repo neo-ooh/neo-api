@@ -250,6 +250,11 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
 
+    public function property() {
+        return $this->hasOne(Property::class, 'actor_id', 'id');
+    }
+
+
     /*
     |--------------------------------------------------------------------------
     | Branding

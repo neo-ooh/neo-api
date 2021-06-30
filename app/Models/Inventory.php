@@ -13,7 +13,7 @@ namespace Neo\Models;
 use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Neo\Models\Traits\HasCompositePrimarykey;
+use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
  * Neo\Models\FormatLayout
@@ -31,7 +31,7 @@ use Neo\Models\Traits\HasCompositePrimarykey;
  * @mixin Builder
  */
 class Inventory extends Model {
-    use HasCompositePrimarykey;
+    use HasCompositePrimaryKey;
 
     /**
      * The table associated with the model.

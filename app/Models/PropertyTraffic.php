@@ -5,6 +5,7 @@ namespace Neo\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
  * Class Property Traffic
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Property $property
  */
 class PropertyTraffic extends Model {
+    use HasCompositePrimaryKey;
     use HasFactory;
 
     /*
@@ -39,7 +41,7 @@ class PropertyTraffic extends Model {
      *
      * @var string
      */
-    protected $primaryKey = "property_id";
+    protected $primaryKey = ["property_id", "year", "month"];
 
     /**
      * Indicates if the IDs are auto-incrementing.

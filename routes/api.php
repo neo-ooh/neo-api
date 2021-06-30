@@ -46,6 +46,7 @@ use Neo\Http\Controllers\NetworksController;
 use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\ParamsController;
 use Neo\Http\Controllers\PropertiesController;
+use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\ReviewsController;
 use Neo\Http\Controllers\ReviewsTemplatesController;
 use Neo\Http\Controllers\RolesActorsController;
@@ -621,8 +622,8 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::   get("properties/{property}/traffic", PropertiesController::class . "@index"   )->name("properties.traffic.index");
-    Route::  post("properties/{property}/traffic", PropertiesController::class . "@store" )->name("properties.traffic.store");
+    Route::   get("properties/{property}/traffic", PropertiesTrafficController::class . "@index"   )->name("properties.traffic.index");
+    Route::  post("properties/{property}/traffic", PropertiesTrafficController::class . "@store" )->name("properties.traffic.store");
 
 
     /*

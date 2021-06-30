@@ -5,28 +5,24 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Contract.php
+ * @neo/api - PDFContract.php
  */
 
 namespace Neo\Documents\Contract;
 
 use Carbon\CarbonInterval;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\File;
-use League\Csv\Reader;
 use Mpdf\HTMLParserMode;
-use Neo\Documents\Contract\Components\ContractFirstPage;
-use Neo\Documents\Contract\Components\DetailedOrdersCategory;
-use Neo\Documents\Contract\Components\DetailedOrdersTable;
-use Neo\Documents\Contract\Components\DetailedSummary;
-use Neo\Documents\Contract\Components\GeneralConditions;
-use Neo\Documents\Contract\Components\Totals;
-use Neo\Documents\Document;
-use Neo\Documents\Network;
+use Neo\Documents\Contract\PDFComponents\ContractFirstPage;
+use Neo\Documents\Contract\PDFComponents\DetailedOrdersCategory;
+use Neo\Documents\Contract\PDFComponents\DetailedOrdersTable;
+use Neo\Documents\Contract\PDFComponents\DetailedSummary;
+use Neo\Documents\Contract\PDFComponents\GeneralConditions;
+use Neo\Documents\Contract\PDFComponents\Totals;
+use Neo\Documents\PDFDocument;
 
-class Contract extends Document {
+class PDFContract extends PDFDocument {
     public const TYPE_PROPOSAL = 'proposal';
     public const TYPE_CONTRACT = 'contract';
 
@@ -40,35 +36,35 @@ class Contract extends Document {
 
     public function __construct() {
         parent::__construct([
-            "margin_bottom"     => 25,
-            "packTableData"     => true,
-            "use_kwt"           => true,
-            "setAutoTopMargin"  => "pad",
+            "margin_bottom"    => 25,
+            "packTableData"    => true,
+            "use_kwt"          => true,
+            "setAutoTopMargin" => "pad",
         ]);
 
         CarbonInterval::setCascadeFactors([
             'minute' => [60, 'seconds'],
-            'hour' => [60, 'minutes'],
-            'day' => [8, 'hours'],
-            'week' => [5, 'days'],
-            'month' => [999999, 'weeks'],
+            'hour'   => [60, 'minutes'],
+            'day'    => [8, 'hours'],
+            'week'   => [5, 'days'],
+            'month'  => [999999, 'weeks'],
         ]);
 
         // Register our components
-        Blade::componentNamespace("Neo\\Documents\\Contract\\Components", "contract");
 
+        Blade::componentNamespace("Neo\\Documents\\Contract\\PDFComponents", "contract");
         // Some very large contracts exceeds the PCRE backtrack limit. So we increase it to prevent crash
         ini_set("pcre.backtrack_limit", "5000000");
     }
 
-    public static function makeContract($data): Document {
+    public static function makeContract($data): PDFDocument {
         $document               = parent::make($data);
         $document->documentType = self::TYPE_CONTRACT;
 
         return $document;
     }
 
-    public static function makeProposal($data): Document {
+    public static function makeProposal($data): PDFDocument {
         $document               = parent::make($data);
         $document->documentType = self::TYPE_PROPOSAL;
 
@@ -76,48 +72,7 @@ class Contract extends Document {
     }
 
     public function ingest($data): bool {
-        // Data is expected to be a CSV file
-        // Read the csv file
-        $reader = Reader::createFromString($data);
-        $reader->setDelimiter(',');
-        $reader->setHeaderOffset(0);
-
-        // Get all records in the file
-        $records = $reader->getRecords();
-
-        $this->orderLines = new Collection();
-
-        // Parse all records
-        foreach ($records as $offset => $record) {
-            // The first record holds additional informations such as customer and order info
-            if ($offset === 1) {
-                $this->customer = new Customer($record);
-                $this->order    = new Order($record);
-
-                $locale = substr($this->order->locale, 0, 2);
-                App::setLocale($locale);
-            }
-
-            $orderLine = new OrderLine($record);
-
-            if ($orderLine->is_production) {
-                $this->order->productionLines->push($orderLine);
-                continue;
-            }
-
-            if ((int)$orderLine->unit_price === 0 && $orderLine->isNetwork(Network::NEO_OTG)) {
-                // -Dans le On the Go, nous avons lié les produits In Screen et Full Screen dans une même propriété. Pourquoi? Parce qu'ils ont le même inventaire. Exemple: il y a 15 spot de dispo. Si un client achète un Digital Full Screen, il reste donc 14 dispos. Il va donc aussi rester 14 dispo autant pour In Screen que pour le Full Screen. Ce sont deux produits differents dans le même écran.
-                //Donc, dans Odoo, lorsque j'ajoute, un Full screen (ou vice versa), ca l'ajoute aussi un in screen qui toutefois se n'a aucune valeurs dans cette propositions. Ainsi, dans le cas que ca arrive, il ne faut pas affiher le In screen. En plus, il ne doit pas faire partie des calculs sur la ligne de total.
-                //Maintenant, quel champ utilisé. Je crois que le meilleur champs serait: Order Lines/Unit Price. Lorsqu'il est à 0, on affiche pas. Note que ceci est exclusif à On the Go.
-                continue;
-            }
-
-            // Each line holds one Order Line
-            $this->order->orderLines->push($orderLine);
-        }
-
-        // All data has been correctly parsed and imported, let's make some calculations right now
-        $this->order->computeValues();
+        [$this->customer, $this->order] = ContractImporter::parse($data);
 
         return true;
     }
@@ -218,8 +173,8 @@ class Contract extends Document {
 
         if ($audienceExtensionLines->isNotEmpty()) {
             $this->mpdf->WriteHTML(view("documents.contract.campaign-summary.audience-extension", [
-                "lines"   => $audienceExtensionLines,
-                "order"    => $this->order,
+                "lines" => $audienceExtensionLines,
+                "order" => $this->order,
             ])->render());
         }
 

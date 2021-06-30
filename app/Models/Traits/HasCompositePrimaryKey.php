@@ -5,14 +5,14 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - HasCompositePrimarykey.php
+ * @neo/api - HasCompositePrimaryKey.php
  */
 
 namespace Neo\Models\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 
-trait HasCompositePrimarykey {
+trait HasCompositePrimaryKey {
     public function getKey()
     {
         $attributes = [];

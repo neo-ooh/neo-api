@@ -6,10 +6,10 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\File;
 use Mpdf\HTMLParserMode;
-use Neo\Documents\Document;
+use Neo\Documents\PDFDocument;
 use Neo\Models\ContractScreenshot;
 
-class POP extends Document {
+class POP extends PDFDocument {
     protected array $contract;
 
     protected string $header_view = "documents.pop.header";

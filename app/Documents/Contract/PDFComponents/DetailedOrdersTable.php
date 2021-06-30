@@ -8,7 +8,7 @@
  * @neo/api - DetailedOrdersTable.php
  */
 
-namespace Neo\Documents\Contract\Components;
+namespace Neo\Documents\Contract\PDFComponents;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;

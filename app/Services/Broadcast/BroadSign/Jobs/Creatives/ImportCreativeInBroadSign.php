@@ -114,7 +114,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
             "source_refresh"             => $creative->properties->refresh_interval     // URL refresh interval (minutes)
         ];
 
-        $bsCreativeId = BSCreative::makeDynamic($creative->owner->email . " - " . $creative->original_name, $attributes);
+        $bsCreativeId = BSCreative::makeDynamic($this->getAPIClient(), $creative->owner->email . " - " . $creative->original_name, $attributes);
 
         $creative->external_ids()->create([
             "network_id" => $this->config->networkID,

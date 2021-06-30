@@ -16,9 +16,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Neo\Http\Controllers\CreativesController;
 use Neo\Models\Creative;
-use Neo\Models\DynamicContent;
 use Neo\Models\DynamicCreative;
-use Neo\Models\StaticContent;
 use Neo\Models\StaticCreative;
 
 class AppServiceProvider extends ServiceProvider {

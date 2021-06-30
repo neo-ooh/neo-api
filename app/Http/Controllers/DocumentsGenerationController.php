@@ -11,7 +11,9 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Neo\Documents\Contract\Contract;
+use League\Csv\Reader;
+use Neo\Documents\Contract\PDFContract;
+use Neo\Documents\Contract\XLSXProposal;
 use Neo\Documents\Exceptions\UnknownGenerationException;
 use Neo\Documents\POP\POP;
 use Neo\Exceptions\UnknownDocumentException;
@@ -36,14 +38,27 @@ class DocumentsGenerationController extends Controller {
                     return new Response(["error" => "Missing file"], 400);
                 }
 
-                $document = Contract::makeContract($file->getContent());
+                $document = PDFContract::makeContract($file->getContent());
                 break;
             case "proposal":
                 if ($file === null) {
                     return new Response(["error" => "Missing file"], 400);
                 }
 
-                $document = Contract::makeProposal($file->getContent());
+                // We need to do a first parse of the given file as to get the requested output format
+                $reader = Reader::createFromString($file->getContent());
+                $reader->setDelimiter(',');
+                $reader->setHeaderOffset(0);
+
+                // Get all records in the file
+                $format = $reader->fetchOne() ["export_in_excel"] === "True" ? 'xlsx' : 'pdf';
+                unset($reader);
+
+                if($format === 'xlsx') {
+                    $document = XLSXProposal::make($file->getContent());
+                } else {
+                    $document = PDFContract::makeProposal($file->getContent());
+                }
                 break;
             case "pop":
                 if ($data === null) {
@@ -61,7 +76,7 @@ class DocumentsGenerationController extends Controller {
         }
 
         return new Response($document->output(), 200, [
-            "Content-Type" => "application/pdf",
+            $document->format()
         ]);
     }
 }

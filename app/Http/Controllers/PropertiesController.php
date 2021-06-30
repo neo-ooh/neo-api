@@ -30,6 +30,7 @@ class PropertiesController extends Controller {
         $property           = new Property();
         $property->actor_id = $actorId;
         $property->save();
+        $property->refresh();
 
         return new Response($property->load(["actor", "traffic_data"]), 201);
     }

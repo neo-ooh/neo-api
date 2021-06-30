@@ -49,6 +49,7 @@ class ActorDetails extends Model {
      */
     protected $casts = [
         'parent_is_group' => 'boolean',
+        'is_property' => 'boolean',
     ];
 
 

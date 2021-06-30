@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use League\Csv\Reader;
 use Neo\Documents\Contract\PDFContract;
 use Neo\Documents\Contract\XLSXProposal;
 use Neo\Documents\Exceptions\UnknownGenerationException;
@@ -44,8 +45,16 @@ class DocumentsGenerationController extends Controller {
                     return new Response(["error" => "Missing file"], 400);
                 }
 
+                // We need to do a first parse of the given file as to get the requested output format
+                $reader = Reader::createFromString($file->getContent());
+                $reader->setDelimiter(',');
+                $reader->setHeaderOffset(0);
 
-                if($request->input("format", "pdf") === 'xlsx') {
+                // Get all records in the file
+                $format = $reader->fetchOne() ["export_in_excel"] === "True" ? 'xlsx' : 'pdf';
+                unset($reader);
+
+                if($format === 'xlsx') {
                     $document = XLSXProposal::make($file->getContent());
                 } else {
                     $document = PDFContract::makeProposal($file->getContent());

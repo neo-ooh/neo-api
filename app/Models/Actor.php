@@ -164,6 +164,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     protected $appends = [
         "parent_id",
         "parent_is_group",
+        "is_property",
         "direct_children_count",
         "path_names",
         "path_ids",
@@ -386,7 +387,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getIsPropertyAttribute(): ?int {
-        return $this->details->parent_id;
+        return $this->details->is_property;
     }
 
     public function getDirectChildrenCountAttribute(): int {

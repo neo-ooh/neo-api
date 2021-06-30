@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int      id
  * @property int      parent_id
  * @property int      parent_is_group
+ * @property string   is_property
  * @property bool     direct_children_count
  * @property string   path_names
  * @property string   path_ids

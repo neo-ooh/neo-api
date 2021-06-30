@@ -31,7 +31,7 @@ class PropertyTraffic extends Model {
      *
      * @var string
      */
-    protected $table = "properties";
+    protected $table = "properties_traffic";
 
 
     /**

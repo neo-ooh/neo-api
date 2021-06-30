@@ -28,7 +28,7 @@ class UpdatePropertyRequest extends FormRequest
         return [
             "require_traffic" => ["required", "boolean"],
             "traffic_start_year" => ["required", "integer"],
-            "traffic_grace_override" => ["required", "nullable", "date"]
+            "traffic_grace_override" => ["present", "nullable", "date"]
         ];
     }
 }

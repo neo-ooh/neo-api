@@ -55,6 +55,12 @@ class PropertyTraffic extends Model {
         "traffic"
     ];
 
+    protected $casts = [
+        "year" => "integer",
+        "month" => "integer",
+        "traffic" => "integer",
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations

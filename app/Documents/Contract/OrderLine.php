@@ -201,7 +201,7 @@ class OrderLine {
         } else {
             // for lins without covid specific impressions and cpm, we simply carry on the regular ones
             $this->covid_impressions = $this->impressions;
-            $this->covid_cpmphp  = $this->impressions > 0 ? ($this->net_investment / $this->impressions) * 1000 : 0;
+            $this->covid_cpm  = $this->impressions > 0 ? ($this->net_investment / $this->impressions) * 1000 : 0;
         }
     }
 

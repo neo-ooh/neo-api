@@ -34,6 +34,8 @@ class XLSXProposal extends XLSXDocument {
      * @inheritDoc
      */
     public function build(): bool {
+        $this->ws->setTitle($this->order->reference);
+
         $header = new Header($this->order, $this->customer);
         $header->render($this->ws);
 

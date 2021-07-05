@@ -17,8 +17,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Date;
+use Mail;
 use Neo\Enums\Capability;
+use Neo\Mails\TrafficDataReminder;
 use Neo\Models\Property;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * This job identifies which user are required to input traffic informations, and sends them an email about it.
@@ -46,7 +49,7 @@ class TrafficRequiredReminder implements ShouldQueue {
 
         // We have a list of actors responsible for inputing traffic data for properties that are missing last month data. And we have removed any duplicate. We can now send the emails.
         foreach($actors as $actor) {
-
+            Mail::to($actor)->send(new TrafficDataReminder($actor));
         }
     }
 }

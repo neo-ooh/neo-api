@@ -27,7 +27,7 @@ class ActorWelcomeEmail extends ReliableEmail {
     /**
      * @var Actor
      */
-    public $actor;
+    public Actor $actor;
 
     public $subject = "Bienvenue sur les services web Neo-OOH — Welcome to Neo-OOH web-services";
 

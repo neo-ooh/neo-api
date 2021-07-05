@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Neo\Enums\Capability as CapabilityEnum;
+use Neo\Models\Actor;
 use Neo\Models\ActorCapability;
 use Neo\Models\ActorRole;
 use Neo\Models\Capability;
@@ -109,7 +110,6 @@ trait HasRoles {
     /**
      * @param int[] $roles
      *
-     * @return HasRoles
      * @return HasRoles
      */
     public function removeRoles(array $roles): self {
@@ -300,6 +300,40 @@ trait HasRoles {
         if (!$this->is_group && ($this->parent->is_group ?? false)) {
             return $this->getCachedRelation("inherited_roles", fn() => $this->InheritedRoles()->get());
         }
+
+        return new Collection();
+    }
+
+    /**
+     * This returns the user.s in the current group or above that have the specified capability.
+     * The method stops searching once it finds at least one actor with the specified capability.
+     * If multiple actors in the same group have the capability, they will all be returned.
+     * @param CapabilityEnum $capability
+     * @return \Illuminate\Support\Collection<Actor> A list of actors with the capability. These actors are guaranteed to have access to the current actor.
+     */
+    public function getActorsInHierarchyWithCapability(CapabilityEnum $capability) {
+        // We start by the current actor and we move upward until we found someone
+        $actor = $this;
+
+        do {
+            // Is this actor a group ?
+            if ($actor->is_group) {
+                // Does this group has actor with the proper capability ?
+                $reviewers = $actor->getAccessibleActors(true, true, false, false)
+                                   ->filter(fn($child) => !$child->is_group && $child->hasCapability($capability))
+                                   ->each(fn($actor) => $actor->unsetRelations());
+
+                if ($reviewers->count() > 0) {
+                    return $reviewers;
+                }
+            } else if (!$actor->is_group && $actor->hasCapability(Capability::contents_review())) {
+                // This actor has the proper capability, use it
+                return collect([$actor]);
+            }
+
+            // No match, go up
+            $actor = $actor->parent;
+        } while ($actor !== null);
 
         return new Collection();
     }

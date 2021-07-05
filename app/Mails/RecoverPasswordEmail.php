@@ -19,8 +19,8 @@ use Neo\Models\RecoveryToken;
 class RecoverPasswordEmail extends ReliableEmail {
     use Queueable, SerializesModels;
 
-    public $recoveryToken;
-    public $actor;
+    public string $recoveryToken;
+    public Actor $actor;
 
     public $subject = "Connexion aux services web Neo-ooh — Neo-ooh web services connection";
 

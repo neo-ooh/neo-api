@@ -11,12 +11,14 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
+use Neo\Http\Requests\Actors\RecycleTwoFARequest;
 use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
@@ -24,6 +26,7 @@ use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
+use Neo\Models\TwoFactorToken;
 
 /**
  * Class ActorsController
@@ -245,5 +248,18 @@ class ActorsController extends Controller {
 
     public function getToken(RequestActorTokenRequest $request) {
         return new Response(["token" => Auth::user()->getJWT()]);
+    }
+
+    public function recycleTwoFA(RecycleTwoFARequest $request, Actor $actor) {
+        // Delete any Two Fa token of the user
+        $actor->twoFactorToken()->delete();
+
+        // Create a new one
+        $token = new TwoFactorToken();
+        $token->actor()->associate($actor);
+        $token->save();
+
+        // We're good, creating the new token has sent an email to the user
+        return new Response(["status" => "ok"]);
     }
 }

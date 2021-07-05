@@ -129,6 +129,7 @@ Route::prefix("v1")->group(function () {
 
     Route::post("actors/{actor}/re-send-signup-email", ActorsController::class . "@resendWelcomeEmail")
          ->name("actors.re-send-signup-email");
+    Route::post("actors/{actor}/recycle-two-fa", ActorsController::class . "@recycleTwoFA")->name("actors.recycle-two-fa");
 
 
     /*

@@ -81,31 +81,26 @@ final class Capability extends Enum {
     // Tests
     public const tests = "test.capability";
 
-    // Customers
-    public const customers_edit = "customers.edit";
-
     // Contracts
-    public const reports_create = "reports.create";
-    public const reports_edit = "reports.edit";
-
     public const contracts_edit = "contracts.edit";
     public const contracts_manage = "contracts.manage";
 
     public const bursts_request = "bursts.request";
     public const bursts_quality = "bursts.quality";
 
+    // Networks
     public const networks_edit = "networks.edit";
     public const networks_connections = "networks.connections";
 
-
+    // Inventory
     public const inventory_read = "inventory.read";
-
-    // Documents Generation
-    public const documents_generation = "documents.generation";
 
     // Dymamics
     public const dynamics_weather = "dynamics.weather";
     public const dynamics_news = "dynamics.news";
+
+    // Documents Generation
+    public const documents_generation = "documents.generation";
 
     // Access Tokens
     public const access_token_edit = "access-token.edit";

@@ -62,10 +62,9 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::contents_review,
             ],
             "NETWORK" => [
-                \Neo\Enums\Capability::customers_edit,
-
-                \Neo\Enums\Capability::reports_create,
-                \Neo\Enums\Capability::reports_edit,
+                \Neo\Enums\Capability::properties_view,
+                \Neo\Enums\Capability::properties_traffic,
+                \Neo\Enums\Capability::properties_edit,
 
                 \Neo\Enums\Capability::bursts_request,
                 \Neo\Enums\Capability::bursts_quality,

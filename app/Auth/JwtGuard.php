@@ -130,32 +130,30 @@ abstract class JwtGuard implements Guard {
     private function validateUser(Actor $actor): bool {
         // If its an impersonating token, we need to validate its accompanying token
         $isImpersonating = array_key_exists("imp", $this->token) && $this->token["imp"];
-        $impersonationIsValid = false;
 
-        if($isImpersonating) {
-            $impersonationIsValid = $this->validateImpersonator();
-
-            if(!$impersonationIsValid) {
-                return false;
-            }
+        if($isImpersonating && !$this->validateImpersonator()) {
+            // We could not validate the impersonator, reject the auth
+            return false;
         }
 
+        return $this->checkActorMeetsCriteria($actor);
+    }
+
+    public function checkActorMeetsCriteria(Actor $actor): bool {
         // Validate that the token has its two factor auth OR that the guard allows it to be missing
-        if(!$this->token['2fa'] && !$this->allowNonValidated2FA && !$impersonationIsValid) {
+        if(!$this->token['2fa'] && !$this->allowNonValidated2FA) {
             return false;
         }
 
         // Validate that the user has approved the Tos
-        if(!$actor->tos_accepted && !$this->allowNonApprovedTos && !$impersonationIsValid) {
+        if(!$actor->tos_accepted && !$this->allowNonApprovedTos) {
             return false;
         }
 
         // Validate the the user account is not locked, OR that a locked account is allowed to log in
-        if($actor->is_locked && !$this->allowDisabledAccount && !$impersonationIsValid) {
+        if($actor->is_locked && !$this->allowDisabledAccount &&) {
             return false;
         }
-
-        return true;
     }
 
     /**
@@ -171,10 +169,10 @@ abstract class JwtGuard implements Guard {
             return false;
         }
 
-        $impersonator = Actor::find($impersonatorData["uid"]);
+        $impersonator = Actor::findOrFail($impersonatorData["uid"]);
 
         // Validate the impersonator and make sure it has the capability to impersonate
-        if(!$this->validateUser($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate())) {
+        if(!$this->checkActorMeetsCriteria($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate())) {
             return false;
         }
 

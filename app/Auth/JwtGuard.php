@@ -136,6 +136,10 @@ abstract class JwtGuard implements Guard {
             return false;
         }
 
+        if($isImpersonating) {
+            return true;
+        }
+
         return $this->checkActorMeetsCriteria($actor);
     }
 

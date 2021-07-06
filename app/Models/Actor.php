@@ -19,6 +19,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -527,16 +528,18 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @throws Exception
      * @throws Exception
      */
-    public function is2FAValid(): bool {
+    public function is2FAValid($updateIfNecessary = true): bool {
         $token = $this->twoFactorToken;
 
         // Is there a token ?
         if ($token === null) {
             // If we are here, it means the user is logged in using its identifier, but has no twoFA.
             // We create one for it
-            $token = new TwoFactorToken();
-            $token->actor()->associate($this);
-            $token->save();
+            if($updateIfNecessary) {
+                $token = new TwoFactorToken();
+                $token->actor()->associate($this);
+                $token->save();
+            }
             return false;
         }
 
@@ -544,9 +547,11 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         if (!$token->validated && $token->created_at->diffInMinutes(Date::now()) >= 15) {
             $token->delete();
 
-            $token = new TwoFactorToken();
-            $token->actor()->associate($this);
-            $token->save();
+            if($updateIfNecessary) {
+                $token = new TwoFactorToken();
+                $token->actor()->associate($this);
+                $token->save();
+            }
 
             return false;
         }
@@ -560,9 +565,11 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         if ($token->validated && $token->validated_at->diffInMonths(Date::now()) >= 1) {
             $token->delete();
 
-            $token = new TwoFactorToken();
-            $token->actor()->associate($this);
-            $token->save();
+            if($updateIfNecessary) {
+                $token = new TwoFactorToken();
+                $token->actor()->associate($this);
+                $token->save();
+            }
 
             return false;
         }
@@ -579,7 +586,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @throws Exception
      */
     public function getJWT($isImpersonating = false): string {
-        $twoFAIsValid = $this->is2FAValid();
+        $twoFAIsValid = $this->is2FAValid(!$isImpersonating);
 
         // If this token is for impersonating OR if the user hasn't finished all auth steps, the token should expire in the 24hrs, otherwise, it expires one month after the second FA has been done
         $expire = $isImpersonating || !$twoFAIsValid ? Date::now()->addDay()->timestamp : $this->twoFactorToken->validated_at->addMonth()->timestamp;

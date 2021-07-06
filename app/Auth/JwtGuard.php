@@ -17,6 +17,7 @@ use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use Neo\Enums\Capability;
 use Neo\Models\Actor;
 
 /**
@@ -167,6 +168,13 @@ abstract class JwtGuard implements Guard {
         try {
             $impersonatorData = (array)JWT::decode($impersonatorToken, config('auth.jwt_public_key'), ['RS256']);
         } catch(Exception $e) {
+            return false;
+        }
+
+        $impersonator = Actor::find($impersonatorData["uid"]);
+
+        // Validate the impersonator and make sure it has the capability to impersonate
+        if(!$this->validateUser($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate())) {
             return false;
         }
 

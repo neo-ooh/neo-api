@@ -133,6 +133,10 @@ abstract class JwtGuard implements Guard {
 
         if($isImpersonating) {
             $impersonationIsValid = $this->validateImpersonator();
+
+            if(!$impersonationIsValid) {
+                return false;
+            }
         }
 
         // Validate that the token has its two factor auth OR that the guard allows it to be missing

@@ -34,6 +34,7 @@ class OrderLine {
         "Rotating column"       => 0.5,
         "Sky poster"            => 0.5,
         "Unik poster"           => 0.5,
+        "Banner"               => 0.5,
     ];
 
     public string $orderLine;
@@ -195,7 +196,7 @@ class OrderLine {
             $this->cpm               = (float)$record["order_line/cpm"];
         }
 
-        if ($this->impressions > 0 && isset($this->product_category) && $this->isNetwork(Network::NEO_SHOPPING)) {
+        if ($this->impressions > 0 && isset($this->product_category) && $this->isNetwork(Network::NEO_SHOPPING) && array_key_exists($this->product_category, static::COVID_TRAFFIC_FACTOR)) {
             $this->covid_impressions = $this->impressions * static::COVID_TRAFFIC_FACTOR[$this->product_category];
              $this->covid_cpm = ($this->net_investment / $this->covid_impressions) * 1000;
         } else {

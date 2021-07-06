@@ -16,6 +16,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 use Neo\Models\Actor;
 
 /**
@@ -126,22 +127,47 @@ abstract class JwtGuard implements Guard {
     }
 
     private function validateUser(Actor $actor): bool {
+        // If its an impersonating token, we need to validate its accompanying token
+        $isImpersonating = array_key_exists("imp", $this->token) && $this->token["imp"];
+        $impersonationIsValid = false;
+
+        if($isImpersonating) {
+            $impersonationIsValid = $this->validateImpersonator();
+        }
+
         // Validate that the token has its two factor auth OR that the guard allows it to be missing
-        if(!$this->token['2fa'] && !$this->allowNonValidated2FA) {
+        if(!$this->token['2fa'] && !$this->allowNonValidated2FA && !$impersonationIsValid) {
             return false;
         }
 
         // Validate that the user has approved the Tos
-        if(!$actor->tos_accepted && !$this->allowNonApprovedTos) {
+        if(!$actor->tos_accepted && !$this->allowNonApprovedTos && !$impersonationIsValid) {
             return false;
         }
 
         // Validate the the user account is not locked, OR that a locked account is allowed to log in
-        if($actor->is_locked && !$this->allowDisabledAccount) {
+        if($actor->is_locked && !$this->allowDisabledAccount && !$impersonationIsValid) {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Validate the existence of a second Authorization token validating the use of the main token for impersonation.
+     * @return bool
+     */
+    protected function validateImpersonator(): bool {
+        $impersonatorToken = Str::substr(Request::header('X-Impersonator-Authorization', ''), strlen("Bearer "));
+
+        try {
+            $impersonatorData = (array)JWT::decode($impersonatorToken, config('auth.jwt_public_key'), ['RS256']);
+        } catch(Exception $e) {
+            return false;
+        }
+
+        // Given token is valid, validate our main token is correctly associated with the current impersonatore
+        return $this->token["iid"] === $impersonatorData["uid"];
     }
 
     /**

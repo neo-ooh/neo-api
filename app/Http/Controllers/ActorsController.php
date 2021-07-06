@@ -16,7 +16,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use InvalidArgumentException;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
+use Neo\Http\Requests\Actors\ImpersonateActorRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
 use Neo\Http\Requests\Actors\RecycleTwoFARequest;
 use Neo\Http\Requests\Actors\RequestActorTokenRequest;
@@ -237,6 +239,11 @@ class ActorsController extends Controller {
         return new Response([]);
     }
 
+    /**
+     * Generates a new welcome token and email for the given actor
+     * @param Actor $actor
+     * @return Response
+     */
     public function resendWelcomeEmail(Actor $actor): Response {
         // Remove leftover token
         SignupToken::query()->where("actor_id", "=", $actor->id)->delete();
@@ -246,11 +253,22 @@ class ActorsController extends Controller {
         return new Response();
     }
 
-    public function getToken(RequestActorTokenRequest $request) {
+    /**
+     * Gives a token for the current user
+     * @param RequestActorTokenRequest $request
+     * @return Response
+     */
+    public function getToken(RequestActorTokenRequest $request): Response {
         return new Response(["token" => Auth::user()->getJWT()]);
     }
 
-    public function recycleTwoFA(RecycleTwoFARequest $request, Actor $actor) {
+    /**
+     * Deletes the authentication second-step token and create a new one for the passed actor
+     * @param RecycleTwoFARequest $request
+     * @param Actor               $actor
+     * @return Response
+     */
+    public function recycleTwoFA(RecycleTwoFARequest $request, Actor $actor): Response {
         // Delete any Two Fa token of the user
         $actor->twoFactorToken()->delete();
 
@@ -261,5 +279,15 @@ class ActorsController extends Controller {
 
         // We're good, creating the new token has sent an email to the user
         return new Response(["status" => "ok"]);
+    }
+
+    public function impersonate(ImpersonateActorRequest $request, Actor $actor) {
+        // Validate the actor is not a group
+        if($actor->is_group) {
+            throw new InvalidArgumentException("Cannot impersonate a group");
+        }
+
+        // Get and return the impersonating token
+        return new Response(["token" => $actor->getJWT(true)]);
     }
 }

@@ -131,6 +131,8 @@ Route::prefix("v1")->group(function () {
          ->name("actors.re-send-signup-email");
     Route::post("actors/{actor}/recycle-two-fa", ActorsController::class . "@recycleTwoFA")->name("actors.recycle-two-fa");
 
+    Route::get("actors/{actor}/impersonate", ActorsController::class . "@impersonate")->name("actors.impersonate");
+
 
     /*
     |----------------------------------------------------------------------

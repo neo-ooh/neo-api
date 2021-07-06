@@ -578,24 +578,31 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @throws Exception
      * @throws Exception
      */
-    public function getJWT(): string {
+    public function getJWT($isImpersonating = false): string {
         $twoFAIsValid = $this->is2FAValid();
+
+        // If this token is for impersonating OR if the user hasn't finished all auth steps, the token should expire in the 24hrs, otherwise, it expires one month after the second FA has been done
+        $expire = $isImpersonating || !$twoFAIsValid ? Date::now()->addDay()->timestamp : $this->twoFactorToken->validated_at->addMonth()->timestamp;
 
         $payload = [
             // Registered
             "iss"  => config("app.url"),
             "aud"  => "*.neo-ooh.com",
             "iat"  => time(),
-            "exp"  => $twoFAIsValid
-                ? $this->twoFactorToken->validated_at->addMonth()->timestamp
-                : Date::now()->addDay()->timestamp,
+            "exp"  => $expire,
 
             // Private
-            "uid"  => $this->id,
-            "name" => $this->name,
-            "2fa"  => $twoFAIsValid,
-            "tos"  => $this->tos_accepted,
+            "uid"  => $this->id,            // uid => user id
+            "name" => $this->name,          //
+            "2fa"  => $twoFAIsValid,        // 2fa => Two Factor Auth
+            "tos"  => $this->tos_accepted,  // tos => Terms of Use
         ];
+
+        // When impersonating someone, we add additional fields to the token to ensure it can only be used by the current actor
+        if($isImpersonating) {
+            $payload["imp"] = true;         // imp => Impersonating
+            $payload["iid"] = Auth::id();   // iid => Impersonator Id
+        }
 
         return JWT::encode($payload, config("auth.jwt_private_key"), "RS256");
     }

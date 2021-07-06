@@ -145,7 +145,7 @@ abstract class JwtGuard implements Guard {
 
     public function checkActorMeetsCriteria(Actor $actor): bool {
         // Validate that the token has its two factor auth OR that the guard allows it to be missing
-        if(!$this->token['2fa'] && !$this->allowNonValidated2FA) {
+        if(!$actor->is2FAValid() && !$this->allowNonValidated2FA) {
             return false;
         }
 

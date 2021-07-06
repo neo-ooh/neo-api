@@ -151,9 +151,11 @@ abstract class JwtGuard implements Guard {
         }
 
         // Validate the the user account is not locked, OR that a locked account is allowed to log in
-        if($actor->is_locked && !$this->allowDisabledAccount &&) {
+        if($actor->is_locked && !$this->allowDisabledAccount) {
             return false;
         }
+
+        return true;
     }
 
     /**

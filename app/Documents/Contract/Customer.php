@@ -20,6 +20,8 @@ class Customer {
     public string $account;
     public string $reference;
 
+    public string $payable_account = "";
+
     public string $address_street;
     public string $address_street_2;
     public string $address_city;
@@ -58,6 +60,11 @@ class Customer {
             "partner_id/state_id/name"   => $this->address_state_name,
             "partner_id/country_id/name" => $this->address_country,
         ] = $record;
+
+        if(array_key_exists("partner_invoice_id/email", $record)) {
+            $this->payable_account = $record["partner_invoice_id/email"];
+        }
+
     }
 
     public function getAddress() {

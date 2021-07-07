@@ -11,6 +11,7 @@
 namespace Neo\Documents\Contract;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Date;
 use Neo\Documents\Exceptions\MissingColumnException;
 
 class Order {
@@ -40,6 +41,8 @@ class Order {
 
     public Collection $orderLines;
     public Collection $productionLines;
+
+    public Collection $invoice_plan_steps;
 
     // Computed values
 
@@ -88,7 +91,7 @@ class Order {
         }
 
         $this->locale            = $record["partner_id/lang"];
-        $this->company_name            = $record["company_id/name"];
+        $this->company_name      = $record["company_id/name"];
         $this->reference         = $record["name"];
         $this->date              = $record["date_order"];
         $this->salesperson       = $record["user_id"];
@@ -108,6 +111,21 @@ class Order {
 
         $this->orderLines      = new Collection();
         $this->productionLines = new Collection();
+
+        $this->invoice_plan_steps = new Collection();
+
+        if (array_key_exists("invoice_plan_ids/invoice_move_ids/amount_untaxed", $record)) {
+            $this->addInvoicePlanStep($record);
+        }
+
+    }
+
+    public function addInvoicePlanStep(array $record) {
+        $this->invoice_plan_steps->add([
+            "step"   => $record["invoice_plan_ids/invoice_move_ids/nb_in_plan"],
+            "date"   => Date::make($record["invoice_plan_ids/plan_date_start"]),
+            "amount" => $record["invoice_plan_ids/invoice_move_ids/amount_untaxed"],
+        ]);
     }
 
     // Getters
@@ -135,9 +153,9 @@ class Order {
     // Compute values
     public function computeValues(): void {
         // Guaranteed orders
-        $guaranteedOrders                   = $this->getGuaranteedOrders();
-        $extensionOrders                   = $this->getAudienceExtensionLines();
-        if($guaranteedOrders->isNotEmpty()) {
+        $guaranteedOrders = $this->getGuaranteedOrders();
+        $extensionOrders  = $this->getAudienceExtensionLines();
+        if ($guaranteedOrders->isNotEmpty()) {
             $this->guaranteed_impressions_count = $guaranteedOrders->sum("impressions") + $extensionOrders->sum("impressions");
             $this->guaranteed_value             = $guaranteedOrders->sum("media_value") + $extensionOrders->sum("media_value");
             $this->guaranteed_investment        = $guaranteedOrders->sum("net_investment") + $extensionOrders->sum("net_investment");
@@ -155,14 +173,14 @@ class Order {
             $this->bua_investment        = $buaOrders->sum("net_investment");
         }
 
-        if($this->has_bua || $guaranteedOrders->isNotEmpty()) {
+        if ($this->has_bua || $guaranteedOrders->isNotEmpty()) {
             // Orders totals
             $this->potential_value        = $this->guaranteed_value + $this->bua_value;
             $this->grand_total_investment = $this->guaranteed_investment + $this->bua_investment;
             $this->potential_discount     = (1 - $this->grand_total_investment / $this->potential_value) * 100;
 
             // Only calculate the cpm if
-            if(($this->guaranteed_impressions_count + $this->bua_impressions_count) > 0) {
+            if (($this->guaranteed_impressions_count + $this->bua_impressions_count) > 0) {
                 $this->cpm = 1000 * $this->grand_total_investment / ($this->guaranteed_impressions_count + $this->bua_impressions_count);
             }
         }
@@ -170,6 +188,9 @@ class Order {
         // Production costs
         $this->production_costs = $this->productionLines->sum("subtotal");
 
-        $this->net_investment   = $this->grand_total_investment + $this->production_costs;
+        $this->net_investment = $this->grand_total_investment + $this->production_costs;
+
+        // Sort payment plan in correct order
+        $this->invoice_plan_steps->sortBy("step");
     }
 }

@@ -11,7 +11,7 @@
   "email-review-schedule-body": "A scheduled ad from <strong>:scheduler</strong> for the campaign <strong>:campaign</strong > of :campaignowner is pending review.<br /><br />You can use the link below to access it directly.",
   "email-review-schedule-cta": "Access the campaign",
 
-  "email-welcome-subject": "Welcome to Neo-OOH web-services",
+  "email-welcome-subject": "Welcome to Connect :name",
   "email-welcome-title": "A Neo-OOH account has been given to you",
   "email-welcome-body": "Welcome!<br />\nA Neo account gives you access to Neo-OOH web-services.<br /><br />\nPlease click on the link below to complete your account configuration.",
   "email-welcome-cta": "Configure my account",
@@ -27,7 +27,7 @@
 
   "email-end-of-schedule-subject": "A schedule is about to end",
   "email-end-of-schedule-title": "Your schedule broadcast is coming to an end",
-  "email-end-of-schedule-body": "Hi :name,<br /><br /> a schedule on your campaign <strong>:campaign</strong> is about to reach its end of broadcast on :date. You need to schedule your ad again if you want to extend its Broadcast.",
+  "email-end-of-schedule-body": "Hi :name,<br /><br /> a schedule on your campaign <strong>:campaign</strong> is about to reach its end of broadcast on :date. You need to schedule your ad again if you want to extend its broadcast.",
   "email-end-of-schedule-cta": "Go to the campaign",
 
   "email-legals": "© :date Neo-OOH. All rights reserved."

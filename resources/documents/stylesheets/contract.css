@@ -224,9 +224,13 @@ footer .footer-table {
 }
 .contract-home-page h2 {
   text-transform: uppercase;
-  font-size: 14pt;
+  font-size: 13pt;
   font-weight: "poppins-regular";
   margin-bottom: 0;
+}
+.contract-home-page h3 {
+  text-align: center;
+  margin-top: -2mm;
 }
 .contract-home-page .contract-party {
   font-size: 9pt;
@@ -258,36 +262,6 @@ footer .footer-table {
 }
 .contract-home-page .contract-party.second-party {
   margin-top: 4mm;
-}
-.contract-home-page .payable-contact {
-  width: 200mm;
-  margin-top: 6mm;
-  border-collapse: collapse;
-  border: 1px solid #252734;
-  font-size: 9pt;
-}
-.contract-home-page .payable-contact tr th {
-  height: 8mm;
-  padding: 0 4mm;
-  background-color: #252734;
-  color: #FFFFFF;
-  text-align: left;
-}
-.contract-home-page .payable-contact tr td {
-  height: 8mm;
-  border-bottom: 1px solid #595959;
-}
-.contract-home-page .payable-contact tr td:nth-child(1) {
-  width: 38mm;
-  padding: 0 2mm;
-  text-align: right;
-  border-right: 1px solid #595959;
-}
-.contract-home-page .payable-contact tr td:nth-child(2) {
-  background-color: #EEEEEE;
-}
-.contract-home-page .payable-contact tr td.invoice-type-cell {
-  padding-left: 3mm;
 }
 .contract-home-page .costs-recap {
   margin-top: 3mm;
@@ -329,6 +303,37 @@ footer .footer-table {
 }
 .contract-home-page .costs-recap .costs-recap-table tr.footer th:nth-child(2) {
   text-align: right;
+}
+.contract-home-page .payable-accounts-wrapper {
+  margin-top: 3mm;
+}
+.contract-home-page .payable-accounts {
+  margin-top: -8mm;
+  margin-left: 50mm;
+}
+.contract-home-page .payable-accounts .payable-account-email {
+  font-family: "poppins-bold";
+  font-weight: bold;
+  margin-left: 5mm;
+}
+.contract-home-page .payment-terms {
+  margin-top: 3mm;
+}
+.contract-home-page .payment-terms .payment-steps {
+  margin-top: -8mm;
+  margin-left: 50mm;
+  margin-bottom: 5mm;
+}
+.contract-home-page .payment-terms .payment-steps tr td:nth-child(1) {
+  padding-right: 5mm;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: right;
+}
+.contract-home-page .payment-terms .payment-steps tr td:nth-child(3) {
+  padding-left: 5mm;
+  font-family: "poppins-bold";
+  font-weight: bold;
 }
 .contract-home-page .payment-terms ul {
   margin-top: -2mm;

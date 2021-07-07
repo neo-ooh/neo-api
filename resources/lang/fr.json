@@ -12,8 +12,8 @@
   "email-review-schedule-body_text": "Une programmation de :scheduler pour la campagne :campaign de :campaign-owner est en attente de validation.\n\nVous pouvez utiliser le lien ci-dessous pour y accèder directement.",
   "email-review-schedule-cta": "Accéder à la campagne",
 
-  "email-welcome-subject": "Bienvenue chez les services web Neo-OOH",
-  "email-welcome-title": "Un compte Neo-OOH viens de vous être attribué",
+  "email-welcome-subject": "Bienvenue sur Connect",
+  "email-welcome-title": "Bienvenue sur Connect :name",
   "email-welcome-body": "Bienvenue!<br />Un compte Neo vous permet d'accéder aux services web Neo-OOH.<br /><br />Veuillez cliquer sur le lien ci-dessous pour terminer la configuration de votre compte.",
   "email-welcome-body_text": "Une programmation de :scheduler pour la campagne :campaign est en attente de validation.<br /><br />Vous pouvez utiliser le lien ci-dessous pour y accèder directement.",
   "email-welcome-cta": "Configurer mon compte",

@@ -11,8 +11,8 @@
   "email-review-schedule-body": "A scheduled ad from <strong>:scheduler</strong> for the campaign <strong>:campaign</strong > of :campaignowner is pending review.<br /><br />You can use the link below to access it directly.",
   "email-review-schedule-cta": "Access the campaign",
 
-  "email-welcome-subject": "Welcome to Connect :name",
-  "email-welcome-title": "A Neo-OOH account has been given to you",
+  "email-welcome-subject": "Welcome to Connect",
+  "email-welcome-title": "Welcome to Connect :name",
   "email-welcome-body": "Welcome!<br />\nA Neo account gives you access to Neo-OOH web-services.<br /><br />\nPlease click on the link below to complete your account configuration.",
   "email-welcome-cta": "Configure my account",
 

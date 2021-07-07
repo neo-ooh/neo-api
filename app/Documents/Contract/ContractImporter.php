@@ -32,6 +32,11 @@ class ContractImporter {
                 App::setLocale($locale);
             }
 
+            if(empty($record["order_line"]) && !empty($record["invoice_plan_ids/invoice_move_ids/nb_in_plan"])) {
+                $order->addInvoicePlanStep($record);
+                continue;
+            }
+
             $orderLine = new OrderLine($record);
 
             if ($orderLine->is_production) {

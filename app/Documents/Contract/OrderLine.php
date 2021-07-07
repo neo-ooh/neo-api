@@ -26,8 +26,8 @@ class OrderLine {
 
     public const COVID_TRAFFIC_FACTOR = [
         "Digital - Vertical"    => 0.5,
-        "Digital - Horizontal"  => 0.7,
-        "Digital - Spectacular" => 0.7,
+        "Digital - Horizontal"  => 0.3,
+        "Digital - Spectacular" => 0.3,
         "Column poster"         => 0.5,
         "Mall poster"           => 0.5,
         "Mall+ poster"          => 0.5,

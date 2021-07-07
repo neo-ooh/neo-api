@@ -1,5 +1,6 @@
 <section class="contract-home-page">
     <h1>{!! __("contract.contract-number-title", ["number" => $order->reference]) !!}</h1>
+    <h3>{!! $order->campaign_name !!}</h3>
     <div class="parties">
         <div class="contract-party first-party">
             <div class="contract-party-left-column">{!! __("contract.first-party-title") !!}</div>
@@ -59,38 +60,6 @@
             </div>
         </div>
     </div>
-    <table class="payable-contact">
-        <tr class="header">
-            <th colspan="2">
-                {!! __("contract.payable-contact-header") !!}
-            </th>
-        </tr>
-        <tr>
-            <td>{!! __("common.complete-name") !!}</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>{!! __("common.phone") !!}</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>{!! __("common.email-address") !!}</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>{!! __("common.billing-address") !!}</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>{!! __("common.invoice") !!}</td>
-            <td class="invoice-type-cell">
-                <label for="contract-type-electronic">{!! __("contract.type-electronic") !!}</label>
-                <input type="radio" name="contract-type" id="contract-type-electronic">
-                <label for="contract-type-paper">{!! __("contract.type-paper") !!}</label>
-                <input type="radio" name="contract-type" id="contract-type-paper">
-            </td>
-        </tr>
-    </table>
     <div class="costs-recap">
         <p>{!! __("contract.customer-accepts") !!}</p>
         <h2 class="investment-label">{!! __("contract.investment") !!}</h2>
@@ -109,13 +78,32 @@
             </tr>
         </table>
     </div>
+    <div class="payable-accounts-wrapper">
+        <h2>{!! __("contract.payable-accounts") !!}</h2>
+        <table class="payable-accounts">
+            <tr>
+                <td class="email-label">{{ __("common.email-address") }}</td>
+                <td class="payable-account-email">
+                    {{ $customer->payable_account }}
+                </td>
+            </tr>
+        </table>
+    </div>
     <div class="payment-terms">
         <h2>{!! __("contract.payment-terms-title") !!}</h2>
+        <table class="payment-steps">
+            @foreach($order->invoice_plan_steps as $step)
+                <tr>
+                    <td>{{ formatCurrency($step["amount"]) }}</td>
+                    <td>{{ __("contract.billed-on") }}</td>
+                    <td>{{ $step["date"]->toFormattedDateString() }}</td>
+                </tr>
+            @endforeach
+        </table>
         <ul>
             <li>{!! __("contract.payment-terms-one") !!}</li>
-            <li><strong>{!! __("contract.payment-terms-two") !!}</strong></li>
+            <li>{!! __("contract.payment-terms-two") !!}</li>
             <li>{!! __("contract.payment-terms-three") !!}</li>
-            <li>{!! __("contract.payment-terms-four") !!}</li>
         </ul>
     </div>
     <div class="intervention">

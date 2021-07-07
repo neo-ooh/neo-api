@@ -26,6 +26,7 @@ use Illuminate\Routing\Middleware\ValidateSignature;
 use Neo\Http\Middleware\Authenticate;
 use Neo\Http\Middleware\DynamicsMiddleware;
 use Neo\Http\Middleware\PreventRequestsDuringMaintenance;
+use Neo\Http\Middleware\SimpleErrors;
 use Neo\Http\Middleware\TrimStrings;
 use Neo\Http\Middleware\TrustProxies;
 
@@ -85,6 +86,7 @@ class Kernel extends HttpKernel {
             'throttle:api',
             'auth:neo-loa-4,access-tokens',
             SubstituteBindings::class,
+            SimpleErrors::class,
         ],
     ];
 

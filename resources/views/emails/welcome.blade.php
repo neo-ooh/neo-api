@@ -78,7 +78,7 @@
     <table border="0" cellpadding="0" cellspacing="0">
         <tr class="main">
             <td colspan="2">
-                <h1>{!! __("email-welcome-title") !!}</h1>
+                <h1>{!! __("email-welcome-title", ["name" => $actor->name]) !!}</h1>
                 <p>
                     {!! __("email-welcome-body") !!}
                 </p>

@@ -91,7 +91,7 @@
         </tr>
         <tr class="logos">
             <td align="center">
-                <img src="{{ secure_asset("images/main.dark.$locale.png") }}" alt="Neo-OOH Logo">
+                <img src="{{ secure_asset("images/main.dark.$actor->locale.png") }}" alt="Neo-OOH Logo">
             </td>
         </tr>
         <tr class="legals" align="center">

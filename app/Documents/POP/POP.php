@@ -120,11 +120,17 @@ class POP extends PDFDocument {
             "locale" => $this->contract["locale"]
         ])->render());
 
+        $reservations = $this->contract["reservations"]->where("type", "!==", "bua");
+
+        if(count($reservations) === 0) {
+            $reservations = $this->contract["reservations"];
+        }
+
         // Build the preface page
         $this->mpdf->WriteHTML(view("documents.pop.preface", [
             "contract"   => $this->contract,
-            "start_date" => $this->contract["reservations"]->where("type", "!==", "bua")->min("start_date")->format("Y-m-d"),
-            "end_date"   => $this->contract["reservations"]->where("type", "!==", "bua")->max("end_date")->format("Y-m-d"),
+            "start_date" => $reservations->min("start_date")->format("Y-m-d"),
+            "end_date"   => $reservations->max("end_date")->format("Y-m-d"),
         ])->render());
 
 

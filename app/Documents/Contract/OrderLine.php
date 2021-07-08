@@ -25,16 +25,16 @@ class OrderLine {
     public const TYPE_EXTENSION_STRATEGY = 4;
 
     public const COVID_TRAFFIC_FACTOR = [
-        "Digital - Vertical"    => 0.5,
-        "Digital - Horizontal"  => 0.3,
-        "Digital - Spectacular" => 0.3,
-        "Column poster"         => 0.5,
-        "Mall poster"           => 0.5,
-        "Mall+ poster"          => 0.5,
-        "Rotating column"       => 0.5,
-        "Sky poster"            => 0.5,
-        "Unik poster"           => 0.5,
-        "Banner"               => 0.5,
+        "Digital - Vertical [shopping]"   => 0.5,
+        "Digital - Horizontal [shopping]" => 0.3,
+        "Digital - Spectacular"           => 0.3,
+        "Column poster"                   => 0.5,
+        "Mall poster"                     => 0.5,
+        "Mall+ poster"                    => 0.5,
+        "Rotating column"                 => 0.5,
+        "Sky poster"                      => 0.5,
+        "Unik poster"                     => 0.5,
+        "Banner"                          => 0.5,
     ];
 
     public string $orderLine;
@@ -198,11 +198,11 @@ class OrderLine {
 
         if ($this->impressions > 0 && isset($this->product_category) && $this->isNetwork(Network::NEO_SHOPPING) && array_key_exists($this->product_category, static::COVID_TRAFFIC_FACTOR)) {
             $this->covid_impressions = $this->impressions * static::COVID_TRAFFIC_FACTOR[$this->product_category];
-             $this->covid_cpm = ($this->net_investment / $this->covid_impressions) * 1000;
+            $this->covid_cpm         = ($this->net_investment / $this->covid_impressions) * 1000;
         } else {
             // for lins without covid specific impressions and cpm, we simply carry on the regular ones
             $this->covid_impressions = $this->impressions;
-            $this->covid_cpm  = $this->impressions > 0 ? ($this->net_investment / $this->impressions) * 1000 : 0;
+            $this->covid_cpm         = $this->impressions > 0 ? ($this->net_investment / $this->impressions) * 1000 : 0;
         }
     }
 

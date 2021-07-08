@@ -2,7 +2,6 @@
 
 return [
     "audience-extension-strategy"    => "Audience extension strategy",
-    "billed-on" => "billed on",
     "campaign-details-title"         => "Campaign Details",
     "campaign-summary-title"         => "Campaign Summary",
     "conditions-cancellation-desc"   => "The CLIENT may cancel the present contract, without penalty, conditional upon the receipt by NEO of a notice from the CLIENT of total or partial cancellation by registered mail at least one hundred and twenty (120) days prior to the commencement date of the intended advertising period. If this delay is not respected, the full amount in accordance with the terms of the present contract shall be due and payable. If the cancellation occurs during the advertising period, the CLIENT shall be obliged to pay NEO the full amount due in accordance with the terms of the present contract.",
@@ -48,7 +47,8 @@ return [
     "order-type-bonus"                   => "Guaranteed Bonus",
     "order-type-bua"                     => "Bonus Upon Availability",
     "order-type-purchase"                => "Guaranteed Purchase",
-    "payable-accounts"                   => "Payable accounts",
+    "payable-contact-header"             => "Accounts payable contact (to be filled out by the client, in block letters)",
+    "payment-terms-four"                 => "The billing cycle for a med ia investment is based on a 4 week period. It always starts as of the first d ay of the campaign. Production fees will be invoiced as of the first day of the campaign.",
     "payment-terms-one"                  => "Any <strong>media</strong> amount due is payable 30 days following the date of the invoice. Any <strong>production</strong> amount due is payable upon receipt of the invoice. Any payment in d efault shall bear interest at the rate of 1.5% per month (18% per annum).",
     "payment-terms-three"                => "NEO reserves the right to have the present contract fulfilled, in whole or in part, by an agent of its choice. In addition, it is agreed and understood that NEO will not be bound by any unwritten representation or undertaking made on its behalf.",
     "payment-terms-title"                => "Payment Terms",
@@ -113,4 +113,6 @@ return [
     "totals-guaranteed-media-total"      => "Guaranteed Media Total",
     "totals-potential-total"             => "(Potential) Grand Media Total",
     "totals-production-cost"             => "Production Cost",
+    "type-electronic"                    => "Electronic",
+    "type-paper"                         => "Paper",
 ];

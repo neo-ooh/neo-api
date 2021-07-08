@@ -33,14 +33,9 @@
 
   h2 {
     text-transform : uppercase;
-    font-size      : 13pt;
+    font-size      : 14pt;
     font-weight    : $font-regular;
     margin-bottom  : 0;
-  }
-
-  h3 {
-    text-align: center;
-    margin-top: -2mm;
   }
 
   .contract-party {
@@ -84,6 +79,44 @@
 
     &.second-party {
       margin-top : 4mm;
+    }
+  }
+
+  .payable-contact {
+    width           : 200mm;
+    margin-top      : 6mm;
+    border-collapse : collapse;
+    border          : 1px solid $dark-blue;
+    font-size       : 9pt;
+
+    tr {
+      th {
+        height           : 8mm;
+        padding          : 0 4mm;
+        background-color : $dark-blue;
+        color            : $white;
+        text-align       : left;
+      }
+
+      td {
+        height        : 8mm;
+        border-bottom : 1px solid $dark-grey;
+
+        &:nth-child(1) {
+          width        : 38mm;
+          padding      : 0 2mm;
+          text-align   : right;
+          border-right : 1px solid $dark-grey;
+        }
+
+        &:nth-child(2) {
+          background-color : $ultralight-grey;
+        }
+
+        &.invoice-type-cell {
+          padding-left : 3mm;
+        }
+      }
     }
   }
 
@@ -145,47 +178,7 @@
     }
   }
 
-  .payable-accounts-wrapper {
-    margin-top: 3mm;
-  }
-
-  .payable-accounts {
-    margin-top      : -8mm;
-    margin-left     : 50mm;
-
-    .payable-account-email {
-      font-family: $font-bold;
-      font-weight: bold;
-      margin-left: 5mm;
-    }
-  }
-
   .payment-terms {
-    margin-top: 3mm;
-
-    .payment-steps {
-      margin-top      : -8mm;
-      margin-left     : 50mm;
-      margin-bottom: 5mm;
-
-      tr {
-        td:nth-child(1) {
-          padding-right: 5mm;
-
-          font-family: $font-bold;
-          font-weight: bold;
-          text-align: right;
-        }
-
-        td:nth-child(3) {
-          padding-left: 5mm;
-
-          font-family: $font-bold;
-          font-weight: bold;
-        }
-      }
-    }
-
     ul {
       margin-top : -2mm;
 

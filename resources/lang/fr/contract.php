@@ -2,7 +2,6 @@
 
 return [
     "contract"                 => "Contrat :contract",
-    "billed-on" => "facturé le",
     "proposal"                 => "Proposition :contract",
     "production-details"       => "Détails de Production",
     "campaign-summary-title"   => "Campagne Sommaire",
@@ -17,10 +16,12 @@ return [
     "order-type-purchase"      => "Achat Garanti",
     "order-type-bonus"         => "Boni Garanti",
     "order-type-bua"           => "Boni selon disponibilité",
-    "payable-accounts"                   => "Comptes payables",
+    "payable-contact-header"   => "Contact comptes payables (à compléter par le client)",
     "represented-by"           => "Ici représentée par",
     "second-party-referred-as" => "Dûment autorisé tel qu’il le déclare : (Ci-après appelé : « <strong>CLIENT</strong> » )",
     "second-party-title"       => "Et",
+    "type-electronic"          => "Électronique",
+    "type-paper"               => "Papier",
     "customer-accepts"         => "Le client accepte ce qui suit:",
     "investment"               => "Investissement:",
     "total-media-net"          => "Total Média net",
@@ -31,6 +32,7 @@ return [
     "payment-terms-one"   => "Tout montant <strong>média</strong> dû est payable 30 jours après la date de facturation. Tout montant de <strong>production</strong> est payable sur réception. Tout retard portera intérêt au taux de 1.5% par mois (18% l’an).",
     "payment-terms-two"   => "L’annexe « A », de même que les conditions générales se trouvant au verso font parties intégrantes du présent contrat. Le client et l’intervenant, le cas échéant, reconnaissent en avoir pris connaissance et avoir accepté celles-ci.",
     "payment-terms-three" => "NEO se réserve le droit de faire exécuter le présent contrat, en totalité ou en partie, par les mandataires de son choix. De plus, il est entendu que NEO ne sera liée par aucun engagement verbal passé en son nom.",
+    "payment-terms-four"  => "Le cycle de facturation d'un investissement média est basé sur une période de 4 semaines. Le cycle commence toujours à partir du premier jour du début de la campagne. Les frais de production seront facturés dès le premier jour de la campagne.",
     "intervention-title"  => "Intervention",
     "intervention-desc"   => "L’annonceur qui intervient au présent contrat reconnaît qu’il sera tenu solidairement responsable avec le client de toute et chacune des obligations de celui‐ci, découlant des présentes.",
 

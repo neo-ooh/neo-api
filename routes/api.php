@@ -133,6 +133,8 @@ Route::prefix("v1")->group(function () {
 
     Route::get("actors/{actor}/impersonate", ActorsController::class . "@impersonate")->name("actors.impersonate");
 
+    Route::get("actors/{actor}/auth-status", ActorsController::class . "@authStatus")->name("actors.auth-status");
+
 
     /*
     |----------------------------------------------------------------------

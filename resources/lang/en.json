@@ -12,8 +12,8 @@
   "email-review-schedule-cta": "Access the campaign",
 
   "email-welcome-subject": "Welcome to Connect",
-  "email-welcome-title": "Welcome to Connect :name",
-  "email-welcome-body": "Welcome!<br />\nA Neo account gives you access to Neo-OOH web-services.<br /><br />\nPlease click on the link below to complete your account configuration.",
+  "email-welcome-title": "Welcome to Connect",
+  "email-welcome-body": "Welcome :name,<br />\na Connect account gives you access to Neo-OOH web-services.<br /><br />\nPlease click on the link below to complete your account configuration.",
   "email-welcome-cta": "Configure my account",
 
   "email-password-recovery-subject": "Neo-ooh web services connection",

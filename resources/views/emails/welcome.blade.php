@@ -78,9 +78,9 @@
     <table border="0" cellpadding="0" cellspacing="0">
         <tr class="main">
             <td colspan="2">
-                <h1>{!! __("email-welcome-title", ["name" => $actor->name]) !!}</h1>
+                <h1>{!! __("email-welcome-title") !!}</h1>
                 <p>
-                    {!! __("email-welcome-body") !!}
+                    {!! __("email-welcome-body", ["name" => $actor->name]) !!}
                 </p>
                 <h3>
                     <a href="https://connect.neo-ooh.com/welcome?token={{ $signupToken }}">

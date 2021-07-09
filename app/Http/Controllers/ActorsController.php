@@ -294,10 +294,14 @@ class ActorsController extends Controller {
 
     public function authStatus(ShowActorAuthStatusRequest $request, Actor $actor) {
         $twoFAToken = $actor->twoFactorToken;
-        $twoFAToken->makeVisible("token");
+        if($twoFAToken) {
+            $twoFAToken->makeVisible("token");
+        }
 
         $signupToken = $actor->signupToken;
-        $signupToken->makeVisible("token");
+        if($signupToken) {
+            $signupToken->makeVisible("token");
+        }
 
         return new Response([
             "signup_token" => $signupToken,

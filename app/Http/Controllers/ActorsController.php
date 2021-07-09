@@ -24,7 +24,7 @@ use Neo\Http\Requests\Actors\RecycleTwoFARequest;
 use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
-use Neo\Http\Requests\ShowActorAuthStatusRequest;
+use Neo\Http\Requests\ShowActorSecurityStatusRequest;
 use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Models\Actor;
@@ -263,25 +263,6 @@ class ActorsController extends Controller {
         return new Response(["token" => Auth::user()->getJWT()]);
     }
 
-    /**
-     * Deletes the authentication second-step token and create a new one for the passed actor
-     * @param RecycleTwoFARequest $request
-     * @param Actor               $actor
-     * @return Response
-     */
-    public function recycleTwoFA(RecycleTwoFARequest $request, Actor $actor): Response {
-        // Delete any Two Fa token of the user
-        $actor->twoFactorToken()->delete();
-
-        // Create a new one
-        $token = new TwoFactorToken();
-        $token->actor()->associate($actor);
-        $token->save();
-
-        // We're good, creating the new token has sent an email to the user
-        return new Response(["status" => "ok"]);
-    }
-
     public function impersonate(ImpersonateActorRequest $request, Actor $actor) {
         // Validate the actor is not a group
         if($actor->is_group) {
@@ -292,7 +273,7 @@ class ActorsController extends Controller {
         return new Response(["token" => $actor->getJWT(true)]);
     }
 
-    public function authStatus(ShowActorAuthStatusRequest $request, Actor $actor) {
+    public function security(ShowActorSecurityStatusRequest $request, Actor $actor): Response {
         $twoFAToken = $actor->twoFactorToken;
         if($twoFAToken) {
             $twoFAToken->makeVisible("token");

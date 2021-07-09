@@ -6,7 +6,7 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 
-class ShowActorAuthStatusRequest extends FormRequest
+class ValidateTwoFaRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

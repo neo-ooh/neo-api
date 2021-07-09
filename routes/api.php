@@ -57,6 +57,7 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\StatsController;
+use Neo\Http\Controllers\TwoFactorAuthController;
 use Neo\Http\Controllers\WeatherBackgroundsController;
 use Neo\Http\Controllers\WeatherLocationsController;
 use Neo\Models\AccessToken;
@@ -134,11 +135,13 @@ Route::prefix("v1")->group(function () {
 
     Route::post("actors/{actor}/re-send-signup-email", ActorsController::class . "@resendWelcomeEmail")
          ->name("actors.re-send-signup-email");
-    Route::post("actors/{actor}/recycle-two-fa", ActorsController::class . "@recycleTwoFA")->name("actors.recycle-two-fa");
 
     Route::get("actors/{actor}/impersonate", ActorsController::class . "@impersonate")->name("actors.impersonate");
 
-    Route::get("actors/{actor}/auth-status", ActorsController::class . "@authStatus")->name("actors.auth-status");
+    Route::get("actors/{actor}/security", ActorsController::class . "@authStatus")->name("actors.auth-status");
+
+    Route::post("actors/{actor}/two-fa/validate", TwoFactorAuthController::class . "@forceValidateToken")->name("actors.two-fa.validate");
+    Route::post("actors/{actor}/two-fa/recycle", TwoFactorAuthController::class . "@recycle")->name("actors.two-fa.recycle");
 
 
     /*

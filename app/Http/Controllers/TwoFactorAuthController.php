@@ -10,9 +10,13 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Neo\Http\Requests\Actors\RecycleTwoFARequest;
 use Neo\Http\Requests\Auth\TwoFactorValidationRequest;
+use Neo\Http\Requests\ValidateTwoFaRequest;
+use Neo\Models\Actor;
 use Neo\Models\TwoFactorToken;
 
 class TwoFactorAuthController extends Controller {
@@ -41,13 +45,36 @@ class TwoFactorAuthController extends Controller {
         ]);
     }
 
-    public function refresh(): Response {
-        // Remove any two factor token associated with the user
-        TwoFactorToken::query()->where("actor_id", Auth::id());
+    /**
+     * Deletes the authentication second-step token and create a new one for the passed actor
+     * @param RecycleTwoFARequest $request
+     * @param Actor               $actor
+     * @return Response
+     */
+    public function recycle(RecycleTwoFARequest $request, Actor $actor): Response {
+        // Delete any Two Fa token of the user
+        $actor->twoFactorToken()->delete();
 
-        // and create a new one by triggering a check
-        Auth::user()->getJWT();
+        // Create a new one
+        $token = new TwoFactorToken();
+        $token->actor()->associate($actor);
+        $token->save();
 
-        return new Response();
+        // We're good, creating the new token has sent an email to the user
+        return new Response(["status" => "ok"]);
+    }
+
+    public function forceValidateToken(ValidateTwoFaRequest $request, Actor $actor) {
+        $token = $actor->twoFactorToken;
+
+        if(!$token) {
+            // No token, do nothing
+            return new Response([]);
+        }
+
+        $token->makeVisible("token");
+        $token->validate($token->token);
+
+        return new Response($token);
     }
 }

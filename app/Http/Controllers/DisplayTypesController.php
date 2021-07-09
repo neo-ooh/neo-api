@@ -10,12 +10,23 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Neo\Http\Requests\DisplayTypes\ListDisplayTypesPerNetworkRequest;
 use Neo\Http\Requests\DisplayTypes\ListDisplayTypesRequest;
 use Neo\Models\DisplayType;
+use Neo\Models\Location;
+use Neo\Models\Network;
 
 class DisplayTypesController extends Controller {
     public function index(ListDisplayTypesRequest $request) {
         return new Response(DisplayType::all());
     }
-}
+
+    public function byNetwork(ListDisplayTypesPerNetworkRequest $request, Network $network) {
+        $displayTypes = DisplayType::query()->whereHas(Location::class, function (Builder $query) use ($network) {
+            $query->where("network_id", "=", $network->id);
+        })->orderBy("name")->get();
+
+        return new Response($displayTypes);
+    }

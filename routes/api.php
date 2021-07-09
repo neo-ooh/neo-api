@@ -32,8 +32,10 @@ use Neo\Http\Controllers\ContentsController;
 use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
+use Neo\Http\Controllers\CountriesController;
 use Neo\Http\Controllers\CreativesController;
 use Neo\Http\Controllers\DisplayTypesController;
+use Neo\Http\Controllers\DisplayTypesPrintsFactorsController;
 use Neo\Http\Controllers\FormatsController;
 use Neo\Http\Controllers\FormatsDisplayTypesController;
 use Neo\Http\Controllers\FormatsLayoutsController;
@@ -47,6 +49,7 @@ use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\ParamsController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesTrafficController;
+use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\ReviewsController;
 use Neo\Http\Controllers\ReviewsTemplatesController;
 use Neo\Http\Controllers\RolesActorsController;
@@ -68,6 +71,7 @@ use Neo\Models\Content;
 use Neo\Models\Contract;
 use Neo\Models\ContractBurst;
 use Neo\Models\ContractScreenshot;
+use Neo\Models\Country;
 use Neo\Models\Creative;
 use Neo\Models\Format;
 use Neo\Models\FormatLayout;
@@ -80,6 +84,7 @@ use Neo\Models\Network;
 use Neo\Models\NewsBackground;
 use Neo\Models\Param;
 use Neo\Models\Property;
+use Neo\Models\Province;
 use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
@@ -411,6 +416,26 @@ Route::prefix("v1")->group(function () {
 
     /*
     |----------------------------------------------------------------------
+    | Countries
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("country", Country::class);
+    Route::model("province", Province::class);
+
+    Route::get("countries", CountriesController::class . "@index")
+         ->name("countries.index");
+    Route::get("countries/{country}", CountriesController::class . "@show")
+         ->name("countries.show");
+    Route::get("countries/{country}/provinces", ProvincesController::class . "@index")
+         ->name("countries.provinces.show");
+
+    Route::get("countries/{country}/provinces/{province}", ProvincesController::class . "@index")
+         ->name("countries.provinces.show");
+
+
+    /*
+    |----------------------------------------------------------------------
     | Creatives
     |----------------------------------------------------------------------
     */
@@ -593,6 +618,9 @@ Route::prefix("v1")->group(function () {
     Route:: get("networks/{network}", NetworksController::class . "@show")->name("networks.show");
     Route:: put("networks/{network}", NetworksController::class . "@update")->name("networks.update");
     Route::delete("networks/{network}", NetworksController::class . "@destroy")->name("networks.destroy");
+
+    Route::delete("networks/{network}/display_types", DisplayTypesController::class . "@byNetwork")->name("networks.display_types");
+    Route::delete("networks/{network}/prints_calculations", DisplayTypesPrintsFactorsController::class . "@index")->name("networks.display_types");
 
     /*
     |----------------------------------------------------------------------

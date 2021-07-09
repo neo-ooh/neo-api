@@ -17,26 +17,34 @@ use BenSampo\Enum\Enum;
  * @method static self actors_create()
  * @method static self actors_delete()
  * @method static self actors_impersonate()
+ *
  * @method static self roles_edit()
+ *
  * @method static self brandings_edit()
+ *
  * @method static self libraries_edit()
  * @method static self libraries_create()
  * @method static self libraries_destroy()
+ *
  * @method static self campaigns_edit()
+ *
  * @method static self contents_edit()
  * @method static self contents_schedule()
  * @method static self contents_review()
+ *
  * @method static self locations_edit()
+ *
  * @method static self bursts_request()
  * @method static self bursts_quality()
+ *
  * @method static self contracts_edit()
  * @method static self contracts_manage()
- * @method static self reports_create()
- * @method static self reports_edit()
+ *
  * @method static self inventory_read()
  *
  * @method static self networks_edit()
  * @method static self networks_connections()
+ * @method static self networks_prints()
  *
  * @method static self chores_broadsign()
  * @method static self tests()
@@ -93,6 +101,7 @@ final class Capability extends Enum {
     // Networks
     public const networks_edit = "networks.edit";
     public const networks_connections = "networks.connections";
+    public const networks_prints = "networks.prints";
 
     // Inventory
     public const inventory_read = "inventory.read";

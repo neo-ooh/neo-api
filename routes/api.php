@@ -622,7 +622,7 @@ Route::prefix("v1")->group(function () {
     Route::delete("networks/{network}", NetworksController::class . "@destroy")->name("networks.destroy");
 
     Route::delete("networks/{network}/display_types", DisplayTypesController::class . "@byNetwork")->name("networks.display_types");
-    Route::delete("networks/{network}/prints_calculations", DisplayTypesPrintsFactorsController::class . "@index")->name("networks.display_types");
+    Route::delete("networks/{network}/prints_calculations", DisplayTypesPrintsFactorsController::class . "@index")->name("networks.prints-calculations");
 
     /*
     |----------------------------------------------------------------------

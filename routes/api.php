@@ -138,7 +138,7 @@ Route::prefix("v1")->group(function () {
 
     Route::get("actors/{actor}/impersonate", ActorsController::class . "@impersonate")->name("actors.impersonate");
 
-    Route::get("actors/{actor}/security", ActorsController::class . "@authStatus")->name("actors.auth-status");
+    Route::get("actors/{actor}/security", ActorsController::class . "@security")->name("actors.security");
 
     Route::post("actors/{actor}/two-fa/validate", TwoFactorAuthController::class . "@forceValidateToken")->name("actors.two-fa.validate");
     Route::post("actors/{actor}/two-fa/recycle", TwoFactorAuthController::class . "@recycle")->name("actors.two-fa.recycle");

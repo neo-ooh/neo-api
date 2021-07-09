@@ -17,6 +17,7 @@ use BenSampo\Enum\Enum;
  * @method static self actors_create()
  * @method static self actors_delete()
  * @method static self actors_impersonate()
+ * @method static self actors_auth()
  *
  * @method static self roles_edit()
  *
@@ -54,6 +55,7 @@ final class Capability extends Enum {
     public const actors_edit   = "actors.edit";
     public const actors_create = "actors.create";
     public const actors_delete = "actors.delete";
+    public const actors_auth = "actors.auth";
     public const actors_impersonate = "actors.impersonate";
 
     // Roles

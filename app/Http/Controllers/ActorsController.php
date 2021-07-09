@@ -24,6 +24,7 @@ use Neo\Http\Requests\Actors\RecycleTwoFARequest;
 use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
+use Neo\Http\Requests\ShowActorAuthStatusRequest;
 use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Models\Actor;
@@ -289,5 +290,18 @@ class ActorsController extends Controller {
 
         // Get and return the impersonating token
         return new Response(["token" => $actor->getJWT(true)]);
+    }
+
+    public function authStatus(ShowActorAuthStatusRequest $request, Actor $actor) {
+        $twoFAToken = $actor->twoFactorToken;
+        $twoFAToken->makeVisible("token");
+
+        $signupToken = $actor->signupToken;
+        $signupToken->makeVisible("token");
+
+        return new Response([
+            "signup_token" => $signupToken,
+            "two_factor_token" => $twoFAToken,
+        ]);
     }
 }

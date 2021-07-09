@@ -43,6 +43,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::actors_create,
                 \Neo\Enums\Capability::actors_delete,
                 \Neo\Enums\Capability::actors_edit,
+                \Neo\Enums\Capability::actors_auth,
                 \Neo\Enums\Capability::actors_impersonate,
 
                 \Neo\Enums\Capability::roles_edit,

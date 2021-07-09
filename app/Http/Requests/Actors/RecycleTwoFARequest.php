@@ -15,7 +15,7 @@ class RecycleTwoFARequest extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows(Capability::actors_edit);
+        return Gate::allows(Capability::actors_auth);
     }
 
     /**

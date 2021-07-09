@@ -61,7 +61,7 @@ class TwoFactorAuthController extends Controller {
         $token->save();
 
         // We're good, creating the new token has sent an email to the user
-        return new Response(["status" => "ok"]);
+        return new Response($token);
     }
 
     public function forceValidateToken(ValidateTwoFaRequest $request, Actor $actor) {

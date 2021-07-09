@@ -61,6 +61,7 @@ class TwoFactorAuthController extends Controller {
         $token->save();
 
         // We're good, creating the new token has sent an email to the user
+        $token->makeVisible("token");
         return new Response($token);
     }
 

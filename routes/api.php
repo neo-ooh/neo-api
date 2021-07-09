@@ -115,7 +115,7 @@ Route::prefix("v1")->group(function () {
     Route::  post("access-tokens", AccessTokensController::class . "@store")->name("access-tokens.store");
     Route::   get("access-tokens/{accessToken}", AccessTokensController::class . "@show")->name("access-tokens.show");
     Route::   put("access-tokens/{accessToken}", AccessTokensController::class . "@update")->name("access-tokens.update");
-    Route::delete("access-tokens/{accessToken}", AccessTokensController::class . "@destroy")->name("access-tokens.destroy2   ");
+    Route::delete("access-tokens/{accessToken}", AccessTokensController::class . "@destroy")->name("access-tokens.destroy");
 
     /*
     |----------------------------------------------------------------------
@@ -430,7 +430,7 @@ Route::prefix("v1")->group(function () {
     Route::get("countries/{country}", CountriesController::class . "@show")
          ->name("countries.show");
     Route::get("countries/{country}/provinces", ProvincesController::class . "@index")
-         ->name("countries.provinces.show");
+         ->name("countries.provinces");
 
     Route::get("countries/{country}/provinces/{province}", ProvincesController::class . "@index")
          ->name("countries.provinces.show");

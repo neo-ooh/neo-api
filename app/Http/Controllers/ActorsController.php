@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use InvalidArgumentException;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ImpersonateActorRequest;
@@ -27,6 +28,7 @@ use Neo\Http\Requests\Actors\UpdateActorRequest;
 use Neo\Http\Requests\ShowActorSecurityStatusRequest;
 use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
+use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
 use Neo\Models\TwoFactorToken;
@@ -246,12 +248,16 @@ class ActorsController extends Controller {
      * @return Response
      */
     public function resendWelcomeEmail(Actor $actor): Response {
-        // Remove leftover token
-        SignupToken::query()->where("actor_id", "=", $actor->id)->delete();
+        // If the user has no token, run the default job
+        if(!$actor->signupToken) {
+            CreateSignupToken::dispatchSync($actor->id);
+            $actor->refresh();
+        } else {
+            // Otherwise, simply resend the email
+            Mail::to($actor)->send(new ActorWelcomeEmail($actor->signupToken));
+        }
 
-        CreateSignupToken::dispatchSync($actor->id);
-
-        return new Response();
+        return new Response($actor->signupToken);
     }
 
     /**

@@ -60,6 +60,7 @@
             </div>
         </div>
     </div>
+    @if($order->use_invoice_plan)
     <div class="costs-recap">
         <p>{!! __("contract.customer-accepts") !!}</p>
         <h2 class="investment-label">{!! __("contract.investment") !!}</h2>
@@ -89,6 +90,7 @@
             </tr>
         </table>
     </div>
+    @endif
     <div class="payment-terms">
         <h2>{!! __("contract.payment-terms-title") !!}</h2>
         <table class="payment-steps">

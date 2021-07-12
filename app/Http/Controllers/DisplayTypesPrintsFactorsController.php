@@ -22,7 +22,7 @@ class DisplayTypesPrintsFactorsController extends Controller {
         $factors->exposure_length = $request->input("exposure_length");
         $factors->save();
 
-        $factors->displayTypes()->attach([$request->input("display_types")]);
+        $factors->displayTypes()->attach($request->input("display_types"));
 
         return new Response($factors->load(["network", "displayTypes"]), 201);
     }

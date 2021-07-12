@@ -28,9 +28,9 @@ class StoreFactorsRequest extends FormRequest {
             "display_types.*"  => ["integer", "exists:display_types,id"],
             "start_month"      => ["required", "integer", "min:1", "max:12"],
             "end_month"        => ["required", "integer", "gte:start_month", "max:12"],
-            "product_exposure" => ["required", "integer", "min:0"],
-            "exposure_length"  => ["required", "integer", "min:0"],
-            "loop_length"      => ["required", "integer", "min:1"],
+            "product_exposure" => ["required", "numeric", "min:0"],
+            "exposure_length"  => ["required", "numeric", "min:0"],
+            "loop_length"      => ["required", "numeric", "min:1"],
         ];
     }
 }

@@ -116,10 +116,5 @@ Passé ce délai, Neo ne pourra pas garantir l’intégralité de l’inventaire
     "totals-potential-total"        => "(Potentiel) Grand Média Total",
     "totals-production-cost"        => "Coût de Production",
 
-    "audience-extension-strategy" => "Stratégie d'extension d'aucience",
-
-    "type-electronic"          => "Électronique",
-    "type-paper"               => "Papier",
-    "payable-contact-header"   => "Contact comptes payables (à compléter par le client)",
-
+    "audience-extension-strategy" => "Stratégie d'extension d'audience",
 ];

@@ -116,5 +116,5 @@ Passé ce délai, Neo ne pourra pas garantir l’intégralité de l’inventaire
     "totals-potential-total"        => "(Potentiel) Grand Média Total",
     "totals-production-cost"        => "Coût de Production",
 
-    "audience-extension-strategy" => "Stratégie d'extension d'aucience",
+    "audience-extension-strategy" => "Stratégie d'extension d'audience",
 ];

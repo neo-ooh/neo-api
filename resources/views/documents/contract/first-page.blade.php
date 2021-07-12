@@ -78,28 +78,28 @@
             </tr>
         </table>
     </div>
-    <div class="payable-accounts-wrapper">
-        <h2>{!! __("contract.payable-accounts") !!}</h2>
-        <table class="payable-accounts">
-            <tr>
-                <td class="email-label">{{ __("common.email-address") }}</td>
-                <td class="payable-account-email">
-                    {{ $customer->payable_account }}
-                </td>
-            </tr>
-        </table>
-    </div>
+{{--    <div class="payable-accounts-wrapper">--}}
+{{--        <h2>{!! __("contract.payable-accounts") !!}</h2>--}}
+{{--        <table class="payable-accounts">--}}
+{{--            <tr>--}}
+{{--                <td class="email-label">{{ __("common.email-address") }}</td>--}}
+{{--                <td class="payable-account-email">--}}
+{{--                    {{ $customer->payable_account }}--}}
+{{--                </td>--}}
+{{--            </tr>--}}
+{{--        </table>--}}
+{{--    </div>--}}
     <div class="payment-terms">
         <h2>{!! __("contract.payment-terms-title") !!}</h2>
-        <table class="payment-steps">
-            @foreach($order->invoice_plan_steps as $step)
-                <tr>
-                    <td>{{ formatCurrency($step["amount"]) }}</td>
-                    <td>{{ __("contract.billed-on") }}</td>
-                    <td>{{ $step["date"]->toFormattedDateString() }}</td>
-                </tr>
-            @endforeach
-        </table>
+{{--        <table class="payment-steps">--}}
+{{--            @foreach($order->invoice_plan_steps as $step)--}}
+{{--                <tr>--}}
+{{--                    <td>{{ formatCurrency($step["amount"]) }}</td>--}}
+{{--                    <td>{{ __("contract.billed-on") }}</td>--}}
+{{--                    <td>{{ $step["date"]->toFormattedDateString() }}</td>--}}
+{{--                </tr>--}}
+{{--            @endforeach--}}
+{{--        </table>--}}
         <ul>
             <li>{!! __("contract.payment-terms-one") !!}</li>
             <li>{!! __("contract.payment-terms-two") !!}</li>

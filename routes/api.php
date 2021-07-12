@@ -501,7 +501,7 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::get("display-types-factors", DisplayTypesPrintsFactorsController::class . "@index")->name("display-types-factor.index");
+    Route::get("display-types-factors", DisplayTypesPrintsFactorsController::class . "@index")->name("display-types-factors.index");
 
 
     /*

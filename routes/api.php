@@ -74,6 +74,7 @@ use Neo\Models\ContractBurst;
 use Neo\Models\ContractScreenshot;
 use Neo\Models\Country;
 use Neo\Models\Creative;
+use Neo\Models\DisplayTypePrintsFactors;
 use Neo\Models\Format;
 use Neo\Models\FormatLayout;
 use Neo\Models\Frame;
@@ -501,9 +502,12 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
+    Route::model("factors", DisplayTypePrintsFactors::class);
+
     Route::get("display-types-factors", DisplayTypesPrintsFactorsController::class . "@index")->name("display-types-factors.index");
 
     Route::post("display-types-factors", DisplayTypesPrintsFactorsController::class . "@store")->name("display-types-factors.store");
+    Route::put("display-types-factors/{factors}", DisplayTypesPrintsFactorsController::class . "@update")->name("display-types-factors.update");
 
 
     /*

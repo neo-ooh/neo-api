@@ -49,6 +49,8 @@ use BenSampo\Enum\Enum;
  *
  * @method static self chores_broadsign()
  * @method static self tests()
+ *
+ * @method static self tools_prints()
  */
 final class Capability extends Enum {
     // Actors
@@ -137,4 +139,9 @@ final class Capability extends Enum {
      * Allow user to fill in traffic information for accessible properties. Redundant with `properties_edit`
      */
     public const properties_traffic = "properties.traffic";
+
+    /**
+     * Allow user to use the Prints tools to export estimated prints by properties
+     */
+    public const tools_prints = "tools.prints";
 }

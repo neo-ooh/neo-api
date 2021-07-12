@@ -32,4 +32,12 @@ class DisplayTypePrintsFactors extends Model
     protected $table = "display_types_prints_factors";
 
     protected $primaryKey = "id";
+
+    public function displayType() {
+        return $this->belongsTo(DisplayType::class, "display_type_id");
+    }
+
+    public function network() {
+        return $this->belongsTo(Network::class, "network_id");
+    }
 }

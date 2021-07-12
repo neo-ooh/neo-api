@@ -30,3 +30,4 @@ class DisplayTypesController extends Controller {
 
         return new Response($displayTypes);
     }
+}

@@ -11,7 +11,6 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -21,17 +20,14 @@ use InvalidArgumentException;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ImpersonateActorRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
-use Neo\Http\Requests\Actors\RecycleTwoFARequest;
 use Neo\Http\Requests\Actors\RequestActorTokenRequest;
+use Neo\Http\Requests\Actors\ShowActorSecurityStatusRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
-use Neo\Http\Requests\ShowActorSecurityStatusRequest;
 use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
-use Neo\Models\SignupToken;
-use Neo\Models\TwoFactorToken;
 use Swift_TransportException;
 
 /**
@@ -183,7 +179,7 @@ class ActorsController extends Controller {
         // The request handles input validation
         $actor->name           = $request->get("name", $actor->name);
         $actor->email          = $request->get("email", $actor->email);
-        $actor->locale          = $request->get("locale", $actor->locale);
+        $actor->locale         = $request->get("locale", $actor->locale);
         $actor->branding_id    = $request->get("branding_id", $actor->branding_id);
         $actor->limited_access = $request->get("limited_access", $actor->limited_access);
 
@@ -245,6 +241,7 @@ class ActorsController extends Controller {
 
     /**
      * Generates a new welcome token and email for the given actor
+     *
      * @param Actor $actor
      * @return Response
      */
@@ -268,6 +265,7 @@ class ActorsController extends Controller {
 
     /**
      * Gives a token for the current user
+     *
      * @param RequestActorTokenRequest $request
      * @return Response
      */
@@ -277,7 +275,7 @@ class ActorsController extends Controller {
 
     public function impersonate(ImpersonateActorRequest $request, Actor $actor) {
         // Validate the actor is not a group
-        if($actor->is_group) {
+        if ($actor->is_group) {
             throw new InvalidArgumentException("Cannot impersonate a group");
         }
 
@@ -287,17 +285,17 @@ class ActorsController extends Controller {
 
     public function security(ShowActorSecurityStatusRequest $request, Actor $actor): Response {
         $twoFAToken = $actor->twoFactorToken;
-        if($twoFAToken) {
+        if ($twoFAToken) {
             $twoFAToken->makeVisible("token");
         }
 
         $signupToken = $actor->signupToken;
-        if($signupToken) {
+        if ($signupToken) {
             $signupToken->makeVisible("token");
         }
 
         return new Response([
-            "signup_token" => $signupToken,
+            "signup_token"     => $signupToken,
             "two_factor_token" => $twoFAToken,
         ]);
     }

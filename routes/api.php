@@ -633,8 +633,7 @@ Route::prefix("v1")->group(function () {
     Route:: put("networks/{network}", NetworksController::class . "@update")->name("networks.update");
     Route::delete("networks/{network}", NetworksController::class . "@destroy")->name("networks.destroy");
 
-    Route::delete("networks/{network}/display-types", DisplayTypesController::class . "@byNetwork")->name("networks.display_types");
-    Route::delete("networks/{network}/prints_calculations", DisplayTypesPrintsFactorsController::class . "@index")->name("networks.prints-calculations");
+    Route::get("networks/{network}/display-types", DisplayTypesController::class . "@byNetwork")->name("networks.display_types");
 
     /*
     |----------------------------------------------------------------------

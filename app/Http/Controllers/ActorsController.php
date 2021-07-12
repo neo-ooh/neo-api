@@ -32,6 +32,7 @@ use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
 use Neo\Models\SignupToken;
 use Neo\Models\TwoFactorToken;
+use Swift_TransportException;
 
 /**
  * Class ActorsController
@@ -249,12 +250,17 @@ class ActorsController extends Controller {
      */
     public function resendWelcomeEmail(Actor $actor): Response {
         // If the user has no token, run the default job
-        if(!$actor->signupToken) {
-            CreateSignupToken::dispatchSync($actor->id);
-            $actor->refresh();
-        } else {
-            // Otherwise, simply resend the email
-            Mail::to($actor)->send(new ActorWelcomeEmail($actor->signupToken));
+        try {
+            if (!$actor->signupToken) {
+                CreateSignupToken::dispatchSync($actor->id);
+                $actor->refresh();
+            } else {
+                // Otherwise, simply resend the email
+                Mail::to($actor)->send(new ActorWelcomeEmail($actor->signupToken));
+            }
+        } catch (Swift_TransportException $e) {
+            // Email could not be delivered because recipient does not exist.
+            // Not my problem
         }
 
         return new Response($actor->signupToken);

@@ -417,6 +417,7 @@ Route::prefix("v1")->group(function () {
 
     Route::post("contracts", ContractsController::class . "@store")->name("contracts.store");
     Route::get("contracts/{contract}", ContractsController::class . "@show")->name("contracts.show");
+    Route::delete("contracts/{contract}", ContractsController::class . "@destroy")->name("contracts.destroy");
     Route::post("contracts/{contract}/_refresh", ContractsController::class . "@refresh")->name("contracts.refresh");
 
 

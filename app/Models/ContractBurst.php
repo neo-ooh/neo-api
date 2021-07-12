@@ -67,6 +67,17 @@ class ContractBurst extends Model {
         "expected_screenshots",
     ];
 
+    protected static function boot() {
+        parent::boot();
+
+        static::deleting(function (ContractBurst $burst) {
+            // Delete all the screenshots of the burst
+            foreach($burst->screenshots as $screenshot) {
+                $screenshot->destroy();
+            }
+        });
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relations

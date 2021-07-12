@@ -249,7 +249,7 @@ class ActorsController extends Controller {
         // Remove leftover token
         SignupToken::query()->where("actor_id", "=", $actor->id)->delete();
 
-        CreateSignupToken::dispatch($actor->id);
+        CreateSignupToken::dispatchSync($actor->id);
 
         return new Response();
     }

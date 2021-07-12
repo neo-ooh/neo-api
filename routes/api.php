@@ -497,11 +497,13 @@ Route::prefix("v1")->group(function () {
 
     /*
     |----------------------------------------------------------------------
-    | Display Types
+    | Display Types Print Factors
     |----------------------------------------------------------------------
     */
 
     Route::get("display-types-factors", DisplayTypesPrintsFactorsController::class . "@index")->name("display-types-factors.index");
+
+    Route::post("display-types-factors", DisplayTypesPrintsFactorsController::class . "@store")->name("display-types-factors.store");
 
 
     /*

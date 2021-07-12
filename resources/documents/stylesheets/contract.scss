@@ -87,6 +87,46 @@
     }
   }
 
+
+
+  .payable-contact {
+    width           : 200mm;
+    margin-top      : 6mm;
+    border-collapse : collapse;
+    border          : 1px solid $dark-blue;
+    font-size       : 9pt;
+
+    tr {
+      th {
+        height           : 8mm;
+        padding          : 0 4mm;
+        background-color : $dark-blue;
+        color            : $white;
+        text-align       : left;
+      }
+
+      td {
+        height        : 8mm;
+        border-bottom : 1px solid $dark-grey;
+
+        &:nth-child(1) {
+          width        : 38mm;
+          padding      : 0 2mm;
+          text-align   : right;
+          border-right : 1px solid $dark-grey;
+        }
+
+        &:nth-child(2) {
+          background-color : $ultralight-grey;
+        }
+
+        &.invoice-type-cell {
+          padding-left : 3mm;
+        }
+      }
+    }
+  }
+
   .costs-recap {
     margin-top : 3mm;
 

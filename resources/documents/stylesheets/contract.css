@@ -263,6 +263,36 @@ footer .footer-table {
 .contract-home-page .contract-party.second-party {
   margin-top: 4mm;
 }
+.contract-home-page .payable-contact {
+  width: 200mm;
+  margin-top: 6mm;
+  border-collapse: collapse;
+  border: 1px solid #252734;
+  font-size: 9pt;
+}
+.contract-home-page .payable-contact tr th {
+  height: 8mm;
+  padding: 0 4mm;
+  background-color: #252734;
+  color: #FFFFFF;
+  text-align: left;
+}
+.contract-home-page .payable-contact tr td {
+  height: 8mm;
+  border-bottom: 1px solid #595959;
+}
+.contract-home-page .payable-contact tr td:nth-child(1) {
+  width: 38mm;
+  padding: 0 2mm;
+  text-align: right;
+  border-right: 1px solid #595959;
+}
+.contract-home-page .payable-contact tr td:nth-child(2) {
+  background-color: #EEEEEE;
+}
+.contract-home-page .payable-contact tr td.invoice-type-cell {
+  padding-left: 3mm;
+}
 .contract-home-page .costs-recap {
   margin-top: 3mm;
 }

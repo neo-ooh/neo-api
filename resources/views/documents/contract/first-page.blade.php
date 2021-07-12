@@ -60,6 +60,38 @@
             </div>
         </div>
     </div>
+    <table class="payable-contact">
+        <tr class="header">
+            <th colspan="2">
+                {!! __("contract.payable-contact-header") !!}
+            </th>
+        </tr>
+        <tr>
+            <td>{!! __("common.complete-name") !!}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>{!! __("common.phone") !!}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>{!! __("common.email-address") !!}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>{!! __("common.billing-address") !!}</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>{!! __("common.invoice") !!}</td>
+            <td class="invoice-type-cell">
+                <label for="contract-type-electronic">{!! __("contract.type-electronic") !!}</label>
+                <input type="radio" name="contract-type" id="contract-type-electronic">
+                <label for="contract-type-paper">{!! __("contract.type-paper") !!}</label>
+                <input type="radio" name="contract-type" id="contract-type-paper">
+            </td>
+        </tr>
+    </table>
     <div class="costs-recap">
         <p>{!! __("contract.customer-accepts") !!}</p>
         <h2 class="investment-label">{!! __("contract.investment") !!}</h2>

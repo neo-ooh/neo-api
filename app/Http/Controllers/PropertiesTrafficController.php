@@ -12,10 +12,10 @@ use Neo\Models\PropertyTraffic;
 class PropertiesTrafficController extends Controller {
     public function index(ListTrafficRequest $request, Property $property) {
 
-        $yearTraffic = $property->traffic_data()
-                                ->where("year", "=", $request->input("year"))
-                                ->orderBy("month")
-                                ->get();
+        $yearTraffic = $property->traffic->data()
+                                         ->where("year", "=", $request->input("year"))
+                                         ->orderBy("month")
+                                         ->get();
 
         return new Response($yearTraffic);
     }

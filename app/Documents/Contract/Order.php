@@ -14,6 +14,7 @@ use Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Neo\Documents\Exceptions\MissingColumnException;
+use Neo\Documents\Network;
 
 class Order {
     public string $locale;
@@ -151,6 +152,18 @@ class Order {
 
     public function getAudienceExtensionLines(): Collection {
         return $this->orderLines->filter(fn($order) => $order->isExtensionStrategy());
+    }
+
+    public function getShoppingOrders() {
+        return $this->orderLines->filter(fn($order) => $order->isNetwork(Network::NEO_SHOPPING));
+    }
+
+    public function getOTGOrders() {
+        return $this->orderLines->filter(fn($order) => $order->isNetwork(Network::NEO_OTG));
+    }
+
+    public function getFitnessOrders() {
+        return $this->orderLines->filter(fn($order) => $order->isNetwork(Network::NEO_FITNESS));
     }
 
     // Compute values

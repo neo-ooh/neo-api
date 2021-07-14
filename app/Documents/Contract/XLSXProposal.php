@@ -71,6 +71,7 @@ class XLSXProposal extends XLSXDocument {
         $this->ws->getColumnDimension("A")->setAutoSize(true);
         $this->ws->getColumnDimension("B")->setAutoSize(true);
         $this->ws->getColumnDimension("E")->setAutoSize(true);
+        $this->ws->getColumnDimension("H")->setAutoSize(true);
         $this->ws->getColumnDimension("K")->setAutoSize(true);
 
         return true;

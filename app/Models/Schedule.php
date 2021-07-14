@@ -42,7 +42,7 @@ use Neo\Services\Broadcast\Broadcast;
  *
  * - Relations
  * @property Campaign           $campaign
- * @property Content            $content
+ * @property Content            $content$
  * @property Actor              $owner
  * @property Collection<Review> $reviews
  *

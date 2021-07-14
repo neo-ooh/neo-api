@@ -30,4 +30,11 @@ return [
 
     "weeks"             => "week|weeks",
     "broadcast-periods" => "Advertising period|Advertising periods",
+
+    "guaranteed-impressions" => "Guaranteed Impressions",
+    "potential-impressions" => "Potential Impressions",
+    "guaranteed-impressions-covid" => "COVID Guaranteed Impressions",
+    "cpm-covid" => "COVID CPM",
+    "potential-impressions-covid" => "COVID potential impressions",
+    "potential-cpm-covid" => "COVID potential CPM"
 ];

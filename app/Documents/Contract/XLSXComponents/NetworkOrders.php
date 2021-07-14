@@ -126,7 +126,7 @@ class NetworkOrders extends Component {
 
                 $ws->popPosition();
 
-                $lines = $lines->sortBy(['property_city', 'property_name']);
+                $lines = $lines->sortBy(['property_name', 'property_city']);
                 $lastLine = null;
 
                 // Print the lines
@@ -143,50 +143,50 @@ class NetworkOrders extends Component {
                     $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
                     $ws->setRelativeCellFormat('$#,##0.00', 15, 0);
 
-                    // Handle merging of rows for the annual traffic column
+                    // Handle merging of rows.
+                    // When we have multiple rows for the same property, we want to merge their market, properties, annual traffic and campaign traffic column.
+                    // How it's done: We keep the previous line in memory and check if the properties names match. If so, we move back up to find the first line for the property, unmerge if necessary, and re-merge the rows properly.
+
+                    $city = $line->property_city;
+                    $property = $line->property_name;
                     $annualTraffic = $line->property_annual_traffic;
-                    if($lastLine && $lastLine->property_name === $line->property_name) {
-                        $annualTraffic = null;
-
-                        $ws->pushPosition();
-                        $ws->moveCursor(2, -1);
-                        $acc = 0;
-                        while($ws->getCurrentCell()->isInMergeRange() && !$ws->getCurrentCell()->isMergeRangeValueCell()) {
-                            $ws->moveCursor(0, -1);
-                            $acc++;
-                        }
-                        if($ws->getCurrentCell()->isMergeRangeValueCell()) {
-                            $ws->unmergeCells($ws->getCurrentCell()->getMergeRange());
-                        }
-                        $ws->mergeCellsRelative(1, 2 + $acc);
-                        $ws->popPosition();
-                    }
-
-                    // Handle merging of rows for the campaign traffic column
                     $campaignTraffic = $line->traffic;
-                    if($lastLine && $lastLine->property_name === $line->property_name) {
-                        $ws->pushPosition();
-                        $ws->moveCursor(3, 0);
-                        $acc = 1;
 
+                    // Is the last line for the same property ?
+                    if($lastLine && $lastLine->property_name === $line->property_name) {
+                        // Yes, make sure we will not print anything for the current row as we will use the first row values.
+                        $city = null; $property = null; $campaignTraffic = null; $annualTraffic = null;
+
+                        // Save the current position, and roll back up to find the first occurence of the property
+                        $ws->pushPosition();
+                        $acc = 0;
                         do {
                             $ws->moveCursor(0, -1);
-                            $campaignTraffic = max($campaignTraffic, $ws->getCurrentCell()->getValue());
                             $acc++;
                         } while($ws->getCurrentCell()->isInMergeRange() && !$ws->getCurrentCell()->isMergeRangeValueCell());
 
+                        // Check if we are at the beggining of a merge range, if so, unmerge it
                         if($ws->getCurrentCell()->isMergeRangeValueCell()) {
-                            $ws->unmergeCells($ws->getCurrentCell()->getMergeRange());
-                            $ws->getCurrentCell()->setValue($campaignTraffic);
-                            $campaignTraffic = null;
+                            $ws->pushPosition();
+                            // Unmerge Market, property, annual traffic, campaign traffic and redo the merging
+                            for($i = 0; $i < 4; $i++) {
+                                $ws->unmergeCells($ws->getCurrentCell()->getMergeRange());
+                                $ws->moveCursor(1, 0);
+                            }
+                            $ws->popPosition();
                         }
-                        $ws->mergeCellsRelative(1, $acc);
+                        // Finally, properly merge the columns
+                        for($i = 0; $i < 4; $i++) {
+                            $ws->mergeCellsRelative(1, 1 + $acc);
+                            $ws->moveCursor(1, 0);
+                        }
+
                         $ws->popPosition();
                     }
 
                     $ws->printRow([
-                        $line->property_city,
-                        $line->property_name,
+                        $city,
+                        $property,
                         $annualTraffic,
                         $campaignTraffic,
                         $line->product,

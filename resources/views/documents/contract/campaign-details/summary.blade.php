@@ -1,5 +1,5 @@
 <x-contract::detailed-summary-production-costs :production="$production"/>
-<x-contract::detailed-summary-technical-specs/>
+<x-contract::detailed-summary-technical-specs :order="$order"/>
 <section class="summary-right-col">
     <x-contract::totals :order="$order" :orders="$orders" :production="$production" size="small"/>
     @if($renderDisclaimers)

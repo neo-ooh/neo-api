@@ -60,7 +60,7 @@ class XLSXProposal extends XLSXDocument {
         $totalsPrinter->render($this->ws);
 
         // Print the technical specifications
-        $specsPrinter = new TechnicalSpecs();
+        $specsPrinter = new TechnicalSpecs($this->order);
         $specsPrinter->render($this->ws);
 
         // And the production costs

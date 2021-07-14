@@ -10,6 +10,7 @@ use Neo\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Http\Requests\Properties\UpdatePropertyRequest;
 use Neo\Models\Actor;
 use Neo\Models\Property;
+use Neo\Models\PropertyTrafficSettings;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PropertiesController extends Controller {
@@ -28,12 +29,16 @@ class PropertiesController extends Controller {
         }
 
         // All good
+        // Create the property
         $property           = new Property();
         $property->actor_id = $actorId;
         $property->save();
         $property->refresh();
 
-        return new Response($property->load(["actor", "traffic_data"]), 201);
+        // Create the traffic settings
+        $property->traffic()->create();
+
+        return new Response($property->load(["actor", "traffic"]), 201);
     }
 
     public function show(ShowPropertyRequest $request, int $propertyId) {
@@ -41,7 +46,7 @@ class PropertiesController extends Controller {
         $property = Property::query()->find($propertyId);
 
         if($property) {
-            return new Response($property->load(["actor", "traffic_data"]));
+            return new Response($property->load(["actor", "traffic"]));
         }
 
         // This group is not a property, does it has properties below it ?
@@ -63,7 +68,7 @@ class PropertiesController extends Controller {
         $property->traffic_grace_override = $request->input("traffic_grace_override");
         $property->save();
 
-        return new Response($property->load(["actor", "traffic_data"]));
+        return new Response($property->load(["actor", "traffic"]));
     }
 
     public function destroy(DestroyPropertyRequest $request, Property $property) {

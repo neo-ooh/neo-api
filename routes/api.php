@@ -780,8 +780,8 @@ Route::prefix("v1")->group(function () {
 
     Route::model("trafficSource", TrafficSource::class);
 
-    Route::get("traffic_sources", TrafficSourcesController::class . "@index")->name("traffic-sources.index");
-    Route::post("traffic_sources", TrafficSourcesController::class . "@store")->name("traffic-sources.store");
-    Route::put("traffic_sources/{trafficSource}", TrafficSourcesController::class . "@update")->name("traffic-sources.update");
-    Route::delete("traffic_sources/{trafficSource}", TrafficSourcesController::class . "@destroy")->name("traffic-sources.destroy");
+    Route::get("traffic-sources", TrafficSourcesController::class . "@index")->name("traffic-sources.index");
+    Route::post("traffic-sources", TrafficSourcesController::class . "@store")->name("traffic-sources.store");
+    Route::put("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@update")->name("traffic-sources.update");
+    Route::delete("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@destroy")->name("traffic-sources.destroy");
 });

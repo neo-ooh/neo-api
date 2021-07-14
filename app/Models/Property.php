@@ -5,10 +5,8 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Neo\Rules\AccessibleActor;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Neo\Rules\AccessibleProperty;
 
 /**
@@ -83,7 +81,7 @@ class Property extends SecuredModel {
         return $this->belongsTo(Actor::class, "actor_id");
     }
 
-    public function traffic_data(): HasMany {
-        return $this->hasMany(PropertyTraffic::class, "property_id", "actor_id");
+    public function traffic(): HasOne {
+        return $this->hasOne(PropertyTrafficSettings::class, "property_id", "actor_id");
     }
 }

@@ -1,0 +1,61 @@
+<?php
+
+namespace Neo\Models;
+
+use Carbon\Traits\Date;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+/**
+ * @package Neo\Models
+ * @property boolean $is_required
+ * @property int     $start_year
+ * @property Date    $grace_override
+ * @property string  $input_method
+ * @property string  $missing_value_strategy
+ * @property int     $placeholder_value
+ *
+ * @property int     $property_id
+ */
+class PropertyTrafficSettings extends Model {
+    use HasFactory;
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = "property_traffic_settings";
+
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $primaryKey = "property_id";
+
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
+    public $incrementing = false;
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    public $casts = [
+        "is_required"    => "boolean",
+        "grace_override" => "date"
+    ];
+
+    protected $with = ["data"];
+    protected $fillable = ["is_required", "start_year", "grace_override"];
+
+    public function data(): HasMany {
+        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
+    }
+}

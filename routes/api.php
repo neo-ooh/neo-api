@@ -674,7 +674,7 @@ Route::prefix("v1")->group(function () {
     */
 
     Route::   get("properties/{property}/traffic", PropertiesTrafficController::class . "@index"   )->name("properties.traffic.index");
-    Route:: patch("properties/{property}/traffic", PropertiesTrafficController::class . "@update"   )->name("properties.traffic.update-settings");
+    Route:: put("properties/{property}/traffic", PropertiesTrafficController::class . "@update"   )->name("properties.traffic.update-settings");
     Route::  post("properties/{property}/traffic", PropertiesTrafficController::class . "@store" )->name("properties.traffic.store");
 
 

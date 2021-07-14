@@ -1,4 +1,5 @@
 {{-- NEO-SHOPPING --}}
+@if($order->getShoppingOrders()->count() > 0)
 <h2 class="technical-specs-title">
     {!! __("contract.technical-specs") !!}
     <span class="shopping">/ {!! __("contract.network-shopping") !!}</span>
@@ -33,7 +34,8 @@
     </tr>
     </tbody>
 </table>
-
+@endif
+@if($order->getOTGOrders()->count() > 0)
 {{-- NEO-On the Go --}}
 <h2 class="technical-specs-title">
     {!! __("contract.technical-specs") !!}
@@ -52,8 +54,8 @@
     <tr>
         <td>{!! __("contract.products-digital-horizontal-indoor") !!}</td>
         <td>15 sec.</td>
-        <td>4 min.</td>
-        <td>4 min.</td>
+        <td>3 min.</td>
+        <td>3 min.</td>
     </tr>
     <tr>
         <td>{!! __("contract.products-digital-in-screen") !!}</td>
@@ -69,7 +71,8 @@
     </tr>
     </tbody>
 </table>
-
+@endif
+@if($order->getFitnessOrders()->count() > 0)
 {{-- NEO-FITNESS --}}
 <h2 class="technical-specs-title">
     {!! __("contract.technical-specs") !!}
@@ -99,3 +102,4 @@
     </tr>
     </tbody>
 </table>
+@endif

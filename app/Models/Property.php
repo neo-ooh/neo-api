@@ -3,7 +3,6 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -12,15 +11,15 @@ use Neo\Rules\AccessibleProperty;
 /**
  * Class Property
  *
- * @property int        $actor_id
- * @property boolean    $require_traffic
- * @property int        $traffic_start_year
- * @property Date       $traffic_grace_override
- * @property Date       $created_at
- * @property Date       $updated_at
+ * @property int                     $actor_id
+ * @property boolean                 $require_traffic
+ * @property int                     $traffic_start_year
+ * @property Date                    $traffic_grace_override
+ * @property Date                    $created_at
+ * @property Date                    $updated_at
  *
- * @property Actor      $actor
- * @property Collection $traffic_data
+ * @property Actor                   $actor
+ * @property PropertyTrafficSettings $traffic
  */
 class Property extends SecuredModel {
     use HasFactory;

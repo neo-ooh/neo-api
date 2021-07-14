@@ -57,6 +57,7 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\StatsController;
+use Neo\Http\Controllers\TrafficSourcesController;
 use Neo\Http\Controllers\TwoFactorAuthController;
 use Neo\Http\Controllers\WeatherBackgroundsController;
 use Neo\Http\Controllers\WeatherLocationsController;
@@ -90,6 +91,7 @@ use Neo\Models\Province;
 use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
+use Neo\Models\TrafficSource;
 use Neo\Models\WeatherBackground;
 use Neo\Models\WeatherLocation;
 
@@ -769,4 +771,17 @@ Route::prefix("v1")->group(function () {
     */
 
     Route::get("stats", StatsController::class . "@index")->name("stats.index");
+
+    /*
+    |----------------------------------------------------------------------
+    | Traffic Sources
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("trafficSource", TrafficSource::class);
+
+    Route::get("traffic_sources", TrafficSourcesController::class . "@index")->name("traffic-sources.index");
+    Route::post("traffic_sources", TrafficSourcesController::class . "@store")->name("traffic-sources.store");
+    Route::put("traffic_sources/{trafficSource}", TrafficSourcesController::class . "@update")->name("traffic-sources.update");
+    Route::delete("traffic_sources/{trafficSource}", TrafficSourcesController::class . "@destroy")->name("traffic-sources.destroy");
 });

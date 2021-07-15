@@ -27,8 +27,6 @@ class TrafficSourceSettingsLinkett extends Model {
 
     protected $fillable = ["api_key"];
 
-    protected $with = ["source"];
-
     public function source(): BelongsTo {
         return $this->belongsTo(TrafficSource::class, "source_id", "id");
     }

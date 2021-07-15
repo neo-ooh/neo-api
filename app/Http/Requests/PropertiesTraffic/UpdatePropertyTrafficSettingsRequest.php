@@ -28,7 +28,10 @@ class UpdatePropertyTrafficSettingsRequest extends FormRequest {
             "start_year"             => ["required", "integer"],
             "grace_override"         => ["present", "nullable", "date"],
             "input_method"           => ["required", "string", Rule::in(["MANUAL", "LINKETT"])],
-            "source_uid" => ["required_if:input_method,LINKETT"],
+
+            "source_id" => ["required_if:input_method,LINKETT", "exists:traffic_sources,id"],
+            "venue_id" => ["required_if:input_method,LINKETT", "string"],
+
             "missing_value_strategy" => ["required", "string", Rule::in(["USE_LAST", "USE_PLACEHOLDER"])],
             "placeholder_value"      => ["required", "integer"],
         ];

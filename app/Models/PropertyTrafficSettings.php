@@ -5,6 +5,7 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -57,5 +58,10 @@ class PropertyTrafficSettings extends Model {
 
     public function data(): HasMany {
         return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
+    }
+
+    public function source(): BelongsToMany {
+        return $this->belongsToMany(TrafficSource::class, "property_traffic_source", "property_id", "source_id")
+                    ->withPivot("uid");
     }
 }

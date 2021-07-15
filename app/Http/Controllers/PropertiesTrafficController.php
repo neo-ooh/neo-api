@@ -43,9 +43,12 @@ class PropertiesTrafficController extends Controller {
 
         $trafficSettings->save();
 
-//        if($trafficSettings->input_method === 'LINKETT') {
-//            // Save Linkett id...
-//        }
+        if($trafficSettings->input_method === 'LINKETT') {
+            $trafficSettings->source()
+                            ->attach($request->input("source_id"), [
+                                "uid" => $request->input("venue_id")
+                            ]);
+        }
 
         return new Response($trafficSettings);
     }

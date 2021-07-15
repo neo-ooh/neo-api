@@ -35,7 +35,8 @@ return [
     "guaranteed-impressions" => "Impressions garanties",
     "potential-impressions" => "Impressions potentiels",
     "guaranteed-impressions-covid" => "Impressions garanties COVID",
-    "cpm-covid" => "CPM COVID",
+    "cpm -covid" => "CPM COVID",
     "potential-impressions-covid" => "Impressions potentiels COVID",
+    "potential-cpm" => "CPM potentiel",
     "potential-cpm-covid" => "CPM COVID potentiel"
 ];

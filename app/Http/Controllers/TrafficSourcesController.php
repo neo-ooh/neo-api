@@ -26,11 +26,12 @@ class TrafficSourcesController extends Controller
             $source->settings()->create(["api_key" => $request->input("api_key")]);
         }
 
-        return new Response($source->refresh(), 201);
+        return new Response($source->refresh()->load("settings"), 201);
     }
 
     public function update(UpdateTrafficSourceRequest $request, TrafficSource $trafficSource) {
         $trafficSource->name = $request->input("name");
+        $trafficSource->save();
 
         if($trafficSource->type === "linkett") {
             $trafficSource->settings->api_key = $request->input("api_key");

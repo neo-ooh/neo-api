@@ -2,9 +2,9 @@
 
 namespace Neo\Services\Traffic;
 
-use Carbon\Traits\Date;
+use Carbon\Carbon;
 use Neo\Models\Property;
 
 interface TrafficProviderInterface {
-    public function getTraffic(Property $property, Date $from, Date $to): int;
+    public function getTraffic(Property $property, Carbon $from, Carbon $to): int;
 }

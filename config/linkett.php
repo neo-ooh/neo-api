@@ -30,5 +30,5 @@ return [
     |
     */
 
-    "categories" => ["rsession", "ssession"],
+    "categories" => ["ssession", "rsession"],
 ];

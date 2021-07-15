@@ -16,8 +16,8 @@ class LinkettAPIClient implements APIClientInterface {
 
     public function __construct(string $apiKey) {
         $this->apiKey = $apiKey;
+        $this->client = new APIClient();
     }
-
 
     /**
      * @inheritDoc
@@ -25,7 +25,7 @@ class LinkettAPIClient implements APIClientInterface {
     public function call($endpoint, $payload, array $headers = []) {
         $payload["key"] = $this->apiKey;
 
-        $response = $this->client->call($endpoint, $payload);
+        $response = $this->client->call($endpoint, $payload, ["Accept" => "application/json"]);
 
         if(!$response->successful()) {
             $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);

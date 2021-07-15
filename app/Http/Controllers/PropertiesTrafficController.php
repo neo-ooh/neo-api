@@ -3,6 +3,8 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Artisan;
+use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Http\Requests\PropertiesTraffic\ListTrafficRequest;
 use Neo\Http\Requests\PropertiesTraffic\StoreTrafficRequest;
 use Neo\Http\Requests\PropertiesTraffic\UpdatePropertyTrafficSettingsRequest;
@@ -41,6 +43,8 @@ class PropertiesTrafficController extends Controller {
         $trafficSettings->missing_value_strategy = $request->input("missing_value_strategy");
         $trafficSettings->placeholder_value      = $request->input("placeholder_value");
 
+        $forcePull = $trafficSettings->getOriginal("input_method") === 'MANUAL' && $trafficSettings->input_method === 'LINKETT';
+
         $trafficSettings->save();
 
         if($trafficSettings->input_method === 'LINKETT') {
@@ -50,6 +54,10 @@ class PropertiesTrafficController extends Controller {
                             ]);
         } else {
             $trafficSettings->source()->sync([]);
+        }
+
+        if($forcePull) {
+            Artisan::queue("property:pull-traffic $property->actor_id");
         }
 
         return new Response($trafficSettings);

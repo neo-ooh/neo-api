@@ -5,7 +5,9 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Collection;
 
 /**
  * @package Neo\Models
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int     $placeholder_value
  *
  * @property int     $property_id
+ * @property Collection<TrafficSource> $source
  */
 class PropertyTrafficSettings extends Model {
     use HasFactory;
@@ -52,10 +55,16 @@ class PropertyTrafficSettings extends Model {
         "grace_override" => "date"
     ];
 
-    protected $with = ["data"];
+    protected $with = ["data", "source"];
+
     protected $fillable = ["is_required", "start_year", "grace_override"];
 
     public function data(): HasMany {
         return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
+    }
+
+    public function source(): BelongsToMany {
+        return $this->belongsToMany(TrafficSource::class, "property_traffic_source", "property_id", "source_id")
+                    ->withPivot("uid");
     }
 }

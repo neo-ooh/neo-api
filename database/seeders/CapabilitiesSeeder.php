@@ -91,6 +91,9 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::chores_broadsign,
                 \Neo\Enums\Capability::access_token_edit,
 
+                \Neo\Enums\Capability::tools_prints,
+                \Neo\Enums\Capability::traffic_sources,
+
                 \Neo\Enums\Capability::tests,
             ],
         ];

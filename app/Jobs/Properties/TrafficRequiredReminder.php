@@ -36,7 +36,7 @@ class TrafficRequiredReminder implements ShouldQueue {
         // We take all properties that require traffic informations and whose past month traffic data is missing
         $properties = Property::query()
                               ->where("require_traffic", "=", true)
-                              ->whereDoesntHave("traffic_data", function (Builder $query) {
+                              ->whereDoesntHave("traffic.data", function (Builder $query) {
                                   $lastMonth = Date::now()->subMonth()->startOfMonth();
                                   $query->where("year", "=", $lastMonth->year)
                                         ->where("month", "=", $lastMonth->month - 1); // Sub one to the month as its index is one-indexed by carbon

@@ -5,6 +5,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
+use Neo\Http\Requests\Contracts\DestroyContractRequest;
 use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
@@ -78,5 +79,9 @@ class ContractsController extends Controller {
         RefreshContractReservations::dispatchSync($contract->id);
 
         return new Response(["status" => "ok"]);
+    }
+
+    public function destroy(DestroyContractRequest $request, Contract $contract) {
+        $contract->delete();
     }
 }

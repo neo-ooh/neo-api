@@ -80,8 +80,8 @@ class PiSignageClient implements APIClientInterface {
 
         if (!$response->successful()) {
             // Request was not successful, log the exchange
-            $jsonPaylod = json_encode($payload, JSON_THROW_ON_ERROR);
-            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPaylod", );
+            $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);
+            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload", );
             Log::channel("broadsign")
                ->error("pisignage response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 

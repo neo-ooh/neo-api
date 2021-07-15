@@ -136,12 +136,6 @@
       <path value="$PROJECT_DIR$/vendor/psr/http-client" />
       <path value="$PROJECT_DIR$/vendor/doctrine/deprecations" />
       <path value="$PROJECT_DIR$/vendor/loilo/fuse" />
-      <path value="$PROJECT_DIR$/vendor/roave/better-reflection" />
-      <path value="$PROJECT_DIR$/vendor/roave/signature" />
-      <path value="$PROJECT_DIR$/vendor/vyuldashev/laravel-openapi" />
-      <path value="$PROJECT_DIR$/vendor/psr/cache" />
-      <path value="$PROJECT_DIR$/vendor/doctrine/annotations" />
-      <path value="$PROJECT_DIR$/vendor/goldspecdigital/oooas" />
       <path value="$PROJECT_DIR$/vendor/ezyang/htmlpurifier" />
       <path value="$PROJECT_DIR$/vendor/myclabs/php-enum" />
       <path value="$PROJECT_DIR$/vendor/psr/http-factory" />
@@ -149,9 +143,17 @@
       <path value="$PROJECT_DIR$/vendor/markbaker/complex" />
       <path value="$PROJECT_DIR$/vendor/markbaker/matrix" />
       <path value="$PROJECT_DIR$/vendor/maennchen/zipstream-php" />
+      <path value="$PROJECT_DIR$/vendor/php-http/promise" />
+      <path value="$PROJECT_DIR$/vendor/php-http/guzzle7-adapter" />
+      <path value="$PROJECT_DIR$/vendor/php-http/httplug" />
+      <path value="$PROJECT_DIR$/vendor/php-http/discovery" />
+      <path value="$PROJECT_DIR$/vendor/nipwaayoni/elastic-apm-php-agent" />
+      <path value="$PROJECT_DIR$/vendor/http-interop/http-factory-guzzle" />
+      <path value="$PROJECT_DIR$/vendor/jasny/persist-sql-query" />
+      <path value="$PROJECT_DIR$/vendor/arkaitzgarro/elastic-apm-laravel" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.0">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpUnit">

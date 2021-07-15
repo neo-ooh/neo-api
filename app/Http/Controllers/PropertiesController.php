@@ -55,7 +55,7 @@ class PropertiesController extends Controller {
         $childrenIds = $actor->selectActors()->directChildren()->where("is_group", "=", true)->get("id")->pluck("id");
 
         if(count($childrenIds) > 0) {
-            return new Response(Property::query()->findMany($childrenIds)->load(["actor", "traffic_data"]));
+            return new Response(Property::query()->findMany($childrenIds)->load(["actor", "traffic"]));
         }
 
         throw new HttpException(404);

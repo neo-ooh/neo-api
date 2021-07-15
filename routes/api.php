@@ -57,6 +57,7 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\StatsController;
+use Neo\Http\Controllers\TrafficSourcesController;
 use Neo\Http\Controllers\TwoFactorAuthController;
 use Neo\Http\Controllers\WeatherBackgroundsController;
 use Neo\Http\Controllers\WeatherLocationsController;
@@ -74,6 +75,7 @@ use Neo\Models\ContractBurst;
 use Neo\Models\ContractScreenshot;
 use Neo\Models\Country;
 use Neo\Models\Creative;
+use Neo\Models\DisplayTypePrintsFactors;
 use Neo\Models\Format;
 use Neo\Models\FormatLayout;
 use Neo\Models\Frame;
@@ -89,6 +91,7 @@ use Neo\Models\Province;
 use Neo\Models\ReviewTemplate;
 use Neo\Models\Role;
 use Neo\Models\Schedule;
+use Neo\Models\TrafficSource;
 use Neo\Models\WeatherBackground;
 use Neo\Models\WeatherLocation;
 
@@ -416,6 +419,7 @@ Route::prefix("v1")->group(function () {
 
     Route::post("contracts", ContractsController::class . "@store")->name("contracts.store");
     Route::get("contracts/{contract}", ContractsController::class . "@show")->name("contracts.show");
+    Route::delete("contracts/{contract}", ContractsController::class . "@destroy")->name("contracts.destroy");
     Route::post("contracts/{contract}/_refresh", ContractsController::class . "@refresh")->name("contracts.refresh");
 
 
@@ -493,6 +497,20 @@ Route::prefix("v1")->group(function () {
     */
 
     Route::get("display-types", DisplayTypesController::class . "@index")->name("display-types.index");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Display Types Print Factors
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("factors", DisplayTypePrintsFactors::class);
+
+    Route::get("display-types-factors", DisplayTypesPrintsFactorsController::class . "@index")->name("display-types-factors.index");
+
+    Route::post("display-types-factors", DisplayTypesPrintsFactorsController::class . "@store")->name("display-types-factors.store");
+    Route::put("display-types-factors/{factors}", DisplayTypesPrintsFactorsController::class . "@update")->name("display-types-factors.update");
 
 
     /*
@@ -624,8 +642,7 @@ Route::prefix("v1")->group(function () {
     Route:: put("networks/{network}", NetworksController::class . "@update")->name("networks.update");
     Route::delete("networks/{network}", NetworksController::class . "@destroy")->name("networks.destroy");
 
-    Route::delete("networks/{network}/display_types", DisplayTypesController::class . "@byNetwork")->name("networks.display_types");
-    Route::delete("networks/{network}/prints_calculations", DisplayTypesPrintsFactorsController::class . "@index")->name("networks.prints-calculations");
+    Route::get("networks/{network}/display-types", DisplayTypesController::class . "@byNetwork")->name("networks.display_types");
 
     /*
     |----------------------------------------------------------------------
@@ -659,6 +676,7 @@ Route::prefix("v1")->group(function () {
     */
 
     Route::   get("properties/{property}/traffic", PropertiesTrafficController::class . "@index"   )->name("properties.traffic.index");
+    Route:: put("properties/{property}/traffic", PropertiesTrafficController::class . "@update"   )->name("properties.traffic.update-settings");
     Route::  post("properties/{property}/traffic", PropertiesTrafficController::class . "@store" )->name("properties.traffic.store");
 
 
@@ -753,4 +771,17 @@ Route::prefix("v1")->group(function () {
     */
 
     Route::get("stats", StatsController::class . "@index")->name("stats.index");
+
+    /*
+    |----------------------------------------------------------------------
+    | Traffic Sources
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("trafficSource", TrafficSource::class);
+
+    Route::get("traffic-sources", TrafficSourcesController::class . "@index")->name("traffic-sources.index");
+    Route::post("traffic-sources", TrafficSourcesController::class . "@store")->name("traffic-sources.store");
+    Route::put("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@update")->name("traffic-sources.update");
+    Route::delete("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@destroy")->name("traffic-sources.destroy");
 });

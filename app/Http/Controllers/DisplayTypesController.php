@@ -24,9 +24,10 @@ class DisplayTypesController extends Controller {
     }
 
     public function byNetwork(ListDisplayTypesPerNetworkRequest $request, Network $network) {
-        $displayTypes = DisplayType::query()->whereHas(Location::class, function (Builder $query) use ($network) {
+        $displayTypes = DisplayType::query()->whereHas('locations', function (Builder $query) use ($network) {
             $query->where("network_id", "=", $network->id);
         })->orderBy("name")->get();
 
         return new Response($displayTypes);
     }
+}

@@ -12,9 +12,9 @@ namespace Neo\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\RefreshAllContracts;
-use Neo\Jobs\RefreshContractsReservations;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\SynchronizeNetworks;
 use Neo\Services\News\NewsService;
@@ -47,6 +47,8 @@ class Kernel extends ConsoleKernel {
         Chores\CleanUpCreatives::class,
 
         Utils\MergeOTGResourcesIntoOneFormat::class,
+
+        PullPropertyTraffic::class
     ];
 
     /**

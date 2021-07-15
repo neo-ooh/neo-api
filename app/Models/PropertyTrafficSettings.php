@@ -53,15 +53,19 @@ class PropertyTrafficSettings extends Model {
         "grace_override" => "date"
     ];
 
-    protected $with = ["data", "source"];
+    protected $with = ["data"];
+
+    protected $appends = ["source"];
+
     protected $fillable = ["is_required", "start_year", "grace_override"];
 
     public function data(): HasMany {
         return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
     }
 
-    public function source(): BelongsToMany {
+    public function getSourceAttribute(): BelongsToMany {
         return $this->belongsToMany(TrafficSource::class, "property_traffic_source", "property_id", "source_id")
-                    ->withPivot("uid");
+                    ->withPivot("uid")
+                    ->first();
     }
 }

@@ -38,7 +38,7 @@ class TrafficSourcesController extends Controller
             $trafficSource->settings->save();
         }
 
-        return new Response($trafficSource);
+        return new Response($trafficSource->load("settings"));
     }
 
     public function destroy(DestroyTrafficSourceRequest $request, TrafficSource $trafficSource) {

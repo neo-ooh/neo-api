@@ -147,7 +147,7 @@ class OrderLine {
         $this->market_name  = $record["order_line/market_id/name"];
         $this->market_order = $record["order_line/market_id/sequence"];
         $this->nb_screens   = (int)($record["order_line/nb_screen"] ?? 0);
-        $this->quantity     = $record["order_line/product_uom_qty"];
+        $this->quantity     = (float)($record["order_line/product_uom_qty"] ?? 0);
 
         $this->is_production = $record["order_line/product_id/production"] === "True";
 

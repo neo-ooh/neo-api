@@ -51,6 +51,10 @@ class ContractImporter {
                 continue;
             }
 
+            if($orderLine->quantity < PHP_FLOAT_EPSILON) {
+                continue;
+            }
+
             // Each line holds one Order Line
             $order->orderLines->push($orderLine);
         }

@@ -48,6 +48,8 @@ class PropertiesTrafficController extends Controller {
                             ->attach($request->input("source_id"), [
                                 "uid" => $request->input("venue_id")
                             ]);
+        } else {
+            $trafficSettings->source()->sync([]);
         }
 
         return new Response($trafficSettings);

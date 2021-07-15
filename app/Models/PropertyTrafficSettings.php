@@ -63,9 +63,8 @@ class PropertyTrafficSettings extends Model {
         return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
     }
 
-    public function getSourceAttribute(): BelongsToMany {
+    public function source(): BelongsToMany {
         return $this->belongsToMany(TrafficSource::class, "property_traffic_source", "property_id", "source_id")
-                    ->withPivot("uid")
-                    ->first();
+                    ->withPivot("uid");
     }
 }

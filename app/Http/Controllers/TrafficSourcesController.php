@@ -13,7 +13,7 @@ use Neo\Models\TrafficSource;
 class TrafficSourcesController extends Controller
 {
     public function index(ListTrafficSourcesRequest $request) {
-        return new Response(TrafficSource::all());
+        return new Response(TrafficSource::with("settings")->get());
     }
 
     public function store(StoreTrafficSourceRequest $request) {

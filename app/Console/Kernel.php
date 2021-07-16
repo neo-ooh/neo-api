@@ -15,6 +15,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\NotifyEndOfSchedules;
+use Neo\Jobs\Properties\PullLatestTrafficData;
 use Neo\Jobs\RefreshAllContracts;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\SynchronizeNetworks;
@@ -96,6 +97,16 @@ class Kernel extends ConsoleKernel {
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()
                                                    ->timezone('America/Toronto')
                                                    ->at("06:00");
+
+
+
+        /* -----------------
+         * Monthly tasks
+         */
+
+        // End of schedule email
+        $schedule->job(PullLatestTrafficData::class)->monthly();
+
     }
 
     /**

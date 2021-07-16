@@ -119,7 +119,7 @@ class Totals extends Component {
         $ws->mergeCellsRelative(4);
         $ws->getCurrentCell()->setValue(__("CPM"));
         $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($this->order->cpm);
+        $ws->getCurrentCell()->setValue(($this->order->net_investment / $this->order->getGuaranteedOrders()->sum("impressions")) * 1000);
         $ws->setRelativeCellFormat('$#,##0.00');
 
         $ws->popPosition();

@@ -17,7 +17,9 @@ class LinkettAPIAdapter implements TrafficProviderInterface {
     public function __construct(TrafficSourceSettingsLinkett $settings) {
         $this->client = new LinkettAPIClient($settings->api_key);
         $this->trafficEndpoint = Endpoint::get("/v1/activity_counters/sum");
-        $this->trafficEndpoint->options = [];
+        $this->trafficEndpoint->options = [
+            "http_errors" => false
+        ];
         $this->trafficEndpoint->parser(new SumResponseParser());
         $this->trafficEndpoint->base = config("linkett.url");
     }

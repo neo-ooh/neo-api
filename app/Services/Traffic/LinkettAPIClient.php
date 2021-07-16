@@ -3,11 +3,10 @@
 namespace Neo\Services\Traffic;
 
 use Facade\FlareClient\Http\Exceptions\BadResponse;
-use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Facades\Log;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Neo\Services\API\Endpoint;
 
 class LinkettAPIClient implements APIClientInterface {
 
@@ -25,21 +24,14 @@ class LinkettAPIClient implements APIClientInterface {
     public function call($endpoint, $payload, array $headers = []) {
         $payload["key"] = $this->apiKey;
 
-
         // The linkett API tends to return 503 errors oonce n a while (more often than not). So we allow for a few tries before actually failing
         $tries = 0;
 
         do {
-
-            try {
-                $response = $this->client->call($endpoint, $payload, [
-                    "Accept"      => "application/json",
-                    "Connection"  => "close",
-                    "http_errors" => false,
-                ]);
-            } catch (ServerException $e) {
-                (new ConsoleOutput())->write("Error on try #" . $tries+1);
-            }
+            $response = $this->client->call($endpoint, $payload, [
+                "Accept"      => "application/json",
+                "Connection"  => "close",
+            ]);
 
             $tries++;
         } while (!$response->successful() && $tries < 5);

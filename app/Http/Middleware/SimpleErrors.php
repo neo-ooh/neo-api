@@ -19,7 +19,7 @@ class SimpleErrors {
         /** @var Response $response */
         $response = $next($request);
 
-        if($exception = $response->exception) {
+        if(($exception = $response->exception) && (config('app.env') === 'production')) {
             return new Response([
                 "code"    => $response->getStatusCode() ,
                 "message" => $exception->getMessage(),

@@ -61,35 +61,35 @@
         </div>
     </div>
     @if($order->use_invoice_plan)
-    <div class="costs-recap">
-        <p>{!! __("contract.customer-accepts") !!}</p>
-        <h2 class="investment-label">{!! __("contract.investment") !!}</h2>
-        <table class="costs-recap-table">
-            <tr>
-                <td>{!! __("contract.total-media-net") !!}</td>
-                <td class="value row-1">{{ formatCurrency(round($order->grand_total_investment)) }}</td>
-            </tr>
-            <tr>
-                <td>{!! __("contract.production-costs") !!}</td>
-                <td class="value">{{ formatCurrency(round($order->production_costs)) }}</td>
-            </tr>
-            <tr class="footer">
-                <th>{!! __("contract.grand-total-net") !!}</th>
-                <th>{{ formatCurrency(round($order->net_investment)) }}</th>
-            </tr>
-        </table>
-    </div>
-    <div class="payable-accounts-wrapper">
-        <h2>{!! __("contract.payable-accounts") !!}</h2>
-        <table class="payable-accounts">
-            <tr>
-                <td class="email-label">{{ __("common.email-address") }}</td>
-                <td class="payable-account-email">
-                    {{ $customer->payable_account }}
-                </td>
-            </tr>
-        </table>
-    </div>
+        <div class="costs-recap">
+            <p>{!! __("contract.customer-accepts") !!}</p>
+            <h2 class="investment-label">{!! __("contract.investment") !!}</h2>
+            <table class="costs-recap-table">
+                <tr>
+                    <td>{!! __("contract.total-media-net") !!}</td>
+                    <td class="value row-1">{{ formatCurrency(round($order->grand_total_investment)) }}</td>
+                </tr>
+                <tr>
+                    <td>{!! __("contract.production-costs") !!}</td>
+                    <td class="value">{{ formatCurrency(round($order->production_costs)) }}</td>
+                </tr>
+                <tr class="footer">
+                    <th>{!! __("contract.grand-total-net") !!}</th>
+                    <th>{{ formatCurrency(round($order->net_investment)) }}</th>
+                </tr>
+            </table>
+        </div>
+        <div class="payable-accounts-wrapper">
+            <h2>{!! __("contract.payable-accounts") !!}</h2>
+            <table class="payable-accounts">
+                <tr>
+                    <td class="email-label">{{ __("common.email-address") }}</td>
+                    <td class="payable-account-email">
+                        {{ $customer->payable_account }}
+                    </td>
+                </tr>
+            </table>
+        </div>
     @else
         <table class="payable-contact">
             <tr class="header">
@@ -126,15 +126,17 @@
     @endif
     <div class="payment-terms">
         <h2>{!! __("contract.payment-terms-title") !!}</h2>
-        <table class="payment-steps">
-            @foreach($order->invoice_plan_steps as $step)
-                <tr>
-                    <td>{{ formatCurrency($step["amount"]) }}</td>
-                    <td>{{ __("contract.billed-on") }}</td>
-                    <td>{{ $step["date"]->toFormattedDateString() }}</td>
-                </tr>
-            @endforeach
-        </table>
+        @if($order->use_invoice_plan)
+            <table class="payment-steps">
+                @foreach($order->invoice_plan_steps as $step)
+                    <tr>
+                        <td>{{ formatCurrency($step["amount"]) }}</td>
+                        <td>{{ __("contract.billed-on") }}</td>
+                        <td>{{ $step["date"]->toFormattedDateString() }}</td>
+                    </tr>
+                @endforeach
+            </table>
+        @endif
         <ul>
             <li>{!! __("contract.payment-terms-one") !!}</li>
             <li>{!! __("contract.payment-terms-two") !!}</li>

@@ -64,6 +64,7 @@ class PullPropertyTraffic extends Command {
             $start = $month->startOfMonth();
             $end   = $month->copy()->addMonth();
 
+
             // Fetch the value
             $traffic = $trafficSource->getTraffic($property, $start, $end);
 

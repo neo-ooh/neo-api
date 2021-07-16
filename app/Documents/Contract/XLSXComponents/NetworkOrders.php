@@ -254,7 +254,7 @@ class NetworkOrders extends Component {
                     $lines->sum("net_investment"),
                     $lines->sum("impressions"),
                     $lines->sum("covid_impressions"),
-                    ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000,
+                    $lines->sum("covid_impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000 : 0,
                 ]);
 
                 $statePropertiesTraffic += $propertiesTraffic;
@@ -310,7 +310,7 @@ class NetworkOrders extends Component {
                 $lines->sum("net_investment"),
                 $lines->sum("impressions"),
                 $lines->sum("covid_impressions"),
-                ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000,
+                $lines->sum("covid_impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000 : 0,
             ]);
 
             $ws->popPosition();
@@ -354,7 +354,7 @@ class NetworkOrders extends Component {
             $lines->sum("net_investment"),
             $lines->sum("impressions"),
             $lines->sum("covid_impressions"),
-             ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000,
+            $lines->sum("covid_impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000 : 0,
         ]);
 
         $ws->popPosition();

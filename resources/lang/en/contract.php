@@ -113,4 +113,9 @@ return [
     "totals-guaranteed-media-total"      => "Guaranteed Media Total",
     "totals-potential-total"             => "(Potential) Grand Media Total",
     "totals-production-cost"             => "Production Cost",
+
+    "type-electronic"                    => "Electronic",
+    "type-paper"                         => "Paper",
+    "payable-contact-header"             => "Accounts payable contact (to be filled out by the client, in block letters)",
+
 ];

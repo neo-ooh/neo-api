@@ -17,11 +17,11 @@ abstract class BaseException extends Exception
 {
     protected int $status = 422;
 
-//    public function asResponse(): ?Response
-//    {
-//        return new Response([
-//            "code" => $this->code,
-//            "message" => $this->message,
-//        ], $this->status);
-//    }
+    public function asResponse(): ?Response
+    {
+        return new Response([
+            "code" => $this->code,
+            "message" => $this->message,
+        ], $this->status);
+    }
 }

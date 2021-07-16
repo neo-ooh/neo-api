@@ -11,6 +11,7 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Request;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class APIClient implements APIClientInterface {
     /**
@@ -22,19 +23,18 @@ class APIClient implements APIClientInterface {
      * @return Response
      */
     public function call($endpoint, $payload, array $headers = []) {
-//        $stack = new HandlerStack();
-//        $stack->setHandler(new CurlHandler());
+        $stack = new HandlerStack();
+        $stack->setHandler(new CurlHandler());
 
         $client = new Client($endpoint->options);
         $request = new \GuzzleHttp\Psr7\Request($endpoint->method, $endpoint->getUrl(), $headers);
 
-//        // Create a middleware that echoes parts of the request.
-//        $tapMiddleware = Middleware::tap(function ($request) {
-//            echo $request->getBody();
-//            // {"foo":"bar"}
-//        });
+        // Create a middleware that echoes parts of the request.
+        $tapMiddleware = Middleware::tap(function ($request) {
+            (new ConsoleOutput())->write($request->getHeaders());
+        });
 
-        $options = [/*'handler' => $tapMiddleware($stack)*/];
+        $options = ['handler' => $tapMiddleware($stack), ""];
 
         if($endpoint->format === 'multipart') {
             $options[RequestOptions::MULTIPART] = $payload;

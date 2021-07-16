@@ -44,7 +44,7 @@ class Order {
     public Collection $orderLines;
     public Collection $productionLines;
 
-    public bool $useInvoicePlan = false;
+    public bool $use_invoice_plan = false;
     public Collection $invoice_plan_steps;
 
     // Computed values
@@ -115,7 +115,7 @@ class Order {
         $this->orderLines      = new Collection();
         $this->productionLines = new Collection();
 
-        $this->useInvoicePlan = data_get($record, "use_invoice_plan", false) === "True";
+        $this->use_invoice_plan   = data_get($record, "use_invoice_plan", false) === "True";
         $this->invoice_plan_steps = new Collection();
 
         if (Arr::exists($record, "invoice_plan_ids/invoice_move_ids/amount_untaxed")) {

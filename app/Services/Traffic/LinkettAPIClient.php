@@ -2,12 +2,12 @@
 
 namespace Neo\Services\Traffic;
 
-use Exception;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
-use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Facades\Log;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class LinkettAPIClient implements APIClientInterface {
 
@@ -25,11 +25,28 @@ class LinkettAPIClient implements APIClientInterface {
     public function call($endpoint, $payload, array $headers = []) {
         $payload["key"] = $this->apiKey;
 
-        $response = $this->client->call($endpoint, $payload, ["Accept" => "application/json"]);
 
-        if(!$response->successful()) {
+        // The linkett API tends to return 503 errors oonce n a while (more often than not). So we allow for a few tries before actually failing
+        $tries = 0;
+
+        do {
+
+            try {
+                $response = $this->client->call($endpoint, $payload, [
+                    "Accept"      => "application/json",
+                    "Connection"  => "close",
+                    "http_errors" => false,
+                ]);
+            } catch (ServerException $e) {
+                (new ConsoleOutput())->write("Error on try #" . $tries+1);
+            }
+
+            $tries++;
+        } while (!$response->successful() && $tries < 5);
+
+        if (!$response->successful()) {
             $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);
-            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload", );
+            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload",);
             Log::channel("broadsign")
                ->error("pisignage response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 

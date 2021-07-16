@@ -6,11 +6,9 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
-use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Request;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class APIClient implements APIClientInterface {
     /**
@@ -25,20 +23,19 @@ class APIClient implements APIClientInterface {
 //        $stack = new HandlerStack();
 //        $stack->setHandler(new CurlHandler());
 
-        $client = new Client($endpoint->options);
+        $client  = new Client($endpoint->options);
         $request = new \GuzzleHttp\Psr7\Request($endpoint->method, $endpoint->getUrl(), $headers);
 
-//        // Create a middleware that echoes parts of the request.
+        // Create a middleware that echoes parts of the request.
 //        $tapMiddleware = Middleware::tap(function ($request) {
-//            echo $request->getBody();
-//            // {"foo":"bar"}
+//            (new ConsoleOutput())->write($request->getBody());
 //        });
 
-        $options = [/*'handler' => $tapMiddleware($stack)*/];
+        $options = [/*'handler' => $tapMiddleware($stack), 'debug' => true*/];
 
-        if($endpoint->format === 'multipart') {
+        if ($endpoint->format === 'multipart') {
             $options[RequestOptions::MULTIPART] = $payload;
-        } else if($request->getMethod() === "GET") {
+        } else if ($request->getMethod() === "GET") {
             $options[RequestOptions::QUERY] = $payload;
         } else {
             $options[RequestOptions::JSON] = $payload;

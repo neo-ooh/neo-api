@@ -12,6 +12,7 @@ namespace Neo\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\RefreshAllContracts;
@@ -42,9 +43,6 @@ class Kernel extends ConsoleKernel {
         Hotfixes\RetargetAllCampaigns::class,
         Hotfixes\RetargetAllCreatives::class,
         Hotfixes\RecreateAllCampaigns::class,
-
-        Chores\CleanUpCampaigns::class,
-        Chores\CleanUpCreatives::class,
 
         Utils\MergeOTGResourcesIntoOneFormat::class,
 

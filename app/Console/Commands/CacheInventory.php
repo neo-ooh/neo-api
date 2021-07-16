@@ -8,7 +8,7 @@
  * @neo/api - CacheInventory.php
  */
 
-namespace Neo\Console;
+namespace Neo\Console\Commands;
 
 
 use Illuminate\Console\Command;

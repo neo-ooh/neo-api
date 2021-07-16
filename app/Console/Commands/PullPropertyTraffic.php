@@ -76,7 +76,7 @@ class PullPropertyTraffic extends Command {
                     "property_id" => $property->actor_id,
                     "year"        => $start->year,
                     "month"       => $start->month - 1
-                ])) {
+                ])->exists()) {
                 continue;
             }
 

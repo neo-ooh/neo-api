@@ -142,7 +142,7 @@ class NetworkTraffic extends XLSXDocument {
     public function getPeriod(int $networkId, int $displayTypeId, int $month) {
         return $this->periods->first(/**
          * @param DisplayTypePrintsFactors $p
-         */ fn($p) => $p->display_type_id === $displayTypeId
+         */ fn($p) => $p->displayTypes()->where('id', "=", $displayTypeId)->exists()
             && $p->network_id === $networkId
             && $p->start_month <= $month + 1
             && $p->end_month >= $month + 1

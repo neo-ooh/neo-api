@@ -66,9 +66,11 @@ class NetworkTraffic extends XLSXDocument {
         $this->spreadsheet->removeSheetByIndex(0);
 
         // Autosize columns
-        for ($i = 0; $i < 15; ++$i) {
+        for ($i = 0; $i < 27; ++$i) {
             $this->ws->getColumnDimensionByColumn($i)->setWidth(15);
         }
+        $this->ws->getColumnDimensionByColumn('A')->setAutoSize(true);
+        $this->ws->getColumnDimensionByColumn('B')->setAutoSize(true);
 
         return true;
     }
@@ -83,8 +85,8 @@ class NetworkTraffic extends XLSXDocument {
 
         // Print header
         $this->ws->printRow([
-            "Property",
-            "Product",
+            "Properties",
+            "Products",
         ]);
 
         $this->ws->popPosition();

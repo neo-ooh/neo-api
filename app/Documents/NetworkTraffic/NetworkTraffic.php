@@ -116,7 +116,7 @@ class NetworkTraffic extends XLSXDocument {
             // Get the traffic information for the year
             $trafficData = collect();
             for ($i = 0; $i < 12; $i++) {
-                $trafficData[] = $property->getTraffic($this->year, 0);
+                $trafficData[$i] = $property->getTraffic($this->year, 0);
             }
 
             // We print one row per property product

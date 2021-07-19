@@ -21,11 +21,8 @@
 
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\DocumentsGenerationController;
-use Neo\Http\Controllers\TrafficController;
 
 Route::prefix("documents")->group(function () {
-    Route::get("traffic/_export", TrafficController::class . "@export")
-         ->name("traffic.export");
     Route::post("{document}", DocumentsGenerationController::class . "@make")
          ->name("documents.make");
 });

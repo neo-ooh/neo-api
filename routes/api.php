@@ -57,6 +57,7 @@ use Neo\Http\Controllers\RolesCapabilitiesController;
 use Neo\Http\Controllers\RolesController;
 use Neo\Http\Controllers\SchedulesController;
 use Neo\Http\Controllers\StatsController;
+use Neo\Http\Controllers\TrafficController;
 use Neo\Http\Controllers\TrafficSourcesController;
 use Neo\Http\Controllers\TwoFactorAuthController;
 use Neo\Http\Controllers\WeatherBackgroundsController;
@@ -778,7 +779,7 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::get("traffic/_export", Traffic::class . "@index")->name("traffic-sources.index");
+    Route::get("traffic/_export", TrafficController::class . "@export")->name("traffic.export");
 
     /*
     |----------------------------------------------------------------------

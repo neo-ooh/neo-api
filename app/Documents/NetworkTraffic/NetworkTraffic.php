@@ -92,16 +92,19 @@ class NetworkTraffic extends XLSXDocument {
         $this->ws->moveCursor(2, 0);
 
         for ($i = 0; $i < 12; $i++) {
+            $this->ws->pushPosition();
             $this->ws->mergeCellsRelative(2, 1);
 
             $month = Carbon::create($this->year, $i + 1)->monthName;
-            $this->ws->getCurrentCell()->setValue($month);
+            $this->ws->printRow([$month]);
+            $this->ws->printRow(["Monthly", "Weekly"]);
 
+            $this->ws->popPosition();
             $this->ws->moveCursor(2, 0);
         }
 
         $this->ws->popPosition();
-        $this->ws->moveCursor(0, 1);
+        $this->ws->moveCursor(0, 2);
 
         // Now print each property
         /**

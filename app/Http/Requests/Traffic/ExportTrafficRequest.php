@@ -26,7 +26,7 @@ class ExportTrafficRequest extends FormRequest
     public function rules()
     {
         return [
-            "year" => ["required", "number"],
+            "year" => ["required", "int"],
         ];
     }
 }

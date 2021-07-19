@@ -11,6 +11,8 @@
 namespace Neo\Documents\NetworkTraffic;
 
 
+use Carbon\Carbon;
+use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
@@ -66,23 +68,9 @@ class NetworkTraffic extends XLSXDocument {
         $this->spreadsheet->removeSheetByIndex(0);
 
         // Autosize columns
-        for($i = 0; $i < 14; ++$i) {
+        for($i = 0; $i < 15; ++$i) {
             $this->ws->getColumnDimensionByColumn($i)->setWidth(15);
         }
-//        $this->ws->getColumnDimension("A")->setAutoSize(true);
-//        $this->ws->getColumnDimension("B")->setAutoSize(true);
-//        $this->ws->getColumnDimension("C")->setAutoSize(true);
-//        $this->ws->getColumnDimension("D")->setAutoSize(true);
-//        $this->ws->getColumnDimension("E")->setAutoSize(true);
-//        $this->ws->getColumnDimension("F")->setAutoSize(true);
-//        $this->ws->getColumnDimension("G")->setAutoSize(true);
-//        $this->ws->getColumnDimension("H")->setAutoSize(true);
-//        $this->ws->getColumnDimension("I")->setAutoSize(true);
-//        $this->ws->getColumnDimension("J")->setAutoSize(true);
-//        $this->ws->getColumnDimension("K")->setAutoSize(true);
-//        $this->ws->getColumnDimension("L")->setAutoSize(true);
-//        $this->ws->getColumnDimension("M")->setAutoSize(true);
-//        $this->ws->getColumnDimension("N")->setAutoSize(true);
 
         return true;
     }
@@ -90,26 +78,32 @@ class NetworkTraffic extends XLSXDocument {
     public function printNetwork(Network $network) {
         // Start by printing our header
         // Set row style
-        $this->ws->getStyle($this->ws->getRelativeRange(14, 1))->applyFromArray(XLSXStyleFactory::tableHeader());
+        $this->ws->getStyle($this->ws->getRelativeRange(26, 2))->applyFromArray(XLSXStyleFactory::tableHeader());
         $this->ws->getRowDimension($this->ws->getCursorRow())->setRowHeight(30);
+
+        $this->ws->pushPosition();
 
         // Print header
         $this->ws->printRow([
             "Property",
             "Product",
-            "January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December",
         ]);
+
+        $this->ws->popPosition();
+        $this->ws->pushPosition();
+        $this->ws->moveCursor(2, 0);
+
+        for ($i = 0; $i < 12; $i++) {
+            $this->ws->mergeCellsRelative(2, 0);
+
+            $month = Carbon::create($this->year, $i + 1)->monthName;
+            $this->ws->getCurrentCell()->setValue($month);
+
+            $this->ws->moveCursor(2, 0);
+        }
+
+        $this->ws->popPosition();
+        $this->ws->moveCursor(0, 1);
 
         // Now print each property
         /**
@@ -129,7 +123,7 @@ class NetworkTraffic extends XLSXDocument {
              * @var DisplayType $product
              */
             foreach ($products as $product) {
-                $prints = collect();
+                $values = collect();
 
                 foreach ($trafficData as $month => $traffic) {
                     // Take advantage of the loop for each month value to setup proper formatting of values for the row
@@ -139,18 +133,21 @@ class NetworkTraffic extends XLSXDocument {
 
                     // If no period calculator are available, skip product
                     if(!$period) {
-                        $prints[] = null;
+                        $values[] = null;
+                        $values[] = null;
                         continue;
                     }
 
-                    $prints[] = $period->getPrintsForTraffic($traffic);
+                    $prints = $period->getPrintsForTraffic($traffic);
+                    $values[] = $prints;
+                    $values[] = ($prints / Date::createFromDate($this->year, $month)->daysInMonth) / 2;
                 }
 
 
                 $this->ws->printRow([
                     $property->actor->name,
                     $product->name,
-                    ...$prints
+                    ...$values
                 ]);
 
             }

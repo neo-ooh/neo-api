@@ -100,7 +100,7 @@ class NetworkTraffic extends XLSXDocument {
             }
 
             // We print one row per property product
-            $products = $property->actor()->own_locations->pluck("display_type")->unique("id");
+            $products = $property->actor->own_locations->pluck("display_type")->unique("id");
 
             /**
              * @var DisplayType $product

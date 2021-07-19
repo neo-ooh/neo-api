@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
+use Neo\Models\DisplayType;
 use Neo\Models\DisplayTypePrintsFactors;
 use Neo\Models\Network;
 use Neo\Models\Property;
@@ -92,8 +93,60 @@ class NetworkTraffic extends XLSXDocument {
          * @var Property $property
          */
         foreach ($network->properties as $property) {
-            $this->ws->printRow([$property->actor->name]);
+            // Get the traffic information for the year
+            $trafficData = collect();
+            for ($i = 0; $i < 12; $i++) {
+                $trafficData[] = $property->getTraffic($this->year, 0);
+            }
+
+            // We print one row per property product
+            $products = $property->actor()->own_locations->pluck("display_type")->unique("id");
+
+            /**
+             * @var DisplayType $product
+             */
+            foreach ($products as $product) {
+                $prints = collect();
+
+                foreach ($trafficData as $month => $traffic) {
+                    $period = $this->getPeriod($network->id, $product->id, $month);
+
+                    // If no period calculator are available, skip product
+                    if(!$period) {
+                        $prints[] = null;
+                        continue;
+                    }
+
+                    $prints[] = $period->getPrintsForTraffic($traffic);
+                }
+
+                $this->ws->printRow([
+                    $property->actor->name,
+                    $product->name,
+                    ...$prints
+                ]);
+
+            }
+
+
         }
+    }
+
+    /**
+     * @param int $networkId
+     * @param int $displayTypeId
+     * @param int $month 0-indexed month
+     *
+     * @return DisplayTypePrintsFactors | null
+     */
+    public function getPeriod(int $networkId, int $displayTypeId, int $month) {
+        return $this->periods->first(/**
+         * @param DisplayTypePrintsFactors $p
+         */ fn($p) => $p->display_type_id === $displayTypeId
+            && $p->network_id === $networkId
+            && $p->start_month <= $month + 1
+            && $p->end_month >= $month + 1
+        );
     }
 
     /**

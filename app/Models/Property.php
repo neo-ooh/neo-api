@@ -83,4 +83,20 @@ class Property extends SecuredModel {
     public function traffic(): HasOne {
         return $this->hasOne(PropertyTrafficSettings::class, "property_id", "actor_id");
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    |
+    |--------------------------------------------------------------------------
+    */
+
+    public function getTraffic(int $year, int $month) {
+        /** @var ?PropertyTraffic $traffic */
+        $traffic = $this->traffic->data()
+                                 ->where("year", "=", $year)
+                                 ->where("month", "=", $month)
+                                 ->get();
+
+        return $traffic?->traffic;
+    }
 }

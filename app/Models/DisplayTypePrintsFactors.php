@@ -13,8 +13,8 @@ use Illuminate\Database\Eloquent\Collection;
  * @property int $id
  * @property int $display_type_id
  * @property int $network_id
- * @property int $start_month
- * @property int $end_month
+ * @property int $start_month 1-indexed month
+ * @property int $end_month 1-indexed month
  * @property double $product_exposure
  * @property double $exposure_length
  * @property int $loop_length
@@ -40,5 +40,9 @@ class DisplayTypePrintsFactors extends Model
 
     public function network() {
         return $this->belongsTo(Network::class, "network_id");
+    }
+
+    public function getPrintsForTraffic($traffic) {
+        return $traffic * ($this->product_exposure / 100.0) * $this->exposure_length;
     }
 }

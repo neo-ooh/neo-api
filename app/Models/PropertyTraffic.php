@@ -12,7 +12,7 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  *
  * @property int      $property_id
  * @property int      $year
- * @property int      $month
+ * @property int      $month 0-indexed month
  * @property int      $traffic
  *
  * @property Property $property

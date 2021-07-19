@@ -86,6 +86,11 @@ class NetworkTraffic extends XLSXDocument {
         $this->ws->pushPosition();
 
         // Print header
+        $this->ws->mergeCellsRelative(2, 1);
+        $this->ws->printRow([
+            $this->year,
+        ]);
+
         $this->ws->printRow([
             "Properties",
             "Products",

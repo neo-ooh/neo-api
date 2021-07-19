@@ -94,7 +94,7 @@ class NetworkTraffic extends XLSXDocument {
         $this->ws->moveCursor(2, 0);
 
         for ($i = 0; $i < 12; $i++) {
-            $this->ws->mergeCellsRelative(2, 0);
+            $this->ws->mergeCellsRelative(2, 1);
 
             $month = Carbon::create($this->year, $i + 1)->monthName;
             $this->ws->getCurrentCell()->setValue($month);

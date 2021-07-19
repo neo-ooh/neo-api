@@ -20,6 +20,7 @@ use Neo\Models\DisplayType;
 use Neo\Models\DisplayTypePrintsFactors;
 use Neo\Models\Network;
 use Neo\Models\Property;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class NetworkTraffic extends XLSXDocument {
 
@@ -129,9 +130,23 @@ class NetworkTraffic extends XLSXDocument {
             foreach ($products as $product) {
                 $values = collect();
 
+                $this->ws->getStyle($this->ws->getRelativeRange(2, 1))
+                         ->getBorders()
+                         ->getRight()
+                         ->setBorderStyle(Border::BORDER_THICK);
+
+                $this->ws->pushPosition();
+
                 foreach ($trafficData as $month => $traffic) {
+                    $this->ws->moveCursor(2, 0);
                     // Take advantage of the loop for each month value to setup proper formatting of values for the row
-                    $this->ws->setRelativeCellFormat('#,##0.00', 2 + $month, 0);
+                    $this->ws->setRelativeCellFormat('#,##0.00', 0, 0);
+                    $this->ws->setRelativeCellFormat('#,##0.00', 1, 0);
+
+                    $this->ws->getStyle($this->ws->getRelativeRange(2, 1))
+                            ->getBorders()
+                            ->getRight()
+                            ->setBorderStyle(Border::BORDER_THICK);
 
                     $period = $this->getPeriod($network->id, $product->id, $month);
 
@@ -147,6 +162,7 @@ class NetworkTraffic extends XLSXDocument {
                     $values[] = ($prints / Carbon::create($this->year, $month)->daysInMonth) * 7;
                 }
 
+                $this->ws->popPosition();
 
                 $this->ws->printRow([
                     $property->actor->name,

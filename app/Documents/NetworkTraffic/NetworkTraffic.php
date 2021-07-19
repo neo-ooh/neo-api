@@ -202,6 +202,6 @@ class NetworkTraffic extends XLSXDocument {
      * @inheritDoc
      */
     public function getName(): string {
-        return "Network Traffic Report ";
+        return "Network Impressions";
     }
 }

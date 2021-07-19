@@ -70,6 +70,11 @@ abstract class XLSXDocument extends Document {
         $tempDir = (new TemporaryDirectory())->create();
         $tempFile = $tempDir->path('temp.xlsx');
         $writer->save($tempFile);
-        return file_get_contents($tempFile);
+
+        $output = file_get_contents($tempFile);
+
+        $tempDir->delete();
+
+        return $output;
     }
 }

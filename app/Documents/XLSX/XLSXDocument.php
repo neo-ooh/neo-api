@@ -67,6 +67,7 @@ abstract class XLSXDocument extends Document {
         $writer->setPreCalculateFormulas(false);
 
         header("access-control-allow-origin: *");
+        header("content-type: " . $this->format());
 
         $writer->save("php://output");
         exit;

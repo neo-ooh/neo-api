@@ -61,6 +61,24 @@ class NetworkTraffic extends XLSXDocument {
             $this->printNetwork($network);
         }
 
+        // Remove the first sheet as it is not being used
+        $this->spreadsheet->removeSheetByIndex(0);
+
+        // Autosize columns
+        $this->ws->getColumnDimension("A")->setAutoSize(true);
+        $this->ws->getColumnDimension("B")->setAutoSize(true);
+        $this->ws->getColumnDimension("C")->setAutoSize(true);
+        $this->ws->getColumnDimension("D")->setAutoSize(true);
+        $this->ws->getColumnDimension("E")->setAutoSize(true);
+        $this->ws->getColumnDimension("F")->setAutoSize(true);
+        $this->ws->getColumnDimension("G")->setAutoSize(true);
+        $this->ws->getColumnDimension("H")->setAutoSize(true);
+        $this->ws->getColumnDimension("I")->setAutoSize(true);
+        $this->ws->getColumnDimension("J")->setAutoSize(true);
+        $this->ws->getColumnDimension("K")->setAutoSize(true);
+        $this->ws->getColumnDimension("L")->setAutoSize(true);
+        $this->ws->getColumnDimension("M")->setAutoSize(true);
+
         return true;
     }
 

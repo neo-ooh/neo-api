@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Spatie\TemporaryDirectory\TemporaryDirectory;
 
 /**
  * Class XLSXDocument
@@ -66,8 +67,9 @@ abstract class XLSXDocument extends Document {
         $writer = new Xlsx($this->spreadsheet);
         $writer->setPreCalculateFormulas(false);
 
-        ob_start();
-            $writer->save("php://output");
-        return ob_get_clean();
+        $tempDir = (new TemporaryDirectory())->create();
+        $tempFile = $tempDir->path('temp.xlsx');
+        $writer->save($tempFile);
+        return file_get_contents($tempFile);
     }
 }

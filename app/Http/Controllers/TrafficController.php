@@ -30,8 +30,6 @@ class TrafficController extends Controller
             throw new UnknownDocumentException();
         }
 
-        Storage::put(storage_path('output.xlsx'), $file->output());
-
         return new Response($file->output(), 200, [
             $file->format()
         ]);

@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\Actors\RecycleTwoFARequest;
+use Neo\Http\Requests\Actors\ValidateTwoFaRequest;
 use Neo\Http\Requests\Auth\TwoFactorValidationRequest;
-use Neo\Http\Requests\ValidateTwoFaRequest;
 use Neo\Models\Actor;
 use Neo\Models\TwoFactorToken;
 
@@ -65,7 +65,7 @@ class TwoFactorAuthController extends Controller {
         return new Response($token);
     }
 
-    public function forceValidateToken(ValidateTwoFaRequest $request, Actor $actor) {
+    public function forceValidateToken(ValidateTwoFaRequest $request, Actor $actor): Response {
         $token = $actor->twoFactorToken;
 
         if(!$token) {

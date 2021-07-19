@@ -779,7 +779,7 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::get("traffic/_export", TrafficController::class . "@export")->name("traffic.export");
+    Route::post("traffic/_export", TrafficController::class . "@export")->name("traffic.export");
 
     /*
     |----------------------------------------------------------------------

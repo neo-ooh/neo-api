@@ -12,7 +12,6 @@ namespace Neo\Documents\NetworkTraffic;
 
 
 use Carbon\Carbon;
-use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
@@ -21,7 +20,6 @@ use Neo\Models\DisplayType;
 use Neo\Models\DisplayTypePrintsFactors;
 use Neo\Models\Network;
 use Neo\Models\Property;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class NetworkTraffic extends XLSXDocument {
 
@@ -68,7 +66,7 @@ class NetworkTraffic extends XLSXDocument {
         $this->spreadsheet->removeSheetByIndex(0);
 
         // Autosize columns
-        for($i = 0; $i < 15; ++$i) {
+        for ($i = 0; $i < 15; ++$i) {
             $this->ws->getColumnDimensionByColumn($i)->setWidth(15);
         }
 
@@ -132,15 +130,15 @@ class NetworkTraffic extends XLSXDocument {
                     $period = $this->getPeriod($network->id, $product->id, $month);
 
                     // If no period calculator are available, skip product
-                    if(!$period) {
+                    if (!$period) {
                         $values[] = null;
                         $values[] = null;
                         continue;
                     }
 
-                    $prints = $period->getPrintsForTraffic($traffic);
+                    $prints   = $period->getPrintsForTraffic($traffic);
                     $values[] = $prints;
-                    $values[] = ($prints / Date::createFromDate($this->year, $month)->daysInMonth) / 2;
+                    $values[] = ($prints / Carbon::create($this->year, $month)->daysInMonth) / 2;
                 }
 
 

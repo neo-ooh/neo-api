@@ -66,20 +66,23 @@ class NetworkTraffic extends XLSXDocument {
         $this->spreadsheet->removeSheetByIndex(0);
 
         // Autosize columns
-        $this->ws->getColumnDimension("A")->setAutoSize(true);
-        $this->ws->getColumnDimension("B")->setAutoSize(true);
-        $this->ws->getColumnDimension("C")->setAutoSize(true);
-        $this->ws->getColumnDimension("D")->setAutoSize(true);
-        $this->ws->getColumnDimension("E")->setAutoSize(true);
-        $this->ws->getColumnDimension("F")->setAutoSize(true);
-        $this->ws->getColumnDimension("G")->setAutoSize(true);
-        $this->ws->getColumnDimension("H")->setAutoSize(true);
-        $this->ws->getColumnDimension("I")->setAutoSize(true);
-        $this->ws->getColumnDimension("J")->setAutoSize(true);
-        $this->ws->getColumnDimension("K")->setAutoSize(true);
-        $this->ws->getColumnDimension("L")->setAutoSize(true);
-        $this->ws->getColumnDimension("M")->setAutoSize(true);
-        $this->ws->getColumnDimension("N")->setAutoSize(true);
+        for($i = 0; $i < 14; ++$i) {
+            $this->ws->getColumnDimensionByColumn($i)->setWidth(15);
+        }
+//        $this->ws->getColumnDimension("A")->setAutoSize(true);
+//        $this->ws->getColumnDimension("B")->setAutoSize(true);
+//        $this->ws->getColumnDimension("C")->setAutoSize(true);
+//        $this->ws->getColumnDimension("D")->setAutoSize(true);
+//        $this->ws->getColumnDimension("E")->setAutoSize(true);
+//        $this->ws->getColumnDimension("F")->setAutoSize(true);
+//        $this->ws->getColumnDimension("G")->setAutoSize(true);
+//        $this->ws->getColumnDimension("H")->setAutoSize(true);
+//        $this->ws->getColumnDimension("I")->setAutoSize(true);
+//        $this->ws->getColumnDimension("J")->setAutoSize(true);
+//        $this->ws->getColumnDimension("K")->setAutoSize(true);
+//        $this->ws->getColumnDimension("L")->setAutoSize(true);
+//        $this->ws->getColumnDimension("M")->setAutoSize(true);
+//        $this->ws->getColumnDimension("N")->setAutoSize(true);
 
         return true;
     }

@@ -130,7 +130,7 @@ class NetworkTraffic extends XLSXDocument {
 
                 foreach ($trafficData as $month => $traffic) {
                     // Take advantage of the loop for each month value to setup proper formatting of values for the row
-                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER_00, 2 + $month, 0);
+                    $this->ws->setRelativeCellFormat('#,##0.00', 2 + $month, 0);
 
                     $period = $this->getPeriod($network->id, $product->id, $month);
 

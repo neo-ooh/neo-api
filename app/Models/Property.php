@@ -92,7 +92,7 @@ class Property extends SecuredModel {
 
     public function getTraffic(int $year, int $month) {
         /** @var ?PropertyTraffic $traffic */
-        $traffic = $this->traffic->data()
+        $traffic = $this->traffic->data
                                  ->where("year", "=", $year)
                                  ->where("month", "=", $month)
                                  ->first();

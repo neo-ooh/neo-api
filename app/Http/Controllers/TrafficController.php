@@ -18,7 +18,7 @@ class TrafficController extends Controller
     public function export(ExportTrafficRequest $request) {
         $year = $request->input("year");
 
-        $networks = Network::query()->whereHas("printsFactors")->with("printsFactors")->orderBy("name")->get()->append("properties");
+        $networks = Network::query()->whereHas("printsFactors")->with(["printsFactors"])->orderBy("name")->get()->append("properties");
 
         $periods = DisplayTypePrintsFactors::query()
                                            ->with("displayTypes")

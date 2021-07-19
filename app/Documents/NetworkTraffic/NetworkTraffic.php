@@ -69,8 +69,9 @@ class NetworkTraffic extends XLSXDocument {
         for ($i = 0; $i < 27; ++$i) {
             $this->ws->getColumnDimensionByColumn($i)->setWidth(15);
         }
-        $this->ws->getColumnDimensionByColumn('A')->setAutoSize(true);
-        $this->ws->getColumnDimensionByColumn('B')->setAutoSize(true);
+
+        $this->ws->getColumnDimension('A')->setAutoSize(true);
+        $this->ws->getColumnDimension('B')->setAutoSize(true);
 
         return true;
     }
@@ -169,7 +170,7 @@ class NetworkTraffic extends XLSXDocument {
     public function getPeriod(int $networkId, int $displayTypeId, int $month) {
         return $this->periods->first(/**
          * @param DisplayTypePrintsFactors $p
-         */ fn($p) => $p->displayTypes()->where('id', "=", $displayTypeId)->exists()
+         */ fn($p) => $p->displayTypes->contains($displayTypeId)
             && $p->network_id === $networkId
             && $p->start_month <= $month + 1
             && $p->end_month >= $month + 1

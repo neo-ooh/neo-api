@@ -80,4 +80,15 @@ class Network extends Model {
     public function campaigns(): HasMany {
         return $this->hasMany(Campaign::class, 'network_id', 'id')->orderBy("name");
     }
+
+    public function printsFactors(): HasMany {
+        return $this->hasMany(DisplayTypePrintsFactors::class, "network_id", "id");
+    }
+
+    public function getPropertiesAttribute() {
+        $networkId = $this->id;
+        return Property::query()->whereHas("actor.own_locations", function (Builder $query) use ($networkId) {
+            $query->where("network_id", "=", $networkId);
+        })->get()->sortBy("actor.name");
+    }
 }

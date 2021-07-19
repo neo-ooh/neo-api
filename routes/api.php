@@ -778,6 +778,14 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
+    Route::get("traffic/_export", Traffic::class . "@index")->name("traffic-sources.index");
+
+    /*
+    |----------------------------------------------------------------------
+    | Traffic Sources
+    |----------------------------------------------------------------------
+    */
+
     Route::model("trafficSource", TrafficSource::class);
 
     Route::get("traffic-sources", TrafficSourcesController::class . "@index")->name("traffic-sources.index");

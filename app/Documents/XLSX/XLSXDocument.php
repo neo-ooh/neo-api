@@ -66,7 +66,8 @@ abstract class XLSXDocument extends Document {
         $writer = new Xlsx($this->spreadsheet);
         $writer->setPreCalculateFormulas(false);
 
-        $writer->save("php://output");
-        exit;
+        ob_start();
+            $writer->save("php://output");
+        return ob_get_clean();
     }
 }

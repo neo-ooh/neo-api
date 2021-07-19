@@ -19,6 +19,7 @@ use Neo\Models\DisplayType;
 use Neo\Models\DisplayTypePrintsFactors;
 use Neo\Models\Network;
 use Neo\Models\Property;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class NetworkTraffic extends XLSXDocument {
 
@@ -78,6 +79,7 @@ class NetworkTraffic extends XLSXDocument {
         $this->ws->getColumnDimension("K")->setAutoSize(true);
         $this->ws->getColumnDimension("L")->setAutoSize(true);
         $this->ws->getColumnDimension("M")->setAutoSize(true);
+        $this->ws->getColumnDimension("N")->setAutoSize(true);
 
         return true;
     }
@@ -127,6 +129,9 @@ class NetworkTraffic extends XLSXDocument {
                 $prints = collect();
 
                 foreach ($trafficData as $month => $traffic) {
+                    // Take advantage of the loop for each month value to setup proper formatting of values for the row
+                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER_00, 2 + $month, 0);
+
                     $period = $this->getPeriod($network->id, $product->id, $month);
 
                     // If no period calculator are available, skip product
@@ -137,6 +142,7 @@ class NetworkTraffic extends XLSXDocument {
 
                     $prints[] = $period->getPrintsForTraffic($traffic);
                 }
+
 
                 $this->ws->printRow([
                     $property->actor->name,

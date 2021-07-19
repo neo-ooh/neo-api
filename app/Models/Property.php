@@ -95,7 +95,7 @@ class Property extends SecuredModel {
         $traffic = $this->traffic->data()
                                  ->where("year", "=", $year)
                                  ->where("month", "=", $month)
-                                 ->get();
+                                 ->first();
 
         return $traffic?->traffic;
     }

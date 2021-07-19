@@ -133,7 +133,7 @@ class NetworkTraffic extends XLSXDocument {
                 $this->ws->getStyle($this->ws->getRelativeRange(2, 1))
                          ->getBorders()
                          ->getRight()
-                         ->setBorderStyle(Border::BORDER_THICK);
+                         ->setBorderStyle(Border::BORDER_MEDIUM);
 
                 $this->ws->pushPosition();
 
@@ -146,7 +146,7 @@ class NetworkTraffic extends XLSXDocument {
                     $this->ws->getStyle($this->ws->getRelativeRange(2, 1))
                             ->getBorders()
                             ->getRight()
-                            ->setBorderStyle(Border::BORDER_THICK);
+                            ->setBorderStyle(Border::BORDER_THIN);
 
                     $period = $this->getPeriod($network->id, $product->id, $month);
 

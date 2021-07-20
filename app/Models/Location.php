@@ -79,7 +79,8 @@ class Location extends SecuredModel {
      * @var array
      */
     protected $with = [
-        "display_type"
+        "display_type",
+        "network:id,name"
     ];
 
     /**

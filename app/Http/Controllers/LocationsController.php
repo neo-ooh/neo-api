@@ -61,6 +61,7 @@ class LocationsController extends Controller {
         if ($loadHierarchy) {
             $query->with(["container"]);
         }
+
         clock()->event('Executing and serializing')->color('purple')->begin();
         $locations = $query->get()->values();
         clock()->event('Executing and serializing')->end();

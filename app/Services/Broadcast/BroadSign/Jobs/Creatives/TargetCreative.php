@@ -21,6 +21,7 @@ use Neo\Models\Creative;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Creative as BSCreative;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class ImportCreative
@@ -72,7 +73,7 @@ class TargetCreative extends BroadSignJob implements ShouldBeUniqueUntilProcessi
 
         $bsCreative = new BSCreative($this->getAPIClient(), ["id" => (int)$externalId]);
 
-        $criteria_id = $creative->frame->settings_broadsign?->criteria_id;
+        $criteria_id = $creative->frame->settings_broadsign?->criteria?->broadsign_criteria_id;
 
         if (!$criteria_id) {
             // All done

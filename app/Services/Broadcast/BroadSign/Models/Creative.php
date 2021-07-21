@@ -85,8 +85,7 @@ class Creative extends BroadSignModel {
             "update"              => Endpoint::put("/content/v11")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new SingleResourcesParser(static::class)),
-            "addResourceCriteria" => Endpoint::post("/resource_criteria/v7/add")
-                                             ->unwrap(static::$unwrapKey),
+            "addResourceCriteria" => Endpoint::post("/resource_criteria/v7/add"),
         ];
     }
 

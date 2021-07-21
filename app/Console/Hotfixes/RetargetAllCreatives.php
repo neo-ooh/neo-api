@@ -88,8 +88,7 @@ class RetargetAllCreatives extends Command {
             (new ConsoleOutput())->writeln("");
         }
 
-        (new ConsoleOutput())->writeln("All Broadsign creatives have been re-targeted");
-
+        $this->info("All Broadsign creatives have been re-targeted");
         return 0;
     }
 

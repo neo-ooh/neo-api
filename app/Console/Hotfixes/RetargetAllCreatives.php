@@ -11,17 +11,28 @@
 namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
+use Illuminate\Database\Eloquent\Builder;
 use Neo\Models\Creative;
+use Neo\Models\Network;
+use Neo\Services\Broadcast\Broadcast;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\TargetCreative;
+use Neo\Services\Broadcast\BroadSign\Models\ResourceCriteria;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
+/**
+ * This script retargets all creatives scheduled on a BroadSign network
+ *
+ * @package Neo\Console\Hotfixes
+ */
 class RetargetAllCreatives extends Command {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'hotfix:2021-02-16.2';
+    protected $signature = 'broadsign:retarget-creatives';
 
     /**
      * The console command description.
@@ -36,32 +47,48 @@ class RetargetAllCreatives extends Command {
      * @return int
      */
     public function handle(): int {
-        // We start by loading all campaigns on connect who have a counterpart on BroadSign
-        $creatives = Creative::query()->whereNotNull('broadsign_ad_copy_id')->get();
+        $networks = Network::query()->whereHas("broadcaster_connection", function (Builder $query) {
+            $query->where("broadcaster", "=", "broadsign");
+        })->get();
 
-        $progressBar = $this->makeProgressBar(count($creatives));
-        $progressBar->start();
+        /** @var Network $network */
+        foreach ($networks as $network) {
+            $broadcastConfig = Broadcast::network($network->id)->getConfig();
 
-        // Now for each campaign, we load its creatives, remove them, and trigger a re-targeting
-        /** @var Creative $creative */
-        foreach ($creatives as $creative) {
-            $progressBar->advance();
-            $progressBar->setMessage("Creative #($creative->broadsign_ad_copy_id) $creative->id");
+            // Load all creatives who are scheduled in this network
+            $creatives = Creative::query()->whereHas("external_ids", function (Builder $query) use ($network) {
+                $query->where("network_id", "=", $network->id);
+            })->get();
 
-            $criteria = ResourceCriteria::for($creative->broadsign_ad_copy_id);
 
-            /** @var ResourceCriteria $criterion */
-            foreach ($criteria as $criterion) {
-                $criterion->active = false;
-                $criterion->save();
+            $progressBar = $this->makeProgressBar($creatives->count());
+            $progressBar->start();
+
+            // Now for each creative, we deactivate all its applied criteria and force-target it again.
+            /** @var Creative $creative */
+            foreach ($creatives as $creative) {
+                $externalId = $creative->getExternalId($network->id);
+
+                $progressBar->advance();
+                $progressBar->setMessage("Creative #($externalId) $creative->id");
+
+                $criteria = ResourceCriteria::for(new BroadsignClient($broadcastConfig), $externalId);
+
+                /** @var ResourceCriteria $criterion */
+                foreach ($criteria as $criterion) {
+                    $criterion->active = false;
+                    $criterion->save();
+                }
+
+                TargetCreative::dispatchSync($broadcastConfig, $creative->id);
             }
 
-            TargetCreative::dispatchSync($creative->id);
-
+            $progressBar->setMessage("$network->name creatives retargeted!");
+            $progressBar->finish();
+            (new ConsoleOutput())->writeln("");
         }
 
-        $progressBar->setMessage("Hotfix done");
-        $progressBar->finish();
+        (new ConsoleOutput())->writeln("All Broadsign creatives have been re-targeted");
 
         return 0;
     }

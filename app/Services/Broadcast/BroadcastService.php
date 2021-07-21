@@ -2,7 +2,11 @@
 
 namespace Neo\Services\Broadcast;
 
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
+
 interface BroadcastService {
+    public function getConfig(): BroadSignConfig|PiSignageConfig;
     /**
      * Synchronize stored locations with the location of the network
      *

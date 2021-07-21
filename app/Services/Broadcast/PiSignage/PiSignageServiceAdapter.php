@@ -21,6 +21,10 @@ class PiSignageServiceAdapter implements BroadcastService {
         $this->config = $config;
     }
 
+    public function getConfig(): PiSignageConfig {
+        return $this->config;
+    }
+
     /**
      * @inheritDoc
      */

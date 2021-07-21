@@ -88,7 +88,7 @@ class BroadSignServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function destroySchedule(int $scheduleId) {
-        DisableBroadSignSchedule::dispatch($this->config, (int)Schedule::find($scheduleId)->external_id_2);
+        DisableBroadSignSchedule::dispatch($this->config, (int)Schedule::withTrashed()->find($scheduleId)->external_id_2);
     }
 
     /**

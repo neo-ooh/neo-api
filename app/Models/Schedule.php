@@ -156,7 +156,6 @@ class Schedule extends Model {
             $network->destroySchedule($schedule->id);
             $network->updateCampaignSchedulesOrder($schedule->campaign_id);
 
-
             // Adjust order of remaining schedules in the campaign
             foreach ($schedule->campaign->schedules as $s) {
                 if ($s->id === $schedule->id) {

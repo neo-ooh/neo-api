@@ -84,8 +84,8 @@ class BroadsignClient implements APIClientInterface {
 
         if (!$response->successful()) {
             // Request was not successful, log the exchange
-            $jsonPaylod = json_encode($payload, JSON_THROW_ON_ERROR);
-            Log::channel("broadsign")->debug("request:$endpoint->method [{$endpoint->getPath()}] $jsonPaylod",);
+            $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);
+            Log::channel("broadsign")->debug("request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload");
             Log::channel("broadsign")
                ->error("response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 

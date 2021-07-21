@@ -76,14 +76,16 @@ class TargetCreative extends BroadSignJob implements ShouldBeUniqueUntilProcessi
 
         $bsCreative = new BSCreative($this->getAPIClient(), ["id" => (int)$externalId]);
 
-        if (!$creative->frame->criteria_id) {
+        $criteria_id = $creative->frame->settings_broadsign?->criteria_id;
+
+        if (!$criteria_id) {
             // All done
             return;
         }
 
         // Add the frame criteria
         try {
-            $bsCreative->addCriteria($creative->frame->settings_broadsign->criteria->broadsign_criteria_id, 0);
+            $bsCreative->addCriteria($criteria_id, 0);
         } catch (BadResponse $exception) {
             // Creative could not be targeted. It is most probably still uploading
             $this->release(60);

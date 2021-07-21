@@ -65,7 +65,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
             return;
         }
 
-        // Depending on the creative type, we performed different operations
+        // Depending on the creative type, we perform different operations
         switch ($creative->type) {
             case Creative::TYPE_STATIC:
                 $this->importStaticCreative($creative);

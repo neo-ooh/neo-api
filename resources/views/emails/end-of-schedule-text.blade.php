@@ -3,7 +3,7 @@
 ===========================================================
 
 {!! __("email-end-of-schedule-body_text", [
-    "name" => $dest->name,
+    "name" => $actor->name,
     "campaign" => $schedule->campaign->name,
     "date" => $schedule->end_date->toDayDateTimeString(),
 ]) !!}

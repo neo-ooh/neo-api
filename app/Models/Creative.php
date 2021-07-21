@@ -153,8 +153,11 @@ class Creative extends Model {
      * @return string|null
      */
     public function getExternalId(int $networkId): ?string {
-        $externalId = $this->external_ids()->where("network_id", "=", $networkId)->first();
+        /** @var CreativeExternalId $externalId */
+        $externalId = $this->external_ids()
+                           ->where("network_id", "=", $networkId)
+                           ->first();
 
-        return $externalId->external_id ?? null;
+        return $externalId?->external_id;
     }
 }

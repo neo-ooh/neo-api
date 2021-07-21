@@ -19,22 +19,23 @@ use Neo\Models\Schedule;
  *
  * @package Neo\Jobs
  *
- * This job takes all the schedules that are about to end their broadcast, and warn the owner the schedule and the owner of the campaign of it.
- * If the campaign is a group, its direct children are warned. The schedule's owner is always warned.
+ * This job takes all the schedules that are about to end their broadcast, and warn the owner the schedule and the owner of the
+ * campaign of it. If the campaign is a group, its direct children are warned. The schedule's owner is always warned.
  */
 class NotifyEndOfSchedules implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct() {}
+    public function __construct() {
+    }
 
     public function handle() {
         // Start by selecting all the schedules that are about to end
         $schedules = Schedule::query()->where("end_date", ">=", Date::now()->addDay()->startOfDay())
-                                      ->where("end_date", "<", Date::now()->addDay()->nextWeekday()->endOfDay())
-                                      ->get()
-        // Make sure all the selected schedules are actually approved
-                                      ->filter(fn($schedule) => $schedule->is_approved)
-                                      ->load(["owner:id,name,email", "campaign.owner"]);
+                             ->where("end_date", "<", Date::now()->addDay()->nextWeekday()->endOfDay())
+                             ->get()
+            // Make sure all the selected schedules are actually approved
+                             ->filter(fn($schedule) => $schedule->is_approved)
+                             ->load(["owner:id,name,email", "campaign.owner"]);
 
         // Now we go schedule by schedule, select the actors that needs to be warned and send the emails
         /** @var Schedule $schedule */
@@ -49,8 +50,7 @@ class NotifyEndOfSchedules implements ShouldQueue {
 
             $dest = $dest->map(fn($actor) => is_int($actor) ? Actor::query()->find($actor) : $actor);
 
-            $dest->each(fn($recipient) =>
-                Mail::to($recipient)->send(new EndOfScheduleNotificationEmail($recipient, $schedule))
+            $dest->each(fn($recipient) => Mail::to($recipient)->send(new EndOfScheduleNotificationEmail($recipient, $schedule))
             );
         }
     }

@@ -51,6 +51,7 @@ class SynchronizeLocations extends PiSignageJob implements ShouldBeUnique {
             "external_id" => 0
         ], [
             "name" => "default",
+            "internal_name" => "default",
         ]);
 
         // Now, all we need is to map all groups on the PiSignage server to locations on Connect

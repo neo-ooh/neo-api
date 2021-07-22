@@ -2,11 +2,11 @@
 
 namespace Neo\Http\Requests\DisplayTypes;
 
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ListDisplayTypesPerNetworkRequest extends FormRequest
+class UpdateDisplayTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,7 +15,7 @@ class ListDisplayTypesPerNetworkRequest extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows(Capability::networks_edit) || Gate::allows(Capability::tools_prints);
+        return Gate::allows(Capability::networks_edit);
     }
 
     /**
@@ -26,7 +26,7 @@ class ListDisplayTypesPerNetworkRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            "name" => ["required", "string"]
         ];
     }
 }

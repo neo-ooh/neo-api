@@ -57,7 +57,15 @@ final class Capability extends Enum {
     public const actors_edit   = "actors.edit";
     public const actors_create = "actors.create";
     public const actors_delete = "actors.delete";
+
+    /**
+     * Allows user to update and manage the Authentication and signup token of accessible users.
+     */
     public const actors_auth = "actors.auth";
+
+    /**
+     * Allows user to browse Connect under the account of an accessible user.
+     */
     public const actors_impersonate = "actors.impersonate";
 
     // Roles

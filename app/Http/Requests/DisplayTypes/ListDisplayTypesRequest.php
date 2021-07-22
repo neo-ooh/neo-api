@@ -21,7 +21,7 @@ class ListDisplayTypesRequest extends FormRequest {
      * @return bool
      */
     public function authorize (): bool {
-        return Gate::allows(Capability::formats_edit);
+        return Gate::allows(Capability::formats_edit) || Gate::allows(Capability::networks_edit()) ;
     }
 
     /**

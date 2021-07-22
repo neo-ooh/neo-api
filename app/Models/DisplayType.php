@@ -56,6 +56,7 @@ class DisplayType extends Model {
         "external_id",
         "connection_id",
         "name",
+        "interna_name",
     ];
 
 

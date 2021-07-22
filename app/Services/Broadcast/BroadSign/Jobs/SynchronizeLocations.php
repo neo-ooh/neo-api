@@ -109,7 +109,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
             $displayType = $this->getDisplayType($bslocation->display_unit_type_id);
 
             // for now, we only identify locations by their externa ID and not their network to prevent erasing the currently stored locations and f***ing up the campaigns.
-            // TODO: Once the deployement is good and everything is running, move the network_id assignment to the  identifying par of the request.
+            // TODO: Once the deployment is good and everything is running, move the network_id assignment to the  identifying par of the request.
             /** @var Location $location */
             $location = Location::query()->firstOrCreate([
                 "external_id" => $bslocation->id,
@@ -134,30 +134,29 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
         $progressBar->finish();
     }
 
+    /**
+     * Get the `DisplayType` for the given BroadSign external Id.
+     * If no display type exist, a new one is created for the current connection.
+     *
+     * @param $displayTypeId
+     * @return DisplayType
+     */
     protected function getDisplayType($displayTypeId) {
-        // TODO: For now we ignore the connection Id associated with the display type as to not f***ck up existing resources. Once the migration to the new system is up and running, we'll add it back
-        $displayType = DisplayType::query()
-                                  ->where("external_id", "=", $displayTypeId)
-//                                  ->where("connection_id", "=", $this->config->connectionID)
-                                  ->first();
-
-        if ($displayType) {
-            // TODO: remove once previous todo is done.
-            $displayType->connection_id = $this->config->connectionID;
-            $displayType->save();
-
-            return $displayType;
-        }
+        /** @var DisplayType $displayType */
+        $displayType = DisplayType::query()->firstOrNew([
+            "connection_id" => $this->config->connectionID,
+            "external_id" => $displayTypeId
+        ]);
 
         $bsDisplayType = Format::get($this->getAPIClient(), $displayTypeId);
 
-        $displayType = new DisplayType([
-            "connection_id" => $this->config->connectionID,
-            "external_id"   => $bsDisplayType->id,
-            "name"          => $bsDisplayType->name,
-        ]);
-        $displayType->save();
+        $displayType->internal_name = $bsDisplayType->name;
 
+        if(!$displayType->exists) {
+            $displayType->name = $bsDisplayType->name;
+        }
+
+        $displayType->save();
         return $displayType;
     }
 

@@ -501,7 +501,7 @@ Route::prefix("v1")->group(function () {
     Route::model("displayType", DisplayType::class);
 
     Route::get("display-types", DisplayTypesController::class . "@index")->name("display-types.index");
-    Route::get("display-types/{displayType}", DisplayTypesController::class . "@update")->name("display-types.index");
+    Route::put("display-types/{displayType}", DisplayTypesController::class . "@update")->name("display-types.update");
 
 
     /*

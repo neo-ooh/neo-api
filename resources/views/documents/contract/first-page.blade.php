@@ -1,5 +1,16 @@
 <section class="contract-home-page">
-    <h1>{!! __("contract.contract-number-title", ["number" => $order->reference]) !!}</h1>
+    <h1>
+        @if($order->use_invoice_plan)
+            {!! __("contract.payment-terms-confirmation-title") !!}
+        @else
+            {!! __("contract.contract-number-title", ["number" => $order->reference]) !!}
+        @endif
+    </h1>
+    @if($order->use_invoice_plan)
+        <h2>
+            {!! __("contract.contract-number-title", ["number" => $order->reference]) !!}
+        </h2>
+    @endif
     <h3>{!! $order->campaign_name !!}</h3>
     <div class="parties">
         <div class="contract-party first-party">

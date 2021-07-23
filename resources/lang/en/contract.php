@@ -2,6 +2,7 @@
 
 return [
     "audience-extension-strategy"    => "Audience extension strategy",
+    "payment-terms-confirmation-title" => "PAYMENT TERMS CONFIRMATION",
     "billed-on" => "billed on",
     "campaign-details-title"         => "Campaign Details",
     "campaign-summary-title"         => "Campaign Summary",

@@ -75,7 +75,8 @@ return [
     |
     */
 
-    'timezone' => 'America/Toronto',
+//    'timezone' => 'America/Toronto',
+    'timezone' => 'UTC',
 
     /*
     |--------------------------------------------------------------------------

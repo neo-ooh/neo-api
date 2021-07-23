@@ -45,6 +45,10 @@
   h3 {
     text-align: center;
     margin-top: -2mm;
+
+    &.small {
+      font-size: 9pt;
+    }
   }
 
   .contract-party {

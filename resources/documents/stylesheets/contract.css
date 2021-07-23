@@ -235,6 +235,9 @@ footer .footer-table {
   text-align: center;
   margin-top: -2mm;
 }
+.contract-home-page h3.small {
+  font-size: 9pt;
+}
 .contract-home-page .contract-party {
   font-size: 9pt;
 }

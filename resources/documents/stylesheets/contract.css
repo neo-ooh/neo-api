@@ -228,6 +228,9 @@ footer .footer-table {
   font-weight: "poppins-regular";
   margin-bottom: 0;
 }
+.contract-home-page h2.center {
+  text-align: center;
+}
 .contract-home-page h3 {
   text-align: center;
   margin-top: -2mm;

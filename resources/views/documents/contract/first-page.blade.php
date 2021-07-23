@@ -7,7 +7,7 @@
         @endif
     </h1>
     @if($order->use_invoice_plan)
-        <h2>
+        <h2 class="center">
             {!! __("contract.contract-number-title", ["number" => $order->reference]) !!}
         </h2>
     @endif

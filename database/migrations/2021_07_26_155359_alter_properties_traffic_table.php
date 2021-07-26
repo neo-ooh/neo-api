@@ -14,7 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table("properties_traffic", function (Blueprint $table) {
-            $table->integer("temporary")->nullable()->after("traffic");
+            $table->unsignedBigInteger("traffic")->nullable()->change();
+            $table->unsignedBigInteger("temporary")->nullable()->after("traffic");
         });
     }
 

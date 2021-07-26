@@ -30,6 +30,11 @@ class WeatherBackground extends Model
 
     protected $appends = ["url"];
 
+    protected $casts = [
+        "format_id" => "integer",
+        "network_id" => "integer",
+    ];
+
     public static function boot(): void {
         parent::boot();
 

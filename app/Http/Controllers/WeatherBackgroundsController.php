@@ -84,6 +84,7 @@ class WeatherBackgroundsController extends Controller {
         if ($request->input("period") !== "RANDOM") {
             // Is there already a background for the specified properties ?
             $existingBackground = WeatherBackground::query()->where("weather_location_id", "=", $location->id)
+                                                   ->where("format_id", "=", $request->input('format_id'))
                                                    ->where("period", "=", $request->input('period'))
                                                    ->where("weather", "=", $request->input('weather'))->first();
 

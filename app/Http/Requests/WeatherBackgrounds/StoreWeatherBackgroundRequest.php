@@ -30,6 +30,7 @@ class StoreWeatherBackgroundRequest extends FormRequest
             "province" => ["required", "string", "max:2"],
             "city" => ["required", "string"],
             "period" => ["required", "string"],
+            "network_id" => ["required", "nullable"],
             "weather" => ["required_unless:period,RANDOM", "string"],
             "format_id" => ["required", "exists:formats,id"],
 

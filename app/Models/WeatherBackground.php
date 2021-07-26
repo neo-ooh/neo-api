@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Storage;
  * @property int $id
  * @property string $weather
  * @property string $period
+ * @property int $network_id
  * @property string $weather_location_id
  * @property string $format_id
  * @property string $path

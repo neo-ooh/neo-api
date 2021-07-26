@@ -76,6 +76,7 @@ class WeatherBackgroundsController extends Controller {
         $background                      = new WeatherBackground();
         $background->weather             = $request->input("weather");
         $background->period              = $request->input("period");
+        $background->network_id              = $request->input("network_id");
         $background->weather_location_id = $location->id;
         $background->format_id           = $request->input("format_id");
         $background->path                = $file->storePubliclyAs(Storage::path("dynamics/weather/backgrounds/"), $file->hashName());

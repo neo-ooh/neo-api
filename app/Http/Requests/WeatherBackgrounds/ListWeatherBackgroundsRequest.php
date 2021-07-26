@@ -27,6 +27,7 @@ class ListWeatherBackgroundsRequest extends FormRequest
     {
         return [
             "period" => ["required", "string"],
+            "network_id" => ["required", "nullable"],
             "country" => ["required", "string", "size:2"],
             "province" => ["required", "string", "max:2"],
             "city" => ["required", "string"],

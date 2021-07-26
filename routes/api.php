@@ -431,18 +431,18 @@ Route::prefix("v1")->group(function () {
     |----------------------------------------------------------------------
     */
 
-    Route::model("country", Country::class);
-    Route::model("province", Province::class);
-
-    Route::get("countries", CountriesController::class . "@index")
-         ->name("countries.index");
-    Route::get("countries/{country}", CountriesController::class . "@show")
-         ->name("countries.show");
-    Route::get("countries/{country}/provinces", ProvincesController::class . "@index")
-         ->name("countries.provinces");
-
-    Route::get("countries/{country}/provinces/{province}", ProvincesController::class . "@index")
-         ->name("countries.provinces.show");
+//    Route::model("country", Country::class);
+//    Route::model("province", Province::class);
+//
+//    Route::get("countries", CountriesController::class . "@index")
+//         ->name("countries.index");
+//    Route::get("countries/{country}", CountriesController::class . "@show")
+//         ->name("countries.show");
+//    Route::get("countries/{country}/provinces", ProvincesController::class . "@index")
+//         ->name("countries.provinces");
+//
+//    Route::get("countries/{country}/provinces/{province}", ProvincesController::class . "@index")
+//         ->name("countries.provinces.show");
 
 
     /*

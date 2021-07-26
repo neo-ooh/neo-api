@@ -260,7 +260,7 @@ class OrderLine {
         $dateObj = Carbon::make($this->date_start);
 
         if (!$dateObj) {
-            throw new InvalidArgumentException("date_start field is not a valid datetime representation.");
+            throw new InvalidArgumentException("date_start field is not a valid datetime representation : $this->date_start.");
         }
 
         $dateObj->locale(App::getLocale());

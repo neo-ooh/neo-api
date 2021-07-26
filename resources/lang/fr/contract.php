@@ -2,6 +2,7 @@
 
 return [
     "contract"                 => "Contrat :contract",
+    "payment-terms-confirmation-title" => "CONFIRMATION DES MODALITÉS DE PAIEMENTS",
     "billed-on" => "facturé le",
     "proposal"                 => "Proposition :contract",
     "production-details"       => "Détails de Production",

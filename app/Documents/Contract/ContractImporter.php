@@ -37,6 +37,11 @@ class ContractImporter {
                 continue;
             }
 
+            if(empty($record["order_line"])) {
+                // ignore line
+                continue;
+            }
+
             $orderLine = new OrderLine($record);
 
             if ($orderLine->is_production) {

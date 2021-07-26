@@ -1,6 +1,17 @@
 <section class="contract-home-page">
-    <h1>{!! __("contract.contract-number-title", ["number" => $order->reference]) !!}</h1>
-    <h3>{!! $order->campaign_name !!}</h3>
+    <h1>
+        @if($order->use_invoice_plan)
+            {!! __("contract.payment-terms-confirmation-title") !!}
+        @else
+            {!! __("contract.contract-number-title", ["number" => $order->reference]) !!}
+        @endif
+    </h1>
+    @if($order->use_invoice_plan)
+        <h2 class="center">
+            {!! __("contract.contract-number-title", ["number" => $order->reference]) !!}
+        </h2>
+    @endif
+    <h3  @if($order->use_invoice_plan) class="small" @endif >{!! $order->campaign_name !!}</h3>
     <div class="parties">
         <div class="contract-party first-party">
             <div class="contract-party-left-column">{!! __("contract.first-party-title") !!}</div>
@@ -60,70 +71,35 @@
             </div>
         </div>
     </div>
-    @if($order->use_invoice_plan)
-        <div class="costs-recap">
-            <p>{!! __("contract.customer-accepts") !!}</p>
-            <h2 class="investment-label">{!! __("contract.investment") !!}</h2>
-            <table class="costs-recap-table">
-                <tr>
-                    <td>{!! __("contract.total-media-net") !!}</td>
-                    <td class="value row-1">{{ formatCurrency(round($order->grand_total_investment)) }}</td>
-                </tr>
-                <tr>
-                    <td>{!! __("contract.production-costs") !!}</td>
-                    <td class="value">{{ formatCurrency(round($order->production_costs)) }}</td>
-                </tr>
-                <tr class="footer">
-                    <th>{!! __("contract.grand-total-net") !!}</th>
-                    <th>{{ formatCurrency(round($order->net_investment)) }}</th>
-                </tr>
-            </table>
-        </div>
-        <div class="payable-accounts-wrapper">
-            <h2>{!! __("contract.payable-accounts") !!}</h2>
-            <table class="payable-accounts">
-                <tr>
-                    <td class="email-label">{{ __("common.email-address") }}</td>
-                    <td class="payable-account-email">
-                        {{ $customer->payable_account }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-    @else
-        <table class="payable-contact">
-            <tr class="header">
-                <th colspan="2">
-                    {!! __("contract.payable-contact-header") !!}
-                </th>
+    <div class="costs-recap">
+        <p>{!! __("contract.customer-accepts") !!}</p>
+        <h2 class="investment-label">{!! __("contract.investment") !!}</h2>
+        <table class="costs-recap-table">
+            <tr>
+                <td>{!! __("contract.total-media-net") !!}</td>
+                <td class="value row-1">{{ formatCurrency(round($order->grand_total_investment)) }}</td>
             </tr>
             <tr>
-                <td>{!! __("common.complete-name") !!}</td>
-                <td></td>
+                <td>{!! __("contract.production-costs") !!}</td>
+                <td class="value">{{ formatCurrency(round($order->production_costs)) }}</td>
             </tr>
-            <tr>
-                <td>{!! __("common.phone") !!}</td>
-                <td></td>
+            <tr class="footer">
+                <th>{!! __("contract.grand-total-net") !!}</th>
+                <th>{{ formatCurrency(round($order->net_investment)) }}</th>
             </tr>
+        </table>
+    </div>
+    <div class="payable-accounts-wrapper">
+        <h2>{!! __("contract.payable-accounts") !!}</h2>
+        <table class="payable-accounts">
             <tr>
-                <td>{!! __("common.email-address") !!}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>{!! __("common.billing-address") !!}</td>
-                <td></td>
-            </tr>
-            <tr>
-                <td>{!! __("common.invoice") !!}</td>
-                <td class="invoice-type-cell">
-                    <label for="contract-type-electronic">{!! __("contract.type-electronic") !!}</label>
-                    <input type="radio" name="contract-type" id="contract-type-electronic">
-                    <label for="contract-type-paper">{!! __("contract.type-paper") !!}</label>
-                    <input type="radio" name="contract-type" id="contract-type-paper">
+                <td class="email-label">{{ __("common.email-address") }}</td>
+                <td class="payable-account-email">
+                    {{ $customer->payable_account }}
                 </td>
             </tr>
         </table>
-    @endif
+    </div>
     <div class="payment-terms">
         <h2>{!! __("contract.payment-terms-title") !!}</h2>
         @if($order->use_invoice_plan)

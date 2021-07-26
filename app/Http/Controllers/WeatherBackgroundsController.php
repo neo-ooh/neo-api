@@ -2,6 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Neo\Http\Requests\WeatherBackgrounds\DestroyWeatherBackgroundRequest;
@@ -23,6 +24,8 @@ class WeatherBackgroundsController extends Controller {
             $location->save();
         }
 
+        $networkSpecific = (bool)$request->input("network_id");
+
         // There is now two different collection strategy that can be applied here.
         // If the selection is random, we only return the backgrounds associated with this precise location. Otherwise, we the backgrounds of the location, plus any additional ones provided by the parents location, which is the location without the city set for a location with a city, and the location with just the country set. Only the backgrounds with the most 'precise' location are kept in case of duplicates by weather in the same period and format.
 
@@ -30,23 +33,46 @@ class WeatherBackgroundsController extends Controller {
             $backgrounds = $location->backgrounds()
                                     ->where("format_id", "=", $request->input("format_id"))
                                     ->where("period", "=", 'RANDOM')
-                                    ->get();
+                                    ->when((bool)$request->input("network_id"), function (Builder $query) use ($request) {
+                                        $query->where("network_id", "=", $request->input("network_id"));
+                                    }, function (Builder $query) {
+                                        $query->whereNull("network_id");
+                                    })->get();
 
             return new Response($backgrounds);
         }
 
         // Get the current location in an ordered array with its parents
-        $locations = $this->getLocationAndParents($location);
+        $locations   = $this->getLocationAndParents($location);
         $backgrounds = collect();
 
         foreach ($locations as $location) {
             $backgrounds = $backgrounds->merge(
-                WeatherBackground::query()->where("weather_location_id", "=", $location->id)
-                ->where("format_id", "=", $request->input("format_id"))
-                ->where("period", "=", $request->input("period"))
-                ->whereNotIn("weather", $backgrounds->pluck("weather"))
-                ->get()
+                WeatherBackground::query()
+                                 ->where("weather_location_id", "=", $location->id)
+                                 ->where("format_id", "=", $request->input("format_id"))
+                                 ->where("period", "=", $request->input("period"))
+                                 ->whereNotIn("weather", $backgrounds->pluck("weather"))
+                                 ->when($networkSpecific, function (Builder $query) use ($request) {
+                                     $query->where("network_id", "=", $request->input("network_id"));
+                                 }, function (Builder $query) {
+                                     $query->whereNull("network_id");
+                                 })->get()
             );
+
+
+            // If a network has been set, we execute an additional request to collect missing backgrounds with ones set for all networks
+            if ($networkSpecific) {
+                $backgrounds = $backgrounds->merge(
+                    WeatherBackground::query()
+                                     ->where("weather_location_id", "=", $location->id)
+                                     ->where("format_id", "=", $request->input("format_id"))
+                                     ->where("period", "=", $request->input("period"))
+                                     ->whereNotIn("weather", $backgrounds->pluck("weather"))
+                                     ->whereNull("network_id")
+                                     ->get()
+                );
+            }
         }
 
         return new Response($backgrounds);
@@ -76,7 +102,7 @@ class WeatherBackgroundsController extends Controller {
         $background                      = new WeatherBackground();
         $background->weather             = $request->input("weather");
         $background->period              = $request->input("period");
-        $background->network_id              = $request->input("network_id");
+        $background->network_id          = $request->input("network_id");
         $background->weather_location_id = $location->id;
         $background->format_id           = $request->input("format_id");
         $background->path                = $file->storePubliclyAs(Storage::path("dynamics/weather/backgrounds/"), $file->hashName());
@@ -94,11 +120,11 @@ class WeatherBackgroundsController extends Controller {
     protected function getLocationAndParents(WeatherLocation $location): array {
         $locations = [$location];
 
-        if($location->city !== WeatherLocation::NULL_COMPONENT) {
+        if ($location->city !== WeatherLocation::NULL_COMPONENT) {
             $locations[] = WeatherLocation::fromComponents($location->country, $location->province, WeatherLocation::NULL_COMPONENT, true);
         }
 
-        if($location->province !== WeatherLocation::NULL_COMPONENT) {
+        if ($location->province !== WeatherLocation::NULL_COMPONENT) {
             $locations[] = WeatherLocation::fromComponents($location->country, WeatherLocation::NULL_COMPONENT, WeatherLocation::NULL_COMPONENT, true);
         }
 

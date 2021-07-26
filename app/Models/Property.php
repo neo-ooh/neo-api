@@ -97,6 +97,6 @@ class Property extends SecuredModel {
                                  ->where("month", "=", $month)
                                  ->first();
 
-        return $traffic?->traffic;
+        return $traffic?->traffic || $traffic?->temporary;
     }
 }

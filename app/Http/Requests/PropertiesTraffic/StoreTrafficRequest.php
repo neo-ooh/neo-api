@@ -28,7 +28,8 @@ class StoreTrafficRequest extends FormRequest
         return [
             "year" => ["required", "integer"],
             "month" => ["required", "numeric"],
-            "traffic" => ["required", "numeric"]
+            "traffic" => ["required", "numeric"],
+            "temporary" => ["sometimes", "nullable", "numeric"],
         ];
     }
 }

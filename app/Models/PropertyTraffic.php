@@ -14,6 +14,7 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  * @property int      $year
  * @property int      $month 0-indexed month
  * @property int      $traffic
+ * @property int      $temporary
  *
  * @property Property $property
  */
@@ -54,13 +55,15 @@ class PropertyTraffic extends Model {
         "property_id",
         "year",
         "month",
-        "traffic"
+        "traffic",
+        "temporary",
     ];
 
     protected $casts = [
         "year" => "integer",
         "month" => "integer",
         "traffic" => "integer",
+        "temporary" => "integer",
     ];
 
     /*

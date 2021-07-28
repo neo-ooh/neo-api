@@ -12,6 +12,7 @@ namespace Neo\Documents\Contract;
 
 use App;
 use Arr;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Neo\Documents\Exceptions\MissingColumnException;
@@ -128,7 +129,7 @@ class Order {
     public function addInvoicePlanStep(array $record) {
         $this->invoice_plan_steps->add([
             "step"   => $record["invoice_plan_ids/invoice_move_ids/nb_in_plan"],
-            "date"   => Date::make($record["invoice_plan_ids/plan_date_start"])->locale($this->locale),
+            "date"   => Carbon::parse($record["invoice_plan_ids/plan_date_start"])->locale($this->locale),
             "amount" => $record["invoice_plan_ids/invoice_move_ids/amount_untaxed"],
         ]);
     }

@@ -90,13 +90,17 @@ class Property extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    public function getTraffic(int $year, int $month) {
+    public function getTraffic(int $year, int $month): int|null {
         /** @var ?PropertyTraffic $traffic */
         $traffic = $this->traffic->data
                                  ->where("year", "=", $year)
                                  ->where("month", "=", $month)
                                  ->first();
 
-        return $traffic?->traffic || $traffic?->temporary;
+        if(!$traffic) {
+            return null;
+        }
+
+        return $traffic->traffic || $traffic->temporary;
     }
 }

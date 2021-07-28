@@ -163,8 +163,9 @@ class NetworkTraffic extends XLSXDocument {
                     }
 
                     $prints   = $period->getPrintsForTraffic($traffic);
+                    $values[] = $traffic;
                     $values[] = $prints;
-                    $values[] = ($prints / Carbon::create($this->year, $month)->daysInMonth) * 7;
+//                    $values[] = ($prints / Carbon::create($this->year, $month)->daysInMonth) * 7;
                 }
 
                 $this->ws->popPosition();

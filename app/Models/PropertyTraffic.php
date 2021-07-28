@@ -5,6 +5,7 @@ namespace Neo\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Gate;
 use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
@@ -65,6 +66,14 @@ class PropertyTraffic extends Model {
         "traffic" => "integer",
         "temporary" => "integer",
     ];
+
+    protected static function boot() {
+        parent::boot();
+
+        static::retrieved(function(PropertyTraffic $traffic) {
+            $traffic->makeHiddenIf(!Gate::allows(\Neo\Enums\Capability::properties_edit), ["temporary"]);
+        });
+    }
 
     /*
     |--------------------------------------------------------------------------

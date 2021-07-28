@@ -10,6 +10,7 @@
 
 namespace Neo\Documents\Contract;
 
+use App;
 use Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
@@ -93,7 +94,7 @@ class Order {
             }
         }
 
-        $this->locale            = $record["partner_id/lang"];
+        $this->locale            = substr($record["partner_id/lang"], 0, 2);
         $this->company_name      = $record["company_id/name"];
         $this->reference         = $record["name"];
         $this->date              = $record["date_order"];
@@ -127,7 +128,7 @@ class Order {
     public function addInvoicePlanStep(array $record) {
         $this->invoice_plan_steps->add([
             "step"   => $record["invoice_plan_ids/invoice_move_ids/nb_in_plan"],
-            "date"   => Date::make($record["invoice_plan_ids/plan_date_start"]),
+            "date"   => Date::make($record["invoice_plan_ids/plan_date_start"])->locale($this->locale),
             "amount" => $record["invoice_plan_ids/invoice_move_ids/amount_untaxed"],
         ]);
     }

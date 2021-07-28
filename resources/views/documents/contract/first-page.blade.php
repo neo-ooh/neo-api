@@ -108,7 +108,7 @@
                     <tr>
                         <td>{{ formatCurrency($step["amount"]) }}</td>
                         <td>{{ __("contract.billed-on") }}</td>
-                        <td>{{ $step["date"]->toFormattedDateString() }}</td>
+                        <td>{{ $step["date"]->toDateString() }}</td>
                     </tr>
                 @endforeach
             </table>

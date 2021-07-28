@@ -2,6 +2,7 @@
 
 namespace Neo\Documents\Contract;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
 use League\Csv\Reader;
 use Neo\Documents\Network;
@@ -30,6 +31,7 @@ class ContractImporter {
 
                 $locale = substr($order->locale, 0, 2);
                 App::setLocale($locale);
+                Carbon::setLocale($locale);
             }
 
             if(empty($record["order_line"]) && !empty($record["invoice_plan_ids/invoice_move_ids/nb_in_plan"])) {

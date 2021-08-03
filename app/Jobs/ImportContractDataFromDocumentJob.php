@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -55,11 +56,11 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
         $contract->advertiser_name = $this->customer->parent_name;
         $contract->executive_account_name = $this->order->salesperson;
         $contract->presented_to = $this->customer->name;
-        $contract->start_date = $this->order->campaign_start;
-        $contract->end_date = $this->order->campaign_end;
+        $contract->start_date = $this->order->getGuaranteedOrders()->min(fn($date) => Carbon::parse($date));
+        $contract->end_date = $this->order->getGuaranteedOrders()->max(fn($date) => Carbon::parse($date));
         $contract->save();
 
-        // And noow fill in informations about purchases
+        // And now fill in informations about purchases
         $guaranteedOrders = $this->order->getGuaranteedOrders();
         $bonusOrders = $this->order->getBonusOrders();
         $buaOrders = $this->order->getBuaOrders();

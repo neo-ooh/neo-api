@@ -44,7 +44,7 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
             ]));
 
             // Attach a rep to the contract
-            $rep = Actor::query()->first(["name" => $this->order->salesperson])
+            $rep = Actor::query()->first(["name" => $this->order->salesperson]);
             if ($rep !== null) {
                 $contract->owner()->associate();
             }

@@ -66,9 +66,10 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
         $buaOrders = $this->order->getBuaOrders();
 
         foreach (Network::getValues() as $network) {
-            $data = new ContractNetworkData();
-            $data->contract_id = $contract->id;
-            $data->network = $network;
+            $data = ContractNetworkData::query()->firstOrNew([
+                "contract_id" => $contract->id,
+                "network" => $network
+            ]);
 
             $networkGuaranteedOrders = $guaranteedOrders->filter(fn($order) => $order->isNetwork($network));
 

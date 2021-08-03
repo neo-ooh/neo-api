@@ -20,7 +20,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create($this->tableName, function (Blueprint $table) {
-            $table->foreignId("contract_id")->primary()->constrained("contracts");
+            $table->foreignId("contract_id")->constrained("contracts");
             $table->string("network", 16);
             $table->boolean("has_guaranteed_reservations")->nullable();
             $table->unsignedBigInteger("guaranteed_impressions")->nullable();

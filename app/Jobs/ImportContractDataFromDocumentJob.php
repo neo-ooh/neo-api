@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Neo\Documents\Contract\Customer;
 use Neo\Documents\Contract\Order;
 use Neo\Enums\Network;
@@ -72,6 +73,8 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
             ]);
 
             $networkGuaranteedOrders = $guaranteedOrders->filter(fn($order) => $order->isNetwork($network));
+
+            Log::debug($guaranteedOrders);
 
             $data->has_guaranteed_reservations = $networkGuaranteedOrders->isNotEmpty();
             if($data->has_guaranteed_reservations) {

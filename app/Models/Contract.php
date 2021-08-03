@@ -2,6 +2,7 @@
 
 namespace Neo\Models;
 
+use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +26,12 @@ use RuntimeException;
  *           the contract inside Connect)
  * @property integer                         $client_id
  * @property integer                         $owner_id
+ * @property Date                            $start_date
+ * @property array                           $end_date
  * @property array                           $data
+ * @property string                          $advertiser_name
+ * @property string                          $executive_account_name
+ * @property string                          $presented_to
  * @property integer                         $created_at
  * @property integer                         $updated_at
  *
@@ -47,6 +53,11 @@ class Contract extends Model {
 
     protected $casts = [
         "data" => "array",
+    ];
+
+    protected $dates = [
+        "start_date",
+        "end_date"
     ];
 
     protected static function boot() {
@@ -81,10 +92,14 @@ class Contract extends Model {
         return $this->hasMany(ContractReservation::class, "contract_id", "id");
     }
 
+    public function data(): HasMany {
+        return $this->hasMany(ContractNetworkData::class, "contract_id", "id");
+    }
+
 
     /*
     |--------------------------------------------------------------------------
-    | Relations
+    | Additional Attributes
     |--------------------------------------------------------------------------
     */
 
@@ -105,7 +120,8 @@ class Contract extends Model {
         $broadsignClient = new BroadsignClient($config);
 
         foreach ($this->reservations as $reservation) {
-            $bsLocations            = BSLocation::byReservable($broadsignClient, ["reservable_id" => $reservation->external_id])->pluck('id');
+            $bsLocations            = BSLocation::byReservable($broadsignClient, ["reservable_id" => $reservation->external_id])
+                                                ->pluck('id');
             $reservation->locations = Location::query()->whereIn("external_id", $bsLocations)->get();
         }
     }

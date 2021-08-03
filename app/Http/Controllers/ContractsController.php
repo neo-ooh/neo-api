@@ -72,6 +72,10 @@ class ContractsController extends Controller {
             $contract->load("bursts", "bursts.screenshots", "bursts.location");
         }
 
+        if (in_array("data", $with, true)) {
+            $contract->load("data");
+        }
+
         return new Response($contract);
     }
 

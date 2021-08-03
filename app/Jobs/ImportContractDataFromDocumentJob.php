@@ -74,10 +74,10 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
 
             $networkGuaranteedOrders = $guaranteedOrders->filter(fn($order) => $order->isNetwork($network));
 
-            Log::debug($guaranteedOrders);
-
             $data->has_guaranteed_reservations = $networkGuaranteedOrders->isNotEmpty();
             if($data->has_guaranteed_reservations) {
+                Log::debug($networkGuaranteedOrders->sum("impressions"));
+                Log::debug($networkGuaranteedOrders->sum("net_investment"));
                 $data->guaranteed_impressions    = $networkGuaranteedOrders->sum("impressions");
                 $data->guaranteed_media_value    = $networkGuaranteedOrders->sum("media_value");
                 $data->guaranteed_net_investment = $networkGuaranteedOrders->sum("net_investment");

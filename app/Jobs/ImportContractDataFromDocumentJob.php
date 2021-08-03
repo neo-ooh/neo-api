@@ -66,24 +66,22 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
         $bonusOrders = $this->order->getBonusOrders();
         $buaOrders = $this->order->getBuaOrders();
 
-        foreach (Network::getValues() as $network) {
+        foreach (Network::asArray() as $key => $network) {
             $data = ContractNetworkData::query()->firstOrNew([
                 "contract_id" => $contract->id,
                 "network" => $network
             ]);
 
-            $networkGuaranteedOrders = $guaranteedOrders->filter(fn($order) => $order->isNetwork($network));
+            $networkGuaranteedOrders = $guaranteedOrders->filter(fn($order) => $order->isNetwork($key));
 
             $data->has_guaranteed_reservations = $networkGuaranteedOrders->isNotEmpty();
             if($data->has_guaranteed_reservations) {
-                Log::debug($networkGuaranteedOrders->sum("impressions"));
-                Log::debug($networkGuaranteedOrders->sum("net_investment"));
                 $data->guaranteed_impressions    = $networkGuaranteedOrders->sum("impressions");
                 $data->guaranteed_media_value    = $networkGuaranteedOrders->sum("media_value");
                 $data->guaranteed_net_investment = $networkGuaranteedOrders->sum("net_investment");
             }
 
-            $networkBonusOrders = $bonusOrders->filter(fn($order) => $order->isNetwork($network))->values();
+            $networkBonusOrders = $bonusOrders->filter(fn($order) => $order->isNetwork($key))->values();
 
             $data->has_bonus_reservations = $networkBonusOrders->isNotEmpty();
             if($data->has_bonus_reservations) {
@@ -91,7 +89,7 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
                 $data->bonus_media_value    = $networkBonusOrders->sum("media_value");
             }
 
-            $networkBuaOrders = $buaOrders->filter(fn($order) => $order->isNetwork($network))->values();
+            $networkBuaOrders = $buaOrders->filter(fn($order) => $order->isNetwork($key))->values();
 
             $data->has_bua_reservations = $networkBuaOrders->isNotEmpty();
             if($data->has_bua_reservations) {

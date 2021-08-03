@@ -11,6 +11,7 @@
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Neo\Models\Traits\HasCompositePrimaryKey;
 
 
 /**
@@ -28,11 +29,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $bua_media_value
  */
 class ContractNetworkData extends Model {
+    use HasCompositePrimaryKey;
+
     protected $table = "contracts_networks_data";
 
     public $incrementing = false;
 
-    protected $primaryKey = "contact_id";
+    protected $primaryKey = ["contract_id", "network"];
 
     public $timestamps = false;
 

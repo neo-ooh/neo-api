@@ -62,7 +62,7 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
         $contract->save();
 
         // And now fill in informations about purchases
-        $guaranteedOrders = $this->order->getGuaranteedOrders();
+        $guaranteedOrders = $this->order->getGuaranteedOrders()->values();
         $bonusOrders = $this->order->getBonusOrders();
         $buaOrders = $this->order->getBuaOrders();
 
@@ -83,7 +83,7 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
                 $data->guaranteed_net_investment = $networkGuaranteedOrders->sum("net_investment");
             }
 
-            $networkBonusOrders = $bonusOrders->filter(fn($order) => $order->isNetwork($network));
+            $networkBonusOrders = $bonusOrders->filter(fn($order) => $order->isNetwork($network))->values();
 
             $data->has_bonus_reservations = $networkBonusOrders->isNotEmpty();
             if($data->has_bonus_reservations) {
@@ -91,7 +91,7 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
                 $data->bonus_media_value    = $networkBonusOrders->sum("media_value");
             }
 
-            $networkBuaOrders = $buaOrders->filter(fn($order) => $order->isNetwork($network));
+            $networkBuaOrders = $buaOrders->filter(fn($order) => $order->isNetwork($network))->values();
 
             $data->has_bua_reservations = $networkBuaOrders->isNotEmpty();
             if($data->has_bua_reservations) {

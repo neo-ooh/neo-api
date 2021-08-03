@@ -54,7 +54,7 @@ class ImportContractDataFromDocumentJob implements ShouldQueue {
 
         // Now, fill in some information about the contract
         $contract->advertiser_name = $this->customer->parent_name;
-        $contract->executive_account_name = $this->order->salesperson;
+        $contract->executive_name = $this->order->salesperson;
         $contract->presented_to = $this->customer->name;
         $contract->start_date = $this->order->getGuaranteedOrders()->min(fn($date) => Carbon::parse($date));
         $contract->end_date = $this->order->getGuaranteedOrders()->max(fn($date) => Carbon::parse($date));

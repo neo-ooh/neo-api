@@ -30,7 +30,7 @@ use RuntimeException;
  * @property array                           $end_date
  * @property array                           $data
  * @property string                          $advertiser_name
- * @property string                          $executive_account_name
+ * @property string                          $executive_name
  * @property string                          $presented_to
  * @property integer                         $created_at
  * @property integer                         $updated_at

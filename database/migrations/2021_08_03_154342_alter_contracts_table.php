@@ -20,9 +20,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table($this->tableName, function (Blueprint $table) {
-            $table->string("advertiser_name", "64")->nullable()->after('data');
-            $table->string("executive_name", "64")->nullable();
-            $table->string("presented_to", "64")->nullable();
+            $table->string("advertiser_name", 64)->nullable()->after('data');
+            $table->string("executive_name", 64)->nullable();
+            $table->string("presented_to", 64)->nullable();
         });
     }
 

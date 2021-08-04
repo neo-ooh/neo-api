@@ -39,6 +39,11 @@ class ContractNetworkData extends Model {
 
     public $timestamps = false;
 
+    protected $fillable = [
+        "contract_id",
+        "network"
+    ];
+
     protected $casts = [
         "has_guaranteed_reservations" => "boolean",
         "has_bonus_reservations" => "boolean",

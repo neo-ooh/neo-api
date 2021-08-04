@@ -83,7 +83,7 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
             return;
         }
 
-        // Make sure the campaign has a an external id, if not, release and retry later
+        // Make sure the campaign has an external id, if not, release and retry later
         if ($schedule->campaign->external_id === null) {
             // Wait 30s before trying again
             $this->release(30);

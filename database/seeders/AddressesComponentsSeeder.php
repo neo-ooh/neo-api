@@ -88,7 +88,7 @@ class AddressesComponentsSeeder extends Seeder {
             Market::query()->insertOrIgnore(collect($ms)->map(fn($m) => [
                 "province_id" => $province->id,
                 "name_en" => $m["en"],
-                "name_fr" => $m["en"],
+                "name_fr" => $m["fr"],
             ])->values()->toArray());
         }
     }

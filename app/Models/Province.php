@@ -48,10 +48,10 @@ class Province extends Model
     }
 
     public function markets() {
-        return $this->hasMany(Market::class, "province_id");
+        return $this->hasMany(Market::class, "province_id")->orderBy("slug");
     }
 
     public function cities() {
-        return $this->hasMany(City::class, "province_id");
+        return $this->hasMany(City::class, "province_id")->orderBy("name");
     }
 }

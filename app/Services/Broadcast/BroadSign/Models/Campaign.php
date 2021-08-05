@@ -56,6 +56,7 @@ use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
  * @property int    pacing_period
  * @property int    pacing_target
  * @property int    parent_id ID of the customer owning this campaign
+ * @property int    priority
  * @property int    promoter_user_id
  * @property string promotion_time
  * @property string reps_calculated_on
@@ -95,6 +96,7 @@ class Campaign extends BroadSignModel {
         "pacing_period",
         "pacing_target",
         "parent_id",
+        "priority",
         "state",
     ];
 

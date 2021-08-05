@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\Markets\DestroyMarketRequest;
 use Neo\Http\Requests\Markets\StoreMarketRequest;
 use Neo\Http\Requests\Markets\UpdateMarketRequest;
 use Neo\Models\Country;
@@ -35,5 +36,11 @@ class MarketsController extends Controller {
         $market->save();
 
         return new Response($market);
+    }
+
+    public function destroy(DestroyMarketRequest $request, Market $market) {
+        $market->delete();
+
+        return new Response();
     }
 }

@@ -452,6 +452,8 @@ Route::prefix("v1")->group(function () {
          ->name("countries.provinces.markets.store");
     Route::put("markets/{market}", MarketsController::class . "@update")
          ->name("countries.provinces.markets.update");
+    Route::delete("markets/{market}", MarketsController::class . "@destroy")
+         ->name("countries.provinces.markets.destroy");
 
     // Cities
     Route::get("countries/{country}/provinces/{province}/cities", CitiesController::class . "@index")

@@ -2,7 +2,9 @@
 
 namespace Neo\Http\Requests\Provinces;
 
+use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Neo\Enums\Capability;
 
 class ListProvincesRequest extends FormRequest
 {
@@ -13,7 +15,7 @@ class ListProvincesRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return Gate::allows(Capability::properties_edit) || Gate::allows(Capability::properties_markets);
     }
 
     /**

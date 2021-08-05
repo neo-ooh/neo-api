@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $province_id
+ * @property string $name_en
+ * @property string $name_fr
  *
  * @property Province $province
  *
@@ -24,6 +26,8 @@ class Market extends Model
     protected $primaryKey = "id";
 
     public $timestamps = false;
+
+    protected $fillable = ["province_id", "name_en", "name_fr"];
 
     public function province() {
         return $this->belongsTo(Province::class, "province_id");

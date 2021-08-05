@@ -28,6 +28,12 @@ class City extends Model
 
     public $timestamps = false;
 
+    protected $fillable = [
+        "name",
+        "market_id",
+        "province_id"
+    ];
+
     public function province() {
         return $this->belongsTo(Province::class, "province_id");
     }

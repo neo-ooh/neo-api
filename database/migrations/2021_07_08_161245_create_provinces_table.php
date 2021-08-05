@@ -21,8 +21,8 @@ return new class extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
-            $table->string("slug", 2);
-            $table->foreignId("country_id")->constrained("countries");
+            $table->string("slug", 2)->unique();
+            $table->foreignId("country_id")->constrained("countries")->cascadeOnUpdate()->cascadeOnDelete();
             $table->string("name", 64);
         });
     }

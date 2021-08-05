@@ -11,9 +11,11 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Illuminate\Support\Collection;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
+use phpDocumentor\Reflection\Types\Array_;
 
 /**
  * Class ActorsLocations
@@ -46,6 +48,7 @@ use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
  * @property Container container
  *
  * @method static Collection all(BroadsignClient $client)
+ * @method static Collection get(BroadsignClient $client, )
  * @method static Collection byReservable(BroadsignClient $client, array $params)
  */
 class Location extends BroadSignModel {
@@ -56,7 +59,10 @@ class Location extends BroadSignModel {
             "all"          => Endpoint::get("/display_unit/v12")
                                       ->unwrap(static::$unwrapKey)
                                       ->parser(new MultipleResourcesParser(static::class)),
-            "byContainer"          => Endpoint::get("/display_unit/v12/by_container")
+            "get"          => Endpoint::get("/display_unit/v12/{id}")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new SingleResourcesParser(static::class)),
+            "byContainer"  => Endpoint::get("/display_unit/v12/by_container")
                                       ->unwrap(static::$unwrapKey)
                                       ->parser(new MultipleResourcesParser(static::class)),
             "byReservable" => Endpoint::get("/display_unit/v12/by_reservable")

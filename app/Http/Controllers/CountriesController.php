@@ -9,7 +9,7 @@ use Neo\Models\Country;
 
 class CountriesController extends Controller {
     public function index(ListCountriesRequest $request) {
-        return new Response(Country::query()->orderBy("name")->get());
+        return new Response(Country::query()->orderBy("name")->with("provinces", "provinces.markets")->get());
     }
 
     public function show(ShowCountryRequest $request, Country $country) {

@@ -12,14 +12,13 @@ use Neo\Rules\AccessibleProperty;
  * Class Property
  *
  * @property int                     $actor_id
- * @property boolean                 $require_traffic
- * @property int                     $traffic_start_year
- * @property Date                    $traffic_grace_override
+ * @property int                     $address_id
  * @property Date                    $created_at
  * @property Date                    $updated_at
  *
  * @property Actor                   $actor
  * @property PropertyTrafficSettings $traffic
+ * @property Address|null $address
  */
 class Property extends SecuredModel {
     use HasFactory;
@@ -82,6 +81,10 @@ class Property extends SecuredModel {
 
     public function traffic(): HasOne {
         return $this->hasOne(PropertyTrafficSettings::class, "property_id", "actor_id");
+    }
+
+    public function address(): BelongsTo {
+        return $this->belongsTo(Address::class, "address_id", "id");
     }
 
     /*

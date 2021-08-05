@@ -46,7 +46,7 @@ class PropertiesController extends Controller {
         $property = Property::query()->find($propertyId);
 
         if($property) {
-            return new Response($property->load(["actor", "traffic"]));
+            return new Response($property->load(["actor", "traffic", "address"]));
         }
 
         // This group is not a property, does it has properties below it ?

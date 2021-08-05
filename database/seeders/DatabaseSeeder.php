@@ -18,6 +18,7 @@ class DatabaseSeeder extends BaseSeeder {
             ParamsSeeder::class,
             CapabilitiesSeeder::class,
             BoostrapSeeder::class,
+            AddressesComponentsSeeder::class,
         ]);
     }
 }

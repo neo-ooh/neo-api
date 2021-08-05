@@ -27,6 +27,18 @@ class Country extends Model
 
     public $timestamps = false;
 
+    protected $fillable = ["name", "slug"];
+
+    /**
+     * Get the route key for the model.
+     *
+     * @return string
+     */
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
+
     public function provinces() {
         return $this->hasMany(Province::class, "country_id");
     }

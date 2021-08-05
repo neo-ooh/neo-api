@@ -21,7 +21,7 @@ return new class extends Migration
     {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
-            $table->string("slug", 2);
+            $table->string("slug", 2)->unique();
             $table->string("name", 64);
         });
     }

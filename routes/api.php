@@ -26,6 +26,7 @@ use Neo\Http\Controllers\BroadSignSeparationsController;
 use Neo\Http\Controllers\BroadSignTriggersController;
 use Neo\Http\Controllers\CampaignsController;
 use Neo\Http\Controllers\CapabilitiesController;
+use Neo\Http\Controllers\CitiesController;
 use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContainersController;
 use Neo\Http\Controllers\ContentsController;
@@ -433,16 +434,18 @@ Route::prefix("v1")->group(function () {
 
 //    Route::model("country", Country::class);
 //    Route::model("province", Province::class);
-//
-//    Route::get("countries", CountriesController::class . "@index")
-//         ->name("countries.index");
-//    Route::get("countries/{country}", CountriesController::class . "@show")
-//         ->name("countries.show");
-//    Route::get("countries/{country}/provinces", ProvincesController::class . "@index")
-//         ->name("countries.provinces");
-//
-//    Route::get("countries/{country}/provinces/{province}", ProvincesController::class . "@index")
-//         ->name("countries.provinces.show");
+
+    Route::get("countries", CountriesController::class . "@index")
+         ->name("countries.index");
+    Route::get("countries/{country}", CountriesController::class . "@show")
+         ->name("countries.show");
+    Route::get("countries/{country}/provinces", ProvincesController::class . "@index")
+         ->name("countries.provinces");
+
+    Route::get("countries/{country}/provinces/{province}", ProvincesController::class . "@show")
+         ->name("countries.provinces.show");
+    Route::post("countries/{country}/provinces/{province}", CitiesController::class . "@store")
+         ->name("countries.provinces.cities.store");
 
 
     /*

@@ -34,6 +34,12 @@ class Address extends Model {
         "geolocation",
     ];
 
+    protected $with = [
+        "city",
+        "city.province",
+        "city.market",
+    ];
+
     public function city() {
         return $this->belongsTo(City::class, "city_id");
     }

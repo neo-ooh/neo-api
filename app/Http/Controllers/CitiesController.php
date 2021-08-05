@@ -19,7 +19,7 @@ use Neo\Models\Country;
 use Neo\Models\Province;
 
 class CitiesController extends Controller {
-    public function store(StoreCityRequest $request, Province $province): Response {
+    public function store(StoreCityRequest $request, Country $country, Province $province): Response {
         $city              = new City();
         $city->province_id = $province->id;
         $city->market_id   = $request->input("market_id");

@@ -13,24 +13,33 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Cities\ListCitiesRequest;
 use Neo\Http\Requests\Cities\StoreCityRequest;
+use Neo\Http\Requests\Cities\UpdateCityRequest;
 use Neo\Models\City;
 use Neo\Models\Country;
 use Neo\Models\Province;
 
 class CitiesController extends Controller {
-    public function store(StoreCityRequest $request, Province $province) {
-        $city = new City();
+    public function store(StoreCityRequest $request, Province $province): Response {
+        $city              = new City();
         $city->province_id = $province->id;
-        $city->market_id = $request->input("market_id");
+        $city->market_id   = $request->input("market_id");
         $city->save();
 
         return new Response($city);
     }
 
-    public function index(ListCitiesRequest $request, Country $country, Province $province) {
+    public function index(ListCitiesRequest $request, Country $country, Province $province): Response {
         return new Response(City::query()
                                 ->where("province_id", "=", $province->id)
                                 ->orderBy("name")
                                 ->get());
+    }
+
+    public function update(UpdateCityRequest $request, Country $country, Province $province, City $city): Response {
+        $city->name      = $request->input("name");
+        $city->market_id = $request->input("market_id");
+        $city->save();
+
+        return new Response($city);
     }
 }

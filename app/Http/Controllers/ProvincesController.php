@@ -13,6 +13,6 @@ class ProvincesController extends Controller {
     }
 
     public function show(ListProvincesRequest $request, Country $country, Province $province) {
-        return new Response($province->load(["markets", "cities"]));
+        return new Response($province->load(["country", "markets", "cities"]));
     }
 }

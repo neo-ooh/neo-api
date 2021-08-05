@@ -22,7 +22,7 @@ class UpdateAddressRequest extends FormRequest {
     public function rules() {
         return [
             "line_1" => ["required", "string"],
-            "line_2" => ["string"],
+            "line_2" => ["nullable", "string"],
             "province" => ["required", "string", "exists:provinces,slug"],
             "city" => ["required", "string"],
             "zipcode" => ["required", "string"],

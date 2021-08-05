@@ -45,6 +45,7 @@ use Neo\Http\Controllers\HeadlinesController;
 use Neo\Http\Controllers\InventoryController;
 use Neo\Http\Controllers\LibrariesController;
 use Neo\Http\Controllers\LocationsController;
+use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\NetworksController;
 use Neo\Http\Controllers\NewsBackgroundsController;
 use Neo\Http\Controllers\ParamsController;
@@ -439,11 +440,20 @@ Route::prefix("v1")->group(function () {
          ->name("countries.index");
     Route::get("countries/{country}", CountriesController::class . "@show")
          ->name("countries.show");
+
+    // Provinces
     Route::get("countries/{country}/provinces", ProvincesController::class . "@index")
          ->name("countries.provinces");
-
     Route::get("countries/{country}/provinces/{province}", ProvincesController::class . "@show")
          ->name("countries.provinces.show");
+
+    // Markets
+    Route::post("countries/{country}/provinces/{province}/markets", MarketsController::class . "@store")
+         ->name("countries.provinces.markets.store");
+    Route::put("markets/{market}", MarketsController::class . "@update")
+         ->name("countries.provinces.markets.update");
+
+    // Cities
     Route::get("countries/{country}/provinces/{province}/cities", CitiesController::class . "@index")
          ->name("countries.provinces.cities.list");
     Route::post("countries/{country}/provinces/{province}", CitiesController::class . "@store")

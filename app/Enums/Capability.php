@@ -149,6 +149,11 @@ final class Capability extends Enum {
     public const properties_traffic = "properties.traffic";
 
     /**
+     * Allow user to change markets and cities in them
+     */
+    public const properties_markets = "properties.markets";
+
+    /**
      * Allow user to use the Prints tools to export estimated prints by properties
      */
     public const tools_prints = "tools.prints";

@@ -22,7 +22,7 @@ return new class extends Migration
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
             $table->string("name", 128);
-            $table->foreignId("market_id")->nullable()->constrained("markets");
+            $table->foreignId("market_id")->nullable()->constrained("markets")->cascadeOnUpdate()->nullOnDelete();
             $table->foreignId("province_id")->constrained("provinces");
         });
     }

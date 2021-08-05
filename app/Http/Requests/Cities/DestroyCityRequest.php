@@ -14,15 +14,12 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 
-class UpdateCityRequest extends FormRequest {
+class DestroyCityRequest extends FormRequest {
     public function authorize() {
         return Gate::allows(Capability::properties_markets);
     }
 
     public function rules() {
-        return [
-            "name" => ["required", "string"],
-            "market_id" => ["integer", "exists:markets,id"]
-        ];
+        return [];
     }
 }

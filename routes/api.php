@@ -460,8 +460,10 @@ Route::prefix("v1")->group(function () {
          ->name("countries.provinces.cities.list");
     Route::post("countries/{country}/provinces/{province}", CitiesController::class . "@store")
          ->name("countries.provinces.cities.store");
-    Route::put("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@index")
+    Route::put("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@update")
          ->name("countries.provinces.cities.update");
+    Route::delete("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@destroy")
+         ->name("countries.provinces.cities.destroy");
 
 
     /*

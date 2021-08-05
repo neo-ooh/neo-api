@@ -677,6 +677,7 @@ Route::prefix("v1")->group(function () {
     Route::  post("properties"           , PropertiesController::class . "@store"  )->name("properties.store");
     Route::   get("properties/{propertyId}", PropertiesController::class . "@show"   )->name("properties.show");
     Route::   put("properties/{property}", PropertiesController::class . "@update" )->name("properties.update");
+    Route::   put("properties/{property}/address", PropertiesController::class . "@updateAddress" )->name("properties.address.update");
     Route::delete("properties/{property}", PropertiesController::class . "@destroy")->name("properties.destroy");
 
     /*

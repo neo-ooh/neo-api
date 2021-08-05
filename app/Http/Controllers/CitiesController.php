@@ -30,6 +30,7 @@ class CitiesController extends Controller {
     public function index(ListCitiesRequest $request, Country $country, Province $province) {
         return new Response(City::query()
                                 ->where("province_id", "=", $province->id)
+                                ->orderBy("name")
                                 ->get());
     }
 }

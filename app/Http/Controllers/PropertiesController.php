@@ -7,10 +7,14 @@ use InvalidArgumentException;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
 use Neo\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Http\Requests\Properties\StorePropertyRequest;
+use Neo\Http\Requests\Properties\UpdateAddressRequest;
 use Neo\Http\Requests\Properties\UpdatePropertyRequest;
 use Neo\Models\Actor;
+use Neo\Models\Address;
+use Neo\Models\City;
 use Neo\Models\Property;
 use Neo\Models\PropertyTrafficSettings;
+use Neo\Models\Province;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class PropertiesController extends Controller {
@@ -69,6 +73,28 @@ class PropertiesController extends Controller {
         $property->save();
 
         return new Response($property->load(["actor", "traffic"]));
+    }
+
+    public function updateAddress(UpdateAddressRequest $request, Property $property) {
+        /** @var Province $province */
+        $province = Province::query()
+                            ->where("slug", "=", $request->input("province"))
+                            ->first();
+
+        /** @var City $city */
+        $city = City::query()->firstOrCreate([
+            "name" => $request->input("city"),
+            "province_id" => $province->id,
+        ]);
+
+        $address = $property->address ?? new Address();
+        $address->line_1 = $request->input("line_1");
+        $address->line_2 = $request->input("line_2");
+        $address->city_id = $city->id;
+        $address->zipcode = $request->input("zipcode");
+        $address->save();
+
+        return new Response($address);
     }
 
     public function destroy(DestroyPropertyRequest $request, Property $property) {

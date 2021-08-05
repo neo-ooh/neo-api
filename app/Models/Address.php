@@ -37,6 +37,7 @@ class Address extends Model {
     protected $with = [
         "city",
         "city.province",
+        "city.province.country",
         "city.market",
     ];
 

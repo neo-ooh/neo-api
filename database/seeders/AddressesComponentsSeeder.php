@@ -85,7 +85,8 @@ class AddressesComponentsSeeder extends Seeder {
         foreach ($markets as $provinceCode => $ms) {
             /** @var Province $province */
             $province = Province::query()->where("slug", "=", $provinceCode)->first();
-            Market::query()->insertOrIgnore(collect($ms)->map(fn($m) => [
+
+            Market::query()->firstOrCreate(collect($ms)->map(fn($m) => [
                 "province_id" => $province->id,
                 "name_en" => $m["en"],
                 "name_fr" => $m["fr"],

@@ -444,6 +444,8 @@ Route::prefix("v1")->group(function () {
 
     Route::get("countries/{country}/provinces/{province}", ProvincesController::class . "@show")
          ->name("countries.provinces.show");
+    Route::get("countries/{country}/provinces/{province}/cities", CitiesController::class . "@index")
+         ->name("countries.provinces.cities.list");
     Route::post("countries/{country}/provinces/{province}", CitiesController::class . "@store")
          ->name("countries.provinces.cities.store");
 

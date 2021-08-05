@@ -11,8 +11,10 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\Cities\ListCitiesRequest;
 use Neo\Http\Requests\Cities\StoreCityRequest;
 use Neo\Models\City;
+use Neo\Models\Country;
 use Neo\Models\Province;
 
 class CitiesController extends Controller {
@@ -23,5 +25,11 @@ class CitiesController extends Controller {
         $city->save();
 
         return new Response($city);
+    }
+
+    public function index(ListCitiesRequest $request, Country $country, Province $province) {
+        return new Response(City::query()
+                                ->where("province_id", "=", $province->id)
+                                ->get());
     }
 }

@@ -35,6 +35,7 @@ use Neo\Services\Broadcast\Broadcaster;
  * @property string              $name
  * @property int                 $display_duration
  * @property int                 $loop_saturation
+ * @property int                 $priority
  * @property Date                $start_date
  * @property Date                $end_date
  *
@@ -89,6 +90,7 @@ class Campaign extends SecuredModel {
         'forant_id',
         'name',
         'display_duration',
+        'priority',
         'start_date',
         'end_date',
     ];

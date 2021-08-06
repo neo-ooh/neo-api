@@ -96,7 +96,6 @@ class Campaign extends BroadSignModel {
         "pacing_period",
         "pacing_target",
         "parent_id",
-        "priority",
         "state",
     ];
 

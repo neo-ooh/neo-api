@@ -53,6 +53,7 @@ class CampaignsController extends Controller {
             "start_date"       => $campaign->start_date,
             "end_date"         => $campaign->end_date,
             "loop_saturation"  => $campaign->loop_saturation,
+            "priority"         => $campaign->priority,
         ] = $request->validated();
 
         // If no name was specified for the campaign, we generate one

@@ -79,6 +79,7 @@ class CreateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
         $bsCampaign->saturation               = $campaign->loop_saturation > 0
             ? $campaign->loop_saturation
             : $campaign->schedules->filter(fn($schedule) => $schedule->is_approved)->count();
+        $bsCampaign->priority       = $campaign->priority;
         $bsCampaign->default_fullscreen       = false;
         $bsCampaign->create();
 

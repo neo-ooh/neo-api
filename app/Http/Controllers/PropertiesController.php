@@ -56,7 +56,7 @@ class PropertiesController extends Controller {
         // This group is not a property, does it has properties below it ?
         /** @var Actor $actor */
         $actor = Actor::query()->find($propertyId);
-        $childrenIds = $actor->selectActors()->directChildren()->where("is_group", "=", true)->get("id")->pluck("id");
+        $childrenIds = $actor->selectActors()->children()->where("is_group", "=", true)->get("id")->pluck("id");
 
         if(count($childrenIds) === 0) {
             throw new HttpException(404);

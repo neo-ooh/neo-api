@@ -58,11 +58,12 @@ class PropertiesController extends Controller {
         $actor = Actor::query()->find($propertyId);
         $childrenIds = $actor->selectActors()->directChildren()->where("is_group", "=", true)->get("id")->pluck("id");
 
-        if(count($childrenIds) > 0) {
-            return new Response(Property::query()->findMany($childrenIds)->load(["actor", "traffic"]));
+        if(count($childrenIds) === 0) {
+            throw new HttpException(404);
         }
 
-        throw new HttpException(404);
+        $actor->properties = Property::query()->findMany($childrenIds)->load(["actor", "traffic"]);
+        return new Response($actor);
     }
 
     public function update(UpdatePropertyRequest $request, Property $property) {

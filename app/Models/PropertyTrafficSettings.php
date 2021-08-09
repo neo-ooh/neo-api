@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int                       $placeholder_value
  *
  * @property int                       $property_id
+ * @property Property                  $property
  * @property Collection<TrafficSource> $source
  */
 class PropertyTrafficSettings extends Model {
@@ -58,6 +59,10 @@ class PropertyTrafficSettings extends Model {
     protected $with = ["data", "source"];
 
     protected $fillable = ["is_required", "start_year", "grace_override"];
+
+    public function property() {
+        return $this->belongsTo(Property::class, "property_id", "actor_id");
+    }
 
     public function data(): HasMany {
         return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");

@@ -90,7 +90,7 @@ class AddressesComponentsSeeder extends Seeder {
                 "province_id" => $province->id,
                 "name_en" => $m["en"],
                 "name_fr" => $m["fr"],
-            ])->values());
+            ])->toArray());
         }
     }
 }

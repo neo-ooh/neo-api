@@ -14,6 +14,7 @@ use Illuminate\Database\Seeder;
 use Neo\Models\Country;
 use Neo\Models\Market;
 use Neo\Models\Province;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class AddressesComponentsSeeder extends Seeder {
     /**
@@ -86,11 +87,11 @@ class AddressesComponentsSeeder extends Seeder {
             /** @var Province $province */
             $province = Province::query()->where("slug", "=", $provinceCode)->first();
 
-            Market::query()->firstOrCreate(collect($ms)->map(fn($m) => [
+            collect($ms)->each(fn($m) => Market::query()->firstOrCreate([
                 "province_id" => $province->id,
                 "name_en" => $m["en"],
                 "name_fr" => $m["fr"],
-            ])->toArray());
+            ]));
         }
     }
 }

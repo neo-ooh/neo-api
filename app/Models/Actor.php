@@ -646,7 +646,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return Campaign::STATUS_OFFLINE;
     }
 
-    public function getCoumpoundTrafficAttribute() {
+    public function getCompoundTrafficAttribute() {
         if($this->is_property) {
             return $this
                 ->property
@@ -665,22 +665,23 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return null;
         }
 
-        $children = $this->selectActors()->children()->where("is_group", "=", true)->get();
+        $children = $this->selectActors()->directChildren()->where("is_group", "=", true)->get();
 
-        $childrenData = $children->map(fn($child) => $child->coumpound_traffic);
+        $childrenData = $children->map(fn($child) => $child->compound_traffic);
 
         $trafficValues = new Collection();
 
         foreach ($childrenData as $dataset) {
             foreach ($dataset as $year => $yearValues) {
                 if(!$trafficValues->has($year)) {
-                    $trafficValues[$year] = $yearValues;
-                    continue;
+                    $trafficValues[$year] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 }
 
+                $v = $trafficValues[$year];
                 foreach ($yearValues as $monthIndex => $traffic) {
-                    $trafficValues[$year][$monthIndex] += $traffic;
+                    $v[$monthIndex] += $traffic;
                 }
+                $trafficValues[$year] = $v;
             }
         }
 

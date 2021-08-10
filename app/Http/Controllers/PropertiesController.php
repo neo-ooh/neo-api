@@ -53,16 +53,23 @@ class PropertiesController extends Controller {
             return new Response($property->load(["actor", "traffic", "address"]));
         }
 
-        // This group is not a property, does it has properties below it ?
+        // Since the requested actor is not a property, we'll either load all its children data in a compound, or its own.
         /** @var Actor $actor */
         $actor = Actor::query()->find($propertyId);
-        $childrenIds = $actor->selectActors()->children()->where("is_group", "=", true)->get("id")->pluck("id");
 
-        if(count($childrenIds) === 0) {
-            throw new HttpException(404);
+        if($request->input("summed", false)) {
+            $actor->append("compound_traffic");
+            $actor->makeHidden("property");
+            return new Response($actor);
         }
 
-        $actor->properties = Property::query()->findMany($childrenIds)->load(["actor", "traffic"])->append("actor.coumpound_traffic");
+        $actor->properties = $actor->selectActors()
+                                   ->directChildren()
+                                   ->where("is_group", "=", true)
+                                   ->get()
+                                   ->append("compound_traffic");
+
+        $actor->properties->makeHidden("property");
 
         return new Response($actor);
     }

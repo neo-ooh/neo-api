@@ -66,6 +66,7 @@ class PropertiesController extends Controller {
         $actor->properties = $actor->selectActors()
                                    ->directChildren()
                                    ->where("is_group", "=", true)
+                                   ->orderBy("name")
                                    ->get()
                                    ->append("compound_traffic");
 

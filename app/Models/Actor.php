@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -68,6 +69,8 @@ use Neo\Rules\AccessibleActor;
  * @property TwoFactorToken twoFactorToken
  * @property RecoveryToken  recoveryToken
  * @property SignupToken    signupToken
+ *
+ * @property Property       $property
  *
  * @property Collection     accessible_actors
  * @property Collection     shared_actors
@@ -641,5 +644,46 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         return Campaign::STATUS_OFFLINE;
+    }
+
+    public function getCoumpoundTrafficAttribute() {
+        if($this->is_property) {
+            return $this
+                ->property
+                ->traffic
+                ->data
+                ->groupBy(["year", "month"])
+                ->map(fn($yearData) =>
+                    $yearData->map(fn($monthData) =>
+                        $monthData->map(fn($d) => $d->traffic ?? $d->temporary)
+                                  ->sum()
+                    )
+                );
+        }
+
+        if(!$this->is_group) {
+            return null;
+        }
+
+        $children = $this->selectActors()->children()->where("is_group", "=", true)->get();
+
+        $childrenData = $children->map(fn($child) => $child->coumpound_traffic);
+
+        $trafficValues = new Collection();
+
+        foreach ($childrenData as $dataset) {
+            foreach ($dataset as $year => $yearValues) {
+                if(!$trafficValues->has($year)) {
+                    $trafficValues[$year] = $yearValues;
+                    continue;
+                }
+
+                foreach ($yearValues as $monthIndex => $traffic) {
+                    $trafficValues[$year][$monthIndex] += $traffic;
+                }
+            }
+        }
+
+        return $trafficValues;
     }
 }

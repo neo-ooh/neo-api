@@ -62,7 +62,8 @@ class PropertiesController extends Controller {
             throw new HttpException(404);
         }
 
-        $actor->properties = Property::query()->findMany($childrenIds)->load(["actor", "traffic"]);
+        $actor->properties = Property::query()->findMany($childrenIds)->load(["actor", "traffic"])->append("actor.coumpound_traffic");
+
         return new Response($actor);
     }
 

@@ -176,6 +176,7 @@ return [
         Neo\Providers\AuthServiceProvider::class,
         Neo\Providers\EventServiceProvider::class,
         Neo\Providers\RouteServiceProvider::class,
+        Neo\Providers\TelescopeServiceProvider::class,
 
         Neo\Providers\DBServiceProvider::class,
         Neo\Providers\ThirdPartiesServicesProvider::class,

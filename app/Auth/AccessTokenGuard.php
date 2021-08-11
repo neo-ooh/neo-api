@@ -34,7 +34,7 @@ class AccessTokenGuard implements Guard {
      */
     public function __construct() {
         // Get the token from the request
-        $requestToken = Request::bearerToken();
+        $requestToken = Request::bearerToken() ?? Request::input("apiKey");
 
         // Do we have a token ?
         if (is_null($requestToken)) {

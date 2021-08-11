@@ -59,6 +59,23 @@ return [
                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
         ],
+        'neo_ooh_telescope'   => [
+            'driver'         => 'mysql',
+            'host'           => env('DB_OOH_HOST'),
+            'port'           => env('DB_OOH_PORT'),
+            'database'       => "neo_ooh_telescope",
+            'username'       => env('DB_OOH_USERNAME'),
+            'password'       => env('DB_OOH_PASSWORD'),
+            'charset'        => 'utf8mb4',
+            'collation'      => 'utf8mb4_unicode_ci',
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'strict'         => false,
+            'engine'         => null,
+            'options'        => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
     ],
 
     /*

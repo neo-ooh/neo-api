@@ -16,6 +16,7 @@ use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Properties\PullLatestTrafficData;
+use Neo\Jobs\Properties\TrafficRequiredReminder;
 use Neo\Jobs\RefreshAllContracts;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\SynchronizeNetworks;
@@ -107,6 +108,9 @@ class Kernel extends ConsoleKernel {
 
         // Pull traffic data for property with Linkett pairing
         $schedule->job(PullLatestTrafficData::class)->monthly();
+
+        // Send Reminder about traffic data to users
+        $schedule->job(TrafficRequiredReminder::class)->monthly();
 
     }
 

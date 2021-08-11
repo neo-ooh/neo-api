@@ -83,7 +83,7 @@
                     Bonjour {{ $actor->name }},<br/><br/>
 
                     <b>Nous vous écrivons aujourd’hui afin de vous rappeler l’importance de compléter les données d’achalandage
-                        pour le mois de {{ $date->formatLocalized('F') }}.</b><br/><br/>
+                        pour le mois de {{ $date->format('F') }}.</b><br/><br/>
 
                     Comme vous le comprenez, l’achalandage mensuel des établissements de nos différents réseaux est une donnée
                     essentielle pour nos clients.<b> Dans ce contexte, votre collaboration est essentielle.</b><br/>
@@ -120,7 +120,7 @@
                     Hello {{ $actor->name }},<br/><br/>
 
                     <b>We are writing to you today to remind you of the importance of completing traffic data for the month
-                        of {{ $date->formatLocalized('F') }}.</b><br/><br/>
+                        of {{ $date->format('F') }}.</b><br/><br/>
 
                     As you will understand, the monthly traffic of the establishments in our various networks is essential data
                     for our clients.<b> In this context, your collaboration is essential.</b><br/>

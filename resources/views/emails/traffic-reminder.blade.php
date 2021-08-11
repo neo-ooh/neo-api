@@ -86,18 +86,18 @@
                         pour le mois de {{ $date->formatLocalized('F') }}.</b><br/><br/>
 
                     Comme vous le comprenez, l’achalandage mensuel des établissements de nos différents réseaux est une donnée
-                    essentielle pour nos clients.<b> Dans ce contexte, votre collaboration est essentielle.</b><br/><br/>
+                    essentielle pour nos clients.<b> Dans ce contexte, votre collaboration est essentielle.</b><br/>
                 </p>
                 <p>
                     Si par contre, vous n’avez pas encore complété les données d’achalandage de 2019 et des mois de 2021 jusqu’à
                     aujourd’hui, sachez que Neo a développé un module appelé « Propriétés » sur son application « Connect » qui
-                    vous permettra de compléter l’information propre à votre établissement en trois étapes simples :
+                    vous permettra de compléter l’information propre à votre établissement en trois étapes simples&nbsp;:
                 <ol>
                     <li>Compléter les informations d’achalandage concernant 2019 une seule fois</li>
                     <li>Compléter les informations d’achalandage concernant 2021</li>
                     <li>Chaque mois, compléter l’information d’achalandage du mois précédent</li>
                 </ol>
-
+                <br/>
                 <b>Si vous ne disposez pas de cette information ou vous ne considérez pas être la personne identifiée pour nous
                     fournir ce type d’information, merci de nous fournir les coordonnées de la personne à qui nous devons nous
                     adresser. Nous lui ferons alors parvenir un accès personnalisé sur cette section de l’application Connect.</b><br/><br/><br/>
@@ -118,30 +118,30 @@
             <td colspan="2">
                 <p>
                     Hello {{ $actor->name }},<br/><br/>
-                    <b>The monthly traffic of the establishments in our networks is essential data for our clients.</b> For
-                    several years now, the advertising industry and media buyers have been demanding precise data on their
-                    clientele from their media partners.<br/><br/>
 
-                    <b>In this context, your collaboration is essential.</b> To facilitate access to this information, Neo has
-                    developed a module called "Properties" on its "Connect" application that will allow each of its 400+ partners
-                    to complete the information specific to their establishment.<br/><br/>
+                    <b>We are writing to you today to remind you of the importance of completing traffic data for the month
+                        of {{ $date->formatLocalized('F') }}.</b><br/><br/>
+
+                    As you will understand, the monthly traffic of the establishments in our various networks is essential data
+                    for our clients.<b> In this context, your collaboration is essential.</b><br/>
                 </p>
-                <div style="text-align: center;">A NEW WAY TO COMMUNICATE THIS ESSENTIAL INFORMATION TO US</div>
                 <p>
-                    Each month, a reminder will be sent to you asking you to provide us with your establishment's monthly traffic
-                    for the month just ended (number of visits)<br/><br/>
+                    If you haven’t yet completed the traffic data for 2019 and for the months of 2021 to today, be aware that Neo
+                    has developed a module called "Properties" on its "Connect" application that will allow you to complete the
+                    information specific to your establishment in three easy steps:
+                <ol>
+                    <li>Complete the required traffic information for the reference year, 2019</li>
+                    <li>Complete the traffic information for 2021</li>
+                    <li>Each month, complete the previous month's information</li>
+                </ol>
+                <br/>
+                <b>If you do not have this information or you do not consider yourself to be the person identified to provide us
+                    with this type of information, please provide us with the contact information of the person we should contact.
+                    We will then send them personalized access to this section of the Connect application.</b><br/><br/><br/>
 
-                    This data will be compared to that of 2019, which we will consider as the reference year given the recent
-                    pandemic that we have all experienced. You will only have to complete the information for 2019 one time, and
-                    from the data entered a comparison will be calculated automatically.<br/><br/>
+                We thank you for your cooperation and remain available for any questions or clarifications.<br/><br/>
 
-                    <b>If you do not have this data, please provide us with the contact information of the person who is
-                        responsible for this task. We will then send them a personalized access to this section of the Connect
-                        application.</b><br/><br/><br/>
-
-                    We thank you for your cooperation and remain available for any questions or clarifications.<br/><br/>
-
-                    The Neo-ooh team.
+                The Neo-ooh team.
                 </p>
                 <h3>
                     <a href="https://connect.neo-ooh.com/">

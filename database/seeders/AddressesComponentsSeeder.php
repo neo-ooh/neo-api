@@ -65,14 +65,14 @@ class AddressesComponentsSeeder extends Seeder {
                 ["en" => "Ottawa", "fr" => "Ottawa"],
             ],
             "MB" => [
-                ["en" => "Winnipeg & Reqions", "fr" => "Winnipeg & Réqions"],
+                ["en" => "Winnipeg & Regions", "fr" => "Winnipeg & Regions"],
             ],
             "SK" => [
-                ["en" => "Regina & Reqions", "fr" => "Regina & Réqions"],
+                ["en" => "Regina & Regions", "fr" => "Regina & Régions"],
             ],
             "AB" => [
-                ["en" => "Edmonton & Reqions", "fr" => "Edmonton & Réqions"],
-                ["en" => "Calgary & Reqions", "fr" => "Calgary & Réqions"],
+                ["en" => "Edmonton & Regions", "fr" => "Edmonton & Régions"],
+                ["en" => "Calgary & Regions", "fr" => "Calgary & Régions"],
             ],
             "BC" => [
                 ["en" => "Greater Vancouver Area", "fr" => "Grande Région de Vancouver"],

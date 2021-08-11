@@ -2,6 +2,7 @@
 
 use Laravel\Telescope\Http\Middleware\Authorize;
 use Laravel\Telescope\Watchers;
+use Neo\Http\Middleware\ForceHttpsMiddleware;
 
 return [
 
@@ -76,6 +77,7 @@ return [
     */
 
     'middleware' => [
+        ForceHttpsMiddleware::class,
 //        Authorize::class,
     ],
 

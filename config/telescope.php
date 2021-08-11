@@ -78,7 +78,7 @@ return [
 
     'middleware' => [
         ForceHttpsMiddleware::class,
-//        Authorize::class,
+        Authorize::class,
     ],
 
     /*

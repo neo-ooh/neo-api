@@ -77,6 +77,7 @@ return [
     */
 
     'middleware' => [
+        'auth:access-tokens',
         ForceHttpsMiddleware::class,
 //        Authorize::class,
     ],

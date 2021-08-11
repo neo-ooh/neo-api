@@ -48,7 +48,7 @@ use phpDocumentor\Reflection\Types\Array_;
  * @property Container container
  *
  * @method static Collection all(BroadsignClient $client)
- * @method static Collection get(BroadsignClient $client, )
+ * @method static Location get(BroadsignClient $client, int $displayUnitId)
  * @method static Collection byReservable(BroadsignClient $client, array $params)
  */
 class Location extends BroadSignModel {

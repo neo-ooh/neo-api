@@ -40,6 +40,7 @@ class Kernel extends ConsoleKernel {
         // network:update-contracts
         RefreshAllContracts::class,
 
+        // hotfix:...
         Hotfixes\DisableFullscreenEverywhere::class,
         Hotfixes\RetargetAllCampaigns::class,
         Hotfixes\RetargetAllCreatives::class,
@@ -104,7 +105,7 @@ class Kernel extends ConsoleKernel {
          * Monthly tasks
          */
 
-        // End of schedule email
+        // Pull traffic data for property with Linkett pairing
         $schedule->job(PullLatestTrafficData::class)->monthly();
 
     }

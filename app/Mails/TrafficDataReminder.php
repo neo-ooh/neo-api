@@ -14,24 +14,23 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Date;
 use Neo\Models\Actor;
 
 class TrafficDataReminder extends ReliableEmail
 {
     use Queueable, SerializesModels;
 
-    public Actor $actor;
-
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(Actor $actor)
+    public function __construct(public Actor $actor, public Carbon $date)
     {
         parent::__construct();
-        $this->actor = $actor;
     }
 
     /**

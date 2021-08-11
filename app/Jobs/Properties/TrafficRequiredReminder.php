@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs\Properties;
 
+use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -21,7 +22,6 @@ use Mail;
 use Neo\Enums\Capability;
 use Neo\Mails\TrafficDataReminder;
 use Neo\Models\Property;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * This job identifies which user are required to input traffic informations, and sends them an email about it.
@@ -34,22 +34,31 @@ class TrafficRequiredReminder implements ShouldQueue {
      */
     public function handle(): void {
         // We take all properties that require traffic informations and whose past month traffic data is missing
+        $lastMonth  = Date::now()->subMonth()->startOfMonth();
         $properties = Property::query()
                               ->where("require_traffic", "=", true)
-                              ->whereDoesntHave("traffic.data", function (Builder $query) {
-                                  $lastMonth = Date::now()->subMonth()->startOfMonth();
+             // Either no data at all for the past month
+                              ->whereDoesntHave("traffic.data", function (Builder $query) use ($lastMonth) {
                                   $query->where("year", "=", $lastMonth->year)
                                         ->where("month", "=", $lastMonth->month - 1); // Sub one to the month as its index is one-indexed by carbon
+                              })
+            // Or no traffic data for the past month (temporary/internal data may be present but doesn't count)
+                              ->orWhereHas("traffic.data", function (Builder $query) use ($lastMonth) {
+                                  $query->where("year", "=", $lastMonth->year)
+                                        ->where("month", "=", $lastMonth->month - 1)
+                                        ->whereNull("traffic");
                               })->get();
 
         // For each properties, we need the list of actors responsible for it
         $actors = $properties->map(fn(Property $property) => $property->actor->getActorsInHierarchyWithCapability(Capability::properties_traffic()))
-            ->flatten(1)
-            ->unique("id");
+                             ->flatten(1)
+                             ->unique("id");
+
+        $date = Date::now()->subMonth();
 
         // We have a list of actors responsible for inputing traffic data for properties that are missing last month data. And we have removed any duplicate. We can now send the emails.
-        foreach($actors as $actor) {
-            Mail::to($actor)->send(new TrafficDataReminder($actor));
+        foreach ($actors as $actor) {
+            Mail::to($actor)->send(new TrafficDataReminder($actor, $date));
         }
     }
 }

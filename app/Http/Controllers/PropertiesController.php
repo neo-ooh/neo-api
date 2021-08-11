@@ -9,6 +9,7 @@ use Neo\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Http\Requests\Properties\UpdateAddressRequest;
 use Neo\Http\Requests\Properties\UpdatePropertyRequest;
+use Neo\Jobs\PullPropertyAddressFromBroadSignJob;
 use Neo\Models\Actor;
 use Neo\Models\Address;
 use Neo\Models\City;
@@ -41,6 +42,9 @@ class PropertiesController extends Controller {
 
         // Create the traffic settings
         $property->traffic()->create();
+
+        // Load the address of the property
+        PullPropertyAddressFromBroadSignJob::dispatch($property->actor_id);
 
         return new Response($property->load(["actor", "traffic"]), 201);
     }

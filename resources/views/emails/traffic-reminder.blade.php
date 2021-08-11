@@ -83,7 +83,7 @@
                     Bonjour {{ $actor->name }},<br/><br/>
 
                     <b>Nous vous écrivons aujourd’hui afin de vous rappeler l’importance de compléter les données d’achalandage
-                        pour le mois de {{ $date->format('F') }}.</b><br/><br/>
+                        pour le mois de {{ $date->locale('fr')->format('F') }}.</b><br/><br/>
 
                     Comme vous le comprenez, l’achalandage mensuel des établissements de nos différents réseaux est une donnée
                     essentielle pour nos clients.<b> Dans ce contexte, votre collaboration est essentielle.</b><br/>

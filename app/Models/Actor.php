@@ -548,7 +548,9 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
         // If the token is not validated and is too old, recreate one and stop here
         if (!$token->validated && $token->created_at->diffInMinutes(Date::now()) >= 15) {
-            $token->delete();
+            TwoFactorToken::query()
+                          ->where("actor_id", "=", $this->id)
+                          ->delete();
 
             if($updateIfNecessary) {
                 $token = new TwoFactorToken();

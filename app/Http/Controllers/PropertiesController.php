@@ -82,12 +82,7 @@ class PropertiesController extends Controller {
             return new Response(null, 404);
         }
 
-        $actor->properties = $actor->selectActors()
-                                   ->directChildren()
-                                   ->where("is_group", "=", true)
-                                   ->orderBy("name")
-                                   ->get()
-                                   ->append("compound_traffic");
+        $actor->properties = $childGroups->append("compound_traffic");
 
         $actor->properties->makeHidden("property");
 

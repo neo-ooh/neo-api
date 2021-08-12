@@ -2,6 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use InvalidArgumentException;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
@@ -57,6 +58,7 @@ class PropertiesController extends Controller {
             return new Response($property->load(["actor", "traffic", "address"]));
         }
 
+
         // Since the requested actor is not a property, we'll either load all its children data in a compound, or its own.
         /** @var Actor $actor */
         $actor = Actor::query()->find($propertyId);
@@ -65,6 +67,19 @@ class PropertiesController extends Controller {
             $actor->append("compound_traffic");
             $actor->makeHidden("property");
             return new Response($actor);
+        }
+
+        // Is there any children bellow ?
+        /** @var Collection $childGroups */
+        $childGroups = $actor->selectActors()
+                             ->directChildren()
+                             ->where("is_group", "=", true)
+                             ->orderBy("name")
+                             ->get();
+
+        if($childGroups->isEmpty()) {
+            // No group children, and not a property, return 404;
+            return new Response(null, 404);
         }
 
         $actor->properties = $actor->selectActors()

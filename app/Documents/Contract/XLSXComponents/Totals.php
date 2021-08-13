@@ -115,11 +115,13 @@ class Totals extends Component {
 
         $ws->pushPosition();
 
+        $impressionsTotal = $this->order->getGuaranteedOrders()->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->getGuaranteedOrders()->sum("impressions")) * 1000 : 0;
+
         $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
         $ws->mergeCellsRelative(4);
         $ws->getCurrentCell()->setValue(__("CPM"));
         $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue(($this->order->net_investment / $this->order->getGuaranteedOrders()->sum("impressions")) * 1000);
+        $ws->getCurrentCell()->setValue($impressionsTotal);
         $ws->setRelativeCellFormat('$#,##0.00');
 
         $ws->popPosition();
@@ -138,11 +140,13 @@ class Totals extends Component {
 
         $ws->pushPosition();
 
+        $cpm = $this->order->orderLines->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->orderLines->sum("impressions")) * 1000 : 0;
+
         $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
         $ws->mergeCellsRelative(4);
         $ws->getCurrentCell()->setValue(__("common.potential-cpm"));
         $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue(($this->order->net_investment / $this->order->orderLines->sum("impressions")) * 1000);
+        $ws->getCurrentCell()->setValue($cpm);
         $ws->setRelativeCellFormat('$#,##0.00');
 
         $ws->popPosition();
@@ -167,7 +171,7 @@ class Totals extends Component {
         $ws->mergeCellsRelative(4);
         $ws->getCurrentCell()->setValue(__("common.cpm-covid"));
         $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue(($this->order->net_investment / $covidGuaranteedImpressions) * 1000);
+        $ws->getCurrentCell()->setValue($covidGuaranteedImpressions > 0 ? ($this->order->net_investment / $covidGuaranteedImpressions) * 1000 : 0);
         $ws->setRelativeCellFormat('$#,##0.00');
 
         $ws->popPosition();
@@ -192,7 +196,7 @@ class Totals extends Component {
         $ws->mergeCellsRelative(4);
         $ws->getCurrentCell()->setValue(__("common.potential-cpm-covid"));
         $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue(($this->order->net_investment / $covidPotentialmpressions ) * 1000);
+        $ws->getCurrentCell()->setValue($covidPotentialmpressions > 0 ? ($this->order->net_investment / $covidPotentialmpressions ) * 1000 : 0);
         $ws->setRelativeCellFormat('$#,##0.00');
 
         $ws->popPosition();

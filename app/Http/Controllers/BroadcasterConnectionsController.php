@@ -10,6 +10,7 @@ use Neo\Http\Requests\BroadcasterConnections\StoreConnectionRequest;
 use Neo\Http\Requests\BroadcasterConnections\UpdateConnectionRequest;
 use Neo\Models\BroadcasterConnection;
 use Neo\Models\Casts\ConnectionSettingsBroadSign;
+use Neo\Models\Casts\ConnectionSettingsOdoo;
 use Neo\Models\Casts\ConnectionSettingsPiSignage;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use function Ramsey\Uuid\v4;
@@ -27,7 +28,6 @@ class BroadcasterConnectionsController extends Controller {
         $connection->uuid        = v4();
         $connection->name        = $name;
         $connection->broadcaster = $type;
-        $connection->save();
 
         // Set up settings for the connection depending on the provider
         switch ($type) {
@@ -45,6 +45,12 @@ class BroadcasterConnectionsController extends Controller {
                 ]);
                 break;
             case "odoo":
+                $settings = new ConnectionSettingsOdoo([
+                    "server_url" => $request->input("server_url"),
+                    "username"      => $request->input("username"),
+                    "password"      => $request->input("password"),
+                    "database"      => $request->input("database"),
+                ]);
                 break;
         }
 

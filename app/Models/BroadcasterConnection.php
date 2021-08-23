@@ -16,7 +16,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Neo\Services\Broadcast\Broadcaster;
+use Neo\Models\Casts\BroadcasterSettings;
+use Neo\Models\Casts\ConnectionSettingsBroadSign;
+use Neo\Models\Casts\ConnectionSettingsPiSignage;
 
 /**
  * Class BroadcasterConnections
@@ -46,19 +48,13 @@ class BroadcasterConnection extends Model {
     protected $table = "broadcasters_connections";
 
     protected $casts = [
-        "active" => "bool"
+        "active"   => "bool",
+        "settings" => BroadcasterSettings::class,
     ];
 
-    public function getSettingsAttribute() {
-        switch ($this->broadcaster) {
-            case Broadcaster::BROADSIGN:
-                return $this->hasOne(ConnectionSettingsBroadSign::class, "connection_id")->getResults();
-            case Broadcaster::PISIGNAGE:
-                return $this->hasOne(ConnectionSettingsPiSignage::class, "connection_id")->getResults();
-            default:
-                return null;
-        }
-    }
+    protected $hidden = [
+        "settings"
+    ];
 
     public function displayTypes(): HasMany {
         return $this->hasMany(DisplayType::class, "connection_id")->orderBy("name");

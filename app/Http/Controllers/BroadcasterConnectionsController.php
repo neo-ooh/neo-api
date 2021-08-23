@@ -9,14 +9,14 @@ use Neo\Http\Requests\BroadcasterConnections\ListConnectionRequest;
 use Neo\Http\Requests\BroadcasterConnections\StoreConnectionRequest;
 use Neo\Http\Requests\BroadcasterConnections\UpdateConnectionRequest;
 use Neo\Models\BroadcasterConnection;
-use Neo\Models\ConnectionSettingsBroadSign;
-use Neo\Models\ConnectionSettingsPiSignage;
+use Neo\Models\Casts\ConnectionSettingsBroadSign;
+use Neo\Models\Casts\ConnectionSettingsPiSignage;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use function Ramsey\Uuid\v4;
 
 class BroadcasterConnectionsController extends Controller {
     public function index(): Response {
-        return new Response(BroadcasterConnection::query()->orderBy("name")->get()->append("settings"));
+        return new Response(BroadcasterConnection::query()->orderBy("name")->get()->makeVisible("settings"));
     }
 
     public function store(StoreConnectionRequest $request): Response {
@@ -28,23 +28,30 @@ class BroadcasterConnectionsController extends Controller {
         $connection->name        = $name;
         $connection->broadcaster = $type;
         $connection->save();
-        $connection->refresh();
 
         // Set up settings for the connection depending on the provider
-        if ($type === 'broadsign') {
-            $settings                      = new ConnectionSettingsBroadSign();
-            $settings->domain_id           = $request->input("domain_id");
-            $settings->default_customer_id = $request->input("default_customer_id");
-            $settings->default_tracking_id = $request->input("default_tracking_id");
-        } else { // if ($type === 'pisignage')
-            $settings             = new ConnectionSettingsPiSignage();
-            $settings->server_url = $request->input("server_url");
-            $settings->token      = $request->input("token");
+        switch ($type) {
+            case "broadsign":
+                $settings = new ConnectionSettingsBroadSign([
+                    "domain_id"           => $request->input("domain_id"),
+                    "default_customer_id" => $request->input("default_customer_id"),
+                    "default_tracking_id" => $request->input("default_tracking_id"),
+                ]);
+                break;
+            case "pisignage":
+                $settings = new ConnectionSettingsPiSignage([
+                    "server_url" => $request->input("server_url"),
+                    "token"      => $request->input("token"),
+
+                ]);
+                break;
+            case "odoo":
+                break;
         }
 
-        $settings->connection_id = $connection->id;
-        $settings->save();
-        $settings->refresh();
+        $connection->settings = $settings;
+        $connection->save();
+        $connection->refresh();
 
         if ($type === 'broadsign') {
             // Store the broadsign certificate
@@ -97,9 +104,10 @@ class BroadcasterConnectionsController extends Controller {
             $connectionSettings->token = $request->input("token", $connectionSettings->token);
         }
 
-        $connectionSettings->save();
+        $connection->settings = $connectionSettings;
+        $connection->save();
 
-        return new Response($connection->append("settings"));
+        return new Response($connection->makeVisible("settings"));
     }
 
     public function destroy(DestroyConnectionRequest $request, BroadcasterConnection $connection): Response {

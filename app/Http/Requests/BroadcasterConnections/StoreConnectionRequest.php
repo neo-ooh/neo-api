@@ -25,7 +25,7 @@ class StoreConnectionRequest extends FormRequest {
     public function rules() {
         return [
             "name"                => ["required", "string"],
-            "type"                => ["required", Rule::in(["broadsign", "pisignage"])],
+            "type"                => ["required", Rule::in(["broadsign", "pisignage", "odoo"])],
 
             // BroadSign connection parameters
             "certificate"         => ["required_if:type,broadsign", "file"],
@@ -33,9 +33,14 @@ class StoreConnectionRequest extends FormRequest {
             "default_customer_id" => ["required_if:type,broadsign", "nullable", "integer"],
             "default_tracking_id" => ["required_if:type,broadsign", "nullable", "integer"],
 
+            "server_url"               => ["required_if:type,pisignage,odoo", "url"],
             // PiSignage connection parameters
-            "server_url"               => ["required_if:type,pisignage", "url"],
-            "token"               => ["required_if:type,pisignage", "string"],
+            "token"              => ["required_if:type,pisignage", "string"],
+
+            // Odoo connection parameters
+            "username"               => ["required_if:type,odoo"],
+            "password"               => ["required_if:type,odoo"],
+            "database"               => ["required_if:type,odoo"],
         ];
     }
 }

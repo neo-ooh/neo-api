@@ -19,6 +19,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Casts\BroadcasterSettings;
 use Neo\Models\Casts\ConnectionSettingsBroadSign;
 use Neo\Models\Casts\ConnectionSettingsPiSignage;
+use Neo\Services\API\Traits\HasAttributes;
+use Neo\Services\Broadcast\Broadcaster;
+use RuntimeException;
 
 /**
  * Class BroadcasterConnections
@@ -49,7 +52,7 @@ class BroadcasterConnection extends Model {
 
     protected $casts = [
         "active"   => "bool",
-        "settings" => BroadcasterSettings::class,
+        "settings" => "json",
     ];
 
     protected $hidden = [
@@ -58,5 +61,25 @@ class BroadcasterConnection extends Model {
 
     public function displayTypes(): HasMany {
         return $this->hasMany(DisplayType::class, "connection_id")->orderBy("name");
+    }
+
+    public function getSettingsAttribute() {
+        $settings = $this->attributes["settings"] !== null ? $this->attributes["settings"] : [];
+
+        $settings["broadcaster_uuid"] = $this->uuid;
+
+        return match ($this->broadcaster) {
+            Broadcaster::BROADSIGN => new ConnectionSettingsBroadSign($settings),
+            Broadcaster::PISIGNAGE => new ConnectionSettingsPiSignage($settings),
+            default => null,
+        };
+    }
+
+    public function setSettingsAttribute($value) {
+        if (!in_array(HasAttributes::class, class_uses($value), true)) {
+            throw new RuntimeException("Bad format");
+        }
+
+        $this->attributes["settings"] = $value->toJson();
     }
 }

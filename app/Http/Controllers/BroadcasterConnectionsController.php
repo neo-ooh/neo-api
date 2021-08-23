@@ -2,7 +2,6 @@
 
 namespace Neo\Http\Controllers;
 
-use Exception;
 use Illuminate\Http\Response;
 use InvalidArgumentException;
 use Neo\Http\Requests\BroadcasterConnections\DestroyConnectionRequest;
@@ -12,7 +11,6 @@ use Neo\Http\Requests\BroadcasterConnections\UpdateConnectionRequest;
 use Neo\Models\BroadcasterConnection;
 use Neo\Models\ConnectionSettingsBroadSign;
 use Neo\Models\ConnectionSettingsPiSignage;
-use Storage;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use function Ramsey\Uuid\v4;
 

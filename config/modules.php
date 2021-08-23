@@ -158,4 +158,8 @@ return [
     "impressions" => [
         "enabled" => env('MODULE_IMPRESSIONS_ENABLED', true),
     ],
+
+    "odoo" => [
+        "enabled" => env('MODULE_ODOO_ENABLED', true),
+    ],
 ];

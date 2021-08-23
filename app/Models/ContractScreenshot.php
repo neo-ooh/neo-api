@@ -13,19 +13,18 @@ use Illuminate\Support\Facades\Storage;
  *
  * @package Neo\Models
  *
- * @property integer $id
- * @property integer $burst_id
- * @property boolean $is_locked
- * @property Date $created_at
- * @property Date $updated_at
+ * @property integer       $id
+ * @property integer       $burst_id
+ * @property boolean       $is_locked
+ * @property Date          $created_at
+ * @property Date          $updated_at
  *
- * @property Burst $burst
+ * @property ContractBurst $burst
  *
- * @property string $file_path
- * @property string $url
+ * @property string        $file_path
+ * @property string        $url
  */
-class ContractScreenshot extends Model
-{
+class ContractScreenshot extends Model {
     use HasFactory;
 
     protected $table = "contracts_screenshots";

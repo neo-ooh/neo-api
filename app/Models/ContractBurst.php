@@ -3,6 +3,7 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -13,26 +14,27 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @package Neo\Models
  *
- * @property integer             $id
- * @property integer             $contract_id
- * @property integer             $reservation_id
- * @property ?integer            $actor_id
- * @property integer             $location_id
- * @property Date                $start_at
- * @property string              $status
- * @property int                 $scale_percent
- * @property int                 $duration_ms
- * @property int                 $frequency_ms
- * @property Date                $created_at
- * @property Date                $updated_at
+ * @property integer                        $id
+ * @property integer                        $contract_id
+ * @property integer                        $reservation_id
+ * @property ?integer                       $actor_id
+ * @property integer                        $location_id
+ * @property Date                           $start_at
+ * @property string                         $status
+ * @property int                            $scale_percent
+ * @property int                            $duration_ms
+ * @property int                            $frequency_ms
+ * @property Date                           $created_at
+ * @property Date                           $updated_at
  *
- * @property integer             $expected_screenshots
- * @property integer             $screenshots_count
+ * @property integer                        $expected_screenshots
+ * @property integer                        $screenshots_count
+ * @property Collection<ContractScreenshot> $screenshots
  *
- * @property Contract            $contract
- * @property ContractReservation $reservation
- * @property Actor               $actor
- * @property Location            $location
+ * @property Contract                       $contract
+ * @property ContractReservation            $reservation
+ * @property Actor                          $actor
+ * @property Location                       $location
  */
 class ContractBurst extends Model {
     use HasFactory;
@@ -72,8 +74,9 @@ class ContractBurst extends Model {
 
         static::deleting(function (ContractBurst $burst) {
             // Delete all the screenshots of the burst
-            foreach($burst->screenshots as $screenshot) {
-                $screenshot->destroy();
+            /** @var ContractScreenshot $screenshot */
+            foreach ($burst->screenshots as $screenshot) {
+                $screenshot->delete();
             }
         });
     }

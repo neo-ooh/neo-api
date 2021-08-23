@@ -16,8 +16,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table("broadcasters_connections", function (Blueprint $table) {
+        Schema::table("broadcasters_connections", function (Blueprint $table)
+        {
+            $table->set("broadcaster", ["broadsign", "pisignage", "odoo"])->change();
             $table->json("settings")->after("active");
+
         });
 
         $broadsignSettings = \Illuminate\Support\Facades\DB::table("connection_settings_broadsign")->get();

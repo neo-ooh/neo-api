@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Casts\BroadcasterSettings;
 use Neo\Models\Casts\ConnectionSettingsBroadSign;
+use Neo\Models\Casts\ConnectionSettingsOdoo;
 use Neo\Models\Casts\ConnectionSettingsPiSignage;
 use Neo\Services\API\Traits\HasAttributes;
 use Neo\Services\Broadcast\Broadcaster;
@@ -74,6 +75,7 @@ class BroadcasterConnection extends Model {
         return match ($this->broadcaster) {
             Broadcaster::BROADSIGN => new ConnectionSettingsBroadSign($settings),
             Broadcaster::PISIGNAGE => new ConnectionSettingsPiSignage($settings),
+            Broadcaster::ODOO => new ConnectionSettingsOdoo($settings),
             default => null,
         };
     }

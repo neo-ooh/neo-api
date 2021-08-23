@@ -52,7 +52,7 @@ class BroadcasterConnection extends Model {
 
     protected $casts = [
         "active"   => "bool",
-        "settings" => "json",
+        "settings" => "array",
     ];
 
     protected $hidden = [

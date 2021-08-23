@@ -11,6 +11,7 @@
 namespace Neo\Services\API\Traits;
 
 use Illuminate\Database\Eloquent\JsonEncodingException;
+use Illuminate\Support\Facades\Log;
 use JsonException;
 
 trait HasAttributes {
@@ -88,7 +89,7 @@ trait HasAttributes {
     public function toJson(int $options = 0): string {
         $json = json_encode($this->attributes, JSON_THROW_ON_ERROR | $options);
 
-        dump($this->attributes);
+        Log::debug($this->attributes);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
             throw new JsonEncodingException(json_last_error_msg());

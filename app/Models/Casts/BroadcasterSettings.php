@@ -3,9 +3,8 @@
 namespace Neo\Models\Casts;
 
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use JsonException;
 use Neo\Models\BroadcasterConnection;
-use Neo\Models\ConnectionSettingsBroadSign;
-use Neo\Models\ConnectionSettingsPiSignage;
 use Neo\Services\API\Traits\HasAttributes;
 use Neo\Services\Broadcast\Broadcaster;
 use RuntimeException;
@@ -17,7 +16,7 @@ class BroadcasterSettings implements CastsAttributes {
     /**
      * @inheritDoc
      * @param BroadcasterConnection $model
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function get($model, string $key, $value, array $attributes) {
         $settings = $value !== null ? json_decode($value, true, 512, JSON_THROW_ON_ERROR) : [];
@@ -35,7 +34,7 @@ class BroadcasterSettings implements CastsAttributes {
      * @inheritDoc
      */
     public function set($model, string $key, $value, array $attributes) {
-        if(!in_array(HasAttributes::class, class_uses($value), true)) {
+        if (!in_array(HasAttributes::class, class_uses($value), true)) {
             throw new RuntimeException("Bad format");
         }
 

@@ -40,7 +40,7 @@ use RuntimeException;
  * @property Date                                                    $updated_at
  * @property Date                                                    $deleted_at
  *
- * @property ConnectionSettingsBroadSign|ConnectionSettingsPiSignage $settings    Settings for the connection, dependant on the
+ * @property ConnectionSettingsBroadSign|ConnectionSettingsPiSignage|ConnectionSettingsOdoo $settings    Settings for the connection, dependant on the
  *           broadcaster type (`broadcaster`) of the connection. Defined in DBServiceProvider
  * @property Collection<DisplayType>                                 $display_types
  *

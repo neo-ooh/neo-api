@@ -91,22 +91,31 @@ class BroadcasterConnectionsController extends Controller {
 
         $connectionSettings = $connection->settings;
 
-        if ($connection->broadcaster === 'broadsign') {
-            if ($request->hasFile("certificate")) {
-                $cert = $request->file("certificate");
+        switch ($type) {
+            case "broadsign":
+                $connectionSettings->domain_id           = $request->input("domain_id");
+                $connectionSettings->default_customer_id = $request->input("default_customer_id");
+                $connectionSettings->default_tracking_id = $request->input("default_tracking_id");
 
-                if (!$cert->isValid()) {
-                    throw new UploadException($cert->getErrorMessage(), $cert->getError());
+                if ($request->hasFile("certificate")) {
+                    $cert = $request->file("certificate");
+
+                    if (!$cert->isValid()) {
+                        throw new UploadException($cert->getErrorMessage(), $cert->getError());
+                    }
+
+                    $cert->storeAs($connectionSettings->certificate_path, $connectionSettings->file_name, ["visibility" => "private"]);
                 }
-
-                $cert->storeAs($connectionSettings->certificate_path, $connectionSettings->file_name, ["visibility" => "private"]);
-            }
-
-            $connectionSettings->domain_id           = $request->input("domain_id");
-            $connectionSettings->default_customer_id = $request->input("default_customer_id");
-            $connectionSettings->default_tracking_id = $request->input("default_tracking_id");
-        } else { // if ($connection->broadcaster === 'pisignage')
-            $connectionSettings->token = $request->input("token", $connectionSettings->token);
+                break;
+            case "pisignage":
+                $connectionSettings->token = $request->input("token", $connectionSettings->token);
+                break;
+            case "odoo":
+                $connectionSettings->server_url = $request->input("server_url", $connectionSettings->server_url);
+                $connectionSettings->username = $request->input("username", $connectionSettings->username);
+                $connectionSettings->password = $request->input("password", $connectionSettings->password);
+                $connectionSettings->database = $request->input("database", $connectionSettings->database);
+                break;
         }
 
         $connection->settings = $connectionSettings;

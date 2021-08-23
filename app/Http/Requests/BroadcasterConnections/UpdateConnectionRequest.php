@@ -7,8 +7,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Neo\Enums\Capability;
 
-class UpdateConnectionRequest extends FormRequest
-{
+class UpdateConnectionRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -35,7 +34,13 @@ class UpdateConnectionRequest extends FormRequest
             "default_tracking_id" => ["required_if:type,broadsign", "nullable", "integer"],
 
             // PiSignage connection parameters
-            "token"               => ["sometimes", "string"]
+            "token"               => ["sometimes", "string"],
+
+            // Odoo connection parameters
+            "server_url"          => ["required_if:type,odoo", "url"],
+            "username"            => ["required_if:type,odoo"],
+            "password"            => ["required_if:type,odoo"],
+            "database"            => ["required_if:type,odoo"],
         ];
     }
 }

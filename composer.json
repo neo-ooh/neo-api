@@ -4,6 +4,12 @@
   "description": "Neo-OOH web services API.",
   "keywords": [],
   "license": "",
+  "repositories": [
+    {
+      "type": "github",
+      "url": "https://github.com/fedeisas/laradoo.git"
+    }
+  ],
   "require": {
     "php": "^8.0",
     "ext-curl": "*",
@@ -15,6 +21,7 @@
     "arkaitzgarro/elastic-apm-laravel": "^3.0",
     "bensampo/laravel-enum": "^3.1",
     "doctrine/dbal": "3.1.1",
+    "edujugon/laradoo": "dev-php_8",
     "fideloper/proxy": "^4.4",
     "firebase/php-jwt": "^5.2",
     "fruitcake/laravel-cors": "^2.0",
@@ -41,6 +48,7 @@
     "fakerphp/faker": "^1.9.1",
     "mockery/mockery": "^1.4.2",
     "nunomaduro/collision": "^5.0",
+    "phpstan/phpstan": "^0.12.96",
     "phpunit/phpunit": "^9.3.3",
     "roave/security-advisories": "dev-latest"
   },

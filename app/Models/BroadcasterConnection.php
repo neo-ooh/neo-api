@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - BroadcasterConnection.php
+ */
 
 namespace Neo\Models;
 
@@ -19,7 +27,7 @@ use Neo\Services\Broadcast\Broadcaster;
  *
  * @property int                                                     $id
  * @property string                                                  $uuid
- * @property string                                                  $broadcaster `\Neo\Enums\Broadcaster`
+ * @property string                                                  $broadcaster `\Neo\Services\Broadcast\Broadcaster`
  * @property string                                                  $name
  * @property bool                                                    $active
  * @property Date                                                    $created_at

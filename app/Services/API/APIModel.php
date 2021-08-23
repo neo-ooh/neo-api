@@ -5,18 +5,16 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - BroadSignModel.php
+ * @neo/api - APIModel.php
  */
 
 namespace Neo\Services\API;
 
 use BadMethodCallException;
-use Facade\FlareClient\Http\Exceptions\BadResponse;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Database\Eloquent\JsonEncodingException;
-use JsonException;
 use JsonSerializable;
+use Neo\Services\API\Traits\HasAttributes;
 
 /**
  * Class APIModel
@@ -24,6 +22,8 @@ use JsonSerializable;
  * @package Neo\BroadSign\Models
  */
 abstract class APIModel implements JsonSerializable, Arrayable {
+    use HasAttributes;
+
     protected static string $key;
     protected static string $unwrapKey;
     protected static array $updatable;
@@ -40,53 +40,6 @@ abstract class APIModel implements JsonSerializable, Arrayable {
     final public function __construct(APIClientInterface $client, array $attributes = []) {
         $this->api        = $client;
         $this->attributes = $attributes;
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return mixed
-     */
-    public function &__get(string $name) {
-        // Check if a method with the specified name exists
-        if (method_exists($this, $name)) {
-            // Yes call it and return
-            return $this->{$name}();
-        }
-
-        // Return the attribute with the provided name
-        return $this->attributes[$name];
-    }
-
-    /**
-     * @param string $name
-     *
-     * @return bool
-     */
-    public function __isset(string $name): bool {
-        return isset($this->attributes[$name]);
-    }
-
-    /**
-     * @param string $name
-     * @param        $value
-     */
-    public function __set(string $name, $value) {
-        $this->attributes[$name] = $value;
-        $this->dirty             = true;
-    }
-
-    /**
-     */
-    public function __toString(): string {
-        try {
-            /** @var string $serialized */
-            $serialized = json_encode($this->attributes, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT);
-        } catch (JsonException $e) {
-            return $e->getMessage();
-        }
-
-        return $serialized;
     }
 
     public function create(): void {
@@ -146,33 +99,5 @@ abstract class APIModel implements JsonSerializable, Arrayable {
      */
     public function jsonSerialize(): array {
         return $this->toArray();
-    }
-
-    /**
-     * Convert the model instance to an array.
-     *
-     * @return array
-     */
-    public function toArray(): array {
-        return $this->attributes;
-    }
-
-    /**
-     * Convert the model instance to JSON.
-     *
-     * @param int $options
-     *
-     * @return string
-     *
-     * @throws JsonException
-     */
-    public function toJson($options = 0): string {
-        $json = json_encode($this->attributes, JSON_THROW_ON_ERROR | $options);
-
-        if (JSON_ERROR_NONE !== json_last_error()) {
-            throw JsonEncodingException::forModel($this, json_last_error_msg());
-        }
-
-        return $json;
     }
 }

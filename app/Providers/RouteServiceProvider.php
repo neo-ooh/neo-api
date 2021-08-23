@@ -33,33 +33,35 @@ class RouteServiceProvider extends ServiceProvider {
 
         $this->routes(function () {
             // Guests and not fully authenticated routes
-            Route::middleware('guests')->group(base_path('routes/auth.php'));
+            Route::group([], base_path('routes/core.auth.php'));
 
+            // Core modules
+            Route::group([], base_path('routes/core.actors.php'));
+            Route::group([], base_path('routes/core.campaigns.php'));
+            Route::group([], base_path('routes/core.formats.php'));
+            Route::group([], base_path('routes/core.libraries.php'));
+            Route::group([], base_path('routes/core.networks.php'));
+            Route::group([], base_path('routes/core.parameters.php'));
+            Route::group([], base_path('routes/core.roles.php'));
 
-            // Authenticated human users routes
-            Route::middleware('default')->group(function () {
-                Route::group([], base_path('routes/api.php'));
-            });
+            Route::group([], base_path('routes/core.misc.php'));
 
+            // Now, we loop all modules to load their routes
+            foreach (config('modules') as $module => $config) {
+                if($module === 'core') { continue; }
 
-            // Routes accessible only by access tokens
-            Route::middleware(['access-tokens', 'dynamics'])->group(function () {
-                Route::group([], base_path('routes/dynamics.php'));
-            });
+                if(!$config["enabled"]) { continue; }
 
+                $routesFile = base_path("routes/module.$module.php");
 
-            // Routes accessible by human users and access-tokens
-            Route::middleware("default+ac")->group(function () {
-                Route::group([], base_path('routes/documents.php'));
-            });
+                if(!file_exists($routesFile)) { continue; }
 
-
-            // Broadsign only routes
-            Route::middleware('broadsign')->group(base_path('routes/broadsign.php'));
+                Route::group([], $routesFile);
+            }
 
 
             // Heartbeat route for up-time monitoring
-            Route::get("/_heartbeat", fn() => new Response())->name("heartbeat");
+            Route::get("/_heartbeat", fn() => new Response());
         });
     }
 

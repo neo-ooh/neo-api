@@ -55,8 +55,9 @@ class Kernel extends HttpKernel {
     protected $middlewareGroups = [
         "default" => [
             "throttle:api",
+            'auth:neo-loa-4,access-tokens',
             SubstituteBindings::class,
-            "auth:neo-loa-4",
+            SimpleErrors::class,
         ],
         'guests'   => [
             'throttle:api',
@@ -76,17 +77,6 @@ class Kernel extends HttpKernel {
         ],
         'broadsign'   => [
             SubstituteBindings::class,
-        ],
-        'access-tokens'   => [
-            'throttle:api',
-            'auth:access-tokens',
-            SubstituteBindings::class,
-        ],
-        'default+ac'   => [
-            'throttle:api',
-            'auth:neo-loa-4,access-tokens',
-            SubstituteBindings::class,
-            SimpleErrors::class,
         ],
     ];
 

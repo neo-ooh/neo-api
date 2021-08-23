@@ -42,7 +42,6 @@ class BroadcasterConnectionsController extends Controller {
                 $settings = new ConnectionSettingsPiSignage([
                     "server_url" => $request->input("server_url"),
                     "token"      => $request->input("token"),
-
                 ]);
                 break;
             case "odoo":

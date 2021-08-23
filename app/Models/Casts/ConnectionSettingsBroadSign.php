@@ -11,6 +11,7 @@
 namespace Neo\Models\Casts;
 
 use Illuminate\Support\Arr;
+use JsonSerializable;
 use Neo\Services\API\Traits\HasAttributes;
 
 /**
@@ -22,7 +23,7 @@ use Neo\Services\API\Traits\HasAttributes;
  * @property int                   $default_tracking_id
  *
  */
-class ConnectionSettingsBroadSign {
+class ConnectionSettingsBroadSign implements JsonSerializable {
     use HasAttributes;
 
     public string $certificate_path = "secure/certs/";
@@ -34,5 +35,9 @@ class ConnectionSettingsBroadSign {
 
         $this->file_name = Arr::get($this->attributes, "broadcaster_uuid") . ".pem";
         $this->file_path = $this->certificate_path . $this->file_name;
+    }
+
+    public function jsonSerialize() {
+        return $this->attributes;
     }
 }

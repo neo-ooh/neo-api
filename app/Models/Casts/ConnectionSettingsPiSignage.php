@@ -10,6 +10,7 @@
 
 namespace Neo\Models\Casts;
 
+use JsonSerializable;
 use Neo\Services\API\Traits\HasAttributes;
 
 /**
@@ -19,10 +20,14 @@ use Neo\Services\API\Traits\HasAttributes;
  * @property string                $server_url
  * @property string                $token
  */
-class ConnectionSettingsPiSignage {
+class ConnectionSettingsPiSignage implements JsonSerializable {
     use HasAttributes;
 
     public function __construct(array $attributes) {
         $this->attributes = $attributes;
+    }
+
+    public function jsonSerialize() {
+        return $this->attributes;
     }
 }

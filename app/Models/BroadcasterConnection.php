@@ -63,8 +63,11 @@ class BroadcasterConnection extends Model {
         return $this->hasMany(DisplayType::class, "connection_id")->orderBy("name");
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function getSettingsAttribute() {
-        $settings = $this->attributes["settings"] !== null ? $this->attributes["settings"] : [];
+        $settings = $this->attributes["settings"] !== null ? json_decode($this->attributes["settings"], true, 512, JSON_THROW_ON_ERROR) : [];
 
         $settings["broadcaster_uuid"] = $this->uuid;
 

@@ -89,7 +89,7 @@ trait HasAttributes {
         $json = json_encode($this->attributes, JSON_THROW_ON_ERROR | $options);
 
         if (JSON_ERROR_NONE !== json_last_error()) {
-            throw JsonEncodingException::forModel($this, json_last_error_msg());
+            throw new JsonEncodingException(json_last_error_msg());
         }
 
         return $json;

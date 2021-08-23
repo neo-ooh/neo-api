@@ -25,7 +25,7 @@ class UpdateConnectionRequest extends FormRequest {
     public function rules(): array {
         return [
             "name"                => ["required", "string"],
-            "type"                => ["required", Rule::in(["broadsign", "pisignage"])],
+            "type"                => ["required", Rule::in(["broadsign", "pisignage", "odoo"])],
 
             // BroadSign connection parameters
             "certificate"         => ["sometimes", "file"],

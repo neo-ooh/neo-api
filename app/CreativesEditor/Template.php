@@ -4,6 +4,7 @@ namespace Neo\CreativesEditor;
 
 use Arr;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
+use JsonException;
 use function Fuse\Helpers\get;
 
 class Template implements CastsAttributes {
@@ -27,7 +28,7 @@ class Template implements CastsAttributes {
 
     /**
      * @inheritDoc
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function get($model, string $key, $value, array $attributes) {
         return json_encode([
@@ -51,7 +52,7 @@ class Template implements CastsAttributes {
 
     /**
      * @inheritDoc
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function set($model, string $key, $value, array $attributes) {
         $templateData = json_decode($value, true, 512, JSON_THROW_ON_ERROR);

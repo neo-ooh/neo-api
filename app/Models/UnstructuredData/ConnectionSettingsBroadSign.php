@@ -8,7 +8,7 @@
  * @neo/api - ConnectionSettingsBroadSign.php
  */
 
-namespace Neo\Models\Casts;
+namespace Neo\Models\UnstructuredData;
 
 use Illuminate\Support\Arr;
 use JsonSerializable;

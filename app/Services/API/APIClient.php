@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
+use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Client\Response;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -24,7 +25,7 @@ class APIClient implements APIClientInterface {
 //        $stack->setHandler(new CurlHandler());
 
         $client  = new Client($endpoint->options);
-        $request = new \GuzzleHttp\Psr7\Request($endpoint->method, $endpoint->getUrl(), $headers);
+        $request = new Request($endpoint->method, $endpoint->getUrl(), $headers);
 
         // Create a middleware that echoes parts of the request.
 //        $tapMiddleware = Middleware::tap(function ($request) {

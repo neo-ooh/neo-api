@@ -17,7 +17,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use JsonException;
+use Neo\Models\UnstructuredData\NetworkSettingsBroadSign;
+use Neo\Models\UnstructuredData\NetworkSettingsOdoo;
+use Neo\Models\UnstructuredData\NetworkSettingsPiSignage;
+use Neo\Services\API\Traits\HasAttributes;
 use Neo\Services\Broadcast\Broadcaster;
+use RuntimeException;
 
 /**
  * @property int                                               $id
@@ -52,6 +58,14 @@ class Network extends Model {
      */
     protected $table = 'networks';
 
+    protected $casts = [
+        "settings" => "array",
+    ];
+
+    protected $hidden = [
+        "settings",
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations
@@ -62,16 +76,27 @@ class Network extends Model {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
     }
 
-    public function getSettingsAttribute() {
-        switch ($this->broadcaster_connection->broadcaster) {
-            case Broadcaster::BROADSIGN:
-                return $this->hasOne(NetworkSettingsBroadSign::class, "network_id")->getResults();
-            case Broadcaster::PISIGNAGE:
-                return $this->hasOne(NetworkSettingsPiSignage::class, "network_id")->getResults();
-            default:
-                return null;
-        }
+    /**
+     * @throws JsonException
+     */
+    public function getSettingsAttribute(): NetworkSettingsBroadSign|null {
+        $settings = $this->attributes["settings"] !== null ? json_decode($this->attributes["settings"], true, 512, JSON_THROW_ON_ERROR) : [];
+
+        return match ($this->broadcaster_connection->broadcaster) {
+            Broadcaster::BROADSIGN => new NetworkSettingsBroadSign($settings),
+            Broadcaster::PISIGNAGE => new NetworkSettingsPiSignage($settings),
+            default => null,
+        };
     }
+
+    public function setSettingsAttribute($value): void {
+        if (!in_array(HasAttributes::class, class_uses($value), true)) {
+            throw new RuntimeException("Bad format");
+        }
+
+        $this->attributes["settings"] = $value->toJson();
+    }
+
 
     public function locations(): HasMany {
         return $this->hasMany(Location::class, 'network_id', 'id')->orderBy("name");

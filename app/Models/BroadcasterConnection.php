@@ -16,10 +16,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Neo\Models\Casts\BroadcasterSettings;
-use Neo\Models\Casts\ConnectionSettingsBroadSign;
-use Neo\Models\Casts\ConnectionSettingsOdoo;
-use Neo\Models\Casts\ConnectionSettingsPiSignage;
+use JsonException;
+use Neo\Models\UnstructuredData\ConnectionSettingsBroadSign;
+use Neo\Models\UnstructuredData\ConnectionSettingsOdoo;
+use Neo\Models\UnstructuredData\ConnectionSettingsPiSignage;
 use Neo\Services\API\Traits\HasAttributes;
 use Neo\Services\Broadcast\Broadcaster;
 use RuntimeException;
@@ -33,15 +33,16 @@ use RuntimeException;
  *
  * @property int                                                     $id
  * @property string                                                  $uuid
- * @property string                                                  $broadcaster `\Neo\Services\Broadcast\Broadcaster`
+ * @property string                                                  $broadcaster
+ *           `\Neo\Services\Broadcast\Broadcaster`
  * @property string                                                  $name
  * @property bool                                                    $active
  * @property Date                                                    $created_at
  * @property Date                                                    $updated_at
  * @property Date                                                    $deleted_at
  *
- * @property ConnectionSettingsBroadSign|ConnectionSettingsPiSignage|ConnectionSettingsOdoo $settings    Settings for the connection, dependant on the
- *           broadcaster type (`broadcaster`) of the connection. Defined in DBServiceProvider
+ * @property ConnectionSettingsBroadSign|ConnectionSettingsPiSignage $settings    Settings for the
+ *           connection, dependant on the broadcaster type (`broadcaster`) of the connection. Defined in DBServiceProvider
  * @property Collection<DisplayType>                                 $display_types
  *
  */
@@ -65,7 +66,7 @@ class BroadcasterConnection extends Model {
     }
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function getSettingsAttribute() {
         $settings = $this->attributes["settings"] !== null ? json_decode($this->attributes["settings"], true, 512, JSON_THROW_ON_ERROR) : [];
@@ -75,7 +76,6 @@ class BroadcasterConnection extends Model {
         return match ($this->broadcaster) {
             Broadcaster::BROADSIGN => new ConnectionSettingsBroadSign($settings),
             Broadcaster::PISIGNAGE => new ConnectionSettingsPiSignage($settings),
-            Broadcaster::ODOO => new ConnectionSettingsOdoo($settings),
             default => null,
         };
     }

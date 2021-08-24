@@ -5,10 +5,11 @@ namespace Neo\Documents\Contract\XLSXComponents;
 
 
 use Neo\Documents\Contract\Order;
+use Neo\Documents\XLSX\Component;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXStyleFactory;
 
-class TechnicalSpecs extends \Neo\Documents\XLSX\Component {
+class TechnicalSpecs extends Component {
     protected Order $order;
 
     public function __construct(Order $order) {

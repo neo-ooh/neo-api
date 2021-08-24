@@ -20,17 +20,16 @@ class ListOdooPropertiesCommand extends Command {
     protected $description = '[TEST] List Odoo properties';
 
     public function handle() {
-        $basepath     = "https://odoo.neo-ooh.com/xmlrpc/2";
-        $userEmail    = "vdufois@neo-ooh.com";
-        $userPassword = "WhPa24FZeT";
+        $basepath     = config('modules.odoo.server-url');
+        $userEmail    = config('modules.odoo.username');
+        $userPassword = config('modules.odoo.password');
 
-        $client = new Client($basepath, "production", $userEmail, $userPassword);
-
+        $client = new Client($basepath, config('modules.odoo.database'), $userEmail, $userPassword);
 
         $properties = Property::all($client);
 
         foreach ($properties as $property) {
-            $this->output->writeln($property->name);
+            $this->output->writeln($property->name . ", " . $property->center_type);
         }
     }
 }

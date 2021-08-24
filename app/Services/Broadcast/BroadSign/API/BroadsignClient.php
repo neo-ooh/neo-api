@@ -6,6 +6,7 @@ use Cache;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
+use JsonException;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
@@ -71,7 +72,7 @@ class BroadsignClient implements APIClientInterface {
      * @param array             $headers
      * @return false|mixed|string|null
      * @throws BadResponse
-     * @throws \JsonException
+     * @throws JsonException
      */
     protected function call_impl__(BroadSignEndpoint $endpoint, $payload, array $headers) {
         // Execute the request

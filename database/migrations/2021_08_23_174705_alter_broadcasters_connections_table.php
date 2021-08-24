@@ -4,8 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Neo\Models\BroadcasterConnection;
-use Neo\Models\Casts\ConnectionSettingsBroadSign;
-use Neo\Models\Casts\ConnectionSettingsPiSignage;
+use Neo\Models\UnstructuredData\ConnectionSettingsBroadSign;
+use Neo\Models\UnstructuredData\ConnectionSettingsPiSignage;
 
 return new class extends Migration
 {
@@ -18,7 +18,6 @@ return new class extends Migration
     {
         Schema::table("broadcasters_connections", function (Blueprint $table)
         {
-            $table->set("broadcaster", ["broadsign", "pisignage", "odoo"])->change();
             $table->json("settings")->after("active");
 
         });

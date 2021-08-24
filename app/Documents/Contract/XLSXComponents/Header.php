@@ -6,6 +6,7 @@ use Neo\Documents\Contract\Customer;
 use Neo\Documents\Contract\Order;
 use Neo\Documents\XLSX\Component;
 use Neo\Documents\XLSX\Worksheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class Header extends Component {
     protected Order $order;
@@ -20,7 +21,7 @@ class Header extends Component {
         $ws->pushPosition();
 
         // Add the Neo logo
-        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+        $drawing = new Drawing();
         $drawing->setName('Neo-OOH');
         $drawing->setDescription('Neo Out of Home');
         $drawing->setPath(resource_path("logos/main.dark.en@2x.png"));

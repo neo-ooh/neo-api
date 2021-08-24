@@ -9,9 +9,8 @@ use Neo\Http\Requests\BroadcasterConnections\ListConnectionRequest;
 use Neo\Http\Requests\BroadcasterConnections\StoreConnectionRequest;
 use Neo\Http\Requests\BroadcasterConnections\UpdateConnectionRequest;
 use Neo\Models\BroadcasterConnection;
-use Neo\Models\Casts\ConnectionSettingsBroadSign;
-use Neo\Models\Casts\ConnectionSettingsOdoo;
-use Neo\Models\Casts\ConnectionSettingsPiSignage;
+use Neo\Models\UnstructuredData\ConnectionSettingsBroadSign;
+use Neo\Models\UnstructuredData\ConnectionSettingsPiSignage;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 use function Ramsey\Uuid\v4;
 
@@ -42,14 +41,6 @@ class BroadcasterConnectionsController extends Controller {
                 $settings = new ConnectionSettingsPiSignage([
                     "server_url" => $request->input("server_url"),
                     "token"      => $request->input("token"),
-                ]);
-                break;
-            case "odoo":
-                $settings = new ConnectionSettingsOdoo([
-                    "server_url" => $request->input("server_url"),
-                    "username"      => $request->input("username"),
-                    "password"      => $request->input("password"),
-                    "database"      => $request->input("database"),
                 ]);
                 break;
         }
@@ -109,12 +100,6 @@ class BroadcasterConnectionsController extends Controller {
                 break;
             case "pisignage":
                 $connectionSettings->token = $request->input("token", $connectionSettings->token);
-                break;
-            case "odoo":
-                $connectionSettings->server_url = $request->input("server_url", $connectionSettings->server_url);
-                $connectionSettings->username = $request->input("username", $connectionSettings->username);
-                $connectionSettings->password = $request->input("password", $connectionSettings->password);
-                $connectionSettings->database = $request->input("database", $connectionSettings->database);
                 break;
         }
 

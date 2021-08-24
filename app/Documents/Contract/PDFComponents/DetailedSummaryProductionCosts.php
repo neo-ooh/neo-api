@@ -12,6 +12,7 @@ namespace Neo\Documents\Contract\PDFComponents;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 
@@ -30,7 +31,7 @@ class DetailedSummaryProductionCosts extends Component {
     /**
      * Get the view / contents that represent the component.
      *
-     * @return Application|Factory|\Illuminate\Contracts\View\View
+     * @return Application|Factory|View
      */
     public function render() {
         return view('documents.contract.campaign-details.summary-production-costs', [

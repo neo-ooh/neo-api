@@ -18,6 +18,7 @@ class Property extends Model {
     protected static array $filters = [
         ["is_company", "=", true],
         ["center_type", "<>", false],
+        ["center_type", "<>", "group"],
     ];
 
 

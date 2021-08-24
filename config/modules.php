@@ -26,7 +26,7 @@ return [
     | Core modules cannot be deactivated, they are required for Connect to work.
     |
     */
-    "core" => [
+    "core"          => [
 
     ],
 
@@ -41,17 +41,16 @@ return [
     | will not be shown anywhere
     |
     */
-    "broadsign" => [
+    "broadsign"     => [
         "enabled" => env('MODULE_BROADSIGN_ENABLED', true),
 
         "api-url" => env("BROADSIGN_API_URL", "https://api.broadsign.com:10889/rest"),
 
-        "default-campaign-length" => 10, // years
-        "bursts" => [
+        "bursts"                  => [
             "default-quality" => 80 // %
         ]
     ],
-    "pisignage" => [
+    "pisignage"     => [
         "enabled" => env('MODULE_PISIGNAGE_ENABLED', true),
     ],
 
@@ -83,14 +82,13 @@ return [
     | customization interface
     |
     */
-    "dynamics" => [
+    "dynamics"  => [
         "enabled" => env('MODULE_DYNAMICS_ENABLED', true),
     ],
 
-    "inventory" => [
+    "inventory"        => [
         "enabled" => env('MODULE_INVENTORY_ENABLED', true),
     ],
-
 
 
     /*
@@ -102,10 +100,10 @@ return [
     | but have no impact on the rest of the platform.
     |
     */
-    "brandings" => [
+    "brandings"        => [
         "enabled" => env('MODULE_BRANDINGS_ENABLED', true),
     ],
-    "headlines" => [
+    "headlines"        => [
         "enabled" => env('MODULE_HEADLINES_ENABLED', true),
     ],
     "review-templates" => [
@@ -122,10 +120,10 @@ return [
     | Neo-ooh.
     |
     */
-    "contracts" => [
+    "contracts"        => [
         "enabled" => env('MODULE_CONTRACTS_ENABLED', true),
     ],
-    "properties" => [
+    "properties"       => [
         "enabled" => env('MODULE_PROPERTIES_ENABLED', true),
 
         "linkett" => [
@@ -161,5 +159,11 @@ return [
 
     "odoo" => [
         "enabled" => env('MODULE_ODOO_ENABLED', true),
+
+        "server-url" => env('MODULE_ODOO_SERVER_URL'),
+        "username"   => env('MODULE_ODOO_USERNAME'),
+        "password"   => env('MODULE_ODOO_PASSWORD'),
+
+        "database" => env('MODULE_ODOO_DATABASE')
     ],
 ];

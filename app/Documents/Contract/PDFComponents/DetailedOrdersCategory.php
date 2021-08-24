@@ -12,6 +12,7 @@ namespace Neo\Documents\Contract\PDFComponents;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Illuminate\View\Component;
 use Neo\Documents\Contract\Order;
@@ -39,7 +40,7 @@ class DetailedOrdersCategory extends Component {
     /**
      * Get the view / contents that represent the component.
      *
-     * @return Application|Factory|\Illuminate\Contracts\View\View|string
+     * @return Application|Factory|View|string
      */
     public function render() {
         $purchases = $this

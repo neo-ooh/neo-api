@@ -25,7 +25,7 @@ class UpdateConnectionRequest extends FormRequest {
     public function rules(): array {
         return [
             "name"                => ["required", "string"],
-            "type"                => ["required", Rule::in(["broadsign", "pisignage", "odoo"])],
+            "type"                => ["required", Rule::in(["broadsign", "pisignage"])],
 
             // BroadSign connection parameters
             "certificate"         => ["sometimes", "file"],
@@ -35,12 +35,6 @@ class UpdateConnectionRequest extends FormRequest {
 
             // PiSignage connection parameters
             "token"               => ["sometimes", "string"],
-
-            // Odoo connection parameters
-            "server_url"          => ["required_if:type,odoo", "url"],
-            "username"            => ["required_if:type,odoo"],
-            "password"            => ["required_if:type,odoo"],
-            "database"            => ["required_if:type,odoo"],
         ];
     }
 }

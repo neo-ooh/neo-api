@@ -8,7 +8,7 @@
  * @neo/api - ConnectionSettingsPiSignage.php
  */
 
-namespace Neo\Models\Casts;
+namespace Neo\Models\UnstructuredData;
 
 use JsonSerializable;
 use Neo\Services\API\Traits\HasAttributes;
@@ -18,11 +18,9 @@ use Neo\Services\API\Traits\HasAttributes;
  *
  * @package Neo\Models
  * @property string                $server_url
- * @property string                $username
- * @property string                $password
- * @property string                $database
+ * @property string                $token
  */
-class ConnectionSettingsOdoo implements JsonSerializable {
+class ConnectionSettingsPiSignage implements JsonSerializable {
     use HasAttributes;
 
     public function __construct(array $attributes) {

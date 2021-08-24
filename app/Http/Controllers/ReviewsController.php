@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Neo\Exceptions\InvalidBroadcastServiceException;
 use Neo\Http\Requests\Reviews\StoreReviewRequest;
 use Neo\Models\Review;
 use Neo\Models\Schedule;
@@ -23,7 +24,7 @@ class ReviewsController extends Controller {
      * @param Schedule           $schedule
      *
      * @return Response
-     * @throws \Neo\Exceptions\InvalidBroadcastServiceException
+     * @throws InvalidBroadcastServiceException
      */
     public function store(StoreReviewRequest $request, Schedule $schedule) {
         $review              = new Review();

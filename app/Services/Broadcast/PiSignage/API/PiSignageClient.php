@@ -6,6 +6,7 @@ use Cache;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Log;
+use JsonException;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
 use Neo\Services\API\Endpoint;
@@ -65,7 +66,7 @@ class PiSignageClient implements APIClientInterface {
 
     /**
      * @throws BadResponse
-     * @throws \JsonException
+     * @throws JsonException
      */
     protected function call_impl__(Endpoint $endpoint, $payload, array $headers) {
         // Execute the request

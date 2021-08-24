@@ -5,11 +5,12 @@ namespace Neo\Documents\Contract\XLSXComponents;
 
 
 use Neo\Documents\Contract\Order;
+use Neo\Documents\XLSX\Component;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXStyleFactory;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class ProductionFees extends \Neo\Documents\XLSX\Component {
+class ProductionFees extends Component {
     protected Order $order;
 
     public function __construct(Order $order) {

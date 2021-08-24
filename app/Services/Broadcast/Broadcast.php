@@ -29,7 +29,7 @@ abstract class Broadcast {
                 $config->connectionUUID          = $network->broadcaster_connection->uuid;
                 $config->networkID               = $network->id;
                 $config->networkUUID             = $network->uuid;
-                $config->apiURL                  = config("broadsign.api.url");
+                $config->apiURL                  = config("modules.broadsign.api-url");
                 $config->domainId                = $network->broadcaster_connection->settings->domain_id;
                 $config->customerId              = $network->settings->customer_id;
                 $config->containerId             = $network->settings->container_id;

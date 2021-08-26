@@ -113,12 +113,12 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
             /** @var Location $location */
             $location = Location::query()->firstOrCreate([
                 "external_id" => $bslocation->id,
+                "network_id"  => $this->config->networkID,
             ], [
                 "name"          => $bslocation->name,
                 "internal_name" => $bslocation->name,
             ]);
 
-            $location->network_id      = $this->config->networkID; // <-s
             $location->display_type_id = $displayType->id;
             $location->container_id    = $containerID;
             $location->province        = $address;
@@ -145,14 +145,14 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
         /** @var DisplayType $displayType */
         $displayType = DisplayType::query()->firstOrNew([
             "connection_id" => $this->config->connectionID,
-            "external_id" => $displayTypeId
+            "external_id"   => $displayTypeId
         ]);
 
         $bsDisplayType = Format::get($this->getAPIClient(), $displayTypeId);
 
         $displayType->internal_name = $bsDisplayType->name;
 
-        if(!$displayType->exists) {
+        if (!$displayType->exists) {
             $displayType->name = $bsDisplayType->name;
         }
 

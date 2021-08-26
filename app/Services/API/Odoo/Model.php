@@ -37,9 +37,9 @@ abstract class Model {
     protected Client $client;
 
     /**
-     * @param Client $client       Odoo client for future requests from this model
-     * @param array  $attributes   Attribute of the model
-     * @param bool   $isIncomplete If true, the model will fetch itself when trying to access a missing property
+     * @param Client           $client       Odoo client for future requests from this model
+     * @param array|Collection $attributes   Attributes of the model
+     * @param bool             $isIncomplete If true, the model will fetch itself when trying to access a missing property
      */
     final public function __construct(
         Client         $client,
@@ -69,12 +69,34 @@ abstract class Model {
         }
     }
 
+    /**
+     * Pull all records for the current model
+     * @param Client $client
+     * @param array  $filters
+     * @return Collection
+     */
     public static function all(Client $client, $filters = []): Collection {
         $rawModels = $client->get(static::$slug, array_merge(static::$filters, $filters), static::$fields);
 
         return $rawModels->map(static fn($model) => new static($client, $model));
     }
 
+    /**
+     * Pull multiple records using their ids
+     * @param Client           $client
+     * @param array|Collection $ids
+     * @return Collection
+     */
+    public static function getMultiple(Client $client, array|Collection $ids): Collection {
+        return $client->getById(static::$slug, $ids, static::$fields)->map(fn($record) => new static($client, $record));
+    }
+
+    /**
+     * Pull a specific record using its id
+     * @param Client $client
+     * @param mixed  $id Unique ID of the record
+     * @return static
+     */
     public static function get(Client $client, $id): static {
         return new static($client, $client->getById(static::$slug, $id, static::$fields));
     }

@@ -19,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use JsonException;
 use Neo\Models\UnstructuredData\NetworkSettingsBroadSign;
-use Neo\Models\UnstructuredData\NetworkSettingsOdoo;
 use Neo\Models\UnstructuredData\NetworkSettingsPiSignage;
 use Neo\Services\API\Traits\HasAttributes;
 use Neo\Services\Broadcast\Broadcaster;
@@ -79,7 +78,7 @@ class Network extends Model {
     /**
      * @throws JsonException
      */
-    public function getSettingsAttribute(): NetworkSettingsBroadSign|null {
+    public function getSettingsAttribute(): NetworkSettingsBroadSign|NetworkSettingsPiSignage|null {
         $settings = $this->attributes["settings"] !== null ? json_decode($this->attributes["settings"], true, 512, JSON_THROW_ON_ERROR) : [];
 
         return match ($this->broadcaster_connection->broadcaster) {

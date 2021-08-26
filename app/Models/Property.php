@@ -6,6 +6,7 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Neo\Models\Odoo\Property as OdooProperty;
 use Neo\Rules\AccessibleProperty;
 
 /**
@@ -18,7 +19,8 @@ use Neo\Rules\AccessibleProperty;
  *
  * @property Actor                   $actor
  * @property PropertyTrafficSettings $traffic
- * @property Address|null $address
+ * @property Address|null            $address
+ * @property PropertyData            $data
  */
 class Property extends SecuredModel {
     use HasFactory;
@@ -87,6 +89,14 @@ class Property extends SecuredModel {
         return $this->belongsTo(Address::class, "address_id", "id");
     }
 
+    public function odoo() {
+        return $this->hasOne(OdooProperty::class, "property_id", "actor_id");
+    }
+
+    public function data() {
+        return $this->hasOne(PropertyData::class, "property_id", "actor_id");
+    }
+
     /*
     |--------------------------------------------------------------------------
     |
@@ -96,11 +106,11 @@ class Property extends SecuredModel {
     public function getTraffic(int $year, int $month): int|null {
         /** @var ?PropertyTraffic $traffic */
         $traffic = $this->traffic->data
-                                 ->where("year", "=", $year)
-                                 ->where("month", "=", $month)
-                                 ->first();
+            ->where("year", "=", $year)
+            ->where("month", "=", $month)
+            ->first();
 
-        if(!$traffic) {
+        if (!$traffic) {
             return null;
         }
 

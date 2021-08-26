@@ -65,6 +65,11 @@ return [
             'driver' => 'file',
             'path' => storage_path('framework/cache/data'),
         ],
+
+        "geocoding" => [
+            "driver" => "redis",
+            "connection" => "geocoding",
+        ]
 //
 //        'memcached' => [
 //            'driver' => 'memcached',

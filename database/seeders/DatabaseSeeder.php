@@ -17,8 +17,7 @@ class DatabaseSeeder extends BaseSeeder {
         $this->call([
             ParamsSeeder::class,
             CapabilitiesSeeder::class,
-            BoostrapSeeder::class,
-            AddressesComponentsSeeder::class,
+            BootstrapSeeder::class,
         ]);
     }
 }

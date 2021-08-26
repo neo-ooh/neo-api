@@ -13,15 +13,15 @@ use Neo\Http\Controllers\CitiesController;
 use Neo\Http\Controllers\CountriesController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\PropertiesController;
+use Neo\Http\Controllers\PropertiesDataController;
 use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\TrafficSourcesController;
-use Neo\Models\Property;
 use Neo\Models\TrafficSource;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
     /*
     |----------------------------------------------------------------------
@@ -29,13 +29,10 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::model("property", Property::class);
-
-    Route::  post("properties"                   , PropertiesController::class . "@store");
-    Route::   get("properties/{propertyId}"      , PropertiesController::class . "@show");
-    Route::   put("properties/{property}"        , PropertiesController::class . "@update");
+    Route::  post("properties", PropertiesController::class . "@store");
+    Route::   get("properties/{propertyId}", PropertiesController::class . "@show");
     Route::   put("properties/{property}/address", PropertiesController::class . "@updateAddress");
-    Route::delete("properties/{property}"        , PropertiesController::class . "@destroy");
+    Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 
 
     /*
@@ -48,6 +45,15 @@ Route::group([
     Route::   put("properties/{property}/traffic", PropertiesTrafficController::class . "@update");
     Route::  post("properties/{property}/traffic", PropertiesTrafficController::class . "@store");
 
+
+    /*
+    |----------------------------------------------------------------------
+    | Properties Data
+    |----------------------------------------------------------------------
+    */
+
+    Route::   put("properties/{property}/data", PropertiesDataController::class . "@update");
+
     /*
     |----------------------------------------------------------------------
     | Traffic Sources
@@ -56,9 +62,9 @@ Route::group([
 
     Route::model("trafficSource", TrafficSource::class);
 
-    Route::get("traffic-sources"                   , TrafficSourcesController::class . "@index");
-    Route::post("traffic-sources"                  , TrafficSourcesController::class . "@store");
-    Route::put("traffic-sources/{trafficSource}"   , TrafficSourcesController::class . "@update");
+    Route::get("traffic-sources", TrafficSourcesController::class . "@index");
+    Route::post("traffic-sources", TrafficSourcesController::class . "@store");
+    Route::put("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@update");
     Route::delete("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@destroy");
 
     /*
@@ -67,21 +73,21 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::   get("countries"          , CountriesController::class . "@index");
+    Route::   get("countries", CountriesController::class . "@index");
     Route::   get("countries/{country}", CountriesController::class . "@show");
 
     // Provinces
-    Route::   get("countries/{country}/provinces"           , ProvincesController::class . "@index");
+    Route::   get("countries/{country}/provinces", ProvincesController::class . "@index");
     Route::   get("countries/{country}/provinces/{province}", ProvincesController::class . "@show");
 
     // Markets
-    Route::   put("markets/{market}"                                , MarketsController::class . "@update");
+    Route::   put("markets/{market}", MarketsController::class . "@update");
     Route::  post("countries/{country}/provinces/{province}/markets", MarketsController::class . "@store");
-    Route::delete("markets/{market}"                                , MarketsController::class . "@destroy");
+    Route::delete("markets/{market}", MarketsController::class . "@destroy");
 
     // Cities
-    Route::   get("countries/{country}/provinces/{province}/cities"       , CitiesController::class . "@index");
-    Route::  post("countries/{country}/provinces/{province}/cities"       , CitiesController::class . "@store");
+    Route::   get("countries/{country}/provinces/{province}/cities", CitiesController::class . "@index");
+    Route::  post("countries/{country}/provinces/{province}/cities", CitiesController::class . "@store");
     Route::   put("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@update");
     Route::delete("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@destroy");
 });

@@ -12,7 +12,8 @@ namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
 use Neo\Services\API\Odoo\Client;
-use Neo\Services\Broadcast\Odoo\Models\Property;
+use Neo\Services\Odoo\Models\Property;
+use Neo\Services\Odoo\OdooConfig;
 
 class ListOdooPropertiesCommand extends Command {
     protected $signature = 'test:list-odoo-properties';
@@ -20,16 +21,13 @@ class ListOdooPropertiesCommand extends Command {
     protected $description = '[TEST] List Odoo properties';
 
     public function handle() {
-        $basepath     = config('modules.odoo.server-url');
-        $userEmail    = config('modules.odoo.username');
-        $userPassword = config('modules.odoo.password');
-
-        $client = new Client($basepath, config('modules.odoo.database'), $userEmail, $userPassword);
+        $client = OdooConfig::fromConfig()->getClient();
 
         $properties = Property::all($client);
 
+        /** @var Property $property */
         foreach ($properties as $property) {
-            $this->output->writeln($property->name . ", " . $property->center_type);
+            $this->output->writeln($property->name . ", " . implode(",", $property->rental_product_ids));
         }
     }
 }

@@ -3,13 +3,10 @@
 namespace Neo\Services\API;
 
 use GuzzleHttp\Client;
-use GuzzleHttp\Handler\CurlHandler;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Middleware;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Client\Response;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 class APIClient implements APIClientInterface {
     /**
@@ -19,10 +16,13 @@ class APIClient implements APIClientInterface {
      * @param mixed    $payload
      * @param array    $headers
      * @return Response
+     * @throws GuzzleException
      */
     public function call($endpoint, $payload, array $headers = []) {
 //        $stack = new HandlerStack();
 //        $stack->setHandler(new CurlHandler());
+
+
 
         $client  = new Client($endpoint->options);
         $request = new Request($endpoint->method, $endpoint->getUrl(), $headers);
@@ -41,6 +41,8 @@ class APIClient implements APIClientInterface {
         } else {
             $options[RequestOptions::JSON] = $payload;
         }
+
+        dump($request);
 
         return new Response($client->send($request, $options));
     }

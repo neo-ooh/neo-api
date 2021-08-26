@@ -19,7 +19,7 @@ use Neo\Models\Role;
  *
  * @package Neo\DB\Seeders
  */
-class BoostrapSeeder extends Seeder {
+class BootstrapSeeder extends Seeder {
     /**
      * Run the database seeds.
      *

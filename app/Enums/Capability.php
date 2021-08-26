@@ -162,4 +162,9 @@ final class Capability extends Enum {
      * Allow user to setup traffic sources
      */
     public const traffic_sources = "traffic.sources";
+
+    /**
+     * Allow user to setup and edit odoo properties and products
+     */
+    public const odoo_properties = "odoo.properties";
 }

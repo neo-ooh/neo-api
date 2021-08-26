@@ -30,6 +30,8 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
 
     protected int $campaignId;
 
+    public $delay = 180; // Add a 3 minutes delay to all targeting to make sure piSignage server has time to receive and process the creatives
+
     public function uniqueId(): int {
         return $this->campaignId;
     }
@@ -75,13 +77,13 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             $playlistIsPresent = $group->hasPlaylist($playlist->name);
             $groupIsTargeted   = $groupIds->contains($group->getKey());
 
-            $group->deploy                   = true;
-            $group->playAllEligiblePlaylists = true;
-
             if ((!$playlistIsPresent && !$groupIsTargeted)) {
                 // we do not target this group, and the playlist is absent from it, ignore.
                 continue;
             }
+
+            $group->deploy                   = true;
+            $group->playAllEligiblePlaylists = true;
 
             if ($playlistIsPresent) {
                 // We remove the playlist if it is present, even if we target the group, as we will re-insert it after to update it.

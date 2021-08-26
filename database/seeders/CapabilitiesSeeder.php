@@ -96,6 +96,8 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::traffic_sources,
 
                 \Neo\Enums\Capability::tests,
+
+                \Neo\Enums\Capability::tests,
             ],
         ];
 

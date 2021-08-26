@@ -8,18 +8,17 @@
  * @neo/api - Property.php
  */
 
-namespace Neo\Services\Broadcast\Odoo\Models;
+namespace Neo\Services\Odoo\Models;
 
 use Neo\Services\API\Odoo\Model;
 
-class Property extends Model {
-    protected static string $slug = "res.partner";
+/**
+ * @property int $id
+ * @property string $name
+ * @property string $display_name
+ */
+class ProductType extends Model {
+    protected static string $slug = "product.type";
 
-    protected static array $filters = [
-        ["is_company", "=", true],
-        ["center_type", "<>", false],
-        ["center_type", "<>", "group"],
-    ];
-
-
+    protected static array $filters = [];
 }

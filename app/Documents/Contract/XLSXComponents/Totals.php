@@ -98,148 +98,62 @@ class Totals extends Component {
         $ws->popPosition();
         $ws->moveCursor(0, 4);
 
+        // Prepare our calculations
+        $cpmTotal = $this->order->getGuaranteedOrders()->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->getGuaranteedOrders()->sum("impressions")) * 1000 : 0;
+        $cpm = $this->order->orderLines->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->orderLines->sum("impressions")) * 1000 : 0;
+        $covidGuaranteedImpressions = $this->order->getGuaranteedOrders()->sum("covid_impressions");
+        $covidPotentialmpressions = $this->order->orderLines->sum("covid_impressions");
+
         // Finally, we print the footer excerpts
         $ws->pushPosition();
         $ws->moveCursor(3, 0);
 
-        $ws->pushPosition();
+        $this->addRow($ws, __("common.guaranteed-impressions"), $this->order->getGuaranteedOrders()->sum("impressions"));
 
-        $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(4);
-        $ws->getCurrentCell()->setValue(__("common.guaranteed-impressions"));
-        $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($this->order->getGuaranteedOrders()->sum("impressions"));
+        $this->addRow($ws, __("CPM"), $cpmTotal, '$#,##0.00');
 
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
+        $this->addRow($ws, __("common.potential-impressions"), $this->order->orderLines->sum("impressions"));
 
-        $ws->pushPosition();
+        $this->addRow($ws, __("common.potential-cpm"), $cpm, '$#,##0.00');
 
-        $impressionsTotal = $this->order->getGuaranteedOrders()->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->getGuaranteedOrders()->sum("impressions")) * 1000 : 0;
+        $this->addRow($ws, __("common.guaranteed-impressions-covid"), $covidGuaranteedImpressions);
 
-        $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(4);
-        $ws->getCurrentCell()->setValue(__("CPM"));
-        $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($impressionsTotal);
-        $ws->setRelativeCellFormat('$#,##0.00');
+        $this->addRow($ws, __("common.cpm-covid"), $covidGuaranteedImpressions > 0 ? ($this->order->net_investment / $covidGuaranteedImpressions) * 1000 : 0, '$#,##0.00');
 
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
+        $this->addRow($ws, __("common.potential-impressions-covid"), $covidPotentialmpressions);
 
-        $ws->pushPosition();
+        $this->addRow($ws, __("common.potential-cpm-covid"), $covidPotentialmpressions > 0 ? ($this->order->net_investment / $covidPotentialmpressions ) * 1000 : 0, '$#,##0.00');
 
-        $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(4);
-        $ws->getCurrentCell()->setValue(__("common.potential-impressions"));
-        $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($this->order->orderLines->sum("impressions"));
+        $ws->moveCursor(7, -16);
 
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
+        $this->addRow($ws, __("SAVINGS"), $this->order->potential_value - $this->order->grand_total_investment, NumberFormat::FORMAT_CURRENCY_USD);
 
-        $ws->pushPosition();
+        $this->addRow($ws, __("DISCOUNT"), $this->order->potential_discount / 100.0, NumberFormat::FORMAT_PERCENTAGE);
 
-        $cpm = $this->order->orderLines->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->orderLines->sum("impressions")) * 1000 : 0;
+        $this->addRow($ws, __("PRODUCTION FEES"), $this->order->production_costs, NumberFormat::FORMAT_CURRENCY_USD);
 
-        $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(4);
-        $ws->getCurrentCell()->setValue(__("common.potential-cpm"));
-        $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($cpm);
-        $ws->setRelativeCellFormat('$#,##0.00');
-
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
-
-        $ws->pushPosition();
-
-        $covidGuaranteedImpressions = $this->order->getGuaranteedOrders()->sum("covid_impressions");
-
-        $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(4);
-        $ws->getCurrentCell()->setValue(__("common.guaranteed-impressions-covid"));
-        $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($covidGuaranteedImpressions);
-
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
-
-        $ws->pushPosition();
-
-        $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(4);
-        $ws->getCurrentCell()->setValue(__("common.cpm-covid"));
-        $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($covidGuaranteedImpressions > 0 ? ($this->order->net_investment / $covidGuaranteedImpressions) * 1000 : 0);
-        $ws->setRelativeCellFormat('$#,##0.00');
-
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
-
-        $ws->pushPosition();
-
-        $covidPotentialmpressions = $this->order->orderLines->sum("covid_impressions");
-
-        $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(4);
-        $ws->getCurrentCell()->setValue(__("common.potential-impressions-covid"));
-        $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($covidPotentialmpressions);
-
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
-
-        $ws->pushPosition();
-
-        $ws->getStyle($ws->getRelativeRange(5, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(4);
-        $ws->getCurrentCell()->setValue(__("common.potential-cpm-covid"));
-        $ws->moveCursor(4, 0);
-        $ws->getCurrentCell()->setValue($covidPotentialmpressions > 0 ? ($this->order->net_investment / $covidPotentialmpressions ) * 1000 : 0);
-        $ws->setRelativeCellFormat('$#,##0.00');
-
-        $ws->popPosition();
-        $ws->moveCursor(7, -14);
-
-        $ws->pushPosition();
-
-        $ws->getStyle($ws->getRelativeRange(3, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(2);
-        $ws->getCurrentCell()->setValue(__("NET INVESTMENT"));
-        $ws->moveCursor(2, 0);
-        $ws->getCurrentCell()->setValue($this->order->net_investment);
-        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD);
-
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
-
-        $ws->pushPosition();
-
-        $ws->getStyle($ws->getRelativeRange(3, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(2);
-        $ws->getCurrentCell()->setValue(__("SAVINGS"));
-        $ws->moveCursor(2, 0);
-        $ws->getCurrentCell()->setValue($this->order->potential_value - $this->order->net_investment);
-        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD);
-
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
-
-        $ws->pushPosition();
-
-        $ws->getStyle($ws->getRelativeRange(3, 1))->applyFromArray(XLSXStyleFactory::totals());
-        $ws->mergeCellsRelative(2);
-        $ws->getCurrentCell()->setValue(__("DISCOUNT"));
-        $ws->moveCursor(2, 0);
-        $ws->setRelativeCellFormat(NumberFormat::FORMAT_PERCENTAGE);
-        $ws->getCurrentCell()->setValue($this->order->potential_discount / 100.0);
-
-        $ws->popPosition();
-        $ws->moveCursor(0, 2);
+        $this->addRow($ws, __("NET INVESTMENT"), $this->order->net_investment, NumberFormat::FORMAT_CURRENCY_USD);
 
 
         $ws->popPosition();
         $ws->moveCursor(0, 16);
+    }
+
+    public function addRow(Worksheet $ws, string $label, $value, $format = null) {
+        $ws->pushPosition();
+
+        $ws->getStyle($ws->getRelativeRange(3, 1))->applyFromArray(XLSXStyleFactory::totals());
+        $ws->mergeCellsRelative(2);
+        $ws->getCurrentCell()->setValue($label);
+        $ws->moveCursor(2, 0);
+
+        if($format) {
+            $ws->setRelativeCellFormat($format);
+        }
+
+        $ws->getCurrentCell()->setValue($value);
+
+        $ws->popPosition();
+        $ws->moveCursor(0, 2);
     }
 }

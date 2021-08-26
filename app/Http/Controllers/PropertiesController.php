@@ -135,7 +135,7 @@ class PropertiesController extends Controller {
         $property->address()->associate($address);
         $property->save();
 
-        PullAddressGeolocationJob::dispatchSync($address);
+        PullAddressGeolocationJob::dispatch($address);
 
         if($property->odoo) {
             PushPropertyGeolocationJob::dispatch($property->id);

@@ -70,7 +70,7 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
         $property->address()->associate($address);
         $property->save();
 
-        PullAddressGeolocationJob::dispatchSync($address);
+        PullAddressGeolocationJob::dispatch($address);
 
         if($property->odoo) {
             PushPropertyGeolocationJob::dispatchSync($this->property_id);

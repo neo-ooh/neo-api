@@ -17,6 +17,7 @@ use Neo\Http\Controllers\Controller;
 use Neo\Http\Requests\Odoo\Properties\DestroyPropertyRequest;
 use Neo\Http\Requests\Odoo\Properties\StorePropertyRequest;
 use Neo\Jobs\Odoo\SyncPropertyDataJob;
+use Neo\Jobs\PullPropertyAddressFromOdooJob;
 use Neo\Models\Odoo\Property as OdooProperty;
 use Neo\Services\Odoo\Models\Property;
 use Neo\Services\Odoo\OdooConfig;
@@ -49,6 +50,7 @@ class PropertiesController extends Controller {
         $odooProperty->save();
 
         // Trigger a sync of the property products
+        PullPropertyAddressFromOdooJob::dispatchSync($propertyId);
         SyncPropertyDataJob::dispatchSync($odooProperty->property_id, $client);
 
         return new Response($odooProperty, 201);
@@ -60,7 +62,6 @@ class PropertiesController extends Controller {
      * @return Response
      */
     public function destroy(DestroyPropertyRequest $request, OdooProperty $property): Response {
-        Log::debug($property->property_id);
         $property->delete();
 
         return new Response([]);

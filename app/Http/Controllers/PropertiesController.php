@@ -12,6 +12,7 @@ use Neo\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Http\Requests\Properties\UpdateAddressRequest;
 use Neo\Http\Requests\Properties\UpdatePropertyRequest;
+use Neo\Jobs\Odoo\PushPropertyGeolocationJob;
 use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Jobs\PullPropertyAddressFromBroadSignJob;
 use Neo\Models\Actor;
@@ -50,7 +51,17 @@ class PropertiesController extends Controller {
         // Load the address of the property
         PullPropertyAddressFromBroadSignJob::dispatch($property->actor_id);
 
-        return new Response($property->load(["actor", "traffic"]), 201);
+        $property->load(["actor", "traffic", "address"]);
+
+        if(Gate::allows(Capability::properties_edit)) {
+            $property->load(["data"]);
+        }
+
+        if(Gate::allows(Capability::odoo_properties)) {
+            $property->load(["odoo", "odoo.products", "odoo.products.product_type"]);
+        }
+
+        return new Response($property, 201);
     }
 
     public function show(ShowPropertyRequest $request, int $propertyId) {
@@ -121,7 +132,14 @@ class PropertiesController extends Controller {
         $address->zipcode = $request->input("zipcode");
         $address->save();
 
+        $property->address()->associate($address);
+        $property->save();
+
         PullAddressGeolocationJob::dispatchSync($address);
+
+        if($property->odoo) {
+            PushPropertyGeolocationJob::dispatch($property->id);
+        }
 
         return new Response($address);
     }

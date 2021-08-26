@@ -30,14 +30,16 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
 
     protected int $campaignId;
 
-    public $delay = 180; // Add a 3 minutes delay to all targeting to make sure piSignage server has time to receive and process the creatives
-
     public function uniqueId(): int {
         return $this->campaignId;
     }
 
     public function __construct(PiSignageConfig $config, int $campaignId) {
+        // Make sure this job is delayed
+        $this->delay = 180;
+
         parent::__construct($config);
+
         $this->campaignId = $campaignId;
     }
 

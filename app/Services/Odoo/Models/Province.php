@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Property.php
+ * @neo/api - Province.php
  */
 
 namespace Neo\Services\Odoo\Models;
@@ -14,11 +14,13 @@ use Neo\Services\API\Odoo\Model;
 
 /**
  * @property int $id
+ * @property array $country_id
+ * @property string $code
  * @property string $name
  * @property string $display_name
  */
-class ProductType extends Model {
-    public static string $slug = "product.type";
+class Province extends Model {
+    public static string $slug = "res.country.state";
 
     protected static array $filters = [];
 }

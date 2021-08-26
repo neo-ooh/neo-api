@@ -21,6 +21,7 @@ use Neo\Rules\AccessibleProperty;
  * @property PropertyTrafficSettings $traffic
  * @property Address|null            $address
  * @property PropertyData            $data
+ * @property OdooProperty            $odoo
  */
 class Property extends SecuredModel {
     use HasFactory;

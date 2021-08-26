@@ -59,4 +59,9 @@ class Client {
 
         return is_int($ids) ? $models[0] : $models;
     }
+
+    public function update(Model $model, array $values): bool {
+        return $this->client->where("id", "=", $model->getKey())
+                    ->update($model::$slug, $values);
+    }
 }

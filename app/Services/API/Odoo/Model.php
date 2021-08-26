@@ -20,7 +20,12 @@ abstract class Model {
     /**
      * @var string The model identifier (eg. res.partner)
      */
-    protected static string $slug;
+    public static string $slug;
+
+    /**
+     * @var string The model unique key
+     */
+    protected static string $key = "id";
 
     /**
      * @var array List of filters that will be applied to every get request for this model.
@@ -69,6 +74,10 @@ abstract class Model {
         }
     }
 
+    public function getKey(): mixed {
+        return $this->{static::$key};
+    }
+
     /**
      * Pull all records for the current model
      * @param Client $client
@@ -109,5 +118,14 @@ abstract class Model {
 
         $this->setAttributes(static::get($this->client, $this->id));
         $this->isIncomplete = false;
+    }
+
+    /**
+     * Push the value of the specified fields to Odoo
+     * @param array $fields
+     */
+    public function update(array $fields): bool {
+        $values = collect($fields)->mapWithKeys(fn($k) => [$k => $this->{$k}]);
+        return $this->client->update($this, $values->toArray());
     }
 }

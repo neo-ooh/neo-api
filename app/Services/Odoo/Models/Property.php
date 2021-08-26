@@ -24,8 +24,8 @@ use Neo\Services\API\Odoo\Model;
  * @property string $street
  * @property string $street2
  * @property string $zip
- * @property string $city
- * @property string $state_id
+ * @property array $city
+ * @property array $state_id
  * @property string $country_id
  * @property double $partner_latitude
  * @property double $partner_longitude
@@ -33,9 +33,11 @@ use Neo\Services\API\Odoo\Model;
  * @property string $phone
  *
  * @property array<int> $rental_product_ids
+ *
+ * @property Province $province
  */
 class Property extends Model {
-    protected static string $slug = "res.partner";
+    public static string $slug = "res.partner";
 
     protected static array $filters = [
         ["is_company", "=", true],
@@ -43,5 +45,7 @@ class Property extends Model {
         ["center_type", "<>", "group"],
     ];
 
-
+    public function province(): Province {
+        return Province::get($this->client, $this->state_id[0]);
+    }
 }

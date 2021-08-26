@@ -21,7 +21,7 @@ use Neo\Services\API\Odoo\Model;
  * @property mixed $product_type_id
  */
 class Product extends Model {
-    protected static string $slug = "product.template";
+    public static string $slug = "product.template";
 
     protected static array $filters = [
         ["active", "=", true],

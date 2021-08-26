@@ -13,7 +13,7 @@ use Neo\Http\Controllers\DocumentsGenerationController;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1/documents"
+    "prefix" => "documents"
 ], function () {
     Route::post("{document}", DocumentsGenerationController::class . "@make");
 });

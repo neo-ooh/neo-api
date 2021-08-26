@@ -53,9 +53,9 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
         }
 
         // Get the playlist in PiSignage representing the campaign
-        $playlist       = Playlist::get($this->getAPIClient(), $campaign->external_id);
+        $playlist = Playlist::get($this->getAPIClient(), $campaign->external_id);
 
-        if(!$playlist) {
+        if (!$playlist) {
             return;
         }
 
@@ -85,6 +85,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             }
 
             $group->deploy                   = true;
+            $group->loadPlaylistOnCompletion = true;
             $group->playAllEligiblePlaylists = true;
 
             if ($playlistIsPresent) {

@@ -105,7 +105,8 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
                 $group->playlists[] = $playlist;
 
                 // Add the playlist assets as well
-                $group->assets = array_merge($group->playlists, $playlistAssets);
+                $group->assets[] = "__" . $playlist->name;
+                $group->assets = array_merge($group->playlists, $playlistAssets->toArray());
                 continue;
             }
 

@@ -92,7 +92,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             $group->loadPlaylistOnCompletion = true;
             $group->playAllEligiblePlaylists = true;
 
-            if ($playlistIsPresent && !$groupIsTargeted) {
+            if ($playlistIsPresent) {
                 // We remove the playlist if it is present and we don't target the group
                 $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name)->toArray();
 
@@ -100,7 +100,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
                 $group->assets = collect($group->assets)->filter(fn($a) => !$playlistAssets->contains($a))->toArray();
             }
 
-            if ($groupIsTargeted && !$playlistIsPresent) {
+            if ($groupIsTargeted) {
                 // This group is targeted and the playlist is not present, add it.
                 $group->playlists[] = $playlist;
 

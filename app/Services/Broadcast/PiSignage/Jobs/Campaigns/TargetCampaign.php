@@ -53,9 +53,9 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
         }
 
         // Get the playlist in PiSignage representing the campaign
-        $playlist       = Playlist::get($this->getAPIClient(), $campaign->external_id);
+        $playlist = Playlist::get($this->getAPIClient(), $campaign->external_id);
 
-        if(!$playlist) {
+        if (!$playlist) {
             return;
         }
 
@@ -70,6 +70,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
         $playlist->settings["timeEnable"]     = true;
         $playlist->settings["starttime"]      = $campaign->start_date->toTimeString();
         $playlist->settings["endtime"]        = $campaign->end_date->toTimeString();
+        $playlist->save();
 
         // Assigned the playlist to all desired locations and remove it from other
         $groups = Group::all($this->getAPIClient());
@@ -79,27 +80,27 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             $playlistIsPresent = $group->hasPlaylist($playlist->name);
             $groupIsTargeted   = $groupIds->contains($group->getKey());
 
-            if ((!$playlistIsPresent && !$groupIsTargeted)) {
+            if (!$playlistIsPresent && !$groupIsTargeted) {
                 // we do not target this group, and the playlist is absent from it, ignore.
                 continue;
             }
 
             $group->deploy                   = true;
+            $group->loadPlaylistOnCompletion = true;
             $group->playAllEligiblePlaylists = true;
 
-            if ($playlistIsPresent) {
-                // We remove the playlist if it is present, even if we target the group, as we will re-insert it after to update it.
-                $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name);
+            if ($playlistIsPresent && !$groupIsTargeted) {
+                // We remove the playlist if it is present and we don't target the group
+                $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name)->toArray();
             }
 
-            if (!$groupIsTargeted) {
-                // No playlist in group, and group not targeted, stop here.
-                $group->save();
+            if ($groupIsTargeted && !$playlistIsPresent) {
+                // This group is targeted and the playlist is not present, add it.
+                $group->playlists[] = $playlist;
                 continue;
             }
 
-            // Add the playlist
-            $group->playlists[] = $playlist;
+            // Save
             $group->save();
         }
     }

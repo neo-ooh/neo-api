@@ -8,10 +8,10 @@ use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
+use Neo\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Http\Requests\Properties\UpdateAddressRequest;
-use Neo\Http\Requests\Properties\UpdatePropertyRequest;
 use Neo\Jobs\Odoo\PushPropertyGeolocationJob;
 use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Jobs\PullPropertyAddressFromBroadSignJob;
@@ -22,6 +22,14 @@ use Neo\Models\Property;
 use Neo\Models\Province;
 
 class PropertiesController extends Controller {
+
+    public function index(ListPropertiesRequest $request) {
+        $properties = Property::all();
+        $properties->load(["data", "address", "actor", "odoo.products", "odoo.products.product_type"]);
+
+        return $properties;
+    }
+
     public function store(StorePropertyRequest $request) {
         // We need to make sure that the targeted actor is indeed a group
         $actorId = $request->input("actor_id");
@@ -53,11 +61,11 @@ class PropertiesController extends Controller {
 
         $property->load(["actor", "traffic", "address"]);
 
-        if(Gate::allows(Capability::properties_edit)) {
+        if (Gate::allows(Capability::properties_edit)) {
             $property->load(["data"]);
         }
 
-        if(Gate::allows(Capability::odoo_properties)) {
+        if (Gate::allows(Capability::odoo_properties)) {
             $property->load(["odoo", "odoo.products", "odoo.products.product_type"]);
         }
 
@@ -71,11 +79,11 @@ class PropertiesController extends Controller {
         if ($property) {
             $property->load(["actor", "traffic", "address"]);
 
-            if(Gate::allows(Capability::properties_edit)) {
+            if (Gate::allows(Capability::properties_edit)) {
                 $property->load(["data"]);
             }
 
-            if(Gate::allows(Capability::odoo_properties)) {
+            if (Gate::allows(Capability::odoo_properties)) {
                 $property->load(["odoo", "odoo.products", "odoo.products.product_type"]);
             }
 
@@ -137,7 +145,7 @@ class PropertiesController extends Controller {
 
         PullAddressGeolocationJob::dispatchSync($address);
 
-        if($property->odoo) {
+        if ($property->odoo) {
             PushPropertyGeolocationJob::dispatch($property->id);
         }
 

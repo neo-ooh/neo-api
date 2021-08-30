@@ -2,6 +2,7 @@
 
 namespace Neo\Services\Broadcast\PiSignage\Models;
 
+use ArrayAccess;
 use Illuminate\Support\Collection;
 use Neo\Services\API\Endpoint;
 use Neo\Services\API\Parsers\MultipleResourcesParser;

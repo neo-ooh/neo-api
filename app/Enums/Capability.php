@@ -51,6 +51,8 @@ use BenSampo\Enum\Enum;
  * @method static self tests()
  *
  * @method static self tools_prints()
+ *
+ * @method static self tools_planning()
  */
 final class Capability extends Enum {
     // Actors
@@ -167,4 +169,9 @@ final class Capability extends Enum {
      * Allow user to setup and edit odoo properties and products
      */
     public const odoo_properties = "odoo.properties";
+
+    /**
+     * Allow user to setup and edit odoo properties and products
+     */
+    public const tools_planning = "tools.planning";
 }

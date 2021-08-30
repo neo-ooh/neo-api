@@ -36,7 +36,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
 
     public function __construct(PiSignageConfig $config, int $campaignId) {
         // Make sure this job is delayed
-        $this->delay = 180;
+//        $this->delay = 180;
 
         parent::__construct($config);
 

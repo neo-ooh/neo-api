@@ -101,7 +101,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
                 $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name)->toArray();
 
                 // We also remove the required assets
-                $group->assets = collect($group->assets)->filter(fn($a) => !$playlistAssets->contains($a))->toArray();
+                $group->assets = collect($group->assets)->filter(fn($a) => !$playlistAssets->contains($a) && $a !== $playlistFile)->toArray();
             }
 
             if ($groupIsTargeted) {
@@ -110,10 +110,9 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
 
 
                 // Add the playlist assets as well
-                $group->assets = array_merge($group->assets, $playlistAssets->toArray());
+                $group->assets[] = $playlistFile;
+                $group->assets = [...$group->assets, ...$playlistAssets->toArray()];
             }
-
-            Log::debug($group->assets);
 
             // Save
             $group->save();

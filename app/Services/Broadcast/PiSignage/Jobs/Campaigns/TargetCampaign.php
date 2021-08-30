@@ -16,11 +16,13 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Neo\Models\Campaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
 use Neo\Services\Broadcast\PiSignage\Models\Group;
 use Neo\Services\Broadcast\PiSignage\Models\Playlist;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * @package Neo\Jobs
@@ -46,6 +48,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
     public function handle(): void {
         /** @var Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignId);
+
 
         if ($campaign === null || !$campaign->external_id) {
             // this campaign either doesn't exist or already has a reservation ID, do nothing.
@@ -94,22 +97,23 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             $group->playAllEligiblePlaylists = true;
 
             if ($playlistIsPresent) {
-                // We remove the playlist if it is present and we don't target the group
-                $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlistFile)->toArray();
+                // We remove the playlist if it is present
+                $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name)->toArray();
 
                 // We also remove the required assets
-                $group->assets = collect($group->assets)->filter(fn($a) => !$playlistAssets->contains($a) && $a !== "__" . $playlist->name)->toArray();
+                $group->assets = collect($group->assets)->filter(fn($a) => !$playlistAssets->contains($a))->toArray();
             }
 
             if ($groupIsTargeted) {
-                // This group is targeted and the playlist is not present, add it.
+                // This group is targeted, add the playlist
                 $group->playlists[] = $playlist;
 
+
                 // Add the playlist assets as well
-                $group->assets[] = $playlistFile;
-                $group->assets = array_merge($group->playlists, $playlistAssets->toArray());
-                continue;
+                $group->assets = array_merge($group->assets, $playlistAssets->toArray());
             }
+
+            Log::debug($group->assets);
 
             // Save
             $group->save();

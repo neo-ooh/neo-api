@@ -93,7 +93,7 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function targetCampaign(int $campaignId) {
-        TargetCampaign::dispatch($this->config, $campaignId);
+        TargetCampaign::dispatchSync($this->config, $campaignId);
     }
 
     /**

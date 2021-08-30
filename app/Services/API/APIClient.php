@@ -42,8 +42,6 @@ class APIClient implements APIClientInterface {
             $options[RequestOptions::JSON] = $payload;
         }
 
-        dump($request);
-
         return new Response($client->send($request, $options));
     }
 }

@@ -17,6 +17,7 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @property string   $_id
  * @property boolean  $deploy                   Deploy state of group to players
  * @property string   $name                     Name of the group
+ * @property array    $assets                   Assets required by the group
  * @property string   $playlistToSchedule       Playlist name to be used as starting name for adding to scheduling group
  * @property boolean  $combineDefaultPlaylist   Play default playlist first along with scheduled playlist(s)
  * @property boolean  $playAllEligiblePlaylists Play all elgible scheduled playlists (otherwise only first one will be played)

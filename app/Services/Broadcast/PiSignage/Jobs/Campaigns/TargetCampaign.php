@@ -72,8 +72,11 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
         $playlist->settings["endtime"]        = $campaign->end_date->toTimeString();
         $playlist->save();
 
+        $playlistAssets = collect($playlist->assets)->pluck("filename");
+
         // Assigned the playlist to all desired locations and remove it from other
         $groups = Group::all($this->getAPIClient());
+
 
         /** @var Group $group */
         foreach ($groups as $group) {
@@ -92,11 +95,17 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
             if ($playlistIsPresent && !$groupIsTargeted) {
                 // We remove the playlist if it is present and we don't target the group
                 $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name)->toArray();
+
+                // We also remove the required assets
+                $group->assets = collect($group->assets)->filter(fn($a) => !$playlistAssets->contains($a))->toArray();
             }
 
             if ($groupIsTargeted && !$playlistIsPresent) {
                 // This group is targeted and the playlist is not present, add it.
                 $group->playlists[] = $playlist;
+
+                // Add the playlist assets as well
+                $group->assets = array_merge($group->playlists, $playlistAssets);
                 continue;
             }
 

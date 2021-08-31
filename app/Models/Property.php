@@ -99,10 +99,14 @@ class Property extends SecuredModel {
     }
 
     public function network() {
-        $this->network_id = $this->actor->getLocations(true, false, false, false)->pluck("network_id")->first();
+        $this->network_id = Location::query()->whereHas("actor", function ($query) {
+            $query->where("id", "=", $this->actor_id);
+        })
+                                    ->get("network_id")->pluck("network_id")->first();
 
         return $this->belongsTo(Network::class, "network_id");
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -110,7 +114,8 @@ class Property extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    public function getTraffic(int $year, int $month): int|null {
+    public
+    function getTraffic(int $year, int $month): int|null {
         /** @var ?PropertyTraffic $traffic */
         $traffic = $this->traffic->data
             ->where("year", "=", $year)

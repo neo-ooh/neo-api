@@ -28,6 +28,7 @@ class StoreNetworkRequest extends FormRequest {
     public function rules() {
         return [
             "name"                      => ["required", "string"],
+            "color"                     => ["required", "string"],
             "connection_id"             => ["required", "exists:broadcasters_connections,id"],
 
             // Broadsign network settings

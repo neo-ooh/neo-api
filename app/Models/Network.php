@@ -29,6 +29,7 @@ use RuntimeException;
  * @property string                                            $uuid
  * @property int                                               $connection_id
  * @property string                                            $name
+ * @property string                                            $color
  * @property Date                                              $created_at
  * @property Date                                              $updated_at
  * @property Date                                              $deleted_at

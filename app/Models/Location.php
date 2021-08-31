@@ -13,6 +13,7 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Rules\AccessibleLocation;
 
@@ -115,6 +116,10 @@ class Location extends SecuredModel {
 
     public function inventory(): HasMany {
         return $this->hasMany(Inventory::class, "location_id", "id");
+    }
+
+    public function actor(): BelongsToMany {
+        return $this->belongsToMany(Actor::class, "actors_locations", "location_id", "actor_id");
     }
 
     /* Reports */

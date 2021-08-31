@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
+use Neo\Exceptions\InvalidBroadcastServiceException;
 use Neo\Http\Requests\Networks\DestroyNetworkRequest;
 use Neo\Http\Requests\Networks\ListNetworksRequest;
 use Neo\Http\Requests\Networks\ShowNetworkRequest;
@@ -51,12 +52,13 @@ class NetworksController extends Controller {
     }
 
     /**
-     * @throws \Neo\Exceptions\InvalidBroadcastServiceException
+     * @throws InvalidBroadcastServiceException
      */
     public function store(StoreNetworkRequest $request): Response {
         $network                = new Network();
         $network->uuid          = v4();
         $network->name          = $request->input("name");
+        $network->color         = $request->input("color");
         $network->connection_id = $request->input("connection_id");
 
         $settings = match ($network->broadcaster_connection->broadcaster) {
@@ -88,6 +90,7 @@ class NetworksController extends Controller {
 
     public function update(UpdateNetworkRequest $request, Network $network): Response {
         $network->name = $request->input("name");
+        $network->color = $request->input("color");
         $settings      = $network->settings;
 
         if ($network->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN) {

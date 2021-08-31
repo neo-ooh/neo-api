@@ -8,18 +8,15 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\RequiredIf;
 use Neo\Enums\Capability;
 use Neo\Models\BroadcasterConnection;
-use Neo\Models\Network;
 use Neo\Services\Broadcast\Broadcaster;
 
-class UpdateNetworkRequest extends FormRequest
-{
+class UpdateNetworkRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         return Gate::allows(Capability::networks_edit);
     }
 
@@ -28,10 +25,10 @@ class UpdateNetworkRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "name" => ["required", "string"],
+            "name"                      => ["required", "string"],
+            "color"                     => ["required", "string"],
 
             // Broadsign network settings
             "container_id"              => [$this->broadcaster(Broadcaster::BROADSIGN), "integer"],

@@ -98,6 +98,12 @@ class Property extends SecuredModel {
         return $this->hasOne(PropertyData::class, "property_id", "actor_id");
     }
 
+    public function network() {
+        $this->network_id = $this->actor->getLocations(true, false, false, false)->pluck("network_id")->first();
+
+        return $this->belongsTo(Network::class, "network_id");
+    }
+
     /*
     |--------------------------------------------------------------------------
     |
@@ -116,10 +122,5 @@ class Property extends SecuredModel {
         }
 
         return $traffic->traffic ?? $traffic->temporary;
-    }
-
-    public function getNetworkAttribute() {
-        $networkId = $this->actor->getLocations(true, false, false, false)->pluck("network_id")->first();
-        return Network::query()->find($networkId);
     }
 }

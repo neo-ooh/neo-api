@@ -52,7 +52,7 @@ class Address extends Model {
 
     public function getStringRepresentationAttribute(): string {
         $str = $this->line_1;
-        if($this->line_2 !== null && strlen($this->line_2) > 0) {
+        if($this->line_2 && strlen($this->line_2) > 0) {
             $str .= ", $this->line_2";
         }
 

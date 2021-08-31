@@ -50,7 +50,7 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
 
         $address = $property->address ?? new Address();
         $address->line_1 = $odooProperty->street;
-        $address->line_2 = $odooProperty->street2;
+        $address->line_2 = $odooProperty->street2 === 0 ? null : $odooProperty->street2 ;
         $address->zipcode = $odooProperty->zip;
 
         /** @var Province $province */

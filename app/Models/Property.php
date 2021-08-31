@@ -117,4 +117,9 @@ class Property extends SecuredModel {
 
         return $traffic->traffic ?? $traffic->temporary;
     }
+
+    public function getNetworkAttribute() {
+        $networkId = $this->actor->getLocations(true, false, false, false)->pluck("network_id")->first();
+        return Network::query()->find($networkId);
+    }
 }

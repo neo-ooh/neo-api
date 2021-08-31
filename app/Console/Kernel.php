@@ -110,7 +110,7 @@ class Kernel extends ConsoleKernel {
         $schedule->job(PullLatestTrafficData::class)->monthly();
 
         // Send Reminder about traffic data to users
-        $schedule->job(TrafficRequiredReminder::class)->monthly();
+        $schedule->job(TrafficRequiredReminder::class)->monthlyOn(7);
 
     }
 

@@ -98,13 +98,13 @@ class Property extends SecuredModel {
         return $this->hasOne(PropertyData::class, "property_id", "actor_id");
     }
 
-    public function network() {
+    public function getNetworkAttribute() {
         $this->network_id = Location::query()->whereHas("actor", function ($query) {
             $query->where("id", "=", $this->actor_id);
         })
                                     ->get("network_id")->pluck("network_id")->first();
 
-        return $this->belongsTo(Network::class, "network_id");
+        return Network::query()->find($this->network_id);
     }
 
 

@@ -12,6 +12,7 @@ use Neo\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Http\Requests\Properties\UpdateAddressRequest;
+use Neo\Http\Requests\Properties\UpdatePropertyRequest;
 use Neo\Jobs\Odoo\PushPropertyGeolocationJob;
 use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Jobs\PullPropertyAddressFromBroadSignJob;
@@ -25,8 +26,7 @@ class PropertiesController extends Controller {
 
     public function index(ListPropertiesRequest $request) {
         $properties = Property::all();
-        $properties->load(["data", "address", "actor", "odoo.products", "odoo.products.product_type"]);
-        $properties->append(["network"]);
+        $properties->load(["data", "address", "actor", "odoo.products", "odoo.products.product_type", "network"]);
 
         return $properties;
     }
@@ -81,7 +81,7 @@ class PropertiesController extends Controller {
             $property->load(["actor", "traffic", "address"]);
 
             if (Gate::allows(Capability::properties_edit)) {
-                $property->load(["data"]);
+                $property->load(["data", "network"]);
             }
 
             if (Gate::allows(Capability::odoo_properties)) {
@@ -120,6 +120,13 @@ class PropertiesController extends Controller {
         $actor->properties->makeHidden("property");
 
         return new Response($actor);
+    }
+
+    public function update(UpdatePropertyRequest $request, Property $property) {
+        $property->network_id = $request->input("network_id");
+        $property->save();
+
+        return new Response($property);
     }
 
     public function updateAddress(UpdateAddressRequest $request, Property $property) {

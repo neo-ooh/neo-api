@@ -14,6 +14,7 @@ use Neo\Rules\AccessibleProperty;
  *
  * @property int                     $actor_id
  * @property int                     $address_id
+ * @property int                     $network_id
  * @property Date                    $created_at
  * @property Date                    $updated_at
  *
@@ -82,6 +83,10 @@ class Property extends SecuredModel {
         return $this->belongsTo(Actor::class, "actor_id");
     }
 
+    public function network(): BelongsTo {
+        return $this->belongsTo(Network::class, "network_id");
+    }
+
     public function traffic(): HasOne {
         return $this->hasOne(PropertyTrafficSettings::class, "property_id", "actor_id");
     }
@@ -96,15 +101,6 @@ class Property extends SecuredModel {
 
     public function data() {
         return $this->hasOne(PropertyData::class, "property_id", "actor_id");
-    }
-
-    public function getNetworkAttribute() {
-        $this->network_id = Location::query()->whereHas("actor", function ($query) {
-            $query->where("id", "=", $this->actor_id);
-        })
-                                    ->get("network_id")->pluck("network_id")->first();
-
-        return Network::query()->find($this->network_id);
     }
 
 

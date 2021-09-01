@@ -11,7 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Jobs\PullAddressGeolocationJob;
+use Neo\Models\Location;
 use Neo\Models\Property;
 
 class TestCommand extends Command {
@@ -20,14 +20,17 @@ class TestCommand extends Command {
     protected $description = 'Internal tests';
 
     public function handle() {
-//        $httpClient = new \Http\Adapter\Guzzle7\Client();
-//        $provider = new \Geocoder\Provider\GoogleMaps\GoogleMaps($httpClient, null, env('GOOGLE_MAPS_API_KEY'));
-//        $geocoder = new \Geocoder\StatefulGeocoder($provider, 'en');
-//
-//        $result = $geocoder->geocodeQuery(GeocodeQuery::create('Buckingham Palace, London'));
+        $properties = Property::all();
 
-//        dd(Geocoder::geocode('5200 ru\e Parthenais, Montreal H2H, Quebec')->get());
+        foreach ($properties as $property) {
+            $property->network_id = Location::query()->whereHas("actor", function ($query) use ($property) {
+                $query->where("id", "=", $property->actor_id);
+            })
+                                            ->get("network_id")
+                                            ->pluck("network_id")
+                                            ->first();
 
-        PullAddressGeolocationJob::dispatchSync(Property::find(106)->address);
+            $property->save();
+        }
     }
 }

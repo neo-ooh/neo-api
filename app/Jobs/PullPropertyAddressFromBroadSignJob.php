@@ -77,7 +77,7 @@ class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
             $address->zipcode = str_replace(" ", "", trim($matches[5]));
         }
 
-        [$lat, $lng] = explode(",", substr($displayUnit->geolocation, 1, -1));
+        [$lng, $lat] = explode(",", substr($displayUnit->geolocation, 1, -1));
         $address->geolocation = new Point($lat, $lng);
 
         $address->save();

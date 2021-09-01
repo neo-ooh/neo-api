@@ -10,7 +10,6 @@
 
 namespace Neo\Jobs;
 
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -19,13 +18,9 @@ use Illuminate\Queue\SerializesModels;
 use Neo\Jobs\Odoo\PushPropertyGeolocationJob;
 use Neo\Models\Address;
 use Neo\Models\City;
-use Neo\Models\Location;
 use Neo\Models\Property;
 use Neo\Models\Province;
-use Neo\Services\Broadcast\Broadcast;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Odoo\OdooConfig;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 class PullPropertyAddressFromOdooJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Schema;
 
 class RemoveOdooProductsTable extends Migration {
     public function up() {
+        Schema::drop("odoo_products_locations");
         Schema::drop("odoo_products");
     }
 

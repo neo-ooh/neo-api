@@ -27,7 +27,7 @@ class PropertiesController extends Controller {
 
     public function index(ListPropertiesRequest $request) {
         $properties = Property::all();
-        $properties->load(["data", "address", "actor", "odoo.products", "odoo.products.product_type", "network"]);
+        $properties->load(["data", "address", "actor", "odoo.products_categories", "odoo.products_categories.product_type", "network"]);
 
         return $properties;
     }

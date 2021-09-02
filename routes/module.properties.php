@@ -32,7 +32,7 @@ Route::group([
     Route::   get("properties", PropertiesController::class . "@index");
     Route::  post("properties", PropertiesController::class . "@store");
     Route::   get("properties/{propertyId}", PropertiesController::class . "@show");
-    Route::   put("properties/{propertyId}", PropertiesController::class . "@update");
+    Route::   put("properties/{property}", PropertiesController::class . "@update");
     Route::   put("properties/{property}/address", PropertiesController::class . "@updateAddress");
     Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 

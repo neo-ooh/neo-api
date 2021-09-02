@@ -94,7 +94,7 @@ abstract class Model {
      * Pull multiple records using their ids
      * @param Client           $client
      * @param array|Collection $ids
-     * @return Collection
+     * @return Collection<static>
      */
     public static function getMultiple(Client $client, array|Collection $ids): Collection {
         return $client->getById(static::$slug, $ids, static::$fields)->map(fn($record) => new static($client, $record));

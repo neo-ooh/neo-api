@@ -97,7 +97,7 @@ return [
     "table-media-value"                  => "Media Value",
     "table-net-investment"               => "Net Investment",
     "table-networks"                     => "Networks",
-    "table-product"                      => "Product",
+    "table-product"                      => "ProductCategory",
     "table-properties"                   => "Properties",
     "table-quantity"                     => "Quantity",
     "table-rate-per-week"                => "Rate per Week",

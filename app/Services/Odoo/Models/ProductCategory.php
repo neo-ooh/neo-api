@@ -15,17 +15,15 @@ use Neo\Services\API\Odoo\Model;
 /**
  * @property int $id
  * @property string $name
- * @property int $sequence
- * @property string $description
- * @property bool $bonus
- * @property mixed $product_type_id
- * @property mixed $categ_id
+ * @property string $complete_name
+ * @property string $display_name
+ * @property int $parent_id
+ * @property int $parent_path
+ * @property int $child_id
+ * @property int $product_count
  */
-class Product extends Model {
-    public static string $slug = "product.template";
+class ProductCategory extends Model {
+    public static string $slug = "product.category";
 
-    protected static array $filters = [
-        ["active", "=", true],
-        ["is_a_neo_rental_product", "=", true],
-    ];
+    protected static array $filters = [];
 }

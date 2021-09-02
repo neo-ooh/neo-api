@@ -19,6 +19,7 @@ use Neo\Jobs\PullPropertyAddressFromBroadSignJob;
 use Neo\Models\Actor;
 use Neo\Models\Address;
 use Neo\Models\City;
+use Neo\Models\Location;
 use Neo\Models\Property;
 use Neo\Models\Province;
 
@@ -53,6 +54,16 @@ class PropertiesController extends Controller {
         $property->save();
         $property->refresh();
 
+        // Try to identify the network from the property's actor locations
+        $property->network_id = Location::query()->whereHas("actor", function ($query) use ($property) {
+            $query->where("id", "=", $property->actor_id);
+        })
+                                        ->get("network_id")
+                                        ->pluck("network_id")
+                                        ->first();
+
+        $property->save();
+
         // Create the data and traffic records for the property
         $property->data()->create();
         $property->traffic()->create();
@@ -85,7 +96,7 @@ class PropertiesController extends Controller {
             }
 
             if (Gate::allows(Capability::odoo_properties)) {
-                $property->load(["odoo", "odoo.products", "odoo.products.product_type"]);
+                $property->load(["odoo", "odoo.products_categories", "odoo.products_categories.product_type"]);
             }
 
             return new Response($property);

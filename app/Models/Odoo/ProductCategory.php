@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Product.php
+ * @neo/api - ProductCategory.php
  */
 
 namespace Neo\Models\Odoo;
@@ -17,7 +17,6 @@ use Neo\Models\Location;
 
 /**
  * @property int $id
- * @property int $property_id
  * @property int $odoo_id
  * @property int $product_type_id
  * @property string $name
@@ -25,15 +24,14 @@ use Neo\Models\Location;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
- * @property Property $odoo_property
+ * @property Collection<Property> $odoo_properties
  * @property ProductType $product_type
  * @property Collection<Location> $locations
  */
-class Product extends Model {
-    protected $table = "odoo_products";
+class ProductCategory extends Model {
+    protected $table = "odoo_products_categories";
 
     protected $fillable = [
-        "property_id",
         "odoo_id",
         "product_type_id",
         "name",
@@ -46,8 +44,8 @@ class Product extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function odoo_property() {
-        return $this->belongsTo(Property::class, "property_id", "property_id");
+    public function odoo_properties() {
+        return $this->belongsToMany(Property::class, "odoo_properties_products_categories", "product_category_id", "property_id");
     }
 
     public function product_type() {

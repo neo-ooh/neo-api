@@ -32,8 +32,8 @@ class UpdateLocationRequest extends FormRequest {
         return [
             "name" => [ "required", "string" ],
             "scheduled_sleep" => [ "required", "boolean" ],
-            "sleep_end" => [ "required_if:scheduled_sleep,true", "date_format:H:i" ],
-            "sleep_start" => [ "required_if:scheduled_sleep,true", "date_format:H:i" ],
+            "sleep_end" => [ "nullable", "required_if:scheduled_sleep,true", "date_format:H:i" ],
+            "sleep_start" => [ "nullable", "required_if:scheduled_sleep,true", "date_format:H:i" ],
         ];
     }
 }

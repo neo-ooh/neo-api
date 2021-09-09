@@ -134,7 +134,6 @@ class CacheInventory extends Command {
     protected function makeProgressBar(int $steps): ProgressBar {
         $bar = new ProgressBar(new ConsoleOutput(), $steps);
         $bar->setFormat('%current%/%max% [%bar%] %message%');
-        $bar->setMessage('Fetching data...');
 
         return $bar;
     }

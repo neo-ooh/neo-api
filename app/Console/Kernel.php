@@ -14,7 +14,9 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\PullPropertyTraffic;
+use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\NotifyEndOfSchedules;
+use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\Properties\PullLatestTrafficData;
 use Neo\Jobs\Properties\TrafficRequiredReminder;
 use Neo\Jobs\RefreshAllContracts;
@@ -32,6 +34,9 @@ class Kernel extends ConsoleKernel {
         // network:sync
         SynchronizeNetworks::class,
 
+        // properties:sync
+        SynchronizeProperties::class,
+
         // network:rebuild
         RebuildResources::class,
 
@@ -40,6 +45,9 @@ class Kernel extends ConsoleKernel {
 
         // network:update-contracts
         RefreshAllContracts::class,
+
+        // contracts:clear-screenshots
+        ClearOldScreenshots::class,
 
         // hotfix:...
         Hotfixes\DisableFullscreenEverywhere::class,
@@ -94,6 +102,7 @@ class Kernel extends ConsoleKernel {
 
         // Update network from broadsign
         $schedule->command('network:sync')->daily();
+        $schedule->command('properties:sync')->daily();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()

@@ -97,8 +97,16 @@ class POP extends PDFDocument {
         $this->contract["current_value"] = $this->contract["current_guaranteed_value"] + $this->contract["current_bonus_value"] + $this->contract["current_bua_value"];
 
         // Map the screenshots Ids to their model counterpart
-        $this->contract["screenshots"] = collect($this->contract["screenshots"])->map(fn($id) => ContractScreenshot::find($id)
-                                                                                                                   ->load("burst", "burst.location"));
+        $this->contract["screenshots"] = ContractScreenshot::query()
+                                                           ->whereIn("id", collect($this->contract["screenshots"]))
+                                                           ->with(["burst", "burst.location"])
+                                                           ->get();
+
+        // Lock the screenshots
+        $this->contract["screenshots"]->each(function(ContractScreenshot $screenshot) {
+            $screenshot->is_locked = true;
+            $screenshot->save();
+        } );
 
         return true;
     }

@@ -53,7 +53,7 @@ class SyncPropertyDataJob implements ShouldQueue {
                                           ->get()
                                           ->mapWithKeys(fn($productType) => [$productType->odoo_id => $productType->id]);
 
-        // for each product, we want to store its category, wich is shared with other properties, and link it properly with the property
+        // for each product, we want to store its category, which is shared with other properties, and link it properly with the property
         $productCategoriesIds = [];
 
         /** @var Product $distRentalProduct */

@@ -103,6 +103,7 @@ class Kernel extends ConsoleKernel {
         // Update network from broadsign
         $schedule->command('network:sync')->daily();
         $schedule->command('properties:sync')->daily();
+        $schedule->command('contracts:clear-screenshots')->daily();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()

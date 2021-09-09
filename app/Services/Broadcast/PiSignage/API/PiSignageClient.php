@@ -93,6 +93,12 @@ class PiSignageClient implements APIClientInterface {
         if(array_key_exists("data", $responseBody)) {
             // Unwrap response content
             $responseBody = $responseBody["data"];
+
+            // pages routes will have another level of nesting
+            if(array_key_exists("objects", $responseBody)) {
+                // Unwrap response content
+                $responseBody = $responseBody["objects"];
+            }
         }
 
         // Execute post-request transformation if needed

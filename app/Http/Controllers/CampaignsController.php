@@ -13,8 +13,10 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Exceptions\InvalidBroadcastServiceException;
+use Neo\Exceptions\UnsupportedBroadcasterOptionException;
 use Neo\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Http\Requests\Campaigns\ListCampaignsRequest;
+use Neo\Http\Requests\Campaigns\SetScreensStateRequest;
 use Neo\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Http\Requests\CampaignsLocations\RemoveCampaignLocationRequest;
@@ -22,6 +24,7 @@ use Neo\Http\Requests\CampaignsLocations\SyncCampaignLocationsRequest;
 use Neo\Models\Campaign;
 use Neo\Models\Format;
 use Neo\Models\Location;
+use Neo\Models\Player;
 use Neo\Services\Broadcast\Broadcast;
 
 class CampaignsController extends Controller {
@@ -167,5 +170,26 @@ class CampaignsController extends Controller {
         $campaign->delete();
 
         return new Response(["result" => "ok"]);
+    }
+
+    public function setScreensState(SetScreensStateRequest $request, Campaign $campaign) {
+        //Make sure the campaign supports screen controls
+        if(!in_array("screens_controls", $campaign->available_options)) {
+            throw new UnsupportedBroadcasterOptionException("{$campaign->network->broadcaster_connection->broadcaster} does not support the 'screen_controls option'");
+        }
+
+        // Get a network instance
+        $broadcaster = Broadcast::network($campaign->network_id);
+
+        $state = $request->input("state");
+
+        // Send the updated screen state to each location
+        /** @var Location $location */
+        foreach($campaign->locations as $location) {
+            /** @var Player $player */
+            foreach($location->players as $player) {
+                $broadcaster->setScreenState($player->external_id, $state);
+            }
+        }
     }
 }

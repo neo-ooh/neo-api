@@ -18,7 +18,7 @@ use Neo\Models\Schedule;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
 
 
@@ -37,13 +37,15 @@ Route::group([
     Route::   put("campaigns/{campaign}", CampaignsController::class . "@update");
     Route::delete("campaigns/{campaign}", CampaignsController::class . "@destroy");
 
+    Route::   put("campaigns/{campaign}/screens_state", CampaignsController::class . "@setScreensState");
+
     /*
    |----------------------------------------------------------------------
    | Campaigns Locations
    |----------------------------------------------------------------------
    */
 
-    Route::   put("campaigns/{campaign}/locations"           , CampaignsController::class . "@syncLocations");
+    Route::   put("campaigns/{campaign}/locations", CampaignsController::class . "@syncLocations");
     Route::delete("campaigns/{campaign}/locations/{location}", CampaignsController::class . "@removeLocation");
 
     /*
@@ -54,13 +56,13 @@ Route::group([
 
     Route::model("schedule", Schedule::class);
 
-    Route::   get("schedules/pending"             , SchedulesController::class . "@pending");
-    Route::   put("schedules/{schedule}"          , SchedulesController::class . "@update");
-    Route::delete("schedules/{schedule}"          , SchedulesController::class . "@destroy");
+    Route::   get("schedules/pending", SchedulesController::class . "@pending");
+    Route::   put("schedules/{schedule}", SchedulesController::class . "@update");
+    Route::delete("schedules/{schedule}", SchedulesController::class . "@destroy");
 
-    Route::  post("campaigns/{campaign}/reorder"  , SchedulesController::class . "@reorder");
+    Route::  post("campaigns/{campaign}/reorder", SchedulesController::class . "@reorder");
     Route::  post("campaigns/{campaign}/schedules", SchedulesController::class . "@store");
-    Route::  post("campaigns/{campaign}/insert"   , SchedulesController::class . "@insert");
+    Route::  post("campaigns/{campaign}/insert", SchedulesController::class . "@insert");
 
 
     /*

@@ -8,10 +8,12 @@ use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\CreateCampaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\DestroyCampaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\SetCampaignSchedules;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\TargetCampaign;
+use Neo\Services\Broadcast\PiSignage\Jobs\Players\TurnPlayerTVOnOff;
 use Neo\Services\Broadcast\PiSignage\Jobs\Schedules\CreateSchedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\Schedules\DestroySchedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\Schedules\UpdateSchedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\SynchronizeLocations;
+use Neo\Services\Broadcast\PiSignage\Jobs\SynchronizePlayers;
 
 class PiSignageServiceAdapter implements BroadcastService {
 
@@ -36,7 +38,8 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function synchronizePlayers() {
-        // TODO: Implement synchronizePlayers() method.
+        SynchronizePlayers::dispatchSync($this->config);
+
     }
 
     /**
@@ -126,5 +129,9 @@ class PiSignageServiceAdapter implements BroadcastService {
 
     public function searchCampaigns(array $query) {
         // TODO: Implement searchCampaigns() method.
+    }
+
+    public function setScreenState(string $external_player_id, bool $state) {
+        TurnPlayerTVOnOff::dispatchSync($this->config, $external_player_id, $state);
     }
 }

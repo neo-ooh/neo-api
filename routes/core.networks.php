@@ -14,6 +14,7 @@ use Neo\Http\Controllers\BroadcasterConnectionsController;
 use Neo\Http\Controllers\ContainersController;
 use Neo\Http\Controllers\DisplayTypesController;
 use Neo\Http\Controllers\LocationsController;
+use Neo\Http\Controllers\LocationsPlayersController;
 use Neo\Http\Controllers\NetworksController;
 use Neo\Models\BroadcasterConnection;
 use Neo\Models\DisplayType;
@@ -22,7 +23,7 @@ use Neo\Models\Network;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
     /*
     |----------------------------------------------------------------------
@@ -32,8 +33,8 @@ Route::group([
 
     Route::model("connection", BroadcasterConnection::class);
 
-    Route::   get("broadcasters/"            , BroadcasterConnectionsController::class . "@index");
-    Route::  post("broadcasters/"            , BroadcasterConnectionsController::class . "@store");
+    Route::   get("broadcasters/", BroadcasterConnectionsController::class . "@index");
+    Route::  post("broadcasters/", BroadcasterConnectionsController::class . "@store");
     Route::   get("broadcasters/{connection}", BroadcasterConnectionsController::class . "@show");
     Route::  post("broadcasters/{connection}", BroadcasterConnectionsController::class . "@update");
     Route::delete("broadcasters/{connection}", BroadcasterConnectionsController::class . "@destroy");
@@ -46,9 +47,9 @@ Route::group([
 
     Route::model("network", Network::class);
 
-    Route::   get("networks"          , NetworksController::class . "@index");
-    Route::  post("networks"          , NetworksController::class . "@store");
-    Route::  post("networks/_refresh" , NetworksController::class . "@refresh");
+    Route::   get("networks", NetworksController::class . "@index");
+    Route::  post("networks", NetworksController::class . "@store");
+    Route::  post("networks/_refresh", NetworksController::class . "@refresh");
     Route::   get("networks/{network}", NetworksController::class . "@show");
     Route::   put("networks/{network}", NetworksController::class . "@update");
     Route::delete("networks/{network}", NetworksController::class . "@destroy");
@@ -64,7 +65,7 @@ Route::group([
 
     Route::model("displayType", DisplayType::class);
 
-    Route::get("display-types"              , DisplayTypesController::class . "@index");
+    Route::get("display-types", DisplayTypesController::class . "@index");
     Route::put("display-types/{displayType}", DisplayTypesController::class . "@update");
 
 
@@ -76,12 +77,13 @@ Route::group([
 
     Route::model("location", Location::class);
 
-    Route::get("locations"           , LocationsController::class . "@index");
-    Route::get("locations/_search"   , LocationsController::class . "@search");
-    Route::get("locations/_network"  , LocationsController::class . "@allByNetwork");
+    Route::get("locations", LocationsController::class . "@index");
+    Route::get("locations/_search", LocationsController::class . "@search");
+    Route::get("locations/_network", LocationsController::class . "@allByNetwork");
     Route::get("locations/{location}", LocationsController::class . "@show");
     Route::put("locations/{location}", LocationsController::class . "@update");
 
+    Route::get("locations/{location}/players", LocationsPlayersController::class . "@index");
 
     /*
     |----------------------------------------------------------------------

@@ -50,6 +50,7 @@ use Neo\Services\Broadcast\Broadcaster;
  * @property int                 $schedules_count
  *
  * @property EloquentCollection  $related_campaigns
+ * @property array  $available_options
  *
  * @property Collection<integer> $targeted_frames Frame targeting criteria required by the campaign
  *           schedule
@@ -254,6 +255,7 @@ class Campaign extends SecuredModel {
                 $options[] = "loop_saturation";
                 break;
             case Broadcaster::PISIGNAGE:
+                $options[] = "screens_controls";
                 break;
         }
 

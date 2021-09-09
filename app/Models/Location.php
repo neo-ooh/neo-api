@@ -29,10 +29,14 @@ use Neo\Rules\AccessibleLocation;
  * @property int        $container_id
  * @property string     $province [QC, ON, ...]
  * @property string     $city
+ * @property boolean    $scheduled_sleep
+ * @property Date       $sleep_end
+ * @property Date    $sleep_start
  * @property Date       $created_at
  * @property Date       $updated_at
  *
- * @property ?Container container
+ * @property ?Container $container
+ * @property Network    $network
  *
  * @mixin Builder
  */
@@ -73,6 +77,15 @@ class Location extends SecuredModel {
      * @var array
      */
     protected $hidden = [];
+
+    protected $casts = [
+        "scheduled_sleep" => "boolean"
+    ];
+
+    protected $dates = [
+        "sleep_end",
+        "sleep_start",
+    ];
 
     /**
      * The relationships that should always be loaded.

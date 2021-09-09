@@ -56,6 +56,7 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @property boolean  $disableAp                Disable Pi Access Point
  * @property array    $playlists
  * @property array    $deployedPlaylists
+ * @property array{enable: bool, ontime: string, offtime: string}    $sleep
  *
  * @method static Collection all(PiSignageClient $client);
  *

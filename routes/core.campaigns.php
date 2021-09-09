@@ -37,8 +37,6 @@ Route::group([
     Route::   put("campaigns/{campaign}", CampaignsController::class . "@update");
     Route::delete("campaigns/{campaign}", CampaignsController::class . "@destroy");
 
-    Route::   put("campaigns/{campaign}/screens_state", CampaignsController::class . "@setScreensState");
-
     /*
    |----------------------------------------------------------------------
    | Campaigns Locations

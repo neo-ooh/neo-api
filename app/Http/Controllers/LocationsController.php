@@ -16,6 +16,8 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Neo\Enums\Capability;
+use Neo\Exceptions\UnsupportedBroadcasterOptionException;
+use Neo\Http\Requests\Campaigns\SetScreensStateRequest;
 use Neo\Http\Requests\Locations\ListLocationsRequest;
 use Neo\Http\Requests\Locations\SalesLocationRequest;
 use Neo\Http\Requests\Locations\SearchLocationsRequest;
@@ -25,6 +27,8 @@ use Neo\Models\Actor;
 use Neo\Models\Format;
 use Neo\Models\Location;
 use Neo\Models\Network;
+use Neo\Models\Player;
+use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
 
 class LocationsController extends Controller {
@@ -151,8 +155,34 @@ class LocationsController extends Controller {
      */
     public function update(UpdateLocationRequest $request, Location $location): Response {
         $location->name = $request->input('name');
+        $location->scheduled_sleep = $request->input("scheduled_sleep");
+        $location->sleep_end = $request->input("sleep_end");
+        $location->sleep_start = $request->input("sleep_start");
         $location->save();
 
+        if($location->network()->first()->broadcaster_connection->broadcaster === 'pisignage') {
+            $network = Broadcast::network($location->network_id);
+            $network->updateLocation($location->id);
+        }
+
         return new Response($location->load('display_type'));
+    }
+
+    public function setScreensState(SetScreensStateRequest $request, Location $location) {
+        //Make sure the location supports screen controls
+        if ($location->network->broadcaster_connection->broadcaster !== 'pisignage') {
+            throw new UnsupportedBroadcasterOptionException("{$location->network->broadcaster_connection->broadcaster} does not support the 'screen_controls option'");
+        }
+
+        // Get a network instance
+        $broadcaster = Broadcast::network($location->network_id);
+
+        $state = $request->input("state");
+
+        // Send the updated screen state to each location
+        /** @var Player $player */
+        foreach ($location->players as $player) {
+            $broadcaster->setScreenState($player->external_id, $state);
+        }
     }
 }

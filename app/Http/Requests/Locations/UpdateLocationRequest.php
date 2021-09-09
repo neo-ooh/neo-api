@@ -31,6 +31,9 @@ class UpdateLocationRequest extends FormRequest {
     public function rules (): array {
         return [
             "name" => [ "required", "string" ],
+            "scheduled_sleep" => [ "required", "boolean" ],
+            "sleep_end" => [ "required_if:scheduled_sleep,true", "date_format:H:i" ],
+            "sleep_start" => [ "required_if:scheduled_sleep,true", "date_format:H:i" ],
         ];
     }
 }

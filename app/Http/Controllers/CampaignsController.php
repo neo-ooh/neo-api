@@ -171,25 +171,4 @@ class CampaignsController extends Controller {
 
         return new Response(["result" => "ok"]);
     }
-
-    public function setScreensState(SetScreensStateRequest $request, Campaign $campaign) {
-        //Make sure the campaign supports screen controls
-        if(!in_array("screens_controls", $campaign->available_options)) {
-            throw new UnsupportedBroadcasterOptionException("{$campaign->network->broadcaster_connection->broadcaster} does not support the 'screen_controls option'");
-        }
-
-        // Get a network instance
-        $broadcaster = Broadcast::network($campaign->network_id);
-
-        $state = $request->input("state");
-
-        // Send the updated screen state to each location
-        /** @var Location $location */
-        foreach($campaign->locations as $location) {
-            /** @var Player $player */
-            foreach($location->players as $player) {
-                $broadcaster->setScreenState($player->external_id, $state);
-            }
-        }
-    }
 }

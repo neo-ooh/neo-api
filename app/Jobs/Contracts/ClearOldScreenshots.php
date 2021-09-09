@@ -47,7 +47,7 @@ class ClearOldScreenshots extends Command {
             $progressBar->advance();
         }
 
-        $progressBar->finish();;=
+        $progressBar->finish();
 
         // Delete finished bursts without any screenshots
         ContractBurst::query()->where("status", "=", "OK")->whereDoesntHave("screenshots")->delete();

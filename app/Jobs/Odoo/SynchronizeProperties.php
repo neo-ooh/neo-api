@@ -49,9 +49,10 @@ class SynchronizeProperties extends Command {
 
         $progressBar = $this->makeProgressBar($properties->count());
         $progressBar->start();
+        $progressBar->setMessage("Syncing...");
 
         foreach($properties as $property) {
-            $progressBar->setMessage("Syncing property #" . $property->property_id . "...");
+            $progressBar->setMessage("Syncing property #" . $property->property_id . ": ");
 
             SyncPropertyDataJob::dispatchSync($property->property_id, $client);
 

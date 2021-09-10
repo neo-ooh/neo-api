@@ -18,11 +18,14 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Neo\Models\Odoo\ProductCategory;
+use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\ProductCategory as OdooProduct;
 use Neo\Models\Odoo\ProductType;
 use Neo\Services\API\Odoo\Client;
 use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\Models\Property;
+use SebastianBergmann\Environment\Console;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class SyncPropertyDataJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -39,6 +42,8 @@ class SyncPropertyDataJob implements ShouldQueue {
 
         // We want to pull all the rental products of the property
         $propertyRentalProducts = Product::getMultiple($this->client, $odooPropertyDist->rental_product_ids);
+
+        (new ConsoleOutput())->writeln("{$odooProperty->property->actor->name} - {$propertyRentalProducts->count()} products");
 
         // Make sure all the referenced product_types are present in the DB
         $odooProductTypesIds = $propertyRentalProducts->pluck("product_type_id.0")->unique();
@@ -58,11 +63,6 @@ class SyncPropertyDataJob implements ShouldQueue {
 
         /** @var Product $distRentalProduct */
         foreach ($propertyRentalProducts as $distRentalProduct) {
-            if($odooProperty->products_categories->contains("odoo_id", $distRentalProduct->categ_id[0])) {
-                // Category is already referenced, move on
-                continue;
-            }
-
             // Get or create the product category from our db
             $productCategory = ProductCategory::query()->firstOrCreate([
                 "odoo_id" => $distRentalProduct->categ_id[0],
@@ -75,7 +75,7 @@ class SyncPropertyDataJob implements ShouldQueue {
             $productCategoriesIds[] = $productCategory->id;
         }
 
-        $odooProperty->products_categories()->sync($productCategoriesIds);
+        dump($odooProperty->products_categories()->sync($productCategoriesIds));
     }
 
     protected function pullPropertyType(int $odooProductTypeId): void {

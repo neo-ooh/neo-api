@@ -43,8 +43,6 @@ class SyncPropertyDataJob implements ShouldQueue {
         // We want to pull all the rental products of the property
         $propertyRentalProducts = Product::getMultiple($this->client, $odooPropertyDist->rental_product_ids);
 
-        (new ConsoleOutput())->writeln("{$odooProperty->property->actor->name} - {$propertyRentalProducts->count()} products");
-
         // Make sure all the referenced product_types are present in the DB
         $odooProductTypesIds = $propertyRentalProducts->pluck("product_type_id.0")->unique();
 
@@ -75,7 +73,7 @@ class SyncPropertyDataJob implements ShouldQueue {
             $productCategoriesIds[] = $productCategory->id;
         }
 
-        dump($odooProperty->products_categories()->sync($productCategoriesIds));
+        $odooProperty->products_categories()->sync($productCategoriesIds);
     }
 
     protected function pullPropertyType(int $odooProductTypeId): void {

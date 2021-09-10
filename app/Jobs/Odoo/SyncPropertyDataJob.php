@@ -15,17 +15,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Neo\Models\Odoo\ProductCategory;
-use Neo\Models\Odoo\ProductCategory;
-use Neo\Models\Odoo\ProductCategory as OdooProduct;
 use Neo\Models\Odoo\ProductType;
 use Neo\Services\API\Odoo\Client;
 use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\Models\Property;
-use SebastianBergmann\Environment\Console;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 class SyncPropertyDataJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -65,8 +59,8 @@ class SyncPropertyDataJob implements ShouldQueue {
             $productCategory = ProductCategory::query()->firstOrCreate([
                 "odoo_id" => $distRentalProduct->categ_id[0],
             ], [
-                "name" => $distRentalProduct->categ_id[1],
-                "internal_name" => $distRentalProduct->categ_id[1],
+                "name"            => $distRentalProduct->categ_id[1],
+                "internal_name"   => $distRentalProduct->categ_id[1],
                 "product_type_id" => $odooProductTypesMap[$distRentalProduct->product_type_id[0]]
             ]);
 
@@ -87,7 +81,7 @@ class SyncPropertyDataJob implements ShouldQueue {
         ProductType::query()->firstOrCreate([
             "odoo_id" => $odooProductTypeId,
         ], [
-            "name" => $productTypeDist->display_name,
+            "name"          => $productTypeDist->display_name,
             "internal_name" => $productTypeDist->name,
         ]);
     }

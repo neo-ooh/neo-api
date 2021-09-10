@@ -234,6 +234,10 @@ class ActorsController extends Controller {
                 break;
         }
 
+        if($actor->property !== null) {
+            $actor->property->delete();
+        }
+
         $actor->delete();
 
         return new Response([]);

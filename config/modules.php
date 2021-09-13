@@ -166,4 +166,7 @@ return [
 
         "database" => env('MODULE_ODOO_DATABASE')
     ],
+    "planning" => [
+        "enabled" => env('MODULE_PLANNING_ENABLED', true),
+    ]
 ];

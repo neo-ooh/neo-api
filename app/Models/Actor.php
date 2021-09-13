@@ -87,7 +87,9 @@ use Neo\Rules\AccessibleActor;
  * @property Collection     shared_libraries
  * @property Collection     children_libraries
  *
- * @property ?ActorLogo     logo
+ * @property Collection     campaign_planner_saves
+ *
+ * @property ?ActorLogo logo
  *
  * @property string         campaigns_status
  *
@@ -253,9 +255,12 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->hasOne(ActorLogo::class, 'actor_id', 'id');
     }
 
-
     public function property() {
         return $this->hasOne(Property::class, 'actor_id', 'id');
+    }
+
+    public function campaign_planner_saves() {
+        return $this->hasMany(CampaignPlannerSave::class, 'actor_id', 'id');
     }
 
 

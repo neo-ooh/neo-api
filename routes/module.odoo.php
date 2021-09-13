@@ -9,13 +9,11 @@
  */
 
 use Illuminate\Support\Facades\Route;
-use Neo\Http\Controllers\ModulesController;
 use Neo\Http\Controllers\Odoo\PropertiesController;
-use Neo\Http\Controllers\StatsController;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1/odoo"
+    "prefix"     => "v1/odoo"
 ], function () {
     /*
     |----------------------------------------------------------------------

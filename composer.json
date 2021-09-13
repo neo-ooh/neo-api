@@ -42,7 +42,8 @@
     "predis/predis": "^1.1",
     "ramsey/uuid": "^4.1",
     "spatie/image": "^1.10",
-    "toin0u/geocoder-laravel": "^4.4"
+    "toin0u/geocoder-laravel": "^4.4",
+    "vinkla/hashids": "^9.1"
   },
   "require-dev": {
     "facade/ignition": "^2.5",

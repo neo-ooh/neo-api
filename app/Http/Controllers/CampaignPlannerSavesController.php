@@ -20,14 +20,14 @@ use Neo\Models\CampaignPlannerSave;
 
 class CampaignPlannerSavesController {
     public function index(ListSavesRequest $request, Actor $actor) {
-        return new Response($actor->campaign_planner_saves()->get(['name', 'created_at', 'updated_at']));
+        return new Response($actor->campaign_planner_saves()->get(["id", "name", "created_at", "updated_at"]));
     }
 
     public function store(StoreSaveRequest $request, Actor $actor) {
         $save = new CampaignPlannerSave([
             "actor_id" => $actor->id,
-            "name" => $request->input("name"),
-            "data" => $request->input("data"),
+            "name"     => $request->input("name"),
+            "data"     => $request->input("data"),
         ]);
 
         $save->save();

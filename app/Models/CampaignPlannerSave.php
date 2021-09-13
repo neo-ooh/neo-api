@@ -35,6 +35,12 @@ class CampaignPlannerSave extends Model {
         "data" => "array"
     ];
 
+    protected $fillable = [
+        "name",
+        "actor_id",
+        "data"
+    ];
+
     public function resolveRouteBinding($value, $field = null) {
         $id = Hashids::decode($value)[0] ?? null;
         return $this->newQuery()->findOrFail($id);

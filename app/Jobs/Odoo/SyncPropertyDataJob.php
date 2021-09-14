@@ -65,6 +65,7 @@ class SyncPropertyDataJob implements ShouldQueue {
             ]);
             $productCategory->internal_name = $distRentalProduct->categ_id[1];
             $productCategory->quantity = $distRentalProduct->nb_screen;
+            $productCategory->save();
 
             $productCategoriesIds[] = $productCategory->id;
         }

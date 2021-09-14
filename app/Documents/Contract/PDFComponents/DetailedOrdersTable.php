@@ -25,6 +25,12 @@ class DetailedOrdersTable extends Component {
     protected string $network;
     protected Collection $purchases;
 
+    const NETWORK_SUBSECTIONS = [
+        Network::NEO_SHOPPING => [null],
+        Network::NEO_OTG      => ["outdoor", "indoor"],
+        Network::NEO_FITNESS  => [null],
+    ];
+
     protected array $regions = [
         "Greater Montreal",
         "Eastern Townships",
@@ -74,21 +80,40 @@ class DetailedOrdersTable extends Component {
                     "purchase" => $order->isGuaranteedPurchase(),
                     "bonus"    => $order->isGuaranteedBonus(),
                     "bua"      => $order->isBonusUponAvailability(),
-                ][$this->type])
-            ->sortBy(['market_order', 'property_name'])
-            ->groupBy(['market_order', 'property_name']);
+                ][$this->type]);
 
-        if ($purchases->count() === 0) {
-            return "";
+        $views = "";
+
+        foreach (static::NETWORK_SUBSECTIONS[$this->network] as $subsection) {
+            $sectionPurchases = collect([...$purchases]);
+
+            if ($subsection !== null) {
+                if ($subsection === 'outdoor') {
+                    $sectionPurchases = $sectionPurchases->filter(fn($line) => $line->isOutdoor());
+                }
+
+                if ($subsection === 'indoor') {
+                    $sectionPurchases = $sectionPurchases->filter(fn($line) => $line->isIndoor());
+                }
+            }
+
+            if ($sectionPurchases->count() === 0) {
+                return "";
+            }
+
+            $views .= view('documents.contract.campaign-details.orders-network', [
+                "type"        => $this->type,
+                "network"     => $this->network,
+                "networkName" => $this->networkName(),
+                "subsection"  => $subsection,
+                "orders"      => $sectionPurchases
+                    ->sortBy(['market_order', 'property_name'])
+                    ->groupBy(['market_order', 'property_name']),
+                "order"       => $this->order,
+            ]);
         }
 
-        return view('documents.contract.campaign-details.orders-network', [
-            "type"        => $this->type,
-            "network"     => $this->network,
-            "networkName" => $this->networkName(),
-            "orders"      => $purchases,
-            "order"       => $this->order,
-        ]);
+        return $views;
     }
 
     /**

@@ -5,6 +5,7 @@ namespace Neo\Documents\Contract\XLSXComponents;
 use Illuminate\Support\Collection;
 use Neo\Documents\Contract\Order;
 use Neo\Documents\Contract\OrderLine;
+use Neo\Documents\Network;
 use Neo\Documents\XLSX\Component;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXStyleFactory;
@@ -12,6 +13,12 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class NetworkOrders extends Component {
+
+    const NETWORK_SUBSECTIONS = [
+        Network::NEO_SHOPPING => [null],
+        Network::NEO_OTG      => ["outdoor", "indoor"],
+        Network::NEO_FITNESS  => [null],
+    ];
 
     protected string $network;
     protected Order $order;
@@ -27,27 +34,39 @@ class NetworkOrders extends Component {
     public function render(Worksheet $ws) {
         $orderLines = $this->order->orderLines->filter(fn(OrderLine $line) => $line->isNetwork($this->network));
 
-        if (count($orderLines) === 0) {
-            // If there is no ordere line for this network, we don't print anything
-            return;
+        foreach (static::NETWORK_SUBSECTIONS[$this->network] as $subsection) {
+            $sectionPurchases = collect([...$orderLines]);
+
+            if ($subsection !== null) {
+                if ($subsection === 'outdoor') {
+                    $sectionPurchases = $sectionPurchases->filter(fn($line) => $line->isOutdoor());
+                }
+
+                if ($subsection === 'indoor') {
+                    $sectionPurchases = $sectionPurchases->filter(fn($line) => $line->isIndoor());
+                }
+            }
+
+            if (count($sectionPurchases) === 0) {
+                // If there is no ordere line for this network, we don't print anything
+                return;
+            }
+
+            // Start by printing our header
+            $ws->moveCursor(0, 2);
+            $ws->mergeCellsRelative(16);
+            $ws->getCurrentCell()->setValue($subsection ? __("network-" . $this->network . "-" . $subsection) : __("network-" . $this->network));
+
+            // Stylize the cell
+            $ws->getStyle($ws->getCursorPosition())->applyFromArray(XLSXStyleFactory::networkSectionHeader($this->network));
+            $ws->getRowDimension($ws->getCursorRow())->setRowHeight(50);
+
+            // Then print the guaranteed orders
+            $this->printGuaranteedOrderLines($sectionPurchases->filter(fn(OrderLine $line) => $line->isGuaranteed()), $ws);
+
+            // Then print the bua orders
+            $this->printBuaOrderLinee($sectionPurchases->filter(fn(OrderLine $line) => $line->isBonusUponAvailability()), $ws);
         }
-
-        // Start by printing our header
-        $ws->moveCursor(0, 2);
-        $ws->mergeCellsRelative(16);
-        $ws->getCurrentCell()->setValue(strtoupper(__("common.network-" . $this->network)));
-
-        // Stylize the cell
-        $ws->getStyle($ws->getCursorPosition())->applyFromArray(XLSXStyleFactory::networkSectionHeader($this->network));
-        $ws->getRowDimension($ws->getCursorRow())->setRowHeight(50);
-
-        // Then print the guaranteed orders
-        $this->printGuaranteedOrderLines($this->order->getGuaranteedOrders()
-                                                     ->filter(fn(OrderLine $line) => $line->isNetwork($this->network)), $ws);
-
-        // Then print the bua orders
-        $this->printBuaOrderLinee($this->order->getBuaOrders()
-                                              ->filter(fn(OrderLine $line) => $line->isNetwork($this->network)), $ws);
     }
 
     public function printGuaranteedOrderLines(Collection $orderLines, Worksheet $ws) {
@@ -126,7 +145,7 @@ class NetworkOrders extends Component {
 
                 $ws->popPosition();
 
-                $lines = $lines->sortBy(['property_name', 'property_city']);
+                $lines    = $lines->sortBy(['property_name', 'property_city']);
                 $lastLine = null;
 
                 // Print the lines
@@ -147,15 +166,18 @@ class NetworkOrders extends Component {
                     // When we have multiple rows for the same property, we want to merge their market, properties, annual traffic and campaign traffic column.
                     // How it's done: We keep the previous line in memory and check if the properties names match. If so, we move back up to find the first line for the property, unmerge if necessary, and re-merge the rows properly.
 
-                    $city = $line->property_city;
-                    $property = $line->property_name;
-                    $annualTraffic = $line->property_annual_traffic;
+                    $city            = $line->property_city;
+                    $property        = $line->property_name;
+                    $annualTraffic   = $line->property_annual_traffic;
                     $campaignTraffic = $line->traffic;
 
                     // Is the last line for the same property ?
-                    if($lastLine && $lastLine->property_name === $line->property_name) {
+                    if ($lastLine && $lastLine->property_name === $line->property_name) {
                         // Yes, make sure we will not print anything for the current row as we will use the first row values.
-                        $city = null; $property = null; $campaignTraffic = null; $annualTraffic = null;
+                        $city            = null;
+                        $property        = null;
+                        $campaignTraffic = null;
+                        $annualTraffic   = null;
 
                         // Save the current position, and roll back up to find the first occurence of the property
                         $ws->pushPosition();
@@ -163,20 +185,20 @@ class NetworkOrders extends Component {
                         do {
                             $ws->moveCursor(0, -1);
                             $acc++;
-                        } while($ws->getCurrentCell()->isInMergeRange() && !$ws->getCurrentCell()->isMergeRangeValueCell());
+                        } while ($ws->getCurrentCell()->isInMergeRange() && !$ws->getCurrentCell()->isMergeRangeValueCell());
 
                         // Check if we are at the beggining of a merge range, if so, unmerge it
-                        if($ws->getCurrentCell()->isMergeRangeValueCell()) {
+                        if ($ws->getCurrentCell()->isMergeRangeValueCell()) {
                             $ws->pushPosition();
                             // Unmerge Market, property, annual traffic, campaign traffic and redo the merging
-                            for($i = 0; $i < 4; $i++) {
+                            for ($i = 0; $i < 4; $i++) {
                                 $ws->unmergeCells($ws->getCurrentCell()->getMergeRange());
                                 $ws->moveCursor(1, 0);
                             }
                             $ws->popPosition();
                         }
                         // Finally, properly merge the columns
-                        for($i = 0; $i < 4; $i++) {
+                        for ($i = 0; $i < 4; $i++) {
                             $ws->mergeCellsRelative(1, 1 + $acc);
                             $ws->moveCursor(1, 0);
                         }
@@ -238,7 +260,9 @@ class NetworkOrders extends Component {
 
                 $lines = collect($lines);
 
-                $propertiesTraffic = $lines->groupBy('property_name')->map(fn($properties) => collect($properties)->max("traffic"))->sum();
+                $propertiesTraffic = $lines->groupBy('property_name')
+                                           ->map(fn($properties) => collect($properties)->max("traffic"))
+                                           ->sum();
 
                 $ws->printRow([
                     $lines->unique("property_name")->sum("property_annual_traffic"),
@@ -329,7 +353,7 @@ class NetworkOrders extends Component {
         $ws->getRowDimension($ws->getCursorRow())->setRowHeight(20);
 
         $ws->mergeCellsRelative(2);
-        $ws->getCurrentCell()->setValue("Total " . __("common.network-". $this->network)) ;
+        $ws->getCurrentCell()->setValue("Total " . __("common.network-" . $this->network));
 
         // Monetary values
         $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
@@ -361,7 +385,7 @@ class NetworkOrders extends Component {
         $ws->moveCursor(0, 1);
 
         $this->networkTotalTraffic = $networkPropertiesTraffic;
-        $this->totalAnnualTraffic = $lines->unique("property_name")->sum("property_annual_traffic");
+        $this->totalAnnualTraffic  = $lines->unique("property_name")->sum("property_annual_traffic");
     }
 
     public function printBuaOrderLinee(Collection $orderLines, Worksheet $ws) {

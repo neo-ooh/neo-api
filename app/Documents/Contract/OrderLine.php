@@ -225,6 +225,11 @@ class OrderLine {
         $this->type = static::TYPE_GUARANTEED_PURCHASE;
     }
 
+    /**
+     * Confirm if the current line is of the given network or not
+     * @param string $network
+     * @return bool
+     */
     public function isNetwork(string $network) {
         switch ($network) {
             case Network::NEO_SHOPPING:
@@ -236,6 +241,34 @@ class OrderLine {
         }
 
         return false;
+    }
+
+    /**
+     * Tell if the current order line is for an indoor property on the on-the-go network
+     * @return bool
+     */
+    public function isIndoor() {
+        if(!$this->isNetwork(Network::NEO_OTG)) {
+            return false;
+        }
+
+        return strtolower($this->property_type) === 'c-store' || strtolower($this->property_type) === 'dépanneur';
+    }
+
+    /**
+     * Tell if the current order line is for an outdoor property on the on-the-go network
+     * @return bool
+     */
+    public function isOutdoor() {
+        if(!$this->isNetwork(Network::NEO_OTG)) {
+            return false;
+        }
+
+        return strtolower($this->property_type) === 'service station' || strtolower($this->property_type) === 'station service';
+    }
+
+    public function isGuaranteed(): int {
+        return $this->isGuaranteedPurchase() || $this->isGuaranteedBonus();
     }
 
     public function isGuaranteedPurchase(): int {

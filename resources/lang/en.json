@@ -1,6 +1,8 @@
 {
   "network-shopping": "Neo Shopping",
   "network-otg": "Neo On the Go",
+  "network-otg-indoor" :"Neo On the Go (Indoor)",
+  "network-otg-outdoor":  "Neo On the Go (Outdoor)",
   "network-fitness": "Neo Fitness",
   "order-type-purchase":"Guaranteed Purchase",
   "order-type-bonus":"Guaranteed Bonus",

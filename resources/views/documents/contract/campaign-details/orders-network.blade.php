@@ -1,7 +1,7 @@
 <section class="detailed-purchases">
     <h2 class="detailed-purchases-title">
         {{ __("order-type-$type")  }}
-        <span class="{{ $network }}"> / {{ __("network-$network") }}</span>
+        <span class="{{ $network }}"> / {{ $subsection ? __("network-$network-$subsection") : __("network-$network") }}</span>
     </h2>
     <table class="detailed-purchases-wrapper" autosize="1">
         <thead>

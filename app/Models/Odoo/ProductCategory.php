@@ -21,6 +21,7 @@ use Neo\Models\Location;
  * @property int $product_type_id
  * @property string $name
  * @property string $internal_name
+ * @property int $quantity
  * @property Carbon $created_at
  * @property Carbon $updated_at
  *
@@ -36,6 +37,7 @@ class ProductCategory extends Model {
         "product_type_id",
         "name",
         "internal_name",
+        "quantity",
     ];
 
     /*

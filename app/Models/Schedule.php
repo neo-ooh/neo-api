@@ -162,7 +162,7 @@ class Schedule extends Model {
                     continue;
                 }
 
-                if ($s->order >= $schedule->order) {
+                if ($s->order >= $schedule->order && $s->order !== 0) {
                     $s->decrement('order', 1);
                 }
             }

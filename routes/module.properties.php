@@ -14,6 +14,7 @@ use Neo\Http\Controllers\CountriesController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
+use Neo\Http\Controllers\PropertiesStatisticsController;
 use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\TrafficSourcesController;
@@ -46,6 +47,9 @@ Route::group([
     Route::   get("properties/{property}/traffic", PropertiesTrafficController::class . "@index");
     Route::   put("properties/{property}/traffic", PropertiesTrafficController::class . "@update");
     Route::  post("properties/{property}/traffic", PropertiesTrafficController::class . "@store");
+
+
+    Route::  get("properties/{property}/statistics", PropertiesStatisticsController::class . "@show");
 
 
     /*

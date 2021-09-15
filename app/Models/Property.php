@@ -110,8 +110,7 @@ class Property extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    public
-    function getTraffic(int $year, int $month): int|null {
+    public function getTraffic(int $year, int $month): int|null {
         /** @var ?PropertyTraffic $traffic */
         $traffic = $this->traffic->data
             ->where("year", "=", $year)

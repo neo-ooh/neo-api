@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $line_1
  * @property string $line_2
  * @property int    $city_id
+ * @property City   $city
  * @property string $zipcode
  * @property Point  $geolocation
  * @property Date   $created_at

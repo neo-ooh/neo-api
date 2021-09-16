@@ -2,7 +2,6 @@
 
 namespace Neo\Http\Controllers;
 
-use DB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
@@ -29,6 +28,10 @@ class PropertiesController extends Controller {
     public function index(ListPropertiesRequest $request) {
         $properties = Property::all();
         $properties->load(["data", "address", "actor", "odoo.products_categories", "odoo.products_categories.product_type", "network"]);
+
+        if(in_array("traffic", $request->input("with"))) {
+            $properties->load("traffic");
+        }
 
         return $properties;
     }

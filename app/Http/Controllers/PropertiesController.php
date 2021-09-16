@@ -29,7 +29,7 @@ class PropertiesController extends Controller {
         $properties = Property::all();
         $properties->load(["data", "address", "actor", "odoo.products_categories", "odoo.products_categories.product_type", "network"]);
 
-        if(in_array("traffic", $request->input("with"))) {
+        if(in_array("traffic", $request->input("with", []))) {
             $properties->load("traffic");
         }
 

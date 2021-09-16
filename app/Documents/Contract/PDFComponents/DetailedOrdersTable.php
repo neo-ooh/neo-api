@@ -98,7 +98,7 @@ class DetailedOrdersTable extends Component {
             }
 
             if ($sectionPurchases->count() === 0) {
-                return "";
+                continue;
             }
 
             $views .= view('documents.contract.campaign-details.orders-network', [

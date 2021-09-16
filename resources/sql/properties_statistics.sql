@@ -9,13 +9,12 @@
 
 -- ------------------------------------
 -- Markets
--- Traffic for specific property for specific year per month
+-- Traffic for specific property per month
 SELECT `pt`.`year`,
        `pt`.`month`,
        SUM(IFNULL(`pt`.`traffic`, `pt`.`temporary`)) AS `traffic`
   FROM `properties_traffic` `pt`
- WHERE `pt`.`year` = ?
-   AND `pt`.`property_id` = ?
+ WHERE `pt`.`property_id` = ?
  GROUP BY `pt`.`year`, `pt`.`month`;
 
 -- Total traffic for market for specific year per month

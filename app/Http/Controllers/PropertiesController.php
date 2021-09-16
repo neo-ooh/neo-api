@@ -2,6 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
+use DB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
@@ -89,7 +90,7 @@ class PropertiesController extends Controller {
         $property = Property::query()->find($propertyId);
 
         if ($property) {
-            $property->load(["actor", "traffic", "address"]);
+            $property->load(["actor", "traffic", "traffic.source", "address"]);
 
             if (Gate::allows(Capability::properties_edit)) {
                 $property->load(["data", "network"]);

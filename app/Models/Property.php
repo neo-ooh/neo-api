@@ -23,6 +23,7 @@ use Neo\Rules\AccessibleProperty;
  * @property Address|null            $address
  * @property PropertyData            $data
  * @property OdooProperty            $odoo
+ * @property Network                 $network
  */
 class Property extends SecuredModel {
     use HasFactory;

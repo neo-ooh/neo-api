@@ -25,9 +25,6 @@ class ListTrafficRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            "years" => ["required", "array"],
-            "years.*" => ["integer"],
-        ];
+        return [];
     }
 }

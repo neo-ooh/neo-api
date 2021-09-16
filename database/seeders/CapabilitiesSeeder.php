@@ -68,6 +68,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::properties_traffic,
                 \Neo\Enums\Capability::properties_edit,
                 \Neo\Enums\Capability::properties_markets,
+                \Neo\Enums\Capability::odoo_properties,
 
                 \Neo\Enums\Capability::bursts_request,
                 \Neo\Enums\Capability::bursts_quality,
@@ -96,8 +97,6 @@ class CapabilitiesSeeder extends Seeder {
 
                 \Neo\Enums\Capability::tools_prints,
                 \Neo\Enums\Capability::traffic_sources,
-
-                \Neo\Enums\Capability::tests,
 
                 \Neo\Enums\Capability::tests,
             ],

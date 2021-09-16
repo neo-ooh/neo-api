@@ -51,7 +51,6 @@ Route::group([
 
     Route::  get("properties/{property}/statistics", PropertiesStatisticsController::class . "@show");
 
-
     /*
     |----------------------------------------------------------------------
     | Properties Data

@@ -17,7 +17,6 @@ use Neo\Enums\Capability;
 class ListPropertiesRequest extends FormRequest {
     public function rules() {
         return [
-            //
         ];
     }
 

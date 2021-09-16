@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\PropertiesStatistics\GetPropertyStatisticsRequest;
+use Neo\Http\Requests\PropertiesStatistics\ShowMultiplePropertiesRequest;
 use Neo\Models\Property;
 
 class PropertiesStatisticsController {
@@ -20,12 +21,12 @@ class PropertiesStatisticsController {
         $years = $request->input("years");
 
         $datasets = [];
-        foreach($years as $year) {
+        foreach ($years as $year) {
             $datasets[$year] = match ($request->input("breakdown")) {
                 "default" => $this->getDefaultBreakdown($property, $year),
-                "market" => $this->getMarketBreakdown($property, $year),
+                "market"  => $this->getMarketBreakdown($property, $year),
                 "product" => $this->getProductBreakdown($property, $year, $request->input("product_id")),
-                "network" => $this->getNetworkBreakdown($property, $year, $property->network_id),
+                "network" => $this->getNetworkBreakdown($property, $year),
             };
         }
 
@@ -33,7 +34,7 @@ class PropertiesStatisticsController {
     }
 
     public function getMarketBreakdown(Property $property, int $year, ?int $productId = null, ?int $networkId = null) {
-        return [
+        $datasets = [
             [
                 "type"    => "property",
                 "name"    => $property->actor->name,
@@ -41,8 +42,8 @@ class PropertiesStatisticsController {
             ],
             [
                 "type"    => "market",
-                "name_en"    => $property->address->city->market->name_en,
-                "name_fr"    => $property->address->city->market->name_fr,
+                "name_en" => $property->address->city->market->name_en,
+                "name_fr" => $property->address->city->market->name_fr,
                 "traffic" => $this->getTraffic($year, marketId: $property->address->city->market_id, productId: $productId, networkId: $networkId),
             ],
             [
@@ -51,6 +52,16 @@ class PropertiesStatisticsController {
                 "traffic" => $this->getTraffic($year, provinceId: $property->address->city->province_id, productId: $productId, networkId: $networkId),
             ]
         ];
+
+        if(!$networkId && !$productId) {
+            $datasets[] = [
+                "type"    => "country",
+                "name"    => "Canada",
+                "traffic" => $this->getTraffic($year),
+            ];
+        }
+
+        return $datasets;
     }
 
     public function getProductBreakdown(Property $property, int $year, ?int $productId) {
@@ -58,19 +69,20 @@ class PropertiesStatisticsController {
             ...$this->getMarketBreakdown($property, $year, productId: $productId),
             [
                 "type"    => "product",
-                "id"    => $productId,
+                "id"      => $productId,
                 "traffic" => $this->getTraffic($year, productId: $productId),
             ]
         ];
     }
 
-    public function getNetworkBreakdown(Property $property, int $year, ?int $networkId) {
+    public function getNetworkBreakdown(Property $property, int $year) {
         return [
-            ...$this->getMarketBreakdown($property, $year, networkId: $networkId),
+            ...$this->getMarketBreakdown($property, $year, networkId: $property->network_id),
             [
                 "type"    => "network",
-                "id"    => $networkId,
-                "traffic" => $this->getTraffic($year, networkId: $networkId),
+                "id"      => $property->network_id,
+                "name"    => $property->network->name,
+                "traffic" => $this->getTraffic($year, networkId: $property->network_id),
             ]
         ];
     }
@@ -79,7 +91,7 @@ class PropertiesStatisticsController {
         $datasets   = [];
         $datasets[] = [
             "type"    => "property",
-            "id"    => $property->actor_id,
+            "id"      => $property->actor_id,
             "name"    => $property->actor->name,
             "traffic" => $this->getTraffic($year, propertyId: $property->actor_id),
         ];
@@ -89,7 +101,7 @@ class PropertiesStatisticsController {
         while ($nextParent !== null) {
             $datasets[] = [
                 "type"    => "parent",
-                "id"    => $nextParent->id,
+                "id"      => $nextParent->id,
                 "name"    => $nextParent->name,
                 "traffic" => $this->getTraffic($year, parentId: $nextParent->id),
             ];
@@ -146,6 +158,6 @@ class PropertiesStatisticsController {
                   ->where("ac.ancestor_id", "=", $parentId);
         }
 
-        return $query->get()->pluck("traffic");
+        return $query->get()->pluck("traffic", "month");
     }
 }

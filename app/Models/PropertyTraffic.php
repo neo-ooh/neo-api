@@ -16,6 +16,7 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  * @property int      $month 0-indexed month
  * @property int      $traffic
  * @property int      $temporary
+ * @property int      $final_traffic
  *
  * @property Property $property
  */
@@ -65,6 +66,7 @@ class PropertyTraffic extends Model {
         "month" => "integer",
         "traffic" => "integer",
         "temporary" => "integer",
+        "final_traffic" => "integer",
     ];
 
     protected static function boot() {

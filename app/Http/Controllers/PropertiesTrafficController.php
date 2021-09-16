@@ -17,7 +17,6 @@ class PropertiesTrafficController extends Controller {
     public function index(ListTrafficRequest $request, Property $property): Response {
 
         $yearTraffic = $property->traffic->data()
-                                         ->whereIn("year", $request->input("years"))
                                          ->orderBy("month")
                                          ->get()
                                          ->groupBy("year");

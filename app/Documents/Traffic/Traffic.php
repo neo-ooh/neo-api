@@ -31,7 +31,7 @@ class Traffic extends XLSXDocument {
      * @inheritDoc
      */
     public function build(): bool {
-        $this->ws->setTitle($this->year);
+//        $this->ws->setTitle($this->year);
 
         // Print header
         $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::tableHeader());

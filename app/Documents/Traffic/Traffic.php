@@ -59,18 +59,18 @@ class Traffic extends XLSXDocument {
 
         /** @var Property $property */
         foreach ($this->properties as $property) {
-            $this->ws->setRelativeCellFormat('#,##0.00', 4, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 5, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 6, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 7, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 8, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 9, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 10, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 11, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 12, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 13, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 14, 0);
-            $this->ws->setRelativeCellFormat('#,##0.00', 15, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 4, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 5, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 6, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 7, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 8, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 9, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 10, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 11, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 12, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 13, 0);
+            $this->ws->setRelativeCellFormat('#,##0.', 14, 0);
+            $this->ws->setRelativeCellFormat('#,##0', 15, 0);
 
             $this->ws->printRow([$property->actor->name,
                                  $property->address->city?->name,

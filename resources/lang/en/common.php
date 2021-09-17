@@ -37,5 +37,23 @@ return [
     "cpm-covid" => "COVID CPM",
     "potential-impressions-covid" => "COVID potential impressions",
     "potential-cpm" => "Potential CPM",
-    "potential-cpm-covid" => "COVID potential CPM"
+    "potential-cpm-covid" => "COVID potential CPM",
+
+    "property" => "Property",
+    "city" => "City",
+    "market" => "Market",
+    "province" => "Province",
+
+    "month-january" => "January",
+    "month-february" => "February",
+    "month-march" => "March",
+    "month-april" => "April",
+    "month-may" => "May",
+    "month-june" => "June",
+    "month-july" => "July",
+    "month-august" => "August",
+    "month-september" => "September",
+    "month-october" => "October",
+    "month-november" => "November",
+    "month-december" => "Décember",
 ];

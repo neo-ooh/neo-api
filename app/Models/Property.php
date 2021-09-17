@@ -122,6 +122,6 @@ class Property extends SecuredModel {
             return null;
         }
 
-        return $traffic->traffic ?? $traffic->temporary;
+        return $traffic->final_traffic;
     }
 }

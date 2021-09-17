@@ -16,6 +16,7 @@ use Neo\Documents\Contract\PDFContract;
 use Neo\Documents\Contract\XLSXProposal;
 use Neo\Documents\Exceptions\UnknownGenerationException;
 use Neo\Documents\POP\POP;
+use Neo\Documents\Traffic\Traffic;
 use Neo\Exceptions\UnknownDocumentException;
 use Neo\Http\Requests\Documents\MakeDocumentRequest;
 
@@ -66,6 +67,13 @@ class DocumentsGenerationController extends Controller {
                 }
 
                 $document = POP::make($data);
+                break;
+            case "traffic":
+                if ($data === null) {
+                    return new Response(["error" => "Missing data"], 400);
+                }
+
+                $document = Traffic::make($data);
                 break;
             default:
                 throw new UnknownDocumentException();

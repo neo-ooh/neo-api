@@ -20,9 +20,9 @@ class Traffic extends XLSXDocument {
     protected function ingest($data): bool {
         $this->year = $data["year"];
         $this->properties = Property::query()->whereIn("actor_id", $data["properties"])
-                                             ->with(["traffic", "network", "address"])
-                                             ->orderBy("actor.name")
-                                             ->get();
+                                             ->with(["traffic", "network", "address", "actor"])
+                                             ->get()
+                                             ->sortBy("actor.name");
 
         return true;
     }

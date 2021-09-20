@@ -33,6 +33,7 @@ class PropertyPicturesController {
 
         // Image is valid, create a resource for it and store it
         $picture = new PropertyPicture([
+            "name"        => $image->getClientOriginalName(),
             "order"       => $property->pictures()->count(),
             "width"       => $width,
             "height"      => $height,

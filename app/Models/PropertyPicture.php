@@ -65,7 +65,7 @@ class PropertyPicture extends Model {
     }
 
     public function getFilePathAttribute() {
-        return "/properties/pictures/$this->uid.jpg";
+        return "properties/pictures/$this->uid.jpg";
     }
 
     public function getUrlAttribute() {

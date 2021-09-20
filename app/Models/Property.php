@@ -3,6 +3,7 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -12,18 +13,19 @@ use Neo\Rules\AccessibleProperty;
 /**
  * Class Property
  *
- * @property int                     $actor_id
- * @property int                     $address_id
- * @property int                     $network_id
- * @property Date                    $created_at
- * @property Date                    $updated_at
+ * @property int                         $actor_id
+ * @property int                         $address_id
+ * @property int                         $network_id
+ * @property Date                        $created_at
+ * @property Date                        $updated_at
  *
- * @property Actor                   $actor
- * @property PropertyTrafficSettings $traffic
- * @property Address|null            $address
- * @property PropertyData            $data
- * @property OdooProperty            $odoo
- * @property Network                 $network
+ * @property Actor                       $actor
+ * @property PropertyTrafficSettings     $traffic
+ * @property Address|null                $address
+ * @property PropertyData                $data
+ * @property OdooProperty                $odoo
+ * @property Network                     $network
+ * @property Collection<PropertyPicture> $pictures
  */
 class Property extends SecuredModel {
     use HasFactory;
@@ -102,6 +104,10 @@ class Property extends SecuredModel {
 
     public function data() {
         return $this->hasOne(PropertyData::class, "property_id", "actor_id");
+    }
+
+    public function pictures() {
+        return $this->hasMany(PropertyPicture::class, "property_id", "actor_id")->orderBy("order");
     }
 
 

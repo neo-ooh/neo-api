@@ -16,6 +16,7 @@ use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
 use Neo\Http\Controllers\PropertiesStatisticsController;
 use Neo\Http\Controllers\PropertiesTrafficController;
+use Neo\Http\Controllers\PropertyPicturesController;
 use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\TrafficSourcesController;
 use Neo\Models\TrafficSource;
@@ -58,6 +59,17 @@ Route::group([
     */
 
     Route::   put("properties/{property}/data", PropertiesDataController::class . "@update");
+
+    /*
+    |----------------------------------------------------------------------
+    | Properties Pictures
+    |----------------------------------------------------------------------
+    */
+
+    Route::   get("properties/{property}/pictures", PropertyPicturesController::class . "@index");
+    Route::  post("properties/{property}/pictures", PropertyPicturesController::class . "@store");
+    Route::   put("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@update");
+    Route::delete("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@destroy");
 
     /*
     |----------------------------------------------------------------------

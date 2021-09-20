@@ -78,7 +78,7 @@ class PropertyPicturesController {
     }
 
     public function destroy(Property $property, PropertyPicture $propertyPicture): Response {
-        $property->delete();
+        $propertyPicture->delete();
         return new Response();
     }
 }

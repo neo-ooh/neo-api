@@ -24,7 +24,8 @@ class PropertyPicturesController {
 
     public function store(StorePictureRequest $request, Property $property): Response {
         $image = $request->file("picture");
-        if ($image->isValid()) {
+
+        if (!$image->isValid()) {
             throw new UploadException($image->getErrorMessage(), $image->getError());
         }
 

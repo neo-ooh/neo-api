@@ -96,7 +96,7 @@ class PropertiesController extends Controller {
             $property->load(["actor", "traffic", "traffic.source", "address"]);
 
             if (Gate::allows(Capability::properties_edit)) {
-                $property->load(["data", "network"]);
+                $property->load(["data", "network", "pictures"]);
             }
 
             if (Gate::allows(Capability::odoo_properties)) {

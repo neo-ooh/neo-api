@@ -73,9 +73,9 @@ class Traffic extends XLSXDocument {
             $this->ws->setRelativeCellFormat('#,##0', 15, 0);
 
             $this->ws->printRow([$property->actor->name,
-                                 $property->address->city?->name,
-                                 $property->address->city?->market?->{"name_".App::getLocale()},
-                                 $property->address->city?->province->slug,
+                                 $property->address?->city?->name,
+                                 $property->address?->city?->market?->{"name_".App::getLocale()},
+                                 $property->address?->city?->province->slug,
                                  $property->getTraffic($this->year, 0),
                                  $property->getTraffic($this->year, 1),
                                  $property->getTraffic($this->year, 2),

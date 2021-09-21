@@ -74,7 +74,7 @@ class RefreshContractReservations implements ShouldQueue {
             }
         }
 
-        $storedReservations = [];
+        $storedReservationsId = [];
 
         // Now make sure all reservations are properly associated with the report
         /** @var Campaign $reservation */
@@ -97,9 +97,9 @@ class RefreshContractReservations implements ShouldQueue {
             $rr->end_date      = Carbon::parse($reservation->end_date . " " . $reservation->end_time);
             $rr->save();
 
-            $storedReservations[] = $rr;
+            $storedReservationsId[] = $rr->id;
         }
 
-        $contract->reservations()->sync($storedReservations);
+        $contract->reservations()->whereNotIn($storedReservationsId)->delete();
     }
 }

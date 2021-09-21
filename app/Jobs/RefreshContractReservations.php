@@ -100,6 +100,6 @@ class RefreshContractReservations implements ShouldQueue {
             $storedReservationsId[] = $rr->id;
         }
 
-        $contract->reservations()->whereNotIn($storedReservationsId)->delete();
+        $contract->reservations()->whereNotIn("id", $storedReservationsId)->delete();
     }
 }

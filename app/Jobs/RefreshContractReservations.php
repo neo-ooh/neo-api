@@ -55,26 +55,35 @@ class RefreshContractReservations implements ShouldQueue {
             return;
         }
 
+        $identifier = strtoupper($contract->contract_id);
+
         // Get all the Broadsign Reservations matching the report's contract Id
-        $reservations = Campaign::search($broadsignClient, ["name" => strtoupper($contract->contract_id)]);
+        $reservations = Campaign::search($broadsignClient, ["name" => $identifier]);
 
         if (count($reservations) === 0) {
             // No campaigns where found, let's try again, replacing hyphen-minus with hyphen...
-            $utfContract = str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id);
+            $identifier = strtoupper(str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id));
 
-            $reservations = Campaign::search($broadsignClient, ["name" => strtoupper($utfContract)]);
+            $reservations = Campaign::search($broadsignClient, ["name" => $identifier]);
 
             if (count($reservations) === 0) {
                 // Still nothing, let's try with an underscore this time
-                $utfContract = str_replace('-', '_', $contract->contract_id);
+                $identifier = strtoupper(str_replace('-', '_', $contract->contract_id));
 
-                $reservations = Campaign::search($broadsignClient, ["name" => strtoupper($utfContract)]);
+                $reservations = Campaign::search($broadsignClient, ["name" => $identifier]);
             }
         }
+
+        $storedReservations = [];
 
         // Now make sure all reservations are properly associated with the report
         /** @var Campaign $reservation */
         foreach ($reservations as $reservation) {
+            // In the case of contract with identical numbers but different prefix, the Broadsign API will return both. eg: NEO-092-21 and OTG-092-21. We need to validate the beggining of the campaign names as an additional filter step
+            if(!str_starts_with($reservation->name, $identifier)) {
+                continue;
+            }
+
             /** @var ContractReservation $rr */
             $rr = ContractReservation::query()->firstOrNew([
                 "external_id" => $reservation->id
@@ -87,6 +96,10 @@ class RefreshContractReservations implements ShouldQueue {
             $rr->start_date    = Carbon::parse($reservation->start_date . " " . $reservation->start_time);
             $rr->end_date      = Carbon::parse($reservation->end_date . " " . $reservation->end_time);
             $rr->save();
+
+            $storedReservations[] = $rr;
         }
+
+        $contract->reservations()->sync($storedReservations);
     }
 }

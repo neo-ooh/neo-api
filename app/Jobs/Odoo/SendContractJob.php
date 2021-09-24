@@ -50,7 +50,7 @@ class SendContractJob implements ShouldQueue {
             $flightStart = Carbon::parse($flight['start'])->toDateString();
             $flightEnd   = Carbon::parse($flight['end'])->toDateString();
 
-            clock()->event("Create flight in Odoo")->color('purple')->begin();
+            clock()->event("Create flight in Odoo")->color('red')->begin();
 
             $campaign = clock(Campaign::create($client, [
                 "order_id"   => $this->contract->id,

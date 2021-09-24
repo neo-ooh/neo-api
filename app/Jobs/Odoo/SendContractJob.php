@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\ProductType;
 use Neo\Models\Property;
@@ -41,9 +40,9 @@ class SendContractJob implements ShouldQueue {
                 continue;
             }
 
-            $flightType = $flight["type"];
+            $flightType  = $flight["type"];
             $flightStart = Carbon::parse($flight['start'])->toDateString();
-            $flightEnd = Carbon::parse($flight['end'])->toDateString();
+            $flightEnd   = Carbon::parse($flight['end'])->toDateString();
 
             $campaign = Campaign::create($client, [
                 "order_id"   => $this->contract->id,
@@ -77,8 +76,7 @@ class SendContractJob implements ShouldQueue {
                 }
 
                 /** @var Product $product */
-                foreach($products as $product) {
-                    // Add a new order line with the first product
+                foreach ($products as $product) {     // Add a new order line with the first product
                     OrderLine::create($client, [
                         "order_id"        => $this->contract->id,
                         "name"            => $product->name,
@@ -89,6 +87,7 @@ class SendContractJob implements ShouldQueue {
                         "rental_start"    => $flightStart,
                         "rental_end"      => $flightEnd,
                         "is_rental_line"  => 1,
+                        "discount"        => $flightType === 'bonus' ? 100.0 : 0.0
                     ]);
                 }
             }

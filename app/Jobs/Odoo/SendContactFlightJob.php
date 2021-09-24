@@ -41,7 +41,7 @@ class SendContactFlightJob implements ShouldQueue {
         $flightStart = Carbon::parse($this->flight['start'])->toDateString();
         $flightEnd   = Carbon::parse($this->flight['end'])->toDateString();
 
-        clock()->event("Create flight in Odoo")->color('red')->begin();
+        clock()->event("Create flight in Odoo")->color('purple')->begin();
 
         $campaign = clock(Campaign::create($client, [
             "order_id"   => $this->contract->id,
@@ -53,8 +53,8 @@ class SendContactFlightJob implements ShouldQueue {
         clock()->event("Create flight in Odoo")->end();
 
         // Preload the properties and products used by the flight
-        $properties = Property::with("odoo")->findMany(collect($this->flight["selection"])->pluck("0.0"));
-        $productsCategories = ProductCategory::findMany(collect($this->flight["selection"])->pluck("0.1"));
+        $properties = Property::with("odoo")->findMany(collect($this->flight["selection"])->pluck("0.0")->unique());
+        $productsCategories = ProductCategory::findMany(collect($this->flight["selection"])->pluck("0.1")->unique());
 
         // Now we need to add each specified product
         foreach ($this->flight["selection"] as $selection) {
@@ -70,7 +70,7 @@ class SendContactFlightJob implements ShouldQueue {
             /** @var ProductType $connectProduct */
             $connectProduct = $productsCategories->firstOrFail(fn($product) => $product->getKey()  ===  $productId);
 
-            clock()->event("Request matching products from Odoo Property #$key")->color('red')->begin();
+            clock()->event("Request matching products from Odoo Property #$key")->color('purple')->begin();
             // Pull the products of the odoo property matching the product type
             $products = Product::all($client, [
                 ["shopping_center_id", "=", $connectProperty->odoo->odoo_id],
@@ -88,7 +88,7 @@ class SendContactFlightJob implements ShouldQueue {
 
             /** @var Product $product */
             foreach ($products as $product) {     // Add a new order line with the first product
-                clock()->event("$key -> $product->name")->color('red')->begin();
+                clock()->event("$key -> $product->name")->color('purple')->begin();
                 OrderLine::create($client, [
                     "order_id"        => $this->contract->id,
                     "name"            => $product->name,

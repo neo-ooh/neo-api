@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Bus;
 use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\ProductType;
 use Neo\Models\Property;
@@ -34,6 +35,7 @@ class SendContractJob implements ShouldQueue {
     public function handle() {
         clock()->event('Send contract')->color('purple')->begin();
 
+        $flightsJobs = [];
 
         // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required orderlines
         foreach ($this->flights as $flight) {
@@ -41,8 +43,10 @@ class SendContractJob implements ShouldQueue {
                 continue;
             }
 
-            SendContactFlightJob::dispatch($this->contract, $flight);
+            $flightsJobs[] = new SendContactFlightJob($this->contract, $flight);
         }
+
+        Bus::dispatch($flightsJobs);
 
         clock()->event('Send contract')->end();
     }

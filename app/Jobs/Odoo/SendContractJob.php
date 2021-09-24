@@ -57,12 +57,12 @@ class SendContractJob implements ShouldQueue {
 
         // Remove all order lines from the contract
         OrderLine::delete($client, [
-            ["order_id" => $this->contract->id],
+            ["order_id", "=", $this->contract->id],
         ]);
 
         // Remove all lines from the contract
         Campaign::delete($client, [
-            ["order_id" => $this->contract->id]
+            ["order_id", "=", $this->contract->id]
         ]);
     }
 }

@@ -41,7 +41,7 @@ class SendContractJob implements ShouldQueue {
                 continue;
             }
 
-            SendContactFlightJob::dispatchSync($this->contract, $flight);
+            SendContactFlightJob::dispatch($this->contract, $flight);
         }
 
         clock()->event('Send contract')->end();

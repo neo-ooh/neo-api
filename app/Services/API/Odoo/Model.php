@@ -11,10 +11,11 @@
 namespace Neo\Services\API\Odoo;
 
 use ArrayAccess;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Neo\Services\API\Traits\HasAttributes;
 
-abstract class Model {
+abstract class Model implements Arrayable {
     use HasAttributes;
 
     /**
@@ -84,10 +85,20 @@ abstract class Model {
      * @param array  $filters
      * @return Collection
      */
-    public static function all(Client $client, $filters = []): Collection {
+    public static function all(Client $client, array $filters = []): Collection {
         $rawModels = $client->get(static::$slug, array_merge(static::$filters, $filters), static::$fields);
 
         return $rawModels->map(static fn($model) => new static($client, $model));
+    }
+
+    /**
+     * Pull multiple records using a custom field
+     * @param Client           $client
+     * @param array|Collection $ids
+     * @return Collection<static>
+     */
+    public static function findBy(Client $client, string $field, $value): Collection {
+        return $client->findBy(static::$slug, $field, $value)->map(fn($record) => new static($client, $record));
     }
 
     /**
@@ -127,5 +138,16 @@ abstract class Model {
     public function update(array $fields): bool {
         $values = collect($fields)->mapWithKeys(fn($k) => [$k => $this->{$k}]);
         return $this->client->update($this, $values->toArray());
+    }
+
+    /**
+     * Pull a specific record using its id
+     * @param Client $client
+     * @param mixed  $id Unique ID of the record
+     * @return static
+     */
+    public static function create(Client $client, array $fields): static {
+        $recordId = $client->create(static::$slug, $fields);
+        return static::get($client, $recordId);
     }
 }

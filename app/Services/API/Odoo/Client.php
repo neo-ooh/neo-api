@@ -17,7 +17,7 @@ use Edujugon\Laradoo\Odoo;
  * Handles communication with Odoo XMLRPC API
  */
 class Client {
-    protected Odoo $client;
+    public Odoo $client;
 
     /**
      * @param string $basepath URL to the Odoo server
@@ -63,5 +63,14 @@ class Client {
     public function update(Model $model, array $values): bool {
         return $this->client->where("id", "=", $model->getKey())
                     ->update($model::$slug, $values);
+    }
+
+    public function findBy(string $model, string $field, $value) {
+        return $this->client->where($field, "=", $value)
+                            ->get($model);
+    }
+
+    public function create(string $model, array $fields) {
+        return $this->client->create($model, $fields);
     }
 }

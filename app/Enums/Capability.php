@@ -174,4 +174,9 @@ final class Capability extends Enum {
      * Allow user to setup and edit odoo properties and products
      */
     public const tools_planning = "tools.planning";
+
+    /**
+     * Allow user to send properties list made using the planning to Odoo
+     */
+    public const odoo_contracts = "odoo.contracts";
 }

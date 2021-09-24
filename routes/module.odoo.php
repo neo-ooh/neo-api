@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\Odoo\ContractsController;
 use Neo\Http\Controllers\Odoo\PropertiesController;
 
 Route::group([
@@ -24,4 +25,12 @@ Route::group([
     Route::post("properties", PropertiesController::class . "@store");
     Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 
+    /*
+    |----------------------------------------------------------------------
+    | Contracts
+    |----------------------------------------------------------------------
+    */
+
+    Route::get("contracts/{contractName}", ContractsController::class . "@show");
+    Route::post("contracts/{contractName}", ContractsController::class . "@send");
 });

@@ -56,7 +56,7 @@ class SendContractJob implements ShouldQueue {
         // Log import in odoo
         Message::create($client, [
             "subject" => false,
-            "body" => implode("\n", [
+            "body" => implode("<br />", [
                 $this->clearOnSend ? "Clear and Import" : "Import",
                 ...$flightsDescriptions,
             ]),

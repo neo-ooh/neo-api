@@ -54,7 +54,7 @@ class SendContractJob implements ShouldQueue {
         }
 
         // Log import in odoo
-        Log::debug("Messsage sent", [Message::create($client, [
+        Message::create($client, [
             "subject" => false,
             "body" => implode("\n", [
                 $this->clearOnSend ? "Clear and Import" : "Import",
@@ -64,7 +64,7 @@ class SendContractJob implements ShouldQueue {
             "res_id" => $this->contract->id,
             "message_type" => "comment",
             "subtype_id" => 2,
-        ])]);
+        ]);
 
         clock()->event('Send contract')->end();
     }
@@ -87,6 +87,6 @@ class SendContractJob implements ShouldQueue {
         $flightEnd = Carbon::parse($flight['end'])->toDateString();
         $flightType = ucFirst($flight["type"]);
 
-         return "Flight #$flightIndex ($flightType) [$flightStart -> $flightEnd])";
+         return "Flight #$flightIndex ($flightType) [$flightStart -> $flightEnd]";
     }
 }

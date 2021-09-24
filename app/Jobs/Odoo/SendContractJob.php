@@ -69,8 +69,8 @@ class SendContractJob implements ShouldQueue {
             foreach ($flight["selection"] as $selection) {
                 clock()->event("Send product #". implode(",", $selection[0]))->start();
 
-                $propertyId = $selection[0][0];
-                $productId  = $selection[0][1];
+                [$propertyId, $productId] = $selection[0];
+                clock([$propertyId, $productId]);
 
                 // We need the property and product record from Connect
                 /** @var Property $connectProperty */

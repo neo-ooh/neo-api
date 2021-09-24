@@ -17,6 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\Models\Message;
@@ -53,7 +54,7 @@ class SendContractJob implements ShouldQueue {
         }
 
         // Log import in odoo
-        Message::create($client, [
+        Log::debug("Messsage sent", [Message::create($client, [
             ["subject" => false],
             ["body" => implode("\n", [
                 $this->clearOnSend ? "Clear and Import" : "Import",
@@ -62,7 +63,7 @@ class SendContractJob implements ShouldQueue {
             ["model" => Contract::$slug],
             ["res_id" => $this->contract->id],
             ["subtype_id" => 2],
-        ]);
+        ])]);
 
         clock()->event('Send contract')->end();
     }

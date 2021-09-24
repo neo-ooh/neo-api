@@ -67,7 +67,7 @@ class SendContractJob implements ShouldQueue {
 
             // Now we need to add each specified product
             foreach ($flight["selection"] as $selection) {
-                clock()->event("Send product #". implode(",", $selection[0]))->start();
+                clock()->event("Handle product #". implode(",", $selection[0]))->begin();
 
                 [$propertyId, $productId] = $selection[0];
                 clock([$propertyId, $productId]);
@@ -93,6 +93,7 @@ class SendContractJob implements ShouldQueue {
 
                 /** @var Product $product */
                 foreach ($products as $product) {     // Add a new order line with the first product
+                    clock()->event("Add OrderLine for $product->name")->begin();
                     OrderLine::create($client, [
                         "order_id"        => $this->contract->id,
                         "name"            => $product->name,
@@ -105,9 +106,10 @@ class SendContractJob implements ShouldQueue {
                         "is_rental_line"  => 1,
                         "discount"        => $flightType === 'bonus' ? 100.0 : 0.0
                     ]);
+                    clock()->event("Add OrderLine for $product->name")->end();
                 }
 
-                clock()->event("Send product #". implode(",", $selection[0]))->end();
+                clock()->event("Handle product #". implode(",", $selection[0]))->end();
             }
             clock()->event("Send Flight #".$flightKey)->end();
         }

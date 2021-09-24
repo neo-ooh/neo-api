@@ -46,7 +46,8 @@ class SendContractJob implements ShouldQueue {
             $flightsJobs[] = new SendContactFlightJob($this->contract, $flight);
         }
 
-        Bus::chain($flightsJobs);
+        Bus::chain($flightsJobs)->dispatch();
+
 
         clock()->event('Send contract')->end();
     }

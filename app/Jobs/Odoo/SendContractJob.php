@@ -50,12 +50,20 @@ class SendContractJob implements ShouldQueue {
             $flightStart = Carbon::parse($flight['start'])->toDateString();
             $flightEnd   = Carbon::parse($flight['end'])->toDateString();
 
+            clock()->event("Create flight in Odoo")->begin();
+
             $campaign = clock(Campaign::create($client, [
                 "order_id"   => $this->contract->id,
                 "state"      => "draft",
                 "date_start" => $flightStart,
                 "date_end"   => $flightEnd,
             ]));
+
+            clock()->event("Create flight in Odoo")->end();
+
+            // Preload the properties and products used by the flight
+            $properties = Property::with("odoo")->findMany(collect($flight["selection"])->pluck("0.0"));
+            $products = ProductCategory::findMany(collect($flight["selection"])->pluck("0.1"));
 
             // Now we need to add each specified product
             foreach ($flight["selection"] as $selection) {
@@ -66,9 +74,9 @@ class SendContractJob implements ShouldQueue {
 
                 // We need the property and product record from Connect
                 /** @var Property $connectProperty */
-                $connectProperty = Property::with(["odoo"])->find($propertyId);
+                $connectProperty = $properties->first(fn($property) => $property->getKey()  ===  $propertyId);
                 /** @var ProductType $connectProduct */
-                $connectProduct = ProductCategory::find($productId);
+                $connectProduct = $products->first(fn($product) => $product->getKey()  ===  $productId);
 
                 // Pull the products of the odoo property matching the product type
                 $products = Product::all($client, [

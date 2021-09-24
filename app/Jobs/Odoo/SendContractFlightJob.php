@@ -12,10 +12,10 @@ namespace Neo\Jobs\Odoo;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\ProductType;
 use Neo\Models\Property;
@@ -28,7 +28,7 @@ use Neo\Services\Odoo\OdooConfig;
 class SendContractFlightJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected Contract $contract, protected array $flight) {
+    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {
 
     }
 
@@ -53,12 +53,12 @@ class SendContractFlightJob implements ShouldQueue {
         clock()->event("Create flight in Odoo")->end();
 
         // Preload the properties and products used by the flight
-        $properties = Property::with("odoo")->findMany(collect($this->flight["selection"])->pluck("0.0")->unique());
+        $properties         = Property::with("odoo")->findMany(collect($this->flight["selection"])->pluck("0.0")->unique());
         $productsCategories = ProductCategory::findMany(collect($this->flight["selection"])->pluck("0.1")->unique());
 
         // Now we need to add each specified product
         foreach ($this->flight["selection"] as $selection) {
-            $key =  implode(",", $selection[0]);
+            $key = implode(",", $selection[0]);
             clock()->event("Handle product #$key")->begin();
 
             [$propertyId, $productId] = $selection[0];
@@ -66,9 +66,9 @@ class SendContractFlightJob implements ShouldQueue {
 
             // We need the property and product record from Connect
             /** @var Property $connectProperty */
-            $connectProperty = $properties->firstOrFail(fn($property) => $property->getKey()  ===  $propertyId);
+            $connectProperty = $properties->firstOrFail(fn($property) => $property->getKey() === $propertyId);
             /** @var ProductType $connectProduct */
-            $connectProduct = $productsCategories->firstOrFail(fn($product) => $product->getKey()  ===  $productId);
+            $connectProduct = $productsCategories->firstOrFail(fn($product) => $product->getKey() === $productId);
 
             clock()->event("Request matching products from Odoo Property #$key")->color('purple')->begin();
             // Pull the products of the odoo property matching the product type
@@ -99,7 +99,8 @@ class SendContractFlightJob implements ShouldQueue {
                     "rental_start"    => $flightStart,
                     "rental_end"      => $flightEnd,
                     "is_rental_line"  => 1,
-                    "discount"        => $flightType === 'bonus' ? 100.0 : 0.0
+                    "discount"        => $flightType === 'bonus' ? 100.0 : 0.0,
+                    "sequence"        => $this->flightIndex * 10,
                 ]);
                 clock()->event("$key -> $product->name")->end();
             }

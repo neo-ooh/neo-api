@@ -62,7 +62,7 @@ class SendContractJob implements ShouldQueue {
             ]),
             "model" => Contract::$slug,
             "res_id" => $this->contract->id,
-            "message_type" => "comment",
+            "message_type" => "notification",
             "subtype_id" => 2,
         ]);
 

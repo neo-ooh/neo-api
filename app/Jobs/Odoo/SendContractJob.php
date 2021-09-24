@@ -78,13 +78,14 @@ class SendContractJob implements ShouldQueue {
                 /** @var ProductType $connectProduct */
                 $connectProduct = $productsCategories->firstOrFail(fn($product) => $product->getKey()  ===  $productId);
 
-                clock()->event("Request matching product from Odoo")->color('purple')->begin();
+                clock()->event("Request matching products from Odoo")->color('red')->begin();
                 // Pull the products of the odoo property matching the product type
                 $products = Product::all($client, [
                     ["shopping_center_id", "=", $connectProperty->odoo->odoo_id],
                     ["categ_id", "=", $connectProduct->odoo_id]
                 ]);
-                clock()->event("Request matching product from Odoo")->end();
+
+                clock()->event("Request matching products from Odoo")->end();
 
                 // Filter products based on flight type
                 if ($flightType === 'bua') {
@@ -95,7 +96,7 @@ class SendContractJob implements ShouldQueue {
 
                 /** @var Product $product */
                 foreach ($products as $product) {     // Add a new order line with the first product
-                    clock()->event("Add OrderLine for $product->name")->color('purple')->begin();
+                    clock()->event("Add OrderLine for $product->name")->color('red')->begin();
                     OrderLine::create($client, [
                         "order_id"        => $this->contract->id,
                         "name"            => $product->name,
@@ -111,7 +112,7 @@ class SendContractJob implements ShouldQueue {
                     clock()->event("Add OrderLine for $product->name")->end();
                 }
 
-                clock()->event("Handle product #". implode(",", $selection[0]))->color('purple')->end();
+                clock()->event("Handle product #". implode(",", $selection[0]))->end();
             }
             clock()->event("Send Flight #".$flightKey)->end();
         }

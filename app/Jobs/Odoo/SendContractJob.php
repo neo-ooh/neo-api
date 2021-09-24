@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs\Odoo;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -18,6 +19,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
+use Neo\Services\Odoo\Models\Message;
 use Neo\Services\Odoo\Models\OrderLine;
 use Neo\Services\Odoo\OdooConfig;
 
@@ -30,12 +32,14 @@ class SendContractJob implements ShouldQueue {
     public function handle() {
         clock()->event('Send contract')->color('purple')->begin();
 
+        $client = OdooConfig::fromConfig()->getClient();
+
         // Clean up contract before insert if requested
         if($this->clearOnSend) {
-            $this->cleanupContract();
+            $this->cleanupContract($client);
         }
 
-//        $flightsJobs = [];
+        $flightsDescriptions = [];
 
         // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required orderlines
         foreach ($this->flights as $flightIndex => $flight) {
@@ -44,18 +48,26 @@ class SendContractJob implements ShouldQueue {
             }
 
             SendContractFlightJob::dispatch($this->contract, $flight, $flightIndex);
-//            $flightsJobs[] = new SendContractFlightJob($this->contract, $flight);
+
+            $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
         }
 
-//        if(count($flightsJobs) > 0) {
-//            Bus::chain($flightsJobs)->dispatch();
-//        }
+        // Log import in odoo
+        Message::create($client, [
+            ["subject" => false],
+            ["body" => implode("\n", [
+                $this->clearOnSend ? "Clear and Import" : "Import",
+                $flightsDescriptions
+            ])],
+            ["model" => Contract::$slug],
+            ["res_id" => $this->contract->id],
+            ["subtype_id" => 2],
+        ]);
 
         clock()->event('Send contract')->end();
     }
 
-    public function cleanupContract() {
-        $client = OdooConfig::fromConfig()->getClient();
+    protected function cleanupContract($client) {
 
         // Remove all order lines from the contract
         OrderLine::delete($client, [
@@ -66,5 +78,13 @@ class SendContractJob implements ShouldQueue {
         Campaign::delete($client, [
             ["order_id", "=", $this->contract->id]
         ]);
+    }
+
+    protected function getFlightDescription(array $flight, int $flightIndex) {
+        $flightStart = Carbon::parse($flight['start'])->toDateString();
+        $flightEnd = Carbon::parse($flight['end'])->toDateString();
+        $flightType = ucFirst($flight["type"]);
+
+         return "Flight #$flightIndex ($flightType) [$flightStart -> $flightEnd])";
     }
 }

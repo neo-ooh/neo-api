@@ -78,14 +78,14 @@ class SendContractJob implements ShouldQueue {
                 /** @var ProductType $connectProduct */
                 $connectProduct = $productsCategories->firstOrFail(fn($product) => $product->getKey()  ===  $productId);
 
-                clock()->event("Request matching products from Odoo")->color('red')->begin();
+                clock()->event("Request matching products from Odoo Property #".$connectProperty->odoo->odoo_id)->color('red')->begin();
                 // Pull the products of the odoo property matching the product type
                 $products = Product::all($client, [
                     ["shopping_center_id", "=", $connectProperty->odoo->odoo_id],
                     ["categ_id", "=", $connectProduct->odoo_id]
                 ]);
 
-                clock()->event("Request matching products from Odoo")->end();
+                clock()->event("Request matching products from Odoo Property #".$connectProperty->odoo->odoo_id)->end();
 
                 // Filter products based on flight type
                 if ($flightType === 'bua') {

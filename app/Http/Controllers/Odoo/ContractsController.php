@@ -50,7 +50,7 @@ class ContractsController {
             return new ResourceNotFoundException("Could not found any contract with name $contractName");
         }
 
-        SendContractJob::dispatchSync($contract, $request->input("flights"), $request->input("clearOnSend"));
+        SendContractJob::dispatch($contract, $request->input("flights"), $request->input("clearOnSend"));
 
         return new Response([]);
     }

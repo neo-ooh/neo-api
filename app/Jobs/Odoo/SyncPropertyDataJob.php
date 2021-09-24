@@ -57,14 +57,15 @@ class SyncPropertyDataJob implements ShouldQueue {
         foreach ($propertyRentalProducts as $distRentalProduct) {
             // Get or create the product category from our db
             /** @var ProductCategory $productCategory */
-            $productCategory = ProductCategory::query()->firstOrNew([
+            $productCategory                = ProductCategory::query()->firstOrNew([
                 "odoo_id" => $distRentalProduct->categ_id[0],
             ], [
                 "name"            => $distRentalProduct->categ_id[1],
-                "product_type_id" => $odooProductTypesMap[$distRentalProduct->product_type_id[0]]
+                "product_type_id" => $odooProductTypesMap[$distRentalProduct->product_type_id[0]],
+                "quantity"        => 0,
             ]);
             $productCategory->internal_name = $distRentalProduct->categ_id[1];
-            $productCategory->quantity = $distRentalProduct->nb_screen;
+            $productCategory->quantity      = $productCategory->quantity + $distRentalProduct->nb_screen;
             $productCategory->save();
 
             $productCategoriesIds[] = $productCategory->id;

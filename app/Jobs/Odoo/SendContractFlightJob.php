@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - SendContactFlightJob.php
+ * @neo/api - SendContractFlightJob.php
  */
 
 namespace Neo\Jobs\Odoo;
@@ -25,7 +25,7 @@ use Neo\Services\Odoo\Models\OrderLine;
 use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\OdooConfig;
 
-class SendContactFlightJob implements ShouldQueue {
+class SendContractFlightJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(protected Contract $contract, protected array $flight) {

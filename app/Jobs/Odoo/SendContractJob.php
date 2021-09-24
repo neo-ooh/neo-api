@@ -10,21 +10,13 @@
 
 namespace Neo\Jobs\Odoo;
 
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
-use Neo\Models\Odoo\ProductCategory;
-use Neo\Models\Odoo\ProductType;
-use Neo\Models\Property;
-use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
-use Neo\Services\Odoo\Models\OrderLine;
-use Neo\Services\Odoo\Models\Product;
-use Neo\Services\Odoo\OdooConfig;
 
 class SendContractJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -43,7 +35,7 @@ class SendContractJob implements ShouldQueue {
                 continue;
             }
 
-            $flightsJobs[] = new SendContactFlightJob($this->contract, $flight);
+            $flightsJobs[] = new SendContractFlightJob($this->contract, $flight);
         }
 
         Bus::chain($flightsJobs)->dispatch();

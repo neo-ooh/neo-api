@@ -57,7 +57,7 @@ class SendContractJob implements ShouldQueue {
             ["subject" => false],
             ["body" => implode("\n", [
                 $this->clearOnSend ? "Clear and Import" : "Import",
-                $flightsDescriptions
+                ...$flightsDescriptions,
             ])],
             ["model" => Contract::$slug],
             ["res_id" => $this->contract->id],

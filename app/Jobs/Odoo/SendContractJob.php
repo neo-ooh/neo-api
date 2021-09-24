@@ -55,14 +55,15 @@ class SendContractJob implements ShouldQueue {
 
         // Log import in odoo
         Log::debug("Messsage sent", [Message::create($client, [
-            ["subject" => false],
-            ["body" => implode("\n", [
+            "subject" => false,
+            "body" => implode("\n", [
                 $this->clearOnSend ? "Clear and Import" : "Import",
                 ...$flightsDescriptions,
-            ])],
-            ["model" => Contract::$slug],
-            ["res_id" => $this->contract->id],
-            ["subtype_id" => 2],
+            ]),
+            "model" => Contract::$slug,
+            "res_id" => $this->contract->id,
+            "message_type" => "comment",
+            "subtype_id" => 2,
         ])]);
 
         clock()->event('Send contract')->end();

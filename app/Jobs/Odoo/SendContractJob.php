@@ -16,7 +16,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Bus;
+use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
+use Neo\Services\Odoo\Models\OrderLine;
+use Neo\Services\Odoo\OdooConfig;
 
 class SendContractJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -26,6 +29,11 @@ class SendContractJob implements ShouldQueue {
 
     public function handle() {
         clock()->event('Send contract')->color('purple')->begin();
+
+        // Clean up contract before insert if requested
+        if($this->clearOnSend) {
+            $this->cleanupContract();
+        }
 
         $flightsJobs = [];
 
@@ -42,5 +50,19 @@ class SendContractJob implements ShouldQueue {
 
 
         clock()->event('Send contract')->end();
+    }
+
+    public function cleanupContract() {
+        $client = OdooConfig::fromConfig()->getClient();
+
+        // Remove all order lines from the contract
+        OrderLine::delete($client, [
+            ["order_id" => $this->contract->id],
+        ]);
+
+        // Remove all lines from the contract
+        Campaign::delete($client, [
+            ["order_id" => $this->contract->id]
+        ]);
     }
 }

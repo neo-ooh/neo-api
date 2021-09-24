@@ -73,4 +73,12 @@ class Client {
     public function create(string $model, array $fields) {
         return $this->client->create($model, $fields);
     }
+
+    public function delete(string $model, array $where) {
+        foreach ($where as $whereCondition) {
+            $this->client->where(...$whereCondition);
+        }
+
+        return $this->client->delete($model);
+    }
 }

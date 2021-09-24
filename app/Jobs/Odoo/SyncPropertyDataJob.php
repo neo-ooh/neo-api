@@ -62,7 +62,6 @@ class SyncPropertyDataJob implements ShouldQueue {
             ], [
                 "name"            => $distRentalProduct->categ_id[1],
                 "product_type_id" => $odooProductTypesMap[$distRentalProduct->product_type_id[0]],
-                "quantity"        => 0,
             ]);
             $productCategory->internal_name = $distRentalProduct->categ_id[1];
             $productCategory->quantity      = $productCategory->quantity + $distRentalProduct->nb_screen;

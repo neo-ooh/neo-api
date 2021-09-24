@@ -16,6 +16,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\Property;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -50,6 +51,11 @@ class SynchronizeProperties extends Command {
         $progressBar = $this->makeProgressBar($properties->count());
         $progressBar->start();
         $progressBar->setMessage("Syncing...");
+
+        // Reset product quantities
+        ProductCategory::query()->update([
+            "quantity" => 0
+        ]);
 
         foreach($properties as $property) {
             $progressBar->setMessage("Syncing property #" . $property->property_id . ": ");

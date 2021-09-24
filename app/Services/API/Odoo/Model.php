@@ -150,4 +150,8 @@ abstract class Model implements Arrayable {
         $recordId = $client->create(static::$slug, $fields);
         return static::get($client, $recordId);
     }
+
+    public static function delete(Client $client, array $where) {
+        return $client->delete(static::$slug, $where);
+    }
 }

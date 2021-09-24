@@ -107,7 +107,7 @@ class SendContractJob implements ShouldQueue {
                     ]);
                 }
 
-                clock()->event("Send product #". implode(",", $selection[0]))->start();
+                clock()->event("Send product #". implode(",", $selection[0]))->end();
             }
             clock()->event("Send Flight #".$flightKey)->end();
         }

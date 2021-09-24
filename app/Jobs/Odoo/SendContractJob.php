@@ -32,11 +32,17 @@ class SendContractJob implements ShouldQueue {
     }
 
     public function handle() {
+        clock()->event('Send contract')->color('purple')->begin();
+
         $client = OdooConfig::fromConfig()->getClient();
 
         // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required orderlines
-        foreach ($this->flights as $flight) {
+        foreach ($this->flights as $flightKey => $flight) {
+            clock()->event("Send Flight #".$flightKey)->begin();
+
             if (!$flight['send']) {
+                clock()->info("Flight #$flightKey is not marked for sending");
+                clock()->event("Send Flight #".$flightKey)->end();
                 continue;
             }
 
@@ -44,15 +50,17 @@ class SendContractJob implements ShouldQueue {
             $flightStart = Carbon::parse($flight['start'])->toDateString();
             $flightEnd   = Carbon::parse($flight['end'])->toDateString();
 
-            $campaign = Campaign::create($client, [
+            $campaign = clock(Campaign::create($client, [
                 "order_id"   => $this->contract->id,
                 "state"      => "draft",
                 "date_start" => $flightStart,
                 "date_end"   => $flightEnd,
-            ]);
+            ]));
 
             // Now we need to add each specified product
             foreach ($flight["selection"] as $selection) {
+                clock()->event("Send product #". implode(",", $selection[0]))->start();
+
                 $propertyId = $selection[0][0];
                 $productId  = $selection[0][1];
 
@@ -90,7 +98,12 @@ class SendContractJob implements ShouldQueue {
                         "discount"        => $flightType === 'bonus' ? 100.0 : 0.0
                     ]);
                 }
+
+                clock()->event("Send product #". implode(",", $selection[0]))->start();
             }
+            clock()->event("Send Flight #".$flightKey)->end();
         }
+
+        clock()->event('Send contract')->end();
     }
 }

@@ -67,7 +67,7 @@ class Property extends Model {
             $products = $this->products->where("product_category_id", "=", $products_category->id);
 
             $products_category->quantity = $products->sum("quantity");
-            $products_category->unit_price = $products->sum("unit_price");
+            $products_category->unit_price = $products->map(fn($p) => $p->quantity * $p->unit_price)->sum();
         }
     }
 }

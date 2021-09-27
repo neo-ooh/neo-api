@@ -27,14 +27,14 @@ class PropertiesController extends Controller {
 
     public function index(ListPropertiesRequest $request) {
         $properties = Property::all();
-        $properties->load(["data", "address", "actor", "odoo.products_categories", "odoo.products_categories.product_type", "network"]);
+        $properties->load(["data", "address", "actor", "odoo", "odoo.products_categories", "odoo.products_categories.product_type", "network"]);
 
         if(in_array("traffic", $request->input("with", []))) {
             $properties->load("traffic");
         }
 
         if(in_array("products", $request->input("with", []))) {
-            $properties->load(['odoo.products'])->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
+            $properties->load(['odoo.products', 'odoo.products_categories.product_type'])->each(fn(Property $p) => $p->odoo?->computeqCategoriesValues());
         }
 
         return $properties;

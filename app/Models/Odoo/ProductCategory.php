@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Neo\Models\Location;
+use function Clue\StreamFilter\fun;
 
 /**
  * @property int $id
@@ -52,6 +53,10 @@ class ProductCategory extends Model {
 
     public function product_type() {
         return $this->belongsTo(ProductType::class, "product_type_id", "id");
+    }
+
+    public function products() {
+        return $this->hasMany(Product::class, "product_category_id", "id");
     }
 
     public function locations() {

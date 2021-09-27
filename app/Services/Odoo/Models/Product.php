@@ -22,6 +22,7 @@ use Neo\Services\API\Odoo\Model;
  * @property mixed $categ_id
  * @property int $nb_screen
  * @property int $list_price
+ * @property array $product_variant_id
  */
 class Product extends Model {
     public static string $slug = "product.template";

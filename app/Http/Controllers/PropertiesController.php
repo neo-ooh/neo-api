@@ -33,6 +33,10 @@ class PropertiesController extends Controller {
             $properties->load("traffic");
         }
 
+        if(in_array("products", $request->input("with", []))) {
+            $properties->load(['odoo.products'])->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
+        }
+
         return $properties;
     }
 
@@ -90,6 +94,7 @@ class PropertiesController extends Controller {
 
     public function show(ShowPropertyRequest $request, int $propertyId) {
         // Is this group a property ?
+        /** @var Property $property */
         $property = Property::query()->find($propertyId);
 
         if ($property) {
@@ -100,7 +105,8 @@ class PropertiesController extends Controller {
             }
 
             if (Gate::allows(Capability::odoo_properties)) {
-                $property->load(["odoo", "odoo.products_categories", "odoo.products_categories.product_type"]);
+                $property->load(["odoo", "odoo.products", "odoo.products_categories", "odoo.products_categories.product_type"]);
+                $property->odoo->computeCategoriesValues();
             }
 
             return new Response($property);

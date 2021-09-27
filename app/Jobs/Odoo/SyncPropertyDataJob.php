@@ -41,7 +41,7 @@ class SyncPropertyDataJob implements ShouldQueue {
         $odooProductTypesIds = $propertyRentalProducts->pluck("product_type_id.0")->unique();
 
         foreach ($odooProductTypesIds as $odooProductTypeId) {
-            $this->pullPropertyType($odooProductTypeId);
+            $this->pullProductType($odooProductTypeId);
         }
 
         // Map each odoo product type id with Connect's ids
@@ -50,30 +50,40 @@ class SyncPropertyDataJob implements ShouldQueue {
                                           ->get()
                                           ->mapWithKeys(fn($productType) => [$productType->odoo_id => $productType->id]);
 
-        // for each product, we want to store its category, which is shared with other properties, and link it properly with the property
-        $productCategoriesIds = [];
+        $products = [];
 
+        // Now, store/update each product
+        // for each product, we want to store its category, which is shared with other properties
         /** @var Product $distRentalProduct */
         foreach ($propertyRentalProducts as $distRentalProduct) {
-            // Get or create the product category from our db
-            /** @var ProductCategory $productCategory */
-            $productCategory                = ProductCategory::query()->firstOrNew([
-                "odoo_id" => $distRentalProduct->categ_id[0],
-            ], [
-                "name"            => $distRentalProduct->categ_id[1],
-                "product_type_id" => $odooProductTypesMap[$distRentalProduct->product_type_id[0]],
-            ]);
-            $productCategory->internal_name = $distRentalProduct->categ_id[1];
-            $productCategory->quantity      = $productCategory->quantity + $distRentalProduct->nb_screen;
-            $productCategory->save();
+            // Filter out bonus products
+            if($distRentalProduct->bonus) {
+                continue;
+            }
 
-            $productCategoriesIds[] = $productCategory->id;
+            // Get or create the product category from our db
+            $productCategory = $this->getProductCategory($distRentalProduct->categ_id[0], $odooProductTypesMap[$distRentalProduct->product_type_id[0]], $distRentalProduct->categ_id[1]);
+
+            // Store or update the product in our db
+            /** @var \Neo\Models\Odoo\Product $product */
+            $product = \Neo\Models\Odoo\Product::query()->updateOrCreate([
+                "property_id" => $odooProperty->property_id,
+                "odoo_id" => $distRentalProduct->id,
+            ], [
+                "product_category_id" => $productCategory->id,
+                "name" => $distRentalProduct->name,
+                "odoo_variant_id" => $distRentalProduct->product_variant_id[0],
+                "quantity" => $distRentalProduct->nb_screen,
+                "unit_price" => $distRentalProduct->list_price,
+            ]);
+
+            $products[] = $product->odoo_id;
         }
 
-        $odooProperty->products_categories()->sync($productCategoriesIds);
+        $odooProperty->products()->whereNotIn("odoo_id", $products)->delete();
     }
 
-    protected function pullPropertyType(int $odooProductTypeId): void {
+    protected function pullProductType(int $odooProductTypeId): void {
         if (ProductType::query()->where("odoo_id", "=", $odooProductTypeId)->exists()) {
             return;
         }
@@ -87,5 +97,19 @@ class SyncPropertyDataJob implements ShouldQueue {
             "name"          => $productTypeDist->display_name,
             "internal_name" => $productTypeDist->name,
         ]);
+    }
+
+    protected function getProductCategory(int $odooCategoryId, int $productTypeId, string $internalName) {
+        /** @var ProductCategory $productCategory */
+        $productCategory                = ProductCategory::query()->firstOrNew([
+            "odoo_id" => $odooCategoryId,
+        ], [
+            "name"            => $internalName,
+            "product_type_id" => $productTypeId,
+        ]);
+        $productCategory->internal_name = $internalName;
+        $productCategory->save();
+
+        return $productCategory;
     }
 }

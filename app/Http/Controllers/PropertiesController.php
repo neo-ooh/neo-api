@@ -34,7 +34,7 @@ class PropertiesController extends Controller {
         }
 
         if(in_array("products", $request->input("with", []))) {
-            $properties->load(['odoo.products', 'odoo.products_categories.product_type'])->each(fn(Property $p) => $p->odoo?->computeqCategoriesValues());
+            $properties->load(['odoo.products', 'odoo.products_categories.product_type'])->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
         }
 
         return $properties;

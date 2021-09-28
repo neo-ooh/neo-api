@@ -31,6 +31,7 @@ class PropertiesController extends Controller {
 
         if(in_array("traffic", $request->input("with", []))) {
             $properties->load("traffic");
+            $properties->each(fn($p) => $p->traffic->append("monthly_traffic"));
         }
 
         if(in_array("products", $request->input("with", []))) {

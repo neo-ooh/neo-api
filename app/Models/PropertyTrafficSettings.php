@@ -125,7 +125,7 @@ class PropertyTrafficSettings extends Model {
 
             // No default value, we have to apply corrections based on the province
             $coef = $province?->slug === 'QC' ? '.75' : '.65';
-            $monthly_traffic->$monthIndex = $trafficEntry->final_traffic * $coef;
+            $monthly_traffic->$monthIndex = round($trafficEntry->final_traffic * $coef);
         }
 
         $this->monthly_traffic = $monthly_traffic;

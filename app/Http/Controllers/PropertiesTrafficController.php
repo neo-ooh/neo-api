@@ -79,7 +79,7 @@ class PropertiesTrafficController extends Controller {
             Artisan::queue("property:pull-traffic $property->actor_id");
         }
 
-        return new Response($trafficSettings);
+        return new Response($trafficSettings->load(["source"]));
     }
 
 }

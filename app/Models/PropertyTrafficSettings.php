@@ -66,7 +66,7 @@ class PropertyTrafficSettings extends Model {
     }
 
     public function data(): HasMany {
-        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
+        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id")->orderBy("year", 'desc');
     }
 
     public function source(): BelongsToMany {

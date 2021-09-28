@@ -29,7 +29,20 @@ class PropertiesTrafficController extends Controller {
 
         if(Gate::allows(Capability::properties_edit) && $request->has("temporary")) {
             $values["temporary"] = $request->input("temporary");
+
+            if($values["traffic"] === null && $values["temporary"] === null) {
+                // remove the record instead of adding it
+                PropertyTraffic::query()->where([
+                    "property_id" => $property->actor_id,
+                    "year"        => $request->input("year"),
+                    "month"       => $request->input("month"),
+                ])->delete();
+
+                return new Response([], 201);
+            }
         }
+
+
 
         $traffic = PropertyTraffic::query()->updateOrCreate([
             "property_id" => $property->actor_id,

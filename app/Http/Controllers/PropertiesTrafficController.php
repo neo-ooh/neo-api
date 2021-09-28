@@ -66,7 +66,7 @@ class PropertiesTrafficController extends Controller {
 
         $trafficSettings->save();
 
-        $trafficSettings->source()->delete();
+        $trafficSettings->source()->sync([]);
 
         if ($trafficSettings->input_method === 'LINKETT') {
             $trafficSettings->source()

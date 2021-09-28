@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int                       $property_id
  * @property Property                  $property
  * @property Collection<TrafficSource> $source
+ * @property Collection<PropertyTraffic> $data
  */
 class PropertyTrafficSettings extends Model {
     use HasFactory;

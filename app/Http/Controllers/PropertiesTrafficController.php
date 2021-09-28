@@ -66,13 +66,13 @@ class PropertiesTrafficController extends Controller {
 
         $trafficSettings->save();
 
+        $trafficSettings->source()->delete();
+
         if ($trafficSettings->input_method === 'LINKETT') {
             $trafficSettings->source()
                             ->attach($request->input("source_id"), [
                                 "uid" => $request->input("venue_id")
                             ]);
-        } else {
-            $trafficSettings->source()->sync([]);
         }
 
         if ($forcePull) {

@@ -128,6 +128,6 @@ class PropertyTrafficSettings extends Model {
             $monthly_traffic->$monthIndex = $trafficEntry->final_traffic * $coef;
         }
 
-        return $monthly_traffic;
+        $this->monthly_traffic = $monthly_traffic;
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
+use Neo\Jobs\FillMissingTrafficValueJob;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\Properties\PullLatestTrafficData;
@@ -121,6 +122,9 @@ class Kernel extends ConsoleKernel {
 
         // Send Reminder about traffic data to users
         $schedule->job(TrafficRequiredReminder::class)->monthlyOn(7);
+
+        // Input last month traffic value were missing
+        $schedule->job(FillMissingTrafficValueJob::class)->monthlyOn(15);
 
     }
 

@@ -30,34 +30,41 @@ class FillMissingTrafficValueJob implements ShouldQueue {
         $currentYear = Carbon::now()->year;
         $currentMonth = Carbon::now()->month - 2;
 
-        dump($currentMonth, $currentYear);
-
         $properties = Property::with(["traffic", "traffic.data", "address", "address.city", "address.city.province"])->get();
 
         /** @var Property $property */
         foreach($properties as $property) {
-            dump($property->actor_id);
             // Check if the property has a record for this month traffic
             if($property->traffic->data->first(fn(PropertyTraffic $t) => $t->year === $currentYear && $t->month === $currentMonth)) {
                 // ignore
-                dump("ignore");
                 continue;
             }
 
-            // No record, we need to create one. Do we have a record for the same month in 2019 ?
+            // No record, we need to create one.
+
+            // Check the missing value strategy for the property.
+            // If it is set to default value, we will use this one,
+            if($property->traffic->missing_value_strategy === "USE_PLACEHOLDER") {
+                PropertyTraffic::query()->create([
+                    "property_id" => $property->actor_id,
+                    "year"        => $currentYear,
+                    "month"       => $currentMonth,
+                    "temporary"       => $property->traffic->placeholder_value
+                ]);
+
+                continue;
+            }
+
+            // Do we have a record for the same month in 2019 ?
             /** @var ?PropertyTraffic $prevRecord */
             $prevRecord = $property->traffic->data->first(fn(PropertyTraffic $t) => $t->year === 2019 && $t->month === $currentMonth);
 
             if(!$prevRecord) {
-                dump("noref");
                 continue;
             }
 
             $coef = $property->address->city->province->slug === 'QC' ? .75 : .65;
             $traffic = $prevRecord->final_traffic * $coef;
-
-            dump($property->actor_id);
-            dump($traffic);
 
             PropertyTraffic::query()->create([
                 "property_id" => $property->actor_id,

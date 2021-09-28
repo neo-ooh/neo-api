@@ -142,7 +142,7 @@ class PropertiesStatisticsController {
         }
 
         if (isset($productId)) {
-            $query->join("odoo_properties_products_categories as oppc", fn($join) => $join->on("oppc.property_id", "=", "pt.property_id"))
+            $query->join("odoo_properties_products as oppc", fn($join) => $join->on("oppc.property_id", "=", "pt.property_id"))
                   ->where("oppc.product_category_id", "=", $productId);
         }
 

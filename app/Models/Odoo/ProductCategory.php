@@ -48,7 +48,7 @@ class ProductCategory extends Model {
     */
 
     public function odoo_properties() {
-        return $this->belongsToMany(Property::class, "odoo_properties_products_categories", "product_category_id", "property_id");
+        return $this->belongsToMany(Property::class, "odoo_properties_products", "product_category_id", "property_id");
     }
 
     public function product_type() {

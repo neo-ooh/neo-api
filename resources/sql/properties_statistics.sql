@@ -55,7 +55,7 @@ SELECT `pt`.`year`,
            JOIN `addresses` `addr` ON `addr`.`id` = `p`.`address_id`
            JOIN `cities` `c` ON `c`.`id` = `addr`.`city_id`
            JOIN `odoo_properties` `op` ON `op`.`property_id` = `p`.`actor_id`
-           JOIN `odoo_properties_products_categories` `oppc` ON `oppc`.`property_id` = `op`.`property_id`
+           JOIN `odoo_properties_products` `oppc` ON `oppc`.`property_id` = `op`.`property_id`
  WHERE `c`.`market_id` = ?
    AND `oppc`.`product_category_id` = ?
    AND `pt`.`year` = ?
@@ -70,7 +70,7 @@ SELECT `pt`.`year`,
            JOIN `addresses` `addr` ON `addr`.`id` = `p`.`address_id`
            JOIN `cities` `c` ON `c`.`id` = `addr`.`city_id`
            JOIN `odoo_properties` `op` ON `op`.`property_id` = `p`.`actor_id`
-           JOIN `odoo_properties_products_categories` `oppc` ON `oppc`.`property_id` = `op`.`property_id`
+           JOIN `odoo_properties_products` `oppc` ON `oppc`.`property_id` = `op`.`property_id`
  WHERE `c`.`province_id` = ?
    AND `oppc`.`product_category_id` = ?
    AND `pt`.`year` = ?
@@ -83,7 +83,7 @@ SELECT `pt`.`year`,
   FROM `properties_traffic` `pt`
            JOIN `properties` `p` ON `p`.`actor_id` = `pt`.`property_id`
            JOIN `odoo_properties` `op` ON `op`.`property_id` = `p`.`actor_id`
-           JOIN `odoo_properties_products_categories` `oppc` ON `oppc`.`property_id` = `op`.`property_id`
+           JOIN `odoo_properties_products` `oppc` ON `oppc`.`property_id` = `op`.`property_id`
  WHERE `oppc`.`product_category_id` = ?
    AND `pt`.`year` = ?
  GROUP BY `pt`.`year`, `pt`.`month`;

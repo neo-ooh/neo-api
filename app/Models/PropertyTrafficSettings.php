@@ -86,7 +86,7 @@ class PropertyTrafficSettings extends Model {
     /**
      * This methods fills the `monthly_traffic` attribute of the model as an array containing traffic monthly traffic data that can be used to calculate impressions
      */
-    public function getMonthlyTrafficAttribute() {
+    public function loadMonthlyTraffic(?Province $province) {
         $monthly_traffic = new stdClass();
         $trafficData = $this->data->sortBy(["year, month"], descending: true);
         $currentYear = Carbon::now()->year;
@@ -124,7 +124,7 @@ class PropertyTrafficSettings extends Model {
             }
 
             // No default value, we have to apply corrections based on the province
-            $coef = $this->property->address?->city->province->slug === 'QC' ? '.75' : '.65';
+            $coef = $province?->slug === 'QC' ? '.75' : '.65';
             $monthly_traffic->$monthIndex = $trafficEntry->final_traffic * $coef;
         }
 

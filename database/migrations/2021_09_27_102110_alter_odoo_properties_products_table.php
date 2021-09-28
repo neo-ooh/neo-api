@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Schema;
 
 class AlterOdooPropertiesProductsTable extends Migration {
     public function up() {
-//        Schema::table('odoo_properties_products_categories', function (Blueprint $table) {
-        Schema::table('odoo_properties_products', function (Blueprint $table) {
-//            $table->rename("odoo_properties_products");
+        Schema::table('odoo_properties_products_categories', function (Blueprint $table) {
+//        Schema::table('odoo_properties_products', function (Blueprint $table) {
+            $table->rename("odoo_properties_products");
 
             $table->unsignedBigInteger("odoo_id")->after("product_category_id");
             $table->string("name")->after("odoo_id");

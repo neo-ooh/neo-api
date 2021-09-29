@@ -57,7 +57,9 @@ class Address extends Model {
             $str .= ", $this->line_2";
         }
 
-        $str .= ", {$this->city->name} {$this->city->province->slug} {$this->zipcode}";
+        $zipcode = substr($this->zipcode, 0, 3) . " " . substr($this->zipcode, 3);
+
+        $str .= ", {$this->city->name} {$this->city->province->slug} $zipcode";
         $str .= ", {$this->city->province->country->name}";
 
         return $str;

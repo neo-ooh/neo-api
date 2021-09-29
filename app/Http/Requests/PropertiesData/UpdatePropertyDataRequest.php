@@ -31,7 +31,7 @@ class UpdatePropertyDataRequest extends FormRequest {
             "data_source"    => ["nullable", "string"],
             "market_population" => ["nullable", "integer"],
             "gross_area" => ["nullable", "integer"],
-            "spending_per_visit" => ["nullable", "integer"],
+            "spending_per_visit" => ["nullable", "numeric"],
         ];
     }
 }

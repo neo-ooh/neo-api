@@ -134,7 +134,6 @@ final class Capability extends Enum {
     // TODO: Rename this capability to `broadcasters.broadsign`
     public const chores_broadsign = "chores.broadsign";
 
-    // Broadsign administration
     /**
      * Allow user to see information about properties he can access
      */
@@ -146,7 +145,7 @@ final class Capability extends Enum {
     public const properties_edit = "properties.edit";
 
     /**
-     * Allow user to fill in traffic information for accessible properties. Redundant with `properties_edit`
+     * Allow user to fill in traffic information for accessible properties.
      */
     public const properties_traffic = "properties.traffic";
 

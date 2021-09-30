@@ -40,6 +40,7 @@ class CampaignPlannerSavesController {
     }
 
     public function update(UpdateSaveRequest $request, Actor $actor, CampaignPlannerSave $campaignPlannerSave) {
+        $campaignPlannerSave->name = $request->input("name");
         $campaignPlannerSave->data = $request->input("data");
         $campaignPlannerSave->save();
 

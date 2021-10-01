@@ -110,7 +110,7 @@ class Contract extends Model {
         $reservations = $this->reservations;
 
         if ($reservations->isEmpty()) {
-            return new \Illuminate\Support\Collection();
+            return [];
         }
 
         $performances = ReservablePerformance::byReservable($broadsignClient, $reservations->pluck('external_id')

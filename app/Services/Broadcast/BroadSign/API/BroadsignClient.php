@@ -57,13 +57,22 @@ class BroadsignClient implements APIClientInterface {
             $payload = null;
         }
 
-        if ($endpoint->cache === 0 || strtolower($endpoint->method) !== 'get') {
-            // Bypass the cache if we are not making a `get` request
-            return $this->call_impl__($endpoint, $payload, $headers);
-        }
+        try {
+            if ($endpoint->cache === 0 || strtolower($endpoint->method) !== 'get') {
+                // Bypass the cache if we are not making a `get` request
+                return $this->call_impl__($endpoint, $payload, $headers);
+            }
 
-        // Cache and return the response
-        return Cache::remember((string)$endpoint, $endpoint->cache, fn() => $this->call_impl__($endpoint, $payload, $headers));
+            // Cache and return the response
+            return Cache::remember((string)$endpoint, $endpoint->cache, fn() => $this->call_impl__($endpoint, $payload, $headers));
+        } catch (BadResponse $exception) {
+            Log::error($exception->getMessage(), [
+                $endpoint,
+                $payload
+            ]);
+
+            return null;
+        }
     }
 
     /**

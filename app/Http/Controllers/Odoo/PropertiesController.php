@@ -27,14 +27,19 @@ class PropertiesController extends Controller {
         $propertyId = $request->input("property_id");
         $odooId     = $request->input("odoo_id");
 
+        // Make sure this property is not already associated with an Odoo property
+        if(OdooProperty::query()->where("property_id", "=", $propertyId)->exists()) {
+            throw new \http\Exception\InvalidArgumentException("Connect property is already associated with an Odoo Property.");
+        }
 
-        // Check the property nor the provided odoo ID are already used
-        $exists = OdooProperty::query()
-                              ->where("property_id", "=", $propertyId)
-                              ->orWhere("odoo_id", "=", $odooId)->exists();
+        // Check the odoo property is not already associated with a Connect property
+        /** @var Property|null $existing */
+        $existing = OdooProperty::query()
+                                ->with(["property", "property.actor"])
+                                ->where("odoo_id", "=", $odooId)->first();
 
-        if ($exists) {
-            throw new InvalidArgumentException("Connect Property or Odoo Property is already associated.");
+        if ($existing !== null) {
+            throw new InvalidArgumentException("Odoo Property is already associated with $existing->property->actor->name.");
         }
 
         // We are good, we just have to pull info from odoo about the property, and store it

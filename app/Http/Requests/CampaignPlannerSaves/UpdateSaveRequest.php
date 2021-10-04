@@ -17,7 +17,7 @@ use Neo\Enums\Capability;
 class UpdateSaveRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name" => ["requried", "string"],
+            "name" => ["required", "string"],
             "data" => ["required", "array"],
         ];
     }

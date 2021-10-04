@@ -48,6 +48,10 @@ class PropertiesController extends Controller {
 
         $odooPropertyDist = Property::get($client, $odooId);
 
+        if($odooPropertyDist === null) {
+            throw new InvalidArgumentException("Invalid Odoo Id");
+        }
+
         $odooProperty                = new OdooProperty();
         $odooProperty->property_id   = $propertyId;
         $odooProperty->odoo_id       = $odooId;

@@ -10,7 +10,6 @@
 
 namespace Neo\Services\API\Odoo;
 
-use ArrayAccess;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use Neo\Services\API\Traits\HasAttributes;
@@ -48,9 +47,9 @@ abstract class Model implements Arrayable {
      * @param bool             $isIncomplete If true, the model will fetch itself when trying to access a missing property
      */
     final public function __construct(
-        Client         $client,
-        array|Collection          $attributes = [],
-        protected bool $isIncomplete = false
+        Client           $client,
+        array|Collection $attributes = [],
+        protected bool   $isIncomplete = false
     ) {
         $this->client = $client;
         $this->setAttributes((array)$attributes);
@@ -81,6 +80,7 @@ abstract class Model implements Arrayable {
 
     /**
      * Pull all records for the current model
+     *
      * @param Client $client
      * @param array  $filters
      * @return Collection
@@ -93,6 +93,7 @@ abstract class Model implements Arrayable {
 
     /**
      * Pull multiple records using a custom field
+     *
      * @param Client           $client
      * @param array|Collection $ids
      * @return Collection<static>
@@ -103,6 +104,7 @@ abstract class Model implements Arrayable {
 
     /**
      * Pull multiple records using their ids
+     *
      * @param Client           $client
      * @param array|Collection $ids
      * @return Collection<static>
@@ -113,12 +115,19 @@ abstract class Model implements Arrayable {
 
     /**
      * Pull a specific record using its id
+     *
      * @param Client $client
      * @param mixed  $id Unique ID of the record
      * @return static
      */
-    public static function get(Client $client, $id): static {
-        return new static($client, $client->getById(static::$slug, $id, static::$fields));
+    public static function get(Client $client, $id): static|null {
+        $response = $client->getById(static::$slug, $id, static::$fields);
+
+        if (!$response) {
+            return null;
+        }
+
+        return new static($client, $response);
     }
 
     protected function handleMissingAttribute(string $attribute): void {
@@ -133,6 +142,7 @@ abstract class Model implements Arrayable {
 
     /**
      * Push the value of the specified fields to Odoo
+     *
      * @param array $fields
      */
     public function update(array $fields): bool {
@@ -142,6 +152,7 @@ abstract class Model implements Arrayable {
 
     /**
      * Pull a specific record using its id
+     *
      * @param Client $client
      * @param mixed  $id Unique ID of the record
      * @return static

@@ -57,7 +57,7 @@ class Client {
         $modelIds = is_int($ids) ? [$ids] : $ids;
         $models = $this->client->call($model, 'read', [$modelIds], ["fields" => $fields]);
 
-        return is_int($ids) ? $models[0] : $models;
+        return is_int($ids) ? $models->get(0, null) : $models;
     }
 
     public function update(Model $model, array $values): bool {

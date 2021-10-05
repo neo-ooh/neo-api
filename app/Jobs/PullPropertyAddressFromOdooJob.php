@@ -60,15 +60,19 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
         ]);
 
         $address->city_id = $city->id;
+
+        // We only want to update the lat/lng if the address changed
+        $refreshCoordinates = $address->isDirty(["line_1", "line_2", "zipcode", "city_id"]);
+
         $address->save();
 
         $property->address()->associate($address);
         $property->save();
 
-        PullAddressGeolocationJob::dispatch($address);
-
-        if($property->odoo) {
-            PushPropertyGeolocationJob::dispatchSync($this->property_id);
+        if($refreshCoordinates) {
+            PullAddressGeolocationJob::withChain([
+                new PushPropertyGeolocationJob($this->property_id)
+            ])->dispatch($address);
         }
     }
 }

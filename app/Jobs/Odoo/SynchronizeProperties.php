@@ -16,6 +16,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Neo\Jobs\PullPropertyAddressFromOdooJob;
 use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\Property;
 use Neo\Services\Odoo\OdooConfig;
@@ -52,15 +53,11 @@ class SynchronizeProperties extends Command {
         $progressBar->start();
         $progressBar->setMessage("Syncing...");
 
-        // Reset product quantities
-        ProductCategory::query()->update([
-            "quantity" => 0
-        ]);
-
         foreach($properties as $property) {
-            $progressBar->setMessage("Syncing property #" . $property->property_id . ": ");
+            $progressBar->setMessage("Syncing property #" . $property->property_id);
 
-            SyncPropertyDataJob::dispatchSync($property->property_id, $client);
+            PullPropertyAddressFromOdooJob::dispatchSync($property->getKey());
+            SyncPropertyDataJob::dispatchSync($property->getKey(), $client);
 
             $progressBar->advance();
         }

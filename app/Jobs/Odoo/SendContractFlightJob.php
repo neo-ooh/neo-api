@@ -86,18 +86,21 @@ class SendContractFlightJob implements ShouldQueue {
                 $products = $products->where("bonus", "=", false);
             }
 
+            // As of 2021-10-07, behaviour of selection of Mall posters is not set. Current desired behaviour is to support adding only one poster per property.
+
             /** @var Product $product */
-            $product = $products->first();
+            $productIterator = $products->getIterator();
 
             // If no product is available, skip it
-            if(!$product) {
+            if(!$productIterator->valid()) {
                 continue;
             }
 
-            // As of 2021-10-07, behaviour of selection of Mall posters is not set. Current desired behaviour is to support adding only one poster per property.
-//            foreach ($products as $product) {     // Add a new order line with the first product
+            do {
+                $product = $productIterator->current();
+
                 clock()->event("$key -> $product->name")->color('purple')->begin();
-                OrderLine::create($client, [
+                $orderLine = OrderLine::create($client, [
                     "order_id"        => $this->contract->id,
                     "name"            => $product->name,
                     "price_unit"      => $product->list_price,
@@ -111,7 +114,8 @@ class SendContractFlightJob implements ShouldQueue {
                     "sequence"        => $this->flightIndex * 10,
                 ]);
                 clock()->event("$key -> $product->name")->end();
-//            }
+
+            } while($orderLine->over_qty > 0 && $productIterator->valid());
 
             clock()->event("Handle product #$key")->end();
         }

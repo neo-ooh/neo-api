@@ -25,6 +25,7 @@ use Neo\Services\API\Odoo\Model;
  * @property int    $price_reduce
  * @property array  $product_id
  * @property array  $product_template_id
+ * @property int  over_qty
  * ...
  */
 class OrderLine extends Model {

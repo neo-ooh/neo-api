@@ -109,7 +109,8 @@ class SendContractFlightJob implements ShouldQueue {
                     "sequence"        => $this->flightIndex * 10,
                 ]);
 
-                if($orderLine->over_qty > 0) {
+                // If the product is unavailable and we have other products that we can try with, remove the product.
+                if($orderLine->over_qty > 0 && $productIterator->valid()) {
                     $orderLine->remove();
                 }
 

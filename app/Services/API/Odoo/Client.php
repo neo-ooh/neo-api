@@ -52,6 +52,8 @@ class Client {
         if (config('app.env') !== "production") {
             clock()->event("GET: " . $model . "[" . $filterString . "]")->end();
         }
+
+        return $response;
     }
 
     /**

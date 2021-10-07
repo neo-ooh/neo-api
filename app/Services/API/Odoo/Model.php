@@ -165,4 +165,8 @@ abstract class Model implements Arrayable {
     public static function delete(Client $client, array $where) {
         return $client->delete(static::$slug, $where);
     }
+
+    public function remove() {
+        return $this->client->delete(static::$slug, [[static::$key, "=", $this->getKey()]]);
+    }
 }

@@ -115,6 +115,10 @@ class SendContractFlightJob implements ShouldQueue {
                 ]);
                 clock()->event("$key -> $product->name")->end();
 
+                if($orderLine->over_qty > 0) {
+                    $orderLine->remove();
+                }
+
                 $productIterator->next();
 
             } while($orderLine->over_qty > 0 && $productIterator->valid());

@@ -10,7 +10,6 @@
 
 namespace Neo\Services\API\Odoo;
 
-use Arr;
 use Edujugon\Laradoo\Odoo;
 
 /**
@@ -27,11 +26,11 @@ class Client {
      */
     public function __construct(string $url, protected string $db, string $userLogin, string $userPassword) {
         $this->client = \Edujugon\Laradoo\Facades\Odoo::host($url)
-                                                    ->apiSuffix('/')
-                                                    ->db($db)
-                                                    ->username($userLogin)
-                                                    ->password($userPassword)
-                                                    ->connect();
+                                                      ->apiSuffix('/')
+                                                      ->db($db)
+                                                      ->username($userLogin)
+                                                      ->password($userPassword)
+                                                      ->connect();
 
     }
 
@@ -40,8 +39,19 @@ class Client {
             $this->client->where(...$filter);
         }
 
-        return $this->client->fields($fields)
-                     ->get($model);
+        if (config('app.env') !== "production") {
+            $filterString = json_encode($filters, JSON_THROW_ON_ERROR);
+            clock()->event("GET: " . $model . "[" . $filterString . "]")->color("purple")->begin();
+        }
+
+        $response = $this->client->fields($fields)
+                            ->get($model);
+
+
+
+        if (config('app.env') !== "production") {
+            clock()->event("GET: " . $model . "[" . $filterString . "]")->end();
+        }
     }
 
     /**
@@ -55,14 +65,14 @@ class Client {
      */
     public function getById(string $model, array|int $ids, $fields = []) {
         $modelIds = is_int($ids) ? [$ids] : $ids;
-        $models = $this->client->call($model, 'read', [$modelIds], ["fields" => $fields]);
+        $models   = $this->client->call($model, 'read', [$modelIds], ["fields" => $fields]);
 
         return is_int($ids) ? $models->get(0, null) : $models;
     }
 
     public function update(Model $model, array $values): bool {
         return $this->client->where("id", "=", $model->getKey())
-                    ->update($model::$slug, $values);
+                            ->update($model::$slug, $values);
     }
 
     public function findBy(string $model, string $field, $value) {

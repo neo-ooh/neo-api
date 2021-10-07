@@ -87,7 +87,15 @@ class SendContractFlightJob implements ShouldQueue {
             }
 
             /** @var Product $product */
-            foreach ($products as $product) {     // Add a new order line with the first product
+            $product = $products->first();
+
+            // If no product is available, skip it
+            if(!$product) {
+                continue;
+            }
+
+            // As of 2021-10-07, behaviour of selection of Mall posters is not set. Current desired behaviour is to support adding only one poster per property.
+//            foreach ($products as $product) {     // Add a new order line with the first product
                 clock()->event("$key -> $product->name")->color('purple')->begin();
                 OrderLine::create($client, [
                     "order_id"        => $this->contract->id,
@@ -103,7 +111,7 @@ class SendContractFlightJob implements ShouldQueue {
                     "sequence"        => $this->flightIndex * 10,
                 ]);
                 clock()->event("$key -> $product->name")->end();
-            }
+//            }
 
             clock()->event("Handle product #$key")->end();
         }

@@ -63,8 +63,17 @@ class Property extends Model {
 
     public function computeCategoriesValues() {
         // For each product category, we summed the prices and faces of products in it
+        /** @var ProductCategory $products_category */
         foreach($this->products_categories as $products_category) {
             $products = $this->products->where("product_category_id", "=", $products_category->id);
+
+            // As of 2021-10-07, mall posters (OdooId #34) handling is not entirely defined. An exception is therefore setup to
+            // limit selection to only one poster at a time. Other products are unaffected by this exception.
+            if($products_category->odoo_id === 34) {
+                $products_category->quantity = 1;
+                $products_category->unit_price = $products->first()->unit_price;
+                continue;
+            }
 
             $products_category->quantity = $products->sum("quantity");
             $products_category->unit_price = $products->map(fn($p) => $p->quantity * $p->unit_price)->sum();

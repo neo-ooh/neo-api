@@ -62,7 +62,6 @@ class SendContractFlightJob implements ShouldQueue {
             clock()->event("Handle product #$key")->begin();
 
             [$propertyId, $productId] = $selection[0];
-            clock([$propertyId, $productId]);
 
             // We need the property and product record from Connect
             /** @var Property $connectProperty */
@@ -70,14 +69,11 @@ class SendContractFlightJob implements ShouldQueue {
             /** @var ProductType $connectProduct */
             $connectProduct = $productsCategories->firstOrFail(fn($product) => $product->getKey() === $productId);
 
-            clock()->event("Request matching products from Odoo Property #$key")->color('purple')->begin();
             // Pull the products of the odoo property matching the product type
             $products = Product::all($client, [
                 ["shopping_center_id", "=", $connectProperty->odoo->odoo_id],
                 ["categ_id", "=", $connectProduct->odoo_id]
             ]);
-
-            clock()->event("Request matching products from Odoo Property #$key")->end();
 
             // Filter products based on flight type
             if ($flightType === 'bua') {
@@ -99,7 +95,6 @@ class SendContractFlightJob implements ShouldQueue {
             do {
                 $product = $productIterator->current();
 
-                clock()->event("$key -> $product->name")->color('purple')->begin();
                 $orderLine = OrderLine::create($client, [
                     "order_id"        => $this->contract->id,
                     "name"            => $product->name,
@@ -113,7 +108,6 @@ class SendContractFlightJob implements ShouldQueue {
                     "discount"        => $flightType === 'bonus' ? 100.0 : 0.0,
                     "sequence"        => $this->flightIndex * 10,
                 ]);
-                clock()->event("$key -> $product->name")->end();
 
                 if($orderLine->over_qty > 0) {
                     $orderLine->remove();

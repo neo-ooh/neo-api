@@ -20,7 +20,7 @@ use Neo\Models\CampaignPlannerSave;
 
 class CampaignPlannerPolygonsController {
     public function index(ListSavesRequest $request, Actor $actor) {
-        return new Response($actor->campaign_planner_saves()->get(["id", "name", "created_at", "updated_at"]));
+        return new Response($actor->campaign_planner_saves);
     }
 
     public function store(StoreSaveRequest $request, Actor $actor) {

@@ -88,6 +88,7 @@ use Neo\Rules\AccessibleActor;
  * @property Collection     children_libraries
  *
  * @property Collection     campaign_planner_saves
+ * @property Collection     campaign_planner_polygons
  *
  * @property ?ActorLogo logo
  *
@@ -264,7 +265,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function campaign_planner_polygons() {
-        return $this->hasMany(CampaignPlannerSave::class, 'actor_id', 'id');
+        return $this->hasMany(CampaignPlannerPolygon::class, 'actor_id', 'id');
     }
 
 

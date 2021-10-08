@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\CampaignPlannerPolygonsController;
 use Neo\Http\Controllers\CampaignPlannerSavesController;
 use Neo\Http\Controllers\Odoo\PropertiesController;
 
@@ -18,7 +19,7 @@ Route::group([
 ], function () {
     /*
     |----------------------------------------------------------------------
-    | Actors saved planning runs
+    | Saved Campaign Planner runs
     |----------------------------------------------------------------------
     */
 
@@ -27,5 +28,16 @@ Route::group([
     Route::   get("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@show");
     Route::   put("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@update");
     Route::delete("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@destroy");
+
+    /*
+    |----------------------------------------------------------------------
+    | Saved Campaign Planner runs
+    |----------------------------------------------------------------------
+    */
+
+    Route::   get("actors/{actor}/campaign-planner-polygons", CampaignPlannerPolygonsController::class . "@index");
+    Route::  post("actors/{actor}/campaign-planner-polygons", CampaignPlannerPolygonsController::class . "@store");
+    Route::   get("actors/{actor}/campaign-planner-polygons/{campaignPlannerPolygon}", CampaignPlannerPolygonsController::class . "@show");
+    Route::delete("actors/{actor}/campaign-planner-polygons/{campaignPlannerPolygon}", CampaignPlannerPolygonsController::class . "@destroy");
 
 });

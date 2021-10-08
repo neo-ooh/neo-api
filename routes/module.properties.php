@@ -79,9 +79,9 @@ Route::group([
 
     Route::model("trafficSource", TrafficSource::class);
 
-    Route::get("traffic-sources", TrafficSourcesController::class . "@index");
-    Route::post("traffic-sources", TrafficSourcesController::class . "@store");
-    Route::put("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@update");
+    Route::   get("traffic-sources", TrafficSourcesController::class . "@index");
+    Route::  post("traffic-sources", TrafficSourcesController::class . "@store");
+    Route::   put("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@update");
     Route::delete("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@destroy");
 
     /*

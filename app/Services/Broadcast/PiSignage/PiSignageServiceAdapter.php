@@ -39,7 +39,7 @@ class PiSignageServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function synchronizePlayers() {
-        SynchronizePlayers::dispatchSync($this->config);
+        SynchronizePlayers::dispatch($this->config);
 
     }
 

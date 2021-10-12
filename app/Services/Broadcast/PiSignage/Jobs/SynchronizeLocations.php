@@ -77,6 +77,8 @@ class SynchronizeLocations extends PiSignageJob implements ShouldBeUnique {
                 "city"        => "-",
             ]);
 
+            $location->name = $group->name;
+            $location->internal_name = $group->name;
             $location->display_type_id = $displayType->id;
             $location->save();
 

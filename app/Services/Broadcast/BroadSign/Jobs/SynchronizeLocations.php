@@ -119,8 +119,8 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
                 "internal_name" => $bslocation->name,
             ]);
 
-            $location->name = $bslocation->name;
-            $location->internal_name = $bslocation->name;
+            $location->name            = $bslocation->name;
+            $location->internal_name   = $bslocation->name;
             $location->display_type_id = $displayType->id;
             $location->container_id    = $containerID;
             $location->province        = $address;

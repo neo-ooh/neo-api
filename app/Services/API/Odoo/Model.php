@@ -127,6 +127,8 @@ abstract class Model implements Arrayable {
             return null;
         }
 
+
+
         return new static($client, $response);
     }
 

@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\ProductType;
 use Neo\Models\Property;
@@ -94,6 +95,20 @@ class SendContractFlightJob implements ShouldQueue {
 
             do {
                 $product = $productIterator->current();
+
+                Log::debug("Send order line", [
+                    "order_id"        => $this->contract->id,
+                    "name"            => $product->name,
+                    "price_unit"      => $product->list_price,
+                    "product_uom_qty" => 1.0,
+                    "customer_lead"   => 0.0,
+                    "product_id"      => $product->product_variant_id[0],
+                    "rental_start"    => $flightStart,
+                    "rental_end"      => $flightEnd,
+                    "is_rental_line"  => 1,
+                    "discount"        => $flightType === 'bonus' ? 100.0 : 0.0,
+                    "sequence"        => $this->flightIndex * 10,
+                ]);
 
                 $orderLine = OrderLine::create($client, [
                     "order_id"        => $this->contract->id,

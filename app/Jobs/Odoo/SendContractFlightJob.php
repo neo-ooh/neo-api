@@ -17,6 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use Neo\Documents\Contract\Order;
 use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\ProductType;
 use Neo\Models\Property;
@@ -95,6 +96,7 @@ class SendContractFlightJob implements ShouldQueue {
 
             do {
                 $product = $productIterator->current();
+                $linkedLine = null;
 
                 $orderLine = OrderLine::create($client, [
                     "order_id"        => $this->contract->id,
@@ -110,12 +112,33 @@ class SendContractFlightJob implements ShouldQueue {
                     "sequence"        => $this->flightIndex * 10,
                 ]);
 
+                // If the product has a linked product, we add it as well
+                if($product->linked_product_id) {
+                    // Get the linked product
+                    $linkedProduct = Product::get($client, $product->linked_product_id[0]);
+
+                    $linkedLine = OrderLine::create($client, [
+                        "order_id" => $this->contract,
+                        "name" => $linkedProduct->name,
+                        "price_unit" => 0,
+                        "product_uom_qty" => 1.0,
+                        "customer_lead" => 0.0,
+                        "product_id" => $linkedProduct->product_variant_id[0],
+                        "rental_start" => $flightStart,
+                        "rental_end" => $flightEnd,
+                        "is_rental_line" => 1,
+                        "is_linked_line" => 1,
+                        "discount" => 0,
+                        "sequence" => $this->flightIndex * 10
+                    ])
+                }
 
                 $productIterator->next();
 
                 // If the product is unavailable, and we have other products that we can try with, remove the product.
                 if($orderLine->over_qty > 0 && $productIterator->valid()) {
                     $orderLine->remove();
+                    $linkedLine?->remove();
                 }
 
             } while($orderLine->over_qty > 0 && $productIterator->valid());

@@ -11,7 +11,10 @@
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\CitiesController;
 use Neo\Http\Controllers\CountriesController;
+use Neo\Http\Controllers\FieldsController;
+use Neo\Http\Controllers\FieldSegmentsController;
 use Neo\Http\Controllers\MarketsController;
+use Neo\Http\Controllers\NetworkFieldsController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
 use Neo\Http\Controllers\PropertiesStatisticsController;
@@ -107,4 +110,22 @@ Route::group([
     Route::  post("countries/{country}/provinces/{province}/cities", CitiesController::class . "@store");
     Route::   put("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@update");
     Route::delete("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@destroy");
+
+    /*
+    |----------------------------------------------------------------------
+    | Fields
+    |----------------------------------------------------------------------
+    */
+
+    Route::   get("fields", FieldsController::class . "@index");
+    Route::  post("fields", FieldsController::class . "@store");
+    Route::   put("fields/{field}", FieldsController::class . "@update");
+    Route::delete("fields/{field}", FieldsController::class . "@destroy");
+
+    Route::  post("fields/{field}/segments", FieldSegmentsController::class . "@store");
+    Route::   put("fields/{field}/segments/{segments}", FieldSegmentsController::class . "@update");
+    Route::delete("fields/{field}/segments/{segments}", FieldSegmentsController::class . "@destroy");
+
+    Route::   get("networks/{network}/segments", NetworkFieldsController::class . "@index");
+    Route::   put("networks/{network}/segments", NetworkFieldsController::class . "@update");
 });

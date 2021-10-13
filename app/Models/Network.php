@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use JsonException;
@@ -38,6 +39,7 @@ use RuntimeException;
  * @property BroadcasterConnection                             $broadcaster_connection
  * @property Collection<Location>                              $locations
  * @property Collection<Campaign>                              $campaigns
+ * @property Collection<Field>                                 $properties_fields
  *
  * @mixin Builder
  */
@@ -108,6 +110,10 @@ class Network extends Model {
 
     public function printsFactors(): HasMany {
         return $this->hasMany(DisplayTypePrintsFactors::class, "network_id", "id");
+    }
+
+    public function properties_fields(): BelongsToMany {
+        return $this->belongsToMany(Field::class, "fields_networks", "network_id", "field_id")->withPivot(["order"])->orderByPivot("order");
     }
 
     public function getPropertiesAttribute() {

@@ -12,48 +12,6 @@ namespace Neo\Enums;
 
 use BenSampo\Enum\Enum;
 
-/**
- * @method static self actors_edit()
- * @method static self actors_create()
- * @method static self actors_delete()
- * @method static self actors_impersonate()
- * @method static self actors_auth()
- *
- * @method static self roles_edit()
- *
- * @method static self brandings_edit()
- *
- * @method static self libraries_edit()
- * @method static self libraries_create()
- * @method static self libraries_destroy()
- *
- * @method static self campaigns_edit()
- *
- * @method static self contents_edit()
- * @method static self contents_schedule()
- * @method static self contents_review()
- *
- * @method static self locations_edit()
- *
- * @method static self bursts_request()
- * @method static self bursts_quality()
- *
- * @method static self contracts_edit()
- * @method static self contracts_manage()
- *
- * @method static self inventory_read()
- *
- * @method static self networks_edit()
- * @method static self networks_connections()
- * @method static self networks_prints()
- *
- * @method static self chores_broadsign()
- * @method static self tests()
- *
- * @method static self tools_prints()
- *
- * @method static self tools_planning()
- */
 final class Capability extends Enum {
     // Actors
     public const actors_edit   = "actors.edit";
@@ -153,6 +111,11 @@ final class Capability extends Enum {
      * Allow user to change markets and cities in them
      */
     public const properties_markets = "properties.markets";
+
+    /**
+     * Allows the user to create and edit custom fields for the properties
+     */
+    public const properties_fields = "properties.fields";
 
     /**
      * Allow user to use the Prints tools to export estimated prints by properties

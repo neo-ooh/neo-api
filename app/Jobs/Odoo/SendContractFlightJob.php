@@ -130,7 +130,7 @@ class SendContractFlightJob implements ShouldQueue {
                         "is_linked_line" => 1,
                         "discount" => 0,
                         "sequence" => $this->flightIndex * 10
-                    ])
+                    ]);
                 }
 
                 $productIterator->next();

@@ -124,15 +124,16 @@ class SendContractFlightJob implements ShouldQueue {
                     "sequence"        => $this->flightIndex * 10,
                 ]);
 
+
+                $productIterator->next();
+
                 Log::debug("Added order line", $orderLine->toArray());
-                Log::debug("Iterator is valid", ["valid()" => $productIterator->valid()]);
+                Log::debug("Another variant is available", ["valid()" => $productIterator->valid()]);
 
                 // If the product is unavailable, and we have other products that we can try with, remove the product.
 //                if($orderLine->over_qty > 0 && $productIterator->valid()) {
 //                    $orderLine->remove();
 //                }
-
-                $productIterator->next();
 
             } while($orderLine->over_qty > 0 && $productIterator->valid());
 

@@ -118,7 +118,7 @@ class SendContractFlightJob implements ShouldQueue {
                     $linkedProduct = Product::get($client, $product->linked_product_id[0]);
 
                     $linkedLine = OrderLine::create($client, [
-                        "order_id" => $this->contract,
+                        "order_id" => $this->contract->id,
                         "name" => $linkedProduct->name,
                         "price_unit" => 0,
                         "product_uom_qty" => 1.0,

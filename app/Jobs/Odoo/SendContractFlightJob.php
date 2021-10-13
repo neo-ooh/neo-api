@@ -96,20 +96,6 @@ class SendContractFlightJob implements ShouldQueue {
             do {
                 $product = $productIterator->current();
 
-                Log::debug("Send order line", [
-                    "order_id"        => $this->contract->id,
-                    "name"            => $product->name,
-                    "price_unit"      => $product->list_price,
-                    "product_uom_qty" => 1.0,
-                    "customer_lead"   => 0.0,
-                    "product_id"      => $product->product_variant_id[0],
-                    "rental_start"    => $flightStart,
-                    "rental_end"      => $flightEnd,
-                    "is_rental_line"  => 1,
-                    "discount"        => $flightType === 'bonus' ? 100.0 : 0.0,
-                    "sequence"        => $this->flightIndex * 10,
-                ]);
-
                 $orderLine = OrderLine::create($client, [
                     "order_id"        => $this->contract->id,
                     "name"            => $product->name,
@@ -127,13 +113,10 @@ class SendContractFlightJob implements ShouldQueue {
 
                 $productIterator->next();
 
-                Log::debug("Added order line", $orderLine->toArray());
-                Log::debug("Another variant is available", ["valid()" => $productIterator->valid()]);
-
                 // If the product is unavailable, and we have other products that we can try with, remove the product.
-//                if($orderLine->over_qty > 0 && $productIterator->valid()) {
-//                    $orderLine->remove();
-//                }
+                if($orderLine->over_qty > 0 && $productIterator->valid()) {
+                    $orderLine->remove();
+                }
 
             } while($orderLine->over_qty > 0 && $productIterator->valid());
 

@@ -20,8 +20,8 @@ class UpdateFieldRequest extends FormRequest {
         return [
             "name_en" => ["required", "string"],
             "name_fr" => ["required", "string"],
-            "type" => ["required", "string"],
-            "unit" => ["required", Rule::in(["int", "float", "bool"])],
+            "type" => ["required", Rule::in(["int", "float", "bool"])],
+            "unit" => ["required", "string"],
             "is_filter" => ["required", "boolean"]
         ];
     }

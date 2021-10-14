@@ -68,8 +68,8 @@ class Property extends Model {
             $products = $this->products->where("product_category_id", "=", $products_category->id);
 
             // As of 2021-10-07, mall posters (OdooId #34) handling is not entirely defined. An exception is therefore setup to
-            // limit selection to only one poster at a time. Other products are unaffected by this exception.
-            if($products_category->odoo_id === 34) {
+            // limit selection to only one poster at a time. Same behaviour applies to specialty media product as well
+            if($products_category->odoo_id === 34 || $products_category->product_type_id === 1) {
                 $products_category->quantity = 1;
                 $products_category->unit_price = $products->first()->unit_price;
                 continue;

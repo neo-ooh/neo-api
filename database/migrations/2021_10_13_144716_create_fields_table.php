@@ -20,7 +20,7 @@ class CreateFieldsTable extends Migration {
             $table->string("name_en");
             $table->string("name_fr");
             $table->set("type", ["int", "float", "bool"]);
-            $table->string("unit", 16);
+            $table->string("unit", 16)->nullable();
             $table->boolean("is_filter");
 
             $table->timestamps();

@@ -21,7 +21,7 @@ class StoreFieldRequest extends FormRequest {
             "name_en" => ["required", "string"],
             "name_fr" => ["required", "string"],
             "type" => ["required", Rule::in(["int", "float", "bool"])],
-            "unit" => ["required", "string"],
+            "unit" => ["string"],
             "is_filter" => ["required", "boolean"]
         ];
     }

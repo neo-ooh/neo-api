@@ -35,7 +35,14 @@ class FieldsController {
         ]);
         $field->save();
 
-        return new Response($field, 201);
+        // And add a first, default segment
+        $field->segments()->create([
+            "name_en" => "Default",
+            "name_fr" => "Default",
+            "order" => 0
+        ]);
+
+        return new Response($field->load("segments"), 201);
     }
 
     public function update(UpdateFieldRequest $request, Field $field): Response {

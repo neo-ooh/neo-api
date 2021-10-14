@@ -68,13 +68,13 @@ class SendContractFlightJob implements ShouldQueue {
             // We need the property and product record from Connect
             /** @var Property $connectProperty */
             $connectProperty = $properties->firstOrFail(fn($property) => $property->getKey() === $propertyId);
-            /** @var ProductType $connectProduct */
-            $connectProduct = $productsCategories->firstOrFail(fn($product) => $product->getKey() === $productId);
+            /** @var ProductType $connectProductType */
+            $connectProductType = $productsCategories->firstOrFail(fn($product) => $product->getKey() === $productId);
 
             // Pull the products of the odoo property matching the product type
             $products = Product::all($client, [
                 ["shopping_center_id", "=", $connectProperty->odoo->odoo_id],
-                ["categ_id", "=", $connectProduct->odoo_id]
+                ["categ_id", "=", $connectProductType->odoo_id]
             ]);
 
             // Filter products based on flight type
@@ -86,7 +86,6 @@ class SendContractFlightJob implements ShouldQueue {
 
             // As of 2021-10-07, behaviour of selection of Mall posters is not set. Current desired behaviour is to support adding only one poster per property.
 
-            /** @var Product $product */
             $productIterator = $products->getIterator();
 
             // If no product is available, skip it
@@ -94,6 +93,7 @@ class SendContractFlightJob implements ShouldQueue {
                 continue;
             }
 
+            // We add products until we have one that is available, or we add all if its digital
             do {
                 $product = $productIterator->current();
                 $linkedLine = null;
@@ -140,8 +140,7 @@ class SendContractFlightJob implements ShouldQueue {
                     $orderLine->remove();
                     $linkedLine?->remove();
                 }
-
-            } while($orderLine->over_qty > 0 && $productIterator->valid());
+            } while(($orderLine->over_qty > 0 || $connectProductType->id === 3) && $productIterator->valid());
 
             clock()->event("Handle product #$key")->end();
         }

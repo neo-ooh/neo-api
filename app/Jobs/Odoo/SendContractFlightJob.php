@@ -86,6 +86,8 @@ class SendContractFlightJob implements ShouldQueue {
 
             // As of 2021-10-07, behaviour of selection of Mall posters is not set. Current desired behaviour is to support adding only one poster per property.
 
+            Log::debug("Adding products", $products->map(fn($p) => $p->toArray())->toArray());
+
             $productIterator = $products->getIterator();
 
             // If no product is available, skip it

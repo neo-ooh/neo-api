@@ -21,6 +21,10 @@ class FieldsController {
         return new Response(Field::all());
     }
 
+    public function show(ListFieldsRequest $request, Field $field): Response {
+        return new Response($field);
+    }
+
     public function store(StoreFieldRequest $request): Response {
         $field = new Field([
             "name_en"   => $request->input("name_en"),

@@ -119,6 +119,7 @@ Route::group([
 
     Route::   get("fields", FieldsController::class . "@index");
     Route::  post("fields", FieldsController::class . "@store");
+    Route::  show("fields/{field}", FieldsController::class . "@show");
     Route::   put("fields/{field}", FieldsController::class . "@update");
     Route::delete("fields/{field}", FieldsController::class . "@destroy");
 

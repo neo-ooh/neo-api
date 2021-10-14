@@ -140,7 +140,7 @@ class SendContractFlightJob implements ShouldQueue {
                     $orderLine->remove();
                     $linkedLine?->remove();
                 }
-            } while(($orderLine->over_qty > 0 || $connectProductType->id === 2) && $productIterator->valid());
+            } while(($orderLine->over_qty > 0 || $connectProductType->product_type_id === 2) && $productIterator->valid());
 
             clock()->event("Handle product #$key")->end();
         }

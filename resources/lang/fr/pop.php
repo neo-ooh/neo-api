@@ -1,7 +1,7 @@
 <?php
 
 return [
-    "title"    => "Rapport de Performances de Campagne",
+    "title"    => "Rapport de performance de campagne",
     "subtitle" => "Contrat :contract",
 
     "table-network"                => "Réseau",

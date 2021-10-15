@@ -15,8 +15,10 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use InvalidArgumentException;
+use Neo\Enums\Capability;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ImpersonateActorRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
@@ -61,8 +63,12 @@ class ActorsController extends Controller {
             $actors->load("details");
         }
 
-        if ($request->has("campaigns_status")) {
+        if ($request->has("campaigns")) {
             $actors->load("own_campaigns", "own_campaigns.schedules");
+        }
+
+        if ($request->has("property")) {
+            $actors->load(Gate::allows(Capability::odoo_properties) ? "property.odoo" : "property");
         }
 
         return new Response($actors->unique("id")->sortBy("name")->values());

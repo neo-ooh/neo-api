@@ -40,6 +40,7 @@ class ListActorsRequest extends FormRequest {
             "withself"         => ["sometimes", "boolean"],
             "details"          => ["sometimes", "boolean"],
             "campaigns_status" => ["sometimes", "boolean"],
+            "property" => ["sometimes", "boolean"],
         ];
     }
 }

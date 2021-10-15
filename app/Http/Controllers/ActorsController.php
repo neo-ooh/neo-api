@@ -63,7 +63,7 @@ class ActorsController extends Controller {
             $actors->load("details");
         }
 
-        if ($request->has("campaigns")) {
+        if ($request->has("campaigns_status")) {
             $actors->load("own_campaigns", "own_campaigns.schedules");
         }
 

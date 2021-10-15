@@ -187,6 +187,11 @@ class PropertiesController extends Controller {
     }
 
     public function destroy(DestroyPropertyRequest $request, Property $property) {
+        $property->traffic()->delete();
+        $property->address()->delete();
+        $property->data()->delete();
+        $property->pictures->each(fn($picture) => $picture->delete());
+        $property->odoo()->delete();
         $property->delete();
 
         return new Response(["status" => "ok"]);

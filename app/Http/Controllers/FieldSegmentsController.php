@@ -22,7 +22,7 @@ class FieldSegmentsController {
         $segment = new FieldSegment([
             "name_en" => $request->input("name_en"),
             "name_fr" => $request->input("name_fr"),
-            "order" => $request->input("order"),
+            "order" => $field->segments_count,
         ]);
 
         $segment->save();

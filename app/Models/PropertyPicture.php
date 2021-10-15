@@ -56,7 +56,7 @@ class PropertyPicture extends Model {
         });
     }
 
-    public function property() {\
+    public function property() {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
     }
 

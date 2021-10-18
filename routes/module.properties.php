@@ -22,6 +22,7 @@ use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\PropertyPicturesController;
 use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\TrafficSourcesController;
+use Neo\Models\Library;
 use Neo\Models\TrafficSource;
 
 Route::group([
@@ -124,8 +125,8 @@ Route::group([
     Route::delete("fields/{field}", FieldsController::class . "@destroy");
 
     Route::  post("fields/{field}/segments", FieldSegmentsController::class . "@store");
-    Route::   put("fields/{field}/segments/{segments}", FieldSegmentsController::class . "@update");
-    Route::delete("fields/{field}/segments/{segments}", FieldSegmentsController::class . "@destroy");
+    Route::   put("fields/{field}/segments/{segment}", FieldSegmentsController::class . "@update");
+    Route::delete("fields/{field}/segments/{segment}", FieldSegmentsController::class . "@destroy");
 
     Route::   get("networks/{network}/segments", NetworkFieldsController::class . "@index");
     Route::   put("networks/{network}/segments", NetworkFieldsController::class . "@update");

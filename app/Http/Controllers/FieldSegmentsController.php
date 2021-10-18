@@ -11,7 +11,6 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Neo\Http\Requests\Fields\DestroyFieldSegmentRequest;
 use Neo\Http\Requests\Fields\StoreFieldSegmentRequest;
 use Neo\Http\Requests\Fields\UpdateFieldSegmentRequest;

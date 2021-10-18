@@ -25,7 +25,7 @@ class FieldSegmentsController {
             "order" => $field->segments()->count(),
         ]);
 
-        $segment->save();
+        $field->segments()->save($segment);
 
         return new Response($segment, 201);
     }

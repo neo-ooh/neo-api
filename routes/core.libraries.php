@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\ContentsController;
 use Neo\Http\Controllers\CreativesController;
 use Neo\Http\Controllers\LibrariesController;
+use Neo\Http\Controllers\LibrariesSharesController;
 use Neo\Models\Content;
 use Neo\Models\Creative;
 use Neo\Models\Library;
@@ -38,6 +39,16 @@ Route::group([
     Route::delete("libraries/{library}"         , LibrariesController::class . "@destroy");
 
     Route::   get('libraries/{library}/contents', LibrariesController::class . "@contents");
+
+    /*
+    |----------------------------------------------------------------------
+    | Libraries Shares
+    |----------------------------------------------------------------------
+    */
+
+    Route::   get("libraries/{library}/shares"         , LibrariesSharesController::class . "@index");
+    Route::   put("libraries/{library}/shares"         , LibrariesSharesController::class . "@store");
+    Route::delete("libraries/{library}/shares"         , LibrariesSharesController::class . "@destroy");
 
 
     /*

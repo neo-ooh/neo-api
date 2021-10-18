@@ -1,17 +1,16 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Valentin Dufois <vdufois@neo-ooh.com>
- *
- * @neo/api - PropertiesController.php
- */
+* Copyright 2020 (c) Neo-OOH - All Rights Reserved
+* Unauthorized copying of this file, via any medium is strictly prohibited
+* Proprietary and confidential
+* Written by Valentin Dufois <vdufois@neo-ooh.com>
+*
+* @neo/api - PropertiesController.php
+*/
 
 namespace Neo\Http\Controllers\Odoo;
 
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Neo\Http\Controllers\Controller;
 use Neo\Http\Requests\Odoo\Properties\DestroyPropertyRequest;
@@ -27,12 +26,12 @@ class PropertiesController extends Controller {
         $propertyId = $request->input("property_id");
         $odooId     = $request->input("odoo_id");
 
-        // Make sure this property is not already associated with an Odoo property
-        if(OdooProperty::query()->where("property_id", "=", $propertyId)->exists()) {
+// Make sure this property is not already associated with an Odoo property
+        if (OdooProperty::query()->where("property_id", "=", $propertyId)->exists()) {
             throw new \http\Exception\InvalidArgumentException("Connect property is already associated with an Odoo Property.");
         }
 
-        // Check the odoo property is not already associated with a Connect property
+// Check the odoo property is not already associated with a Connect property
         /** @var Property|null $existing */
         $existing = OdooProperty::query()
                                 ->with(["property", "property.actor"])
@@ -42,13 +41,13 @@ class PropertiesController extends Controller {
             throw new InvalidArgumentException("Odoo Property is already associated with {$existing->property->actor->name} [{$existing->property->actor->path_names}].");
         }
 
-        // We are good, we just have to pull info from odoo about the property, and store it
+// We are good, we just have to pull info from odoo about the property, and store it
         $config = OdooConfig::fromConfig();
         $client = $config->getClient();
 
         $odooPropertyDist = Property::get($client, $odooId);
 
-        if($odooPropertyDist === null) {
+        if ($odooPropertyDist === null) {
             throw new InvalidArgumentException("Invalid Odoo Id");
         }
 
@@ -58,7 +57,7 @@ class PropertiesController extends Controller {
         $odooProperty->internal_name = $odooPropertyDist->name;
         $odooProperty->save();
 
-        // Trigger a sync of the property products
+// Trigger a sync of the property products
         PullPropertyAddressFromOdooJob::dispatchSync($propertyId);
         SyncPropertyDataJob::dispatchSync($odooProperty->property_id, $client);
 

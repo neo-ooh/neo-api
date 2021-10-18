@@ -39,7 +39,7 @@ class PropertiesController extends Controller {
                                 ->where("odoo_id", "=", $odooId)->first();
 
         if ($existing !== null) {
-            throw new InvalidArgumentException("Odoo Property is already associated with {$existing->property->actor->name}.");
+            throw new InvalidArgumentException("Odoo Property is already associated with {$existing->property->actor->name} [{$existing->property->actor->path_names}].");
         }
 
         // We are good, we just have to pull info from odoo about the property, and store it

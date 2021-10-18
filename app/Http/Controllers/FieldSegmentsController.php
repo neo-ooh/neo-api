@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Neo\Http\Requests\Fields\DestroyFieldSegmentRequest;
 use Neo\Http\Requests\Fields\StoreFieldSegmentRequest;
 use Neo\Http\Requests\Fields\UpdateFieldSegmentRequest;
@@ -30,6 +31,7 @@ class FieldSegmentsController {
         return new Response($segment, 201);
     }
     public function update(UpdateFieldSegmentRequest $request, Field $field, FieldSegment $fieldSegment) {
+        Log::debug("segment", [$fieldSegment]);
         $fieldSegment->name_en = $request->input("name_en");
         $fieldSegment->name_fr = $request->input("name_fr");
         $fieldSegment->order = $request->input("order");

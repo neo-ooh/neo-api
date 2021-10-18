@@ -121,7 +121,7 @@ Route::group([
     */
 
     Route::model("field", Field::class);
-    Route::model("fieldSegment", FieldSegment::class);
+    Route::model("segment", FieldSegment::class);
 
     Route::   get("fields", FieldsController::class . "@index");
     Route::  post("fields", FieldsController::class . "@store");
@@ -130,8 +130,8 @@ Route::group([
     Route::delete("fields/{field}", FieldsController::class . "@destroy");
 
     Route::  post("fields/{field}/segments", FieldSegmentsController::class . "@store");
-    Route::   put("fields/{field}/segments/{fieldSegment}", FieldSegmentsController::class . "@update");
-    Route::delete("fields/{field}/segments/{fieldSegment}", FieldSegmentsController::class . "@destroy");
+    Route::   put("fields/{field}/segments/{segment}", FieldSegmentsController::class . "@update");
+    Route::delete("fields/{field}/segments/{segment}", FieldSegmentsController::class . "@destroy");
 
     Route::   get("networks/{network}/segments", NetworkFieldsController::class . "@index");
     Route::   put("networks/{network}/segments", NetworkFieldsController::class . "@update");

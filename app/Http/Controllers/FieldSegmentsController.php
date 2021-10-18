@@ -30,18 +30,19 @@ class FieldSegmentsController {
 
         return new Response($segment, 201);
     }
-    public function update(UpdateFieldSegmentRequest $request, Field $field, FieldSegment $fieldSegment) {
-        $fieldSegment->name_en = $request->input("name_en");
-        $fieldSegment->name_fr = $request->input("name_fr");
-        $fieldSegment->order = $request->input("order");
-        $fieldSegment->save();
 
-        return new Response($fieldSegment);
+    public function update(UpdateFieldSegmentRequest $request, Field $field, FieldSegment $segment) {
+        $segment->name_en = $request->input("name_en");
+        $segment->name_fr = $request->input("name_fr");
+        $segment->order   = $request->input("order");
+        $segment->save();
+
+        return new Response($segment);
     }
 
-    public function destroy(DestroyFieldSegmentRequest $request, Field $field, FieldSegment $fieldSegment) {
-        $fieldSegment->delete();
+    public function destroy(DestroyFieldSegmentRequest $request, Field $field, FieldSegment $segment) {
+        $segment->delete();
 
-        return new Response($fieldSegment);
+        return new Response($segment);
     }
 }

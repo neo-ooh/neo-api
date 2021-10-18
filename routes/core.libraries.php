@@ -19,7 +19,7 @@ use Neo\Models\Library;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
 
     /*
@@ -30,13 +30,13 @@ Route::group([
 
     Route::model("library", Library::class);
 
-    Route::   get("libraries"                   , LibrariesController::class . "@index");
-    Route::   get("libraries/_query"            , LibrariesController::class . "@query");
-    Route::  post("libraries"                   , LibrariesController::class . "@store");
+    Route::   get("libraries", LibrariesController::class . "@index");
+    Route::   get("libraries/_query", LibrariesController::class . "@query");
+    Route::  post("libraries", LibrariesController::class . "@store");
 
-    Route::   get("libraries/{library}"         , LibrariesController::class . "@show");
-    Route::   put("libraries/{library}"         , LibrariesController::class . "@update");
-    Route::delete("libraries/{library}"         , LibrariesController::class . "@destroy");
+    Route::   get("libraries/{library}", LibrariesController::class . "@show");
+    Route::   put("libraries/{library}", LibrariesController::class . "@update");
+    Route::delete("libraries/{library}", LibrariesController::class . "@destroy");
 
     Route::   get('libraries/{library}/contents', LibrariesController::class . "@contents");
 
@@ -46,9 +46,9 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::   get("libraries/{library}/shares"         , LibrariesSharesController::class . "@index");
-    Route::   put("libraries/{library}/shares"         , LibrariesSharesController::class . "@store");
-    Route::delete("libraries/{library}/shares"         , LibrariesSharesController::class . "@destroy");
+    Route::   get("libraries/{library}/shares", LibrariesSharesController::class . "@index");
+    Route::  post("libraries/{library}/shares", LibrariesSharesController::class . "@store");
+    Route::delete("libraries/{library}/shares", LibrariesSharesController::class . "@destroy");
 
 
     /*
@@ -59,11 +59,11 @@ Route::group([
 
     Route::bind("content", fn($id) => Content::withTrashed()->find($id));
 
-    Route::  post("contents"               , ContentsController::class . "@store");
-    Route::   get("contents/{content}"     , ContentsController::class . "@show");
-    Route::   put("contents/{content}"     , ContentsController::class . "@update");
+    Route::  post("contents", ContentsController::class . "@store");
+    Route::   get("contents/{content}", ContentsController::class . "@show");
+    Route::   put("contents/{content}", ContentsController::class . "@update");
     Route::   put("contents/{content}/swap", ContentsController::class . "@swap");
-    Route::delete("contents/{content}"     , ContentsController::class . "@destroy");
+    Route::delete("contents/{content}", ContentsController::class . "@destroy");
 
     /*
     |----------------------------------------------------------------------

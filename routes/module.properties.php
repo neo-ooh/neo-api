@@ -22,6 +22,8 @@ use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\PropertyPicturesController;
 use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\TrafficSourcesController;
+use Neo\Models\Field;
+use Neo\Models\FieldSegment;
 use Neo\Models\Library;
 use Neo\Models\TrafficSource;
 
@@ -117,6 +119,9 @@ Route::group([
     | Fields
     |----------------------------------------------------------------------
     */
+
+    Route::model("field", Field::class);
+    Route::model("fieldSegment", FieldSegment::class);
 
     Route::   get("fields", FieldsController::class . "@index");
     Route::  post("fields", FieldsController::class . "@store");

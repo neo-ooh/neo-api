@@ -106,7 +106,7 @@ class POP extends PDFDocument {
         $this->contract["screenshots"]->each(function(ContractScreenshot $screenshot) {
             $screenshot->is_locked = true;
             $screenshot->save();
-            $screenshot->created_at->shiftTimezone("America/Toronto");
+            $screenshot->created_at->utc();
         } );
 
         return true;

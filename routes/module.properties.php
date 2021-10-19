@@ -17,6 +17,7 @@ use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\NetworkFieldsController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
+use Neo\Http\Controllers\PropertiesFieldsSegmentsController;
 use Neo\Http\Controllers\PropertiesStatisticsController;
 use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\PropertyPicturesController;
@@ -135,4 +136,7 @@ Route::group([
 
     Route::   get("networks/{network}/fields", NetworkFieldsController::class . "@index");
     Route::  post("networks/{network}/fields", NetworkFieldsController::class . "@update");
+
+    Route::  post("properties/{property}/fields/{field}", PropertiesFieldsSegmentsController::class . "@store");
+    Route::delete("properties/{property}/fields/{field}", PropertiesFieldsSegmentsController::class . "@destroy");
 });

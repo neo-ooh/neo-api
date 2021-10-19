@@ -13,6 +13,7 @@ namespace Neo\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
  * @property int    $property_id
@@ -22,9 +23,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon $updated_at
  */
 class PropertyFieldSegmentValue extends Model {
+    use HasCompositePrimaryKey;
+
     protected $table = "properties_fields_segments_values";
 
-    protected $primaryKey = null;
+    public $incrementing = false;
+
+    protected $primaryKey = ["property_id", "fields_segment_id"];
 
     protected $fillable = [
         "property_id",

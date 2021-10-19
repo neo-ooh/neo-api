@@ -21,7 +21,7 @@ class NetworkFieldsController {
     }
 
     public function update(UpdateFieldsRequest $request, Network $network) {
-        $entries = collect($request->input("fields"))->mapWithKeys(fn($field) => [$field["field_id"] => $field["order"]]);
+        $entries = collect($request->input("fields"))->mapWithKeys(fn($field) => [$field["field_id"] => ["order" => $field["order"]]]);
         $network->properties_fields()->sync($entries);
 
         return new Response($network->refresh()->properties_fields);

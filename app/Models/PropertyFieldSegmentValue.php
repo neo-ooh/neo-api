@@ -26,10 +26,12 @@ class PropertyFieldSegmentValue extends Model {
     use HasCompositePrimaryKey;
 
     protected $table = "properties_fields_segments_values";
+
     protected $primaryKey = ["property_id", "fields_segment_id"];
+
     protected $fillable = [
         "property_id",
-        "field_segment_id",
+        "fields_segment_id",
         "value"
     ];
 

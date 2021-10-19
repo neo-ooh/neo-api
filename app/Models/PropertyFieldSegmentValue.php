@@ -17,7 +17,7 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
  * @property int    $property_id
- * @property int    $field_segment_id
+ * @property int    $fields_segment_id
  * @property double $value
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -26,7 +26,7 @@ class PropertyFieldSegmentValue extends Model {
     use HasCompositePrimaryKey;
 
     protected $table = "properties_fields_segments_values";
-    protected $primaryKey = ["property_id", "field_segment_id"];
+    protected $primaryKey = ["property_id", "fields_segment_id"];
     protected $fillable = [
         "property_id",
         "field_segment_id",
@@ -34,6 +34,6 @@ class PropertyFieldSegmentValue extends Model {
     ];
 
     public function segment(): BelongsTo {
-        return $this->belongsTo(FieldSegment::class, "field_segment_id", "id");
+        return $this->belongsTo(FieldSegment::class, "fields_segment_id", "id");
     }
 }

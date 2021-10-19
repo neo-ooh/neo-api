@@ -24,7 +24,7 @@ class PropertiesFieldsSegmentsController {
 
         $entry = PropertyFieldSegmentValue::query()->firstOrNew([
             "property_id"      => $property->getKey(),
-            "field_segment_id" => $segmentId
+            "fields_segment_id" => $segmentId
         ]);
         // We go the pedantic way here because `value` is a generic word and may conflict with Eloquent methods.
         $entry->setAttribute("value", $value);
@@ -36,7 +36,7 @@ class PropertiesFieldsSegmentsController {
     public function destroy(DestroyFieldSegmentValueRequest $request, Property $property, Field $field) {
         PropertyFieldSegmentValue::query()
                                  ->where("property_id", "=", $property->getKey())
-                                 ->where("field_segment_id", "=", $request->input("segment_id"))
+                                 ->where("fields_segment_id", "=", $request->input("segment_id"))
                                  ->delete();
 
         return new Response();

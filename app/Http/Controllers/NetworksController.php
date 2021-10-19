@@ -42,6 +42,10 @@ class NetworksController extends Controller {
             $query->with("broadcaster_connection");
         });
 
+        $query->when($request->has("with") && in_array("fields", $request->input("with"), true), function ($query) {
+            $query->with("properties_fields");
+        });
+
         $networks = $query->get();
 
         if ($request->has("with") && in_array("settings", $request->input("with"), true)) {

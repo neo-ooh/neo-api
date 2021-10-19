@@ -18,7 +18,7 @@ class StoreFieldSegmentValueRequest extends FormRequest {
     public function rules(): array {
         return [
             "segment_id" => ["required", "exists:fields_segments,id"],
-            "value" => ["required", "number"],
+            "value" => ["required", "numeric"],
         ];
     }
 

@@ -134,5 +134,5 @@ Route::group([
     Route::delete("fields/{field}/segments/{segment}", FieldSegmentsController::class . "@destroy");
 
     Route::   get("networks/{network}/fields", NetworkFieldsController::class . "@index");
-    Route::   put("networks/{network}/fields", NetworkFieldsController::class . "@update");
+    Route::  post("networks/{network}/fields", NetworkFieldsController::class . "@update");
 });

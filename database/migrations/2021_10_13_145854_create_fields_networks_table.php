@@ -17,6 +17,7 @@ class CreateFieldsNetworksTable extends Migration {
         Schema::create('fields_networks', function (Blueprint $table) {
             $table->foreignId("field_id")->constrained("fields")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId("network_id")->constrained("networks")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->unsignedInteger("order");
         });
     }
 

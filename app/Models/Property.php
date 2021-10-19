@@ -110,6 +110,10 @@ class Property extends SecuredModel {
         return $this->hasMany(PropertyPicture::class, "property_id", "actor_id")->orderBy("order");
     }
 
+    public function fields_values() {
+        return $this->hasMany(PropertyFieldSegmentValue::class, "property_id", "actor_id");
+    }
+
 
     /*
     |--------------------------------------------------------------------------

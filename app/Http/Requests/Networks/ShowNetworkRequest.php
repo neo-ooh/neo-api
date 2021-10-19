@@ -26,7 +26,7 @@ class ShowNetworkRequest extends FormRequest
     public function rules()
     {
         return [
-            "with" => ["sometimes", "array"];
+            "with" => ["sometimes", "array"],
         ];
     }
 }

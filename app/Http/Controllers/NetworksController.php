@@ -89,6 +89,10 @@ class NetworksController extends Controller {
     }
 
     public function show(ShowNetworkRequest $request, Network $network): Response {
+        if(in_array("fields", $request->input("with", []))) {
+            $network->load("properties_fields");
+        }
+
         return new Response($network->load(["broadcaster_connection"])->makeVisible(["settings"]));
     }
 

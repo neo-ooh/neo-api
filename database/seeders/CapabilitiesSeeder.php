@@ -90,14 +90,13 @@ class CapabilitiesSeeder extends Seeder {
             "INTERNAL" => [
                 \Neo\Enums\Capability::networks_edit,
                 \Neo\Enums\Capability::networks_connections,
-                \Neo\Enums\Capability::networks_prints,
 
                 \Neo\Enums\Capability::tos_update,
                 \Neo\Enums\Capability::headlines_edit,
                 \Neo\Enums\Capability::chores_broadsign,
                 \Neo\Enums\Capability::access_token_edit,
 
-                \Neo\Enums\Capability::tools_prints,
+                \Neo\Enums\Capability::tools_impressions,
                 \Neo\Enums\Capability::traffic_sources,
 
                 \Neo\Enums\Capability::tests,

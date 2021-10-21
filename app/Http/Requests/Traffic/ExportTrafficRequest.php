@@ -15,7 +15,7 @@ class ExportTrafficRequest extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows(Capability::tools_prints);
+        return Gate::allows(Capability::tools_impressions);
     }
 
     /**

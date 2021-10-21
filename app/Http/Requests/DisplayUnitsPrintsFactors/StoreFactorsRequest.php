@@ -13,7 +13,7 @@ class StoreFactorsRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        return Gate::allows(Capability::tools_prints);
+        return Gate::allows(Capability::tools_impressions);
     }
 
     /**

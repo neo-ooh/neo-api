@@ -194,7 +194,7 @@ class PropertiesController extends Controller {
         $property->data()->delete();
         $property->odoo()->delete();
         $property->delete();
-        $address->delete();
+        $address?->delete();
 
         return new Response(["status" => "ok"]);
     }

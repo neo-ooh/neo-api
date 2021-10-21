@@ -120,7 +120,7 @@ final class Capability extends Enum {
     /**
      * Allow user to use the Prints tools to export estimated prints by properties
      */
-    public const tools_prints = "tools.prints";
+    public const tools_impressions = "tools.impressions";
 
     /**
      * Allow user to setup traffic sources

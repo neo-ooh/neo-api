@@ -22,6 +22,10 @@ use Neo\Services\Odoo\Models\Property;
 use Neo\Services\Odoo\OdooConfig;
 
 class PropertiesController extends Controller {
+    public function _missing() {
+
+    }
+
     public function store(StorePropertyRequest $request): Response {
         $propertyId = $request->input("property_id");
         $odooId     = $request->input("odoo_id");
@@ -74,5 +78,4 @@ class PropertiesController extends Controller {
 
         return new Response([]);
     }
-
 }

@@ -26,6 +26,7 @@ use Neo\Rules\AccessibleProperty;
  * @property OdooProperty                $odoo
  * @property Network                     $network
  * @property Collection<PropertyPicture> $pictures
+ * @property Collection<PropertyFieldSegmentValue> $fields_values
  */
 class Property extends SecuredModel {
     use HasFactory;

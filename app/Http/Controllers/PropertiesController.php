@@ -42,6 +42,10 @@ class PropertiesController extends Controller {
             $properties->load("pictures");
         }
 
+        if(in_array("fields", $request->input("with", []))) {
+            $properties->load(["network.properties_fields", "fields_values"]);
+        }
+
         return $properties;
     }
 

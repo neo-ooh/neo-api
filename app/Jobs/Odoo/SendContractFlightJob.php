@@ -55,8 +55,8 @@ class SendContractFlightJob implements ShouldQueue {
         clock()->event("Create flight in Odoo")->end();
 
         // Preload the properties and products used by the flight
-        $properties         = Property::with("odoo")->findMany(collect($this->flight["selection"])->pluck("0.0")->unique());
-        $productsCategories = ProductCategory::findMany(collect($this->flight["selection"])->pluck("0.1")->unique());
+        $properties         = Property::with("odoo")->findMany(collect($this->flight["selection"])->pluck("0")->unique());
+        $productsCategories = ProductCategory::findMany(collect($this->flight["selection"])->pluck("1")->unique());
 
         // Now we need to add each specified product
         foreach ($this->flight["selection"] as $selection) {

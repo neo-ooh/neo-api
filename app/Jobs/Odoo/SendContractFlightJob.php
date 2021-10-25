@@ -62,8 +62,7 @@ class SendContractFlightJob implements ShouldQueue {
         foreach ($this->flight["selection"] as $selection) {
             [$propertyId, $productId, $discount] = $selection;
 
-            clock()->event("Handle product #$productId->$productId")->begin();
-
+            clock()->event("Handle product #$propertyId->$productId")->begin();
 
             // We need the property and product record from Connect
             /** @var Property $connectProperty */
@@ -142,7 +141,7 @@ class SendContractFlightJob implements ShouldQueue {
                 }
             } while(($orderLine->over_qty > 0 || $connectProductType->product_type_id === 2) && $productIterator->valid());
 
-            clock()->event("Handle product #$productId->$productId")->end();
+            clock()->event("Handle product #$propertyId->$productId")->end();
         }
         clock()->event("Send Flight")->end();
     }

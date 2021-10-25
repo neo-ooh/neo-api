@@ -60,10 +60,10 @@ class SendContractFlightJob implements ShouldQueue {
 
         // Now we need to add each specified product
         foreach ($this->flight["selection"] as $selection) {
-            $key = implode(",", $selection[0]);
-            clock()->event("Handle product #$key")->begin();
+            [$propertyId, $productId, $discount] = $selection;
 
-            [$propertyId, $productId] = $selection[0];
+            clock()->event("Handle product #$productId->$productId")->begin();
+
 
             // We need the property and product record from Connect
             /** @var Property $connectProperty */
@@ -108,7 +108,7 @@ class SendContractFlightJob implements ShouldQueue {
                     "rental_start"    => $flightStart,
                     "rental_end"      => $flightEnd,
                     "is_rental_line"  => 1,
-                    "discount"        => $flightType === 'bonus' ? 100.0 : 0.0,
+                    "discount"        => $flightType === 'bonus' ? 100.0 : $discount,
                     "sequence"        => $this->flightIndex * 10,
                 ]);
 
@@ -142,7 +142,7 @@ class SendContractFlightJob implements ShouldQueue {
                 }
             } while(($orderLine->over_qty > 0 || $connectProductType->product_type_id === 2) && $productIterator->valid());
 
-            clock()->event("Handle product #$key")->end();
+            clock()->event("Handle product #$productId->$productId")->end();
         }
         clock()->event("Send Flight")->end();
     }

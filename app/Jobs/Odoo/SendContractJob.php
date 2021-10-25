@@ -70,7 +70,6 @@ class SendContractJob implements ShouldQueue {
     }
 
     protected function cleanupContract($client) {
-
         // Remove all order lines from the contract
         OrderLine::delete($client, [
             ["order_id", "=", $this->contract->id],

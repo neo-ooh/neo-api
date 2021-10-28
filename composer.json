@@ -41,6 +41,7 @@
     "phpoffice/phpspreadsheet": "^1.18",
     "predis/predis": "^1.1",
     "ramsey/uuid": "^4.1",
+    "skagarwal/google-places-api": "^1.7",
     "spatie/image": "^1.10",
     "toin0u/geocoder-laravel": "^4.4",
     "vinkla/hashids": "^9.1"

@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\GoogleMapsController;
 use Neo\Http\Controllers\ModulesController;
 use Neo\Http\Controllers\StatsController;
 
@@ -33,4 +34,11 @@ Route::group([
 
     Route::get("stats", StatsController::class . "@index");
 
+    /*
+    |--------------------------------------------------------------------------
+    | Google Maps
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get("google/places", GoogleMapsController::class . "@_searchPlaces");
 });

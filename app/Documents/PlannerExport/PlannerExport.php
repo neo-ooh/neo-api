@@ -154,6 +154,14 @@ class PlannerExport extends XLSXDocument {
         ]);
 
         $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+        $this->ws->getStyle($this->ws->getRelativeRange(7, 7))->applyFromArray([
+            "fill" => [
+                'fillType'   => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => "FFFFFFFF",
+                ],
+            ]
+        ]);
 
         $this->ws->printRow([
             __("contract.table-networks"),
@@ -249,6 +257,12 @@ class PlannerExport extends XLSXDocument {
                     "color" => [
                         "argb" => "FF".$networkProperties->first()["property"]["network"]["color"]
                     ]
+                ],
+                "fill" => [
+                    'fillType'   => Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => "FFFFFFFF",
+                    ],
                 ]
             ]);
 
@@ -332,6 +346,14 @@ class PlannerExport extends XLSXDocument {
                     ]);
                 }
             }
+            $this->ws->getStyle($this->ws->getRelativeRange(7, 2))->applyFromArray([
+                "fill" => [
+                    'fillType'   => Fill::FILL_SOLID,
+                    'startColor' => [
+                        'argb' => "FFFFFFFF",
+                    ],
+                ]
+            ]);
 
             $this->ws->moveCursor(0, 2);
         }

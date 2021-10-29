@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Date;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
@@ -41,7 +42,7 @@ class PlannerExport extends XLSXDocument {
             'font'      => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => "FF000000"
+                    'argb' => "FFFFFFFF"
                 ],
                 'size'  => "13",
                 "name"  => "Calibri"
@@ -49,7 +50,13 @@ class PlannerExport extends XLSXDocument {
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-            ]
+            ],
+            'fill'      => [
+                'fillType'   => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => XLSXStyleFactory::COLORS["dark-blue"],
+                ],
+            ],
         ]);
 
         // Add the Neo logo

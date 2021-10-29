@@ -238,68 +238,79 @@ class PlannerExport extends XLSXDocument {
 
         $this->printFlightHeader($flight, $flightIndex);
 
-        // Property / Products table header
-        $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+        $networks = $flight->selection->groupBy("property.network.id");
 
-        $this->ws->printRow([
-            __("contract.table-properties"),
-            __("contract.table-zipcode"),
-            __("contract.table-location"),
-            __("contract.table-faces"),
-            __("contract.table-traffic"),
-            __("contract.table-media-value"),
-            __("contract.table-net-investment"),
-        ]);
-
-        foreach ($flight->selection as $property) {
-            $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray([
+        foreach($networks as $networkProperties) {
+            // Property / Products table header
+            $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+            $this->ws->getStyle($this->ws->getRelativeRange(1, 1))->applyFromArray([
                 "font" => [
-                    "size" => 12,
-                    'bold'  => true,
+                    "color" => "FF".$networkProperties->first()["property"]["network"]["color"]
                 ]
             ]);
-
-            $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
-            $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
 
             $this->ws->printRow([
-                $property["property"]["name"],
-                $property["property"]["address"]["zipcode"],
-                $property["property"]["address"]["city"]["name"],
-                $property["facesCount"],
-                $property["traffic"],
-                $property["mediaValue"],
-                $property["price"],
+                $networkProperties->first()["property"]["network"]["name"],
+                __("contract.table-zipcode"),
+                __("contract.table-location"),
+                __("contract.table-faces"),
+                __("contract.table-traffic"),
+                __("contract.table-media-value"),
+                __("contract.table-net-investment"),
             ]);
 
-            $productsCount = count($property["products"]);
+            foreach ($networkProperties as $property) {
+                $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray([
+                    "font" => [
+                        "size" => 12,
+                        'bold' => true,
+                    ]
+                ]);
 
-            $this->ws->getStyle($this->ws->getRelativeRange(7, $productsCount))->applyFromArray([
-                "font" => [
-                    "size" => 11
-                ],
-                'alignment' => [
-                    "indent" => 4
-                ]
-            ]);
-            foreach ($property["products"] as $product) {
                 $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
                 $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
                 $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
                 $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
 
                 $this->ws->printRow([
-                    $product["name"],
-                    "",
-                    "",
-                    $product["quantity"],
-                    "",
-                    $product["mediaValue"],
-                    $product["price"],
+                    $property["property"]["name"],
+                    $property["property"]["address"]["zipcode"],
+                    $property["property"]["address"]["city"]["name"],
+                    $property["facesCount"],
+                    $property["traffic"],
+                    $property["mediaValue"],
+                    $property["price"],
                 ]);
+
+                $productsCount = count($property["products"]);
+
+                $this->ws->getStyle($this->ws->getRelativeRange(7, $productsCount))->applyFromArray([
+                    "font"      => [
+                        "size" => 11
+                    ],
+                    'alignment' => [
+                        "indent" => 4
+                    ]
+                ]);
+                foreach ($property["products"] as $product) {
+                    $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
+                    $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
+                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
+                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+
+                    $this->ws->printRow([
+                        $product["name"],
+                        "",
+                        "",
+                        $product["quantity"],
+                        "",
+                        $product["mediaValue"],
+                        $product["price"],
+                    ]);
+                }
             }
+
+            $this->ws->moveCursor(0, 2);
         }
 
         $this->ws->getColumnDimension("A")->setAutoSize(true);

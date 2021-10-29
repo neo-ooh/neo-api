@@ -279,7 +279,7 @@ class PlannerExport extends XLSXDocument {
 
                 $this->ws->printRow([
                     $property["property"]["name"],
-                    $property["property"]["address"]["zipcode"],
+                    substr($property["property"]["address"]["zipcode"], 0, 3) . " ". substr($property["property"]["address"]["zipcode"], 3),
                     $property["property"]["address"]["city"]["name"],
                     $property["facesCount"],
                     $property["traffic"],

@@ -269,6 +269,12 @@ class PlannerExport extends XLSXDocument {
                     "font" => [
                         "size" => 12,
                         'bold' => true,
+                    ],
+                    "fill" => [
+                        'fillType'   => Fill::FILL_SOLID,
+                        'startColor' => [
+                            'argb' => "FFFFFFFF",
+                        ],
                     ]
                 ]);
 
@@ -292,6 +298,12 @@ class PlannerExport extends XLSXDocument {
                 $this->ws->getStyle($this->ws->getRelativeRange(7, $productsCount))->applyFromArray([
                     "font"      => [
                         "size" => 11
+                    ],
+                    "fill" => [
+                        'fillType'   => Fill::FILL_SOLID,
+                        'startColor' => [
+                            'argb' => "FFFFFFFF",
+                        ],
                     ]
                 ]);
 

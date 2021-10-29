@@ -55,8 +55,8 @@ class PlannerExport extends XLSXDocument {
     }
 
     protected function printFlightRow(Flight $flight, $flightIndex) {
-        $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::tableHeader());
-        $this->ws->printRow(["Flight #$flightIndex", $flight->startDate->toDateString(), $flight->endDate->toDateString(), __("common.order-type-".$flight->type)]);
+        $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::flightRow());
+        $this->ws->printRow(["Flight #$flightIndex", $flight->startDate->toDateString(), $flight->endDate->toDateString(), '', __("common.order-type-".$flight->type)]);
     }
 
     /**

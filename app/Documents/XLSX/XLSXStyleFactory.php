@@ -8,11 +8,11 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class XLSXStyleFactory {
     public const COLORS = [
-        "dark-blue" => "FF202035",
+        "dark-blue"  => "FF202035",
         "light-blue" => "FF0099F8",
-        "shopping"  => "FF0099F8",
-        "otg"       => "FFFF6300",
-        "fitness"   => "FFF8002B",
+        "shopping"   => "FF0099F8",
+        "otg"        => "FFFF6300",
+        "fitness"    => "FFF8002B",
     ];
 
     public static function networkSectionHeader(string $network) {
@@ -28,7 +28,7 @@ class XLSXStyleFactory {
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText"   => true
             ],
             'fill'      => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -52,7 +52,7 @@ class XLSXStyleFactory {
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText"   => true
             ],
             'fill'      => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -75,7 +75,7 @@ class XLSXStyleFactory {
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText"   => true
             ],
             'fill'      => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -88,7 +88,7 @@ class XLSXStyleFactory {
 
     public static function tableBody() {
         return [
-            'font'      => [
+            'font'         => [
                 'color' => [
                     'argb' => "FF000000"
                 ],
@@ -98,11 +98,11 @@ class XLSXStyleFactory {
             "numberFormat" => [
                 "formatCode" => '#,##0_-'
             ],
-            'alignment' => [
+            'alignment'    => [
                 'vertical' => Alignment::VERTICAL_CENTER,
                 "wrapText" => true
             ],
-            "borders"   => [
+            "borders"      => [
                 "allBorders" => [
                     "borderStyle" => Border::BORDER_THIN,
                 ]
@@ -112,7 +112,7 @@ class XLSXStyleFactory {
 
     public static function tableFooter(string $network) {
         return [
-            'font'      => [
+            'font'         => [
                 'color' => [
                     'argb' => "FFFFFFFF"
                 ],
@@ -122,16 +122,16 @@ class XLSXStyleFactory {
             "numberFormat" => [
                 "formatCode" => '#,##0_-'
             ],
-            'alignment' => [
+            'alignment'    => [
                 'vertical' => Alignment::VERTICAL_CENTER,
                 "wrapText" => true
             ],
-            "borders"   => [
+            "borders"      => [
                 "allBorders" => [
                     "borderStyle" => Border::BORDER_THIN,
                 ]
             ],
-            'fill'      => [
+            'fill'         => [
                 'fillType'   => Fill::FILL_SOLID,
                 'startColor' => [
                     'argb' => static::COLORS[$network],
@@ -142,7 +142,7 @@ class XLSXStyleFactory {
 
     public static function networkFooter() {
         return [
-            'font'      => [
+            'font'         => [
                 'color' => [
                     'argb' => "FFFFFFFF"
                 ],
@@ -152,16 +152,16 @@ class XLSXStyleFactory {
             "numberFormat" => [
                 "formatCode" => '#,##0_-'
             ],
-            'alignment' => [
+            'alignment'    => [
                 'vertical' => Alignment::VERTICAL_CENTER,
                 "wrapText" => true
             ],
-            "borders"   => [
+            "borders"      => [
                 "allBorders" => [
                     "borderStyle" => Border::BORDER_THIN,
                 ]
             ],
-            'fill'      => [
+            'fill'         => [
                 'fillType'   => Fill::FILL_SOLID,
                 'startColor' => [
                     'argb' => static::COLORS["dark-blue"],
@@ -172,7 +172,7 @@ class XLSXStyleFactory {
 
     public static function totals() {
         return [
-            'font'      => [
+            'font'         => [
                 'bold'  => true,
                 'color' => [
                     'argb' => "FFFFFFFF"
@@ -183,11 +183,11 @@ class XLSXStyleFactory {
             "numberFormat" => [
                 "formatCode" => '#,##0_-'
             ],
-            'alignment' => [
-                'vertical'   => Alignment::VERTICAL_CENTER,
+            'alignment'    => [
+                'vertical' => Alignment::VERTICAL_CENTER,
                 "wrapText" => true
             ],
-            'fill'      => [
+            'fill'         => [
                 'fillType'   => Fill::FILL_SOLID,
                 'startColor' => [
                     'argb' => static::COLORS["dark-blue"],
@@ -198,7 +198,7 @@ class XLSXStyleFactory {
 
     public static function specsHeader($network = "dark-blue") {
         return [
-            'font'      => [
+            'font'         => [
                 'bold'  => true,
                 'color' => [
                     'argb' => static::COLORS[$network]
@@ -209,8 +209,8 @@ class XLSXStyleFactory {
             "numberFormat" => [
                 "formatCode" => '#,##0_-'
             ],
-            'alignment' => [
-                'vertical'   => Alignment::VERTICAL_CENTER,
+            'alignment'    => [
+                'vertical' => Alignment::VERTICAL_CENTER,
                 "wrapText" => true
             ],
         ];
@@ -229,7 +229,7 @@ class XLSXStyleFactory {
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText"   => true
             ],
             'fill'      => [
                 'fillType'   => Fill::FILL_SOLID,

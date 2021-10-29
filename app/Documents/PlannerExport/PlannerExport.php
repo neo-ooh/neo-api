@@ -57,7 +57,9 @@ class PlannerExport extends XLSXDocument {
             $flightsValues->push($this->printFlightSummary($flight, $flightIndex));
         }
 
-        // Totals
+        $this->ws->getStyle($this->ws->getRelativeRange(10, 2))->applyFromArray(XLSXStyleFactory::totals());
+
+        // Print Totals headers
         $this->ws->printRow([
             __("contract.table-properties"),
             '',
@@ -70,7 +72,7 @@ class PlannerExport extends XLSXDocument {
             __("contract.table-net-investment"),
         ]);
 
-        // Totals
+        // Print Totals values
         $this->ws->printRow([
             $flightsValues->sum("propertiesCount"),
             '',
@@ -94,7 +96,7 @@ class PlannerExport extends XLSXDocument {
     }
 
     protected function printFlightSummary(Flight $flight, $flightIndex) {
-        $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::flightRow());
+        $this->ws->getStyle($this->ws->getRelativeRange(10, 1))->applyFromArray(XLSXStyleFactory::flightRow());
 
         $this->ws->pushPosition();
         $this->ws->moveCursor(5, 0)->mergeCellsRelative(4, 1);
@@ -140,6 +142,8 @@ class PlannerExport extends XLSXDocument {
                 $flight->length,
             ]);
         }
+
+        $this->ws->getStyle($this->ws->getRelativeRange(10, 1))->applyFromArray(XLSXStyleFactory::simpleTableTotals());
 
         $flightValues = [
             "propertiesCount" => count($flight->selection),

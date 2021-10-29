@@ -223,7 +223,7 @@ class XLSXStyleFactory {
                 'color' => [
                     'argb' => "FFFFFFFF"
                 ],
-                'size'  => "13",
+                'size'  => "14",
                 "name"  => "Calibri"
             ],
             'alignment' => [
@@ -241,6 +241,24 @@ class XLSXStyleFactory {
     }
 
     public static function simpleTableHeader() {
+        return [
+            'font'      => [
+                'bold'  => true,
+                'color' => [
+                    'argb' => "FF000000"
+                ],
+                'size'  => "13",
+                "name"  => "Calibri"
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER,
+                "wrapText"   => true
+            ]
+        ];
+    }
+
+    public static function simpleTableTotals() {
         return [
             'font'      => [
                 'bold'  => true,

@@ -75,6 +75,13 @@ class DocumentsGenerationController extends Controller {
 
                 $document = Traffic::make($data);
                 break;
+            case "planner-export":
+                if ($data === null) {
+                    return new Response(["error" => "Missing data"], 400);
+                }
+
+                $document = Traffic::make($data);
+                break;
             default:
                 throw new UnknownDocumentException();
         }

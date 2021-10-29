@@ -75,7 +75,7 @@ class PlannerExport extends XLSXDocument {
             __("contract.table-net-weeks"),
         ]);
 
-        $networks = $flight->selection->groupBy("property.network.id");
+        $networks = $flight->selection->groupBy("property.network.id")->sortBy("0.property.network.name");
         /** @var Collection $properties */
         foreach($networks as $properties) {
             $this->ws->printRow([

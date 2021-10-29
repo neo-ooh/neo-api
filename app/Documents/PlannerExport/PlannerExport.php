@@ -37,7 +37,7 @@ class PlannerExport extends XLSXDocument {
         $firstSheetName  = $this->contractReference ?? __("contract.summary");
         $this->worksheet = new Worksheet(null, $firstSheetName);
         $this->spreadsheet->addSheet($this->worksheet);
-        $this->spreadsheet->setActiveSheetIndexByName($firstSheetName);
+        $this->spreadsheet->setActiveSheetIndex(1);
 
         // Remove the first sheet as it is not being used
         $this->spreadsheet->removeSheetByIndex(0);

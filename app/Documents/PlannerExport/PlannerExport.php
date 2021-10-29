@@ -69,9 +69,6 @@ class PlannerExport extends XLSXDocument {
             __("contract.table-net-investment"),
         ]);
 
-        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 1, 0);
-        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 2, 0);
-        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 3, 0);
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
 
@@ -127,11 +124,8 @@ class PlannerExport extends XLSXDocument {
 
         /** @var Collection $properties */
         foreach($networks as $properties) {
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 2, 0);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 3, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 6, 0);
 
             $this->ws->printRow([
                 $properties[0]['property']['network']['name'],

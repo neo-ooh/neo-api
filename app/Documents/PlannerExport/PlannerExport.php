@@ -124,6 +124,9 @@ class PlannerExport extends XLSXDocument {
 
         /** @var Collection $properties */
         foreach($networks as $properties) {
+            $this->ws->setRelativeCellFormat("#,##0_-", 1, 0);
+            $this->ws->setRelativeCellFormat("#,##0_-", 2, 0);
+            $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
 
@@ -148,11 +151,8 @@ class PlannerExport extends XLSXDocument {
             "price" => $flight->selection->sum("price"),
         ];
 
-        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 2, 0);
-        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 3, 0);
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
-        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 6, 0);
 
         $this->ws->printRow([
             "Total",

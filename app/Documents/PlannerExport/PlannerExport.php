@@ -50,13 +50,46 @@ class PlannerExport extends XLSXDocument {
         $this->ws->moveCursor(0, 5);
 
         foreach ($this->flights as $flightIndex => $flight) {
-            $this->printFlightRow($flight, $flightIndex);
+            $this->printFlightSummary($flight, $flightIndex);
         }
     }
 
-    protected function printFlightRow(Flight $flight, $flightIndex) {
+    protected function printFlightSummary(Flight $flight, $flightIndex) {
         $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::flightRow());
-        $this->ws->printRow(["Flight #$flightIndex", $flight->startDate->toDateString(), $flight->endDate->toDateString(), '', __("common.order-type-".$flight->type)]);
+        $this->ws->printRow([
+            "Flight #" . $flightIndex + 1,
+            $flight->startDate->toDateString(),
+            '→',
+            $flight->endDate->toDateString(),
+            '',
+            __("common.order-type-".$flight->type)
+        ]);
+
+        $this->ws->printRow([
+            __("contract.table-networks"),
+            __("contract.table-properties"),
+            __("contract.table-faces"),
+            __("contract.table-traffic"),
+            __("contract.table-media-value"),
+            __("contract.table-net-investment"),
+            __("contract.table-net-weeks"),
+        ]);
+
+        $networks = $flight->selection->groupBy("property.network.id");
+        /** @var Collection $properties */
+        foreach($networks as $properties) {
+            $this->ws->printRow([
+                $properties[0]['property']['network']['name'],
+                count($properties),
+                $properties->sum("facesCount"),
+                $properties->sum("traffic"),
+                $properties->sum("mediaValue"),
+                $properties->sum("price"),
+                $flight->length,
+            ]);
+        }
+
+        $this->ws->moveCursor(0, 2);
     }
 
     /**

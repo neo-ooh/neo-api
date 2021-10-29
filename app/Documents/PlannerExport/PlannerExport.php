@@ -69,6 +69,7 @@ class PlannerExport extends XLSXDocument {
         $drawing->setCoordinates('D2');
 
         // Date
+        $this->ws->moveCursor(0, 1);
         $this->ws->printRow(["Date", Date::now()->toFormattedDateString()]);
 
         $this->ws->popPosition();

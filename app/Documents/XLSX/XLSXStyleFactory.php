@@ -274,7 +274,6 @@ class XLSXStyleFactory {
                 "formatCode" => '#,##0_-'
             ],
             'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
             ]
         ];

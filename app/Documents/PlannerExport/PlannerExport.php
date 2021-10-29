@@ -245,7 +245,9 @@ class PlannerExport extends XLSXDocument {
             $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
             $this->ws->getStyle($this->ws->getRelativeRange(1, 1))->applyFromArray([
                 "font" => [
-                    "color" => "FF".$networkProperties->first()["property"]["network"]["color"]
+                    "color" => [
+                        "argb" => "FF".$networkProperties->first()["property"]["network"]["color"]
+                    ]
                 ]
             ]);
 

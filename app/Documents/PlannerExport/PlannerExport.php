@@ -45,7 +45,7 @@ class PlannerExport extends XLSXDocument {
     }
 
     protected function printSummary() {
-        $this->ws->setTitle($this->contractReference ?? __("contract.summary"));
+//        $this->ws->setTitle($this->contractReference ?? __("contract.summary"));
 
         $this->ws->pushPosition();
 

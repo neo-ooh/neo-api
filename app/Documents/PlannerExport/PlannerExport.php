@@ -252,6 +252,12 @@ class PlannerExport extends XLSXDocument {
         ]);
 
         foreach ($flight->selection as $property) {
+            $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray([
+                "font" => [
+                    "size" => 12
+                ]
+            ]);
+
             $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
             $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
@@ -266,7 +272,39 @@ class PlannerExport extends XLSXDocument {
                 $property["mediaValue"],
                 $property["price"],
             ]);
+
+            $productsCount = count($property["products"]);
+
+            $this->ws->getStyle($this->ws->getRelativeRange(7, $productsCount))->applyFromArray([
+                "font" => [
+                    "size" => 11
+                ]
+            ]);
+            foreach ($property["products"] as $product) {
+                $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
+                $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
+                $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
+                $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+
+                $this->ws->printRow([
+                    $product["name"],
+                    "",
+                    "",
+                    $product["quantity"],
+                    "",
+                    $product["mediaValue"],
+                    $product["price"],
+                ]);
+            }
         }
+
+        $this->ws->getColumnDimension("A")->setAutoSize(true);
+        $this->ws->getColumnDimension("B")->setAutoSize(true);
+        $this->ws->getColumnDimension("C")->setAutoSize(true);
+        $this->ws->getColumnDimension("D")->setAutoSize(true);
+        $this->ws->getColumnDimension("E")->setAutoSize(true);
+        $this->ws->getColumnDimension("F")->setAutoSize(true);
+        $this->ws->getColumnDimension("G")->setAutoSize(true);
     }
 
     /**

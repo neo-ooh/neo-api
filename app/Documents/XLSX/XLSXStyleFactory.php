@@ -256,7 +256,6 @@ class XLSXStyleFactory {
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText"   => true
             ]
         ];
     }
@@ -277,7 +276,6 @@ class XLSXStyleFactory {
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText"   => true
             ]
         ];
     }

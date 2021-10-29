@@ -50,9 +50,38 @@ class PlannerExport extends XLSXDocument {
         $this->ws->popPosition();
         $this->ws->moveCursor(0, 5);
 
+        $flightsValues = collect();
+
+        // Flights
         foreach ($this->flights as $flightIndex => $flight) {
-            $this->printFlightSummary($flight, $flightIndex);
+            $flightsValues->push($this->printFlightSummary($flight, $flightIndex));
         }
+
+        // Totals
+        $this->ws->printRow([
+            __("contract.table-properties"),
+            '',
+            __("contract.table-faces"),
+            '',
+            __("contract.table-traffic"),
+            '',
+            __("contract.table-media-value"),
+            '',
+            __("contract.table-net-investment"),
+        ]);
+
+        // Totals
+        $this->ws->printRow([
+            $flightsValues->sum("propertiesCount"),
+            '',
+            $flightsValues->sum("propertiesCount"),
+            '',
+            $flightsValues->sum("traffic"),
+            '',
+            $flightsValues->sum("mediaValue"),
+            '',
+            $flightsValues->sum("price"),
+        ]);
 
         // Autosize columns
         $this->ws->getColumnDimension("A")->setAutoSize(true);
@@ -112,7 +141,27 @@ class PlannerExport extends XLSXDocument {
             ]);
         }
 
+        $flightValues = [
+            "propertiesCount" => count($flight->selection),
+            "faces" => $flight->selection->sum("facesCount"),
+            "traffic" => $flight->selection->sum("traffic"),
+            "mediaValue" => $flight->selection->sum("mediaValue"),
+            "price" => $flight->selection->sum("price"),
+        ];
+
+        $this->ws->printRow([
+            "Total",
+            $flightValues["propertiesCount"],
+            $flightValues["faces"],
+            $flightValues["traffic"],
+            $flightValues["mediaValue"],
+            $flightValues["price"],
+            $flight->length,
+        ]);
+
         $this->ws->moveCursor(0, 2);
+
+        return $flightValues;
     }
 
     /**

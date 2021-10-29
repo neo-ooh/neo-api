@@ -59,7 +59,7 @@ class PlannerExport extends XLSXDocument {
         $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::flightRow());
 
         $this->ws->pushPosition();
-        $this->ws->moveCursor(5, 0)->mergeCellsRelative(4, 0);
+        $this->ws->moveCursor(5, 0)->mergeCellsRelative(4, 1);
         $this->ws->popPosition();
 
         $this->ws->printRow([

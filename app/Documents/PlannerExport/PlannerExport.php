@@ -57,31 +57,25 @@ class PlannerExport extends XLSXDocument {
             $flightsValues->push($this->printFlightSummary($flight, $flightIndex));
         }
 
-        $this->ws->getStyle($this->ws->getRelativeRange(10, 2))->applyFromArray(XLSXStyleFactory::totals());
+        $this->ws->getStyle($this->ws->getRelativeRange(7, 2))->applyFromArray(XLSXStyleFactory::totals());
 
         // Print Totals headers
         $this->ws->printRow([
+            '',
             __("contract.table-properties"),
-            '',
             __("contract.table-faces"),
-            '',
             __("contract.table-traffic"),
-            '',
             __("contract.table-media-value"),
-            '',
             __("contract.table-net-investment"),
         ]);
 
         // Print Totals values
         $this->ws->printRow([
-            $flightsValues->sum("propertiesCount"),
             '',
             $flightsValues->sum("propertiesCount"),
-            '',
+            $flightsValues->sum("propertiesCount"),
             $flightsValues->sum("traffic"),
-            '',
             $flightsValues->sum("mediaValue"),
-            '',
             $flightsValues->sum("price"),
         ]);
 
@@ -96,10 +90,10 @@ class PlannerExport extends XLSXDocument {
     }
 
     protected function printFlightSummary(Flight $flight, $flightIndex) {
-        $this->ws->getStyle($this->ws->getRelativeRange(10, 1))->applyFromArray(XLSXStyleFactory::flightRow());
+        $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::flightRow());
 
         $this->ws->pushPosition();
-        $this->ws->moveCursor(5, 0)->mergeCellsRelative(4, 1);
+        $this->ws->moveCursor(5, 0)->mergeCellsRelative(2, 1);
         $this->ws->popPosition();
 
         $this->ws->printRow([
@@ -111,7 +105,7 @@ class PlannerExport extends XLSXDocument {
             __("common.order-type-".$flight->type)
         ]);
 
-        $this->ws->getStyle($this->ws->getRelativeRange(10, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+        $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
 
         $this->ws->printRow([
             __("contract.table-networks"),

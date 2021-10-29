@@ -39,7 +39,7 @@ class PlannerExport extends XLSXDocument {
 
         // Print each flight's details page
         foreach($this->flights as $flightIndex => $flight) {
-            $this->printFlight($flight, $flightIndex)
+            $this->printFlight($flight, $flightIndex);
         }
         return true;
     }

@@ -69,11 +69,17 @@ class PlannerExport extends XLSXDocument {
             __("contract.table-net-investment"),
         ]);
 
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 1, 0);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 2, 0);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 3, 0);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+
         // Print Totals values
         $this->ws->printRow([
             '',
             $flightsValues->sum("propertiesCount"),
-            $flightsValues->sum("propertiesCount"),
+            $flightsValues->sum("faces"),
             $flightsValues->sum("traffic"),
             $flightsValues->sum("mediaValue"),
             $flightsValues->sum("price"),
@@ -121,10 +127,11 @@ class PlannerExport extends XLSXDocument {
 
         /** @var Collection $properties */
         foreach($networks as $properties) {
-
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 2, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 3, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 6, 0);
 
             $this->ws->printRow([
                 $properties[0]['property']['network']['name'],
@@ -146,6 +153,12 @@ class PlannerExport extends XLSXDocument {
             "mediaValue" => $flight->selection->sum("mediaValue"),
             "price" => $flight->selection->sum("price"),
         ];
+
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 2, 0);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 3, 0);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 6, 0);
 
         $this->ws->printRow([
             "Total",

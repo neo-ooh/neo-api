@@ -14,6 +14,8 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 class PlannerExport extends XLSXDocument {
     protected string $contractReference;
     protected Collection $flights;
+    protected int $propertiesCount;
+    protected int $facesCount;
 
     /**
      * @param array{properties: array<int>, year: int} $data
@@ -21,6 +23,8 @@ class PlannerExport extends XLSXDocument {
     protected function ingest($data): bool {
         $this->contractReference = $data['contract'] ?? "";
         $this->flights           = collect($data['flights'])->map(fn($record) => new Flight($record));
+        $this->propertiesCount = $data['stats']['propertiesCount'];
+        $this->facesCount = $data['stats']['facesCount'];
 
         return true;
     }
@@ -101,8 +105,8 @@ class PlannerExport extends XLSXDocument {
         // Print Totals values
         $this->ws->printRow([
             '',
-            $flightsValues->sum("propertiesCount"),
-            $flightsValues->sum("faces"),
+            $this->propertiesCount,
+            $this->facesCount,
             $flightsValues->sum("traffic"),
             $flightsValues->sum("mediaValue"),
             $flightsValues->sum("price"),

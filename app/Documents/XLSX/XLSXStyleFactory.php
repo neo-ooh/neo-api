@@ -250,6 +250,9 @@ class XLSXStyleFactory {
                 'size'  => "13",
                 "name"  => "Calibri"
             ],
+            "numberFormat" => [
+                "formatCode" => '#,##0_-'
+            ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
@@ -267,6 +270,9 @@ class XLSXStyleFactory {
                 ],
                 'size'  => "12",
                 "name"  => "Calibri"
+            ],
+            "numberFormat" => [
+                "formatCode" => '#,##0_-'
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,

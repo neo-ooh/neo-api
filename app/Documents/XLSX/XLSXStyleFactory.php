@@ -223,7 +223,7 @@ class XLSXStyleFactory {
                 'color' => [
                     'argb' => "FFFFFFFF"
                 ],
-                'size'  => "14",
+                'size'  => "15",
                 "name"  => "Calibri"
             ],
             'alignment' => [

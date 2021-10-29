@@ -243,8 +243,9 @@ class PlannerExport extends XLSXDocument {
         foreach($networks as $networkProperties) {
             // Property / Products table header
             $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
-            $this->ws->getStyle($this->ws->getRelativeRange(1, 1))->applyFromArray([
+            $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray([
                 "font" => [
+                    'size'  => "14",
                     "color" => [
                         "argb" => "FF".$networkProperties->first()["property"]["network"]["color"]
                     ]
@@ -260,6 +261,8 @@ class PlannerExport extends XLSXDocument {
                 __("contract.table-media-value"),
                 __("contract.table-net-investment"),
             ]);
+
+            $networkProperties = collect($networkProperties)->sortBy("property.name");
 
             foreach ($networkProperties as $property) {
                 $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray([
@@ -294,7 +297,10 @@ class PlannerExport extends XLSXDocument {
                         "indent" => 4
                     ]
                 ]);
-                foreach ($property["products"] as $product) {
+
+                $products = collect($property["products"])->sortBy("name");
+
+                foreach ($products as $product) {
                     $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
                     $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
                     $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);

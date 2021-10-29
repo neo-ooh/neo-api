@@ -4,6 +4,7 @@ return [
     "audience-extension-strategy"      => "Audience extension strategy",
     "payment-terms-confirmation-title" => "PAYMENT TERMS CONFIRMATION",
     "billed-on"                        => "billed on",
+    "summary" => "Summary"
     "campaign-details-title"           => "Campaign Details",
     "campaign-summary-title"           => "Campaign Summary",
     "conditions-cancellation-desc"     => "The CLIENT may cancel the present contract, without penalty, conditional upon the receipt by NEO of a notice from the CLIENT of total or partial cancellation by registered mail at least one hundred and twenty (120) days prior to the commencement date of the intended advertising period. If this delay is not respected, the full amount in accordance with the terms of the present contract shall be due and payable. If the cancellation occurs during the advertising period, the CLIENT shall be obliged to pay NEO the full amount due in accordance with the terms of the present contract.",

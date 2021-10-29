@@ -4,6 +4,7 @@ namespace Neo\Documents\PlannerExport;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
+use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -35,10 +36,17 @@ class PlannerExport extends XLSXDocument {
     public function build(): bool {
         // Print the summary page
         $this->printSummary();
+
+        // Print each flight's details page
+        foreach($this->flights as $flightIndex => $flight) {
+            $this->printFlight($flight, $flightIndex)
+        }
         return true;
     }
 
     protected function printSummary() {
+        $this->ws->setTitle($this->contractReference ?? __("contract.summary"));
+
         $this->ws->pushPosition();
 
         // Set the header style
@@ -73,7 +81,6 @@ class PlannerExport extends XLSXDocument {
         $drawing->setCoordinates('D2');
 
         // Date
-        $this->ws->moveCursor(0, 1);
         $this->ws->printRow(["Date", Date::now()->toFormattedDateString()]);
 
         $this->ws->popPosition();
@@ -196,6 +203,13 @@ class PlannerExport extends XLSXDocument {
         $this->ws->moveCursor(0, 2);
 
         return $flightValues;
+    }
+
+    public function printFlight(Flight $flight, int $flightIndex) {
+        $flightLabel = "Flight #".$flightIndex+1;
+        $this->worksheet = new Worksheet(null, $flightLabel);
+        $this->spreadsheet->addSheet($this->worksheet);
+        $this->spreadsheet->setActiveSheetIndexByName($flightLabel);
     }
 
     /**

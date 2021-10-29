@@ -6,6 +6,7 @@ return [
     "billed-on"                        => "facturé le",
     "proposal"                         => "Proposition :contract",
     "production-details"               => "Détails de Production",
+    "summary" => "Récapitulatif",
     "campaign-summary-title"           => "Campagne Sommaire",
     "campaign-details-title"           => "Campagne Détails",
     "contract-number-title"            => "Numéro de Contrat :number",

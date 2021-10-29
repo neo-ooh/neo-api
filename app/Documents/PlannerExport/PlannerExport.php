@@ -56,6 +56,6 @@ class PlannerExport extends XLSXDocument {
      * @inheritDoc
      */
     public function getName(): string {
-        return $this->contractReference ? 'planner-export';
+        return $this->contractReference ?? 'planner-export';
     }
 }

@@ -34,7 +34,7 @@ class PlannerExport extends XLSXDocument {
      * @inheritDoc
      */
     public function build(): bool {
-        $firstSheetName  = $this->contractReference ?? __("contract.summary");
+        $firstSheetName  = __("contract.summary");
         $this->worksheet = new Worksheet(null, $firstSheetName);
         $this->spreadsheet->addSheet($this->worksheet);
         $this->spreadsheet->setActiveSheetIndex(1);

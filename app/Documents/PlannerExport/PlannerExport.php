@@ -58,10 +58,11 @@ class PlannerExport extends XLSXDocument {
         }
 
         $this->ws->getStyle($this->ws->getRelativeRange(7, 2))->applyFromArray(XLSXStyleFactory::totals());
+        $this->ws->mergeCellsRelative(1, 2);
 
         // Print Totals headers
         $this->ws->printRow([
-            '',
+            'Total',
             __("contract.table-properties"),
             __("contract.table-faces"),
             __("contract.table-traffic"),

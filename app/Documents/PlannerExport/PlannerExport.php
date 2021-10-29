@@ -19,7 +19,7 @@ class PlannerExport extends XLSXDocument {
      */
     protected function ingest($data): bool {
         $this->contractReference = $data['contract'] ?? "";
-        $this->flights           = collect($data['selection']);
+        $this->flights           = collect($data['flights']);
 
         return true;
     }

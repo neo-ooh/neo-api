@@ -53,6 +53,15 @@ class PlannerExport extends XLSXDocument {
         foreach ($this->flights as $flightIndex => $flight) {
             $this->printFlightSummary($flight, $flightIndex);
         }
+
+        // Autosize columns
+        $this->ws->getColumnDimension("A")->setAutoSize(true);
+        $this->ws->getColumnDimension("B")->setAutoSize(true);
+        $this->ws->getColumnDimension("C")->setAutoSize(true);
+        $this->ws->getColumnDimension("D")->setAutoSize(true);
+        $this->ws->getColumnDimension("E")->setAutoSize(true);
+        $this->ws->getColumnDimension("F")->setAutoSize(true);
+        $this->ws->getColumnDimension("G")->setAutoSize(true);
     }
 
     protected function printFlightSummary(Flight $flight, $flightIndex) {
@@ -71,6 +80,7 @@ class PlannerExport extends XLSXDocument {
             __("common.order-type-".$flight->type)
         ]);
 
+        $this->ws->getStyle($this->ws->getRelativeRange(10, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
 
         $this->ws->printRow([
             __("contract.table-networks"),
@@ -86,7 +96,6 @@ class PlannerExport extends XLSXDocument {
 
         /** @var Collection $properties */
         foreach($networks as $properties) {
-            $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
 
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 3, 0);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);

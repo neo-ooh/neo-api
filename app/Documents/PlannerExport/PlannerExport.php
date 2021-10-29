@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class PlannerExport extends XLSXDocument {
@@ -56,6 +57,11 @@ class PlannerExport extends XLSXDocument {
 
     protected function printFlightSummary(Flight $flight, $flightIndex) {
         $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::flightRow());
+
+        $this->ws->pushPosition();
+        $this->ws->moveCursor(5, 0)->mergeCellsRelative(4, 0);
+        $this->ws->popPosition();
+
         $this->ws->printRow([
             "Flight #" . $flightIndex + 1,
             $flight->startDate->toDateString(),
@@ -65,6 +71,7 @@ class PlannerExport extends XLSXDocument {
             __("common.order-type-".$flight->type)
         ]);
 
+
         $this->ws->printRow([
             __("contract.table-networks"),
             __("contract.table-properties"),
@@ -72,12 +79,19 @@ class PlannerExport extends XLSXDocument {
             __("contract.table-traffic"),
             __("contract.table-media-value"),
             __("contract.table-net-investment"),
-            __("contract.table-net-weeks"),
+            __("contract.table-weeks"),
         ]);
 
-        $networks = $flight->selection->groupBy("property.network.id")->sortBy("0.property.network.name");
+        $networks = $flight->selection->groupBy("property.network.id");
+
         /** @var Collection $properties */
         foreach($networks as $properties) {
+            $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER, 3, 0);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+
             $this->ws->printRow([
                 $properties[0]['property']['network']['name'],
                 count($properties),

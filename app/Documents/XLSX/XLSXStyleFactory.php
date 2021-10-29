@@ -223,7 +223,7 @@ class XLSXStyleFactory {
                 'color' => [
                     'argb' => "FFFFFFFF"
                 ],
-                'size'  => "12",
+                'size'  => "13",
                 "name"  => "Calibri"
             ],
             'alignment' => [
@@ -237,6 +237,24 @@ class XLSXStyleFactory {
                     'argb' => static::COLORS["light-blue"],
                 ],
             ],
+        ];
+    }
+
+    public static function simpleTableHeader() {
+        return [
+            'font'      => [
+                'bold'  => true,
+                'color' => [
+                    'argb' => "FF000000"
+                ],
+                'size'  => "12",
+                "name"  => "Calibri"
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER,
+                "wrapText"   => true
+            ]
         ];
     }
 }

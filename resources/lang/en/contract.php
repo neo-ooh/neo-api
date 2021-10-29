@@ -89,6 +89,8 @@ return [
     "table-description"                  => "Description",
     "table-discount"                     => "Discount %",
     "table-end-date"                     => "End Date",
+    "table-faces"                     => "Faces",
+    "table-traffic"                     => "Traffic",
     "table-impressions"                  => "Impressions",
     "table-impressions-covid"            => "Covid Impressions",
     "table-impressions-format"           => "Impressions formats",

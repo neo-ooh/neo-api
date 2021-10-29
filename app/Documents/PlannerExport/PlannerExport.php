@@ -24,8 +24,8 @@ class PlannerExport extends XLSXDocument {
     protected function ingest($data): bool {
         $this->contractReference = $data['contract'] ?? "";
         $this->flights           = collect($data['flights'])->map(fn($record) => new Flight($record));
-        $this->propertiesCount = $data['stats']['propertiesCount'];
-        $this->facesCount = $data['stats']['facesCount'];
+        $this->propertiesCount   = $data['stats']['propertiesCount'];
+        $this->facesCount        = $data['stats']['facesCount'];
 
         return true;
     }
@@ -34,18 +34,24 @@ class PlannerExport extends XLSXDocument {
      * @inheritDoc
      */
     public function build(): bool {
+        $firstSheetName  = $this->contractReference ?? __("contract.summary");
+        $this->worksheet = new Worksheet(null, $firstSheetName);
+        $this->spreadsheet->addSheet($this->worksheet);
+        $this->spreadsheet->setActiveSheetIndexByName($firstSheetName);
+
         // Print the summary page
         $this->printSummary();
 
         // Print each flight's details page
-        foreach($this->flights as $flightIndex => $flight) {
+        foreach ($this->flights as $flightIndex => $flight) {
             $this->printFlight($flight, $flightIndex);
         }
+
+        $this->spreadsheet->setActiveSheetIndexByName($firstSheetName);
         return true;
     }
 
     protected function printSummary() {
-//        $this->ws->setTitle($this->contractReference ?? __("contract.summary"));
 
         $this->ws->pushPosition();
 
@@ -141,7 +147,7 @@ class PlannerExport extends XLSXDocument {
             $flight->startDate->toDateString(),
             '→',
             $flight->endDate->toDateString(),
-            __("common.order-type-".$flight->type)
+            __("common.order-type-" . $flight->type)
         ]);
 
         $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
@@ -159,7 +165,7 @@ class PlannerExport extends XLSXDocument {
         $networks = $flight->selection->groupBy("property.network.id");
 
         /** @var Collection $properties */
-        foreach($networks as $properties) {
+        foreach ($networks as $properties) {
             $this->ws->setRelativeCellFormat("#,##0_-", 1, 0);
             $this->ws->setRelativeCellFormat("#,##0_-", 2, 0);
             $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
@@ -181,10 +187,10 @@ class PlannerExport extends XLSXDocument {
 
         $flightValues = [
             "propertiesCount" => count($flight->selection),
-            "faces" => $flight->selection->sum("facesCount"),
-            "traffic" => $flight->selection->sum("traffic"),
-            "mediaValue" => $flight->selection->sum("mediaValue"),
-            "price" => $flight->selection->sum("price"),
+            "faces"           => $flight->selection->sum("facesCount"),
+            "traffic"         => $flight->selection->sum("traffic"),
+            "mediaValue"      => $flight->selection->sum("mediaValue"),
+            "price"           => $flight->selection->sum("price"),
         ];
 
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
@@ -205,11 +211,59 @@ class PlannerExport extends XLSXDocument {
         return $flightValues;
     }
 
+    public function printFlightHeader(Flight $flight, int $flightIndex) {
+        $this->ws->getStyle($this->ws->getRelativeRange(6, 1))->applyFromArray(XLSXStyleFactory::flightRow());
+
+        $this->ws->pushPosition();
+        $this->ws->moveCursor(5, 0)->mergeCellsRelative(2, 1);
+        $this->ws->popPosition();
+
+        $this->ws->printRow([
+            "Flight #" . $flightIndex + 1,
+            $flight->startDate->toDateString(),
+            '→',
+            $flight->endDate->toDateString(),
+            __("common.order-type-" . $flight->type)
+        ]);
+    }
+
     public function printFlight(Flight $flight, int $flightIndex) {
-        $flightLabel = "Flight #".$flightIndex+1;
+        $flightLabel     = "Flight #" . $flightIndex + 1;
         $this->worksheet = new Worksheet(null, $flightLabel);
         $this->spreadsheet->addSheet($this->worksheet);
         $this->spreadsheet->setActiveSheetIndexByName($flightLabel);
+
+        $this->printFlightHeader($flight, $flightIndex);
+
+        // Property / Products table header
+        $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+
+        $this->ws->printRow([
+            __("contract.table-properties"),
+            __("contract.table-zipcode"),
+            __("contract.table-location"),
+            __("contract.table-faces"),
+            __("contract.table-traffic"),
+            __("contract.table-media-value"),
+            __("contract.table-net-investment"),
+        ]);
+
+        foreach ($flight->selection as $property) {
+            $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
+            $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+
+            $this->ws->printRow([
+                $property["property"]["name"],
+                $property["property"]["address"]["zipcode"],
+                $property["property"]["address"]["city"]["name"],
+                $property["facesCount"],
+                $property["traffic"],
+                $property["mediaValue"],
+                $property["price"],
+            ]);
+        }
     }
 
     /**

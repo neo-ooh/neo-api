@@ -254,7 +254,8 @@ class PlannerExport extends XLSXDocument {
         foreach ($flight->selection as $property) {
             $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray([
                 "font" => [
-                    "size" => 12
+                    "size" => 12,
+                    'bold'  => true,
                 ]
             ]);
 
@@ -278,6 +279,9 @@ class PlannerExport extends XLSXDocument {
             $this->ws->getStyle($this->ws->getRelativeRange(7, $productsCount))->applyFromArray([
                 "font" => [
                     "size" => 11
+                ],
+                'alignment' => [
+                    "indent" => 4
                 ]
             ]);
             foreach ($property["products"] as $product) {

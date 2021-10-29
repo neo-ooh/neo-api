@@ -39,6 +39,9 @@ class PlannerExport extends XLSXDocument {
         $this->spreadsheet->addSheet($this->worksheet);
         $this->spreadsheet->setActiveSheetIndexByName($firstSheetName);
 
+        // Remove the first sheet as it is not being used
+        $this->spreadsheet->removeSheetByIndex(0);
+
         // Print the summary page
         $this->printSummary();
 

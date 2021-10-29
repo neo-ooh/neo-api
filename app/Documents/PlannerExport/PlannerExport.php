@@ -292,7 +292,10 @@ class PlannerExport extends XLSXDocument {
                 $this->ws->getStyle($this->ws->getRelativeRange(7, $productsCount))->applyFromArray([
                     "font"      => [
                         "size" => 11
-                    ],
+                    ]
+                ]);
+
+                $this->ws->getStyle($this->ws->getRelativeRange(1, $productsCount))->applyFromArray([
                     'alignment' => [
                         "indent" => 4
                     ]

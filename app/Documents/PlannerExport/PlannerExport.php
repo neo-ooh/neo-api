@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
@@ -35,14 +36,30 @@ class PlannerExport extends XLSXDocument {
     protected function printSummary() {
         $this->ws->pushPosition();
 
+        // Set the header style
+        $this->ws->getStyle($this->ws->getRelativeRange(7, 5))->applyFromArray([
+            'font'      => [
+                'bold'  => true,
+                'color' => [
+                    'argb' => "FF000000"
+                ],
+                'size'  => "13",
+                "name"  => "Calibri"
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER,
+            ]
+        ]);
+
         // Add the Neo logo
         $drawing = new Drawing();
         $drawing->setName('Neo-OOH');
         $drawing->setDescription('Neo Out of Home');
-        $drawing->setPath(resource_path("logos/main.dark.en@2x.png"));
+        $drawing->setPath(resource_path("logos/main.light.en@2x.png"));
         $drawing->setHeight(60);
         $drawing->setWorksheet($this->ws);
-        $drawing->setCoordinates('F2');
+        $drawing->setCoordinates('D2');
 
         // Date
         $this->ws->printRow(["Date", Date::now()->toFormattedDateString()]);
@@ -94,7 +111,7 @@ class PlannerExport extends XLSXDocument {
     }
 
     protected function printFlightSummary(Flight $flight, $flightIndex) {
-        $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::flightRow());
+        $this->ws->getStyle($this->ws->getRelativeRange(6, 1))->applyFromArray(XLSXStyleFactory::flightRow());
 
         $this->ws->pushPosition();
         $this->ws->moveCursor(5, 0)->mergeCellsRelative(3, 1);

@@ -5,6 +5,7 @@ namespace Neo\Documents\PlannerExport;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Neo\Documents\XLSX\XLSXDocument;
+use Neo\Documents\XLSX\XLSXStyleFactory;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class PlannerExport extends XLSXDocument {
@@ -46,7 +47,7 @@ class PlannerExport extends XLSXDocument {
         $this->ws->printRow(["Date", Date::now()->toFormattedDateString()]);
 
         $this->ws->popPosition();
-        $this->ws->moveCursor(0, 2);
+        $this->ws->moveCursor(0, 5);
 
         foreach ($this->flights as $flightIndex => $flight) {
             $this->printFlightRow($flight, $flightIndex);
@@ -54,6 +55,7 @@ class PlannerExport extends XLSXDocument {
     }
 
     protected function printFlightRow(Flight $flight, $flightIndex) {
+        $this->ws->getStyle($this->ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::tableHeader());
         $this->ws->printRow(["Flight #$flightIndex", $flight->startDate->toDateString(), $flight->endDate->toDateString(), __("common.order-type-".$flight->type)]);
     }
 

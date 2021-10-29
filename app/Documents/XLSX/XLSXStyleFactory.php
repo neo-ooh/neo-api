@@ -9,6 +9,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 class XLSXStyleFactory {
     public const COLORS = [
         "dark-blue" => "FF202035",
+        "light-blue" => "FF0099F8",
         "shopping"  => "FF0099F8",
         "otg"       => "FFFF6300",
         "fitness"   => "FFF8002B",
@@ -211,6 +212,30 @@ class XLSXStyleFactory {
             'alignment' => [
                 'vertical'   => Alignment::VERTICAL_CENTER,
                 "wrapText" => true
+            ],
+        ];
+    }
+
+    public static function flightRow() {
+        return [
+            'font'      => [
+                'bold'  => true,
+                'color' => [
+                    'argb' => "FFFFFFFF"
+                ],
+                'size'  => "12",
+                "name"  => "Calibri"
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER,
+                'vertical'   => Alignment::VERTICAL_CENTER,
+                "wrapText" => true
+            ],
+            'fill'      => [
+                'fillType'   => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => static::COLORS["light-blue"],
+                ],
             ],
         ];
     }

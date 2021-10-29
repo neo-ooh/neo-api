@@ -15,6 +15,7 @@ use League\Csv\Reader;
 use Neo\Documents\Contract\PDFContract;
 use Neo\Documents\Contract\XLSXProposal;
 use Neo\Documents\Exceptions\UnknownGenerationException;
+use Neo\Documents\PlannerExport\PlannerExport;
 use Neo\Documents\POP\POP;
 use Neo\Documents\Traffic\Traffic;
 use Neo\Exceptions\UnknownDocumentException;
@@ -80,7 +81,7 @@ class DocumentsGenerationController extends Controller {
                     return new Response(["error" => "Missing data"], 400);
                 }
 
-                $document = Traffic::make($data);
+                $document = PlannerExport::make($data);
                 break;
             default:
                 throw new UnknownDocumentException();

@@ -2,24 +2,21 @@
 
 namespace Neo\Documents\PlannerExport;
 
-use App;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
-use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
-use Neo\Documents\XLSX\XLSXStyleFactory;
-use Neo\Models\Property;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class PlannerExport extends XLSXDocument {
     protected string $contractReference;
+    protected Collection $flights;
 
     /**
      * @param array{properties: array<int>, year: int} $data
      */
     protected function ingest($data): bool {
         $this->contractReference = $data['contract'] ?? "";
-        $this->flights           = collect($data['flights']);
+        $this->flights           = collect($data['flights'])->map(fn($record) => new Flight($record));
 
         return true;
     }
@@ -50,6 +47,14 @@ class PlannerExport extends XLSXDocument {
 
         $this->ws->popPosition();
         $this->ws->moveCursor(0, 2);
+
+        foreach ($this->flights as $flightIndex => $flight) {
+            $this->printFlightRow($flight, $flightIndex);
+        }
+    }
+
+    protected function printFlightRow(Flight $flight, $flightIndex) {
+        $this->ws->printRow(["Flight #$flightIndex", $flight->startDate->toDateString(), $flight->endDate->toDateString(), __("common.order-type-".$flight->type)]);
     }
 
     /**

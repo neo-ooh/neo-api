@@ -294,8 +294,8 @@ class PlannerExport extends XLSXDocument {
 
                 $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
                 $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
-                $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
                 $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+                $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6, 0);
 
                 $this->ws->printRow([
                     $property["property"]["name"],
@@ -332,8 +332,8 @@ class PlannerExport extends XLSXDocument {
                 foreach ($products as $product) {
                     $this->ws->setRelativeCellFormat("#,##0_-", 3, 0);
                     $this->ws->setRelativeCellFormat("#,##0_-", 4, 0);
-                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4, 0);
                     $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5, 0);
+                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6, 0);
 
                     $this->ws->printRow([
                         $product["name"],

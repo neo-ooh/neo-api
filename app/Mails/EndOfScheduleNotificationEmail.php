@@ -30,7 +30,7 @@ class EndOfScheduleNotificationEmail extends Mailable
      * @param Actor    $actor
      * @param Schedule $schedule
      */
-    public function __construct(Actor $actor,Schedule $schedule)
+    public function __construct(Actor $actor, Schedule $schedule)
     {
         $this->actor = $actor;
         $this->schedule = $schedule;

@@ -70,15 +70,27 @@ class SendContractJob implements ShouldQueue {
     }
 
     protected function cleanupContract($client) {
+        clock()->event("Cleaning up contract")->begin();
+
         // Remove all order lines from the contract
-        OrderLine::delete($client, [
+        $response = OrderLine::delete($client, [
             ["order_id", "=", $this->contract->id],
         ]);
 
-        // Remove all lines from the contract
-        Campaign::delete($client, [
+        if($response !== true) {
+            Log::debug("Error when deleting order lines on contract " . $this->contract->name, [$response]);
+        }
+
+        // Remove all flights from the contract
+        $response = Campaign::delete($client, [
             ["order_id", "=", $this->contract->id]
         ]);
+
+        if($response !== true) {
+            Log::debug("Error when deleting flight lines on contract " . $this->contract->name, [$response]);
+        }
+
+        clock()->event("Cleaning up contract")->end();
     }
 
     protected function getFlightDescription(array $flight, int $flightIndex) {

@@ -32,7 +32,7 @@ class AdServerProducts {
             __("contract.table-properties"),
             __("contract.table-networks"),
             "",
-            __("contract.table-product"),
+            "",
             "",
             "",
             "",

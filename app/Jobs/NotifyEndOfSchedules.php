@@ -40,17 +40,14 @@ class NotifyEndOfSchedules implements ShouldQueue {
         // Now we go schedule by schedule, select the actors that needs to be warned and send the emails
         /** @var Schedule $schedule */
         foreach ($schedules as $schedule) {
-            $dest = new Collection($schedule->owner);
+            $dest = collect([$schedule->owner,
+                             $schedule->campaign->owner,
+                             ...$schedule->campaign->owner->direct_children])
+                ->unique()
+                ->filter(fn($actor) => !$actor->is_group && !$actor->is_locked);
 
-            $dest->push($schedule
-                ->campaign
-                ->owner
-                ->direct_children
-                ->filter(fn($actor) => !$actor->is_group && !$actor->is_locked));
-
-            $dest = $dest->map(fn($actor) => is_int($actor) ? Actor::query()->find($actor) : $actor);
-
-            $dest->each(fn($recipient) => Mail::to($recipient)->send(new EndOfScheduleNotificationEmail($recipient, $schedule))
+            $dest->each(fn($recipient) =>
+                Mail::to($recipient->email)->send(new EndOfScheduleNotificationEmail($recipient, $schedule))
             );
         }
     }

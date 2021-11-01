@@ -45,10 +45,10 @@
         </tr>
             @foreach($lines as $line)
             <tr class="strategy-row">
+                <td>{{$line->network}}</td>
                 <td>{{$line->market_name}}</td>
-                <td>{{$line->audience_segment}}</td>
-                <td>{{$line->impression_format}}</td>
-                <td>{{format($line->impressions)}}</td>
+                <td>{{$line->impressions}}</td>
+                <td>{{formatCurrency($line->cpm)}}</td>
                 <td>{{formatCurrency($line->unit_price * $line->nb_weeks)}}</td>
                 @if($order->show_investment)
                     <td>{{ formatCurrency($line->subtotal) }}</td>

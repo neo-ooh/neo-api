@@ -159,8 +159,8 @@ class NetworkOrders extends Component {
                     $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7, 0);
                     $ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER_00, 9, 0);
                     $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
-                    $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
-                    $ws->setRelativeCellFormat('$#,##0.00', 15, 0);
+                    $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
+                    $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
 
                     // Handle merging of rows.
                     // When we have multiple rows for the same property, we want to merge their market, properties, annual traffic and campaign traffic column.
@@ -253,8 +253,8 @@ class NetworkOrders extends Component {
 
                 // Monetary values
                 $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
-                $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
-                $ws->setRelativeCellFormat('$#,##0.00', 15, 0);
+                $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
+                $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
 
                 $ws->moveCursor(2, 0);
 
@@ -312,9 +312,8 @@ class NetworkOrders extends Component {
             $ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER_00, 9, 0);
             // Monetary values
             $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
-            $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
-            $ws->setRelativeCellFormat('$#,##0.00', 15, 0);
-
+            $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
+            $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
 
             $ws->moveCursor(2, 0);
 
@@ -357,8 +356,8 @@ class NetworkOrders extends Component {
 
         // Monetary values
         $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
-        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
-        $ws->setRelativeCellFormat('$#,##0.00', 15, 0);
+        $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
+        $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
 
         $ws->moveCursor(2, 0);
 
@@ -414,7 +413,7 @@ class NetworkOrders extends Component {
         // Monetary values
         $ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER_00, 9, 0);
         $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
-        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
+        $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
 
         foreach ($periods as $period => $periodLinesArray) {
             $periodLines = collect($periodLinesArray);

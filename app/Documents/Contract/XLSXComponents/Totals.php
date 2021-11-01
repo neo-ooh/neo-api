@@ -77,7 +77,7 @@ class Totals extends Component {
 
         // Monetary values
         $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
-        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
+        $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
 
         $ws->moveCursor(2, 0);
 
@@ -110,7 +110,7 @@ class Totals extends Component {
 
         $this->addRow($ws, __("common.guaranteed-impressions"), $this->order->getGuaranteedOrders()->sum("impressions"));
 
-        $this->addRow($ws, __("CPM"), $cpmTotal, '$#,##0.00');
+        $this->addRow($ws, __("CPM"), $cpmTotal, XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES);
 
         $this->addRow($ws, __("common.potential-impressions"), $this->order->orderLines->sum("impressions"));
 
@@ -132,7 +132,7 @@ class Totals extends Component {
 
         $this->addRow($ws, __("PRODUCTION FEES"), $this->order->production_costs, NumberFormat::FORMAT_CURRENCY_USD);
 
-        $this->addRow($ws, __("NET INVESTMENT"), $this->order->net_investment, NumberFormat::FORMAT_CURRENCY_USD);
+        $this->addRow($ws, __("NET INVESTMENT"), $this->order->net_investment, XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES);
 
 
         $ws->popPosition();

@@ -15,6 +15,8 @@ class XLSXStyleFactory {
         "fitness"    => "FFF8002B",
     ];
 
+    public const FORMAT_CURRENCY_TWO_PLACES = '$#,##0.00';
+
     public static function networkSectionHeader(string $network) {
         return [
             'font'      => [

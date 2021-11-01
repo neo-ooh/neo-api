@@ -33,7 +33,7 @@
             @endif
             <td class="investment">
                 @if($showInvestment)
-                    {{ formatCurrency(round($guaranteedInvestment)) }}
+                    {{ formatCurrency($guaranteedInvestment) }}
                 @else
                     -
                 @endif
@@ -76,7 +76,7 @@
                 @endif
                 <td class="investment">
                     @if($showInvestment)
-                        {{ formatCurrency(round($grandTotalInvestment)) }}
+                        {{ formatCurrency($grandTotalInvestment) }}
                     @else
                         -
                     @endif
@@ -116,7 +116,7 @@
                 <td>-</td>
             @endif
             <td class="investment">
-                {{ formatCurrency(round($grandTotalInvestment + $productionCosts)) }}</td>
+                {{ formatCurrency($grandTotalInvestment + $productionCosts) }}</td>
         </tr>
     @endif
     @if($size === 'small' && $orders->count() > 0)

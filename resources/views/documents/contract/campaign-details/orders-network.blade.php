@@ -140,7 +140,7 @@
                                         <td class="border-right">
                                             {{ round($purchase->discount) === 0 ? '-' : "$purchase->discount%" }}
                                         </td>
-                                        <td class="investment-col">{{ formatCurrency(round($purchase->net_investment)) }}</td>
+                                        <td class="investment-col">{{ formatCurrency($purchase->net_investment) }}</td>
                                     @endif
                                 </tr>
                             @endforeach
@@ -174,7 +174,7 @@
                                     @endphp
                                     {{ (int)floor($regionDiscount) === 0 ? '-' : format($regionDiscount) . "%" }}
                                 </td>
-                                <td class="investment-col">{{ formatCurrency(round($regionNetInvestment)) }}</td>
+                                <td class="investment-col">{{ formatCurrency($regionNetInvestment) }}</td>
                             @endif
                         </tr>
                         @php
@@ -215,7 +215,7 @@
                                 @endphp
                                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
                             </td>
-                            <td class="investment-col">{{ formatCurrency(round($totalNetInvestment)) }}</td>
+                            <td class="investment-col">{{ formatCurrency($totalNetInvestment) }}</td>
                         @endif
                     </tr>
                 </table>

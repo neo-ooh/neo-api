@@ -22,7 +22,7 @@
                 @endphp
                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
             </td>
-            <td class="investment-col">{{ formatCurrency(round($totalInvestment)) }}</td>
+            <td class="investment-col">{{ formatCurrency($totalInvestment) }}</td>
         @endif
     </tr>
 </table>

@@ -4,6 +4,7 @@
 namespace Neo\Documents\Contract;
 
 
+use Neo\Documents\Contract\XLSXComponents\AdServerProducts;
 use Neo\Documents\Contract\XLSXComponents\Header;
 use Neo\Documents\Contract\XLSXComponents\NetworkOrders;
 use Neo\Documents\Contract\XLSXComponents\ProductionFees;
@@ -45,6 +46,12 @@ class XLSXProposal extends XLSXDocument {
 
         $totalCampaignTraffic = 0;
         $totalAnnualTraffic = 0;
+
+        $adServerLines = $this->order->getAdServerLines();
+        if($adServerLines->count() > 0) {
+            $adServerPrinter = new AdServerProducts($lines);
+            $adServerPrinter->render($this->ws);
+        }
 
         // Print orderlines for eeach network
         foreach(["shopping", "otg", "fitness"] as $network ) {

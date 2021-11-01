@@ -47,7 +47,7 @@
             <tr class="strategy-row">
                 <td>{{$line->network}}</td>
                 <td>{{$line->market_name}}</td>
-                <td>{{$line->impressions}}</td>
+                <td>{{format($line->impressions)}}</td>
                 <td>{{formatCurrency($line->cpm)}}</td>
                 <td>{{formatCurrency($line->unit_price * $line->nb_weeks)}}</td>
                 @if($order->show_investment)

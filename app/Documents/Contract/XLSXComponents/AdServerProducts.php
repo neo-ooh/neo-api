@@ -52,6 +52,7 @@ class AdServerProducts {
             $ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER_00, 9, 0);
             $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
             $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
+            $ws->setRelativeCellFormat("#,##0_-", 13, 0);
             $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
 
             $ws->printRow([

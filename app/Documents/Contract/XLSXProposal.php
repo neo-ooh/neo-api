@@ -49,7 +49,7 @@ class XLSXProposal extends XLSXDocument {
 
         $adServerLines = $this->order->getAdServerLines();
         if($adServerLines->count() > 0) {
-            $adServerPrinter = new AdServerProducts($lines);
+            $adServerPrinter = new AdServerProducts($adServerLines);
             $adServerPrinter->render($this->ws);
         }
 

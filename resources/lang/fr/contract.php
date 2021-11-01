@@ -28,7 +28,7 @@ return [
     "customer-accepts"                 => "Le client accepte ce qui suit:",
     "investment"                       => "Investissement:",
     "total-media-net"                  => "Total Média net",
-    "production-costs"                 => "Frais de production",
+    "production-costs"                 => "Coût de Production",
     "grand-total-net"                  => "Grand total net",
 
     "payment-terms-title" => "Modalités de Paiements",

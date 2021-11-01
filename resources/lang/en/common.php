@@ -17,6 +17,7 @@ return [
     "network-otg"           => "Neo On the Go",
     "network-fitness"       => "Neo Fitness",
     "network-mobile"        => "Neo Mobile",
+    "network-adserver"        => "Neo Ad Server",
 
     "header-campaign-dates"    => "Campaign dates",
     "header-contract"          => "Contract",

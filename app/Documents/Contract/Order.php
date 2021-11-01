@@ -156,6 +156,10 @@ class Order {
         return $this->orderLines->filter(fn($order) => $order->isExtensionStrategy());
     }
 
+    public function getAdServerLines(): Collection {
+        return $this->orderLines->filter(fn($order) => $order->isAdServerProduct());
+    }
+
     public function getShoppingOrders() {
         return $this->orderLines->filter(fn($order) => $order->isNetwork(Network::NEO_SHOPPING));
     }

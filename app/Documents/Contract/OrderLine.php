@@ -23,6 +23,7 @@ class OrderLine {
     public const TYPE_GUARANTEED_BONUS = 2;
     public const TYPE_BONUS_UPON_AVAIL = 3;
     public const TYPE_EXTENSION_STRATEGY = 4;
+    public const TYPE_ADSERVER_PRODUCT = 4;
 
     public const COVID_TRAFFIC_FACTOR = [
         "Digital - Vertical [shopping]"   => 0.5,
@@ -54,6 +55,7 @@ class OrderLine {
     public string $market;
     public string $market_name;
     public string $market_order;
+    public string $network;
 
     public string $audience_segment;
     public string $impression_format;
@@ -67,6 +69,7 @@ class OrderLine {
     public string $product_description;
     public string $product_rental;
     public bool $isMobileProduct = false;
+    public bool $isAdServerProduct = false;
     public string $product_type;
     public float $unit_price;
     public float $cpm;
@@ -112,6 +115,7 @@ class OrderLine {
                             "order_line/product_id",
                             "order_line/product_id/description",
                             //                            "order_line/is_mobile_product",
+                            //                            "order_line/is_adserver_product",
                             "order_line/is_product_rentable",
                             "order_line/product_type",
                             "order_line/price_unit",
@@ -160,6 +164,11 @@ class OrderLine {
         if (array_key_exists("order_line/is_mobile_product", $record)) {
             $this->isMobileProduct = $record["order_line/is_mobile_product"] === "True";
         }
+
+        if (array_key_exists("order_line/is_adserver_product", $record)) {
+            $this->isAdServerProduct = $record["order_line/is_adserver_product"] === "True";
+        }
+
         $this->product_type = $record["order_line/product_type"];
 
         $this->unit_price = (float)$record["order_line/price_unit"];
@@ -197,6 +206,12 @@ class OrderLine {
             $this->cpm               = (float)$record["order_line/cpm"];
         }
 
+        if ($this->isAdServerProduct()) {
+            $this->market_name       = $record["order_line/market_name"];
+            $this->network  = $record["order_line/network"];
+            $this->cpm               = (float)$record["order_line/cpm"];
+        }
+
         if ($this->impressions > 0 && isset($this->product_category) && $this->isNetwork(Network::NEO_SHOPPING) && array_key_exists($this->product_category, static::COVID_TRAFFIC_FACTOR)) {
             $this->covid_impressions = $this->impressions * static::COVID_TRAFFIC_FACTOR[$this->product_category];
             $this->covid_cpm         = ($this->net_investment / $this->covid_impressions) * 1000;
@@ -208,6 +223,16 @@ class OrderLine {
     }
 
     protected function inferOrderType() {
+        if ($this->isMobileProduct) {
+            $this->type = static::TYPE_EXTENSION_STRATEGY;
+            return;
+        }
+
+        if ($this->isAdServerProduct) {
+            $this->type = static::TYPE_ADSERVER_PRODUCT;
+            return;
+        }
+
         if (str_ends_with($this->product, "(bonus)")) {
             $this->type = static::TYPE_BONUS_UPON_AVAIL;
             return;
@@ -215,11 +240,6 @@ class OrderLine {
 
         if ((int)round($this->discount) === 100) {
             $this->type = static::TYPE_GUARANTEED_BONUS;
-            return;
-        }
-
-        if ($this->isMobileProduct) {
-            $this->type = static::TYPE_EXTENSION_STRATEGY;
             return;
         }
 
@@ -286,6 +306,10 @@ class OrderLine {
 
     public function isExtensionStrategy(): int {
         return $this->type === static::TYPE_EXTENSION_STRATEGY;
+    }
+
+    public function isAdServerProduct(): int {
+        return $this->type === static::TYPE_ADSERVER_PRODUCT;
     }
 
     protected function getPeriodString() {

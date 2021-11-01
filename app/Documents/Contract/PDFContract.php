@@ -171,6 +171,16 @@ class PDFContract extends PDFDocument {
             ])->render());
         }
 
+        // Adserver products summary
+        $adserverLines = $this->order->getAdServerLines();
+
+        if ($adserverLines->isNotEmpty()) {
+            $this->mpdf->WriteHTML(view("documents.contract.campaign-summary.adserver-products", [
+                "lines" => $adserverLines,
+                "order" => $this->order,
+            ])->render());
+        }
+
         // Audience extension strategy summary
         $audienceExtensionLines = $this->order->getAudienceExtensionLines();
 

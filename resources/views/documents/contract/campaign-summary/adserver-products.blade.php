@@ -1,6 +1,6 @@
 <section class="summary-purchases">
     <h1 class="detailed-purchases-title">
-        {{ __("contract.adserver-products")  }}hgcfvil
+        {{ __("contract.adserver-products")  }}
     </h1>
     <table class="broadcast-periods-table no-space-after">
         <tr>

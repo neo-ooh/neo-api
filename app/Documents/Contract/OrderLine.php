@@ -23,7 +23,7 @@ class OrderLine {
     public const TYPE_GUARANTEED_BONUS = 2;
     public const TYPE_BONUS_UPON_AVAIL = 3;
     public const TYPE_EXTENSION_STRATEGY = 4;
-    public const TYPE_ADSERVER_PRODUCT = 4;
+    public const TYPE_ADSERVER_PRODUCT = 5;
 
     public const COVID_TRAFFIC_FACTOR = [
         "Digital - Vertical [shopping]"   => 0.5,

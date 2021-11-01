@@ -82,6 +82,7 @@ return [
     "table-audience-segment"             => "Audience segment",
     "table-campaign-traffic"             => "Campaign Traffic",
     "table-city"                         => "City",
+    "table-address-city"                         => "Address/City",
     "table-cpm"                          => "CPM",
     "table-cost"                         => "Cost",
     "table-count-of-properties"          => "# of properties",

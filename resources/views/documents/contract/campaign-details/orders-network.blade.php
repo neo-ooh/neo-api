@@ -16,7 +16,7 @@
                             {{ __("contract.table-markets-properties-products") }}
                         </th>
                         <th>
-                            {{ __("contract.table-city") }}
+                            {{ __($network === 'otg' ? "contract.table-address-city" : "contract.table-city") }}
                         </th>
                         <th>
                             {{ __("contract.table-start-date") }}

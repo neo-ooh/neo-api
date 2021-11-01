@@ -73,6 +73,7 @@ au contrat dès que l’un ou l’autre ou les deux l’auront signé.",
 
     "table-audience-segment"            => "Segment d'audience",
     "table-city"                        => "Ville",
+    "table-address-city"                         => "Adresse/Ville",
     "table-cost"                        => "Coût",
     "table-count-of-properties"         => "# de propriétés",
     "table-count-of-screens-posters"    => "# d'écrans et affiches",

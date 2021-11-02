@@ -13,19 +13,19 @@ use Neo\Rules\AccessibleProperty;
 /**
  * Class Property
  *
- * @property int                         $actor_id
- * @property int                         $address_id
- * @property int                         $network_id
- * @property Date                        $created_at
- * @property Date                        $updated_at
+ * @property int                                   $actor_id
+ * @property int                                   $address_id
+ * @property int                                   $network_id
+ * @property Date                                  $created_at
+ * @property Date                                  $updated_at
  *
- * @property Actor                       $actor
- * @property PropertyTrafficSettings     $traffic
- * @property Address|null                $address
- * @property PropertyData                $data
- * @property OdooProperty                $odoo
- * @property Network                     $network
- * @property Collection<PropertyPicture> $pictures
+ * @property Actor                                 $actor
+ * @property PropertyTrafficSettings               $traffic
+ * @property Address|null                          $address
+ * @property PropertyData                          $data
+ * @property OdooProperty|null                     $odoo
+ * @property Network|null                          $network
+ * @property Collection<PropertyPicture>           $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
  */
 class Property extends SecuredModel {

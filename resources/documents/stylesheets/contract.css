@@ -728,7 +728,8 @@ footer .footer-table {
   text-align: left;
 }
 .property-purchases-table tr.purchase-row td.property-city {
-  font-weight: 600;
+  font-family: "poppins-bold";
+  font-weight: bold;
 }
 .property-purchases-table tr.purchase-row.last td {
   padding-bottom: 2mm;

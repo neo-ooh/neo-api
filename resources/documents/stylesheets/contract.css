@@ -713,6 +713,7 @@ footer .footer-table {
 .property-purchases-table tr th.property-city {
   padding: 2mm 1mm 1mm;
   text-align: center;
+  font-weight: 400;
 }
 .property-purchases-table tr th:nth-child(11), .property-purchases-table tr th.last {
   border-right: none;

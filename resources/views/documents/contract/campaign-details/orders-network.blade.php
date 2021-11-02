@@ -100,7 +100,7 @@
                                     {{ $propertiesOrders->first()->property_name }}
                                 </th>
                                 <th class="property-city">
-                                    {{ $propertiesOrders->first()->property_street .", ". $propertiesOrders->first()->property_city }}
+                                    {{ $propertiesOrders->first()->property_street .", " }}
                                 </th>
                                 <th></th>
                                 <th class="border-right"></th>
@@ -117,6 +117,7 @@
                             {{-- Loop over each purchase for this property --}}
                             @foreach($propertiesOrders as $purchase)
                                 @php
+                                $city = $loop->first ? $propertiesOrders->first()->property_city : ''
                                     $regionSpots += $purchase->quantity;
                                     $regionScreens += $purchase->nb_screens;
                                     $regionImpressions += $purchase->impressions;
@@ -126,7 +127,7 @@
 
                                 <tr class="purchase-row {{ $loop->last && !$isLastProperty ? 'last' : '' }} {{ $isLastProperty && $loop->last ? 'last-of-region' : '' }} {{ $network }}">
                                     <td class="product-type">{{ $purchase->product }}</td>
-                                    <td></td>
+                                    <td>{{ $city }}</td>
                                     <td>{{ $purchase->date_start }}</td>
                                     <td class="border-right">{{ $purchase->date_end }}</td>
                                     <td class="border-right">{{ $purchase->quantity }}</td>

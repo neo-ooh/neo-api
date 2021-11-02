@@ -70,7 +70,7 @@ class ContractScreenshot extends Model {
     */
 
     public function getFilePathAttribute() {
-        return "/bursts/$this->burst_id/$this->id.jpg";
+        return "bursts/$this->burst_id/$this->id.jpg";
     }
 
     /**

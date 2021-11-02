@@ -100,7 +100,7 @@
                                     {{ $propertiesOrders->first()->property_name }}
                                 </th>
                                 <th class="property-city">
-                                    {{ $propertiesOrders->first()->property_street .", ". $cityName }}
+                                    {{ $propertiesOrders->first()->property_street .", ". $propertiesOrders->first()->property_city }}
                                 </th>
                                 <th></th>
                                 <th class="border-right"></th>

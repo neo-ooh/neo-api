@@ -60,7 +60,9 @@ class SendContractFlightJob implements ShouldQueue {
 
         // Now we need to add each specified product
         foreach ($this->flight["selection"] as $selection) {
-            [$propertyId, $productId, $discount] = $selection;
+            [$propertyId, $productId, $discount, $spotsCount] = $selection;
+
+            $spotsCount = $spotsCount ?? 1;
 
             clock()->event("Handle product #$propertyId->$productId")->begin();
 
@@ -101,7 +103,7 @@ class SendContractFlightJob implements ShouldQueue {
                     "order_id"        => $this->contract->id,
                     "name"            => $product->name,
                     "price_unit"      => $product->list_price,
-                    "product_uom_qty" => 1.0,
+                    "product_uom_qty" => $spotsCount,
                     "customer_lead"   => 0.0,
                     "product_id"      => $product->product_variant_id[0],
                     "rental_start"    => $flightStart,

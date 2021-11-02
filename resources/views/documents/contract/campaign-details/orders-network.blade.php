@@ -135,7 +135,7 @@
                                     <td class="border-right">{{ $purchase->nb_weeks }}</td>
                                     <td class="border-right">{{ format($purchase->impressions) }}</td>
                                     <td class="{{ $order->show_investment ? "border-right" : "" }}">
-                                        {{ formatCurrency($purchase->media_value) }}
+                                        {{ formatCurrency(round($purchase->media_value)) }}
                                     </td>
                                     @if($order->show_investment)
                                         <td class="border-right">
@@ -166,7 +166,7 @@
                             <td @if($order->show_investment)
                                 class="border-right"
                                     @endif >
-                                {{ formatCurrency($regionMediaValue) }}
+                                {{ formatCurrency(round($regionMediaValue)) }}
                             </td>
                             @if($order->show_investment)
                                 <td class="border-right">
@@ -207,7 +207,7 @@
                         <td class="border-right">-</td>
                         <td class="border-right">{{ format($totalImpressions) }}</td>
                         <td class="{{ $order->show_investment ? "border-right" : "last" }}">
-                            {{ formatCurrency($totalMediaValue) }}
+                            {{ formatCurrency(round($totalMediaValue)) }}
                         </td>
                         @if($order->show_investment)
                             <td class="border-right">

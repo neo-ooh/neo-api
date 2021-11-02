@@ -25,7 +25,7 @@
                 <td class="placeholder">-</td>
             @endif
             <td>{{ format($guaranteedImpressions) }}</td>
-            <td>{{ formatCurrency($guaranteedValue) }}</td>
+            <td>{{ formatCurrency(round($guaranteedValue)) }}</td>
             @if($size === 'small' && $showInvestment)
                 <td>
                     {{ round($guaranteedDiscount) === 0.0 ? '-' : format($guaranteedDiscount) . "%" }}
@@ -48,7 +48,7 @@
                     <td class="placeholder">-</td>
                 @endif
                 <td>{{ format($buaImpressions) }}</td>
-                <td>{{ formatCurrency($buaValue) }}</td>
+                <td>{{ formatCurrency(round($buaValue)) }}</td>
                 @if($size === 'small' && $showInvestment)
                     <td> 100% </td>
                 @endif
@@ -68,7 +68,7 @@
                     <td class="placeholder">-</td>
                 @endif
                 <td>{{ format($guaranteedImpressions + $buaImpressions) }}</td>
-                <td>{{ formatCurrency($guaranteedValue + $buaValue) }}</td>
+                <td>{{ formatCurrency(round($guaranteedValue + $buaValue)) }}</td>
                 @if($size === 'small' && $showInvestment)
                     <td>
                         {{ (int)round($potentialDiscount) === 0 ? '-' : format($potentialDiscount) . "%" }}

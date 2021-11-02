@@ -127,7 +127,7 @@
 
                                 <tr class="purchase-row {{ $loop->last && !$isLastProperty ? 'last' : '' }} {{ $isLastProperty && $loop->last ? 'last-of-region' : '' }} {{ $network }}">
                                     <td class="product-type">{{ $purchase->product }}</td>
-                                    <td>{{ $city }}</td>
+                                    <td class="property-city">{{ $city }}</td>
                                     <td>{{ $purchase->date_start }}</td>
                                     <td class="border-right">{{ $purchase->date_end }}</td>
                                     <td class="border-right">{{ $purchase->quantity }}</td>

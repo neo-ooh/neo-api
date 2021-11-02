@@ -83,6 +83,7 @@ class OrderLine {
     public string $property_type;
     public string $property_name;
     public string $property_state;
+    public string $property_street;
     public float $property_annual_traffic;
     public string $property_lat;
     public string $property_lng;
@@ -124,7 +125,6 @@ class OrderLine {
                             //                            "order_line/segment",
                             "order_line/shopping_center_id/annual_traffic",
                             "order_line/shopping_center_id/center_type",
-                            "order_line/shopping_center_id/city",
                             "order_line/shopping_center_id/city",
                             "order_line/shopping_center_id/name",
                             "order_line/shopping_center_id/partner_latitude",
@@ -179,6 +179,7 @@ class OrderLine {
 
         $this->property_name           = $record["order_line/shopping_center_id/name"];
         $this->property_city           = $record["order_line/shopping_center_id/city"];
+        $this->property_street           = $record["order_line/shopping_center_id/street"];
         $this->property_state          = $record["order_line/shopping_center_id/state_id"];
         $this->property_lat            = $record["order_line/shopping_center_id/partner_latitude"];
         $this->property_lng            = $record["order_line/shopping_center_id/partner_longitude"];

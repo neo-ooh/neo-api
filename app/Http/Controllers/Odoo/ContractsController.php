@@ -52,7 +52,7 @@ class ContractsController {
         }
 
         if($contract->state !== 'draft' || $contract->state !== 'sale') {
-            return new InvalidArgumentException("Cannot update a contract whose state is ". $contract->state, "");
+            return new InvalidArgumentException("Cannot update a contract whose state is ". $contract->state);
         }
 
         SendContractJob::dispatchSync($contract, $request->input("flights"), $request->input("clearOnSend"));

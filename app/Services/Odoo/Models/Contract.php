@@ -27,6 +27,7 @@ use Neo\Services\API\Odoo\Model;
  * @property array $company_id
  * @property array<int> $campaign_ids
  * @property string $access_url
+ * @property string $state
  */
 class Contract extends Model {
     public static string $slug = "sale.order";

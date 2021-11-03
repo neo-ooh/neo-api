@@ -98,6 +98,6 @@ class SendContractJob implements ShouldQueue {
         $flightEnd = Carbon::parse($flight['end'])->toDateString();
         $flightType = ucFirst($flight["type"]);
 
-         return "Flight #$flightIndex ($flightType) [$flightStart -> $flightEnd]";
+         return "Flight #". $flightIndex + 1 ." ($flightType) [$flightStart -> $flightEnd]";
     }
 }

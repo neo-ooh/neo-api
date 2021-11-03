@@ -30,9 +30,11 @@ use Neo\Services\Odoo\OdooConfig;
 class SendContractFlightJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {
+    public $tries = 1;
+    public $timeout = 300;
+    public $retryAfter = 330;
 
-    }
+    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {}
 
     public function handle() {
         clock()->event("Send Flight")->begin();

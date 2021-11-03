@@ -21,7 +21,7 @@ return [
     |
     */
 
-    'default' => env('QUEUE_CONNECTION', 'redis'),
+    'default' => env('QUEUE_CONNECTION', 'default'),
 
     /*
     |--------------------------------------------------------------------------
@@ -49,14 +49,6 @@ return [
             'retry_after' => 90,
         ],
 
-        'beanstalkd' => [
-            'driver' => 'beanstalkd',
-            'host' => 'localhost',
-            'queue' => 'default',
-            'retry_after' => 90,
-            'block_for' => 0,
-        ],
-
         'sqs' => [
             'driver' => 'sqs',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -67,13 +59,21 @@ return [
             'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
         ],
 
-        'redis' => [
+        'default' => [
             'driver' => 'redis',
             'connection' => 'default',
             'queue' => env('REDIS_QUEUE', 'default'),
             'retry_after' => 90,
             'block_for' => null,
         ],
+
+//        'beanstalkd' => [
+//            'driver' => 'beanstalkd',
+//            'host' => 'localhost',
+//            'queue' => 'default',
+//            'retry_after' => 90,
+//            'block_for' => 0,
+//        ],
 
     ],
 

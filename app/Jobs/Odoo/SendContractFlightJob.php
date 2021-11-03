@@ -31,8 +31,7 @@ class SendContractFlightJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 1;
-    public $timeout = 300;
-    public $retryAfter = 330;
+    public $timeout = 3600;
 
     public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {}
 

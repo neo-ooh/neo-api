@@ -31,6 +31,8 @@ class StoreHeadlineRequest extends FormRequest
             "messages" => ["required", "array"],
             "messages.*.locale" => ["required", "string"],
             "messages.*.message" => ["required", "string"],
+            "capabilities" => ["sometimes", "array"],
+            "capabilities.*" => ["integer", "exists:capabilities,id"],
         ];
     }
 }

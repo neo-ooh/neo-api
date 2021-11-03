@@ -21,11 +21,25 @@ class HeadlinesController extends Controller {
     }
 
     public function current(CurrentHeadlinesRequest $request) {
-        return new Response(Headline::query()
-                                    ->orderBy("end_date", "desc")
-                                    ->whereDate("end_date", ">", Date::now())
-                                    ->with("messages")
-                                    ->get());
+        $headlines = Headline::query()
+                             ->orderBy("end_date", "desc")
+                             ->whereDate("end_date", ">", Date::now())
+                             ->with(["messages", "capabilities"])
+                             ->get();
+
+
+        $userCapabilities = Auth::user()->capabilities->pluck("id");
+
+        $headlines = $headlines->filter(function($headline) use ($userCapabilities) {
+             if($headline->capabilities->count() === 0) {
+                 return true;
+             }
+
+             return $userCapabilities->diff($headline->capabilities->pluck("id"))
+                                     ->count() !== $userCapabilities->count();
+        });
+
+        return new Response($headlines);
     }
 
     public function show(ShowHeadlineRequest $request, Headline $headline) {
@@ -39,6 +53,8 @@ class HeadlinesController extends Controller {
         $headline->style    = $inputs["style"];
         $headline->end_date = $inputs["end_date"];
         $headline->save();
+
+        $headline->capabilities()->sync($request->input("capabilities", []));
 
         $messages = $inputs["messages"];
 

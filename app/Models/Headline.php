@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Ramsey\Collection\Collection;
+use Illuminate\Support\Collection;
 
 /**
  * Class Headline
@@ -25,6 +26,7 @@ use Ramsey\Collection\Collection;
  *
  * @property ?Actor actor
  * @property Collection<HeadlineMessage> messages
+ * @property Collection<Capability> capabilities
  *
  */
 class Headline extends Model
@@ -55,6 +57,10 @@ class Headline extends Model
 
     public function messages(): HasMany {
         return $this->hasMany(HeadlineMessage::class, "headline_id", "id");
+    }
+
+    public function capabilities(): BelongsToMany {
+        return $this->belongsToMany(Capability::class, "headline_capabilities", "headline_id", "capability_id");
     }
 
     /**

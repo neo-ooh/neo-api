@@ -43,7 +43,7 @@ class HeadlinesController extends Controller {
     }
 
     public function show(ShowHeadlineRequest $request, Headline $headline) {
-        return new Response($headline->load("messages"));
+        return new Response($headline->load(["messages", "capabilities"]));
     }
 
     public function store(StoreHeadlineRequest $request) {

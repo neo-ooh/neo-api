@@ -51,7 +51,7 @@ class ContractsController {
             return new ResourceNotFoundException("Could not found any contract with name $contractName");
         }
 
-        if($contract->state !== 'draft' || $contract->state !== 'sale') {
+        if($contract->state !== 'draft' && $contract->state !== 'sale') {
             return new InvalidArgumentException("Cannot update a contract whose state is ". $contract->state);
         }
 

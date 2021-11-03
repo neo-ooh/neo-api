@@ -80,7 +80,7 @@ class CampaignPlannerSavesController {
             $p->odoo?->computeCategoriesValues();
         } );
 
-        $campaignPlannerSave->load(["actor.name"]);
+//        $campaignPlannerSave->load(["actor.name"]);
 
         return new Response(["save" => $campaignPlannerSave, "properties" => $properties]);
     }

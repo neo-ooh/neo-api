@@ -66,6 +66,12 @@ class SendContractFlightJobBatch implements ShouldQueue {
             [$propertyId, $productId, $discount, $spotsCount] = $selection;
 
             $product = $products->first(fn($p) => $p->property_id === $propertyId && $p->product_category_id === $productId);
+
+            if(!$product) {
+                clock("Could not find product for selection pair: [$propertyId, $productId]");
+                continue;
+            }
+
             $orderLines->push([
                 "order_id"        => $this->contract->id,
                 "name"            => $product->name,

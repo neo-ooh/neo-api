@@ -19,6 +19,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
+use Neo\Services\Odoo\Models\OrderLine;
 use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\OdooConfig;
 
@@ -83,7 +84,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
 
         // Now that we have all our orderlines, push them to the server
-        $client->create(Product::$slug, $orderLines->toArray());
+        $client->create(OrderLine::$slug, $orderLines->toArray());
 
         clock()->event("Send Flight")->end();
     }

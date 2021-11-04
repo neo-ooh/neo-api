@@ -25,7 +25,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon               $updated_at
  *
  * @property \Neo\Models\Property $property
- * @property Collection<Product>  $products
+ * @property Collection<Product>  $products Guaranteed products of the property
+ * @property Collection<Product>  $all_products Guaranteed and bonus products of the property
  * @property Collection<ProductCategory>  $products_categories
  */
 class Property extends Model {
@@ -46,7 +47,12 @@ class Property extends Model {
     }
 
     public function products(): HasMany {
-        return $this->hasMany(Product::class, "property_id", "property_id");
+        return $this->hasMany(Product::class, "property_id", "property_id")
+                    ->where("is_bonus", "=", false);
+    }
+
+    public function all_products(): HasMany {
+        return $this->hasMany(Product::class, "property_id", "property_id")
     }
 
     public function products_categories(): BelongsToMany {

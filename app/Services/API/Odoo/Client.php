@@ -113,14 +113,13 @@ class Client {
 
     public function create(string $model, array $fields) {
         if (config('app.env') !== "production") {
-            $__clockString = json_encode($fields, JSON_THROW_ON_ERROR);
-            clock()->event("CREATE: " . $model . "[$__clockString]")->color("purple")->begin();
+            clock()->event("CREATE: " . $model)->color("purple")->begin();
         }
 
         $response =  $this->client->create($model, $fields);
 
         if (config('app.env') !== "production") {
-            clock()->event("CREATE: " . $model . "[$__clockString]")->end();
+            clock()->event("CREATE: " . $model)->end();
         }
 
         return $response;

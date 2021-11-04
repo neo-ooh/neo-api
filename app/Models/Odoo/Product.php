@@ -11,6 +11,7 @@
 namespace Neo\Models\Odoo;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -44,6 +45,7 @@ class Product extends Model {
         "quantity",
         "unit_price",
         "odoo_variant_id",
+        "is_bonus",
     ];
 
     public $incrementing = false;
@@ -60,5 +62,35 @@ class Product extends Model {
 
     public function category(): BelongsTo {
         return $this->belongsTo(ProductCategory::class, "product_category_id", "id");
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @param Builder $query
+     * @param array   $columns
+     * @param array   $values
+     *
+     * @return Builder
+     */
+    public static function scopeWhereInMultiple(Builder $query, array $columns, array $values)
+    {
+        collect($values)
+            ->transform(function ($v) use ($columns) {
+                $clause = [];
+                foreach ($columns as $index => $column) {
+                    $clause[] = [$column, '=', $v[$index]];
+                }
+                return $clause;
+            })
+            ->each(function($clause, $index) use ($query) {
+                $query->where($clause, null, null, $index === 0 ? 'and' : 'or');
+            });
+
+        return $query;
     }
 }

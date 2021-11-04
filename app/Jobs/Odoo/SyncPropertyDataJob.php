@@ -56,11 +56,6 @@ class SyncPropertyDataJob implements ShouldQueue {
         // for each product, we want to store its category, which is shared with other properties
         /** @var Product $distRentalProduct */
         foreach ($propertyRentalProducts as $distRentalProduct) {
-            // Filter out bonus products
-            if($distRentalProduct->bonus) {
-                continue;
-            }
-
             // Get or create the product category from our db
             $productCategory = $this->getProductCategory($distRentalProduct->categ_id[0], $odooProductTypesMap[$distRentalProduct->product_type_id[0]], $distRentalProduct->categ_id[1]);
 
@@ -72,9 +67,10 @@ class SyncPropertyDataJob implements ShouldQueue {
             ], [
                 "product_category_id" => $productCategory->id,
                 "name" => $distRentalProduct->name,
-                "odoo_variant_id" => $distRentalProduct->product_variant_id[0],
                 "quantity" => $distRentalProduct->nb_screen,
                 "unit_price" => $distRentalProduct->list_price,
+                "odoo_variant_id" => $distRentalProduct->product_variant_id[0],
+                "is_bonus" => $distRentalProduct->bonus
             ]);
 
             $products[] = $product->odoo_id;

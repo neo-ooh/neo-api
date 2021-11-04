@@ -17,14 +17,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Neo\Documents\Contract\Order;
-use Neo\Models\Odoo\ProductCategory;
-use Neo\Models\Odoo\ProductType;
-use Neo\Models\Property;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
-use Neo\Services\Odoo\Models\OrderLine;
 use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\OdooConfig;
 
@@ -34,7 +28,8 @@ class SendContractFlightJobBatch implements ShouldQueue {
     public $tries = 1;
     public $timeout = 3600;
 
-    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {}
+    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {
+    }
 
     public function handle() {
         clock()->event("Send Flight")->begin();
@@ -73,10 +68,10 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $orderLines->push([
                 "order_id"        => $this->contract->id,
                 "name"            => $product->name,
-                "price_unit"      => $product->list_price,
+                "price_unit"      => $product->unit_price,
                 "product_uom_qty" => $spotsCount,
                 "customer_lead"   => 0.0,
-                "product_id"      => $product->product_variant_id[0],
+                "product_id"      => $product->odoo_variant_id,
                 "rental_start"    => $flightStart,
                 "rental_end"      => $flightEnd,
                 "is_rental_line"  => 1,

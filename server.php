@@ -8,6 +8,8 @@
  * @neo/api - server.php
  */
 
+set_time_limit(120);
+
 /**
  * Laravel - A PHP Framework For Web Artisans
  *

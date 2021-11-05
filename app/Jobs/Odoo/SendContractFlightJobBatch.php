@@ -27,7 +27,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 1;
-    public $timeout = 3600;
+    public $timeout = 30;
 
     protected Collection $products;
 
@@ -105,6 +105,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
         do {
             /** @var OrderLine $line */
+            clock($this->consumedProducts);
             foreach ($overbookedLines as $line) {
                 /** @var Product $lineProduct */
                 $lineProduct = $this->products->firstWhere("odoo_variant_id", "=", $line->product_id[0]);

@@ -159,7 +159,7 @@ abstract class Model implements Arrayable {
      * @param mixed  $id Unique ID of the record
      * @return static
      */
-    public static function create(Client $client, array $fields, $pullRecord = true): static {
+    public static function create(Client $client, array $fields, $pullRecord = true): static|int {
         $recordId = $client->create(static::$slug, $fields);
         return $pullRecord ? static::get($client, $recordId) : $recordId;
     }

@@ -107,7 +107,6 @@ class SendContractFlightJobBatch implements ShouldQueue {
             /** @var OrderLine $line */
             foreach ($overbookedLines as $line) {
                 /** @var Product $lineProduct */
-                clock($line);
                 $lineProduct = $this->products->firstWhere("odoo_variant_id", "=", $line->product_id[0]);
                 $product     = $this->products->filter(fn($p) =>
                     $p->property_id === $lineProduct->property_id && $p->product_category_id === $lineProduct->product_category_id)
@@ -149,11 +148,11 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
         clock($orderLinesToRemove);
 
-//        if($orderLinesToRemove->count() > 0) {
-//            OrderLine::delete($client, [
-//                ["id", "in", $orderLinesToRemove->toArray()]
-//            ]);
-//        }
+        if($orderLinesToRemove->count() > 0) {
+            OrderLine::delete($client, [
+                ["id", "in", $orderLinesToRemove->toArray()]
+            ]);
+        }
 
         clock()->event("Send Flight")->end();
     }

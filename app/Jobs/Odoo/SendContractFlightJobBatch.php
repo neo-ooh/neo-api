@@ -102,7 +102,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
                     "price_unit"      => 0,
                     "product_uom_qty" => 1.0,
                     "customer_lead"   => 0.0,
-                    "product_id"      => $linkedProduct->product_variant_id[0],
+                    "product_id"      => $linkedProduct->odoo_variant_id,
                     "rental_start"    => $flightStart,
                     "rental_end"      => $flightEnd,
                     "is_rental_line"  => 1,

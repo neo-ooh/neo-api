@@ -16,6 +16,7 @@ class AlterOdooPropertiesProductsTableLinkedProduct extends Migration {
     public function up() {
         Schema::table('odoo_properties_products', function (Blueprint $table) {
             $table->unique("odoo_id");
+            $table->unique("odoo_variant_id");
             $table->unsignedBigInteger("linked_product_id")
                   ->nullable()
                   ->default(null)

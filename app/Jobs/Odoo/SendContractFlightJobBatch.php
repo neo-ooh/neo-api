@@ -29,100 +29,178 @@ class SendContractFlightJobBatch implements ShouldQueue {
     public $tries = 1;
     public $timeout = 3600;
 
-    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {
-    }
+    protected Collection $products;
+
+    protected string $flightType;
+    protected string $flightStart;
+    protected string $flightEnd;
+
+    protected \Illuminate\Support\Collection $consumedProducts;
+
+    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {}
 
     public function handle() {
         clock()->event("Send Flight")->begin();
 
+        $this->consumedProducts = collect();
         $client = OdooConfig::fromConfig()->getClient();
 
-        $flightType  = $this->flight["type"];
-        $flightStart = Carbon::parse($this->flight['start'])->toDateString();
-        $flightEnd   = Carbon::parse($this->flight['end'])->toDateString();
+        $this->flightType  = $this->flight["type"];
+        $this->flightStart = Carbon::parse($this->flight['start'])->toDateString();
+        $this->flightEnd   = Carbon::parse($this->flight['end'])->toDateString();
 
         clock()->event("Create flight in Odoo")->color('purple')->begin();
 
         clock(Campaign::create($client, [
             "order_id"   => $this->contract->id,
             "state"      => "draft",
-            "date_start" => $flightStart,
-            "date_end"   => $flightEnd,
+            "date_start" => $this->flightStart,
+            "date_end"   => $this->flightEnd,
         ], pullRecord: false));
 
         clock()->event("Create flight in Odoo")->end();
 
         clock()->event("Prepare order lines")->begin();
         // Load all the Connect's products included in the flight
-        /** @var Collection $products */
-        $products = Product::query()
+        $this->products = Product::query()
                            ->whereInMultiple(['property_id', 'product_category_id'], $this->flight["selection"])
-                           ->where("is_bonus", "=", $flightType === "bua")
+                           ->where("is_bonus", "=", $this->flightType === "bua")
                            ->get();
 
-        $linkedProductsIds = $products->pluck("linked_product_id")->filter();
-        $products = $products->merge(Product::query()
+        $linkedProductsIds = $this->products->pluck("linked_product_id")->filter();
+        $this->products = $this->products->merge(Product::query()
                                 ->whereIn("odoo_id", $linkedProductsIds)
                                 ->get())->unique();
 
-        $orderLines = collect();
+        $orderLinesToAdd = collect();
 
         foreach ($this->flight["selection"] as $selection) {
             [$propertyId, $productId, $discount, $spotsCount] = $selection;
 
             /** @var Product|null $product */
-            $product = $products->first(fn($p) => $p->property_id === $propertyId && $p->product_category_id === $productId);
+            $product = $this->products->first(fn($p) => $p->property_id === $propertyId && $p->product_category_id === $productId);
 
             if (!$product) {
                 clock("Could not find product for selection pair: [$propertyId, $productId]");
                 continue;
             }
 
-            $orderLines->push([
-                "order_id"        => $this->contract->id,
-                "name"            => $product->name,
-                "price_unit"      => $product->unit_price,
-                "product_uom_qty" => $spotsCount,
-                "customer_lead"   => 0.0,
-                "product_id"      => $product->odoo_variant_id,
-                "rental_start"    => $flightStart,
-                "rental_end"      => $flightEnd,
-                "is_rental_line"  => 1,
-                "is_linked_line"  => 0,
-                "discount"        => $flightType === 'bonus' ? 100.0 : $discount,
-                "sequence"        => $this->flightIndex * 10,
-            ]);
-
-            if ($product->linked_product_id) {
-                /** @var Product|null $product */
-                $linkedProduct = $products->get($product->linked_product_id);
-
-                if (!$linkedProduct) {
-                    continue;
-                }
-
-                $orderLines->push([
-                    "order_id"        => $this->contract->id,
-                    "name"            => $linkedProduct->name,
-                    "price_unit"      => 0,
-                    "product_uom_qty" => 1.0,
-                    "customer_lead"   => 0.0,
-                    "product_id"      => $linkedProduct->odoo_variant_id,
-                    "rental_start"    => $flightStart,
-                    "rental_end"      => $flightEnd,
-                    "is_rental_line"  => 1,
-                    "is_linked_line"  => 1,
-                    "discount"        => 0,
-                    "sequence"        => $this->flightIndex * 10
-                ]);
-            }
+            $orderLinesToAdd->push(...$this->buildLines($product, spotsCount: $spotsCount, discount: $discount));
         }
 
         clock()->event("Prepare order lines")->end();
 
         // Now that we have all our orderlines, push them to the server
-        $client->create(OrderLine::$slug, $orderLines->toArray());
+        $addedOrderLines = $client->create(OrderLine::$slug, $orderLinesToAdd->toArray());
+
+        // We now want to load the order lines that we just added, check if they are some that are overbooked, and try to find a replacement for these ones
+
+        // Load all the orderlines we just added
+        $orderLinesAdded = OrderLine::getMultiple($client, $addedOrderLines->toArray());
+        $overbookedLines = $orderLinesAdded->where("over_qty", ">", "0");
+
+        // Reset the list of orderlines to add
+        $orderLinesToAdd = collect();
+        $orderLinesToRemove = collect();
+
+        do {
+            /** @var OrderLine $line */
+            foreach ($overbookedLines as $line) {
+                /** @var Product $lineProduct */
+                $lineProduct = $this->products->firstWhere("odoo_variant_id", "=", $line->product_id);
+                $product     = $this->products->filter(fn($p) =>
+                    $p->property_id === $lineProduct->property_id && $p->product_category_id === $lineProduct->product_category_id)
+                                          ->whereNotIn("odoo_id", $this->consumedProducts)
+                                          ->first();
+
+                if(!$product) {
+                    // No more products available, nothing left to do
+                    continue;
+                }
+
+                // Set up the new lines to try
+                $spotsCount = $line->product_uom_qty;
+                $discount = $line->discount;
+
+                $orderLinesToAdd->push(...$this->buildLines($product, $spotsCount, $discount));
+
+                // Mark the previous lines as to be removed
+                $orderLinesToRemove->push($line->id);
+
+                if($lineProduct->linked_product_id && $linkedProduct = $this->products->get($lineProduct->linked_product_id)) {
+                    $orderLinesToRemove->push($orderLinesAdded->first(/**
+                     * @param OrderLine $line
+                     * @return mixed
+                     */ fn($line) => $line->is_linked_line && $line->product_id === $linkedProduct->odoo_variant_id)->id);
+                }
+            }
+
+            if($orderLinesToAdd->count() === 0) {
+                // No line to add, we stop adding stuff here
+                break;
+            }
+
+            // Now that we have all our orderlines, push them to the server and load them for verification
+            $addedOrderLines = $client->create(OrderLine::$slug, $orderLinesToAdd->toArray());
+            $orderLines = OrderLine::getMultiple($client, $addedOrderLines->toArray());
+            $overbookedLines = $orderLines->where("over_qty", ">", "0");
+        } while($overbookedLines->count() > 0);
+
+        if($orderLinesToRemove->count() > 0) {
+            OrderLine::delete($client, [
+                ["id", "in", $orderLinesToRemove->toArray()]
+            ]);
+        }
 
         clock()->event("Send Flight")->end();
+    }
+
+    protected function buildLines(Product $product, float $spotsCount, float $discount) {
+        $orderLines = collect();
+
+        $orderLines->push([
+            "order_id"        => $this->contract->id,
+            "name"            => $product->name,
+            "price_unit"      => $product->unit_price,
+            "product_uom_qty" => $spotsCount,
+            "customer_lead"   => 0.0,
+            "product_id"      => $product->odoo_variant_id,
+            "rental_start"    => $this->flightStart,
+            "rental_end"      => $this->flightEnd,
+            "is_rental_line"  => 1,
+            "is_linked_line"  => 0,
+            "discount"        => $this->flightType === 'bonus' ? 100.0 : $discount,
+            "sequence"        => $this->flightIndex * 10,
+        ]);
+
+        $this->consumedProducts->push($product->odoo_id);
+
+        if (!$product->linked_product_id) {
+            return $orderLines;
+        }
+
+        /** @var Product|null $product */
+        $linkedProduct = $this->products->get($product->linked_product_id);
+
+        if (!$linkedProduct) {
+            return $orderLines;
+        }
+
+        $orderLines->push([
+            "order_id"        => $this->contract->id,
+            "name"            => $linkedProduct->name,
+            "price_unit"      => 0,
+            "product_uom_qty" => 1.0,
+            "customer_lead"   => 0.0,
+            "product_id"      => $linkedProduct->odoo_variant_id,
+            "rental_start"    => $this->flightStart,
+            "rental_end"      => $this->flightEnd,
+            "is_rental_line"  => 1,
+            "is_linked_line"  => 1,
+            "discount"        => 0,
+            "sequence"        => $this->flightIndex * 10
+        ]);
+
+        return $orderLines;
     }
 }

@@ -26,6 +26,13 @@ use Neo\Services\API\Odoo\Model;
  * @property array  $product_id
  * @property array  $product_template_id
  * @property int    $over_qty
+ * @property int    $product_uom_qty
+ * @property int    $customer_lead
+ * @property int    $rental_start
+ * @property int    $rental_end
+ * @property int    $is_rental_line
+ * @property int    $is_linked_line
+ * @property int    $discount
  * ...
  */
 class OrderLine extends Model {

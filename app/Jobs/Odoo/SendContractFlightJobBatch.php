@@ -60,6 +60,11 @@ class SendContractFlightJobBatch implements ShouldQueue {
                            ->where("is_bonus", "=", $flightType === "bua")
                            ->get();
 
+        $linkedProductsIds = $products->pluck("linked_product_id")->filter();
+        $products = $products->merge(Product::query()
+                                ->whereIn("odoo_id", $linkedProductsIds)
+                                ->get());
+
         $orderLines = collect();
 
         foreach ($this->flight["selection"] as $selection) {
@@ -90,7 +95,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
             if ($product->linked_product_id) {
                 /** @var Product|null $product */
-                $linkedProduct = $products->get($product->linked_product_id) ?? Product::query()->where("odoo_id", $product->linked_product_id)->first();
+                $linkedProduct = $products->get($product->linked_product_id);
 
                 if (!$linkedProduct) {
                     continue;

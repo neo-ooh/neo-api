@@ -24,6 +24,8 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  * @property string                      $name
  * @property int                         $quantity
  * @property int                         $odoo_variant_id
+ * @property boolean                     $is_bonus
+ * @property int                         $linked_product_id
  * @property Carbon                      $created_at
  * @property Carbon                      $updated_at
  *
@@ -31,11 +33,11 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  * @property Collection<ProductCategory> $products_categories
  */
 class Product extends Model {
-    use HasCompositePrimaryKey;
 
     protected $table = "odoo_properties_products";
 
-    protected $primaryKey = ["property_id", "product_category_id"];
+    protected $primaryKey = "odoo_id";
+    public $incrementing = false;
 
     protected $fillable = [
         "property_id",
@@ -46,9 +48,13 @@ class Product extends Model {
         "unit_price",
         "odoo_variant_id",
         "is_bonus",
+        "linked_product_id",
     ];
 
-    public $incrementing = false;
+    protected $casts = [
+        "is_bonus" => "boolean",
+    ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -77,8 +83,7 @@ class Product extends Model {
      *
      * @return Builder
      */
-    public static function scopeWhereInMultiple(Builder $query, array $columns, array $values)
-    {
+    public static function scopeWhereInMultiple(Builder $query, array $columns, array $values) {
         collect($values)
             ->transform(function ($v) use ($columns) {
                 $clause = [];
@@ -87,7 +92,7 @@ class Product extends Model {
                 }
                 return $clause;
             })
-            ->each(function($clause, $index) use ($query) {
+            ->each(function ($clause, $index) use ($query) {
                 $query->where($clause, null, null, $index === 0 ? 'and' : 'or');
             });
 

@@ -10,15 +10,9 @@
 
 namespace Neo\Jobs\Odoo;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Console\Command;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Neo\Jobs\PullPropertyAddressFromOdooJob;
-use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\Property;
+use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -46,18 +40,20 @@ class SynchronizeProperties extends Command {
     public function handle(): int {
         $client = OdooConfig::fromConfig()->getClient();
 
-        $properties = Property::all("property_id");
-
+        $properties = Property::all();
 
         $progressBar = $this->makeProgressBar($properties->count());
-        $progressBar->start();
         $progressBar->setMessage("Syncing...");
+        $progressBar->start();
 
-        foreach($properties as $property) {
+//        $odooProperties = \Neo\Services\Odoo\Models\Property::getMultiple($client, $properties->pluck("odoo_id")->toArray());
+//        $odooProducts = Product::all($client);
+
+        foreach ($properties as $property) {
             $progressBar->setMessage("Syncing property #" . $property->property_id);
 
-            PullPropertyAddressFromOdooJob::dispatchSync($property->getKey());
-            SyncPropertyDataJob::dispatchSync($property->getKey(), $client);
+//            PullPropertyAddressFromOdooJob::dispatchSync($property->getKey());
+            SynchronizePropertyData::dispatchSync($property->getKey(), $client);
 
             $progressBar->advance();
         }

@@ -52,7 +52,7 @@ class Property extends Model {
     }
 
     public function all_products(): HasMany {
-        return $this->hasMany(Product::class, "property_id", "property_id")
+        return $this->hasMany(Product::class, "property_id", "property_id");
     }
 
     public function products_categories(): BelongsToMany {

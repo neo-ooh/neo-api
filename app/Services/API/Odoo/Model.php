@@ -110,7 +110,7 @@ abstract class Model implements Arrayable {
      * @return Collection<static>
      */
     public static function getMultiple(Client $client, array|Collection $ids): Collection {
-        return $client->getById(static::$slug, $ids, static::$fields)->map(fn($record) => new static($client, $record));
+        return $client->getById(static::$slug, $ids, static::$fields)->mapWithKeys(fn($record) => [$record[static::$key] => new static($client, $record)]);
     }
 
     /**

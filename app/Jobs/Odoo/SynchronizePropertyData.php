@@ -15,24 +15,29 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\ProductType;
 use Neo\Services\API\Odoo\Client;
 use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\Models\Property;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
-class SyncPropertyDataJob implements ShouldQueue {
+class SynchronizePropertyData implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected int $propertyId, protected Client $client) {
-    }
+    public function __construct(protected int $propertyId, protected Client $client, protected ?Property $odooProperty = null, protected ?Collection $odooProducts = null) {}
 
     public function handle() {
         /** @var \Neo\Models\Odoo\Property $odooProperty */
         $odooProperty = \Neo\Models\Odoo\Property::findOrFail($this->propertyId);
 
         // We are go, let's start by pulling the property from Odoo.
-        $odooPropertyDist = Property::get($this->client, $odooProperty->odoo_id);
+        $odooPropertyDist = $this->odooProperty ?? Property::get($this->client, $odooProperty->odoo_id);
+
+        if(!$odooPropertyDist) {
+            return;
+        }
 
         // We want to pull all the rental products of the property
         $propertyRentalProducts = Product::getMultiple($this->client, $odooPropertyDist->rental_product_ids);
@@ -45,7 +50,7 @@ class SyncPropertyDataJob implements ShouldQueue {
         }
 
         // Map each odoo product type id with Connect's ids
-        $odooProductTypesMap = ProductType::query()
+        $odooProductTypesMap = $this->odooProducts ?? ProductType::query()
                                           ->whereIn("odoo_id", $odooProductTypesIds)
                                           ->get()
                                           ->mapWithKeys(fn($productType) => [$productType->odoo_id => $productType->id]);
@@ -62,21 +67,22 @@ class SyncPropertyDataJob implements ShouldQueue {
             // Store or update the product in our db
             /** @var \Neo\Models\Odoo\Product $product */
             $product = \Neo\Models\Odoo\Product::query()->updateOrCreate([
-                "property_id" => $odooProperty->property_id,
                 "odoo_id" => $distRentalProduct->id,
             ], [
+                "property_id" => $odooProperty->property_id,
                 "product_category_id" => $productCategory->id,
                 "name" => $distRentalProduct->name,
                 "quantity" => $distRentalProduct->nb_screen,
                 "unit_price" => $distRentalProduct->list_price,
                 "odoo_variant_id" => $distRentalProduct->product_variant_id[0],
-                "is_bonus" => $distRentalProduct->bonus
+                "is_bonus" => !!$distRentalProduct->bonus,
+                "linked_product_id" => !!$distRentalProduct->linked_product_id ? $distRentalProduct->linked_product_id[0] : null,
             ]);
 
             $products[] = $product->odoo_id;
         }
 
-        $odooProperty->products()->whereNotIn("odoo_id", $products)->delete();
+        $odooProperty->all_products()->whereNotIn("odoo_id", $products)->delete();
     }
 
     protected function pullProductType(int $odooProductTypeId): void {

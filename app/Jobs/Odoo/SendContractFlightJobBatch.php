@@ -17,10 +17,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\Models\Odoo\Product;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\Models\OrderLine;
-use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\OdooConfig;
 
 class SendContractFlightJobBatch implements ShouldQueue {
@@ -55,19 +55,20 @@ class SendContractFlightJobBatch implements ShouldQueue {
         clock()->event("Prepare order lines")->begin();
         // Load all the Connect's products included in the flight
         /** @var Collection $products */
-        $products = \Neo\Models\Odoo\Product::query()
-                                            ->whereInMultiple(['property_id', 'product_category_id'], $this->flight["selection"])
-                                            ->where("is_bonus", "=", $flightType === "bua")
-                                            ->get();
+        $products = Product::query()
+                           ->whereInMultiple(['property_id', 'product_category_id'], $this->flight["selection"])
+                           ->where("is_bonus", "=", $flightType === "bua")
+                           ->get();
 
         $orderLines = collect();
 
         foreach ($this->flight["selection"] as $selection) {
             [$propertyId, $productId, $discount, $spotsCount] = $selection;
 
+            /** @var Product|null $product */
             $product = $products->first(fn($p) => $p->property_id === $propertyId && $p->product_category_id === $productId);
 
-            if(!$product) {
+            if (!$product) {
                 clock("Could not find product for selection pair: [$propertyId, $productId]");
                 continue;
             }
@@ -82,9 +83,34 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 "rental_start"    => $flightStart,
                 "rental_end"      => $flightEnd,
                 "is_rental_line"  => 1,
+                "is_linked_line"  => 0,
                 "discount"        => $flightType === 'bonus' ? 100.0 : $discount,
                 "sequence"        => $this->flightIndex * 10,
             ]);
+
+            if ($product->linked_product_id) {
+                /** @var Product|null $product */
+                $linkedProduct = Product::query()->where("odoo_id", $product->linked_product_id)->first();
+
+                if (!$linkedProduct) {
+                    continue;
+                }
+
+                $orderLines->push([
+                    "order_id"        => $this->contract->id,
+                    "name"            => $linkedProduct->name,
+                    "price_unit"      => 0,
+                    "product_uom_qty" => 1.0,
+                    "customer_lead"   => 0.0,
+                    "product_id"      => $linkedProduct->product_variant_id[0],
+                    "rental_start"    => $flightStart,
+                    "rental_end"      => $flightEnd,
+                    "is_rental_line"  => 1,
+                    "is_linked_line"  => 1,
+                    "discount"        => 0,
+                    "sequence"        => $this->flightIndex * 10
+                ]);
+            }
         }
         clock()->event("Prepare order lines")->end();
 

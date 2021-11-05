@@ -15,7 +15,7 @@ use InvalidArgumentException;
 use Neo\Http\Controllers\Controller;
 use Neo\Http\Requests\Odoo\Properties\DestroyPropertyRequest;
 use Neo\Http\Requests\Odoo\Properties\StorePropertyRequest;
-use Neo\Jobs\Odoo\SyncPropertyDataJob;
+use Neo\Jobs\Odoo\SynchronizePropertyData;
 use Neo\Jobs\PullPropertyAddressFromOdooJob;
 use Neo\Models\Odoo\Property as OdooProperty;
 use Neo\Services\Odoo\Models\Property;
@@ -63,7 +63,7 @@ class PropertiesController extends Controller {
 
 // Trigger a sync of the property products
         PullPropertyAddressFromOdooJob::dispatchSync($propertyId);
-        SyncPropertyDataJob::dispatchSync($odooProperty->property_id, $client);
+        SynchronizePropertyData::dispatchSync($odooProperty->getKey(), $client);
 
         return new Response($odooProperty, 201);
     }

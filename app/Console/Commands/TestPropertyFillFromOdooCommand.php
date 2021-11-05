@@ -20,6 +20,6 @@ class TestPropertyFillFromOdooCommand extends Command {
     protected $description = 'Command description';
 
     public function handle() {
-        \Neo\Jobs\Odoo\SyncPropertyDataJob::dispatchSync(\Neo\Models\Odoo\Property::find(106), OdooConfig::fromConfig()->getClient());
+        \Neo\Jobs\Odoo\SynchronizePropertyData::dispatchSync(\Neo\Models\Odoo\Property::find(106), OdooConfig::fromConfig()->getClient());
     }
 }

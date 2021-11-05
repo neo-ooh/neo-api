@@ -48,7 +48,7 @@ class SendContractJob implements ShouldQueue {
                 continue;
             }
 
-            SendContractFlightJobBatch::dispatch($this->contract, $flight, $flightIndex);
+            SendContractFlightJob::dispatch($this->contract, $flight, $flightIndex);
 
             $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
         }

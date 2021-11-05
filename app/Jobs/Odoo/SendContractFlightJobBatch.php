@@ -43,12 +43,12 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
         clock()->event("Create flight in Odoo")->color('purple')->begin();
 
-        $campaign = clock(Campaign::create($client, [
+        clock(Campaign::create($client, [
             "order_id"   => $this->contract->id,
             "state"      => "draft",
             "date_start" => $flightStart,
             "date_end"   => $flightEnd,
-        ]));
+        ], pullRecord: false));
 
         clock()->event("Create flight in Odoo")->end();
 
@@ -90,7 +90,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
             if ($product->linked_product_id) {
                 /** @var Product|null $product */
-                $linkedProduct = Product::query()->where("odoo_id", $product->linked_product_id)->first();
+                $linkedProduct = $products->get($product->linked_product_id) ?? Product::query()->where("odoo_id", $product->linked_product_id)->first();
 
                 if (!$linkedProduct) {
                     continue;
@@ -112,8 +112,8 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 ]);
             }
         }
-        clock()->event("Prepare order lines")->end();
 
+        clock()->event("Prepare order lines")->end();
 
         // Now that we have all our orderlines, push them to the server
         $client->create(OrderLine::$slug, $orderLines->toArray());

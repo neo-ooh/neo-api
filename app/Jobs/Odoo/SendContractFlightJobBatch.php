@@ -27,7 +27,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 1;
-    public $timeout = 30;
+    public $timeout = 300;
 
     protected Collection $products;
 

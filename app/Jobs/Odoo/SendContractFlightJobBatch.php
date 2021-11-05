@@ -91,7 +91,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         clock()->event("Prepare order lines")->end();
 
         // Now that we have all our orderlines, push them to the server
-        $addedOrderLines = clock($client->create(OrderLine::$slug, $orderLinesToAdd->toArray()));
+        $addedOrderLines = clock($client->client->call(OrderLine::$slug, "create", $orderLinesToAdd->toArray()));
 
         // We now want to load the order lines that we just added, check if they are some that are overbooked, and try to find a replacement for these ones
 
@@ -141,7 +141,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             }
 
             // Now that we have all our orderlines, push them to the server and load them for verification
-            $addedOrderLines = $client->create(OrderLine::$slug, $orderLinesToAdd->toArray());
+            $addedOrderLines = $client->client->call(OrderLine::$slug, 'create', [$orderLinesToAdd->toArray()]);
             $orderLines = OrderLine::getMultiple($client, $addedOrderLines->toArray());
             $overbookedLines = $orderLines->where("over_qty", ">", "0");
         } while($overbookedLines->count() > 0);

@@ -63,7 +63,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $linkedProductsIds = $products->pluck("linked_product_id")->filter();
         $products = $products->merge(Product::query()
                                 ->whereIn("odoo_id", $linkedProductsIds)
-                                ->get());
+                                ->get())->unique();
 
         $orderLines = collect();
 

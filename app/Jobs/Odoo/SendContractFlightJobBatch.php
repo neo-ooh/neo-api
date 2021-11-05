@@ -100,10 +100,11 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $overbookedLines = $orderLinesAdded->where("over_qty", ">", "0");
 
         // Reset the list of orderlines to add
-        $orderLinesToAdd = collect();
         $orderLinesToRemove = collect();
 
         do {
+            $orderLinesToAdd = collect();
+
             /** @var OrderLine $line */
             clock($this->consumedProducts);
             foreach ($overbookedLines as $line) {
@@ -145,6 +146,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $addedOrderLines = $client->client->call(OrderLine::$slug, 'create', [$orderLinesToAdd->toArray()]);
             $orderLines = OrderLine::getMultiple($client, $addedOrderLines->toArray());
             $overbookedLines = $orderLines->where("over_qty", ">", "0");
+
         } while($overbookedLines->count() > 0);
 
         clock($orderLinesToRemove);

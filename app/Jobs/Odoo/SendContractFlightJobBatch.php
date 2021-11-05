@@ -146,11 +146,13 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $overbookedLines = $orderLines->where("over_qty", ">", "0");
         } while($overbookedLines->count() > 0);
 
-        if($orderLinesToRemove->count() > 0) {
-            OrderLine::delete($client, [
-                ["id", "in", $orderLinesToRemove->toArray()]
-            ]);
-        }
+        clock($orderLinesToRemove);
+
+//        if($orderLinesToRemove->count() > 0) {
+//            OrderLine::delete($client, [
+//                ["id", "in", $orderLinesToRemove->toArray()]
+//            ]);
+//        }
 
         clock()->event("Send Flight")->end();
     }

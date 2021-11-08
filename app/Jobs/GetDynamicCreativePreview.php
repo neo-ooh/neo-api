@@ -8,9 +8,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Neo\Models\Creative;
-use Storage;
 
 class GetDynamicCreativePreview implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -63,7 +63,7 @@ class GetDynamicCreativePreview implements ShouldQueue {
         }
 
         // Check the file is an image
-        if (!Str::startsWith($file->header("Content-Type"), "image/")) {
+        if(!Str::startsWith($file->header("Content-Type"), "image/")) {
             // Not an image, fallback
             //  TODO: Finish this
         }

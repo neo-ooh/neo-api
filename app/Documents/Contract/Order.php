@@ -176,7 +176,7 @@ class Order {
     public function computeValues(): void {
         // Guaranteed orders
         $guaranteedOrders = $this->getGuaranteedOrders();
-        $extensionOrders  = $this->getAudienceExtensionLines();
+        $extensionOrders  = $this->getAudienceExtensionLines()->merge($this->getAdServerLines());
 
         if ($guaranteedOrders->isNotEmpty() || $extensionOrders->isNotEmpty()) {
             $this->guaranteed_impressions_count = $guaranteedOrders->sum("impressions") + $extensionOrders->sum("impressions");

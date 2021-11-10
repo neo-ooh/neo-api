@@ -38,6 +38,7 @@ use Neo\Services\Broadcast\Broadcast;
  * @property int                $print_count
  *
  * - Custom Attributes
+ * @property float             $length
  * @property string             $status
  *
  * - Relations
@@ -249,5 +250,9 @@ class Schedule extends Model {
 //        }
 
         return $options;
+    }
+
+    public function getLengthAttribute(): float {
+        return round($this->content->duration) > 0 ? $this->content->duration : $this->campaign->schedules_default_length;
     }
 }

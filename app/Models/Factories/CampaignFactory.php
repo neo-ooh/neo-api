@@ -22,10 +22,13 @@ class CampaignFactory extends Factory {
 
     public function definition (): array
     {
+        $length = $this->faker->numberBetween(10, 30);
+
         return [
             "format_id"        => Format::query()->has('layouts')->first()->id,
             "name"             => $this->faker->streetName,
-            "display_duration" => $this->faker->numberBetween(10, 30),
+            "schedules_max_length" => $length,
+            "schedules_default_length" => $length,
             "start_date"       => Date::now()->toIso8601String(),
             "end_date"         => Date::now()->addMonth()->toIso8601String(),
         ];

@@ -17,6 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Date;
 use Neo\Models\Campaign;
+use Neo\Models\Schedule;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Bundle as BSBundle;
@@ -58,7 +59,12 @@ class UpdateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
     public function handle(): void {
         // Get the Connect and Broadsign campaign
         /** @var Campaign $campaign */
-        $campaign = Campaign::query()->findOrFail($this->campaignID);
+        $campaign = Campaign::query()->find($this->campaignID);
+
+        if(!$campaign) {
+            // The campaign doesn't exist, we cannot do anything here.
+            return;
+        }
 
         if ($campaign->external_id === null) {
             // This campaign has no BroadSign ID. It must be created before it gets updated
@@ -87,12 +93,19 @@ class UpdateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
         $bsCampaign->name = $campaign->owner->name . " - " . $campaign->name;
         $bsCampaign->save();
 
-        // Update the bundle in the campaign to match the campaign duration
         $bundles = BSBundle::byReservable($this->getAPIClient(), $bsCampaign->id);
 
+        // Update the duration of all the bundles in the campaign
         /** @var BSBundle $bundle */
         foreach ($bundles as $bundle) {
-            $bundle->max_duration_msec = $campaign->display_duration * 1000; // ms
+            /** @var Schedule $schedule */
+            $schedule = $campaign->schedules->firstWhere("external_id_1", "=", $bundle->id);
+
+            if(!$schedule) {
+                continue;
+            }
+
+            $bundle->max_duration_msec = $schedule->length * 1000; // ms
             $bundle->save();
         }
     }

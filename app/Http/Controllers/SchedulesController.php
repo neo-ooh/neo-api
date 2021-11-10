@@ -104,8 +104,8 @@ class SchedulesController extends Controller {
         // Check that all creatives in the content match the campaign media types
 
         // Is the content the correct length
-        if ($content->duration !== 0.0 && $content->duration > $campaign->display_duration) {
-            return new Response(["This content has not the correct length ($content->duration ≠ $campaign->display_duration)"],
+        if ($content->duration > 0 && $content->duration > $campaign->schedules_max_length) {
+            return new Response(["This content has not the correct length ($content->duration > $campaign->schedules_max_length)"],
                 422);
         }
 

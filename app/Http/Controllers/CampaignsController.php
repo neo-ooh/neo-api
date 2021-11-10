@@ -13,10 +13,8 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Exceptions\InvalidBroadcastServiceException;
-use Neo\Exceptions\UnsupportedBroadcasterOptionException;
 use Neo\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Http\Requests\Campaigns\ListCampaignsRequest;
-use Neo\Http\Requests\Campaigns\SetScreensStateRequest;
 use Neo\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Http\Requests\CampaignsLocations\RemoveCampaignLocationRequest;
@@ -24,7 +22,6 @@ use Neo\Http\Requests\CampaignsLocations\SyncCampaignLocationsRequest;
 use Neo\Models\Campaign;
 use Neo\Models\Format;
 use Neo\Models\Location;
-use Neo\Models\Player;
 use Neo\Services\Broadcast\Broadcast;
 
 class CampaignsController extends Controller {
@@ -48,15 +45,16 @@ class CampaignsController extends Controller {
     public function store(StoreCampaignRequest $request): Response {
         $campaign = new Campaign();
         [
-            "network_id"       => $campaign->network_id,
-            "owner_id"         => $campaign->owner_id,
-            "format_id"        => $campaign->format_id,
-            "name"             => $campaign->name,
-            "display_duration" => $campaign->display_duration,
-            "start_date"       => $campaign->start_date,
-            "end_date"         => $campaign->end_date,
-            "loop_saturation"  => $campaign->loop_saturation,
-            "priority"         => $campaign->priority,
+            "network_id"               => $campaign->network_id,
+            "owner_id"                 => $campaign->owner_id,
+            "format_id"                => $campaign->format_id,
+            "name"                     => $campaign->name,
+            "schedules_default_length" => $campaign->schedules_max_length,
+            "schedules_max_length"     => $campaign->schedules_max_length,
+            "start_date"               => $campaign->start_date,
+            "end_date"                 => $campaign->end_date,
+            "loop_saturation"          => $campaign->loop_saturation,
+            "priority"                 => $campaign->priority,
         ] = $request->validated();
 
         // If no name was specified for the campaign, we generate one
@@ -116,13 +114,15 @@ class CampaignsController extends Controller {
      */
     public function update(UpdateCampaignRequest $request, Campaign $campaign): Response {
         [
-            "owner_id"         => $campaign->owner_id,
-            "name"             => $campaign->name,
-            "display_duration" => $campaign->display_duration,
-            "start_date"       => $campaign->start_date,
-            "end_date"         => $campaign->end_date,
-            "loop_saturation"  => $campaign->loop_saturation,
+            "owner_id"                 => $campaign->owner_id,
+            "name"                     => $campaign->name,
+            "schedules_default_length" => $campaign->schedules_default_length,
+            "schedules_max_length"     => $campaign->schedules_max_length,
+            "start_date"               => $campaign->start_date,
+            "end_date"                 => $campaign->end_date,
+            "loop_saturation"          => $campaign->loop_saturation,
         ] = $request->validated();
+
         $campaign->save();
         $campaign->refresh();
 

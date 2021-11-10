@@ -83,7 +83,7 @@ class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
 
             $assetArray[] = [
                 "filename" => $assetName,
-                "duration" => $schedule->campaign->display_duration,
+                "duration" => $schedule->length,
                 "isVideo"  => $creative->properties->extension === "mp4",
                 "selected" => false,
                 "option"   => [

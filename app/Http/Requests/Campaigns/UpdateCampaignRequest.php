@@ -32,12 +32,13 @@ class UpdateCampaignRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "owner_id"         => ["required", "integer", new AccessibleActor()],
-            "name"             => ["required", "string"],
-            "display_duration" => ["required", "numeric", "min:1"],
-            "start_date"       => ["required", "date"],
-            "end_date"         => ["required", "date"],
-            "loop_saturation"  => ["required", "integer", "min:0"],
+            "owner_id"                 => ["required", "integer", new AccessibleActor()],
+            "name"                     => ["required", "string"],
+            "schedules_default_length" => ["required", "numeric", "min:1", "lte:schedules_max_length"],
+            "schedules_max_length"     => ["required", "numeric", "min:1", "gte:schedules_default_length"],
+            "start_date"               => ["required", "date"],
+            "end_date"                 => ["required", "date"],
+            "loop_saturation"          => ["required", "integer", "min:0"],
         ];
     }
 }

@@ -151,7 +151,7 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
         $bundle->allow_custom_duration = true;
         $bundle->auto_synchronized     = true;
         $bundle->fullscreen            = $content->layout->is_fullscreen;
-        $bundle->max_duration_msec     = $schedule->campaign->display_duration * 1000;
+        $bundle->max_duration_msec     = $schedule->length * 1000;
         $bundle->name                  = $schedule->campaign->name . " (" . $schedule->campaign_id . ")" . "-" . $content->name ?? ("Bundle #" . $schedule->id);
         $bundle->parent_id             = $bsSchedule->id;
 

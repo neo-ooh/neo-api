@@ -32,15 +32,15 @@ class StoreCampaignRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "owner_id"         => ["required", "integer", new AccessibleActor()],
-            "network_id"       => ["required", "integer", "exists:networks,id"],
-            "format_id"        => ["required", "integer", "exists:formats,id"],
-            "name"             => ["nullable", "string"],
-            "display_duration" => ["required", "numeric", "min:1"],
-            "start_date"       => ["required", "date"],
-            "end_date"         => ["required", "date"],
-            "loop_saturation"  => ["required", "integer", "min:0"],
-            "priority"         => ["required", "integer", "min:0"],
+            "owner_id"             => ["required", "integer", new AccessibleActor()],
+            "network_id"           => ["required", "integer", "exists:networks,id"],
+            "format_id"            => ["required", "integer", "exists:formats,id"],
+            "name"                 => ["nullable", "string"],
+            "schedules_max_length" => ["required", "numeric", "min:1"],
+            "start_date"           => ["required", "date"],
+            "end_date"             => ["required", "date"],
+            "loop_saturation"      => ["required", "integer", "min:0"],
+            "priority"             => ["required", "integer", "min:0"],
         ];
     }
 }

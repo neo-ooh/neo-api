@@ -17,10 +17,12 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Storage;
 use Neo\Models\Creative;
+use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
-use Neo\Services\Broadcast\BroadSign\Models\Creative as BSCreative;
 
 /**
  * Class ImportCreative
@@ -79,48 +81,124 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
         TargetCreative::dispatch($this->config, $creative->id);
     }
 
+    protected function getAttributesForCreative(Creative $creative) {
+        $attributes           = [];
+        $attributes["height"] = $creative->frame->height;
+        $attributes["width"]  = $creative->frame->width;
+
+        if ($creative->type === Creative::TYPE_DYNAMIC) {
+            $attributes["expire_on_empty_remote_dir"] = "false";                                // Don;t expire if connection is lost
+            $attributes["io_strategy"]                = "esf";                                  // ???
+            $attributes["source"]                     = $creative->properties->url;             // URL to the resource
+            $attributes["source_append_id"]           = "false";                                // Append player ID to url (no)
+            $attributes["source_expiry"]              = "0";                                    // Not sure
+            $attributes["source_refresh"]             = $creative->properties->refresh_interval;// URL refresh interval (minutes)
+        } else {
+            switch ($creative->properties->extension) {
+                case "mp4":
+                    $attributes["height"]   = $creative->frame->height;
+                    $attributes["width"]    = $creative->frame->width;
+                    $attributes["duration"] = (new DateInterval("PT" . $creative->content->duration . "S"))->format("H:I:S");
+            }
+        }
+
+        return implode('\n', array_map(static fn(string $k, string $v) => "$k=$v", array_keys($attributes), array_values($attributes)));
+    }
+
     /**
      * @throws Exception
      */
     protected function importStaticCreative(Creative $creative): void {
-        $attributes = "width={$creative->frame->width}\n";
-        $attributes .= "height={$creative->frame->height}\n";
+        // Prepare the creative metadata for BroadSign
+        $metadata = [
+            "name"             => $creative->owner->email . " - " . $creative->original_name,
+            "originalfilename" => $creative->original_name,
+            "size"             => Storage::size($creative->properties->file_path),
+            "feeds"            => "",
+            "attributes"       => $this->getAttributesForCreative($creative),
+            "mime"             => Storage::mimeType($creative->properties->file_path),
+        ];
 
-        if ($creative->properties->extension === "mp4") {
-            $interval   = new DateInterval("PT" . $creative->content->duration . "S");
-            $attributes .= "duration={$interval->format("H:I:S")}\n";
-        }
 
-        $bsCreative             = new BSCreative($this->getAPIClient());
-        $bsCreative->attributes = $attributes;
-        $bsCreative->name       = $creative->owner->email . " - " . $creative->original_name;
-        $bsCreative->container_id       = $this->config->adCopiesContainerId;
-        $bsCreative->parent_id  = $this->config->customerId;
-        $bsCreative->url        = $creative->properties->file_url;
+        // Get the creative in a temporary file for the upload
+        $tempFile = tmpfile();
+        fwrite($tempFile, file_get_contents($creative->properties->file_url));
+        fseek($tempFile, 0);
+        $creativePath = stream_get_meta_data($tempFile)['uri'];
+
+        $response = $this->executeRequest($metadata, $creativePath);
+
+        fclose($tempFile);
 
         $creative->external_ids()->create([
-            "network_id" => $this->config->networkID,
-            "external_id" => $bsCreative->import(),
+            "network_id"  => $this->config->networkID,
+            "external_id" => $response["id"],
         ]);
+        $creative->save();
     }
 
     protected function importDynamicCreative(Creative $creative): void {
-        $attributes = [
-            "expire_on_empty_remote_dir" => "false",                        // Do not expire if connection lost
-            "io_strategy"                => "esf",                                         // ???
-            "source"                     => $creative->properties->url,                         // URL to the resource
-            "source_append_id"           => "false",                                  // Append player ID to url (no)
-            "source_expiry"              => "0",                                         // Not sure
-            "source_refresh"             => $creative->properties->refresh_interval     // URL refresh interval (minutes)
+        // Prepare the creative metadata for BroadSign
+        $metadata = [
+            "name"             => $creative->owner->email . " - " . $creative->original_name,
+            "originalfilename" => $creative->original_name,
+            "size"             => "-1",
+            "feeds"            => "",
+            "attributes"       => $this->getAttributesForCreative($creative),
+            "mime"             => "",
         ];
 
-        $bsCreativeId = BSCreative::makeDynamic($this->getAPIClient(), $creative->owner->email . " - " . $creative->original_name, $attributes);
+        $response = $this->executeRequest($metadata);
 
         $creative->external_ids()->create([
-            "network_id" => $this->config->networkID,
-            "external_id" => $bsCreativeId,
+            "network_id"  => $this->config->networkID,
+            "external_id" => $response["id"],
         ]);
         $creative->save();
+    }
+
+    protected function executeRequest(array $payload, $file = null) {
+        // Complete the payload
+        $payload["domain_id"]    = $this->config->domainId;
+        $payload["container_id"] = $this->config->adCopiesContainerId;
+
+        $metadata = json_encode($payload, JSON_THROW_ON_ERROR);
+
+        // Get the endpoint
+        $endpoint       = Endpoint::post("/content/v11/add")
+                                  ->unwrap("content")
+                                  ->parser(new ResourceIDParser());
+        $endpoint->base = $this->config->apiURL;
+
+        // Prepare the request command
+        $req          = [];
+        $req[]        = "curl -s";                                           // curl with silent output
+        $req[]        = "-w '\n%{http_code}'";                               // display http status code on 2nd line
+        $req[]        = "-POST " . $endpoint->getUrl();                      // POST method + URL
+        $req[]        = "-E" . $this->config->getCertPath();                 // BroadSign cert auth
+        $req[]        = "-H 'Content-Type: multipart/mixed'";                // Request Content Type
+        $req[]        = "-F 'metadata=$metadata;type=application/json'";     // Request metadata
+        $req[]        = $file ? "-F 'file=@$file'" : "-F 'file=dummy.txt'";  // Request file
+        $curl_command = implode(" ", $req);
+
+        // Execute the request
+        $output    = [];
+        $exit_code = 0;
+
+        exec($curl_command, $output, $exit_code);
+
+        if ($exit_code !== 0 || (int)$output[1] !== 200) {
+            throw new \Error("Error while executing cURL request: " . implode(", ", $output));
+        }
+
+        $responseBody = json_decode($output[0], true, 512, JSON_THROW_ON_ERROR)[$endpoint->unwrapKey];
+        $responseBody = call_user_func($endpoint->parse, $responseBody, $this);
+
+        // On success, we decode the response
+        return [
+            "id"     => $responseBody,
+            "status" => (int)$output[1],
+        ];
     }
 }
 

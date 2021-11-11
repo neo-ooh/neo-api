@@ -51,7 +51,6 @@ class Kernel extends ConsoleKernel {
         ClearOldScreenshots::class,
 
         // hotfix:...
-        Hotfixes\DisableFullscreenEverywhere::class,
         Hotfixes\RetargetAllCampaigns::class,
         Hotfixes\RetargetAllCreatives::class,
         Hotfixes\RecreateAllCampaigns::class,
@@ -76,7 +75,6 @@ class Kernel extends ConsoleKernel {
         $schedule->job(RequestScreenshotsBursts::class)->everyMinute();
 
 
-
         /* -----------------
          * "More often that hourly but not every minutes"
          */
@@ -96,7 +94,6 @@ class Kernel extends ConsoleKernel {
         $schedule->command('network:update-contracts')->everyThreeHours();
 
 
-
         /* -----------------
          * Daily tasks
          */
@@ -108,9 +105,8 @@ class Kernel extends ConsoleKernel {
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()
-                                                   ->timezone('America/Toronto')
-                                                   ->at("06:00");
-
+                 ->timezone('America/Toronto')
+                 ->at("06:00");
 
 
         /* -----------------

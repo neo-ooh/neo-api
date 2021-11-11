@@ -45,16 +45,16 @@ class CampaignsController extends Controller {
     public function store(StoreCampaignRequest $request): Response {
         $campaign = new Campaign();
         [
-            "network_id"               => $campaign->network_id,
-            "owner_id"                 => $campaign->owner_id,
-            "format_id"                => $campaign->format_id,
-            "name"                     => $campaign->name,
-            "schedules_default_length" => $campaign->schedules_max_length,
-            "schedules_max_length"     => $campaign->schedules_max_length,
-            "start_date"               => $campaign->start_date,
-            "end_date"                 => $campaign->end_date,
-            "loop_saturation"          => $campaign->loop_saturation,
-            "priority"                 => $campaign->priority,
+            "network_id"           => $campaign->network_id,
+            "owner_id"             => $campaign->owner_id,
+            "format_id"            => $campaign->format_id,
+            "name"                 => $campaign->name,
+            "schedules_max_length" => $campaign->schedules_default_length,
+            "schedules_max_length" => $campaign->schedules_max_length,
+            "start_date"           => $campaign->start_date,
+            "end_date"             => $campaign->end_date,
+            "loop_saturation"      => $campaign->loop_saturation,
+            "priority"             => $campaign->priority,
         ] = $request->validated();
 
         // If no name was specified for the campaign, we generate one

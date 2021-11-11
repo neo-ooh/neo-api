@@ -61,7 +61,7 @@ class UpdateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
         /** @var Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignID);
 
-        if(!$campaign) {
+        if (!$campaign) {
             // The campaign doesn't exist, we cannot do anything here.
             return;
         }
@@ -83,7 +83,8 @@ class UpdateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
         // Can we simply update the BroadSign Campaign or do we need to rebuild it ?
         if ($saturation !== $bsCampaign->saturation
             || $campaign->start_date->notEqualTo(Date::make($bsCampaign->start_date))
-            || $campaign->end_date->notEqualTo(Date::make($bsCampaign->end_date))) {
+            || $campaign->end_date->notEqualTo(Date::make($bsCampaign->end_date))
+            || $campaign->schedules_max_length * 1000 !== $bsCampaign->duration_msec) {
             // We need to rebuild the campaign
             RebuildBroadSignCampaign::dispatchSync($this->config, $campaign->id);
             return;
@@ -101,7 +102,7 @@ class UpdateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
             /** @var Schedule $schedule */
             $schedule = $campaign->schedules->firstWhere("external_id_1", "=", $bundle->id);
 
-            if(!$schedule) {
+            if (!$schedule) {
                 continue;
             }
 

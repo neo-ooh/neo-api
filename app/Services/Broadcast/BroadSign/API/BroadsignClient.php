@@ -4,7 +4,6 @@ namespace Neo\Services\Broadcast\BroadSign\API;
 
 use Cache;
 use Facade\FlareClient\Http\Exceptions\BadResponse;
-use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Log;
 use JsonException;
 use Neo\Services\API\APIClient;

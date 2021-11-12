@@ -74,7 +74,7 @@ final class Capability extends Enum {
     /**
      * Gives all rights for creating and edition networks and locations.
      */
-    public const networks_admin = "networks.edit";
+    public const networks_admin = "networks.admin";
 
 
     public const networks_edit = "networks.edit";

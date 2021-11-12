@@ -180,8 +180,7 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
                 continue;
             }
 
-            // Apply a 120 seconds delay to the association as BroadSign returns an error if the Ad Copy hasn't finished uploading.
-            AssociateAdCopyWithBundle::dispatch($this->config, $bundle->id, $creative->id)->delay(120);
+            AssociateAdCopyWithBundle::dispatch($this->config, $bundle->id, $creative->id);
         }
     }
 }

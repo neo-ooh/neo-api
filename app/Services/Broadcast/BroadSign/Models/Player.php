@@ -11,10 +11,10 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Illuminate\Support\Collection;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 
 /**
  * Class Player
@@ -106,8 +106,23 @@ class Player extends BroadSignModel {
         ]);
     }
 
-    public function sendRequest(array $payload): void {
-        $this->callAction("request",
+    /**
+     * Request the information about the current content being played by the player.
+     *
+     * @param int $frameId ID of the frame from which to request information
+     */
+    public function forceUpdatePlaylist() {
+        return $this->sendRequest([
+            "rc" => [
+                "version" => 1,
+                "id"      => (string)$this->id,
+                "action"  => "poll_request",
+            ],
+        ]);
+    }
+
+    public function sendRequest(array $payload) {
+        return $this->callAction("request",
             [
                 "player_id"    => $this->id,
                 "request_json" => $payload

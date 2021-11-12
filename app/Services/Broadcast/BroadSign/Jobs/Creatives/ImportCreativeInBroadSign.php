@@ -98,7 +98,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
                 case "mp4":
                     $attributes["height"]   = $creative->frame->height;
                     $attributes["width"]    = $creative->frame->width;
-                    $attributes["duration"] = (new DateInterval("PT" . $creative->content->duration . "S"))->format("H:I:S");
+                    $attributes["duration"] = (new DateInterval("PT" . $creative->content->duration . "S"))->format("%H:%I:%S");
             }
         }
 
@@ -116,7 +116,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
             "size"             => Storage::size($creative->properties->file_path),
             "feeds"            => "",
             "attributes"       => $this->getAttributesForCreative($creative),
-            "mime"             => Storage::mimeType($creative->properties->file_path),
+            "mime"             => $creative->properties->extension,
         ];
 
 

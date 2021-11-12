@@ -12,6 +12,7 @@ use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\RebuildBroadSignCampaign;
 use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\TargetCampaign;
 use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\UpdateBroadSignCampaign;
 use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\DisableBroadSignCreative;
+use Neo\Services\Broadcast\BroadSign\Jobs\DisplayUnits\ForceRefreshPlaylist;
 use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\CreateBroadSignSchedule;
 use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
 use Neo\Services\Broadcast\BroadSign\Jobs\Schedules\ReorderBroadSignSchedules;
@@ -137,5 +138,15 @@ class BroadSignServiceAdapter implements BroadcastService {
      */
     public function rebuildCampaign(int $campaignId) {
         RebuildBroadSignCampaign::dispatch($this->config, $campaignId);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Location
+    |--------------------------------------------------------------------------
+    */
+
+    public function forceRefreshPlaylist(int $locationId) {
+        ForceRefreshPlaylist::dispatch($this->config, $locationId);
     }
 }

@@ -85,6 +85,7 @@ Route::group([
 
     Route::get("locations/{location}/players", LocationsPlayersController::class . "@index");
     Route::get("locations/{location}/screens_state", LocationsController::class . "@setScreenState");
+    Route::put("locations/{location}/_force_refresh", LocationsController::class . "@_forceRefreshPlaylist");
 
     /*
     |----------------------------------------------------------------------

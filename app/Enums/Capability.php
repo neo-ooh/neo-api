@@ -14,7 +14,7 @@ use BenSampo\Enum\Enum;
 
 final class Capability extends Enum {
     // Actors
-    public const actors_edit   = "actors.edit";
+    public const actors_edit = "actors.edit";
     public const actors_create = "actors.create";
     public const actors_delete = "actors.delete";
 
@@ -35,18 +35,18 @@ final class Capability extends Enum {
     public const brandings_edit = "brandings.edit";
 
     // Libraries
-    public const libraries_edit    = "libraries.edit";
-    public const libraries_create  = "libraries.create";
+    public const libraries_edit = "libraries.edit";
+    public const libraries_create = "libraries.create";
     public const libraries_destroy = "libraries.destroy";
 
     // campaigns
     public const campaigns_edit = "campaigns.edit";
 
     // Contents
-    public const contents_edit     = "contents.edit";
-    public const contents_dynamic     = "contents.dynamic";
+    public const contents_edit = "contents.edit";
+    public const contents_dynamic = "contents.dynamic";
     public const contents_schedule = "contents.schedule";
-    public const contents_review   = "contents.review";
+    public const contents_review = "contents.review";
 
     // Formats
     public const formats_edit = "formats.edit";
@@ -71,9 +71,14 @@ final class Capability extends Enum {
     public const bursts_quality = "bursts.quality";
 
     // Networks
+    /**
+     * Gives all rights for creating and edition networks and locations.
+     */
+    public const networks_admin = "networks.edit";
+
+
     public const networks_edit = "networks.edit";
     public const networks_connections = "networks.connections";
-    public const networks_prints = "networks.prints";
 
     // Inventory
     public const inventory_read = "inventory.read";

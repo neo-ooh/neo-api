@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Redirect;
 use Neo\Enums\Capability;
 use Neo\Exceptions\UnsupportedBroadcasterOptionException;
 use Neo\Http\Requests\Campaigns\SetScreensStateRequest;
+use Neo\Http\Requests\Locations\ForceRefreshPlaylistRequest;
 use Neo\Http\Requests\Locations\ListLocationsRequest;
 use Neo\Http\Requests\Locations\SalesLocationRequest;
 use Neo\Http\Requests\Locations\SearchLocationsRequest;
@@ -154,13 +155,13 @@ class LocationsController extends Controller {
      * @return Response
      */
     public function update(UpdateLocationRequest $request, Location $location): Response {
-        $location->name = $request->input('name');
+        $location->name            = $request->input('name');
         $location->scheduled_sleep = $request->input("scheduled_sleep");
-        $location->sleep_end = $request->input("sleep_end");
-        $location->sleep_start = $request->input("sleep_start");
+        $location->sleep_end       = $request->input("sleep_end");
+        $location->sleep_start     = $request->input("sleep_start");
         $location->save();
 
-        if($location->network()->first()->broadcaster_connection->broadcaster === 'pisignage') {
+        if ($location->network()->first()->broadcaster_connection->broadcaster === 'pisignage') {
             $network = Broadcast::network($location->network_id);
             $network->updateLocation($location->id);
         }
@@ -170,7 +171,7 @@ class LocationsController extends Controller {
 
     public function setScreensState(SetScreensStateRequest $request, Location $location) {
         //Make sure the location supports screen controls
-        if ($location->network->broadcaster_connection->broadcaster !== 'pisignage') {
+        if ($location->network->broadcaster_connection->broadcaster !== Broadcaster::PISIGNAGE) {
             throw new UnsupportedBroadcasterOptionException("{$location->network->broadcaster_connection->broadcaster} does not support the 'screen_controls option'");
         }
 
@@ -183,6 +184,13 @@ class LocationsController extends Controller {
         /** @var Player $player */
         foreach ($location->players as $player) {
             $broadcaster->setScreenState($player->external_id, $state);
+        }
+    }
+
+    public function _forceRefreshPlaylist(ForceRefreshPlaylistRequest $request, Location $location) {
+        //Make sure the location supports screen controls
+        if ($location->network->broadcaster_connection->broadcaster !== Broadcaster::BROADSIGN) {
+            throw new UnsupportedBroadcasterOptionException("{$location->network->broadcaster_connection->broadcaster} does not support playlist force refresh");
         }
     }
 }

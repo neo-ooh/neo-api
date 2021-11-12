@@ -39,7 +39,7 @@ class CapabilitiesSeeder extends Seeder {
 
         // Define the capabilities groups
         $capGroups = [
-            "ACTORS" => [
+            "ACTORS"   => [
                 \Neo\Enums\Capability::actors_create,
                 \Neo\Enums\Capability::actors_delete,
                 \Neo\Enums\Capability::actors_edit,
@@ -49,7 +49,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::roles_edit,
                 \Neo\Enums\Capability::brandings_edit,
             ],
-            "DIRECT" => [
+            "DIRECT"   => [
                 \Neo\Enums\Capability::libraries_edit,
                 \Neo\Enums\Capability::libraries_create,
                 \Neo\Enums\Capability::libraries_destroy,
@@ -63,7 +63,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::contents_schedule,
                 \Neo\Enums\Capability::contents_review,
             ],
-            "NETWORK" => [
+            "NETWORK"  => [
                 \Neo\Enums\Capability::properties_view,
                 \Neo\Enums\Capability::properties_traffic,
                 \Neo\Enums\Capability::properties_edit,
@@ -88,6 +88,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::dynamics_weather,
             ],
             "INTERNAL" => [
+                \Neo\Enums\Capability::networks_admin,
                 \Neo\Enums\Capability::networks_edit,
                 \Neo\Enums\Capability::networks_connections,
 
@@ -103,9 +104,9 @@ class CapabilitiesSeeder extends Seeder {
             ],
         ];
 
-        foreach($capGroups as $key => $caps) {
+        foreach ($capGroups as $key => $caps) {
             Capability::query()->whereIn("slug", $caps)
-                ->update(["service" => $key]);
+                      ->update(["service" => $key]);
         }
     }
 }

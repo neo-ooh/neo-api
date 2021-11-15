@@ -47,6 +47,8 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
      */
     protected int $actorID;
 
+    public $tries = 1;
+
     public function uniqueId(): int {
         return $this->scheduleID;
     }

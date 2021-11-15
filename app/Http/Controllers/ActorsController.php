@@ -127,7 +127,7 @@ class ActorsController extends Controller {
             $actor->load("logo");
         }
 
-        if (in_array("phone", $with, true)) {
+        if (in_array("phone", $with, true) || Auth::user()->is($actor)) {
             $actor->load("phone");
         }
 
@@ -210,8 +210,6 @@ class ActorsController extends Controller {
             if (!$actor->phone) {
                 $actor->phone_id = $phone->id;
             }
-
-            $actor->load("phone");
         }
 
         if ($lock !== $actor->is_locked) {

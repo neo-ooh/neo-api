@@ -32,6 +32,9 @@ class PhonesController {
 
         $phone->delete();
 
+        $actor->two_fa_method = 'email';
+        $actor->save();
+
         return new Response(null, 202);
     }
 }

@@ -50,11 +50,11 @@ class SchedulesController extends Controller {
 
         // Are the schedules date contained in the campaign ones ?
         ['schedule_start' => $startDate, 'schedule_end' => $endDate] = $request->validated();
-        if ($startDate > $endDate) {
+        if ($startDate->isAfter($endDate)) {
             return new Response(["Incorrect schedules dates"], 422);
         }
 
-        if ($startDate < $campaign->start_date || $endDate > $campaign->end_date) {
+        if ($startDate->isBefore($campaign->start_date) || $endDate->isAfter($campaign->end_date)) {
             return new Response(["Invalid scheduling dates for this campaign"], 422);
         }
 
@@ -192,11 +192,11 @@ class SchedulesController extends Controller {
             return new Response(["Incorrect schedules dates"], 422);
         }
 
-        if ($startDate < $schedule->campaign->start_date) {
+        if ($startDate->isBefore($schedule->campaign->start_date)) {
             $startDate = $schedule->campaign->start_date;
         }
 
-        if ($endDate > $schedule->campaign->end_date) {
+        if ($endDate->isAfter($schedule->campaign->end_date)) {
             $endDate = $schedule->campaign->end_date;
         }
 

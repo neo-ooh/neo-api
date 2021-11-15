@@ -103,11 +103,18 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
             throw new InvalidResourceException("Could not retrieve the loop slot for the reservation " . $schedule->campaign->external_id . ". ");
         }
 
-        // We need to make sure the end time is not after 23:59:00
-        $endTime = $schedule->end_date;
-        if ($endTime->isAfter($endTime->copy()->setTime(23, 59, 00))) {
-            $endTime = $endTime->setTime(23, 59, 00);
+        // Check again that the start time is not before the start of our campaign
+        $startDateTime = $schedule->start_date;
+        if ($startDateTime->isBefore($schedule->campaign->start_date)) {
+            $startDateTime = $schedule->campaign->start_date;
         }
+
+        // We need to make sure the end time is not after 23:59:00
+        $endDateTime = $schedule->end_date;
+        if ($endDateTime->isAfter($endDateTime->copy()->setTime(23, 59, 00))) {
+            $endDateTime = $endDateTime->setTime(23, 59, 00);
+        }
+
 
         // Create the schedule in broadsign
         $bsSchedule                   = new BSSchedule($this->getAPIClient());
@@ -117,13 +124,15 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
         $bsSchedule->reservable_id    = $schedule->campaign->external_id;
         $bsSchedule->rotation_mode    = 0;
         $bsSchedule->schedule_group   = 2;
-        $bsSchedule->start_date       = $schedule->start_date->toDateString();
-        $bsSchedule->start_time       = $schedule->start_date->setSecond(0)->toTimeString();
-        $bsSchedule->end_date         = $schedule->end_date->toDateString();
-        $bsSchedule->end_time         = $endTime->toTimeString();
+        $bsSchedule->start_date       = $startDateTime->toDateString();
+        $bsSchedule->start_time       = $startDateTime->setSecond(0)->toTimeString();
+        $bsSchedule->end_date         = $endDateTime->toDateString();
+        $bsSchedule->end_time         = $endDateTime->toTimeString();
         $bsSchedule->weight           = 1;
         $bsSchedule->create();
 
+        $schedule->start_date    = $startDateTime;
+        $schedule->end_date      = $endDateTime;
         $schedule->external_id_2 = $bsSchedule->id;
         $schedule->save();
 

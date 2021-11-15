@@ -14,9 +14,7 @@ use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Neo\Mails\TwoFactorTokenEmail;
+use Neo\Jobs\Actors\SendTwoFactorTokenJob;
 
 /**
  * Class TwoFactorToken
@@ -96,7 +94,7 @@ class TwoFactorToken extends Model {
      * @var array
      */
     protected $casts = [
-        'token' => 'integer',
+        'token'     => 'integer',
         'validated' => 'boolean',
     ];
 
@@ -105,13 +103,14 @@ class TwoFactorToken extends Model {
      */
     public $timestamps = false;
 
-    public static function boot () {
+    public static function boot() {
         parent::boot();
 
         static::creating(function (TwoFactorToken $model) {
-            $model->token = str_pad(random_int(1000, 999999), 6, '0', STR_PAD_LEFT);
+            $model->token      = str_pad(random_int(1000, 999999), 6, '0', STR_PAD_LEFT);
             $model->created_at = $model->freshTimestamp();
-            Mail::to($model->actor)->send(new TwoFactorTokenEmail($model->actor, $model));
+
+            SendTwoFactorTokenJob::dispatch($model->actor_id);
         });
     }
 
@@ -124,7 +123,7 @@ class TwoFactorToken extends Model {
     /**
      * @return BelongsTo
      */
-    public function actor (): BelongsTo {
+    public function actor(): BelongsTo {
         return $this->belongsTo(Actor::class);
     }
 
@@ -139,14 +138,14 @@ class TwoFactorToken extends Model {
      *
      * @return bool
      */
-    public function validate (string $token): bool {
+    public function validate(string $token): bool {
         if ($this->token !== (int)$token) {
             // Bad token
             return false;
         }
 
         // Good token
-        $this->validated = true;
+        $this->validated    = true;
         $this->validated_at = $this->freshTimestamp();
         $this->save();
 

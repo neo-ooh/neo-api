@@ -62,9 +62,12 @@ class RebuildBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnt
     public function handle(): void {
         /** @var Campaign $campaign */
         $campaign = Campaign::query()->findOrFail($this->campaignsId);
+
+        $schedules = $campaign->schedules->filter(fn($schedule) => $schedule->end_date->isFuture());
+
         // Start by disabling all the schedules of the campaign in BroadSign
         /** @var Schedule $schedule */
-        foreach ($campaign->schedules as $schedule) {
+        foreach ($schedules as $schedule) {
             if ($schedule->external_id_2 === null) {
                 continue;
             }
@@ -89,7 +92,7 @@ class RebuildBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnt
 
         // Re-create all the schedules in BroadSign
         /** @var Schedule $schedule */
-        foreach ($campaign->schedules as $schedule) {
+        foreach ($schedules as $schedule) {
             CreateBroadSignSchedule::dispatchSync($this->config, $schedule->id, $schedule->owner_id);
             UpdateBroadSignScheduleStatus::dispatchSync($this->config, $schedule->id);
         }

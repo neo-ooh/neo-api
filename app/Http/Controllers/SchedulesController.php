@@ -49,7 +49,8 @@ class SchedulesController extends Controller {
         $this->validateContent($content, $campaign);
 
         // Are the schedules date contained in the campaign ones ?
-        ['schedule_start' => $startDate, 'schedule_end' => $endDate] = $request->validated();
+        $startDate = Carbon::parse($request->input("schedule_start"));
+        $endDate   = Carbon::parse($request->input("schedule_end"));
         if ($startDate->isAfter($endDate)) {
             return new Response(["Incorrect schedules dates"], 422);
         }
@@ -151,6 +152,9 @@ class SchedulesController extends Controller {
                 }
             }
         }
+
+        \Log::debug($startDate);
+        \Log::debug($endDate);
 
         // Looks like we are good!
         $schedule              = new Schedule();

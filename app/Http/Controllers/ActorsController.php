@@ -30,7 +30,6 @@ use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
-use Neo\Models\Phone;
 use Swift_TransportException;
 
 /**
@@ -199,17 +198,6 @@ class ActorsController extends Controller {
 
         if ($request->has("password")) {
             $actor->password = $request->get("password");
-        }
-
-        if ($request->has("phone")) {
-            $phone                 = $actor->phone ?: new Phone();
-            $phone->number_country = $request->input("phone_country");
-            $phone->number         = $request->input("phone");
-            $phone->save();
-
-            if (!$actor->phone) {
-                $actor->phone_id = $phone->id;
-            }
         }
 
         if ($lock !== $actor->is_locked) {

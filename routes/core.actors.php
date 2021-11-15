@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\ActorsAccessesController;
 use Neo\Http\Controllers\ActorsController;
 use Neo\Http\Controllers\ActorsLogosController;
+use Neo\Http\Controllers\ActorsPhoneController;
 use Neo\Http\Controllers\ActorsSharingsController;
 use Neo\Http\Controllers\TwoFactorAuthController;
 use Neo\Models\Actor;
@@ -68,4 +69,14 @@ Route::group([
     Route::   get("actors/{actor}/shares", ActorsSharingsController::class . "@index");
     Route::  post("actors/{actor}/shares", ActorsSharingsController::class . "@store");
     Route::delete("actors/{actor}/shares", ActorsSharingsController::class . "@destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Actors Phones
+    |----------------------------------------------------------------------
+    */
+
+    Route::   put("actors/{actor}/phone", ActorsPhoneController::class . "@store");
+    Route::delete("actors/{actor}/phone", ActorsPhoneController::class . "@destroy");
 });

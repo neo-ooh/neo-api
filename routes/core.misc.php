@@ -11,12 +11,22 @@
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\GoogleMapsController;
 use Neo\Http\Controllers\ModulesController;
+use Neo\Http\Controllers\PhonesController;
 use Neo\Http\Controllers\StatsController;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
+
+    /*
+    |----------------------------------------------------------------------
+    | Phone numbers
+    |----------------------------------------------------------------------
+    */
+
+    Route::   delete("phones/{phone}", PhonesController::class . "@destroy");
+
     /*
     |----------------------------------------------------------------------
     | Modules

@@ -18,7 +18,7 @@ use Neo\Models\Actor;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
 
     Route::model("actor", Actor::class);
@@ -32,12 +32,12 @@ Route::group([
 
     Route::  post("actors/{actor}/re-send-signup-email", ActorsController::class . "@resendWelcomeEmail");
 
-    Route::   get("actors/{actor}/impersonate"    , ActorsController::class . "@impersonate");
+    Route::   get("actors/{actor}/impersonate", ActorsController::class . "@impersonate");
 
-    Route::   get("actors/{actor}/security"       , ActorsController::class . "@security");
+    Route::   get("actors/{actor}/security", ActorsController::class . "@security");
 
     Route::  post("actors/{actor}/two-fa/validate", TwoFactorAuthController::class . "@forceValidateToken");
-    Route::  post("actors/{actor}/two-fa/recycle" , TwoFactorAuthController::class . "@recycle");
+    Route::  post("actors/{actor}/two-fa/recycle", TwoFactorAuthController::class . "@recycle");
 
 
     /*

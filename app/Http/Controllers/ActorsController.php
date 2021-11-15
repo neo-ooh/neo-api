@@ -203,13 +203,15 @@ class ActorsController extends Controller {
 
         if ($request->has("phone")) {
             $phone                 = $actor->phone ?: new Phone();
-            $phone->number         = $request->input("phone");
             $phone->number_country = $request->input("phone_country");
+            $phone->number         = $request->input("phone");
             $phone->save();
 
             if (!$actor->phone) {
                 $actor->phone_id = $phone->id;
             }
+
+            $actor->load("phone");
         }
 
         if ($lock !== $actor->is_locked) {

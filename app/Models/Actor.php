@@ -264,7 +264,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function phone() {
-        return $this->hasOne(Phone::class, 'phone_id', 'id');
+        return $this->belongsTo(Phone::class, 'phone_id', 'id');
     }
 
     public function campaign_planner_saves() {

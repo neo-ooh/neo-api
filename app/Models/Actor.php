@@ -19,14 +19,12 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
@@ -49,7 +47,8 @@ use Neo\Rules\AccessibleActor;
  * @property string         password
  * @property string         locale
  * @property bool           is_group             Tell if the current actor is a group
- * @property bool           is_property          Tell if the current actor is a property. A property is always  group, never a user.
+ * @property bool           is_property          Tell if the current actor is a property. A property is always  group, never a
+ *           user.
  * @property bool           is_locked            Tell if the current actor has been locked. A locked actor cannot login
  * @property int|null       locked_by            Tell who locke this actor, if applicable
  * @property int|null       branding_id          ID of the branding applied to this user
@@ -65,10 +64,14 @@ use Neo\Rules\AccessibleActor;
  * @property bool           limited_access       If set, the actor does not have access to its group and group's children
  *           campaigns. Only to its own, its children campaigns and with user shared with it.
  *
+ * @property int|null       $phone_id
+ * @property Phone|null     $phone
  *
+ * @property string         $two_fa_method
  * @property TwoFactorToken twoFactorToken
  * @property RecoveryToken  recoveryToken
  * @property SignupToken    signupToken
+ *
  *
  * @property Property       $property
  *
@@ -90,7 +93,7 @@ use Neo\Rules\AccessibleActor;
  * @property Collection     campaign_planner_saves
  * @property Collection     campaign_planner_polygons
  *
- * @property ?ActorLogo logo
+ * @property ?ActorLogo     logo
  *
  * @property string         campaigns_status
  *
@@ -258,6 +261,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     public function property() {
         return $this->hasOne(Property::class, 'actor_id', 'id');
+    }
+
+    public function phone() {
+        return $this->hasOne(Phone::class, 'phone_id', 'id');
     }
 
     public function campaign_planner_saves() {
@@ -548,7 +555,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         if ($token === null) {
             // If we are here, it means the user is logged in using its identifier, but has no twoFA.
             // We create one for it
-            if($updateIfNecessary) {
+            if ($updateIfNecessary) {
                 $token = new TwoFactorToken();
                 $token->actor()->associate($this);
                 $token->save();
@@ -562,7 +569,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                           ->where("actor_id", "=", $this->id)
                           ->delete();
 
-            if($updateIfNecessary) {
+            if ($updateIfNecessary) {
                 $token = new TwoFactorToken();
                 $token->actor()->associate($this);
                 $token->save();
@@ -580,7 +587,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         if ($token->validated && $token->validated_at->diffInMonths(Date::now()) >= 1) {
             $token->delete();
 
-            if($updateIfNecessary) {
+            if ($updateIfNecessary) {
                 $token = new TwoFactorToken();
                 $token->actor()->associate($this);
                 $token->save();
@@ -604,7 +611,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $twoFAIsValid = $this->is2FAValid(!$isImpersonating);
 
         // If this token is for impersonating OR if the user hasn't finished all auth steps, the token should expire in the 24hrs, otherwise, it expires one month after the second FA has been done
-        $expire = $isImpersonating || !$twoFAIsValid ? Date::now()->addDay()->timestamp : $this->twoFactorToken->validated_at->addMonth()->timestamp;
+        $expire = $isImpersonating || !$twoFAIsValid ? Date::now()
+                                                           ->addDay()->timestamp : $this->twoFactorToken->validated_at->addMonth()->timestamp;
 
         $payload = [
             // Registered
@@ -621,7 +629,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         ];
 
         // When impersonating someone, we add additional fields to the token to ensure it can only be used by the current actor
-        if($isImpersonating) {
+        if ($isImpersonating) {
             $payload["imp"] = true;         // imp => Impersonating
             $payload["iid"] = Auth::id();   // iid => Impersonator Id
         }
@@ -659,21 +667,19 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function getCompoundTrafficAttribute() {
-        if($this->is_property) {
+        if ($this->is_property) {
             return $this
                 ->property
                 ->traffic
                 ->data
                 ->groupBy(["year", "month"])
-                ->map(fn($yearData) =>
-                    $yearData->map(fn($monthData) =>
-                        $monthData->map(fn($d) => $d->traffic ?? $d->temporary)
-                                  ->sum()
-                    )
+                ->map(fn($yearData) => $yearData->map(fn($monthData) => $monthData->map(fn($d) => $d->traffic ?? $d->temporary)
+                                                                                  ->sum()
+                )
                 );
         }
 
-        if(!$this->is_group) {
+        if (!$this->is_group) {
             return null;
         }
 
@@ -685,7 +691,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
         foreach ($childrenData as $dataset) {
             foreach ($dataset as $year => $yearValues) {
-                if(!$trafficValues->has($year)) {
+                if (!$trafficValues->has($year)) {
                     $trafficValues[$year] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
                 }
 

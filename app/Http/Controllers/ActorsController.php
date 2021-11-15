@@ -30,6 +30,7 @@ use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
+use Neo\Models\Phone;
 use Swift_TransportException;
 
 /**
@@ -126,6 +127,10 @@ class ActorsController extends Controller {
             $actor->load("logo");
         }
 
+        if (in_array("phone", $with, true)) {
+            $actor->load("phone");
+        }
+
         $actor->append(["parent", "registration_sent", "is_registered"]);
 
         return new Response($actor);
@@ -188,12 +193,24 @@ class ActorsController extends Controller {
         $actor->locale         = $request->get("locale", $actor->locale);
         $actor->branding_id    = $request->get("branding_id", $actor->branding_id);
         $actor->limited_access = $request->get("limited_access", $actor->limited_access);
+        $actor->two_fa_method  = $request->get("two_", $actor->two_fa_method);
+
+        $lock = $request->get("is_locked", $actor->is_locked);
 
         if ($request->has("password")) {
             $actor->password = $request->get("password");
         }
 
-        $lock = $request->get("is_locked", $actor->is_locked);
+        if ($request->has("phone")) {
+            $phone                 = $actor->phone ?: new Phone();
+            $phone->number         = $request->input("phone");
+            $phone->number_country = $request->input("phone_country");
+            $phone->save();
+
+            if (!$actor->phone) {
+                $actor->phone_id = $phone->id;
+            }
+        }
 
         if ($lock !== $actor->is_locked) {
             $actor->is_locked = $lock;
@@ -240,8 +257,12 @@ class ActorsController extends Controller {
                 break;
         }
 
-        if($actor->property !== null) {
+        if ($actor->property) {
             $actor->property->delete();
+        }
+
+        if ($actor->phone) {
+            $actor->phone->delete();
         }
 
         $actor->delete();

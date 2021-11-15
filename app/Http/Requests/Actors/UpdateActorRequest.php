@@ -57,6 +57,9 @@ class UpdateActorRequest extends FormRequest {
             "parent_id"      => ["sometimes", "integer", "exists:actors,id"],
             "branding_id"    => ["sometimes", "present"],
             "limited_access" => ["sometimes", "boolean"],
+            "phone"          => ["sometimes", "phone"],
+            "phone_country"  => ["required_with:phonefield"],
+            "two_fa_method"  => ["sometimes", "string"]
         ];
     }
 }

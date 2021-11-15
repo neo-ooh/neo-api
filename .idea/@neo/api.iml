@@ -13,6 +13,12 @@
       <excludeFolder url="file://$MODULE_DIR$/../dataSources" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/skagarwal/google-places-api" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/laravel/framework" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/twilio/sdk" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/aloha/twilio" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/iso3166" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/propaganistas/laravel-phone" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/giggsey/libphonenumber-for-php" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/giggsey/locale" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

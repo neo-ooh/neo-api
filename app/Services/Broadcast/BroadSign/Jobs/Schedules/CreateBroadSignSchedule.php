@@ -138,6 +138,11 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
         $schedule->external_id_2 = $bsSchedule->id;
         $schedule->save();
 
+        if (!$bsSchedule->id) {
+            // The schedule creation failed. Stop here
+            return;
+        }
+
         // Create the broadsign bundle that will be broadcast by the schedule
         $this->makeBundle($content, $bsSchedule, $schedule);
 

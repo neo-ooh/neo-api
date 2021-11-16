@@ -18,7 +18,7 @@ use Neo\Http\Controllers\WelcomeController;
 
 Route::group([
     "middleware" => "guests",
-    "prefix" => "v1/auth"
+    "prefix"     => "v1/auth"
 ], function () {
     /*
     |----------------------------------------------------------------------
@@ -26,7 +26,7 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route:: get('/welcome', WelcomeController::class . '@check'      );
+    Route:: get('/welcome', WelcomeController::class . '@check');
     Route::post('/welcome', WelcomeController::class . '@setPassword');
 
 
@@ -43,7 +43,7 @@ Route::group([
     | Token Refresh
     |----------------------------------------------------------------------
     */
-    Route::middleware('loa-1')->group(function() {
+    Route::middleware('loa-1')->group(function () {
         Route::get('/token-refresh', ActorsController::class . '@getToken');
     });
 
@@ -53,7 +53,8 @@ Route::group([
     | Second Factor Authentication
     |----------------------------------------------------------------------
     */
-    Route::middleware('loa-2')->group(function() {
+    Route::middleware('loa-2')->group(function () {
+        Route::put("/recycle-two-fa/{actor}", TwoFactorAuthController::class . "@recycle");
         Route::post('/two-fa-validation', TwoFactorAuthController::class . '@validateToken');
     });
 
@@ -65,9 +66,9 @@ Route::group([
     */
     Route::prefix('recovery')->group(function () {
         // Generate a password recovery token
-        Route::post('/recover-password', PasswordRecoveryController::class . '@makeToken'    );
-        Route::post('/check-token'     , PasswordRecoveryController::class . '@validateToken');
-        Route::post('/reset-password'  , PasswordRecoveryController::class . '@resetPassword');
+        Route::post('/recover-password', PasswordRecoveryController::class . '@makeToken');
+        Route::post('/check-token', PasswordRecoveryController::class . '@validateToken');
+        Route::post('/reset-password', PasswordRecoveryController::class . '@resetPassword');
     });
 
 
@@ -76,8 +77,8 @@ Route::group([
     | Terms of service
     |----------------------------------------------------------------------
     */
-    Route::middleware('loa-3')->group(function() {
-        Route:: get('/terms-of-service', TermsOfServiceController::class . '@show'  );
+    Route::middleware('loa-3')->group(function () {
+        Route:: get('/terms-of-service', TermsOfServiceController::class . '@show');
         Route::post('/terms-of-service', TermsOfServiceController::class . '@accept');
     });
 });

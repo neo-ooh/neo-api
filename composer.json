@@ -21,7 +21,7 @@
     "aloha/twilio": "^5.0",
     "arkaitzgarro/elastic-apm-laravel": "^3.0",
     "bensampo/laravel-enum": "^3.1",
-    "doctrine/dbal": "3.1.1",
+    "doctrine/dbal": "3.1.4",
     "edujugon/laradoo": "dev-php_8",
     "fideloper/proxy": "^4.4",
     "firebase/php-jwt": "^5.2",

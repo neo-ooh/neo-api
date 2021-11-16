@@ -20,11 +20,10 @@ class LaravelLogFormatter {
      * @param Logger $logger
      * @return void
      */
-    public function __invoke(Logger $logger)
-    {
+    public function __invoke(Logger $logger) {
         foreach ($logger->getHandlers() as $handler) {
             $lineFormatter = new LineFormatter(
-                '[%datetime%] %channel%.%level_name%: %message% %context% %extra%'. PHP_EOL,
+                '[%datetime%] %channel%.%level_name%: %message% context:%context%' . PHP_EOL,
                 'c', // ISO 8601 Date format
                 true,
                 true

@@ -27,8 +27,12 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
 
     public function handle() {
         // List all the weeks we are working on
-        $weeks       = [];
-        $datePointer = Carbon::create($this->year, $this->month)->startOfWeek();
+        $weeks = [];
+        // Special case for january
+        $datePointer = $this->month === 1
+            ? Carbon::now()->setISODate($this->year, 1)
+            : Carbon::create($this->year, $this->month)
+                    ->startOfWeek();
         $boundary    = Carbon::create($this->year, $this->month)->addMonth();
 
         do {

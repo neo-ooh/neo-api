@@ -9,6 +9,7 @@ use Neo\Enums\Capability;
 use Neo\Http\Requests\PropertiesTraffic\ListTrafficRequest;
 use Neo\Http\Requests\PropertiesTraffic\StoreTrafficRequest;
 use Neo\Http\Requests\PropertiesTraffic\UpdatePropertyTrafficSettingsRequest;
+use Neo\Jobs\Traffic\EstimateWeeklyTrafficFromMonthJob;
 use Neo\Models\Property;
 use Neo\Models\PropertyTrafficMonthly;
 
@@ -47,6 +48,8 @@ class PropertiesTrafficController extends Controller {
             "year"        => $request->input("year"),
             "month"       => $request->input("month"),
         ], $values);
+
+        EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $request->input("year"), $request->input("month") + 1);
 
         return new Response($traffic, 201);
     }

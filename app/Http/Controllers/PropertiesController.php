@@ -29,20 +29,28 @@ class PropertiesController extends Controller {
         $properties = Property::all();
         $properties->load(["data", "address", "actor", "odoo", "odoo.products_categories", "odoo.products_categories.product_type", "network"]);
 
-        if(in_array("traffic", $request->input("with", []))) {
-            $properties->load("traffic");
+        if (in_array("traffic", $request->input("with", []))) {
+            $properties->load(["traffic", "traffic.data"]);
             $properties->each(fn($p) => $p->traffic->loadMonthlyTraffic($p->address?->city->province));
         }
 
-        if(in_array("products", $request->input("with", []))) {
-            $properties->load(['odoo.products', 'odoo.products_categories.product_type'])->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
+        if (in_array("weekly_traffic", $request->input("with", []))) {
+            $properties->each(function (Property $p) {
+                $p->traffic->append("weekly_traffic");
+                $p->traffic->makeHidden("weekly_data");
+            });
         }
 
-        if(in_array("pictures", $request->input("with", []))) {
+        if (in_array("products", $request->input("with", []))) {
+            $properties->load(['odoo.products', 'odoo.products_categories.product_type'])
+                       ->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
+        }
+
+        if (in_array("pictures", $request->input("with", []))) {
             $properties->load("pictures");
         }
 
-        if(in_array("fields", $request->input("with", []))) {
+        if (in_array("fields", $request->input("with", []))) {
             $properties->load(["network.properties_fields", "fields_values"]);
         }
 

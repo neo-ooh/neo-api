@@ -8,7 +8,7 @@
  * @neo/api - FillMissingTrafficValueJob.php
  */
 
-namespace Neo\Jobs;
+namespace Neo\Jobs\Traffic;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;

@@ -59,7 +59,7 @@ class PropertyTrafficSettings extends Model {
         "grace_override" => "date"
     ];
 
-    protected $with = ["data"];
+    protected $with = [];
 
     protected $fillable = ["is_required", "start_year", "grace_override"];
 
@@ -68,12 +68,21 @@ class PropertyTrafficSettings extends Model {
     }
 
     /**
-     * Points to monthly data
+     * Monthly traffic data points
      *
      * @return HasMany
      */
     public function data(): HasMany {
         return $this->hasMany(PropertyTrafficMonthly::class, "property_id", "property_id")->orderBy("year", 'desc');
+    }
+
+    /**
+     * Weekly traffic data points
+     *
+     * @return HasMany
+     */
+    public function weekly_data(): HasMany {
+        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
     }
 
     public function source(): BelongsToMany {
@@ -135,5 +144,11 @@ class PropertyTrafficSettings extends Model {
         }
 
         $this->monthly_traffic = $monthly_traffic;
+    }
+
+
+    public function getWeeklyTrafficAttribute() {
+        return $this->weekly_data->groupBy("year")
+                                 ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]));
     }
 }

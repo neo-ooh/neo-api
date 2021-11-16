@@ -1,6 +1,14 @@
 <?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - PullLatestTrafficData.php
+ */
 
-namespace Neo\Jobs\Properties;
+namespace Neo\Jobs\Traffic;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -58,6 +66,8 @@ class PullLatestTrafficData implements ShouldQueue {
             ], [
                 "traffic" => $traffic,
             ]);
+
+            EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $start->year, $start->month);
         }
 
         // We're good

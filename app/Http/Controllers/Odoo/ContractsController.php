@@ -30,7 +30,8 @@ class ContractsController {
             return new ResourceNotFoundException("Could not found any contract with name $contractName");
         }
 
-        Log::info("planner.odoo.assoc", [
+        Log::info("connect.log", [
+            "action"    => "planner.static.assoc",
             "contract"  => $contract->name,
             "sales_rep" => Auth::user()->name
         ]);
@@ -64,7 +65,8 @@ class ContractsController {
 
         SendContractJob::dispatchSync($contract, $request->input("flights"), $request->input("clearOnSend"));
 
-        Log::info("planner.odoo.sent", [
+        Log::info("connect.log", [
+            "action"    => "planner.odoo.sent",
             "contract"  => $contract->name,
             "sales_rep" => Auth::user()->name
         ]);

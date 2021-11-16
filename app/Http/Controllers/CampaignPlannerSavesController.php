@@ -83,9 +83,12 @@ class CampaignPlannerSavesController {
 
 //        $campaignPlannerSave->load(["actor.name"]);
 
-        Log::info("planner.static.load", ["save_id"  => $campaignPlannerSave->id,
-                                          "name"     => $campaignPlannerSave->name,
-                                          "owner_id" => $campaignPlannerSave->actor_id
+        Log::info("connect.log", [
+            "action"   => "planner.static.load",
+            "save_id"  => $campaignPlannerSave->id,
+            "name"     => $campaignPlannerSave->name,
+            "owner_id" => $campaignPlannerSave->actor_id,
+            "contract" => $campaignPlannerSave->data["odoo"]["contract"] ?? "",
         ]);
 
         return new Response(["save" => $campaignPlannerSave, "properties" => $properties]);

@@ -12,12 +12,12 @@ namespace Neo\Jobs;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Neo\Models\Property;
-use Neo\Models\PropertyTraffic;
+use Neo\Models\PropertyTrafficMonthly;
 
 
 /**
@@ -27,15 +27,15 @@ class FillMissingTrafficValueJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function handle() {
-        $currentYear = Carbon::now()->year;
+        $currentYear  = Carbon::now()->year;
         $currentMonth = Carbon::now()->month - 2;
 
         $properties = Property::with(["traffic", "traffic.data", "address", "address.city", "address.city.province"])->get();
 
         /** @var Property $property */
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             // Check if the property has a record for this month traffic
-            if($property->traffic->data->first(fn(PropertyTraffic $t) => $t->year === $currentYear && $t->month === $currentMonth)) {
+            if ($property->traffic->data->first(fn(PropertyTrafficMonthly $t) => $t->year === $currentYear && $t->month === $currentMonth)) {
                 // ignore
                 continue;
             }
@@ -44,33 +44,33 @@ class FillMissingTrafficValueJob implements ShouldQueue {
 
             // Check the missing value strategy for the property.
             // If it is set to default value, we will use this one,
-            if($property->traffic->missing_value_strategy === "USE_PLACEHOLDER") {
-                PropertyTraffic::query()->create([
+            if ($property->traffic->missing_value_strategy === "USE_PLACEHOLDER") {
+                PropertyTrafficMonthly::query()->create([
                     "property_id" => $property->actor_id,
                     "year"        => $currentYear,
                     "month"       => $currentMonth,
-                    "temporary"       => $property->traffic->placeholder_value
+                    "temporary"   => $property->traffic->placeholder_value
                 ]);
 
                 continue;
             }
 
             // Do we have a record for the same month in 2019 ?
-            /** @var ?PropertyTraffic $prevRecord */
-            $prevRecord = $property->traffic->data->first(fn(PropertyTraffic $t) => $t->year === 2019 && $t->month === $currentMonth);
+            /** @var ?PropertyTrafficMonthly $prevRecord */
+            $prevRecord = $property->traffic->data->first(fn(PropertyTrafficMonthly $t) => $t->year === 2019 && $t->month === $currentMonth);
 
-            if(!$prevRecord) {
+            if (!$prevRecord) {
                 continue;
             }
 
-            $coef = $property->address->city->province->slug === 'QC' ? .75 : .65;
+            $coef    = $property->address->city->province->slug === 'QC' ? .75 : .65;
             $traffic = $prevRecord->final_traffic * $coef;
 
-            PropertyTraffic::query()->create([
+            PropertyTrafficMonthly::query()->create([
                 "property_id" => $property->actor_id,
                 "year"        => $currentYear,
                 "month"       => $currentMonth,
-                "temporary"       => $traffic
+                "temporary"   => $traffic
             ]);
         }
 

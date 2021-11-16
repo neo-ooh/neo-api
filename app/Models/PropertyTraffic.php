@@ -1,89 +1,41 @@
 <?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - PropertyTraffic.php
+ */
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Gate;
-use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
- * Class Property Traffic
- *
- * @property int      $property_id
- * @property int      $year
- * @property int      $month 0-indexed month
- * @property int      $traffic
- * @property int      $temporary
- * @property int      $final_traffic
- *
- * @property Property $property
+ * @property int     $property_id
+ * @property int     $year
+ * @property int     $week
+ * @property int     $traffic
+ * @property boolean $is_estimate
  */
 class PropertyTraffic extends Model {
-    use HasCompositePrimaryKey;
-    use HasFactory;
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table properties
-    |--------------------------------------------------------------------------
-    */
-
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
     protected $table = "properties_traffic";
 
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $primaryKey = ["property_id", "year", "month"];
-
-    /**
-     * Indicates if the IDs are auto-incrementing.
-     *
-     * @var bool
-     */
+    protected $primaryKey = null;
     public $incrementing = false;
 
-    public $fillable = [
+    protected $casts = [
+        "is_estimate" => "boolean"
+    ];
+
+    protected $fillable = [
         "property_id",
         "year",
-        "month",
+        "week",
         "traffic",
-        "temporary",
+        "is_estimate",
     ];
 
-    protected $casts = [
-        "year" => "integer",
-        "month" => "integer",
-        "traffic" => "integer",
-        "temporary" => "integer",
-        "final_traffic" => "integer",
-    ];
-
-    protected static function boot() {
-        parent::boot();
-
-        static::retrieved(function(PropertyTraffic $traffic) {
-            $traffic->makeHiddenIf(!Gate::allows(\Neo\Enums\Capability::properties_edit), ["temporary"]);
-        });
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
-
-    public function property(): BelongsTo {
-        return $this->belongsTo(Property::class, "property_id", "actor_id");
-    }
+    public $timestamps = false;
 }

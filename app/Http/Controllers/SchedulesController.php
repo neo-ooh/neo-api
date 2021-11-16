@@ -153,9 +153,6 @@ class SchedulesController extends Controller {
             }
         }
 
-        \Log::debug($startDate);
-        \Log::debug($endDate);
-
         // Looks like we are good!
         $schedule              = new Schedule();
         $schedule->content_id  = $content->id;

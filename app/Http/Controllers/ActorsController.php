@@ -192,7 +192,7 @@ class ActorsController extends Controller {
         $actor->locale         = $request->get("locale", $actor->locale);
         $actor->branding_id    = $request->get("branding_id", $actor->branding_id);
         $actor->limited_access = $request->get("limited_access", $actor->limited_access);
-        $actor->two_fa_method  = $request->get("two_", $actor->two_fa_method);
+        $actor->two_fa_method  = $request->get("two_fa_method", $actor->two_fa_method);
 
         $lock = $request->get("is_locked", $actor->is_locked);
 

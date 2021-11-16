@@ -10,12 +10,13 @@
 
 namespace Neo\Jobs\Actors;
 
-use Aloha\Twilio\Twilio;
+use Aloha\Twilio\Support\Laravel\Facade as Twilio;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Neo\Mails\TwoFactorTokenEmail;
 use Neo\Models\Actor;
@@ -31,13 +32,13 @@ class SendTwoFactorTokenJob implements ShouldQueue {
     public function handle() {
         $actor = Actor::findOrFail($this->actorId);
 
-        if ($actor->two_fa_method === 'email') {
-            Mail::to($actor)->send(new TwoFactorTokenEmail($actor, $actor->twoFactorToken));
+        Log::debug("user $actor->id auth method: $actor->two_fa_method");
+
+        if ($actor->two_fa_method === 'phone' && $actor->has('phone')) {
+            Twilio::message($actor->phone->number, __("auth.two-factor-text", ["token" => $actor->twoFactorToken->token]));
             return;
         }
 
-        if ($actor->two_fa_method === 'phone') {
-            Twilio::message($actor->phone->number, __("auth.two-factor-text", ["token" => $actor->twoFactorToken->token]));
-        }
+        Mail::to($actor)->send(new TwoFactorTokenEmail($actor, $actor->twoFactorToken));
     }
 }

@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Neo\Http\Requests\CampaignPlannerSaves\DestroySaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\ListSavesRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\StoreSaveRequest;
@@ -59,7 +60,7 @@ class CampaignPlannerSavesController {
         // We return the save and the data needed by the save in one go.
         // Extract properties IDs from the save
         $propertiesIds = collect($campaignPlannerSave->data["flights"])->pluck("selection")->flatten(1)->pluck("0.0");
-        $properties = Property::query()->whereIn("actor_id", $propertiesIds)->get();
+        $properties    = Property::query()->whereIn("actor_id", $propertiesIds)->get();
 
         $properties->load([
             "actor",
@@ -75,12 +76,17 @@ class CampaignPlannerSavesController {
             "pictures",
             "traffic",
         ]);
-        $properties->each(function(Property $p) {
+        $properties->each(function (Property $p) {
             $p->traffic->loadMonthlyTraffic($p->address?->city->province);
             $p->odoo?->computeCategoriesValues();
-        } );
+        });
 
 //        $campaignPlannerSave->load(["actor.name"]);
+
+        Log::info("planner.static.load", ["save_id"  => $campaignPlannerSave->id,
+                                          "name"     => $campaignPlannerSave->name,
+                                          "owner_id" => $campaignPlannerSave->actor_id
+        ]);
 
         return new Response(["save" => $campaignPlannerSave, "properties" => $properties]);
     }

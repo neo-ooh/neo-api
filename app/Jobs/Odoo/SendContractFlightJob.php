@@ -16,8 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Neo\Documents\Contract\Order;
 use Neo\Models\Odoo\ProductCategory;
 use Neo\Models\Odoo\ProductType;
 use Neo\Models\Property;
@@ -33,7 +31,8 @@ class SendContractFlightJob implements ShouldQueue {
     public $tries = 1;
     public $timeout = 3600;
 
-    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {}
+    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {
+    }
 
     public function handle() {
         clock()->event("Send Flight")->begin();
@@ -91,13 +90,13 @@ class SendContractFlightJob implements ShouldQueue {
             $productIterator = $products->getIterator();
 
             // If no product is available, skip it
-            if(!$productIterator->valid()) {
+            if (!$productIterator->valid()) {
                 continue;
             }
 
             // We add products until we have one that is available, or we add all if its digital
             do {
-                $product = $productIterator->current();
+                $product    = $productIterator->current();
                 $linkedLine = null;
 
                 $orderLine = OrderLine::create($client, [
@@ -115,34 +114,34 @@ class SendContractFlightJob implements ShouldQueue {
                 ]);
 
                 // If the product has a linked product, we add it as well
-                if($product->linked_product_id) {
+                if ($product->linked_product_id) {
                     // Get the linked product
                     $linkedProduct = Product::get($client, $product->linked_product_id[0]);
 
                     $linkedLine = OrderLine::create($client, [
-                        "order_id" => $this->contract->id,
-                        "name" => $linkedProduct->name,
-                        "price_unit" => 0,
+                        "order_id"        => $this->contract->id,
+                        "name"            => $linkedProduct->name,
+                        "price_unit"      => 0,
                         "product_uom_qty" => 1.0,
-                        "customer_lead" => 0.0,
-                        "product_id" => $linkedProduct->product_variant_id[0],
-                        "rental_start" => $flightStart,
-                        "rental_end" => $flightEnd,
-                        "is_rental_line" => 1,
-                        "is_linked_line" => 1,
-                        "discount" => 0,
-                        "sequence" => $this->flightIndex * 10
+                        "customer_lead"   => 0.0,
+                        "product_id"      => $linkedProduct->product_variant_id[0],
+                        "rental_start"    => $flightStart,
+                        "rental_end"      => $flightEnd,
+                        "is_rental_line"  => 1,
+                        "is_linked_line"  => 1,
+                        "discount"        => 0,
+                        "sequence"        => $this->flightIndex * 10
                     ]);
                 }
 
                 $productIterator->next();
 
                 // If the product is unavailable, and we have other products that we can try with, remove the product.
-                if($orderLine->over_qty > 0 && $productIterator->valid()) {
+                if ($orderLine->over_qty > 0 && $productIterator->valid()) {
                     $orderLine->remove();
                     $linkedLine?->remove();
                 }
-            } while(($orderLine->over_qty > 0 || $connectProductType->product_type_id === 2) && $productIterator->valid());
+            } while (($orderLine->over_qty > 0 || $connectProductType->product_type_id === 2) && $productIterator->valid());
 
             clock()->event("Handle product #$propertyId->$productId")->end();
         }

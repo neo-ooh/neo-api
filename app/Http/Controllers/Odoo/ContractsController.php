@@ -11,6 +11,8 @@
 namespace Neo\Http\Controllers\Odoo;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 use Neo\Http\Requests\Odoo\Contracts\SendContractRequest;
 use Neo\Http\Requests\Odoo\Contracts\ShowContractRequest;
@@ -27,6 +29,11 @@ class ContractsController {
         if ($contract === null) {
             return new ResourceNotFoundException("Could not found any contract with name $contractName");
         }
+
+        Log::info("planner.odoo.assoc", [
+            "contract"  => $contract->name,
+            "sales_rep" => Auth::user()->name
+        ]);
 
         return new Response([
             "name"             => $contract->name,
@@ -51,11 +58,16 @@ class ContractsController {
             return new ResourceNotFoundException("Could not found any contract with name $contractName");
         }
 
-        if($contract->state !== 'draft' && $contract->state !== 'sale') {
-            return new InvalidArgumentException("Cannot update a contract whose state is ". $contract->state);
+        if ($contract->state !== 'draft' && $contract->state !== 'sale') {
+            return new InvalidArgumentException("Cannot update a contract whose state is " . $contract->state);
         }
 
         SendContractJob::dispatchSync($contract, $request->input("flights"), $request->input("clearOnSend"));
+
+        Log::info("planner.odoo.sent", [
+            "contract"  => $contract->name,
+            "sales_rep" => Auth::user()->name
+        ]);
 
         return new Response([]);
     }

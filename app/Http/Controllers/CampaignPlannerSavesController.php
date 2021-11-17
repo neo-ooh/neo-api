@@ -76,11 +76,13 @@ class CampaignPlannerSavesController {
             "pictures",
             "traffic",
         ]);
+
         $properties->each(function (Property $p) {
-            $p->traffic->loadMonthlyTraffic($p->address?->city->province);
+            $p->rolling_monthly_traffic = $p->traffic->getMonthlyTraffic($p->address?->city->province);
             $p->odoo?->computeCategoriesValues();
         });
 
+        $properties->makeHidden("traffic");
 //        $campaignPlannerSave->load(["actor.name"]);
 
         Log::info("connect.log", [

@@ -29,10 +29,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
         // List all the weeks we are working on
         $weeks = [];
         // Special case for january
-        $datePointer = $this->month === 1
-            ? Carbon::now()->setISODate($this->year, 1)
-            : Carbon::create($this->year, $this->month)
-                    ->startOfWeek();
+        $datePointer = Carbon::create($this->year, $this->month)->startOfWeek();
         $boundary    = Carbon::create($this->year, $this->month)->addMonth();
 
         do {
@@ -52,11 +49,13 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                                                   ->first());
 
         array_pop($weeks);
+        dump(collect($weeks)->map(fn($w) => $w->toDateString()));
         // Now we calculate the traffic for each weeks
         /**
          * @var Carbon $week
          */
         foreach ($weeks as $week) {
+            dump("estimating $week->year, $week->week");
             $trafficCount = 0;
             for ($i = 0; $i < 7; $i++) {
                 $day       = $week->clone()->addDays($i);
@@ -64,6 +63,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
 
                 // We are missing month data for this week, go to the next one
                 if (!$monthData) {
+                    dump("dumping $week->year, $week->week");
                     continue 2;
                 }
 

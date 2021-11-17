@@ -27,14 +27,45 @@ class PropertiesController extends Controller {
 
     public function index(ListPropertiesRequest $request) {
         $properties = Property::all();
-        $properties->load(["data", "address", "actor", "odoo", "odoo.products_categories", "odoo.products_categories.product_type", "network"]);
+        $properties->load([
+            "data",
+            "address",
+            "actor" => fn($q) => $q->select(["id", "name"]),
+            "odoo",
+            "odoo.products_categories",
+            "odoo.products_categories.product_type"
+        ]);
+
+        if (in_array("network", $request->input("with", []))) {
+            $properties->load("network");
+        }
 
         if (in_array("traffic", $request->input("with", []))) {
-            $properties->load(["traffic", "traffic.data"]);
-            $properties->each(fn($p) => $p->traffic->loadMonthlyTraffic($p->address?->city->province));
+            $properties->loadMissing([
+                "traffic",
+                "traffic.data"
+            ]);
+        }
+
+        if (in_array("rolling_monthly_traffic", $request->input("with", []))) {
+            $properties->loadMissing([
+                "traffic",
+                "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"])
+            ]);
+
+            $properties->each(function ($p) {
+                $p->rolling_monthly_traffic = $p->traffic->getMonthlyTraffic($p->address?->city->province);
+            });
+
+            $properties->makeHidden("traffic");
         }
 
         if (in_array("weekly_traffic", $request->input("with", []))) {
+            $properties->loadMissing([
+                "traffic",
+                "traffic.weekly_data"
+            ]);
+
             $properties->each(function (Property $p) {
                 $p->traffic->append("weekly_traffic");
                 $p->traffic->makeHidden("weekly_data");
@@ -42,8 +73,10 @@ class PropertiesController extends Controller {
         }
 
         if (in_array("products", $request->input("with", []))) {
-            $properties->load(['odoo.products', 'odoo.products_categories.product_type'])
-                       ->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
+            $properties->loadMissing([
+                "odoo.products",
+                "odoo.products_categories.product_type"
+            ])->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
         }
 
         if (in_array("pictures", $request->input("with", []))) {
@@ -51,7 +84,10 @@ class PropertiesController extends Controller {
         }
 
         if (in_array("fields", $request->input("with", []))) {
-            $properties->load(["network.properties_fields", "fields_values"]);
+            $properties->load([
+                "network.properties_fields",
+                "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"])
+            ]);
         }
 
         return $properties;

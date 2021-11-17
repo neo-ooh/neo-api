@@ -132,11 +132,13 @@ class SchedulesController extends Controller {
         $startDate->setHour($campaign->start_date->hour);
         $startDate->setMinutes($campaign->start_date->minute);
 
-        $endDate = $campaign->end_date;
-        $temp    = $startDate->copy()->addDays($content->scheduling_duration);
+        // Apply the end date, default is two weeks, or the scheduling duration if applied
+        $endDate = $content->scheduling_duration !== 0
+            ? $startDate->clone()->addDays($content->scheduling_duration)
+            : $startDate->clone()->addWeeks(2);
 
-        if ($content->scheduling_duration !== 0 && $temp->isBefore($campaign->end_date)) {
-            $endDate = $temp;
+        if ($endDate->isAfter($campaign->end_date)) {
+            $endDate = $campaign->clone()->end_date;
         }
 
         $endDate->setHour($campaign->end_date->hour);

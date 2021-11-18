@@ -76,10 +76,11 @@ class PropertiesController extends Controller {
             $properties->loadMissing([
                 "odoo.products",
                 "odoo.products_categories.product_type"
-            ])->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
+            ])
+                       ->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
         }
 
-        if (in_array("pictures", $request->input("with", []))) {
+        if(in_array("pictures", $request->input("with", []))) {
             $properties->load("pictures");
         }
 

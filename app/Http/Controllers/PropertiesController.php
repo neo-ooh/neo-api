@@ -41,8 +41,7 @@ class PropertiesController extends Controller {
         }
 
         if (in_array("traffic", $request->input("with", []))) {
-            $properties->loadMissing([
-                "traffic",
+            $properties->load([
                 "traffic.data"
             ]);
         }
@@ -80,7 +79,7 @@ class PropertiesController extends Controller {
                        ->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
         }
 
-        if(in_array("pictures", $request->input("with", []))) {
+        if (in_array("pictures", $request->input("with", []))) {
             $properties->load("pictures");
         }
 

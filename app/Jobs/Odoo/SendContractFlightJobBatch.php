@@ -37,13 +37,14 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
     protected \Illuminate\Support\Collection $consumedProducts;
 
-    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {}
+    public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {
+    }
 
     public function handle() {
         clock()->event("Send Flight")->begin();
 
         $this->consumedProducts = collect();
-        $client = OdooConfig::fromConfig()->getClient();
+        $client                 = OdooConfig::fromConfig()->getClient();
 
         $this->flightType  = $this->flight["type"];
         $this->flightStart = Carbon::parse($this->flight['start'])->toDateString();
@@ -63,29 +64,34 @@ class SendContractFlightJobBatch implements ShouldQueue {
         clock()->event("Prepare order lines")->begin();
         // Load all the Connect's products included in the flight
         $this->products = Product::query()
-                           ->whereInMultiple(['property_id', 'product_category_id'], $this->flight["selection"])
-                           ->where("is_bonus", "=", $this->flightType === "bua")
-                           ->get();
+                                 ->whereInMultiple(['property_id', 'product_category_id'], $this->flight["selection"])
+                                 ->where("is_bonus", "=", $this->flightType === "bua")
+                                 ->get();
 
         $linkedProductsIds = $this->products->pluck("linked_product_id")->filter();
-        $this->products = $this->products->merge(Product::query()
-                                ->whereIn("odoo_id", $linkedProductsIds)
-                                ->get())->unique();
+        $this->products    = $this->products->merge(Product::query()
+                                                           ->whereIn("odoo_id", $linkedProductsIds)
+                                                           ->get())->unique();
 
         $orderLinesToAdd = collect();
 
         foreach ($this->flight["selection"] as $selection) {
             [$propertyId, $productId, $discount, $spotsCount] = $selection;
 
-            /** @var Product|null $product */
-            $product = $this->products->first(fn($p) => $p->property_id === $propertyId && $p->product_category_id === $productId);
+            /** @var Collection<Product> $product */
+            $products = $this->products->filter(fn($p) => $p->property_id === $propertyId && $p->product_category_id === $productId);
 
-            if (!$product) {
+            if ($products->isEmpty()) {
                 clock("Could not find product for selection pair: [$propertyId, $productId]");
                 continue;
             }
 
-            $orderLinesToAdd->push(...$this->buildLines($product, spotsCount: $spotsCount, discount: $discount));
+            $productsPointer = $products->getIterator();
+
+            do {
+                $orderLinesToAdd->push(...$this->buildLines($productsPointer->current(), spotsCount: $spotsCount, discount: $discount));
+                $productsPointer->next();
+            } while ($products->first()->product_category->product_type_id === 2 && $productsPointer->valid());
         }
 
         clock()->event("Prepare order lines")->end();
@@ -110,26 +116,25 @@ class SendContractFlightJobBatch implements ShouldQueue {
             foreach ($overbookedLines as $line) {
                 /** @var Product $lineProduct */
                 $lineProduct = $this->products->firstWhere("odoo_variant_id", "=", $line->product_id[0]);
-                $product     = $this->products->filter(fn($p) =>
-                    $p->property_id === $lineProduct->property_id && $p->product_category_id === $lineProduct->product_category_id)
-                                          ->whereNotIn("odoo_id", $this->consumedProducts)
-                                          ->first();
+                $product     = $this->products->filter(fn($p) => $p->property_id === $lineProduct->property_id && $p->product_category_id === $lineProduct->product_category_id)
+                                              ->whereNotIn("odoo_id", $this->consumedProducts)
+                                              ->first();
 
-                if(!$product) {
+                if (!$product) {
                     // No more products available, nothing left to do
                     continue;
                 }
 
                 // Set up the new lines to try
                 $spotsCount = $line->product_uom_qty;
-                $discount = $line->discount;
+                $discount   = $line->discount;
 
                 $orderLinesToAdd->push(...$this->buildLines($product, $spotsCount, $discount));
 
                 // Mark the previous lines as to be removed
                 $orderLinesToRemove->push($line->id);
 
-                if($lineProduct->linked_product_id && $linkedProduct = $this->products->get($lineProduct->linked_product_id)) {
+                if ($lineProduct->linked_product_id && $linkedProduct = $this->products->get($lineProduct->linked_product_id)) {
                     $orderLinesToRemove->push($orderLinesAdded->first(/**
                      * @param OrderLine $line
                      * @return mixed
@@ -137,21 +142,21 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 }
             }
 
-            if($orderLinesToAdd->count() === 0) {
+            if ($orderLinesToAdd->count() === 0) {
                 // No line to add, we stop adding stuff here
                 break;
             }
 
             // Now that we have all our orderlines, push them to the server and load them for verification
             $addedOrderLines = $client->client->call(OrderLine::$slug, 'create', [$orderLinesToAdd->toArray()]);
-            $orderLines = OrderLine::getMultiple($client, $addedOrderLines->toArray());
+            $orderLines      = OrderLine::getMultiple($client, $addedOrderLines->toArray());
             $overbookedLines = $orderLines->where("over_qty", ">", "0");
 
-        } while($overbookedLines->count() > 0);
+        } while ($overbookedLines->count() > 0);
 
         clock($orderLinesToRemove);
 
-        if($orderLinesToRemove->count() > 0) {
+        if ($orderLinesToRemove->count() > 0) {
             OrderLine::delete($client, [
                 ["id", "in", $orderLinesToRemove->toArray()]
             ]);

@@ -36,17 +36,15 @@ class PropertiesController extends Controller {
             "odoo.products_categories.product_type"
         ]);
 
-        if (in_array("network", $request->input("with", []))) {
+        if (in_array("network", $request->input("with", []), true)) {
             $properties->load("network");
         }
 
-        if (in_array("traffic", $request->input("with", []))) {
-            $properties->load([
-                "traffic.data"
-            ]);
+        if (in_array("traffic", $request->input("with", []), true)) {
+            $properties->load(["traffic.data"]);
         }
 
-        if (in_array("rolling_monthly_traffic", $request->input("with", []))) {
+        if (in_array("rolling_monthly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
                 "traffic",
                 "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"])
@@ -59,7 +57,7 @@ class PropertiesController extends Controller {
             $properties->makeHidden("traffic");
         }
 
-        if (in_array("weekly_traffic", $request->input("with", []))) {
+        if (in_array("weekly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
                 "traffic",
                 "traffic.weekly_data"
@@ -71,7 +69,7 @@ class PropertiesController extends Controller {
             });
         }
 
-        if (in_array("products", $request->input("with", []))) {
+        if (in_array("products", $request->input("with", []), true)) {
             $properties->loadMissing([
                 "odoo.products",
                 "odoo.products_categories.product_type"
@@ -79,11 +77,11 @@ class PropertiesController extends Controller {
                        ->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
         }
 
-        if (in_array("pictures", $request->input("with", []))) {
+        if (in_array("pictures", $request->input("with", []), true)) {
             $properties->load("pictures");
         }
 
-        if (in_array("fields", $request->input("with", []))) {
+        if (in_array("fields", $request->input("with", []), true)) {
             $properties->load([
                 "network.properties_fields",
                 "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"])
@@ -151,14 +149,14 @@ class PropertiesController extends Controller {
         $property = Property::query()->find($propertyId);
 
         if ($property) {
-            $property->load(["actor", "traffic", "traffic.source", "address"]);
+            $property->load(["actor", "traffic", "traffic.data", "address"]);
 
             if (Gate::allows(Capability::properties_edit)) {
-                $property->load(["data", "network", "network.properties_fields", "pictures", "fields_values"]);
+                $property->loadMissing(["data", "network", "network.properties_fields", "pictures", "fields_values", "traffic.source"]);
             }
 
             if (Gate::allows(Capability::odoo_properties)) {
-                $property->load(["odoo", "odoo.products", "odoo.products_categories", "odoo.products_categories.product_type"]);
+                $property->loadMissing(["odoo", "odoo.products", "odoo.products_categories", "odoo.products_categories.product_type"]);
                 $property->odoo?->computeCategoriesValues();
             }
 

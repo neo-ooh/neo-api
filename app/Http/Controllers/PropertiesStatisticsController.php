@@ -13,7 +13,6 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\PropertiesStatistics\GetPropertyStatisticsRequest;
-use Neo\Http\Requests\PropertiesStatistics\ShowMultiplePropertiesRequest;
 use Neo\Models\Property;
 
 class PropertiesStatisticsController {
@@ -24,7 +23,7 @@ class PropertiesStatisticsController {
         foreach ($years as $year) {
             $datasets[$year] = match ($request->input("breakdown")) {
                 "default" => $this->getDefaultBreakdown($property, $year),
-                "market"  => $this->getMarketBreakdown($property, $year),
+                "market" => $this->getMarketBreakdown($property, $year),
                 "product" => $this->getProductBreakdown($property, $year, $request->input("product_id")),
                 "network" => $this->getNetworkBreakdown($property, $year),
             };
@@ -53,7 +52,7 @@ class PropertiesStatisticsController {
             ]
         ];
 
-        if(!$networkId && !$productId) {
+        if (!$networkId && !$productId) {
             $datasets[] = [
                 "type"    => "country",
                 "name"    => "Canada",
@@ -113,7 +112,7 @@ class PropertiesStatisticsController {
     }
 
     public function getTraffic(int $year, ?int $propertyId = null, ?int $marketId = null, ?int $provinceId = null, ?int $productId = null, ?int $networkId = null, ?int $parentId = null) {
-        $query = DB::table("properties_traffic", "pt")
+        $query = DB::table("properties_traffic_monthly", "pt")
                    ->select(["pt.year", "pt.month"])
                    ->selectRaw("SUM(IFNULL(`pt`.`traffic`, `pt`.`temporary`)) AS `traffic`")
                    ->where("pt.year", "=", $year)

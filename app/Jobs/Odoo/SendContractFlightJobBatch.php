@@ -91,7 +91,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             do {
                 $orderLinesToAdd->push(...$this->buildLines($productsPointer->current(), spotsCount: $spotsCount, discount: $discount));
                 $productsPointer->next();
-            } while ($products->first()->product_category->product_type_id === 2 && $productsPointer->valid());
+            } while ($products->first()->category->product_type_id === 2 && $productsPointer->valid());
         }
 
         clock()->event("Prepare order lines")->end();

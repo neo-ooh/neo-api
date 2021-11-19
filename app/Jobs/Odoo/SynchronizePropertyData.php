@@ -16,12 +16,12 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
-use Neo\Models\CategoryType;
 use Neo\Models\ProductCategory;
+use Neo\Models\ProductType;
 use Neo\Models\Property;
 use Neo\Services\API\Odoo\Client;
 use Neo\Services\Odoo\Models\Product;
-use Neo\Services\Odoo\Models\ProductType;
+use Neo\Services\Odoo\Models\ProductType as OdooProductType;
 use Neo\Services\Odoo\Models\Property as OdooProperty;
 
 class SynchronizePropertyData implements ShouldQueue {
@@ -57,10 +57,10 @@ class SynchronizePropertyData implements ShouldQueue {
         }
 
         // Map each odoo product type id with Connect's ids
-        $odooProductTypesMap = $this->odooProducts ?? CategoryType::query()
-                                                                  ->whereIn("external_id", $odooProductTypesIds)
-                                                                  ->get()
-                                                                  ->mapWithKeys(fn($productType) => [$productType->external_id => $productType->id]);
+        $odooProductTypesMap = $this->odooProducts ?? ProductType::query()
+                                                                 ->whereIn("external_id", $odooProductTypesIds)
+                                                                 ->get()
+                                                                 ->mapWithKeys(fn($productType) => [$productType->external_id => $productType->id]);
 
         $products = [];
 
@@ -97,18 +97,18 @@ class SynchronizePropertyData implements ShouldQueue {
     }
 
     protected function pullProductType(int $odooProductTypeId): void {
-        if (CategoryType::query()->where("external_id", "=", $odooProductTypeId)->exists()) {
+        if (ProductType::query()->where("external_id", "=", $odooProductTypeId)->exists()) {
             return;
         }
 
         // Pull the product type
-        $productTypeDist = ProductType::get($this->client, $odooProductTypeId);
+        $productTypeDist = OdooProductType::get($this->client, $odooProductTypeId);
 
         if (!$productTypeDist) {
             return;
         }
 
-        CategoryType::query()->firstOrCreate([
+        ProductType::query()->firstOrCreate([
             "external_id" => $odooProductTypeId,
         ], [
             "name_en" => $productTypeDist->display_name,

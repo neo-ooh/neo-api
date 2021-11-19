@@ -15,6 +15,7 @@ use Neo\Http\Controllers\FieldsController;
 use Neo\Http\Controllers\FieldSegmentsController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\NetworkFieldsController;
+use Neo\Http\Controllers\ProductTypesController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
 use Neo\Http\Controllers\PropertiesFieldsSegmentsController;
@@ -25,6 +26,9 @@ use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\TrafficSourcesController;
 use Neo\Models\Field;
 use Neo\Models\FieldSegment;
+use Neo\Models\Product;
+use Neo\Models\ProductCategory;
+use Neo\Models\ProductType;
 use Neo\Models\TrafficSource;
 
 Route::group([
@@ -60,6 +64,19 @@ Route::group([
 
     /*
     |----------------------------------------------------------------------
+    | Traffic Sources
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("trafficSource", TrafficSource::class);
+
+    Route::   get("traffic-sources", TrafficSourcesController::class . "@index");
+    Route::  post("traffic-sources", TrafficSourcesController::class . "@store");
+    Route::   put("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@update");
+    Route::delete("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@destroy");
+
+    /*
+    |----------------------------------------------------------------------
     | Properties Data
     |----------------------------------------------------------------------
     */
@@ -76,19 +93,6 @@ Route::group([
     Route::  post("properties/{property}/pictures", PropertyPicturesController::class . "@store");
     Route::   put("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@update");
     Route::delete("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@destroy");
-
-    /*
-    |----------------------------------------------------------------------
-    | Traffic Sources
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("trafficSource", TrafficSource::class);
-
-    Route::   get("traffic-sources", TrafficSourcesController::class . "@index");
-    Route::  post("traffic-sources", TrafficSourcesController::class . "@store");
-    Route::   put("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@update");
-    Route::delete("traffic-sources/{trafficSource}", TrafficSourcesController::class . "@destroy");
 
     /*
     |----------------------------------------------------------------------
@@ -138,4 +142,16 @@ Route::group([
 
     Route::  post("properties/{property}/fields/{field}", PropertiesFieldsSegmentsController::class . "@store");
     Route::delete("properties/{property}/fields/{field}", PropertiesFieldsSegmentsController::class . "@destroy");
+
+    /*
+    |----------------------------------------------------------------------
+    | Products
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("product", Product::class);
+    Route::model("productType", ProductType::class);
+    Route::model("productCategory", ProductCategory::class);
+
+    Route::get("product_types", ProductTypesController::class . "@index");
 });

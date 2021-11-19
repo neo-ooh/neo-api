@@ -72,7 +72,7 @@ class PropertiesController extends Controller {
                 "products",
                 "products_categories.product_type"
             ])
-                       ->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
+                       ->each(fn(Property $p) => $p->computeCategoriesValues());
         }
 
         if (in_array("pictures", $request->input("with", []), true)) {
@@ -135,7 +135,7 @@ class PropertiesController extends Controller {
         }
 
         if (Gate::allows(Capability::odoo_properties)) {
-            $property->load(["odoo", "odoo.products", "odoo.products.product_type"]);
+            $property->load(["odoo", "products", "products.product_type"]);
         }
 
         return new Response($property, 201);
@@ -154,8 +154,8 @@ class PropertiesController extends Controller {
             }
 
             if (Gate::allows(Capability::odoo_properties)) {
-                $property->loadMissing(["odoo", "odoo.products", "odoo.products_categories", "odoo.products_categories.product_type"]);
-                $property->odoo?->computeCategoriesValues();
+                $property->loadMissing(["odoo", "products", "products_categories", "products_categories.product_type"]);
+                $property->computeCategoriesValues();
             }
 
             return new Response($property);

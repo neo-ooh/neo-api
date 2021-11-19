@@ -5,13 +5,14 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - CategoryType.php
+ * @neo/api - ProductType.php
  */
 
 namespace Neo\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int    $id
@@ -21,12 +22,16 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
-class CategoryType extends Model {
-    protected $table = "categories_types";
+class ProductType extends Model {
+    protected $table = "products_types";
 
     protected $fillable = [
         "name_en",
         "name_fr",
         "external_id"
     ];
+
+    public function categories(): HasMany {
+        return $this->hasMany(ProductCategory::class, "type_id", "id");
+    }
 }

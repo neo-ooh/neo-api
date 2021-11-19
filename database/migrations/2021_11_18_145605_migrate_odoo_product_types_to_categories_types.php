@@ -10,7 +10,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Neo\Models\CategoryType;
+use Neo\Models\ProductType;
 
 class MigrateOdooProductTypesToCategoriesTypes extends Migration {
     public function up() {
@@ -26,7 +26,7 @@ class MigrateOdooProductTypesToCategoriesTypes extends Migration {
             $table->string("name_fr", 64)->after("name_en");
         });
 
-        CategoryType::all()->each(function ($ct) {
+        ProductType::all()->each(function ($ct) {
             $ct->name_fr = $ct->name_en;
             $ct->save();
         });

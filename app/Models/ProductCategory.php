@@ -28,7 +28,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon               $updated_at
  *
  * @property Collection<Property> $odoo_properties
- * @property CategoryType         $type
+ * @property ProductType          $type
  */
 class ProductCategory extends Model {
     protected $table = "products_categories";
@@ -52,7 +52,7 @@ class ProductCategory extends Model {
     }
 
     public function product_type(): BelongsTo {
-        return $this->belongsTo(CategoryType::class, "type_id", "id");
+        return $this->belongsTo(ProductType::class, "type_id", "id");
     }
 
     public function products(): HasMany {

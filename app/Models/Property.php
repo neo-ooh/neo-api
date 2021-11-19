@@ -118,17 +118,11 @@ class Property extends SecuredModel {
     }
 
     public function products(): HasMany {
-        return $this->hasMany(Product::class, "property_id", "property_id");
+        return $this->hasMany(Product::class, "property_id", "actor_id");
     }
-
-//    public function all_products(): HasMany {
-//        return $this->hasMany(Product::class, "property_id", "property_id");
-//    }
-
 
     public function products_categories(): BelongsToMany {
         return $this->belongsToMany(ProductCategory::class, "products", "property_id", "category_id")
-                    ->withPivot(["property_id"])
                     ->distinct();
     }
 
@@ -159,8 +153,8 @@ class Property extends SecuredModel {
         foreach ($this->products_categories as $products_category) {
             $products = $this->products()
                              ->where("is_bonus", "=", false)
-                             ->get()
-                             ->where("product_category_id", "=", $products_category->id);
+                             ->where("category_id", "=", $products_category->id)
+                             ->get();
 
             // As of 2021-10-07, Static and Specialty Media products (ID #1 & #3) handling is not entirely defined. An exception is
             // therefore setup to limit selection to only one poster at a time.

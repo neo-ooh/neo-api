@@ -123,6 +123,11 @@ final class Capability extends Enum {
     public const properties_fields = "properties.fields";
 
     /**
+     * Allows the user to edit the products of properties
+     */
+    public const properties_products = "properties.products";
+
+    /**
      * Allow user to use the Prints tools to export estimated prints by properties
      */
     public const tools_impressions = "tools.impressions";
@@ -135,12 +140,12 @@ final class Capability extends Enum {
     /**
      * Allow user to setup and edit odoo properties and products
      */
-    public const odoo_properties = "odoo.properties";
+    public const tools_planning = "tools.planning";
 
     /**
      * Allow user to setup and edit odoo properties and products
      */
-    public const tools_planning = "tools.planning";
+    public const odoo_properties = "odoo.properties";
 
     /**
      * Allow user to send properties list made using the planning to Odoo

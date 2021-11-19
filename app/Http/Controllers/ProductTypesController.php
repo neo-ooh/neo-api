@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\ProductTypes\ListProductTypesRequest;
+use Neo\Http\Requests\ProductTypes\UpdateProductTypeRequest;
 use Neo\Models\ProductType;
 
 class ProductTypesController {
@@ -20,7 +21,7 @@ class ProductTypesController {
 
         $productTypes = ProductType::all();
 
-        if (in_array("product_categories", $relations, true)) {
+        if (in_array("categories", $relations, true)) {
             $productTypes->loadMissing("categories");
         }
 
@@ -35,8 +36,12 @@ class ProductTypesController {
         //
     }
 
-    public function update() {
-        //
+    public function update(UpdateProductTypeRequest $request, ProductType $productType) {
+        $productType->name_en = $request->input("name_en");
+        $productType->name_fr = $request->input("name_fr");
+        $productType->save();
+
+        return new Response($productType);
     }
 
     public function destroy() {

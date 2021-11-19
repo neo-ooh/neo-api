@@ -150,8 +150,9 @@ Route::group([
     */
 
     Route::model("product", Product::class);
-    Route::model("productType", ProductType::class);
     Route::model("productCategory", ProductCategory::class);
+    Route::model("productType", ProductType::class);
 
     Route::get("product_types", ProductTypesController::class . "@index");
+    Route::put("product_types/{productType}", ProductTypesController::class . "@update");
 });

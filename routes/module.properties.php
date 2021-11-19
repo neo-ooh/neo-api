@@ -15,6 +15,7 @@ use Neo\Http\Controllers\FieldsController;
 use Neo\Http\Controllers\FieldSegmentsController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\NetworkFieldsController;
+use Neo\Http\Controllers\ProductCategoriesController;
 use Neo\Http\Controllers\ProductTypesController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
@@ -155,4 +156,6 @@ Route::group([
 
     Route::get("product_types", ProductTypesController::class . "@index");
     Route::put("product_types/{productType}", ProductTypesController::class . "@update");
+
+    Route::get("product_categories", ProductCategoriesController::class . "@index");
 });

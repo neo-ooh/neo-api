@@ -16,31 +16,38 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
-use Neo\Models\Odoo\ProductCategory;
-use Neo\Models\Odoo\ProductType;
+use Neo\Models\CategoryType;
+use Neo\Models\ProductCategory;
+use Neo\Models\Property;
 use Neo\Services\API\Odoo\Client;
 use Neo\Services\Odoo\Models\Product;
-use Neo\Services\Odoo\Models\Property;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Neo\Services\Odoo\Models\ProductType;
+use Neo\Services\Odoo\Models\Property as OdooProperty;
 
 class SynchronizePropertyData implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected int $propertyId, protected Client $client, protected ?Property $odooProperty = null, protected ?Collection $odooProducts = null) {}
+    public function __construct(protected int $propertyId, protected Client $client, protected ?OdooProperty $odooProperty = null, protected ?Collection $odooProducts = null) {
+    }
 
     public function handle() {
-        /** @var \Neo\Models\Odoo\Property $odooProperty */
-        $odooProperty = \Neo\Models\Odoo\Property::findOrFail($this->propertyId);
+        /** @var Property $property */
+        $property = Property::findOrFail($this->propertyId);
+
+        // Check the property is matched with an odoo property
+        if (!$property->odoo) {
+            return;
+        }
 
         // We are go, let's start by pulling the property from Odoo.
-        $odooPropertyDist = $this->odooProperty ?? Property::get($this->client, $odooProperty->odoo_id);
+        $odooProperty = $this->odooProperty ?? OdooProperty::get($this->client, $property->odoo->odoo_id);
 
-        if(!$odooPropertyDist) {
+        if (!$odooProperty) {
             return;
         }
 
         // We want to pull all the rental products of the property
-        $propertyRentalProducts = Product::getMultiple($this->client, $odooPropertyDist->rental_product_ids);
+        $propertyRentalProducts = Product::getMultiple($this->client, $odooProperty->rental_product_ids);
 
         // Make sure all the referenced product_types are present in the DB
         $odooProductTypesIds = $propertyRentalProducts->pluck("product_type_id.0")->unique();
@@ -50,10 +57,10 @@ class SynchronizePropertyData implements ShouldQueue {
         }
 
         // Map each odoo product type id with Connect's ids
-        $odooProductTypesMap = $this->odooProducts ?? ProductType::query()
-                                          ->whereIn("odoo_id", $odooProductTypesIds)
-                                          ->get()
-                                          ->mapWithKeys(fn($productType) => [$productType->odoo_id => $productType->id]);
+        $odooProductTypesMap = $this->odooProducts ?? CategoryType::query()
+                                                                  ->whereIn("external_id", $odooProductTypesIds)
+                                                                  ->get()
+                                                                  ->mapWithKeys(fn($productType) => [$productType->external_id => $productType->id]);
 
         $products = [];
 
@@ -65,53 +72,56 @@ class SynchronizePropertyData implements ShouldQueue {
             $productCategory = $this->getProductCategory($distRentalProduct->categ_id[0], $odooProductTypesMap[$distRentalProduct->product_type_id[0]], $distRentalProduct->categ_id[1]);
 
             // Store or update the product in our db
-            /** @var \Neo\Models\Odoo\Product $product */
-            $product = \Neo\Models\Odoo\Product::query()->updateOrCreate([
-                "odoo_id" => $distRentalProduct->id,
+            /** @var \Neo\Models\Product $product */
+            $product = \Neo\Models\Product::query()->firstOrCreate([
+                "external_id" => $distRentalProduct->id,
             ], [
-                "property_id" => $odooProperty->property_id,
-                "product_category_id" => $productCategory->id,
-                "name" => $distRentalProduct->name,
-                "quantity" => $distRentalProduct->nb_screen,
-                "unit_price" => $distRentalProduct->list_price,
-                "odoo_variant_id" => $distRentalProduct->product_variant_id[0],
-                "is_bonus" => !!$distRentalProduct->bonus,
-                "linked_product_id" => !!$distRentalProduct->linked_product_id ? $distRentalProduct->linked_product_id[0] : null,
+                "property_id" => $property->getKey(),
+                "category_id" => $productCategory->id,
+                "name_en"     => $distRentalProduct->name,
+                "name_fr"     => $distRentalProduct->name,
             ]);
 
-            $products[] = $product->odoo_id;
+            $product->quantity            = $distRentalProduct->nb_screen;
+            $product->unit_price          = $distRentalProduct->list_price;
+            $product->external_variant_id = $distRentalProduct->product_variant_id[0];
+            $product->is_bonus            = !!$distRentalProduct->bonus;
+            $product->external_linked_id  = !!$distRentalProduct->external_linked_id ? $distRentalProduct->external_linked_id[0] : null;
+
+            $products[] = $product->id;
         }
 
-        $odooProperty->all_products()->whereNotIn("odoo_id", $products)->delete();
+        $property->products()->whereNotIn("id", $products)->delete();
     }
 
     protected function pullProductType(int $odooProductTypeId): void {
-        if (ProductType::query()->where("odoo_id", "=", $odooProductTypeId)->exists()) {
+        if (CategoryType::query()->where("external_id", "=", $odooProductTypeId)->exists()) {
             return;
         }
 
         // Pull the product type
-        $productTypeDist = \Neo\Services\Odoo\Models\ProductType::get($this->client, $odooProductTypeId);
+        $productTypeDist = ProductType::get($this->client, $odooProductTypeId);
 
-        ProductType::query()->firstOrCreate([
-            "odoo_id" => $odooProductTypeId,
+        if (!$productTypeDist) {
+            return;
+        }
+
+        CategoryType::query()->firstOrCreate([
+            "external_id" => $odooProductTypeId,
         ], [
-            "name"          => $productTypeDist->display_name,
-            "internal_name" => $productTypeDist->name,
+            "name_en" => $productTypeDist->display_name,
+            "name_fr" => $productTypeDist->display_name,
         ]);
     }
 
     protected function getProductCategory(int $odooCategoryId, int $productTypeId, string $internalName) {
         /** @var ProductCategory $productCategory */
-        $productCategory                = ProductCategory::query()->firstOrNew([
-            "odoo_id" => $odooCategoryId,
+        return ProductCategory::query()->firstOrCreate([
+            "external_id" => $odooCategoryId,
         ], [
-            "name"            => $internalName,
-            "product_type_id" => $productTypeId,
+            "name_en" => $internalName,
+            "name_fr" => $internalName,
+            "type_id" => $productTypeId,
         ]);
-        $productCategory->internal_name = $internalName;
-        $productCategory->save();
-
-        return $productCategory;
     }
 }

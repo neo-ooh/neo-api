@@ -32,8 +32,6 @@ class PropertiesController extends Controller {
             "address",
             "actor" => fn($q) => $q->select(["id", "name"]),
             "odoo",
-            "odoo.products_categories",
-            "odoo.products_categories.product_type"
         ]);
 
         if (in_array("network", $request->input("with", []), true)) {
@@ -71,8 +69,8 @@ class PropertiesController extends Controller {
 
         if (in_array("products", $request->input("with", []), true)) {
             $properties->loadMissing([
-                "odoo.products",
-                "odoo.products_categories.product_type"
+                "products",
+                "products_categories.product_type"
             ])
                        ->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
         }

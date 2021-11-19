@@ -11,23 +11,17 @@
 namespace Neo\Models\Odoo;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int                         $property_id
- * @property int                         $odoo_id
- * @property string                      $internal_name
- * @property Carbon                      $created_at
- * @property Carbon                      $updated_at
+ * @property int                  $property_id
+ * @property int                  $odoo_id
+ * @property string               $internal_name
+ * @property Carbon               $created_at
+ * @property Carbon               $updated_at
  *
- * @property \Neo\Models\Property        $property
- * @property Collection<Product>         $products     Guaranteed products of the property
- * @property Collection<Product>         $all_products Guaranteed and bonus products of the property
- * @property Collection<ProductCategory> $products_categories
+ * @property \Neo\Models\Property $property
  */
 class Property extends Model {
     protected $table = "odoo_properties";
@@ -44,45 +38,5 @@ class Property extends Model {
 
     public function property(): BelongsTo {
         return $this->belongsTo(\Neo\Models\Property::class, "property_id", "actor_id");
-    }
-
-    public function products(): HasMany {
-        return $this->hasMany(Product::class, "property_id", "property_id")
-                    ->where("is_bonus", "=", false);
-    }
-
-    public function all_products(): HasMany {
-        return $this->hasMany(Product::class, "property_id", "property_id");
-    }
-
-    public function products_categories(): BelongsToMany {
-        return $this->belongsToMany(ProductCategory::class, "odoo_properties_products", "property_id", "product_category_id")
-                    ->withPivot(["property_id"])
-                    ->distinct();
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Misc
-    |--------------------------------------------------------------------------
-    */
-
-    public function computeCategoriesValues() {
-        // For each product category, we summed the prices and faces of products in it
-        /** @var ProductCategory $products_category */
-        foreach ($this->products_categories as $products_category) {
-            $products = $this->products->where("product_category_id", "=", $products_category->id);
-
-            // As of 2021-10-07, Static and Specialty Media products (ID #1 & #3) handling is not entirely defined. An exception is
-            // therefore setup to limit selection to only one poster at a time.
-            if ($products_category->product_type_id !== 2) {
-                $products_category->quantity   = 1;
-                $products_category->unit_price = $products->first()->unit_price;
-                continue;
-            }
-
-            $products_category->quantity   = $products->sum("quantity");
-            $products_category->unit_price = $products->map(fn($p) => $p->quantity * $p->unit_price)->sum();
-        }
     }
 }

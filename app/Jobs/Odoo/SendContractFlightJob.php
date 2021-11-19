@@ -16,8 +16,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Odoo\ProductCategory;
-use Neo\Models\Odoo\ProductType;
+use Neo\Models\CategoryType;
+use Neo\Models\ProductCategory;
 use Neo\Models\Property;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
@@ -69,13 +69,13 @@ class SendContractFlightJob implements ShouldQueue {
             // We need the property and product record from Connect
             /** @var Property $connectProperty */
             $connectProperty = $properties->firstOrFail(fn($property) => $property->getKey() === $propertyId);
-            /** @var ProductType $connectProductType */
+            /** @var CategoryType $connectProductType */
             $connectProductType = $productsCategories->firstOrFail(fn($product) => $product->getKey() === $productId);
 
             // Pull the products of the odoo property matching the product type
             $products = Product::all($client, [
                 ["shopping_center_id", "=", $connectProperty->odoo->odoo_id],
-                ["categ_id", "=", $connectProductType->odoo_id]
+                ["categ_id", "=", $connectProductType->external_id]
             ]);
 
             // Filter products based on flight type
@@ -114,9 +114,9 @@ class SendContractFlightJob implements ShouldQueue {
                 ]);
 
                 // If the product has a linked product, we add it as well
-                if ($product->linked_product_id) {
+                if ($product->external_linked_id) {
                     // Get the linked product
-                    $linkedProduct = Product::get($client, $product->linked_product_id[0]);
+                    $linkedProduct = Product::get($client, $product->external_linked_id[0]);
 
                     $linkedLine = OrderLine::create($client, [
                         "order_id"        => $this->contract->id,

@@ -6,6 +6,8 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Neo\Models\Odoo\Property as OdooProperty;
 use Neo\Rules\AccessibleProperty;
@@ -99,20 +101,35 @@ class Property extends SecuredModel {
         return $this->belongsTo(Address::class, "address_id", "id");
     }
 
-    public function odoo() {
+    public function odoo(): HasOne {
         return $this->hasOne(OdooProperty::class, "property_id", "actor_id");
     }
 
-    public function data() {
+    public function data(): HasOne {
         return $this->hasOne(PropertyData::class, "property_id", "actor_id");
     }
 
-    public function pictures() {
+    public function pictures(): HasMany {
         return $this->hasMany(PropertyPicture::class, "property_id", "actor_id")->orderBy("order");
     }
 
-    public function fields_values() {
+    public function fields_values(): HasMany {
         return $this->hasMany(PropertyFieldSegmentValue::class, "property_id", "actor_id");
+    }
+
+    public function products(): HasMany {
+        return $this->hasMany(Product::class, "property_id", "property_id");
+    }
+
+//    public function all_products(): HasMany {
+//        return $this->hasMany(Product::class, "property_id", "property_id");
+//    }
+
+
+    public function products_categories(): BelongsToMany {
+        return $this->belongsToMany(ProductCategory::class, "products", "property_id", "category_id")
+                    ->withPivot(["property_id"])
+                    ->distinct();
     }
 
 
@@ -134,5 +151,27 @@ class Property extends SecuredModel {
         }
 
         return $traffic->final_traffic;
+    }
+
+    public function computeCategoriesValues() {
+        // For each product category, we summed the prices and faces of products in it
+        /** @var ProductCategory $products_category */
+        foreach ($this->products_categories as $products_category) {
+            $products = $this->products()
+                             ->where("is_bonus", "=", false)
+                             ->get()
+                             ->where("product_category_id", "=", $products_category->id);
+
+            // As of 2021-10-07, Static and Specialty Media products (ID #1 & #3) handling is not entirely defined. An exception is
+            // therefore setup to limit selection to only one poster at a time.
+            if ($products_category->product_type_id !== 2) {
+                $products_category->quantity   = 1;
+                $products_category->unit_price = $products->first()->unit_price;
+                continue;
+            }
+
+            $products_category->quantity   = $products->sum("quantity");
+            $products_category->unit_price = $products->map(fn($p) => $p->quantity * $p->unit_price)->sum();
+        }
     }
 }

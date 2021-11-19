@@ -158,4 +158,5 @@ Route::group([
     Route::put("product_types/{productType}", ProductTypesController::class . "@update");
 
     Route::get("product_categories", ProductCategoriesController::class . "@index");
+    Route::get("product_categories/{productCategory}", ProductCategoriesController::class . "@show");
 });

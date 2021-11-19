@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\ProductCategories\ListProductCategoriesRequest;
+use Neo\Http\Requests\ProductCategories\ShowProductCategoryRequest;
 use Neo\Models\ProductCategory;
 
 class ProductCategoriesController {
@@ -26,8 +27,10 @@ class ProductCategoriesController {
         //
     }
 
-    public function show() {
-        //
+    public function show(ShowProductCategoryRequest $request, ProductCategory $productCategory) {
+        $relations = $request->input("with", []);
+
+        return new Response($productCategory);
     }
 
     public function update() {

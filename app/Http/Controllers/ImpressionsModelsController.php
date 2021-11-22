@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 use Neo\Http\Requests\ImpressionsModels\DestroyImpressionsModelRequest;
 use Neo\Http\Requests\ImpressionsModels\ListImpressionsModelsRequest;
 use Neo\Http\Requests\ImpressionsModels\StoreImpressionsModelRequest;
@@ -19,6 +20,7 @@ use Neo\Models\ImpressionsModel;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\ProductCategory;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class ImpressionsModelsController {
     public function indexProductCategory(ListImpressionsModelsRequest $request, ProductCategory $productCategory) {
@@ -39,8 +41,14 @@ class ImpressionsModelsController {
         $variables = $request->input("variables", []);
 
         // The formula linting throws an error if it fails
-        $el = new ExpressionLanguage();
-        $el->lint($formula, ["traffic", "faces", ...array_keys($variables)]);
+        try {
+            $el = new ExpressionLanguage();
+            $el->lint($formula, ["traffic", "faces", ...array_keys($variables)]);
+        } catch (SyntaxError $error) {
+            throw ValidationException::withMessages([
+                "formula" => $error->getMessage()
+            ]);
+        }
 
         // Store the new Model
         $model = $modelsHolder->impressions_models()->create([

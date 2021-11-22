@@ -3,6 +3,7 @@
 namespace Neo\Models\Traits;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Neo\Models\ImpressionsModel;
 
 /**
  * Defines an `impressions_models` eloquent relation for the current model.
@@ -10,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  */
 trait HasImpressionsModels {
     public function impressions_models(): BelongsToMany {
-        return $this->belongsToMany(static::class, $this->impressions_models_transient_table, "impressions_model_id", "impressions_model_id",
-            $this->getForeignKey());
+        return $this->belongsToMany(ImpressionsModel::class, $this->impressions_models_transient_table, $this->getForeignKey(), "impressions_model_id");
     }
 }

@@ -75,6 +75,8 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
         $orderLinesToAdd = collect();
 
+        // for ($i = 0; $i < count($this->flight["selection"]); $i++) {
+        // $selection = $this->flight["selection"][$i]
         foreach ($this->flight["selection"] as $selection) {
             [$propertyId, $productId, $discount, $spotsCount] = $selection;
 

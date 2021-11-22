@@ -154,9 +154,10 @@ Route::group([
     Route::model("productCategory", ProductCategory::class);
     Route::model("productType", ProductType::class);
 
-    Route::get("product_types", ProductTypesController::class . "@index");
-    Route::put("product_types/{productType}", ProductTypesController::class . "@update");
+    Route::get("product-types", ProductTypesController::class . "@index");
+    Route::put("product-types/{productType}", ProductTypesController::class . "@update");
 
-    Route::get("product_categories", ProductCategoriesController::class . "@index");
-    Route::get("product_categories/{productCategory}", ProductCategoriesController::class . "@show");
+    Route::get("product-categories", ProductCategoriesController::class . "@index");
+    Route::get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
+    Route::put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 });

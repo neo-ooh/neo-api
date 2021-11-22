@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\ProductCategories\ListProductCategoriesRequest;
 use Neo\Http\Requests\ProductCategories\ShowProductCategoryRequest;
+use Neo\Http\Requests\ProductCategories\UpdateProductCategoryRequest;
 use Neo\Models\ProductCategory;
 
 class ProductCategoriesController {
@@ -33,8 +34,13 @@ class ProductCategoriesController {
         return new Response($productCategory);
     }
 
-    public function update() {
-        //
+    public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory) {
+        $productCategory->name_en       = $request->input("name_en");
+        $productCategory->name_fr       = $request->input("name_fr");
+        $productCategory->fill_strategy = $request->input("fill_strategy");
+        $productCategory->save();
+
+        return new Response($productCategory);
     }
 
     public function destroy() {

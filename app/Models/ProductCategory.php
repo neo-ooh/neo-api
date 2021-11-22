@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Models\Interfaces\WithImpressionsModels;
+use Neo\Models\Traits\HasImpressionsModels;
 
 /**
  * @property int                  $id
@@ -30,7 +32,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Collection<Property> $odoo_properties
  * @property ProductType          $type
  */
-class ProductCategory extends Model {
+class ProductCategory extends Model implements WithImpressionsModels {
+    use HasImpressionsModels;
+
     protected $table = "products_categories";
 
     protected $fillable = [
@@ -40,6 +44,8 @@ class ProductCategory extends Model {
         "fill_strategy",
         "external_id",
     ];
+
+    protected $impressions_models_transient_table = "products_categories_impressions_models";
 
     /*
     |--------------------------------------------------------------------------

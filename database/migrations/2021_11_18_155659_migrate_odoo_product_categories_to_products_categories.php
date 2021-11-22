@@ -25,7 +25,7 @@ class MigrateOdooProductCategoriesToProductsCategories extends Migration {
 
         Schema::table('products_categories', function (Blueprint $table) {
             $table->string("name_fr", 64)->after("name_en");
-            $table->set("fill_strategy", ["ALL", "FIRST_AVAILABLE"])->default("ALL")->after("name_fr");
+            $table->set("fill_strategy", ["DEFAULT", "FIRST_AVAILABLE"])->default("DEFAULT")->after("name_fr");
         });
 
         ProductCategory::all()->each(function ($pc) {

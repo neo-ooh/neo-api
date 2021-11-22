@@ -123,9 +123,14 @@ final class Capability extends Enum {
     public const properties_fields = "properties.fields";
 
     /**
-     * Allows the user to edit the products of properties
+     * Allows the user to view the products of properties
      */
     public const properties_products = "properties.products";
+
+    /**
+     * Allows the user to edit the products of properties
+     */
+    public const products_impressions = "products.impressions";
 
     /**
      * Allow user to use the Prints tools to export estimated prints by properties

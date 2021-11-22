@@ -19,6 +19,10 @@
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/propaganistas/laravel-phone" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/giggsey/libphonenumber-for-php" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/giggsey/locale" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/var-exporter" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/expression-language" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/cache-contracts" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

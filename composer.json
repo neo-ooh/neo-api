@@ -45,6 +45,7 @@
     "ramsey/uuid": "^4.1",
     "skagarwal/google-places-api": "^1.7",
     "spatie/image": "^1.10",
+    "symfony/expression-language": "^5.3",
     "toin0u/geocoder-laravel": "^4.4",
     "vinkla/hashids": "^9.1"
   },
@@ -71,7 +72,6 @@
   "autoload": {
     "psr-4": {
       "Neo\\": "app/",
-      "Database\\Factories\\": "database/factories/",
       "Database\\Seeders\\": "database/seeders/"
     }
   },

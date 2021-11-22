@@ -70,6 +70,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::properties_markets,
                 \Neo\Enums\Capability::properties_fields,
                 \Neo\Enums\Capability::properties_products,
+                \Neo\Enums\Capability::products_impressions,
                 \Neo\Enums\Capability::odoo_properties,
 
                 \Neo\Enums\Capability::bursts_request,

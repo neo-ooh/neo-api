@@ -17,30 +17,44 @@ use Neo\Http\Requests\ImpressionsModels\StoreImpressionsModelRequest;
 use Neo\Http\Requests\ImpressionsModels\UpdateImpressionsModelRequest;
 use Neo\Models\ImpressionsModel;
 use Neo\Models\Interfaces\WithImpressionsModels;
+use Neo\Models\ProductCategory;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsModelsController {
+    public function indexProductCategory(ListImpressionsModelsRequest $request, ProductCategory $productCategory) {
+        return $this->index($request, $productCategory);
+    }
+
     public function index(ListImpressionsModelsRequest $request, WithImpressionsModels $modelsHolder) {
         return new Response($modelsHolder->impressions_models()->get());
     }
 
+    public function storeProductCategory(StoreImpressionsModelRequest $request, ProductCategory $productCategory) {
+        return $this->store($request, $productCategory);
+    }
+
     public function store(StoreImpressionsModelRequest $request, WithImpressionsModels $modelsHolder) {
         // Start by validating the formula
-        $formula = $request->input("formula");
+        $formula   = $request->input("formula");
+        $variables = $request->input("variables", []);
 
         // The formula linting throws an error if it fails
         $el = new ExpressionLanguage();
-        $el->lint($formula, null);
+        $el->lint($formula, ["traffic", "faces", ...array_keys($variables)]);
 
         // Store the new Model
         $model = $modelsHolder->impressions_models()->create([
-            "start_month" => $request->input("start"),
-            "end_month"   => $request->input("end"),
+            "start_month" => $request->input("start_month"),
+            "end_month"   => $request->input("end_month"),
             "formula"     => $request->input("formula"),
             "variables"   => $request->input("variables"),
         ]);
 
         return new Response($model, 201);
+    }
+
+    public function updateProductCategory(UpdateImpressionsModelRequest $request, ProductCategory $productCategory, ImpressionsModel $impressionsModel) {
+        return $this->update($request, $productCategory, $impressionsModel);
     }
 
     public function update(UpdateImpressionsModelRequest $request, WithImpressionsModels $modelsHolder, ImpressionsModel $impressionsModel) {
@@ -52,13 +66,17 @@ class ImpressionsModelsController {
         $el->lint($formula, null);
 
         // Store the new Model
-        $impressionsModel->start_month = $request->input("start");
-        $impressionsModel->end_month   = $request->input("end");
+        $impressionsModel->start_month = $request->input("start_month");
+        $impressionsModel->end_month   = $request->input("end_month");
         $impressionsModel->formula     = $request->input("formula");
         $impressionsModel->variables   = $request->input("variables");
         $impressionsModel->save();
 
         return new Response($impressionsModel, 200);
+    }
+
+    public function destroyProductCategory(DestroyImpressionsModelRequest $request, ProductCategory $productCategory, ImpressionsModel $impressionsModel) {
+        return $this->destroy($request, $productCategory, $impressionsModel);
     }
 
     public function destroy(DestroyImpressionsModelRequest $request, WithImpressionsModels $modelsHolder, ImpressionsModel $impressionsModel) {

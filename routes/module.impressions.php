@@ -40,10 +40,10 @@ Route::group([
 
     Route::model("impressionsModel", ImpressionsModel::class);
 
-    Route::   get("product-categories/{modelsHolder}/impressions-models", ImpressionsModelsController::class . "@show");
-    Route::  post("product-categories/{modelsHolder}/impressions-models", ImpressionsModelsController::class . "@store");
-    Route::   put("product-categories/{modelsHolder}/impressions-models/{impressionsModel}", ImpressionsModelsController::class . "@update");
-    Route::delete("product-categories/{modelsHolder}/impressions-models/{impressionsModel}", ImpressionsModelsController::class . "@destroy");
+    Route::   get("product-categories/{productCategory}/impressions-models", ImpressionsModelsController::class . "@showProductCategory");
+    Route::  post("product-categories/{productCategory}/impressions-models", ImpressionsModelsController::class . "@storeProductCategory");
+    Route::   put("product-categories/{productCategory}/impressions-models/{impressionsModel}", ImpressionsModelsController::class . "@updateProductCategory");
+    Route::delete("product-categories/{productCategory}/impressions-models/{impressionsModel}", ImpressionsModelsController::class . "@destroyProductCategory");
 
     /*
     |----------------------------------------------------------------------

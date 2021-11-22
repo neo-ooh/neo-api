@@ -21,6 +21,10 @@ class ProductCategoriesController {
         $relations         = $request->input("with", []);
         $productCategories = ProductCategory::all();
 
+        if (in_array("impressions_models", $relations, true)) {
+            $productCategories->loadMissing("impressions_models");
+        }
+
         return new Response($productCategories);
     }
 
@@ -30,6 +34,10 @@ class ProductCategoriesController {
 
     public function show(ShowProductCategoryRequest $request, ProductCategory $productCategory) {
         $relations = $request->input("with", []);
+
+        if (in_array("impressions_models", $relations, true)) {
+            $productCategory->loadMissing("impressions_models");
+        }
 
         return new Response($productCategory);
     }

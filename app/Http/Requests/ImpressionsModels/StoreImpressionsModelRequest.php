@@ -17,10 +17,10 @@ use Neo\Enums\Capability;
 class StoreImpressionsModelRequest extends FormRequest {
     public function rules(): array {
         return [
-            "start"     => ["requried", "integer", "min:1", "lte:end"],
-            "end"       => ["requried", "integer", "gte:start", "max:12"],
-            "formula"   => ["required", "string"],
-            "variables" => ["required", "array"]
+            "start_month" => ["required", "integer", "min:1", "lte:end_month"],
+            "end_month"   => ["required", "integer", "gte:start_month", "max:12"],
+            "variables"   => ["array"],
+            "formula"     => ["required", "string"],
         ];
     }
 
@@ -28,3 +28,4 @@ class StoreImpressionsModelRequest extends FormRequest {
         return Gate::allows(Capability::products_impressions);
     }
 }
+

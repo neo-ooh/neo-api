@@ -17,10 +17,10 @@ use Neo\Enums\Capability;
 class UpdateImpressionsModelRequest extends FormRequest {
     public function rules(): array {
         return [
-            "start"     => ["requried", "integer", "min:1", "lte:end"],
-            "end"       => ["requried", "integer", "gte:start", "max:12"],
-            "formula"   => ["required", "string"],
-            "variables" => ["required", "array"]
+            "start_month" => ["required", "integer", "min:1", "lte:end_month"],
+            "end_month"   => ["required", "integer", "gte:start_month", "max:12"],
+            "formula"     => ["required", "string"],
+            "variables"   => ["nullable", "array"]
         ];
     }
 

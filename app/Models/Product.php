@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Neo\Models\Interfaces\WithImpressionsModels;
+use Neo\Models\Traits\HasImpressionsModels;
 
 /**
  * @property int                         $id
@@ -34,7 +36,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property \Neo\Models\Property        $property
  * @property Collection<ProductCategory> $products_categories
  */
-class Product extends Model {
+class Product extends Model implements WithImpressionsModels {
+    use HasImpressionsModels;
+
     protected $table = "products";
 
     protected $primaryKey = "id";
@@ -56,6 +60,8 @@ class Product extends Model {
     protected $casts = [
         "is_bonus" => "boolean",
     ];
+
+    public string $impressions_models_transient_table = "products_impressions_models";
 
 
     /*

@@ -24,6 +24,9 @@ use stdClass;
  * @property Property                           $property
  * @property Collection<TrafficSource>          $source
  * @property Collection<PropertyTrafficMonthly> $data
+ *
+ * @property Collection<PropertyTraffic>        $weekly_data
+ * @property \Illuminate\Support\Collection     $weekly_Traffic
  */
 class PropertyTrafficSettings extends Model {
     use HasFactory;
@@ -147,8 +150,29 @@ class PropertyTrafficSettings extends Model {
     }
 
 
-    public function getWeeklyTrafficAttribute() {
+    public function getWeeklyTrafficAttribute(): \Illuminate\Support\Collection {
         return $this->weekly_data->groupBy("year")
                                  ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]));
+    }
+
+    public function getRollingWeeklyTraffic() {
+        $rollingTraffic = [];
+        $trafficData    = $this->weekly_traffic;
+
+        $yearTrafficIt = $trafficData->getIterator();
+
+        for ($i = 0; $i < 53; $i++) {
+            $yearTrafficIt->rewind();
+            $weekTraffic = 0;
+
+            do {
+                $weekTraffic = $yearTrafficIt->current()[$i + 1] ?? 0;
+                $yearTrafficIt->next();
+            } while ($weekTraffic === 0 && $yearTrafficIt->valid());
+
+            $rollingTraffic[$i + 1] = $weekTraffic;
+        }
+
+        return $rollingTraffic;
     }
 }

@@ -6,15 +6,13 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ShowPropertyRequest extends FormRequest
-{
+class ShowPropertyRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         return Gate::allows(Capability::properties_view);
     }
 
@@ -23,10 +21,9 @@ class ShowPropertyRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            //
+            "with" => ["array"]
         ];
     }
 }

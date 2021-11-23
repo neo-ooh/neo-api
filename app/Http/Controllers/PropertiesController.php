@@ -24,7 +24,6 @@ use Neo\Models\Property;
 use Neo\Models\Province;
 
 class PropertiesController extends Controller {
-
     public function index(ListPropertiesRequest $request) {
         $properties = Property::all();
         $properties->load([
@@ -67,12 +66,18 @@ class PropertiesController extends Controller {
             });
         }
 
+        if (in_array("rolling_weekly_traffic", $request->input("with", []), true)) {
+            $properties->loadMissing(["traffic", "traffic.weekly_data"]);
+
+            $properties->each(function ($p) {
+                $p->rolling_weekly_traffic = $p->traffic->getRollingWeeklyTraffic();
+            });
+
+            $properties->makeHidden(["weekly_data", "weekly_traffic"]);
+        }
+
         if (in_array("products", $request->input("with", []), true)) {
-            $properties->loadMissing([
-                "products",
-                "products_categories.product_type"
-            ])
-                       ->each(fn(Property $p) => $p->computeCategoriesValues());
+            $properties->loadMissing(["products"]);
         }
 
         if (in_array("pictures", $request->input("with", []), true)) {
@@ -144,7 +149,8 @@ class PropertiesController extends Controller {
     public function show(ShowPropertyRequest $request, int $propertyId) {
         // Is this group a property ?
         /** @var Property $property */
-        $property = Property::query()->find($propertyId);
+        $property  = Property::query()->find($propertyId);
+        $relations = $request->input("with", []);
 
         if ($property) {
             $property->load(["actor", "traffic", "traffic.data", "address"]);
@@ -153,9 +159,12 @@ class PropertiesController extends Controller {
                 $property->loadMissing(["data", "network", "network.properties_fields", "pictures", "fields_values", "traffic.source"]);
             }
 
+            if (in_array("products", $relations, true)) {
+                $property->loadMissing(["products", "products.impressions_models", "products_categories", "products_categories.product_type"]);
+            }
+
             if (Gate::allows(Capability::odoo_properties)) {
-                $property->loadMissing(["odoo", "products", "products_categories", "products_categories.product_type"]);
-                $property->computeCategoriesValues();
+                $property->loadMissing(["odoo"]);
             }
 
             return new Response($property);

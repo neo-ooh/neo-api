@@ -146,26 +146,4 @@ class Property extends SecuredModel {
 
         return $traffic->final_traffic;
     }
-
-    public function computeCategoriesValues() {
-        // For each product category, we summed the prices and faces of products in it
-        /** @var ProductCategory $products_category */
-        foreach ($this->products_categories as $products_category) {
-            $products = $this->products()
-                             ->where("is_bonus", "=", false)
-                             ->where("category_id", "=", $products_category->id)
-                             ->get();
-
-            // As of 2021-10-07, Static and Specialty Media products (ID #1 & #3) handling is not entirely defined. An exception is
-            // therefore setup to limit selection to only one poster at a time.
-            if ($products_category->product_type_id !== 2) {
-                $products_category->quantity   = 1;
-                $products_category->unit_price = $products->first()->unit_price;
-                continue;
-            }
-
-            $products_category->quantity   = $products->sum("quantity");
-            $products_category->unit_price = $products->map(fn($p) => $p->quantity * $p->unit_price)->sum();
-        }
-    }
 }

@@ -45,7 +45,7 @@ class ProductCategory extends Model implements WithImpressionsModels {
         "external_id",
     ];
 
-    protected $impressions_models_transient_table = "products_categories_impressions_models";
+    public string $impressions_models_transient_table = "products_categories_impressions_models";
 
     /*
     |--------------------------------------------------------------------------

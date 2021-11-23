@@ -18,12 +18,12 @@ class CreateImpressionsModelsTransientTables extends Migration {
             $table->unsignedBigInteger("product_category_id");
             $table->foreign("product_category_id", "products_categories_impressions_models_foreign")
                   ->on("products_categories")
-                  ->references("id");
+                  ->references("id")->cascadeOnDelete()->cascadeOnUpdate();
 
             $table->unsignedBigInteger("impressions_model_id");
-            $table->foreign("product_category_id", "impressions_models_products_categories_foreign")
+            $table->foreign("impressions_model_id", "impressions_models_products_categories_foreign")
                   ->on("impressions_models")
-                  ->references("id");
+                  ->references("id")->cascadeOnDelete()->cascadeOnUpdate();
         });
 
         Schema::create('products_impressions_models', function (Blueprint $table) {

@@ -40,15 +40,7 @@ class ImpressionsModelsController {
         $formula   = $request->input("formula");
         $variables = $request->input("variables", []);
 
-        // The formula linting throws an error if it fails
-        try {
-            $el = new ExpressionLanguage();
-            $el->lint($formula, ["traffic", "faces", ...array_keys($variables)]);
-        } catch (SyntaxError $error) {
-            throw ValidationException::withMessages([
-                "formula" => $error->getMessage()
-            ]);
-        }
+        $this->validateFormula($formula, array_keys($variables));
 
         // Store the new Model
         $model = $modelsHolder->impressions_models()->create([
@@ -67,11 +59,10 @@ class ImpressionsModelsController {
 
     public function update(UpdateImpressionsModelRequest $request, WithImpressionsModels $modelsHolder, ImpressionsModel $impressionsModel) {
         // Start by validating the formula
-        $formula = $request->input("formula");
+        $formula   = $request->input("formula");
+        $variables = $request->input("variables", []);
 
-        // The formula linting throws an error if it fails
-        $el = new ExpressionLanguage();
-        $el->lint($formula, null);
+        $this->validateFormula($formula, array_keys($variables));
 
         // Store the new Model
         $impressionsModel->start_month = $request->input("start_month");
@@ -81,6 +72,18 @@ class ImpressionsModelsController {
         $impressionsModel->save();
 
         return new Response($impressionsModel, 200);
+    }
+
+    protected function validateFormula(string $formula, array $variablesNames): void {
+        // The formula linting throws an error if it fails
+        try {
+            $el = new ExpressionLanguage();
+            $el->lint($formula, ["traffic", "faces", ...$variablesNames]);
+        } catch (SyntaxError $error) {
+            throw ValidationException::withMessages([
+                "formula" => $error->getMessage()
+            ]);
+        }
     }
 
     public function destroyProductCategory(DestroyImpressionsModelRequest $request, ProductCategory $productCategory, ImpressionsModel $impressionsModel) {

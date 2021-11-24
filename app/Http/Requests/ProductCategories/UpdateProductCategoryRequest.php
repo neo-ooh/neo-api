@@ -13,13 +13,14 @@ namespace Neo\Http\Requests\ProductCategories;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Enums\ProductsFillStrategy;
 
 class UpdateProductCategoryRequest extends FormRequest {
     public function rules(): array {
         return [
             "name_en"       => ["required", "string"],
             "name_fr"       => ["required", "string"],
-            "fill_strategy" => ["required", "in:DEFAULT,FIRST_AVAILABLE"],
+            "fill_strategy" => ["required", "in:" . implode(",", ProductsFillStrategy::getValues())],
         ];
     }
 

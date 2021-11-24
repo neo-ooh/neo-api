@@ -41,14 +41,14 @@ class LibrariesController extends Controller {
     public function query(SearchLibrariesRequest $request) {
         $q = strtolower($request->input("q"));
 
-        $libraries = Auth::user()->getLibraries()->load("contents", "contents.layout");
+        $libraries    = Auth::user()->getLibraries()->load("contents", "contents.layout");
         $searchEngine = new Fuse($libraries->toArray(), [
             "keys" => [
                 "name"
             ]
         ]);
 
-        return new Response($searchEngine->search($q));
+        return new Response(collect($searchEngine->search($q))->map(fn($result) => $result->get("item")));
     }
 
     /**

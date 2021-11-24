@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Product;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
@@ -87,8 +88,8 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 continue;
             }
 
-            // For `FIRST_AVAILABLE` categories, we add an many product as requested throught the `$spotsCount` value.
-            // For `DEFAULT` categories, we add all products
+            // For `DIGITAL` categories, we add all products
+            // For `STATIC` categories, we add as many product as requested through the `$spotsCount` value.
 
             $productsPointer = $products->getIterator();
             $productsCount   = 0;
@@ -96,13 +97,15 @@ class SendContractFlightJobBatch implements ShouldQueue {
             do {
                 $product = $productsPointer->current();
                 $orderLinesToAdd->push(...$this->buildLines(
-                    $productsPointer->current(),
-                    spotsCount: $products->first()->category->fill_strategy === 'DEFAULT' ? $spotsCount : 1,
-                    discount: $discount));
+                    $product,
+                    spotsCount: $product->category->fill_strategy === ProductsFillStrategy::digital ? $spotsCount : 1,
+                    discount: $discount
+                ));
 
                 $productsPointer->next();
                 ++$productsCount;
-            } while (($product->category->fill_strategy === 'DEFAULT' || ($product->category->fill_strategy === 'FIRST_AVAILABLE' && $productsCount < $spotsCount)) && $productsPointer->valid());
+                clock($product->category->fill_strategy, $productsCount, $spotsCount, $productsPointer->valid());
+            } while (($product->category->fill_strategy === ProductsFillStrategy::digital || $productsCount < $spotsCount) && $productsPointer->valid());
         }
 
         clock()->event("Prepare order lines")->end();

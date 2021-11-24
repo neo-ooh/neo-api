@@ -10,6 +10,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\ProductCategory;
 
 class MigrateOdooProductCategoriesToProductsCategories extends Migration {
@@ -25,7 +26,9 @@ class MigrateOdooProductCategoriesToProductsCategories extends Migration {
 
         Schema::table('products_categories', function (Blueprint $table) {
             $table->string("name_fr", 64)->after("name_en");
-            $table->set("fill_strategy", ["DEFAULT", "FIRST_AVAILABLE"])->default("DEFAULT")->after("name_fr");
+            $table->set("fill_strategy", ProductsFillStrategy::getValues())
+                  ->default(ProductsFillStrategy::digital)
+                  ->after("name_fr");
         });
 
         ProductCategory::all()->each(function ($pc) {

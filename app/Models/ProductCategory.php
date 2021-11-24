@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 
@@ -24,7 +25,7 @@ use Neo\Models\Traits\HasImpressionsModels;
  * @property int                  $type_id
  * @property string               $name_en
  * @property string               $name_fr
- * @property string               $fill_strategy
+ * @property ProductsFillStrategy $fill_strategy
  * @property int                  $external_id
  * @property Carbon               $created_at
  * @property Carbon               $updated_at

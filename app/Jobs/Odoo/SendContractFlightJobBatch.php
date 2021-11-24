@@ -64,6 +64,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         clock()->event("Prepare order lines")->begin();
         // Load all the Connect's products included in the flight
         $this->products = Product::query()
+                                 ->with("category")
                                  ->whereInMultiple(['property_id', 'category_id'], $this->flight["selection"])
                                  ->where("is_bonus", "=", $this->flightType === "bua")
                                  ->get();
@@ -75,8 +76,6 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
         $orderLinesToAdd = collect();
 
-        // for ($i = 0; $i < count($this->flight["selection"]); $i++) {
-        // $selection = $this->flight["selection"][$i]
         foreach ($this->flight["selection"] as $selection) {
             [$propertyId, $productId, $discount, $spotsCount] = $selection;
 
@@ -95,6 +94,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $productsCount   = 0;
 
             do {
+                $product = $productsPointer->current();
                 $orderLinesToAdd->push(...$this->buildLines(
                     $productsPointer->current(),
                     spotsCount: $products->first()->category->fill_strategy === 'DEFAULT' ? $spotsCount : 1,
@@ -102,7 +102,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
                 $productsPointer->next();
                 ++$productsCount;
-            } while (($products->first()->category->fill_strategy === 'DEFAULT' || ($products->first()->category->fill_strategy === 'FIRST_AVAILABLE' && $productsCount < $spotsCount)) && $productsPointer->valid());
+            } while (($product->category->fill_strategy === 'DEFAULT' || ($product->category->fill_strategy === 'FIRST_AVAILABLE' && $productsCount < $spotsCount)) && $productsPointer->valid());
         }
 
         clock()->event("Prepare order lines")->end();

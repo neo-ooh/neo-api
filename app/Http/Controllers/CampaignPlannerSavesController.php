@@ -19,6 +19,7 @@ use Neo\Http\Requests\CampaignPlannerSaves\StoreSaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\UpdateSaveRequest;
 use Neo\Models\Actor;
 use Neo\Models\CampaignPlannerSave;
+use Neo\Models\ProductCategory;
 use Neo\Models\Property;
 
 class CampaignPlannerSavesController {
@@ -70,20 +71,21 @@ class CampaignPlannerSavesController {
             "network",
             "network.properties_fields",
             "odoo",
-            "odoo.products",
-            "odoo.products_categories",
-            "odoo.products_categories.product_type",
+            "products",
+            "products.impressions_models",
             "pictures",
             "traffic",
+            "traffic.weekly_data"
         ]);
 
-        $properties->each(function (Property $p) {
-            $p->rolling_monthly_traffic = $p->traffic->getMonthlyTraffic($p->address?->city->province);
-            $p->odoo?->computeCategoriesValues();
+
+        $properties->each(function ($p) {
+            $p->rolling_weekly_traffic = $p->traffic->getRollingWeeklyTraffic();
         });
 
-        $properties->makeHidden("traffic");
-//        $campaignPlannerSave->load(["actor.name"]);
+        $properties->makeHidden(["weekly_data", "weekly_traffic"]);
+
+        $categories = ProductCategory::with(["impressions_models", "product_type"])->get();
 
         Log::info("connect.log", [
             "action"   => "planner.static.load",
@@ -93,6 +95,10 @@ class CampaignPlannerSavesController {
             "contract" => $campaignPlannerSave->data["odoo"]["contract"] ?? "",
         ]);
 
-        return new Response(["save" => $campaignPlannerSave, "properties" => $properties]);
+        return new Response([
+            "save"       => $campaignPlannerSave,
+            "properties" => $properties,
+            "categories" => $categories
+        ]);
     }
 }

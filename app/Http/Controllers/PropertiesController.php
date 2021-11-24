@@ -78,6 +78,10 @@ class PropertiesController extends Controller {
 
         if (in_array("products", $request->input("with", []), true)) {
             $properties->loadMissing(["products"]);
+
+            if (in_array("impressions_models", $request->input("with", []), true)) {
+                $properties->loadMissing(["products.impressions_models"]);
+            }
         }
 
         if (in_array("pictures", $request->input("with", []), true)) {

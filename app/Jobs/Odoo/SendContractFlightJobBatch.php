@@ -64,7 +64,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         clock()->event("Prepare order lines")->begin();
         // Load all the Connect's products included in the flight
         $this->products = Product::query()
-                                 ->whereInMultiple(['property_id', 'product_category_id'], $this->flight["selection"])
+                                 ->whereInMultiple(['property_id', 'category_id'], $this->flight["selection"])
                                  ->where("is_bonus", "=", $this->flightType === "bua")
                                  ->get();
 
@@ -88,12 +88,21 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 continue;
             }
 
+            // For `FIRST_AVAILABLE` categories, we add an many product as requested throught the `$spotsCount` value.
+            // For `DEFAULT` categories, we add all products
+
             $productsPointer = $products->getIterator();
+            $productsCount   = 0;
 
             do {
-                $orderLinesToAdd->push(...$this->buildLines($productsPointer->current(), spotsCount: $spotsCount, discount: $discount));
+                $orderLinesToAdd->push(...$this->buildLines(
+                    $productsPointer->current(),
+                    spotsCount: $products->first()->category->fill_strategy === 'DEFAULT' ? $spotsCount : 1,
+                    discount: $discount));
+
                 $productsPointer->next();
-            } while ($products->first()->category->product_type_id === 2 && $productsPointer->valid());
+                ++$productsCount;
+            } while (($products->first()->category->fill_strategy === 'DEFAULT' || ($products->first()->category->fill_strategy === 'FIRST_AVAILABLE' && $productsCount < $spotsCount)) && $productsPointer->valid());
         }
 
         clock()->event("Prepare order lines")->end();
@@ -114,7 +123,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $orderLinesToAdd = collect();
 
             /** @var OrderLine $line */
-            clock($this->consumedProducts);
+            // For each overbooked product, we try to find another for one for the same property, in the same category, that has not been already used (consumed).
             foreach ($overbookedLines as $line) {
                 /** @var Product $lineProduct */
                 $lineProduct = $this->products->firstWhere("external_variant_id", "=", $line->product_id[0]);

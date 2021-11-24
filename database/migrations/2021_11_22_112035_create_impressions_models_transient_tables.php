@@ -30,12 +30,12 @@ class CreateImpressionsModelsTransientTables extends Migration {
             $table->unsignedBigInteger("product_id");
             $table->foreign("product_id", "products_impressions_models_foreign")
                   ->on("products")
-                  ->references("id");
+                  ->references("id")->cascadeOnDelete()->cascadeOnUpdate();
 
             $table->unsignedBigInteger("impressions_model_id");
             $table->foreign("impressions_model_id", "impressions_models_products_foreign")
                   ->on("impressions_models")
-                  ->references("id");
+                  ->references("id")->cascadeOnDelete()->cascadeOnUpdate();
         });
     }
 

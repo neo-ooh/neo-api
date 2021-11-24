@@ -140,11 +140,6 @@ class PropertiesStatisticsController {
             $query->where("c.province_id", "=", $provinceId);
         }
 
-        if (isset($productId)) {
-            $query->join("odoo_properties_products as oppc", fn($join) => $join->on("oppc.property_id", "=", "pt.property_id"))
-                  ->where("oppc.product_category_id", "=", $productId);
-        }
-
         if (isset($networkId)) {
             $query->where("p.network_id", "=", $networkId);
         }

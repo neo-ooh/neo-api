@@ -81,7 +81,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             [$propertyId, $productId, $discount, $spotsCount] = $selection;
 
             /** @var Collection<Product> $product */
-            $products = $this->products->filter(fn($p) => $p->property_id === $propertyId && $p->product_category_id === $productId);
+            $products = $this->products->filter(fn($p) => $p->property_id === $propertyId && $p->category_id === $productId);
 
             if ($products->isEmpty()) {
                 clock("Could not find product for selection pair: [$propertyId, $productId]");
@@ -127,7 +127,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             foreach ($overbookedLines as $line) {
                 /** @var Product $lineProduct */
                 $lineProduct = $this->products->firstWhere("external_variant_id", "=", $line->product_id[0]);
-                $product     = $this->products->filter(fn($p) => $p->property_id === $lineProduct->property_id && $p->product_category_id === $lineProduct->product_category_id)
+                $product     = $this->products->filter(fn($p) => $p->property_id === $lineProduct->property_id && $p->category_id === $lineProduct->category_id)
                                               ->whereNotIn("external_id", $this->consumedProducts)
                                               ->first();
 

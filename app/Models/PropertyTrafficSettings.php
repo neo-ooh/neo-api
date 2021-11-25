@@ -176,7 +176,7 @@ class PropertyTrafficSettings extends Model {
 
             if ($weekTraffic === 0) {
                 if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
-                    $weekTraffic = $this->placeholder_value / 30;
+                    $weekTraffic = $this->placeholder_value / 4;
                 } else {
                     $weekTraffic = $propertyMedian;
                 }

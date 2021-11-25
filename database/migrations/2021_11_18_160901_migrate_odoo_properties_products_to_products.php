@@ -20,8 +20,8 @@ class MigrateOdooPropertiesProductsToProducts extends Migration {
         Schema::table('products', function (Blueprint $table) {
             $table->renameColumn("product_category_id", "category_id");
             $table->renameColumn("odoo_id", "external_id");
-            $table->renameColumn("external_variant_id", "external_variant_id");
-            $table->renameColumn("external_linked_id", "external_linked_id");
+            $table->renameColumn("odoo_variant_id", "external_variant_id");
+            $table->renameColumn("linked_product_id", "external_linked_id");
             $table->renameColumn("name", "name_en");
         });
 

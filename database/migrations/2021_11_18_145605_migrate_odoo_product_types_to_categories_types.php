@@ -14,15 +14,15 @@ use Neo\Models\ProductType;
 
 class MigrateOdooProductTypesToCategoriesTypes extends Migration {
     public function up() {
-        Schema::rename("odoo_product_types", "categories_types");
+        Schema::rename("odoo_product_types", "products_types");
 
-        Schema::table('categories_types', function (Blueprint $table) {
+        Schema::table('products_types', function (Blueprint $table) {
             $table->renameColumn("odoo_id", "external_id");
             $table->renameColumn("name", "name_en");
             $table->dropColumn("internal_name");
         });
 
-        Schema::table('categories_types', function (Blueprint $table) {
+        Schema::table('products_types', function (Blueprint $table) {
             $table->string("name_fr", 64)->after("name_en");
         });
 

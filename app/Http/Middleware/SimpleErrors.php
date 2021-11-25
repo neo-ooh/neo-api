@@ -3,9 +3,9 @@
 namespace Neo\Http\Middleware;
 
 use Closure;
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class SimpleErrors {
     /**
@@ -19,9 +19,13 @@ class SimpleErrors {
         /** @var Response $response */
         $response = $next($request);
 
-        if(($exception = $response->exception) && (config('app.env') === 'production')) {
+        if (($exception = $response->exception) && (config('app.env') === 'production')) {
+            if ($exception instanceof ValidationException) {
+                return $response;
+            }
+
             return new Response([
-                "code"    => $response->getStatusCode() ,
+                "code"    => $response->getStatusCode(),
                 "message" => $exception->getMessage(),
             ], 500);
         }

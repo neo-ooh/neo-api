@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Schema;
 class AlterOdooPropertiesProductsTableIsBonus extends Migration {
     public function up() {
         Schema::table('odoo_properties_products', function (Blueprint $table) {
-            $table->boolean("is_bonus")->default(0)->after("odoo_variant_id");
+            $table->boolean("is_bonus")->default(0)->after("external_variant_id");
         });
     }
 

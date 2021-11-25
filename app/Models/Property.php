@@ -6,6 +6,8 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Neo\Models\Odoo\Property as OdooProperty;
 use Neo\Rules\AccessibleProperty;
@@ -99,20 +101,29 @@ class Property extends SecuredModel {
         return $this->belongsTo(Address::class, "address_id", "id");
     }
 
-    public function odoo() {
+    public function odoo(): HasOne {
         return $this->hasOne(OdooProperty::class, "property_id", "actor_id");
     }
 
-    public function data() {
+    public function data(): HasOne {
         return $this->hasOne(PropertyData::class, "property_id", "actor_id");
     }
 
-    public function pictures() {
+    public function pictures(): HasMany {
         return $this->hasMany(PropertyPicture::class, "property_id", "actor_id")->orderBy("order");
     }
 
-    public function fields_values() {
+    public function fields_values(): HasMany {
         return $this->hasMany(PropertyFieldSegmentValue::class, "property_id", "actor_id");
+    }
+
+    public function products(): HasMany {
+        return $this->hasMany(Product::class, "property_id", "actor_id");
+    }
+
+    public function products_categories(): BelongsToMany {
+        return $this->belongsToMany(ProductCategory::class, "products", "property_id", "category_id")
+                    ->distinct();
     }
 
 
@@ -123,7 +134,7 @@ class Property extends SecuredModel {
     */
 
     public function getTraffic(int $year, int $month): int|null {
-        /** @var ?PropertyTraffic $traffic */
+        /** @var ?PropertyTrafficMonthly $traffic */
         $traffic = $this->traffic->data
             ->where("year", "=", $year)
             ->where("month", "=", $month)

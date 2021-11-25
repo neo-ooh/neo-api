@@ -42,28 +42,11 @@ return [
     */
 
     'connections' => [
-        'neo_ooh'   => [
+        'neo_ooh' => [
             'driver'         => 'mysql',
             'host'           => env('DB_OOH_HOST'),
             'port'           => env('DB_OOH_PORT'),
             'database'       => env('DB_OOH_DATABASE'),
-            'username'       => env('DB_OOH_USERNAME'),
-            'password'       => env('DB_OOH_PASSWORD'),
-            'charset'        => 'utf8mb4',
-            'collation'      => 'utf8mb4_unicode_ci',
-            'prefix'         => '',
-            'prefix_indexes' => true,
-            'strict'         => false,
-            'engine'         => null,
-            'options'        => extension_loaded('pdo_mysql') ? array_filter([
-                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
-            ]) : [],
-        ],
-        'neo_ooh_telescope'   => [
-            'driver'         => 'mysql',
-            'host'           => env('DB_OOH_HOST'),
-            'port'           => env('DB_OOH_PORT'),
-            'database'       => "neo_ooh_telescope",
             'username'       => env('DB_OOH_USERNAME'),
             'password'       => env('DB_OOH_PASSWORD'),
             'charset'        => 'utf8mb4',
@@ -108,27 +91,27 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix'  => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [
-            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'host'     => env('REDIS_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
+            'port'     => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_QUEUES_DB', '0'),
         ],
 
         'cache' => [
-            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'host'     => env('REDIS_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
+            'port'     => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_CACHE_DB', '1'),
         ],
 
         'geocoding' => [
-            'host' => env('REDIS_HOST', '127.0.0.1'),
+            'host'     => env('REDIS_HOST', '127.0.0.1'),
             'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
+            'port'     => env('REDIS_PORT', '6379'),
             'database' => env('REDIS_GEOCODING_DB', '2'),
         ],
 

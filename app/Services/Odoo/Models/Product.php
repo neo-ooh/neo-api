@@ -13,17 +13,17 @@ namespace Neo\Services\Odoo\Models;
 use Neo\Services\API\Odoo\Model;
 
 /**
- * @property int $id
+ * @property int    $id
  * @property string $name
- * @property int $sequence
+ * @property int    $sequence
  * @property string $description
- * @property bool $bonus
- * @property mixed $product_type_id
- * @property mixed $categ_id
- * @property int $nb_screen
- * @property int $list_price
- * @property array $product_variant_id
- * @property array $linked_product_id
+ * @property bool   $bonus
+ * @property mixed  $product_type_id
+ * @property mixed  $categ_id
+ * @property int    $nb_screen
+ * @property int    $list_price
+ * @property array  $product_variant_id
+ * @property array  $external_linked_id
  */
 class Product extends Model {
     public static string $slug = "product.template";

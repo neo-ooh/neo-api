@@ -22,7 +22,7 @@ class AlterOdooPropertiesProductsTable extends Migration {
             $table->string("name")->after("odoo_id");
             $table->unsignedInteger("quantity")->default(0)->after("name");
             $table->unsignedDouble("unit_price")->default(0)->after("quantity");
-            $table->unsignedBigInteger("odoo_variant_id")->nullable()->after("unit_price");
+            $table->unsignedBigInteger("external_variant_id")->nullable()->after("unit_price");
 
             $table->timestamps();
         });

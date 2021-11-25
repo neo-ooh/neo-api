@@ -8,52 +8,60 @@
  * @neo/api - Product.php
  */
 
-namespace Neo\Models\Odoo;
+namespace Neo\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Neo\Models\Traits\HasCompositePrimaryKey;
+use Neo\Models\Interfaces\WithImpressionsModels;
+use Neo\Models\Traits\HasImpressionsModels;
 
 /**
+ * @property int                         $id
  * @property int                         $property_id
- * @property int                         $product_category_id
- * @property int                         $odoo_id
- * @property string                      $name
+ * @property int                         $category_id
+ * @property string                      $name_en
+ * @property string                      $name_fr
  * @property int                         $quantity
- * @property int                         $odoo_variant_id
+ * @property int                         $unit_price
  * @property boolean                     $is_bonus
- * @property int                         $linked_product_id
+ * @property int                         $external_id
+ * @property int                         $external_variant_id
+ * @property int                         $external_linked_id
  * @property Carbon                      $created_at
  * @property Carbon                      $updated_at
  *
  * @property \Neo\Models\Property        $property
  * @property Collection<ProductCategory> $products_categories
  */
-class Product extends Model {
+class Product extends Model implements WithImpressionsModels {
+    use HasImpressionsModels;
 
-    protected $table = "odoo_properties_products";
+    protected $table = "products";
 
-    protected $primaryKey = "odoo_id";
+    protected $primaryKey = "id";
     public $incrementing = false;
 
     protected $fillable = [
         "property_id",
-        "product_category_id",
-        "odoo_id",
-        "name",
+        "category_id",
+        "name_en",
+        "name_fr",
         "quantity",
         "unit_price",
-        "odoo_variant_id",
         "is_bonus",
-        "linked_product_id",
+        "external_id",
+        "external_variant_id",
+        "external_linked_id",
     ];
 
     protected $casts = [
         "is_bonus" => "boolean",
     ];
+
+    public string $impressions_models_transient_table = "products_impressions_models";
 
 
     /*
@@ -67,7 +75,7 @@ class Product extends Model {
     }
 
     public function category(): BelongsTo {
-        return $this->belongsTo(ProductCategory::class, "product_category_id", "id");
+        return $this->belongsTo(ProductCategory::class, "category_id", "id");
     }
 
     /*

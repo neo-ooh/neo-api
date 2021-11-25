@@ -8,9 +8,8 @@
  * @neo/api - TrafficRequiredReminder.php
  */
 
-namespace Neo\Jobs\Properties;
+namespace Neo\Jobs\Traffic;
 
-use DateTime;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -37,17 +36,17 @@ class TrafficRequiredReminder implements ShouldQueue {
         $lastMonth  = Date::now()->subMonth()->startOfMonth();
         $properties = Property::query()
                               ->where("require_traffic", "=", true)
-             // Either no data at all for the past month
+            // Either no data at all for the past month
                               ->whereDoesntHave("traffic.data", function (Builder $query) use ($lastMonth) {
-                                  $query->where("year", "=", $lastMonth->year)
-                                        ->where("month", "=", $lastMonth->month - 1); // Sub one to the month as its index is one-indexed by carbon
-                              })
+                $query->where("year", "=", $lastMonth->year)
+                      ->where("month", "=", $lastMonth->month - 1); // Sub one to the month as its index is one-indexed by carbon
+            })
             // Or no traffic data for the past month (temporary/internal data may be present but doesn't count)
                               ->orWhereHas("traffic.data", function (Builder $query) use ($lastMonth) {
-                                  $query->where("year", "=", $lastMonth->year)
-                                        ->where("month", "=", $lastMonth->month - 1)
-                                        ->whereNull("traffic");
-                              })->get();
+                $query->where("year", "=", $lastMonth->year)
+                      ->where("month", "=", $lastMonth->month - 1)
+                      ->whereNull("traffic");
+            })->get();
 
         // For each properties, we need the list of actors responsible for it
         $actors = $properties->map(fn(Property $property) => $property->actor->getActorsInHierarchyWithCapability(Capability::properties_traffic()))

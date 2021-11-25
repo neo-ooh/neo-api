@@ -5,13 +5,12 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - module.planning.php
+ * @neo/api - module.planner.php
  */
 
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\CampaignPlannerPolygonsController;
 use Neo\Http\Controllers\CampaignPlannerSavesController;
-use Neo\Http\Controllers\Odoo\PropertiesController;
 
 Route::group([
     "middleware" => "default",
@@ -44,7 +43,7 @@ Route::group([
 // Open two specific routes to guest to be able to display a planner instance when using a share link
 Route::group([
     "middleware" => "guests",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
     Route::   get("campaign-planner/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@showWithData");
 });

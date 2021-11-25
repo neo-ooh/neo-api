@@ -11,8 +11,7 @@
 namespace Neo\Jobs\Odoo;
 
 use Illuminate\Console\Command;
-use Neo\Models\Odoo\Property;
-use Neo\Services\Odoo\Models\Product;
+use Neo\Models\Property;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -40,19 +39,15 @@ class SynchronizeProperties extends Command {
     public function handle(): int {
         $client = OdooConfig::fromConfig()->getClient();
 
-        $properties = Property::all();
+        $properties = Property::with(["actor" => fn($q) => $q->select(["id", "name"])])->get();
 
         $progressBar = $this->makeProgressBar($properties->count());
         $progressBar->setMessage("Syncing...");
         $progressBar->start();
 
-//        $odooProperties = \Neo\Services\Odoo\Models\Property::getMultiple($client, $properties->pluck("odoo_id")->toArray());
-//        $odooProducts = Product::all($client);
-
         foreach ($properties as $property) {
-            $progressBar->setMessage("Syncing property #" . $property->property_id);
+            $progressBar->setMessage("Syncing property #" . $property->getKey() . " ({$property->actor->name})");
 
-//            PullPropertyAddressFromOdooJob::dispatchSync($property->getKey());
             SynchronizePropertyData::dispatchSync($property->getKey(), $client);
 
             $progressBar->advance();

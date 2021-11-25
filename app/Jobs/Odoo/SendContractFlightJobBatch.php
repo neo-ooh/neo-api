@@ -17,7 +17,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Odoo\Product;
+use Neo\Enums\ProductsFillStrategy;
+use Neo\Models\Product;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\Models\OrderLine;
@@ -64,13 +65,14 @@ class SendContractFlightJobBatch implements ShouldQueue {
         clock()->event("Prepare order lines")->begin();
         // Load all the Connect's products included in the flight
         $this->products = Product::query()
-                                 ->whereInMultiple(['property_id', 'product_category_id'], $this->flight["selection"])
+                                 ->with("category")
+                                 ->whereInMultiple(['property_id', 'category_id'], $this->flight["selection"])
                                  ->where("is_bonus", "=", $this->flightType === "bua")
                                  ->get();
 
-        $linkedProductsIds = $this->products->pluck("linked_product_id")->filter();
+        $linkedProductsIds = $this->products->pluck("external_linked_id")->filter();
         $this->products    = $this->products->merge(Product::query()
-                                                           ->whereIn("odoo_id", $linkedProductsIds)
+                                                           ->whereIn("external_id", $linkedProductsIds)
                                                            ->get())->unique();
 
         $orderLinesToAdd = collect();
@@ -79,19 +81,31 @@ class SendContractFlightJobBatch implements ShouldQueue {
             [$propertyId, $productId, $discount, $spotsCount] = $selection;
 
             /** @var Collection<Product> $product */
-            $products = $this->products->filter(fn($p) => $p->property_id === $propertyId && $p->product_category_id === $productId);
+            $products = $this->products->filter(fn($p) => $p->property_id === $propertyId && $p->category_id === $productId);
 
             if ($products->isEmpty()) {
                 clock("Could not find product for selection pair: [$propertyId, $productId]");
                 continue;
             }
 
+            // For `DIGITAL` categories, we add all products
+            // For `STATIC` categories, we add as many product as requested through the `$spotsCount` value.
+
             $productsPointer = $products->getIterator();
+            $productsCount   = 0;
 
             do {
-                $orderLinesToAdd->push(...$this->buildLines($productsPointer->current(), spotsCount: $spotsCount, discount: $discount));
+                $product = $productsPointer->current();
+                $orderLinesToAdd->push(...$this->buildLines(
+                    $product,
+                    spotsCount: $product->category->fill_strategy === ProductsFillStrategy::digital ? $spotsCount : 1,
+                    discount: $discount
+                ));
+
                 $productsPointer->next();
-            } while ($products->first()->category->product_type_id === 2 && $productsPointer->valid());
+                ++$productsCount;
+                clock($product->category->fill_strategy, $productsCount, $spotsCount, $productsPointer->valid());
+            } while (($product->category->fill_strategy === ProductsFillStrategy::digital || $productsCount < $spotsCount) && $productsPointer->valid());
         }
 
         clock()->event("Prepare order lines")->end();
@@ -112,12 +126,12 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $orderLinesToAdd = collect();
 
             /** @var OrderLine $line */
-            clock($this->consumedProducts);
+            // For each overbooked product, we try to find another for one for the same property, in the same category, that has not been already used (consumed).
             foreach ($overbookedLines as $line) {
                 /** @var Product $lineProduct */
-                $lineProduct = $this->products->firstWhere("odoo_variant_id", "=", $line->product_id[0]);
-                $product     = $this->products->filter(fn($p) => $p->property_id === $lineProduct->property_id && $p->product_category_id === $lineProduct->product_category_id)
-                                              ->whereNotIn("odoo_id", $this->consumedProducts)
+                $lineProduct = $this->products->firstWhere("external_variant_id", "=", $line->product_id[0]);
+                $product     = $this->products->filter(fn($p) => $p->property_id === $lineProduct->property_id && $p->category_id === $lineProduct->category_id)
+                                              ->whereNotIn("external_id", $this->consumedProducts)
                                               ->first();
 
                 if (!$product) {
@@ -134,11 +148,11 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 // Mark the previous lines as to be removed
                 $orderLinesToRemove->push($line->id);
 
-                if ($lineProduct->linked_product_id && $linkedProduct = $this->products->get($lineProduct->linked_product_id)) {
+                if ($lineProduct->external_linked_id && $linkedProduct = $this->products->get($lineProduct->external_linked_id)) {
                     $orderLinesToRemove->push($orderLinesAdded->first(/**
                      * @param OrderLine $line
                      * @return mixed
-                     */ fn($line) => $line->is_linked_line && $line->product_id[0] === $linkedProduct->odoo_variant_id)->id);
+                     */ fn($line) => $line->is_linked_line && $line->product_id[0] === $linkedProduct->external_variant_id)->id);
                 }
             }
 
@@ -174,7 +188,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             "price_unit"      => $product->unit_price,
             "product_uom_qty" => $spotsCount,
             "customer_lead"   => 0.0,
-            "product_id"      => $product->odoo_variant_id,
+            "product_id"      => $product->external_variant_id,
             "rental_start"    => $this->flightStart,
             "rental_end"      => $this->flightEnd,
             "is_rental_line"  => 1,
@@ -183,14 +197,14 @@ class SendContractFlightJobBatch implements ShouldQueue {
             "sequence"        => $this->flightIndex * 10,
         ]);
 
-        $this->consumedProducts->push($product->odoo_id);
+        $this->consumedProducts->push($product->external_id);
 
-        if (!$product->linked_product_id) {
+        if (!$product->external_linked_id) {
             return $orderLines;
         }
 
         /** @var Product|null $product */
-        $linkedProduct = $this->products->get($product->linked_product_id);
+        $linkedProduct = $this->products->firstWhere("external_id", "=", $product->external_linked_id);
 
         if (!$linkedProduct) {
             return $orderLines;
@@ -202,7 +216,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             "price_unit"      => 0,
             "product_uom_qty" => 1.0,
             "customer_lead"   => 0.0,
-            "product_id"      => $linkedProduct->odoo_variant_id,
+            "product_id"      => $linkedProduct->external_variant_id,
             "rental_start"    => $this->flightStart,
             "rental_end"      => $this->flightEnd,
             "is_rental_line"  => 1,

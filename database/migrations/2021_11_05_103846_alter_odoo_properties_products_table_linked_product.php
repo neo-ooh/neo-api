@@ -16,8 +16,8 @@ class AlterOdooPropertiesProductsTableLinkedProduct extends Migration {
     public function up() {
         Schema::table('odoo_properties_products', function (Blueprint $table) {
             $table->unique("odoo_id");
-            $table->unique("odoo_variant_id");
-            $table->unsignedBigInteger("linked_product_id")
+            $table->unique("external_variant_id");
+            $table->unsignedBigInteger("external_linked_id")
                   ->nullable()
                   ->default(null)
                   ->after("is_bonus");
@@ -27,7 +27,7 @@ class AlterOdooPropertiesProductsTableLinkedProduct extends Migration {
 
     public function down() {
         Schema::table('odoo_properties_products', function (Blueprint $table) {
-            $table->dropColumn("linked_product_id");
+            $table->dropColumn("external_linked_id");
         });
     }
 }

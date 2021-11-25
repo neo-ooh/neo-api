@@ -24,26 +24,75 @@ use Neo\Models\Property;
 use Neo\Models\Province;
 
 class PropertiesController extends Controller {
-
     public function index(ListPropertiesRequest $request) {
         $properties = Property::all();
-        $properties->load(["data", "address", "actor", "odoo", "odoo.products_categories", "odoo.products_categories.product_type", "network"]);
+        $properties->load([
+            "data",
+            "address",
+            "actor" => fn($q) => $q->select(["id", "name"]),
+            "odoo",
+        ]);
 
-        if(in_array("traffic", $request->input("with", []))) {
-            $properties->load("traffic");
-            $properties->each(fn($p) => $p->traffic->loadMonthlyTraffic($p->address?->city->province));
+        if (in_array("network", $request->input("with", []), true)) {
+            $properties->load("network");
         }
 
-        if(in_array("products", $request->input("with", []))) {
-            $properties->load(['odoo.products', 'odoo.products_categories.product_type'])->each(fn(Property $p) => $p->odoo?->computeCategoriesValues());
+        if (in_array("traffic", $request->input("with", []), true)) {
+            $properties->load(["traffic.data"]);
         }
 
-        if(in_array("pictures", $request->input("with", []))) {
+        if (in_array("rolling_monthly_traffic", $request->input("with", []), true)) {
+            $properties->loadMissing([
+                "traffic",
+                "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"])
+            ]);
+
+            $properties->each(function ($p) {
+                $p->rolling_monthly_traffic = $p->traffic->getMonthlyTraffic($p->address?->city->province);
+            });
+
+            $properties->makeHidden("traffic");
+        }
+
+        if (in_array("weekly_traffic", $request->input("with", []), true)) {
+            $properties->loadMissing([
+                "traffic",
+                "traffic.weekly_data"
+            ]);
+
+            $properties->each(function (Property $p) {
+                $p->traffic->append("weekly_traffic");
+                $p->traffic->makeHidden("weekly_data");
+            });
+        }
+
+        if (in_array("rolling_weekly_traffic", $request->input("with", []), true)) {
+            $properties->loadMissing(["traffic", "traffic.weekly_data"]);
+
+            $properties->each(function ($p) {
+                $p->rolling_weekly_traffic = $p->traffic->getRollingWeeklyTraffic();
+            });
+
+            $properties->makeHidden(["weekly_data", "weekly_traffic"]);
+        }
+
+        if (in_array("products", $request->input("with", []), true)) {
+            $properties->loadMissing(["products"]);
+
+            if (in_array("impressions_models", $request->input("with", []), true)) {
+                $properties->loadMissing(["products.impressions_models"]);
+            }
+        }
+
+        if (in_array("pictures", $request->input("with", []), true)) {
             $properties->load("pictures");
         }
 
-        if(in_array("fields", $request->input("with", []))) {
-            $properties->load(["network.properties_fields", "fields_values"]);
+        if (in_array("fields", $request->input("with", []), true)) {
+            $properties->load([
+                "network.properties_fields",
+                "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"])
+            ]);
         }
 
         return $properties;
@@ -95,7 +144,7 @@ class PropertiesController extends Controller {
         }
 
         if (Gate::allows(Capability::odoo_properties)) {
-            $property->load(["odoo", "odoo.products", "odoo.products.product_type"]);
+            $property->load(["odoo", "products", "products.product_type"]);
         }
 
         return new Response($property, 201);
@@ -104,18 +153,22 @@ class PropertiesController extends Controller {
     public function show(ShowPropertyRequest $request, int $propertyId) {
         // Is this group a property ?
         /** @var Property $property */
-        $property = Property::query()->find($propertyId);
+        $property  = Property::query()->find($propertyId);
+        $relations = $request->input("with", []);
 
         if ($property) {
-            $property->load(["actor", "traffic", "traffic.source", "address"]);
+            $property->load(["actor", "traffic", "traffic.data", "address"]);
 
             if (Gate::allows(Capability::properties_edit)) {
-                $property->load(["data", "network", "network.properties_fields", "pictures", "fields_values"]);
+                $property->loadMissing(["data", "network", "network.properties_fields", "pictures", "fields_values", "traffic.source"]);
+            }
+
+            if (in_array("products", $relations, true)) {
+                $property->loadMissing(["products", "products.impressions_models", "products_categories", "products_categories.product_type"]);
             }
 
             if (Gate::allows(Capability::odoo_properties)) {
-                $property->load(["odoo", "odoo.products", "odoo.products_categories", "odoo.products_categories.product_type"]);
-                $property->odoo?->computeCategoriesValues();
+                $property->loadMissing(["odoo"]);
             }
 
             return new Response($property);

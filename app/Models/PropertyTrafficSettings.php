@@ -13,17 +13,20 @@ use stdClass;
 
 /**
  * @package Neo\Models
- * @property boolean                   $is_required
- * @property int                       $start_year
- * @property Date                      $grace_override
- * @property string                    $input_method
- * @property string                    $missing_value_strategy
- * @property int                       $placeholder_value
+ * @property boolean                            $is_required
+ * @property int                                $start_year
+ * @property Date                               $grace_override
+ * @property string                             $input_method
+ * @property string                             $missing_value_strategy
+ * @property int                                $placeholder_value
  *
- * @property int                       $property_id
- * @property Property                  $property
- * @property Collection<TrafficSource> $source
- * @property Collection<PropertyTraffic> $data
+ * @property int                                $property_id
+ * @property Property                           $property
+ * @property Collection<TrafficSource>          $source
+ * @property Collection<PropertyTrafficMonthly> $data
+ *
+ * @property Collection<PropertyTraffic>        $weekly_data
+ * @property \Illuminate\Support\Collection     $weekly_Traffic
  */
 class PropertyTrafficSettings extends Model {
     use HasFactory;
@@ -59,7 +62,7 @@ class PropertyTrafficSettings extends Model {
         "grace_override" => "date"
     ];
 
-    protected $with = ["data"];
+    protected $with = [];
 
     protected $fillable = ["is_required", "start_year", "grace_override"];
 
@@ -67,8 +70,22 @@ class PropertyTrafficSettings extends Model {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
     }
 
+    /**
+     * Monthly traffic data points
+     *
+     * @return HasMany
+     */
     public function data(): HasMany {
-        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id")->orderBy("year", 'desc');
+        return $this->hasMany(PropertyTrafficMonthly::class, "property_id", "property_id")->orderBy("year", 'desc');
+    }
+
+    /**
+     * Weekly traffic data points
+     *
+     * @return HasMany
+     */
+    public function weekly_data(): HasMany {
+        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
     }
 
     public function source(): BelongsToMany {
@@ -84,21 +101,22 @@ class PropertyTrafficSettings extends Model {
     */
 
     /**
-     * This methods fills the `monthly_traffic` attribute of the model as an array containing traffic monthly traffic data that can be used to calculate impressions
+     * This methods fills the `monthly_traffic` attribute of the model as an array containing traffic monthly traffic data that
+     * can be used to calculate impressions
      */
-    public function loadMonthlyTraffic(?Province $province) {
+    public function getMonthlyTraffic(?Province $province) {
         $monthly_traffic = new stdClass();
-        $trafficData = $this->data->sortBy(["year, month"], descending: true);
-        $currentYear = Carbon::now()->year;
+        $trafficData     = $this->data->sortBy(["year, month"], descending: true);
+        $currentYear     = Carbon::now()->year;
 
-        for($monthIndex = 0; $monthIndex < 12; ++$monthIndex) {
-            /** @var ?PropertyTraffic $trafficEntry */
+        for ($monthIndex = 0; $monthIndex < 12; ++$monthIndex) {
+            /** @var ?PropertyTrafficMonthly $trafficEntry */
             $trafficEntry = $trafficData->where("month", "=", $monthIndex)->first();
 
             // Is there a traffic entry for the month ?
-            if($trafficEntry === null) {
+            if ($trafficEntry === null) {
                 // No, do we have a default value we can use ?
-                if($this->missing_value_strategy === 'USE_PLACEHOLDER') {
+                if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
                     // Yes, use it
                     $monthly_traffic->$monthIndex = $this->placeholder_value;
                     continue;
@@ -110,7 +128,7 @@ class PropertyTrafficSettings extends Model {
             }
 
             // We have a traffic value. Is it for the current year ?
-            if($trafficEntry->year === $currentYear) {
+            if ($trafficEntry->year === $currentYear) {
                 // This traffic data is for the current year, we can use it without any change
                 $monthly_traffic->$monthIndex = $trafficEntry->final_traffic;
                 continue;
@@ -118,16 +136,56 @@ class PropertyTrafficSettings extends Model {
 
             // The traffic value is from a previous year, as of now (2021-09) we need to adjust the traffic value in order to use it
             // If a default value is available, we will prefer using that
-            if($this->missing_value_strategy === 'USE_PLACEHOLDER') {
+            if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
                 $monthly_traffic->$monthIndex = $this->placeholder_value;
                 continue;
             }
 
             // No default value, we have to apply corrections based on the province
-            $coef = $province?->slug === 'QC' ? '.75' : '.65';
+            $coef                         = $province?->slug === 'QC' ? '.75' : '.65';
             $monthly_traffic->$monthIndex = round($trafficEntry->final_traffic * $coef);
         }
 
-        $this->monthly_traffic = $monthly_traffic;
+        return $monthly_traffic;
+    }
+
+
+    public function getWeeklyTrafficAttribute(): \Illuminate\Support\Collection {
+        return $this->weekly_data->groupBy("year")
+                                 ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]));
+    }
+
+    public function getRollingWeeklyTraffic() {
+        $rollingTraffic = [];
+        $trafficData    = $this->weekly_traffic;
+
+        $yearTrafficIt = $trafficData->getIterator();
+
+        $validData      = $this->weekly_data->where("traffic", "!==", 0);
+        $propertyMedian = $validData->count() > 0
+            ? $validData->where("traffic", "!==", 0)->pluck("traffic")->sum() / $validData->count()
+            : 0;
+
+        for ($i = 0; $i < 53; $i++) {
+            $yearTrafficIt->rewind();
+            $weekTraffic = 0;
+
+            do {
+                $weekTraffic = $yearTrafficIt->current()[$i + 1] ?? 0;
+                $yearTrafficIt->next();
+            } while ($weekTraffic === 0 && $yearTrafficIt->valid());
+
+            if ($weekTraffic === 0) {
+                if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
+                    $weekTraffic = $this->placeholder_value / 4;
+                } else {
+                    $weekTraffic = $propertyMedian;
+                }
+            }
+
+            $rollingTraffic[$i + 1] = $weekTraffic;
+        }
+
+        return $rollingTraffic;
     }
 }

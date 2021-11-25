@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Console\Command;
 use Neo\Models\Property;
-use Neo\Models\PropertyTraffic;
+use Neo\Models\PropertyTrafficMonthly;
 use Neo\Services\Traffic\Traffic;
 
 class PullPropertyTraffic extends Command {
@@ -72,7 +72,7 @@ class PullPropertyTraffic extends Command {
             $this->output->comment($month->format("Y-m") . " - " . $traffic);
 
             // If the traffic value is 0 and there is already a record, we ignore it
-            if ($traffic === 0 && PropertyTraffic::query()->where([
+            if ($traffic === 0 && PropertyTrafficMonthly::query()->where([
                     "property_id" => $property->actor_id,
                     "year"        => $start->year,
                     "month"       => $start->month - 1
@@ -81,7 +81,7 @@ class PullPropertyTraffic extends Command {
             }
 
             // Save the value
-            PropertyTraffic::query()->updateOrCreate([
+            PropertyTrafficMonthly::query()->updateOrCreate([
                 "property_id" => $property->actor_id,
                 "year"        => $start->year,
                 "month"       => $start->month - 1,

@@ -162,7 +162,7 @@ class PropertyTrafficSettings extends Model {
         $yearTrafficIt = $trafficData->getIterator();
 
         $propertyMedian = $this->weekly_data->count() > 0
-            ? $this->weekly_data->pluck("traffic")->sum() / $this->weekly_data->count()
+            ? $this->weekly_data->where("traffic", "!==", 0)->pluck("traffic")->sum() / $this->weekly_data->count()
             : 0;
 
         for ($i = 0; $i < 53; $i++) {

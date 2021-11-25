@@ -161,6 +161,10 @@ class PropertyTrafficSettings extends Model {
 
         $yearTrafficIt = $trafficData->getIterator();
 
+        $propertyMedian = $this->weekly_data->count() > 0
+            ? $this->weekly_data->pluck("traffic")->sum() / $this->weekly_data->count()
+            : 0;
+
         for ($i = 0; $i < 53; $i++) {
             $yearTrafficIt->rewind();
             $weekTraffic = 0;
@@ -169,6 +173,14 @@ class PropertyTrafficSettings extends Model {
                 $weekTraffic = $yearTrafficIt->current()[$i + 1] ?? 0;
                 $yearTrafficIt->next();
             } while ($weekTraffic === 0 && $yearTrafficIt->valid());
+
+            if ($weekTraffic === 0) {
+                if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
+                    $weekTraffic = $this->placeholder_value / 30;
+                } else {
+                    $weekTraffic = $propertyMedian;
+                }
+            }
 
             $rollingTraffic[$i + 1] = $weekTraffic;
         }

@@ -79,7 +79,13 @@ class LocationsController extends Controller {
     }
 
     public function search(SearchLocationsRequest $request) {
-        $q         = strtolower($request->query("q"));
+        $q = strtolower($request->query("q", ""));
+
+        // We allow search with empty string only when an actor is provided.
+        if (($q === null || $q === '') && !$request->has("actor")) {
+            return new Response([]);
+        }
+
         $locations = Location::query()
                              ->with("network")
                              ->when($request->has("network"), function (Builder $query) use ($request) {
@@ -87,6 +93,10 @@ class LocationsController extends Controller {
                              })->when($request->has("format"), function (Builder $query) use ($request) {
                 $query->whereHas("display_type.formats", function (Builder $query) use ($request) {
                     $query->where("id", "=", $request->input("format"));
+                });
+            })->when($request->has("actor"), function (Builder $query) use ($request) {
+                $query->whereHas("actor", function (Builder $query) use ($request) {
+                    $query->where("id", "=", $request->input("actor"));
                 });
             })
                              ->where('locations.name', 'LIKE', "%$q%")

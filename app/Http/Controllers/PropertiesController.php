@@ -164,7 +164,11 @@ class PropertiesController extends Controller {
             }
 
             if (in_array("products", $relations, true)) {
-                $property->loadMissing(["products", "products.impressions_models", "products_categories", "products_categories.product_type"]);
+                $property->loadMissing(["products",
+                                        "products.impressions_models",
+                                        "products.locations",
+                                        "products_categories",
+                                        "products_categories.product_type"]);
             }
 
             if (Gate::allows(Capability::odoo_properties)) {

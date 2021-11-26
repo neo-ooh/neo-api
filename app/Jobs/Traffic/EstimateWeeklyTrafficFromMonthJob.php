@@ -49,13 +49,11 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                                                   ->first());
 
         array_pop($weeks);
-        dump(collect($weeks)->map(fn($w) => $w->toDateString()));
         // Now we calculate the traffic for each weeks
         /**
          * @var Carbon $week
          */
         foreach ($weeks as $week) {
-            dump("estimating $week->year, $week->week");
             $trafficCount = 0;
             for ($i = 0; $i < 7; $i++) {
                 $day       = $week->clone()->addDays($i);
@@ -63,7 +61,6 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
 
                 // We are missing month data for this week, go to the next one
                 if (!$monthData) {
-                    dump("dumping $week->year, $week->week");
                     continue 2;
                 }
 

@@ -17,12 +17,12 @@ use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
-use Neo\Jobs\Properties\PullLatestTrafficData;
-use Neo\Jobs\Properties\TrafficRequiredReminder;
 use Neo\Jobs\RefreshAllContracts;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\SynchronizeNetworks;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
+use Neo\Jobs\Traffic\PullLatestTrafficData;
+use Neo\Jobs\Traffic\TrafficRequiredReminder;
 use Neo\Services\News\NewsService;
 
 class Kernel extends ConsoleKernel {

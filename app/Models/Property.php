@@ -126,6 +126,10 @@ class Property extends SecuredModel {
                     ->distinct();
     }
 
+    public function opening_hours(): HasMany {
+        return $this->hasMany(OpeningHours::class, "property_id")->orderBy("weekday");
+    }
+
 
     /*
     |--------------------------------------------------------------------------

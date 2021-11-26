@@ -15,6 +15,7 @@ use Neo\Http\Controllers\FieldsController;
 use Neo\Http\Controllers\FieldSegmentsController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\NetworkFieldsController;
+use Neo\Http\Controllers\OpeningHoursController;
 use Neo\Http\Controllers\ProductCategoriesController;
 use Neo\Http\Controllers\ProductsLocationsController;
 use Neo\Http\Controllers\ProductTypesController;
@@ -163,4 +164,13 @@ Route::group([
     Route::put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 
     Route::put("products/{product}/locations", ProductsLocationsController::class . "@sync");
+
+    /*
+    |----------------------------------------------------------------------
+    | Opening Hours
+    |----------------------------------------------------------------------
+    */
+
+    Route::put("properties/{property}/opening-hours/{weekday}", OpeningHoursController::class . "@update");
+
 });

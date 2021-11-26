@@ -32,7 +32,7 @@ class PropertiesController extends Controller {
 
 // Make sure this property is not already associated with an Odoo property
         if (OdooProperty::query()->where("property_id", "=", $propertyId)->exists()) {
-            throw new \http\Exception\InvalidArgumentException("Connect property is already associated with an Odoo Property.");
+            throw new InvalidArgumentException("Connect property is already associated with an Odoo Property.");
         }
 
 // Check the odoo property is not already associated with a Connect property

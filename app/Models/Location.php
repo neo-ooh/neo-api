@@ -12,6 +12,7 @@ namespace Neo\Models;
 
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,23 +21,24 @@ use Neo\Rules\AccessibleLocation;
 /**
  * Neo\Models\ActorsLocations
  *
- * @property int        $id
- * @property int        $network_id
- * @property string     $external_id
- * @property int        $display_type_id
- * @property string     $name
- * @property string     $internal_name
- * @property int        $container_id
- * @property string     $province [QC, ON, ...]
- * @property string     $city
- * @property boolean    $scheduled_sleep
- * @property Date       $sleep_end
- * @property Date    $sleep_start
- * @property Date       $created_at
- * @property Date       $updated_at
+ * @property int                 $id
+ * @property int                 $network_id
+ * @property string              $external_id
+ * @property int                 $display_type_id
+ * @property string              $name
+ * @property string              $internal_name
+ * @property int                 $container_id
+ * @property string              $province [QC, ON, ...]
+ * @property string              $city
+ * @property boolean             $scheduled_sleep
+ * @property Date                $sleep_end
+ * @property Date                $sleep_start
+ * @property Date                $created_at
+ * @property Date                $updated_at
  *
- * @property ?Container $container
- * @property Network    $network
+ * @property ?Container          $container
+ * @property Network             $network
+ * @property Collection<Product> $locations
  *
  * @mixin Builder
  */
@@ -133,6 +135,10 @@ class Location extends SecuredModel {
 
     public function actor(): BelongsToMany {
         return $this->belongsToMany(Actor::class, "actors_locations", "location_id", "actor_id");
+    }
+
+    public function products(): BelongsToMany {
+        return $this->belongsToMany(Product::class, "products_locations", "location_id", "product_id");
     }
 
     /* Reports */

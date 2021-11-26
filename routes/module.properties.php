@@ -16,6 +16,7 @@ use Neo\Http\Controllers\FieldSegmentsController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\NetworkFieldsController;
 use Neo\Http\Controllers\ProductCategoriesController;
+use Neo\Http\Controllers\ProductsLocationsController;
 use Neo\Http\Controllers\ProductTypesController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
@@ -160,4 +161,6 @@ Route::group([
     Route::get("product-categories", ProductCategoriesController::class . "@index");
     Route::get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
     Route::put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
+
+    Route::put("products/{product}/locations", ProductsLocationsController::class . "@sync");
 });

@@ -22,6 +22,6 @@ class ListProductCategoriesRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_products);
+        return Gate::allows(Capability::properties_products) || Gate::allows(Capability::tools_planning);
     }
 }

@@ -27,6 +27,8 @@ use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+//    public $delay = 60;
+
     public function __construct(protected int $propertyId) {
     }
 

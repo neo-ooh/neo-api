@@ -85,6 +85,13 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
             return;
         }
 
+        // Make sure the schedule has not expired
+        if ($schedule->status !== Schedule::STATUS_APPROVED &&
+            $schedule->status !== Schedule::STATUS_LIVE &&
+            $schedule->status !== Schedule::STATUS_DRAFT) {
+            return;
+        }
+
         // Make sure the campaign has an external id, if not, release and retry later
         if ($schedule->campaign->external_id === null) {
             // Wait 30s before trying again

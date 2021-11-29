@@ -199,7 +199,7 @@ class LocationsController extends Controller {
 
     public function _forceRefreshPlaylist(ForceRefreshPlaylistRequest $request, Location $location) {
         //Make sure the location supports screen controls
-        if ($location->network->broadcaster_connection->broadcaster !== Broadcaster::BROADSIGN) {
+        if ($location->network->broadcaster_connection?->broadcaster !== Broadcaster::BROADSIGN) {
             throw new UnsupportedBroadcasterOptionException("{$location->network->broadcaster_connection->broadcaster} does not support playlist force refresh");
         }
     }

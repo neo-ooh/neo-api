@@ -32,16 +32,16 @@ use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
 class ForceRefreshPlaylist extends BroadSignJob implements ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(BroadSignConfig $config, protected int $locationId) {
+    public function __construct(BroadSignConfig $config, protected int $propertyId) {
         parent::__construct($config);
     }
 
     public function uniqueId(): int {
-        return $this->locationId;
+        return $this->propertyId;
     }
 
     public function handle(): void {
-        $location = Location::query()->with("players")->find($this->locationId);
+        $location = Location::query()->with("players")->find($this->propertyId);
 
         /** @var Player $player */
         foreach ($location->players as $player) {

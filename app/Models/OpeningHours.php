@@ -10,15 +10,15 @@
 
 namespace Neo\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
 use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
  * @property int    property_id
  * @property int    weekday 1-indexed day of the week.
- * @property string open_at
- * @property string close_at
+ * @property Carbon open_at
+ * @property Carbon close_at
  * @property Carbon created_at
  * @property Carbon updated_at
  */

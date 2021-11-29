@@ -29,6 +29,7 @@ use Neo\Rules\AccessibleProperty;
  * @property Network|null                          $network
  * @property Collection<PropertyPicture>           $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
+ * @property Collection<OpeningHours>              $opening_hours
  */
 class Property extends SecuredModel {
     use HasFactory;

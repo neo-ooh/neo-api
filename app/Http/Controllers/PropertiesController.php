@@ -14,6 +14,7 @@ use Neo\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Http\Requests\Properties\UpdateAddressRequest;
 use Neo\Http\Requests\Properties\UpdatePropertyRequest;
 use Neo\Jobs\Odoo\PushPropertyGeolocationJob;
+use Neo\Jobs\Properties\PullOpeningHoursJob;
 use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Jobs\PullPropertyAddressFromBroadSignJob;
 use Neo\Models\Actor;
@@ -135,7 +136,8 @@ class PropertiesController extends Controller {
         $property->traffic()->create();
 
         // Load the address of the property
-        PullPropertyAddressFromBroadSignJob::dispatch($property->actor_id);
+        PullPropertyAddressFromBroadSignJob::dispatch($property->getKey());
+        PullOpeningHoursJob::dispatch($property->getKey());
 
         $property->load(["actor", "traffic", "address"]);
 

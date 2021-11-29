@@ -156,4 +156,9 @@ final class Capability extends Enum {
      * Allow user to send properties list made using the planning to Odoo
      */
     public const odoo_contracts = "odoo.contracts";
+
+    /**
+     * Allow to request an export of impressions, like for specific display unit
+     */
+    public const impressions_export = "impressions.export";
 }

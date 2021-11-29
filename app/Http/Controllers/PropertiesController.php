@@ -139,10 +139,10 @@ class PropertiesController extends Controller {
         PullPropertyAddressFromBroadSignJob::dispatch($property->getKey());
         PullOpeningHoursJob::dispatch($property->getKey());
 
-        $property->load(["actor", "traffic", "address"]);
+        $property->load(["actor", "traffic", "traffic.data", "address"]);
 
         if (Gate::allows(Capability::properties_edit)) {
-            $property->load(["data"]);
+            $property->load(["data", "opening_hours"]);
         }
 
         if (Gate::allows(Capability::odoo_properties)) {
@@ -159,10 +159,10 @@ class PropertiesController extends Controller {
         $relations = $request->input("with", []);
 
         if ($property) {
-            $property->load(["actor", "traffic", "traffic.data", "address", "opening_hours"]);
+            $property->load(["actor", "traffic", "traffic.data", "address"]);
 
             if (Gate::allows(Capability::properties_edit)) {
-                $property->loadMissing(["data", "network", "network.properties_fields", "pictures", "fields_values", "traffic.source"]);
+                $property->loadMissing(["data", "network", "network.properties_fields", "pictures", "fields_values", "traffic.source", "opening_hours"]);
             }
 
             if (in_array("products", $relations, true)) {

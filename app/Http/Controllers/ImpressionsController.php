@@ -123,7 +123,7 @@ class ImpressionsController {
         // For each week
         do {
             // Get the week traffic
-            $traffic = $property->rolling_weekly_traffic[$datePointer->week] / 7;
+            $traffic = $property->rolling_weekly_traffic[$datePointer->isoWeek] / 7;
 
             // For each day of the week
             for ($i = 0; $i < 7; $i++) {

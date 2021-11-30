@@ -69,7 +69,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
 
             PropertyTraffic::query()->updateOrInsert([
                 "property_id" => $this->propertyId,
-                "year"        => $week->year,
+                "year"        => $week->weekYear,
                 "week"        => $week->week,
             ], [
                 "traffic"     => $trafficCount,

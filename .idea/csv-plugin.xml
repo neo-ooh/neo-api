@@ -3,6 +3,13 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="$APPLICATION_CONFIG_DIR$/scratches/scratch_4.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="$USER_HOME$/Library/Mobile Documents/com~apple~CloudDocs/Work/Neo-Traffic/Projets/Documents Generation/PDF/Run 18/sale.order.csv">
           <value>
             <Attribute>

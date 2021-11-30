@@ -20,23 +20,24 @@ use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 
 /**
- * @property int                         $id
- * @property int                         $property_id
- * @property int                         $category_id
- * @property string                      $name_en
- * @property string                      $name_fr
- * @property int                         $quantity
- * @property int                         $unit_price
- * @property boolean                     $is_bonus
- * @property int                         $external_id
- * @property int                         $external_variant_id
- * @property int                         $external_linked_id
- * @property Carbon                      $created_at
- * @property Carbon                      $updated_at
+ * @property int                          $id
+ * @property int                          $property_id
+ * @property int                          $category_id
+ * @property string                       $name_en
+ * @property string                       $name_fr
+ * @property int                          $quantity
+ * @property int                          $unit_price
+ * @property boolean                      $is_bonus
+ * @property int                          $external_id
+ * @property int                          $external_variant_id
+ * @property int                          $external_linked_id
+ * @property Carbon                       $created_at
+ * @property Carbon                       $updated_at
  *
- * @property \Neo\Models\Property        $property
- * @property Collection<ProductCategory> $products_categories
- * @property Collection<Location>        $locations
+ * @property \Neo\Models\Property         $property
+ * @property Collection<ProductCategory>  $products_categories
+ * @property Collection<ImpressionsModel> $impressions_models
+ * @property Collection<Location>         $locations
  */
 class Product extends Model implements WithImpressionsModels {
     use HasImpressionsModels;
@@ -111,5 +112,15 @@ class Product extends Model implements WithImpressionsModels {
             });
 
         return $query;
+    }
+
+    public function getImpressionModel(Carbon $date): ImpressionsModel|null {
+        $model = $this->impressions_models->first(fn($model) => $model->start_month <= $date->month && $date->month <= $model->end_month);
+
+        if (!$model) {
+            $model = $this->category->impressions_models->first(fn($model) => $model->start_month <= $date->month && $date->month <= $model->end_month);
+        }
+
+        return $model;
     }
 }

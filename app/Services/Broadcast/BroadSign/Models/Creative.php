@@ -61,10 +61,10 @@ class Creative extends BroadSignModel {
         "container_id",
         "domain_id",
         "external_id",
+        "parent_id",
         "feeds",
         "id",
         "name",
-        "parent_id",
     ];
 
     protected static function actions(): array {

@@ -261,10 +261,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
             // Get the impression model for the product for the day
             /** @var ImpressionsModel|null $model */
-            $model = $product->impressions_models->first(
-                fn(ImpressionsModel $model) => $model->start_month <= $day->month && $day->month <= $model->end_month,
-                $product->category->impressions_models->first(fn(ImpressionsModel $model) => $model->start_month <= $day->month && $day->month <= $model->end_month)
-            );
+            $model = $product->getImpressionModel($day);
 
             if (!$model) {
                 // No model, no impressions

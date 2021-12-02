@@ -47,7 +47,10 @@ class ImpressionsController {
         // We need to generate a file for each week of the year, for each frame of the display unit
         // Load the property, impressions data and traffic data attached with this location
         /** @var Product|null $product */
-        $product = $location->products()->with(["impressions_models", "category.impressions_models"])->first();
+        $product = $location->products()
+                            ->with(["impressions_models", "category.impressions_models"])
+                            ->withCount("locations")
+                            ->first();
 
         if (!$product) {
             throw new InvalidRequestException("The Display Unit is not associated with a product.");
@@ -145,6 +148,10 @@ class ImpressionsController {
                 ],
                     $model->variables
                 ));
+
+                // Because the impression for the product is spread omn all the display unit attached to it,
+                // we divide the number of impressions by the number of display unit for the product
+                $impressionsPerDay = $impressionsPerDay / $product->locations_count;
 
                 /** @var OpeningHours $hours */
                 $hours = $property->opening_hours->firstWhere("weekday", "=", $weekday);

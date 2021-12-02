@@ -3,6 +3,7 @@
 namespace Neo\Documents\PlannerExport;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Date;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
@@ -248,14 +249,14 @@ class PlannerExport extends XLSXDocument {
 
         $networks = $flight->selection->groupBy("property.network.id");
 
-        foreach($networks as $networkProperties) {
+        foreach ($networks as $networkProperties) {
             // Property / Products table header
             $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
             $this->ws->getStyle($this->ws->getRelativeRange(7, 1))->applyFromArray([
                 "font" => [
                     'size'  => "14",
                     "color" => [
-                        "argb" => "FF".$networkProperties->first()["property"]["network"]["color"]
+                        "argb" => "FF" . $networkProperties->first()["property"]["network"]["color"]
                     ]
                 ],
                 "fill" => [
@@ -299,7 +300,7 @@ class PlannerExport extends XLSXDocument {
 
                 $this->ws->printRow([
                     $property["property"]["name"],
-                    substr($property["property"]["address"]["zipcode"], 0, 3) . " ". substr($property["property"]["address"]["zipcode"], 3),
+                    substr($property["property"]["address"]["zipcode"], 0, 3) . " " . substr($property["property"]["address"]["zipcode"], 3),
                     $property["property"]["address"]["city"]["name"],
                     $property["facesCount"],
                     $property["traffic"],
@@ -310,7 +311,7 @@ class PlannerExport extends XLSXDocument {
                 $productsCount = count($property["products"]);
 
                 $this->ws->getStyle($this->ws->getRelativeRange(7, $productsCount))->applyFromArray([
-                    "font"      => [
+                    "font" => [
                         "size" => 11
                     ],
                     "fill" => [
@@ -336,7 +337,7 @@ class PlannerExport extends XLSXDocument {
                     $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6, 0);
 
                     $this->ws->printRow([
-                        $product["name"],
+                        $product["name_" . App::getLocale()],
                         "",
                         "",
                         $product["quantity"],

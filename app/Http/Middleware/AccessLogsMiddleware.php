@@ -28,7 +28,7 @@ class AccessLogsMiddleware {
             ]
         ];
 
-        Log::channel("activity")->info($requestData);
+        Log::channel("activity")->info("connect.access", $requestData);
 
         return $next($request);
     }

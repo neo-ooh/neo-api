@@ -17,9 +17,10 @@ use Illuminate\Support\Facades\Log;
 class AccessLogsMiddleware {
     public function handle(Request $request, Closure $next) {
         $requestData = [
-            "path"    => $request->getBasePath(),
+            "path"    => $request->getPathInfo(),
             "query"   => $request->query->all(),
             "payload" => $request->json(),
+            "headers" => $request->headers->all(),
             "client"  => [
                 "ip"         => $request->getClientIp(),
                 "id"         => $request->user()?->id ?? 0,

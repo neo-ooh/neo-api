@@ -8,7 +8,6 @@
  * @neo/api - logging.php
  */
 
-use Monolog\Formatter\JsonFormatter;
 use Neo\Logging\BroadSignLogFormatter;
 use Neo\Logging\LaravelLogFormatter;
 
@@ -65,10 +64,10 @@ return [
         ],
 
         'activity' => [
-            'driver' => 'daily',
-            'tap'    => [JsonFormatter::class],
-            'path'   => storage_path('logs/access.log'),
-            'level'  => env('LOG_LEVEL', 'info'),
+            'driver'    => 'daily',
+            'formatter' => Monolog\Formatter\JsonFormatter::class,
+            'path'      => storage_path('logs/access.log'),
+            'level'     => env('LOG_LEVEL', 'info'),
         ],
     ],
 

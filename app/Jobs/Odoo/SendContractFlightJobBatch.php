@@ -83,7 +83,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         // Load all the properties with their traffic as well
         $this->properties = Property::query()
                                     ->with(["traffic", "traffic.weekly_data"])
-                                    ->whereIn("property_id", collect($this->flight["selection"])->pluck(0))
+                                    ->whereIn("actor_id", collect($this->flight["selection"])->pluck(0))
                                     ->get()
                                     ->each(fn(Property $property) => $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic());
 

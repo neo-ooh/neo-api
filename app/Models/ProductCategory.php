@@ -21,17 +21,18 @@ use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 
 /**
- * @property int                  $id
- * @property int                  $type_id
- * @property string               $name_en
- * @property string               $name_fr
- * @property ProductsFillStrategy $fill_strategy
- * @property int                  $external_id
- * @property Carbon               $created_at
- * @property Carbon               $updated_at
+ * @property int                          $id
+ * @property int                          $type_id
+ * @property string                       $name_en
+ * @property string                       $name_fr
+ * @property ProductsFillStrategy         $fill_strategy
+ * @property int                          $external_id
+ * @property Carbon                       $created_at
+ * @property Carbon                       $updated_at
  *
- * @property Collection<Property> $odoo_properties
- * @property ProductType          $type
+ * @property Collection<Property>         $odoo_properties
+ * @property ProductType                  $type
+ * @property Collection<ImpressionsModel> $impressions_models
  */
 class ProductCategory extends Model implements WithImpressionsModels {
     use HasImpressionsModels;

@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int    $id
- * @property int    $start_month
- * @property int    $end_month
+ * @property int    $start_month 1-indexed start month for the model
+ * @property int    $end_month   1-indexed end month for the model
  * @property string $formula
  * @property array  $variables
  * @property Carbon $created_at

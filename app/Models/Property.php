@@ -30,6 +30,8 @@ use Neo\Rules\AccessibleProperty;
  * @property Collection<PropertyPicture>           $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
  * @property Collection<OpeningHours>              $opening_hours
+ *
+ * @property array                                 $rolling_weekly_traffic
  */
 class Property extends SecuredModel {
     use HasFactory;

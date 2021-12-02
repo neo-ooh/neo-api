@@ -35,7 +35,7 @@ use Neo\Models\Traits\HasImpressionsModels;
  * @property Carbon                       $updated_at
  *
  * @property \Neo\Models\Property         $property
- * @property Collection<ProductCategory>  $products_categories
+ * @property ProductCategory              $category
  * @property Collection<ImpressionsModel> $impressions_models
  * @property Collection<Location>         $locations
  */

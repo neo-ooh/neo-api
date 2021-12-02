@@ -18,11 +18,14 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Enums\ProductsFillStrategy;
+use Neo\Models\ImpressionsModel;
 use Neo\Models\Product;
+use Neo\Models\Property;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\Models\OrderLine;
 use Neo\Services\Odoo\OdooConfig;
+use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class SendContractFlightJobBatch implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -31,9 +34,13 @@ class SendContractFlightJobBatch implements ShouldQueue {
     public $timeout = 300;
 
     protected Collection $products;
+    protected Collection $properties;
 
     protected string $flightType;
+
+    protected Carbon $flightStartDate;
     protected string $flightStart;
+    protected Carbon $flightEndDate;
     protected string $flightEnd;
 
     protected \Illuminate\Support\Collection $consumedProducts;
@@ -47,9 +54,12 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $this->consumedProducts = collect();
         $client                 = OdooConfig::fromConfig()->getClient();
 
-        $this->flightType  = $this->flight["type"];
-        $this->flightStart = Carbon::parse($this->flight['start'])->toDateString();
-        $this->flightEnd   = Carbon::parse($this->flight['end'])->toDateString();
+        $this->flightType      = $this->flight["type"];
+        $this->flightStartDate = Carbon::parse($this->flight['start']);
+        $this->flightEndDate   = Carbon::parse($this->flight['end']);
+
+        $this->flightStart = $this->flightStartDate->toDateString();
+        $this->flightEnd   = $this->flightEndDate->toDateString();
 
         clock()->event("Create flight in Odoo")->color('purple')->begin();
 
@@ -65,10 +75,17 @@ class SendContractFlightJobBatch implements ShouldQueue {
         clock()->event("Prepare order lines")->begin();
         // Load all the Connect's products included in the flight
         $this->products = Product::query()
-                                 ->with("category")
+                                 ->with(["impressions_models", "category", "category.impressions_models"])
                                  ->whereInMultiple(['property_id', 'category_id'], $this->flight["selection"])
                                  ->where("is_bonus", "=", $this->flightType === "bua")
                                  ->get();
+
+        // Load all the properties with their traffic as well
+        $this->properties = Property::query()
+                                    ->with(["traffic", "traffic.weekly_data"])
+                                    ->whereIn("property_id", collect($this->flight["selection"])->pluck(0))
+                                    ->get()
+                                    ->each(fn(Property $property) => $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic());
 
         $linkedProductsIds = $this->products->pluck("external_linked_id")->filter();
         $this->products    = $this->products->merge(Product::query()
@@ -226,5 +243,45 @@ class SendContractFlightJobBatch implements ShouldQueue {
         ]);
 
         return $orderLines;
+    }
+
+    public function getProductImpressions(Product $product, float $spotsCount) {
+        $days = $this->flightStartDate->diffInDays($this->flightEndDate->clone()->addDay());
+        $el   = new ExpressionLanguage();
+
+        $impressions = 0;
+        $property    = $this->properties->firstWhere("actor_id", "=", $product->property_id);
+
+        // For each day of the flight
+        for ($i = 0; $i < $days; ++$i) {
+            $day = $this->flightStartDate->clone()->addDays($i);
+
+            // Get the traffic for this day
+            $traffic = floor($property->rolling_weekly_traffic[$day->week] / 7);
+
+            // Get the impression model for the product for the day
+            /** @var ImpressionsModel|null $model */
+            $model = $product->impressions_models->first(
+                fn(ImpressionsModel $model) => $model->start_month <= $day->month && $day->month <= $model->end_month,
+                $product->category->impressions_models->first(fn(ImpressionsModel $model) => $model->start_month <= $day->month && $day->month <= $model->end_month)
+            );
+
+            if (!$model) {
+                // No model, no impressions
+                continue;
+            }
+
+            $dayImpressions = $el->evaluate($model->formula, array_merge([
+                "traffic" => $traffic,
+                "faces"   => $product->quantity,
+                "spots"   => $spotsCount,
+            ],
+                $model->variables
+            ));
+
+            $impressions += $dayImpressions;
+        }
+
+        return $impressions;
     }
 }

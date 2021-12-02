@@ -155,7 +155,7 @@ class PropertyTrafficSettings extends Model {
                                  ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]));
     }
 
-    public function getRollingWeeklyTraffic() {
+    public function getRollingWeeklyTraffic(): array {
         $rollingTraffic = [];
         $trafficData    = $this->weekly_traffic;
 

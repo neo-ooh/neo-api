@@ -30,7 +30,7 @@ class AddParentIdToBroadSignCreativesCommand extends Command {
 
             /** @var CreativeExternalId $external_id */
             foreach ($creative->external_ids as $external_id) {
-                $networkConfig = Broadcast::network($external_id->network_id);
+                $networkConfig = Broadcast::network($external_id->network_id)->getConfig();
 
                 if (!($networkConfig instanceof BroadSignConfig)) {
                     continue;
@@ -38,6 +38,11 @@ class AddParentIdToBroadSignCreativesCommand extends Command {
 
                 $client   = new BroadsignClient($networkConfig);
                 $creative = \Neo\Services\Broadcast\BroadSign\Models\Creative::get($client, $external_id->external_id);
+
+                if (!$creative) {
+                    $this->getOutput()->error("Missing from BroadSign!");
+                    continue;
+                }
 
                 $creative->container_id = $networkConfig->containerId;
                 $creative->parent_id    = $networkConfig->customerId;

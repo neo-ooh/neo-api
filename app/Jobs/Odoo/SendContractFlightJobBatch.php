@@ -78,13 +78,13 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $orderLinesToAdd = collect();
 
         foreach ($this->flight["selection"] as $selection) {
-            [$propertyId, $productId, $discount, $spotsCount] = $selection;
+            [$propertyId, $productCategoryId, $discount, $spotsCount] = $selection;
 
             /** @var Collection<Product> $product */
-            $products = $this->products->filter(fn($p) => $p->property_id === $propertyId && $p->category_id === $productId);
+            $products = $this->products->filter(fn($p) => $p->property_id === $propertyId && $p->category_id === $productCategoryId);
 
             if ($products->isEmpty()) {
-                clock("Could not find product for selection pair: [$propertyId, $productId]");
+                clock("Could not find product for selection pair: [$propertyId, $productCategoryId]");
                 continue;
             }
 

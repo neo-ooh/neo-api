@@ -183,7 +183,7 @@ class PropertyTrafficSettings extends Model {
                 }
             }
 
-            $rollingTraffic[$i + 1] = $weekTraffic;
+            $rollingTraffic[$i + 1] = round($weekTraffic);
         }
 
         return $rollingTraffic;

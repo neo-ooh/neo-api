@@ -23,6 +23,7 @@ use Illuminate\Http\Middleware\SetCacheHeaders;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
+use Neo\Http\Middleware\AccessLogsMiddleware;
 use Neo\Http\Middleware\Authenticate;
 use Neo\Http\Middleware\DynamicsMiddleware;
 use Neo\Http\Middleware\PreventRequestsDuringMaintenance;
@@ -53,29 +54,30 @@ class Kernel extends HttpKernel {
      * @var array
      */
     protected $middlewareGroups = [
-        "default" => [
+        "default"   => [
             "throttle:api",
             'auth:neo-loa-4,access-tokens',
+            'access.logs',
             SubstituteBindings::class,
             SimpleErrors::class,
         ],
-        'guests'   => [
+        'guests'    => [
             'throttle:api',
             SubstituteBindings::class,
         ],
-        'loa-4' => [
+        'loa-4'     => [
             'auth:neo-loa-4', // login + unlocked + 2fa + tos
         ],
-        'loa-3' => [
+        'loa-3'     => [
             'auth:neo-loa-3', // login + unlocked + 2fa
         ],
-        'loa-2' => [
+        'loa-2'     => [
             'auth:neo-loa-2', // login + unlocked
         ],
-        'loa-1' => [
+        'loa-1'     => [
             'auth:neo-loa-1', // login
         ],
-        'broadsign'   => [
+        'broadsign' => [
             SubstituteBindings::class,
         ],
     ];
@@ -98,6 +100,7 @@ class Kernel extends HttpKernel {
         'throttle'         => ThrottleRequests::class,
         'verified'         => EnsureEmailIsVerified::class,
         'dynamics'         => DynamicsMiddleware::class,
+        'access.logs'      => AccessLogsMiddleware::class,
     ];
 
     /**

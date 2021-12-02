@@ -51,15 +51,16 @@ class PushPropertyTrafficJob implements ShouldQueue {
         foreach ($rollingWeeklyTraffic as $week => $traffic) {
             /** @var WeeklyTraffic|null $odooTraffic */
             $odooTraffic = $odooPropertyTraffic->firstWhere("week_number", "=", $week - 1);
+            $dayTraffic  = $traffic / 7;
 
             if ($odooTraffic) {
-                $odooTraffic->traffic = $traffic / 7;
+                $odooTraffic->traffic = $dayTraffic;
                 $odooTraffic->update(["traffic"]);
             } else {
                 $toCreate[] = [
                     "partner_id"  => $property->odoo->odoo_id,
                     "week_number" => $week - 1,
-                    "traffic"     => $traffic / 7
+                    "traffic"     => $dayTraffic
                 ];
             }
         }

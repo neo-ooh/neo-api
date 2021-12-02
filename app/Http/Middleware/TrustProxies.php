@@ -13,14 +13,15 @@ namespace Neo\Http\Middleware;
 use Fideloper\Proxy\TrustProxies as Middleware;
 use Illuminate\Http\Request;
 
-class TrustProxies extends Middleware
-{
+class TrustProxies extends Middleware {
     /**
      * The trusted proxies for this application.
      *
      * @var array|string|null
      */
-    protected $proxies;
+    protected $proxies = [
+        "10.137.160.144"
+    ];
 
     /**
      * The headers that should be used to detect proxies.

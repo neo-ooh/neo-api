@@ -10,13 +10,14 @@
 
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
+use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
-use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 
 /**
  * Class Support
+ *
  * @package Neo\BroadSign\Models
  *
  * @property bool   active
@@ -31,6 +32,7 @@ use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
  * @property int    res_width
  *
  * @method static Format[] all(BroadsignClient $client)
+ * @method static Format get(BroadsignClient $client, $formatId)
  *
  */
 class Format extends BroadSignModel {
@@ -52,7 +54,7 @@ class Format extends BroadSignModel {
         $locations = collect(Location::all());
         /** @var Location $location */
         $locations = $locations->filter(fn($loc) => $loc->display_unit_type_id === $this->id);
-        if($locations->count() === 0) {
+        if ($locations->count() === 0) {
             return [];
         }
 

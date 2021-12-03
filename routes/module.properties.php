@@ -51,6 +51,8 @@ Route::group([
     Route::   put("properties/{property}/address", PropertiesController::class . "@updateAddress");
     Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 
+    Route::get("properties/{property}/_dump", PropertiesController::class . "@dump");
+
 
     /*
     |----------------------------------------------------------------------

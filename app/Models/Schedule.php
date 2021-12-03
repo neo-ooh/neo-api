@@ -28,8 +28,8 @@ use Neo\Services\Broadcast\Broadcast;
  * @property int                $campaign_id
  * @property int                $content_id
  * @property int                $owner_id
- * @property int                $external_id_1
- * @property int                $external_id_2
+ * @property int                $external_id_1 Bundle Id in BroadSign
+ * @property int                $external_id_2 Schedule Id in BroadSign/PiSignage
  * @property Date               $start_date
  * @property Date               $end_date
  * @property int                $order
@@ -38,12 +38,12 @@ use Neo\Services\Broadcast\Broadcast;
  * @property int                $print_count
  *
  * - Custom Attributes
- * @property float             $length
+ * @property float              $length
  * @property string             $status
  *
  * - Relations
  * @property Campaign           $campaign
- * @property Content            $content$
+ * @property Content            $content       $
  * @property Actor              $owner
  * @property Collection<Review> $reviews
  *

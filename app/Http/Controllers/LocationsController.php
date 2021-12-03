@@ -31,6 +31,7 @@ use Neo\Models\Network;
 use Neo\Models\Player;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 
 class LocationsController extends Controller {
     /**
@@ -199,12 +200,12 @@ class LocationsController extends Controller {
 
     public function _forceRefreshPlaylist(ForceRefreshPlaylistRequest $request, Location $location) {
         //Make sure the location supports screen controls
-        if ($location->network->broadcaster_connection?->broadcaster !== Broadcaster::BROADSIGN) {
+        $config = Broadcast::network($location->network_id)->getConfig();
+        if (!($config instanceof BroadSignConfig)) {
             throw new UnsupportedBroadcasterOptionException("{$location->name} does not support playlist force refresh");
         }
 
-        $config = Broadcast::network($location->network_id)->getConfig();
-        $client = new ($config)();
+        $client = new ($config)()();
 
         /** @var Player $player */
         foreach ($location->players as $player) {

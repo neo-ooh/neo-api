@@ -161,7 +161,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
         // Complete the payload
         $payload["domain_id"]    = $this->config->domainId;
         $payload["container_id"] = $this->config->adCopiesContainerId;
-        $payload["customer_id"]  = $this->config->customerId;
+        $payload["parent_id"]    = $this->config->customerId;
 
         $metadata = json_encode($payload, JSON_THROW_ON_ERROR);
 

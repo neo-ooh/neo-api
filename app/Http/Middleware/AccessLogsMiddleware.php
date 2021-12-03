@@ -12,6 +12,7 @@ namespace Neo\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
 class AccessLogsMiddleware {
@@ -29,8 +30,17 @@ class AccessLogsMiddleware {
             ]
         ];
 
+        /** @var Response $response */
+        $response = $next($request);
+
+        if ($response instanceof Response) {
+            $requestData["response"] = [
+                "status" => $response->status(),
+            ];
+        }
+
         Log::channel("activity")->info("connect.access", $requestData);
 
-        return $next($request);
+        return $response;
     }
 }

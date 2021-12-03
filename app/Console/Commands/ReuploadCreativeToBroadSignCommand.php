@@ -37,7 +37,7 @@ class ReuploadCreativeToBroadSignCommand extends Command {
         foreach ($content->schedules as $schedule) {
             $config = Broadcast::network($schedule->campaign->network_id)->getConfig();
 
-            if (!($config instanceof BroadSignConfig)) {
+            if (!($config instanceof BroadSignConfig) || $schedule->external_id_1 === null || $schedule->external_id_2 === null) {
                 continue;
             }
 
@@ -65,6 +65,10 @@ class ReuploadCreativeToBroadSignCommand extends Command {
         // Re-do the schedule, which will trigger a reupload of the creatives as well
         /** @var Schedule $schedule */
         foreach ($content->schedules as $schedule) {
+            if ($schedule->trashed()) {
+                continue;
+            }
+
             $config = Broadcast::network($schedule->campaign->network_id)->getConfig();
 
             if (!($config instanceof BroadSignConfig)) {

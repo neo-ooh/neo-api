@@ -69,7 +69,7 @@ class CreateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
         $bsCampaign                           = new BSCampaign($this->getAPIClient());
         $bsCampaign->auto_synchronize_bundles = true;
         $bsCampaign->container_id             = $this->config->reservationsContainerId;
-        $bsCampaign->duration_msec            = $campaign->schedules_max_length * 1000;
+        $bsCampaign->duration_msec            = $campaign->schedules_default_length * 1000;
         $bsCampaign->end_date                 = $campaign->end_date->toDateString();
         $bsCampaign->end_time                 = $campaign->end_date->toTimeString();
         $bsCampaign->name                     = $campaign->owner->name . " - " . $campaign->name;
@@ -79,7 +79,7 @@ class CreateBroadSignCampaign extends BroadSignJob implements ShouldBeUniqueUnti
         $bsCampaign->saturation               = $campaign->loop_saturation > 0
             ? $campaign->loop_saturation
             : $campaign->schedules->filter(fn($schedule) => $schedule->is_approved)->count();
-        $bsCampaign->priority       = $campaign->priority;
+        $bsCampaign->priority                 = $campaign->priority;
         $bsCampaign->default_fullscreen       = false;
         $bsCampaign->create();
 

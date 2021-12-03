@@ -200,7 +200,15 @@ class LocationsController extends Controller {
     public function _forceRefreshPlaylist(ForceRefreshPlaylistRequest $request, Location $location) {
         //Make sure the location supports screen controls
         if ($location->network->broadcaster_connection?->broadcaster !== Broadcaster::BROADSIGN) {
-            throw new UnsupportedBroadcasterOptionException("{$location->network->broadcaster_connection->broadcaster} does not support playlist force refresh");
+            throw new UnsupportedBroadcasterOptionException("{$location->name} does not support playlist force refresh");
+        }
+
+        $config = Broadcast::network($location->network_id)->getConfig();
+        $client = new ($config)();
+
+        /** @var Player $player */
+        foreach ($location->players as $player) {
+            (new \Neo\Services\Broadcast\BroadSign\Models\Player($client, ["id" => $player->external_id]))->forceUpdatePlaylist();
         }
     }
 }

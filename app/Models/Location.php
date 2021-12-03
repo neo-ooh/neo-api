@@ -39,6 +39,7 @@ use Neo\Rules\AccessibleLocation;
  * @property ?Container          $container
  * @property Network             $network
  * @property Collection<Product> $locations
+ * @property Collection<Player>  $players
  *
  * @mixin Builder
  */

@@ -43,6 +43,7 @@ class PropertyDump extends XLSXDocument {
 
     public function __construct(protected int $propertyId) {
         parent::__construct();
+        $this->ingest(null);
     }
 
     /**
@@ -82,7 +83,7 @@ class PropertyDump extends XLSXDocument {
             /** @var Player $player */
             foreach ($location->players as $player) {
                 // Start by pulling the player from Broadsign. We ignore non-BroadSign players
-                $config = Broadcast::network($player)->getConfig();
+                $config = Broadcast::network($player->external_id)->getConfig();
 
                 if ($config->broadcaster !== Broadcaster::BROADSIGN) {
                     continue;

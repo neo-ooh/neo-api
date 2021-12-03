@@ -13,6 +13,7 @@ namespace Neo\Rules;
 use Illuminate\Contracts\Validation\ImplicitRule;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Neo\Models\AccessToken;
 use Neo\Models\Actor;
 
 class AccessibleActor implements Rule, ImplicitRule {
@@ -23,7 +24,7 @@ class AccessibleActor implements Rule, ImplicitRule {
      *
      * @param bool $allow_self
      */
-    public function __construct (bool $allow_self = true) {
+    public function __construct(bool $allow_self = true) {
         $this->allow_self = $allow_self;
     }
 
@@ -35,7 +36,7 @@ class AccessibleActor implements Rule, ImplicitRule {
      *
      * @return bool
      */
-    public function passes ($attribute, $value): bool {
+    public function passes($attribute, $value): bool {
         // If we should allow the current user, check if the specified user is this one
         if ($this->allow_self && Auth::id() === (int)$value) {
             return true;
@@ -49,6 +50,10 @@ class AccessibleActor implements Rule, ImplicitRule {
             return false;
         }
 
+        if (Auth::user() instanceof AccessToken) {
+            return true;
+        }
+
         // Finally, check if the current user can access it
         return Auth::user()->hasAccessTo($item);
     }
@@ -58,7 +63,7 @@ class AccessibleActor implements Rule, ImplicitRule {
      *
      * @return string
      */
-    public function message (): string {
+    public function message(): string {
         return 'You do not have access to the specified actor';
     }
 }

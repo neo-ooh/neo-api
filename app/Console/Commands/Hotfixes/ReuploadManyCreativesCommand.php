@@ -21,7 +21,7 @@ class ReuploadManyCreativesCommand extends Command {
         $contentIds = Schedule::query()
                               ->whereDate("created_at", ">", Carbon::parse("2021-11-10"))
                               ->get("content_id")
-                              ->pluck("content_id");
+                              ->pluck("content_id")->unique();
 
         foreach ($contentIds as $contentId) {
             $this->runCommand("content:re-upload", ["content" => $contentId], $this->getOutput());

@@ -10,18 +10,20 @@
 
 namespace Neo\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Foursquare\SearchPlacesRequest;
 
 class FoursquareController {
     public function _searchPlaces(SearchPlacesRequest $request) {
-        $client = new \GuzzleHttp\Client();
+        $client = new Client();
 
         $response = $client->request('GET', 'https://api.foursquare.com/v3/places/search', [
             "query"   => [
-                "query" => $request->input("q"),
-                "ne"    => $request->input("bounds")[0],
-                "sw"    => $request->input("bounds")[1],
+                "query" => trim($request->input("q")),
+                "ne"    => $request->input("bounds")[1],
+                "sw"    => $request->input("bounds")[0],
+                "limit" => $request->input("limit", 10),
             ],
             'headers' => [
                 'Accept'        => 'application/json',
@@ -29,6 +31,21 @@ class FoursquareController {
             ],
         ]);
 
-        return new Response($response->getBody());
+        if ($response->getStatusCode() !== 200) {
+            return new Response([]);
+        }
+
+        $places = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
+
+        $formattedPlaces = array_map(fn($place) => [
+            "geometry"   => [
+                "coordinates" => [$place->geocodes->main->longitude, $place->geocodes->main->latitude],
+                "type"        => "Point",
+            ],
+            "place_name" => $place->name . ', ' . ($place->location->address ?? "") . ', ' . ($place->location->postcode ?? "") . ' ' . ($place->location->locality ?? "") . ', ' . ($place->location->region ?? ""),
+            "id"         => $place->fsq_id,
+        ], $places->results);
+
+        return new Response($formattedPlaces);
     }
 }

@@ -31,6 +31,7 @@ class GoogleMapsController {
                 "radius"   => 10000,
                 "region"   => "ca"
             ]);
+
             return new Response($response);
         } catch (GooglePlacesApiException|InvalidRequestException|OverQueryLimitException|RequestDeniedException|UnknownErrorException|NotImplementedException $exception) {
             Log::error("google.places.api.error", [

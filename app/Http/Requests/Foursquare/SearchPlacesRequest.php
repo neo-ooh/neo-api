@@ -16,7 +16,8 @@ class SearchPlacesRequest extends FormRequest {
     public function rules(): array {
         return [
             "q"      => ["required", "string", "min:3"],
-            "bounds" => ["required", "array"]
+            "bounds" => ["required", "array"],
+            "limit"  => ["sometimes", "integer"]
         ];
     }
 

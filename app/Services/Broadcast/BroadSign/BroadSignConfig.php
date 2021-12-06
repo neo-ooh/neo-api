@@ -3,8 +3,11 @@
 namespace Neo\Services\Broadcast\BroadSign;
 
 use Illuminate\Support\Facades\Storage;
+use Neo\Services\Broadcast\Broadcaster;
 
 class BroadSignConfig {
+    public string $broadcaster = Broadcaster::BROADSIGN;
+
     public int $connectionID;
 
     public string $connectionUUID;
@@ -36,7 +39,7 @@ class BroadSignConfig {
         $path = "secure/certs/$this->connectionUUID.pem";
 
         // We need a local copy of the certificate to be able to use it with Broadsign
-        if(!Storage::disk("local")->exists($path)) {
+        if (!Storage::disk("local")->exists($path)) {
             Storage::disk("local")->put($path, Storage::get($path));
         }
 

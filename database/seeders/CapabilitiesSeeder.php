@@ -39,7 +39,7 @@ class CapabilitiesSeeder extends Seeder {
 
         // Define the capabilities groups
         $capGroups = [
-            "ACTORS"   => [
+            "ACTORS"     => [
                 \Neo\Enums\Capability::actors_create,
                 \Neo\Enums\Capability::actors_delete,
                 \Neo\Enums\Capability::actors_edit,
@@ -49,7 +49,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::roles_edit,
                 \Neo\Enums\Capability::brandings_edit,
             ],
-            "DIRECT"   => [
+            "DIRECT"     => [
                 \Neo\Enums\Capability::libraries_edit,
                 \Neo\Enums\Capability::libraries_create,
                 \Neo\Enums\Capability::libraries_destroy,
@@ -63,7 +63,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::contents_schedule,
                 \Neo\Enums\Capability::contents_review,
             ],
-            "NETWORK"  => [
+            "PROPERTIES" => [
                 \Neo\Enums\Capability::properties_view,
                 \Neo\Enums\Capability::properties_traffic,
                 \Neo\Enums\Capability::properties_edit,
@@ -71,8 +71,10 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::properties_fields,
                 \Neo\Enums\Capability::properties_products,
                 \Neo\Enums\Capability::products_impressions,
+                \Neo\Enums\Capability::properties_export,
                 \Neo\Enums\Capability::odoo_properties,
-
+            ],
+            "NETWORK"    => [
                 \Neo\Enums\Capability::bursts_request,
                 \Neo\Enums\Capability::bursts_quality,
 
@@ -85,11 +87,11 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::tools_planning,
                 \Neo\Enums\Capability::odoo_contracts,
             ],
-            "DYNAMICS" => [
+            "DYNAMICS"   => [
                 \Neo\Enums\Capability::dynamics_news,
                 \Neo\Enums\Capability::dynamics_weather,
             ],
-            "INTERNAL" => [
+            "INTERNAL"   => [
                 \Neo\Enums\Capability::networks_admin,
                 \Neo\Enums\Capability::networks_edit,
                 \Neo\Enums\Capability::networks_connections,
@@ -99,7 +101,6 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::chores_broadsign,
                 \Neo\Enums\Capability::access_token_edit,
 
-                \Neo\Enums\Capability::tools_impressions,
                 \Neo\Enums\Capability::traffic_sources,
                 \Neo\Enums\Capability::impressions_export,
 

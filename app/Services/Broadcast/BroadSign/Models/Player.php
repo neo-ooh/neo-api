@@ -42,20 +42,24 @@ use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
  *
  * @method static Collection all(BroadsignClient $client)
  * @method static Player get(BroadsignClient $client, int $playerID)
+ * @method static Collection<Player> getMultiple(BroadsignClient $client, int $playersIds)
  */
 class Player extends BroadSignModel {
     protected static string $unwrapKey = "host";
 
     protected static function actions(): array {
         return [
-            "all"     => Endpoint::get("/host/v17")
-                                 ->unwrap(static::$unwrapKey)
-                                 ->parser(new MultipleResourcesParser(static::class)),
-            "get"     => Endpoint::get("/host/v17/{id}")
-                                 ->unwrap(static::$unwrapKey)
-                                 ->parser(new SingleResourcesParser(static::class)),
-            "request" => Endpoint::post("/host/v17/push_request")
-                                 ->unwrap(static::$unwrapKey),
+            "all"          => Endpoint::get("/host/v17")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
+            "get"          => Endpoint::get("/host/v17/{id}")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new SingleResourcesParser(static::class)),
+            "get_multiple" => Endpoint::get("/host/v17/by_id")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
+            "request"      => Endpoint::post("/host/v17/push_request")
+                                      ->unwrap(static::$unwrapKey),
         ];
     }
 
@@ -66,6 +70,17 @@ class Player extends BroadSignModel {
     | Custom Mechanisms
     |--------------------------------------------------------------------------
     */
+
+    /**
+     * Pull multiple players/hosts at once using their ids
+     *
+     * @param BroadsignClient $client
+     * @param array           $playersIds
+     * @return Collection<static>
+     */
+    public static function getMultiple(BroadsignClient $client, array $playersIds) {
+        return static::get_multiple($client, ["ids" => implode(",", $playersIds)]);
+    }
 
     /**
      * Send a request to the player for a burst of screenshots, using the specified parameters.

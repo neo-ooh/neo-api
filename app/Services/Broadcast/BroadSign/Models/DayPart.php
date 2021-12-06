@@ -63,16 +63,19 @@ class DayPart extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "get"        => Endpoint::get("/day_part/v5/{id}")
-                                    ->unwrap(static::$unwrapKey)
-                                    ->parser(new SingleResourcesParser(static::class))
-                                    ->cache(3600),
-            "update"     => Endpoint::put("/day_part/v5")
-                                    ->unwrap(static::$unwrapKey)
-                                    ->parser(new ResourceIDParser()),
-            "bySchedule" => Endpoint::get("/day_part/v5/by_display_unit")
-                                    ->unwrap(static::$unwrapKey)
-                                    ->parser(new MultipleResourcesParser(static::class)),
+            "get"          => Endpoint::get("/day_part/v5/{id}")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new SingleResourcesParser(static::class))
+                                      ->cache(3600),
+            "get_multiple" => Endpoint::get("/day_part/v5/by_id")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
+            "update"       => Endpoint::put("/day_part/v5")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new ResourceIDParser()),
+            "bySchedule"   => Endpoint::get("/day_part/v5/by_display_unit")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
         ];
     }
 
@@ -83,5 +86,16 @@ class DayPart extends BroadSignModel {
      */
     public static function getByDisplayUnit(BroadsignClient $client, int $displayUnitId): Collection {
         return static::bySchedule($client, ["display_unit_id" => $displayUnitId]);
+    }
+
+    /**
+     * Pull multiple day parts at once using their ids
+     *
+     * @param BroadsignClient $client
+     * @param array           $loopPoliciesIds
+     * @return Collection<static>
+     */
+    public static function getMultiple(BroadsignClient $client, array $loopPoliciesIds) {
+        return static::get_multiple($client, ["ids" => implode(",", $loopPoliciesIds)]);
     }
 }

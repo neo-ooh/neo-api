@@ -6,16 +6,14 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 
-class ListDisplayTypesPerNetworkRequest extends FormRequest
-{
+class ListDisplayTypesPerNetworkRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::networks_edit) || Gate::allows(Capability::tools_impressions);
+    public function authorize() {
+        return Gate::allows(Capability::networks_edit);
     }
 
     /**
@@ -23,8 +21,7 @@ class ListDisplayTypesPerNetworkRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             //
         ];

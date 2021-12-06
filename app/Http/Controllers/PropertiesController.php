@@ -6,8 +6,10 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
+use Neo\Documents\PropertyDump\PropertyDump;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
+use Neo\Http\Requests\Properties\DumpPropertyRequest;
 use Neo\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Http\Requests\Properties\StorePropertyRequest;
@@ -260,5 +262,11 @@ class PropertiesController extends Controller {
         $address?->delete();
 
         return new Response(["status" => "ok"]);
+    }
+
+    public function dump(DumpPropertyRequest $request, Property $property) {
+        $doc = new PropertyDump($property->getKey());
+        $doc->build();
+        $doc->output();
     }
 }

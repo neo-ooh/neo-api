@@ -133,11 +133,6 @@ final class Capability extends Enum {
     public const products_impressions = "products.impressions";
 
     /**
-     * Allow user to use the Prints tools to export estimated prints by properties
-     */
-    public const tools_impressions = "tools.impressions";
-
-    /**
      * Allow user to setup traffic sources
      */
     public const traffic_sources = "traffic.sources";
@@ -161,4 +156,9 @@ final class Capability extends Enum {
      * Allow to request an export of impressions, like for specific display unit
      */
     public const impressions_export = "impressions.export";
+
+    /**
+     * Allows the user to request an excel file of the property
+     */
+    public const properties_export = "properties.export";
 }

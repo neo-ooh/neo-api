@@ -9,30 +9,15 @@
  */
 
 use Illuminate\Support\Facades\Route;
-use Neo\Http\Controllers\DisplayTypesPrintsFactorsController;
 use Neo\Http\Controllers\ImpressionsController;
 use Neo\Http\Controllers\ImpressionsModelsController;
 use Neo\Http\Controllers\TrafficController;
-use Neo\Models\DisplayTypePrintsFactors;
 use Neo\Models\ImpressionsModel;
 
 Route::group([
     "middleware" => "default",
     "prefix"     => "v1"
 ], function () {
-
-    /*
-    |----------------------------------------------------------------------
-    | Calculations
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("factors", DisplayTypePrintsFactors::class);
-
-    Route:: get("display-types-factors", DisplayTypesPrintsFactorsController::class . "@index");
-    Route::post("display-types-factors", DisplayTypesPrintsFactorsController::class . "@store");
-    Route:: put("display-types-factors/{factors}", DisplayTypesPrintsFactorsController::class . "@update");
-
     /*
     |----------------------------------------------------------------------
     | Impressions Models

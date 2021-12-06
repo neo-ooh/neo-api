@@ -18,8 +18,9 @@ use Illuminate\Support\Facades\Log;
 class AccessLogsMiddleware {
     public function handle(Request $request, Closure $next) {
         $requestData = [
+            "env"     => config("app.env"),
             "method"  => $request->getMethod(),
-            "path"    => $request->route()->uri,
+            "path"    => $request->getPathInfo(),
             "query"   => $request->query->all(),
             "payload" => $request->json(),
             "headers" => $request->headers->all(),

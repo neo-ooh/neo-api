@@ -10,13 +10,15 @@
 
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Illuminate\Support\Collection;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 
 /**
  * Class LoopPolicy
+ *
  * @package Neo\BroadSign\Models
  *
  * @property bool   $active
@@ -46,13 +48,28 @@ class LoopPolicy extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all" => Endpoint::get("/loop_policy/v10/all")
-                             ->unwrap(static::$unwrapKey)
-                             ->parser(new MultipleResourcesParser(static::class)),
-            "get" => Endpoint::get("/loop_policy/v10/{id}")
-                             ->unwrap(static::$unwrapKey)
-                             ->parser(new SingleResourcesParser(static::class))
-                             ->cache(21600),
+            "all"          => Endpoint::get("/loop_policy/v10/all")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
+            "get"          => Endpoint::get("/loop_policy/v10/{id}")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new SingleResourcesParser(static::class))
+                                      ->cache(21600),
+            "get_multiple" => Endpoint::get("/loop_policy/v10/by_id")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class))
+                                      ->cache(21600),
         ];
+    }
+
+    /**
+     * Pull multiple loop policies at once using their ids
+     *
+     * @param BroadsignClient $client
+     * @param array           $loopPoliciesIds
+     * @return Collection<static>
+     */
+    public static function getMultiple(BroadsignClient $client, array $loopPoliciesIds) {
+        return static::get_multiple($client, ["ids" => implode(",", $loopPoliciesIds)]);
     }
 }

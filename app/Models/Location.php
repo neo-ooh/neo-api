@@ -41,6 +41,7 @@ use Neo\Rules\AccessibleLocation;
  * @property Collection<Product> $locations
  * @property Collection<Player>  $players
  * @property DisplayType         $display_type
+ * @property Collection<Product> $products
  *
  * @mixin Builder
  */

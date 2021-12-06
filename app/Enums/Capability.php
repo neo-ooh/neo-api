@@ -161,4 +161,9 @@ final class Capability extends Enum {
      * Allow to request an export of impressions, like for specific display unit
      */
     public const impressions_export = "impressions.export";
+
+    /**
+     * Allows the user to request an excel file of the property
+     */
+    public const properties_export = "properties.export";
 }

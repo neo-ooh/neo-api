@@ -101,7 +101,6 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::chores_broadsign,
                 \Neo\Enums\Capability::access_token_edit,
 
-                \Neo\Enums\Capability::tools_impressions,
                 \Neo\Enums\Capability::traffic_sources,
                 \Neo\Enums\Capability::impressions_export,
 

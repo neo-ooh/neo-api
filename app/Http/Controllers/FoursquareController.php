@@ -18,9 +18,10 @@ class FoursquareController {
         $client = new \GuzzleHttp\Client();
 
         $response = $client->request('GET', 'https://api.foursquare.com/v3/places/search', [
-            "body"    => [
-                "query"  => $request->input("q"),
-                "bounds" => $request->input("bounds")
+            "query"   => [
+                "query" => $request->input("q"),
+                "ne"    => $request->input("bounds")[0],
+                "sw"    => $request->input("bounds")[1],
             ],
             'headers' => [
                 'Accept'        => 'application/json',

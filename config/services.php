@@ -23,8 +23,8 @@ return [
     */
 
     'mailgun' => [
-        'domain' => env('MAILGUN_DOMAIN'),
-        'secret' => env('MAILGUN_SECRET'),
+        'domain'   => env('MAILGUN_DOMAIN'),
+        'secret'   => env('MAILGUN_SECRET'),
         'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
     ],
 
@@ -33,19 +33,19 @@ return [
     ],
 
     'ses' => [
-        'key' => env('AWS_ACCESS_KEY_ID'),
+        'key'    => env('AWS_ACCESS_KEY_ID'),
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
     "meteo-media" => [
-        "endpoint" => env("METEO_MEDIA_ENDPOINT", "http://wx.api.pelmorex.com/weather"),
-        "key" => env("METEO_MEDIA_API_KEY"),
+        "endpoint"        => env("METEO_MEDIA_ENDPOINT", "http://wx.api.pelmorex.com/weather"),
+        "key"             => env("METEO_MEDIA_API_KEY"),
         "record-lifespan" => env("METEO_MEDIA_RECORD_LIFESPAN", 2700),
     ],
 
     "canadian-press" => [
-        "disk" => "canadian-press",
+        "disk"    => "canadian-press",
         "storage" => [
             "path" => "dynamics/news/medias/"
         ]
@@ -54,6 +54,11 @@ return [
 
     "google" => [
         "key" => env('GOOGLE_MAPS_API_KEY'),
+    ],
+
+
+    "foursquare" => [
+        "key" => env('FOURSQUARE_API_KEY'),
     ],
 
 ];

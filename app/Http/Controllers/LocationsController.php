@@ -142,20 +142,26 @@ class LocationsController extends Controller {
      * @return Response
      */
     public function show(ShowLocationRequest $request, Location $location): Response {
-        if ($request->has('with_hierarchy')) {
-            $location->loadHierarchy();
+        $relations = $request->input("with", []);
+
+        if (in_array("network", $relations)) {
+            $location->load("network");
         }
 
-        if ($request->has('with_players')) {
-            $location->load('players');
+        if (in_array("broadcaster", $relations)) {
+            $location->load("network.broadcaster_connection");
         }
 
-        if ($request->has('with_bursts')) {
-            $location->load('bursts');
+        if (in_array("players", $relations)) {
+            $location->load("players");
         }
 
-        if ($request->has('with_reports')) {
-            $location->load('reports');
+        if (in_array("actors", $relations)) {
+            $location->load("actors");
+        }
+
+        if (in_array("products", $relations)) {
+            $location->load(["products", "products.category"]);
         }
 
         return new Response($location);

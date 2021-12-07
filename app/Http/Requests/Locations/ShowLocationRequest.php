@@ -18,7 +18,7 @@ class ShowLocationRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         // Users are allowed to list locations. Anyway, they only get the ones they can access.
         return true;
     }
@@ -28,11 +28,9 @@ class ShowLocationRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "with_hierarchy" => [ "sometimes", "present" ],
-            "with_bursts"    => [ "sometimes", "present" ],
-            "with_reports"   => [ "sometimes", "present" ],
+            "with" => ["sometimes", "array"],
         ];
     }
 }

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\ImpressionsModel;
 use Neo\Models\Product;
@@ -131,6 +132,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $addedOrderLines = clock($client->client->call(OrderLine::$slug, "create", [$orderLinesToAdd->toArray()]));
 
         // We now want to load the order lines that we just added, check if they are some that are overbooked, and try to find a replacement for these ones
+        Log::debug("addedOrderLines", $addedOrderLines);
 
         // Load all the orderlines we just added
         $orderLinesAdded = OrderLine::getMultiple($client, $addedOrderLines->toArray());
@@ -185,6 +187,9 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
         } while ($overbookedLines->count() > 0);
 
+        // Trigger calculations of order lines impressions on Odoo
+        $client->client->call("order.order_line", '_compute_impression', [$this->contract->id]);
+
         clock($orderLinesToRemove);
 
         if ($orderLinesToRemove->count() > 0) {
@@ -200,18 +205,19 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $orderLines = collect();
 
         $orderLines->push([
-            "order_id"        => $this->contract->id,
-            "name"            => $product->name,
-            "price_unit"      => $product->unit_price,
-            "product_uom_qty" => $spotsCount,
-            "customer_lead"   => 0.0,
-            "product_id"      => $product->external_variant_id,
-            "rental_start"    => $this->flightStart,
-            "rental_end"      => $this->flightEnd,
-            "is_rental_line"  => 1,
-            "is_linked_line"  => 0,
-            "discount"        => $this->flightType === 'bonus' ? 100.0 : $discount,
-            "sequence"        => $this->flightIndex * 10,
+            "order_id"           => $this->contract->id,
+            "name"               => $product->name,
+            "price_unit"         => $product->unit_price,
+            "product_uom_qty"    => $spotsCount,
+            "customer_lead"      => 0.0,
+            "product_id"         => $product->external_variant_id,
+            "rental_start"       => $this->flightStart,
+            "rental_end"         => $this->flightEnd,
+            "is_rental_line"     => 1,
+            "is_linked_line"     => 0,
+            "discount"           => $this->flightType === 'bonus' ? 100.0 : $discount,
+            "sequence"           => $this->flightIndex * 10,
+            "connect_impression" => $this->getProductImpressions($product, $spotsCount),
         ]);
 
         $this->consumedProducts->push($product->external_id);
@@ -279,6 +285,6 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $impressions += $dayImpressions;
         }
 
-        return $impressions;
+        return round($impressions);
     }
 }

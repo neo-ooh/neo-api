@@ -110,7 +110,13 @@ abstract class Model implements Arrayable {
      * @return Collection<static>
      */
     public static function getMultiple(Client $client, array|Collection $ids): Collection {
-        return $client->getById(static::$slug, $ids, static::$fields)->mapWithKeys(fn($record) => [$record[static::$key] => new static($client, $record)]);
+        $response = $client->getById(static::$slug, $ids, static::$fields);
+
+        if ($response instanceof Collection) {
+            return $response->mapWithKeys(fn($record) => [is_int($record) ? $record : [static::$key] => new static($client, $record)]);
+        }
+
+        return $response;
     }
 
     /**
@@ -126,7 +132,6 @@ abstract class Model implements Arrayable {
         if (!$response) {
             return null;
         }
-
 
 
         return new static($client, $response);

@@ -13,6 +13,7 @@ namespace Neo\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\CacheInventory;
+use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\NotifyEndOfSchedules;
@@ -37,6 +38,9 @@ class Kernel extends ConsoleKernel {
 
         // properties:sync
         SynchronizeProperties::class,
+
+        // properties:push-traffic
+        PushAllPropertiesTrafficCommand::class,
 
         // network:rebuild
         RebuildResources::class,

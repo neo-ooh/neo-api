@@ -15,6 +15,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
+use Neo\Jobs\Creatives\RemoveUnusedCreativesFromBroadcasterJob;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\RefreshAllContracts;
@@ -98,10 +99,13 @@ class Kernel extends ConsoleKernel {
          * Daily tasks
          */
 
-        // Update network from broadsign
+        // Update network from broadsign & others
         $schedule->command('network:sync')->daily();
         $schedule->command('properties:sync')->daily();
         $schedule->command('contracts:clear-screenshots')->daily();
+
+        // Remove unused creatives from external broadcasters
+        $schedule->job(RemoveUnusedCreativesFromBroadcasterJob::class)->daily();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()

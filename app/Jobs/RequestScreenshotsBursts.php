@@ -23,7 +23,6 @@ use Neo\Models\Contract;
 use Neo\Models\ContractBurst;
 use Neo\Models\Player;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
 
 /**
@@ -48,7 +47,7 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
         // Load bursts starting now or up to one minute in the future
         /** @var Collection $bursts */
         $bursts = ContractBurst::query()->where("status", "=", "PENDING")
-                               ->whereDate("start_at", "<=", Date::now()->addMinute())
+                               ->whereDate("start_at", "<=", Date::now()->setTimezone('America/Toronto')->addMinute())
                                ->distinct()
                                ->get();
 
@@ -69,7 +68,7 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
             return;
         }
 
-        $config = Contract::getConnectionConfig();
+        $config          = Contract::getConnectionConfig();
         $broadsignClient = new BroadsignClient($config);
 
         $bsPlayer = new BSPlayer($broadsignClient, ["id" => $player->external_id]);

@@ -121,7 +121,15 @@ class Kernel extends ConsoleKernel {
 
         // Input last month traffic value were missing
         $schedule->job(FillMissingTrafficValueJob::class)->monthlyOn(15);
+    }
 
+    /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
+     */
+    protected function scheduleTimezone() {
+        return 'America/Toronto';
     }
 
     /**

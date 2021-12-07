@@ -31,7 +31,7 @@ class ContractsController {
         }
 
         Log::info("connect.log", [
-            "action"    => "planner.static.assoc",
+            "action"    => "planner.assoc",
             "contract"  => $contract->name,
             "sales_rep" => Auth::user()->name
         ]);

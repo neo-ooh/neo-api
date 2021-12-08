@@ -132,7 +132,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $addedOrderLines = clock($client->client->call(OrderLine::$slug, "create", [$orderLinesToAdd->toArray()]));
 
         // We now want to load the order lines that we just added, check if they are some that are overbooked, and try to find a replacement for these ones
-        Log::debug("addedOrderLines", $addedOrderLines);
+//        Log::debug("addedOrderLines", $addedOrderLines->toArray());
 
         // Load all the orderlines we just added
         $orderLinesAdded = OrderLine::getMultiple($client, $addedOrderLines->toArray());
@@ -188,7 +188,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         } while ($overbookedLines->count() > 0);
 
         // Trigger calculations of order lines impressions on Odoo
-        $client->client->call("order.order_line", '_compute_impression', [$this->contract->id]);
+        Log::debug("dbg", $client->client->call("order.order_line", '_compute_impression', [$this->contract->id])->toArray());
 
         clock($orderLinesToRemove);
 

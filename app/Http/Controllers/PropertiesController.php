@@ -124,7 +124,7 @@ class PropertiesController extends Controller {
         $property->refresh();
 
         // Try to identify the network from the property's actor locations
-        $property->network_id = Location::query()->whereHas("actor", function ($query) use ($property) {
+        $property->network_id = Location::query()->whereHas("actors", function ($query) use ($property) {
             $query->where("id", "=", $property->actor_id);
         })
                                         ->get("network_id")

@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Log;
 use Neo\Models\Property;
 use Neo\Services\Odoo\Models\WeeklyTraffic;
 use Neo\Services\Odoo\OdooConfig;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class PushPropertyTrafficJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -27,6 +28,8 @@ class PushPropertyTrafficJob implements ShouldQueue {
     }
 
     public function handle() {
+        $output = new ConsoleOutput();
+
         /** @var Property|null $property */
         $property = Property::query()->with(["odoo", "traffic.weekly_data"])->find($this->propertyId);
 
@@ -53,6 +56,8 @@ class PushPropertyTrafficJob implements ShouldQueue {
             $odooTraffic = $odooPropertyTraffic->firstWhere("week_number", "=", $week - 1);
             $dayTraffic  = $traffic / 7;
 
+            $output->writeln("Week #$week day traffic : $dayTraffic");
+
             if ($odooTraffic) {
                 $odooTraffic->traffic = $dayTraffic;
                 $odooTraffic->update(["traffic"]);
@@ -60,7 +65,7 @@ class PushPropertyTrafficJob implements ShouldQueue {
                 $toCreate[] = [
                     "partner_id"  => $property->odoo->odoo_id,
                     "week_number" => $week - 1,
-                    "traffic"     => $dayTraffic
+                    "traffic"     => floor($dayTraffic)
                 ];
             }
         }

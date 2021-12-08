@@ -16,7 +16,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
@@ -36,7 +35,7 @@ class SendContractJob implements ShouldQueue {
         $client = OdooConfig::fromConfig()->getClient();
 
         // Clean up contract before insert if requested
-        if($this->clearOnSend) {
+        if ($this->clearOnSend) {
             $this->cleanupContract($client);
         }
 
@@ -48,22 +47,22 @@ class SendContractJob implements ShouldQueue {
                 continue;
             }
 
-            SendContractFlightJobBatch::dispatch($this->contract, $flight, $flightIndex);
+            SendContractFlightJobBatch::dispatchSync($this->contract, $flight, $flightIndex);
 
             $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
         }
 
         // Log import in odoo
         Message::create($client, [
-            "subject" => false,
-            "body" => implode("<br />", [
+            "subject"      => false,
+            "body"         => implode("<br />", [
                 $this->clearOnSend ? "Clear and Import" : "Import",
                 ...$flightsDescriptions,
             ]),
-            "model" => Contract::$slug,
-            "res_id" => $this->contract->id,
+            "model"        => Contract::$slug,
+            "res_id"       => $this->contract->id,
             "message_type" => "notification",
-            "subtype_id" => 2,
+            "subtype_id"   => 2,
         ]);
 
         clock()->event('Send contract')->end();
@@ -77,7 +76,7 @@ class SendContractJob implements ShouldQueue {
             ["order_id", "=", $this->contract->id],
         ]);
 
-        if($response !== true) {
+        if ($response !== true) {
             Log::debug("Error when deleting order lines on contract " . $this->contract->name, [$response]);
         }
 
@@ -86,7 +85,7 @@ class SendContractJob implements ShouldQueue {
             ["order_id", "=", $this->contract->id]
         ]);
 
-        if($response !== true) {
+        if ($response !== true) {
             Log::debug("Error when deleting flight lines on contract " . $this->contract->name, [$response]);
         }
 
@@ -95,9 +94,9 @@ class SendContractJob implements ShouldQueue {
 
     protected function getFlightDescription(array $flight, int $flightIndex) {
         $flightStart = Carbon::parse($flight['start'])->toDateString();
-        $flightEnd = Carbon::parse($flight['end'])->toDateString();
-        $flightType = ucFirst($flight["type"]);
+        $flightEnd   = Carbon::parse($flight['end'])->toDateString();
+        $flightType  = ucFirst($flight["type"]);
 
-         return "Flight #". $flightIndex + 1 ." ($flightType) [$flightStart -> $flightEnd]";
+        return "Flight #" . $flightIndex + 1 . " ($flightType) [$flightStart -> $flightEnd]";
     }
 }

@@ -85,7 +85,9 @@ class PropertyTrafficSettings extends Model {
      * @return HasMany
      */
     public function weekly_data(): HasMany {
-        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id");
+        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id")
+                    ->orderBy("year")
+                    ->orderBy("week");
     }
 
     public function source(): BelongsToMany {
@@ -152,10 +154,15 @@ class PropertyTrafficSettings extends Model {
 
     public function getWeeklyTrafficAttribute(): \Illuminate\Support\Collection {
         return $this->weekly_data->groupBy("year")
-                                 ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]));
+                                 ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]))
+                                 ->sortKeys(SORT_NUMERIC, "desc");
     }
 
     public function getRollingWeeklyTraffic(): array {
+//        if ($this->property->network_id === 1) {
+//            return $this->getShoppingRollingWeeklyTraffic();
+//        }
+
         $rollingTraffic = [];
         $trafficData    = $this->weekly_traffic;
 
@@ -168,24 +175,39 @@ class PropertyTrafficSettings extends Model {
 
         for ($i = 0; $i < 53; $i++) {
             $yearTrafficIt->rewind();
-            $weekTraffic = 0;
+            $weekTraffic    = 0;
+            $weekComponents = 0;
 
             do {
-                $weekTraffic = $yearTrafficIt->current()[$i + 1] ?? 0;
-                $yearTrafficIt->next();
-            } while ($weekTraffic === 0 && $yearTrafficIt->valid());
+                $t = $yearTrafficIt->current()[$i + 1] ?? 0;
 
-            if ($weekTraffic === 0) {
-                if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
-                    $weekTraffic = $this->placeholder_value / 4;
-                } else {
-                    $weekTraffic = $propertyMedian;
+                if ($t !== 0) {
+                    $weekTraffic    += $t;
+                    $weekComponents += 1;
                 }
+
+                $yearTrafficIt->next();
+            } while ($yearTrafficIt->valid());
+
+            if ($weekComponents > 0) {
+                $rollingTraffic[$i + 1] = round($weekTraffic / $weekComponents);
+                continue;
+            }
+
+            if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
+                $weekTraffic = $this->placeholder_value / 4;
+            } else {
+                $weekTraffic = $propertyMedian;
             }
 
             $rollingTraffic[$i + 1] = round($weekTraffic);
         }
 
         return $rollingTraffic;
+    }
+
+    protected function getShoppingRollingWeeklyTraffic(): array {
+        $rollingTraffic = [];
+        return [];
     }
 }

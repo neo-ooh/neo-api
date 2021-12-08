@@ -16,6 +16,7 @@ use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
+use Neo\Jobs\Creatives\RemoveUnusedCreativesFromBroadcasterJob;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\RefreshAllContracts;
@@ -102,10 +103,13 @@ class Kernel extends ConsoleKernel {
          * Daily tasks
          */
 
-        // Update network from broadsign
+        // Update network from broadsign & others
         $schedule->command('network:sync')->daily();
         $schedule->command('properties:sync')->daily();
         $schedule->command('contracts:clear-screenshots')->daily();
+
+        // Remove unused creatives from external broadcasters
+        $schedule->job(RemoveUnusedCreativesFromBroadcasterJob::class)->daily();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()
@@ -125,7 +129,15 @@ class Kernel extends ConsoleKernel {
 
         // Input last month traffic value were missing
         $schedule->job(FillMissingTrafficValueJob::class)->monthlyOn(15);
+    }
 
+    /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
+     */
+    protected function scheduleTimezone() {
+        return 'America/Toronto';
     }
 
     /**

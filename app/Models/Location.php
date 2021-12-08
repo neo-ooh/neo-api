@@ -136,7 +136,7 @@ class Location extends SecuredModel {
         return $this->hasMany(Inventory::class, "location_id", "id");
     }
 
-    public function actor(): BelongsToMany {
+    public function actors(): BelongsToMany {
         return $this->belongsToMany(Actor::class, "actors_locations", "location_id", "actor_id");
     }
 

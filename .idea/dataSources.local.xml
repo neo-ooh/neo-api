@@ -6,7 +6,7 @@
       <schema-mapping />
     </data-source>
     <data-source name="@neo-db" uuid="722b66e2-b592-479e-93f1-568633a32a7e">
-      <database-info product="MariaDB" version="10.4.21-MariaDB-1:10.4.21+maria~bionic-log" jdbc-version="4.2" driver-name="MariaDB Connector/J" driver-version="2.6.0" dbms="MARIADB" exact-version="10.4.21" exact-driver-version="2.6">
+      <database-info product="MariaDB" version="10.4.22-MariaDB-1:10.4.22+maria~bionic-log" jdbc-version="4.2" driver-name="MariaDB Connector/J" driver-version="2.7.3" dbms="MARIADB" exact-version="10.4.22" exact-driver-version="2.7">
         <extra-name-characters>#@</extra-name-characters>
         <identifier-quote-string>`</identifier-quote-string>
       </database-info>

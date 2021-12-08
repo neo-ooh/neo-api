@@ -37,6 +37,8 @@ class FoursquareController {
 
         $places = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
 
+        $places->results = array_filter($places->results, fn($place) => $place->location->country === "CA");
+
         $formattedPlaces = array_map(fn($place) => [
             "geometry"   => [
                 "coordinates" => [$place->geocodes->main->longitude, $place->geocodes->main->latitude],
@@ -46,6 +48,6 @@ class FoursquareController {
             "id"         => $place->fsq_id,
         ], $places->results);
 
-        return new Response($formattedPlaces);
+        return new Response(array_values($formattedPlaces));
     }
 }

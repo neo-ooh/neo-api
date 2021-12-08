@@ -205,19 +205,19 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $orderLines = collect();
 
         $orderLines->push([
-            "order_id"           => $this->contract->id,
-            "name"               => $product->name,
-            "price_unit"         => $product->unit_price,
-            "product_uom_qty"    => $spotsCount,
-            "customer_lead"      => 0.0,
-            "product_id"         => $product->external_variant_id,
-            "rental_start"       => $this->flightStart,
-            "rental_end"         => $this->flightEnd,
-            "is_rental_line"     => 1,
-            "is_linked_line"     => 0,
-            "discount"           => $this->flightType === 'bonus' ? 100.0 : $discount,
-            "sequence"           => $this->flightIndex * 10,
-            "connect_impression" => $this->getProductImpressions($product, $spotsCount),
+            "order_id"        => $this->contract->id,
+            "name"            => $product->name,
+            "price_unit"      => $product->unit_price,
+            "product_uom_qty" => $spotsCount,
+            "customer_lead"   => 0.0,
+            "product_id"      => $product->external_variant_id,
+            "rental_start"    => $this->flightStart,
+            "rental_end"      => $this->flightEnd,
+            "is_rental_line"  => 1,
+            "is_linked_line"  => 0,
+            "discount"        => $this->flightType === 'bonus' ? 100.0 : $discount,
+            "sequence"        => $this->flightIndex * 10,
+            //            "connect_impression" => $this->getProductImpressions($product, $spotsCount),
         ]);
 
         $this->consumedProducts->push($product->external_id);

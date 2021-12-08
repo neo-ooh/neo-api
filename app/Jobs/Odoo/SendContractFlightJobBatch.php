@@ -280,6 +280,6 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $impressions += $dayImpressions;
         }
 
-        return $impressions;
+        return floor($impressions);
     }
 }

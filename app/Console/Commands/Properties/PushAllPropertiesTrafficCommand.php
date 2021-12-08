@@ -25,7 +25,7 @@ class PushAllPropertiesTrafficCommand extends Command {
         foreach ($properties as $property) {
             $this->getOutput()->write("Pushing traffic for property #{$property->getKey()} ...");
 
-            PushPropertyTrafficJob::dispatchSync($property->getKey());
+            PushPropertyTrafficJob::dispatch($property->getKey());
 
             $this->getOutput()->writeln(" Done!");
         }

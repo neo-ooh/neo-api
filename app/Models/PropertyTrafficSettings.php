@@ -225,12 +225,23 @@ class PropertyTrafficSettings extends Model {
 
         for ($week = 1; $week <= 53; $week++) {
 
+            /** @var PropertyTraffic|null $mostRecentDatumForPeriod */
             $mostRecentDatumForPeriod = $this->weekly_data->where("week", "=", $week)
                                                           ->sortBy("year", SORT_REGULAR, "desc")
-                                                          ->first()?->traffic ?? 0;
-            $referenceDatumForPeriod  = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $week)?->traffic ?? 0;
+                                                          ->first();
 
-            $rollingTraffic[$week] = round(max($referenceDatumForPeriod * $evol, $mostRecentDatumForPeriod));
+            /** @var PropertyTraffic|null $referenceDatumForPeriod */
+            $referenceDatumForPeriod = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $week);
+
+            // If the two data are the same, directly apply the factored-down result
+            if ($mostRecentDatumForPeriod && $referenceDatumForPeriod &&
+                $mostRecentDatumForPeriod->year === $referenceDatumForPeriod->year &&
+                $mostRecentDatumForPeriod->week === $referenceDatumForPeriod->week) {
+                $rollingTraffic[$week] = round($referenceDatumForPeriod->traffic * $evol);
+                continue;
+            }
+
+            $rollingTraffic[$week] = round(max(($referenceDatumForPeriod->traffic ?? 0) * $evol, ($mostRecentDatumForPeriod->traffic ?? 0)));
         }
 
         return $rollingTraffic;

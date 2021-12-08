@@ -53,6 +53,8 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
 
         array_pop($weeks);
 
+        $weeklyTraffic = [];
+
         // Now we calculate the traffic for each weeks
         /**
          * @var Carbon $week
@@ -81,12 +83,31 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                 $trafficCount += $monthData->final_traffic / $day->daysInMonth;
             }
 
+            $weeklyTraffic[$week->week] = $trafficCount;
+
             PropertyTraffic::query()->updateOrInsert([
                 "property_id" => $this->propertyId,
                 "year"        => $week->weekYear,
                 "week"        => $week->week,
             ], [
                 "traffic"     => $trafficCount,
+                "is_estimate" => true
+            ]);
+        }
+        if ($this->month === 12 && Carbon::create($this->year, $this->month)
+                                         ->endOfMonth()
+                                         ->startOfWeek()
+                                         ->subDay()->isoWeek === 52) {
+
+
+            $output->writeln("Force adding 53rd week");
+
+            PropertyTraffic::query()->updateOrInsert([
+                "property_id" => $this->propertyId,
+                "year"        => $this->year,
+                "week"        => 53,
+            ], [
+                "traffic"     => $weeklyTraffic[52],
                 "is_estimate" => true
             ]);
         }

@@ -24,7 +24,7 @@ class ForceCalculateAllPropertiesWeeklyTrafficCommand extends Command {
         foreach ($properties as $propertyId) {
             foreach ([2019, 2021] as $year) {
                 for ($i = 1; $i <= 12; $i++) {
-                    EstimateWeeklyTrafficFromMonthJob::dispatch($propertyId, $year, $i);
+                    EstimateWeeklyTrafficFromMonthJob::dispatchSync($propertyId, $year, $i);
                 }
             }
         }

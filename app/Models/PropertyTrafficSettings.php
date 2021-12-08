@@ -26,7 +26,7 @@ use stdClass;
  * @property Collection<PropertyTrafficMonthly> $data
  *
  * @property Collection<PropertyTraffic>        $weekly_data
- * @property \Illuminate\Support\Collection     $weekly_Traffic
+ * @property \Illuminate\Support\Collection     $weekly_traffic
  */
 class PropertyTrafficSettings extends Model {
     use HasFactory;
@@ -159,9 +159,9 @@ class PropertyTrafficSettings extends Model {
     }
 
     public function getRollingWeeklyTraffic(): array {
-//        if ($this->property->network_id === 1) {
-//            return $this->getShoppingRollingWeeklyTraffic();
-//        }
+        if ($this->property->network_id === 1) {
+            return $this->getShoppingRollingWeeklyTraffic();
+        }
 
         $rollingTraffic = [];
         $trafficData    = $this->weekly_traffic;
@@ -207,7 +207,32 @@ class PropertyTrafficSettings extends Model {
     }
 
     protected function getShoppingRollingWeeklyTraffic(): array {
-        $rollingTraffic = [];
-        return [];
+        $rollingTraffic  = [];
+        $mostRecentDatum = $this->weekly_data->last(fn($datum) => $datum->traffic > 0);
+
+        if (!$mostRecentDatum) {
+            // Return an empty array if no values at all
+            return array_fill(0, 53, 0);
+        }
+
+        $referenceDatum = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week);
+
+        if (!$referenceDatum) {
+            return array_fill(0, 53, 0);
+        }
+
+        $evol = $mostRecentDatum->traffic / $referenceDatum->traffic;
+
+        for ($week = 1; $week <= 53; $week++) {
+
+            $mostRecentDatumForPeriod = $this->weekly_data->where("week", "=", $week)
+                                                          ->sortBy("year", SORT_REGULAR, "desc")
+                                                          ->first()?->traffic ?? 0;
+            $referenceDatumForPeriod  = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $week)?->traffic ?? 0;
+
+            $rollingTraffic[$week] = round(max($referenceDatumForPeriod * $evol, $mostRecentDatumForPeriod));
+        }
+
+        return $rollingTraffic;
     }
 }

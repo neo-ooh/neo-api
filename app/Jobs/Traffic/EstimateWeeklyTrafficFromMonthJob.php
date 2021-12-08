@@ -18,6 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\PropertyTraffic;
 use Neo\Models\PropertyTrafficMonthly;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -26,6 +27,8 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
     }
 
     public function handle() {
+        $output = new ConsoleOutput();
+
         // List all the weeks we are working on
         $weeks = [];
         // Special case for january
@@ -49,19 +52,30 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                                                   ->first());
 
         array_pop($weeks);
+
         // Now we calculate the traffic for each weeks
         /**
          * @var Carbon $week
          */
         foreach ($weeks as $week) {
+            $output->writeln("Week #$week->week...");
+
             $trafficCount = 0;
             for ($i = 0; $i < 7; $i++) {
                 $day       = $week->clone()->addDays($i);
                 $monthData = $monthTraffic->get("$day->year-$day->month");
 
-                // We are missing month data for this week, go to the next one
+                $output->writeln("[$day->year-$day->month-$day->day] => " . ($monthData ? $monthData->final_traffic : "Not found!"));
+
+                // We are missing month data for this week, use the default month instead
+                if (!$monthData && ($day->month !== $this->month || $day->year !== $this->year)) {
+                    $monthData = $monthTraffic->get("$this->year-$this->month");
+
+                    $output->writeln("[$this->year-$this->month-$day->day] => " . ($monthData ? $monthData->final_traffic : "Not found!"));
+                }
+
                 if (!$monthData) {
-                    continue 2;
+                    continue;
                 }
 
                 $trafficCount += $monthData->final_traffic / $day->daysInMonth;

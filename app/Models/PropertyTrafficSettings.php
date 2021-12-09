@@ -215,7 +215,8 @@ class PropertyTrafficSettings extends Model {
             return array_fill(0, 53, 0);
         }
 
-        $referenceDatum = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week);
+        $referenceDatum = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week
+        );
 
         if (!$referenceDatum) {
             return array_fill(0, 53, 0);

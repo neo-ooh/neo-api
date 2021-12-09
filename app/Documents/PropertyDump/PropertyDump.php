@@ -12,6 +12,7 @@ namespace Neo\Documents\PropertyDump;
 
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Support\Collection;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
@@ -205,7 +206,7 @@ class PropertyDump extends XLSXDocument {
 
     /** @noinspection PhpSuspiciousNameCombinationInspection */
     protected function getImpressions(BroadSignClient $client, Location $location, float $openLength, float $weeklyTraffic) {
-        $now = Carbon::now()->startOfWeek();
+        $now = Carbon::now()->startOfWeek(CarbonInterface::MONDAY);
 
         $bsSkins    = Skin::byDisplayUnit($client, ["display_unit_id" => $location->external_id]);
         $bsDayParts = DayPart::getMultiple($client, $bsSkins->pluck("parent_id")->toArray());

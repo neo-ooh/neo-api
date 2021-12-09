@@ -32,7 +32,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
         // List all the weeks we are working on
         $weeks = [];
         // Special case for january
-        $datePointer = Carbon::create($this->year, $this->month)->startOfWeek();
+        $datePointer = Carbon::create($this->year, $this->month)->startOfWeek(Carbon::MONDAY);
         $boundary    = Carbon::create($this->year, $this->month)->addMonth();
 
         do {
@@ -40,7 +40,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
             $datePointer->addWeek();
         } while ($datePointer->lte($boundary));
 
-        $weeks[] = $weeks[array_key_last($weeks)]->clone()->endOfWeek();
+        $weeks[] = $weeks[array_key_last($weeks)]->clone()->endOfWeek(Carbon::SUNDAY);
 
         // List the month we need to get data from
         $monthTraffic = collect($weeks)
@@ -96,7 +96,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
         }
         if ($this->month === 12 && Carbon::create($this->year, $this->month)
                                          ->endOfMonth()
-                                         ->startOfWeek()
+                                         ->startOfWeek(Carbon::MONDAY)
                                          ->subDay()->isoWeek === 52) {
 
 
@@ -111,5 +111,9 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                 "is_estimate" => true
             ]);
         }
+
+        // All good, Push the new values to Odoo
+        PushPropertyTrafficJob::dispatch($this->propertyId);
     }
+
 }

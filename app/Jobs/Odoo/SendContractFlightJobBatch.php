@@ -258,7 +258,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $day = $this->flightStartDate->clone()->addDays($i);
 
             // Get the traffic for this day
-            $traffic = floor($property->rolling_weekly_traffic[$day->week] / 7);
+            $traffic = round($property->rolling_weekly_traffic[$day->week] / 7);
 
             // Get the impression model for the product for the day
             /** @var ImpressionsModel|null $model */
@@ -280,6 +280,6 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $impressions += $dayImpressions;
         }
 
-        return floor($impressions);
+        return $impressions;
     }
 }

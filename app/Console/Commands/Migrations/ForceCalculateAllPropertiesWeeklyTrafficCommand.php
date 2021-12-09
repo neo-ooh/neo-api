@@ -24,6 +24,8 @@ class ForceCalculateAllPropertiesWeeklyTrafficCommand extends Command {
     public function handle() {
         $properties = Property::all("actor_id")->pluck("actor_id");
         foreach ($properties as $propertyId) {
+            $this->info("Dispatching for property #$propertyId");
+
             $jobs = [];
             foreach ([2019, 2021] as $year) {
                 for ($i = 1; $i <= 12; $i++) {

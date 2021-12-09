@@ -39,10 +39,8 @@ class Client {
             $this->client->where(...$filter);
         }
 
-        $response = $this->client->fields($fields)
-                                 ->get($model);
-
-        return $response;
+        return $this->client->fields($fields)
+                            ->get($model);
     }
 
     /**
@@ -63,23 +61,17 @@ class Client {
     }
 
     public function update(Model $model, array $values): bool {
-        $response = $this->client->where("id", "=", $model->getKey())
-                                 ->update($model::$slug, $values);
-
-        return $response;
+        return $this->client->where("id", "=", $model->getKey())
+                            ->update($model::$slug, $values);
     }
 
     public function findBy(string $model, string $field, $value) {
-        $response = $this->client->where($field, "=", $value)
-                                 ->get($model);
-
-        return $response;
+        return $this->client->where($field, "=", $value)
+                            ->get($model);
     }
 
     public function create(string $model, array $fields) {
-        $response = $this->client->create($model, $fields);
-
-        return $response;
+        return $this->client->create($model, $fields);
     }
 
     public function delete(string $model, array $where) {
@@ -87,8 +79,6 @@ class Client {
             $this->client->where(...$whereCondition);
         }
 
-        $response = $this->client->delete($model);
-
-        return $response;
+        return $this->client->delete($model);
     }
 }

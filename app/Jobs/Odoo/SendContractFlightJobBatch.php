@@ -235,7 +235,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
     }
 
     public function getProductImpressions(Product $product, float $spotsCount) {
-        $days = $this->flightStartDate->diffInDays($this->flightEndDate->clone()->addDay());
+        $days = $this->flightStartDate->clone()->diffInDays($this->flightEndDate->clone()->addDay());
         $el   = new ExpressionLanguage();
 
         $impressions = 0;
@@ -259,12 +259,6 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 continue;
             }
 
-            Log::info("Impressions Formula", [
-                "day"        => $day->toDateString(),
-                "modelStart" => $model->start_month,
-                "modelEnd"   => $model->end_month,
-            ]);
-
             $dayImpressions = $el->evaluate($model->formula, array_merge([
                 "traffic" => $traffic,
                 "faces"   => $product->quantity,
@@ -272,6 +266,15 @@ class SendContractFlightJobBatch implements ShouldQueue {
             ],
                 $model->variables
             ));
+
+            dump([
+                "day"        => $day->toDateString(),
+                "modelStart" => $model->start_month,
+                "modelEnd"   => $model->end_month,
+                "traffic"    => $traffic,
+                "product"    => $product->name_en,
+            ]);
+
 
             $impressions += $dayImpressions;
         }

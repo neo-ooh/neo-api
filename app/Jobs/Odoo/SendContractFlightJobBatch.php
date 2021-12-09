@@ -245,7 +245,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
         for ($i = 0; $i < $days; ++$i) {
             $day = $this->flightStartDate->clone()->addDays($i);
 
-            $weekNumber = strftime("%W", $day->timestamp);
+            $weekNumber = strftime("%W", $day->timestamp) + 1;
 
             // Get the traffic for this day
             $traffic = round($property->rolling_weekly_traffic[$weekNumber] / 7);

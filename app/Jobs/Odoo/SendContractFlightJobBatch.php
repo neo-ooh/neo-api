@@ -267,15 +267,6 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 $model->variables
             ));
 
-            dump([
-                "day"        => $day->toDateString(),
-                "modelStart" => $model->start_month,
-                "modelEnd"   => $model->end_month,
-                "traffic"    => $traffic,
-                "product"    => $product->name_en,
-            ]);
-
-
             $impressions += $dayImpressions;
         }
 

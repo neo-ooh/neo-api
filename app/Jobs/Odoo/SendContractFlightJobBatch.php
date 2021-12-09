@@ -259,9 +259,10 @@ class SendContractFlightJobBatch implements ShouldQueue {
                 continue;
             }
 
-            Log::debug("Impressions Formula", [
-                "day"   => $day->toDateString(),
-                "model" => $model->toArray(),
+            Log::info("Impressions Formula", [
+                "day"        => $day->toDateString(),
+                "modelStart" => $model->start_month,
+                "modelEnd"   => $model->end_month,
             ]);
 
             $dayImpressions = $el->evaluate($model->formula, array_merge([

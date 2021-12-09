@@ -115,7 +115,11 @@ class Product extends Model implements WithImpressionsModels {
     }
 
     public function getImpressionModel(Carbon $date): ImpressionsModel|null {
-        $validateModel = fn($model) => $model->start_month <= $date->month && $date->month <= $model->end_month;
+        /**
+         * @param ImpressionsModel $model
+         * @return bool
+         */
+        $validateModel = fn(ImpressionsModel $model) => $model->start_month <= $date->month && $date->month <= $model->end_month;
 
         $model = $this->impressions_models->first($validateModel);
 

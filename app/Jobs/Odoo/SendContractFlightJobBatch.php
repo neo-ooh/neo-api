@@ -248,7 +248,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $weekNumber = strftime("%W", $day->timestamp) + 1;
 
             // Get the traffic for this day
-            $traffic = round($property->rolling_weekly_traffic[$weekNumber] / 7);
+            $traffic = floor($property->rolling_weekly_traffic[$weekNumber] / 7);
 
             // Get the impression model for the product for the day
             /** @var ImpressionsModel|null $model */

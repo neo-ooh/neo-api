@@ -61,7 +61,8 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
          * @var Carbon $week
          */
         foreach ($weeks as $week) {
-            $output->writeln("Week #$week->week...");
+            $weekNumber = strftime("%W", $week->timestamp) + 1;
+            $output->writeln("Week #$weekNumber...");
 
             $trafficCount = 0;
             for ($i = 0; $i < 7; $i++) {
@@ -84,12 +85,12 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                 $trafficCount += $monthData->final_traffic / $day->daysInMonth;
             }
 
-            $weeklyTraffic[$week->week] = $trafficCount;
+            $weeklyTraffic[$weekNumber] = $trafficCount;
 
             PropertyTraffic::query()->updateOrInsert([
                 "property_id" => $this->propertyId,
                 "year"        => $week->weekYear,
-                "week"        => $week->week,
+                "week"        => $weekNumber,
             ], [
                 "traffic"     => $trafficCount,
                 "is_estimate" => true

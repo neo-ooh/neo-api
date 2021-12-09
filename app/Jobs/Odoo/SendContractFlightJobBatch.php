@@ -254,13 +254,15 @@ class SendContractFlightJobBatch implements ShouldQueue {
             /** @var ImpressionsModel|null $model */
             $model = $product->getImpressionModel($day);
 
-
             if (!$model) {
                 // No model, no impressions
                 continue;
             }
 
-            Log::debug("Impressions Formula", $model->toArray());
+            Log::debug("Impressions Formula", [
+                "day"   => $day->toDateString(),
+                "model" => $model->toArray(),
+            ]);
 
             $dayImpressions = $el->evaluate($model->formula, array_merge([
                 "traffic" => $traffic,

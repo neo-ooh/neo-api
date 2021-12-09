@@ -11,7 +11,9 @@
 namespace Neo\Console\Commands\Migrations;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Bus;
 use Neo\Jobs\Traffic\EstimateWeeklyTrafficFromMonthJob;
+use Neo\Jobs\Traffic\PushPropertyTrafficJob;
 use Neo\Models\Property;
 
 class ForceCalculateAllPropertiesWeeklyTrafficCommand extends Command {
@@ -22,11 +24,14 @@ class ForceCalculateAllPropertiesWeeklyTrafficCommand extends Command {
     public function handle() {
         $properties = Property::all("actor_id")->pluck("actor_id");
         foreach ($properties as $propertyId) {
+            $jobs = [];
             foreach ([2019, 2021] as $year) {
                 for ($i = 1; $i <= 12; $i++) {
-                    EstimateWeeklyTrafficFromMonthJob::dispatch($propertyId, $year, $i);
+                    $jobs[] = new EstimateWeeklyTrafficFromMonthJob($propertyId, $year, $i);
                 }
             }
+
+            Bus::batch($jobs)->then(fn() => PushPropertyTrafficJob::dispatch($propertyId));
         }
     }
 }

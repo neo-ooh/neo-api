@@ -11,6 +11,7 @@
 namespace Neo\Jobs\Traffic;
 
 use Carbon\Carbon;
+use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -21,7 +22,7 @@ use Neo\Models\PropertyTrafficMonthly;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(protected int $propertyId, protected int $year, protected int $month) {
     }

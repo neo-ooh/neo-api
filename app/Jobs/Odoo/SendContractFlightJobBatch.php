@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Log;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\ImpressionsModel;
 use Neo\Models\Product;
@@ -49,7 +50,6 @@ class SendContractFlightJobBatch implements ShouldQueue {
     }
 
     public function handle() {
-        clock()->event("Send Flight")->begin();
 
         $this->consumedProducts = collect();
         $client                 = OdooConfig::fromConfig()->getClient();
@@ -61,18 +61,13 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $this->flightStart = $this->flightStartDate->toDateString();
         $this->flightEnd   = $this->flightEndDate->toDateString();
 
-        clock()->event("Create flight in Odoo")->color('purple')->begin();
-
-        clock(Campaign::create($client, [
+        Campaign::create($client, [
             "order_id"   => $this->contract->id,
             "state"      => "draft",
             "date_start" => $this->flightStart,
             "date_end"   => $this->flightEnd,
-        ], pullRecord: false));
+        ], pullRecord: false);
 
-        clock()->event("Create flight in Odoo")->end();
-
-        clock()->event("Prepare order lines")->begin();
         // Load all the Connect's products included in the flight
         $this->products = Product::query()
                                  ->with(["impressions_models", "category", "category.impressions_models"])
@@ -101,7 +96,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
             $products = $this->products->filter(fn($p) => $p->property_id === $propertyId && $p->category_id === $productCategoryId);
 
             if ($products->isEmpty()) {
-                clock("Could not find product for selection pair: [$propertyId, $productCategoryId]");
+                Log::info("Could not find product for selection pair: [$propertyId, $productCategoryId]");
                 continue;
             }
 
@@ -121,14 +116,11 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
                 $productsPointer->next();
                 ++$productsCount;
-                clock($product->category->fill_strategy, $productsCount, $spotsCount, $productsPointer->valid());
             } while (($product->category->fill_strategy === ProductsFillStrategy::digital || $productsCount < $spotsCount) && $productsPointer->valid());
         }
 
-        clock()->event("Prepare order lines")->end();
-
         // Now that we have all our orderlines, push them to the server
-        $addedOrderLines = clock($client->client->call(OrderLine::$slug, "create", [$orderLinesToAdd->toArray()]));
+        $addedOrderLines = $client->client->call(OrderLine::$slug, "create", [$orderLinesToAdd->toArray()]);
 
         // We now want to load the order lines that we just added, check if they are some that are overbooked, and try to find a replacement for these ones
 
@@ -185,15 +177,11 @@ class SendContractFlightJobBatch implements ShouldQueue {
 
         } while ($overbookedLines->count() > 0);
 
-        clock($orderLinesToRemove);
-
         if ($orderLinesToRemove->count() > 0) {
             OrderLine::delete($client, [
                 ["id", "in", $orderLinesToRemove->toArray()]
             ]);
         }
-
-        clock()->event("Send Flight")->end();
     }
 
     protected function buildLines(Product $product, float $spotsCount, float $discount) {

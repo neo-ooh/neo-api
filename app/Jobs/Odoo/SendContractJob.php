@@ -30,8 +30,6 @@ class SendContractJob implements ShouldQueue {
     }
 
     public function handle() {
-        clock()->event('Send contract')->color('purple')->begin();
-
         $client = OdooConfig::fromConfig()->getClient();
 
         // Clean up contract before insert if requested
@@ -64,13 +62,9 @@ class SendContractJob implements ShouldQueue {
             "message_type" => "notification",
             "subtype_id"   => 2,
         ]);
-
-        clock()->event('Send contract')->end();
     }
 
     protected function cleanupContract($client) {
-        clock()->event("Cleaning up contract")->begin();
-
         // Remove all order lines from the contract
         $response = OrderLine::delete($client, [
             ["order_id", "=", $this->contract->id],
@@ -88,8 +82,6 @@ class SendContractJob implements ShouldQueue {
         if ($response !== true) {
             Log::debug("Error when deleting flight lines on contract " . $this->contract->name, [$response]);
         }
-
-        clock()->event("Cleaning up contract")->end();
     }
 
     protected function getFlightDescription(array $flight, int $flightIndex) {

@@ -39,17 +39,8 @@ class Client {
             $this->client->where(...$filter);
         }
 
-        if (config('app.env') !== "production") {
-            $filterString = json_encode($filters, JSON_THROW_ON_ERROR);
-            clock()->event("GET: " . $model . "[" . $filterString . "]")->color("purple")->begin();
-        }
-
         $response = $this->client->fields($fields)
-                            ->get($model);
-
-        if (config('app.env') !== "production") {
-            clock()->event("GET: " . $model . "[" . $filterString . "]")->end();
-        }
+                                 ->get($model);
 
         return $response;
     }
@@ -66,80 +57,37 @@ class Client {
     public function getById(string $model, array|int $ids, $fields = []) {
         $modelIds = is_int($ids) ? [$ids] : $ids;
 
-        if (config('app.env') !== "production") {
-            $__clockIds = implode(",", $modelIds);
-            clock()->event("GETbyID: " . $model . "[" . $__clockIds . "]")->color("purple")->begin();
-        }
-
-        $models   = $this->client->call($model, 'read', [$modelIds], ["fields" => $fields]);
-
-        if (config('app.env') !== "production") {
-            clock()->event("GETbyID: " . $model . "[" . $__clockIds . "]")->end();
-        }
+        $models = $this->client->call($model, 'read', [$modelIds], ["fields" => $fields]);
 
         return is_int($ids) ? $models->get(0, null) : $models;
     }
 
     public function update(Model $model, array $values): bool {
-        if (config('app.env') !== "production") {
-            $__clockString = json_encode($values, JSON_THROW_ON_ERROR);
-            clock()->event("UPDATE: " . $model . "[" . $__clockString . "]")->color("purple")->begin();
-        }
-
         $response = $this->client->where("id", "=", $model->getKey())
-                            ->update($model::$slug, $values);
-
-        if (config('app.env') !== "production") {
-            clock()->event("UPDATE: " . $model . "[" . $__clockString . "]")->end();
-        }
+                                 ->update($model::$slug, $values);
 
         return $response;
     }
 
     public function findBy(string $model, string $field, $value) {
-        if (config('app.env') !== "production") {
-            clock()->event("FINDBY: " . $model . "[$field => $value]")->color("purple")->begin();
-        }
-
-        $response =  $this->client->where($field, "=", $value)
-                            ->get($model);
-
-        if (config('app.env') !== "production") {
-            clock()->event("FINDBY: " . $model . "[$field => $value]")->end();
-        }
+        $response = $this->client->where($field, "=", $value)
+                                 ->get($model);
 
         return $response;
     }
 
     public function create(string $model, array $fields) {
-        if (config('app.env') !== "production") {
-            clock()->event("CREATE: " . $model)->color("purple")->begin();
-        }
-
-        $response =  $this->client->create($model, $fields);
-
-        if (config('app.env') !== "production") {
-            clock()->event("CREATE: " . $model)->end();
-        }
+        $response = $this->client->create($model, $fields);
 
         return $response;
     }
 
     public function delete(string $model, array $where) {
-        if (config('app.env') !== "production") {
-            $__clockString = json_encode($where, JSON_THROW_ON_ERROR);
-            clock()->event("DELETE: " . $model . "[$__clockString]")->color("purple")->begin();
-        }
-
         foreach ($where as $whereCondition) {
             $this->client->where(...$whereCondition);
         }
 
         $response = $this->client->delete($model);
-
-        if (config('app.env') !== "production") {
-            clock()->event("DELETE: " . $model . "[$__clockString]")->end();
-        }
 
         return $response;
     }

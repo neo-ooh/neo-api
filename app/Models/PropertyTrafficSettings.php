@@ -173,13 +173,13 @@ class PropertyTrafficSettings extends Model {
             ? $validData->where("traffic", "!==", 0)->pluck("traffic")->sum() / $validData->count()
             : 0;
 
-        for ($i = 0; $i < 53; $i++) {
+        for ($week = 1; $week <= 53; $week++) {
             $yearTrafficIt->rewind();
             $weekTraffic    = 0;
             $weekComponents = 0;
 
             do {
-                $t = $yearTrafficIt->current()[$i + 1] ?? 0;
+                $t = $yearTrafficIt->current()[$week] ?? 0;
 
                 if ($t !== 0) {
                     $weekTraffic    += $t;
@@ -190,7 +190,7 @@ class PropertyTrafficSettings extends Model {
             } while ($yearTrafficIt->valid());
 
             if ($weekComponents > 0) {
-                $rollingTraffic[$i + 1] = round($weekTraffic / $weekComponents);
+                $rollingTraffic[$week] = round($weekTraffic / $weekComponents);
                 continue;
             }
 
@@ -200,7 +200,7 @@ class PropertyTrafficSettings extends Model {
                 $weekTraffic = $propertyMedian;
             }
 
-            $rollingTraffic[$i + 1] = round($weekTraffic);
+            $rollingTraffic[$week] = round($weekTraffic);
         }
 
         return $rollingTraffic;
@@ -212,14 +212,20 @@ class PropertyTrafficSettings extends Model {
 
         if (!$mostRecentDatum) {
             // Return an empty array if no values at all
-            return array_fill(0, 53, 0);
+            for ($week = 1; $week <= 53; $week++) {
+                $rollingTraffic[$week] = 0;
+            }
+            return $rollingTraffic;
         }
 
         $referenceDatum = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week
         );
 
         if (!$referenceDatum) {
-            return array_fill(0, 53, 0);
+            for ($week = 1; $week <= 53; $week++) {
+                $rollingTraffic[$week] = 0;
+            }
+            return $rollingTraffic;
         }
 
         $evol = $mostRecentDatum->traffic / $referenceDatum->traffic;

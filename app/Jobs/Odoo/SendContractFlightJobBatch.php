@@ -34,7 +34,14 @@ class SendContractFlightJobBatch implements ShouldQueue {
     public $tries = 1;
     public $timeout = 300;
 
+    /**
+     * @var Collection List of all Connect's products included in this flight
+     */
     protected Collection $products;
+
+    /**
+     * @var Collection List of all Connect's properties included in this flight
+     */
     protected Collection $properties;
 
     protected string $flightType;
@@ -44,13 +51,15 @@ class SendContractFlightJobBatch implements ShouldQueue {
     protected Carbon $flightEndDate;
     protected string $flightEnd;
 
+    /**
+     * @var \Illuminate\Support\Collection Keeps track of all the products sent to Odoo for this flight.
+     */
     protected \Illuminate\Support\Collection $consumedProducts;
 
     public function __construct(protected Contract $contract, protected array $flight, protected int $flightIndex) {
     }
 
     public function handle() {
-
         $this->consumedProducts = collect();
         $client                 = OdooConfig::fromConfig()->getClient();
 
@@ -82,6 +91,7 @@ class SendContractFlightJobBatch implements ShouldQueue {
                                     ->get()
                                     ->each(fn(Property $property) => $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic());
 
+        // Load linked products id as well
         $linkedProductsIds = $this->products->pluck("external_linked_id")->filter();
         $this->products    = $this->products->merge(Product::query()
                                                            ->whereIn("external_id", $linkedProductsIds)
@@ -90,6 +100,12 @@ class SendContractFlightJobBatch implements ShouldQueue {
         $orderLinesToAdd = collect();
 
         foreach ($this->flight["selection"] as $selection) {
+            /**
+             * @var int $propertyId        ID of the property
+             * @var int $productCategoryId ID of the category of products to add
+             * @var int $discount          Discount to apply to all the products in the category, for this property
+             * @var int $spotsCount        Number of spots selected, influences impressions
+             */
             [$propertyId, $productCategoryId, $discount, $spotsCount] = $selection;
 
             /** @var Collection<Product> $product */
@@ -119,16 +135,16 @@ class SendContractFlightJobBatch implements ShouldQueue {
             } while (($product->category->fill_strategy === ProductsFillStrategy::digital || $productsCount < $spotsCount) && $productsPointer->valid());
         }
 
-        // Now that we have all our orderlines, push them to the server
+        // Now that we have all our order  lines, push them to the server
         $addedOrderLines = $client->client->call(OrderLine::$slug, "create", [$orderLinesToAdd->toArray()]);
 
         // We now want to load the order lines that we just added, check if they are some that are overbooked, and try to find a replacement for these ones
 
-        // Load all the orderlines we just added
+        // Load all the order lines we just added
         $orderLinesAdded = OrderLine::getMultiple($client, $addedOrderLines->toArray());
         $overbookedLines = $orderLinesAdded->where("over_qty", ">", "0");
 
-        // Reset the list of orderlines to add
+        // Reset the list of order lines to add
         $orderLinesToRemove = collect();
 
         do {

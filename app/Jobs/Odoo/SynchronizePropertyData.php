@@ -85,8 +85,8 @@ class SynchronizePropertyData implements ShouldQueue {
             $product->quantity            = $distRentalProduct->nb_screen;
             $product->unit_price          = $distRentalProduct->list_price;
             $product->external_variant_id = $distRentalProduct->product_variant_id[0];
-            $product->is_bonus            = !!$distRentalProduct->bonus;
-            $product->external_linked_id  = !!$distRentalProduct->external_linked_id ? $distRentalProduct->external_linked_id[0] : null;
+            $product->is_bonus            = (bool)$distRentalProduct->bonus;
+            $product->external_linked_id  = $distRentalProduct->linked_product_id ? $distRentalProduct->linked_product_id[0] : null;
 
             $product->save();
 

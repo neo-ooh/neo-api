@@ -82,6 +82,10 @@ class Property extends SecuredModel {
      */
     protected string $accessRule = AccessibleProperty::class;
 
+    public $with = [
+        "actor:id,name"
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations

@@ -17,6 +17,7 @@ use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\NetworkFieldsController;
 use Neo\Http\Controllers\OpeningHoursController;
 use Neo\Http\Controllers\ProductCategoriesController;
+use Neo\Http\Controllers\ProductsController;
 use Neo\Http\Controllers\ProductsLocationsController;
 use Neo\Http\Controllers\ProductTypesController;
 use Neo\Http\Controllers\PropertiesController;
@@ -165,7 +166,10 @@ Route::group([
     Route::get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
     Route::put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 
+    Route::post("products/_import-mappings", ProductsController::class . "@_importMappings");
+
     Route::put("products/{product}/locations", ProductsLocationsController::class . "@sync");
+
 
     /*
     |----------------------------------------------------------------------

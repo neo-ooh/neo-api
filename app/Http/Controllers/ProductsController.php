@@ -10,12 +10,55 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Products\ImportMappingsRequest;
+use Neo\Models\Location;
+use Neo\Models\Product;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 class ProductsController {
     public function _importMappings(ImportMappingsRequest $request) {
         $xlsx = new Xlsx();
-        $xlsx->load($request->file("file")->path());
+        $wb   = $xlsx->load($request->file("file")->path());
+        $rows = $wb->getActiveSheet()->toArray();
+
+        array_shift($rows);
+
+        $productsIndex  = $request->input("products_col");
+        $displayUnitCol = $request->input("display_units_col");
+
+        $idPairs = collect();
+
+        foreach ($rows as $i => $row) {
+            if (!$row[$productsIndex] || !$row[$displayUnitCol]) {
+                continue;
+            }
+
+            $idPairs[] = [$row[$productsIndex], $row[$displayUnitCol]];
+        }
+
+        $odooProductsIds = $idPairs->pluck(0)->unique();
+        $displayUnitsIds = $idPairs->pluck(1)->unique();
+
+        $products  = Product::query()->setEagerLoads([])->whereIn("external_id", $odooProductsIds)->get();
+        $locations = Location::query()->setEagerLoads([])->whereIn("external_id", $displayUnitsIds)->get();
+
+
+        $pairs = collect();
+
+        foreach ($idPairs as [$odooId, $displayUnitId]) {
+            $product  = $products->firstWhere("external_id", "=", $odooId);
+            $location = $locations->firstWhere("external_id", "=", $displayUnitId);
+
+            if (!$product || !$location) {
+                /** @noinspection ForgottenDebugOutputInspection */
+                dump("Error for pair $odooId => $displayUnitId");
+                continue;
+            }
+
+            $pairs[] = ["product_id" => $product->getKey(), "location_id" => $location->getKey()];
+        }
+
+        DB::table("products_locations")->insertOrIgnore($pairs->toArray());
     }
 }

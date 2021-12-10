@@ -159,7 +159,10 @@ class LocationsController extends Controller {
         }
 
         if (in_array("products", $relations)) {
-            $location->load(["products", "products.category"]);
+            $location->load(["products",
+                             "products.category",
+                             "products.locations",
+                             "products.impressions_models"]);
         }
 
         return new Response($location);

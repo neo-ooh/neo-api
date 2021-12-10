@@ -21,6 +21,8 @@ class CreateProductsLocationsTable extends Migration {
             $table->foreignId("location_id")
                   ->constrained("locations")
                   ->cascadeOnUpdate()->cascadeOnDelete();
+
+            $table->unique(["product_id", "location_id"]);
         });
     }
 

@@ -20,6 +20,8 @@ class CreatePropertiesTrafficTable extends Migration {
             $table->unsignedInteger("week");
             $table->unsignedBigInteger("traffic");
             $table->boolean("is_estimate");
+
+            $table->unique(["property_id", "year", "week"]);
         });
     }
 

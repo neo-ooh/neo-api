@@ -52,6 +52,8 @@ class FillMissingTrafficValueJob implements ShouldQueue {
                     "temporary"   => $property->traffic->placeholder_value
                 ]);
 
+                EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $currentYear, $currentMonth);
+
                 continue;
             }
 
@@ -63,7 +65,7 @@ class FillMissingTrafficValueJob implements ShouldQueue {
                 continue;
             }
 
-            $coef    = $property->address->city->province->slug === 'QC' ? .75 : .65;
+            $coef    = $property->address->city->province->slug === 'QC' ? .80 : .70;
             $traffic = $prevRecord->final_traffic * $coef;
 
             PropertyTrafficMonthly::query()->create([
@@ -72,6 +74,8 @@ class FillMissingTrafficValueJob implements ShouldQueue {
                 "month"       => $currentMonth,
                 "temporary"   => $traffic
             ]);
+
+            EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $currentYear, $currentMonth);
         }
 
     }

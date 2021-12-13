@@ -38,7 +38,9 @@ class PropertiesTrafficController extends Controller {
                     "month"       => $request->input("month"),
                 ])->delete();
 
-                return new Response([], 201);
+                EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $request->input("year"), $request->input("month") + 1);
+
+                return new Response([], 200);
             }
         }
 

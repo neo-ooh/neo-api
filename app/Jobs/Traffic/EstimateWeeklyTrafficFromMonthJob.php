@@ -117,5 +117,4 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
         // All good, Push the new values to Odoo
         PushPropertyTrafficJob::dispatch($this->propertyId);
     }
-
 }

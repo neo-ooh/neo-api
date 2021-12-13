@@ -12,6 +12,7 @@ return [
     "table-contracted-impressions" => "Impressions contractées",
     "table-received-impressions"   => "Impressions comptabilisées",
     "table-media-value"            => "Valeur média",
+    "table-media-value-counted"    => "Valeur média comptabilisée",
     "table-net-investment"         => "Investissement net",
     "totals-contracted"            => "Contracté",
     "totals-actual"                => "Actuel",

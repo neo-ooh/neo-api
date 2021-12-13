@@ -10,7 +10,7 @@
             <th class="end-date">{!! __("pop.table-end-date") !!}</th>
             <th class="contracted-impressions">{!! __("pop.table-contracted-impressions") !!}</th>
             <th class="received-impressions">{!! __("pop.table-received-impressions") !!}</th>
-            <th class="media-value">{!! __("pop.table-media-value") !!}</th>
+            <th class="media-value">{!! __($category === 'bua' ? "pop.table-media-value-counted" : "pop.table-media-value" ) !!}</th>
             <th class="net-investment">{!! __("pop.table-net-investment") !!}</th>
         </tr>
         </thead>
@@ -29,7 +29,7 @@
                 <td>{{ format($contract["networks"][$network]["{$category}_impressions"] ?? 0) }}</td>
                 <td>{{ format($networkReservations->sum("received_impressions")) }}</td>
                 <td>
-                    {{ formatCurrency($contract["networks"][$network]["{$category}_media_value"]) }}
+                    {{ formatCurrency($networkReservations->sum("received_impressions") * $contract["bua_impression_value"]) }}
                 </td>
                 <td>{{ formatCurrency($contract["networks"][$network]["{$category}_net_investment"] ?? 0) }}</td>
             </tr>

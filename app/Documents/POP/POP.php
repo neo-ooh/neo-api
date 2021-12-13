@@ -75,10 +75,11 @@ class POP extends PDFDocument {
             // Deduce current media value for the type of buy
             $imprValue = $this->contract["contracted_media_value"] / $this->contract["contracted_impressions"];
 
-            $this->contract["current_guaranteed_value"] = $imprValue * $this->contract["reservations"]->where("type", "guaranteed")->sum("received_impressions");
+            $this->contract["current_guaranteed_value"] = $imprValue * $this->contract["reservations"]->where("type", "guaranteed")
+                                                                                                      ->sum("received_impressions");
         }
 
-        if($this->contract["bonus_impressions"] > 0) {
+        if ($this->contract["bonus_impressions"] > 0) {
             // Deduce current media value for the type of buy
             $imprValue = $this->contract["bonus_media_value"] / $this->contract["bonus_impressions"];
 
@@ -86,12 +87,13 @@ class POP extends PDFDocument {
                                                                                                  ->sum("received_impressions");
         }
 
-        if($this->contract["bua_impressions"] > 0) {
+        if ($this->contract["bua_impressions"] > 0) {
             // Deduce current media value for the type of buy
             $imprValue = $this->contract["bua_media_value"] / $this->contract["bua_impressions"];
 
-            $this->contract["current_bua_value"] = $imprValue * $this->contract["reservations"]->where("type", "bua")
-                                                                                               ->sum("received_impressions");
+            $this->contract["bua_impression_value"] = $imprValue;
+            $this->contract["current_bua_value"]    = $imprValue * $this->contract["reservations"]->where("type", "bua")
+                                                                                                  ->sum("received_impressions");
         }
 
         $this->contract["current_value"] = $this->contract["current_guaranteed_value"] + $this->contract["current_bonus_value"] + $this->contract["current_bua_value"];
@@ -103,11 +105,11 @@ class POP extends PDFDocument {
                                                            ->get();
 
         // Lock the screenshots
-        $this->contract["screenshots"]->each(function(ContractScreenshot $screenshot) {
+        $this->contract["screenshots"]->each(function (ContractScreenshot $screenshot) {
             $screenshot->is_locked = true;
             $screenshot->save();
             $screenshot->created_at = $screenshot->created_at->tz("America/Toronto");
-        } );
+        });
 
         return true;
     }
@@ -131,7 +133,7 @@ class POP extends PDFDocument {
 
         $reservations = $this->contract["reservations"]->where("type", "!==", "bua");
 
-        if(count($reservations) === 0) {
+        if (count($reservations) === 0) {
             $reservations = $this->contract["reservations"];
         }
 

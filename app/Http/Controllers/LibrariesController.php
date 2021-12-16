@@ -29,6 +29,7 @@ class LibrariesController extends Controller {
      * @return Response
      */
     public function index(ListLibrariesRequest $request) {
+        /** @noinspection NullPointerExceptionInspection We are necessarily logged in if we passed the route and request checks */
         $libraries = Auth::user()->getLibraries();
 
         if ($request->has("withContent")) {
@@ -41,6 +42,7 @@ class LibrariesController extends Controller {
     public function query(SearchLibrariesRequest $request) {
         $q = strtolower($request->input("q"));
 
+        /** @noinspection NullPointerExceptionInspection We are necessarily logged in if we passed the route and request checks */
         $libraries    = Auth::user()->getLibraries()->load("contents", "contents.layout");
         $searchEngine = new Fuse($libraries->toArray(), [
             "keys" => [
@@ -87,12 +89,11 @@ class LibrariesController extends Controller {
      * @return Response
      */
     public function update(UpdateLibraryRequest $request, Library $library): Response {
-        // Passed data have been cleared by the FormRequest
-        [
-            "name"          => $library->name,
-            "owner_id"      => $library->owner_id,
-            "content_limit" => $library->content_limit,
-        ] = $request->validated();
+        $library->name           = $request->input("name");
+        $library->owner_id       = $request->input("owner_id");
+        $library->content_limit  = $request->input("content_limit");
+        $library->hidden_formats = $request->input("hidden_formats", []);
+
         $library->save();
         $library->refresh();
 

@@ -29,6 +29,7 @@ use Neo\Rules\AccessibleLibrary;
  * @property int                 owner_id
  * @property string              name
  * @property int                 content_limit
+ * @property array               hidden_formats
  *
  * @property Actor               owner
  *
@@ -73,7 +74,8 @@ class Library extends SecuredModel {
      * @var array
      */
     protected $casts = [
-        'content_limit' => 'integer',
+        'content_limit'  => 'integer',
+        'hidden_formats' => 'array',
     ];
 
     /**
@@ -81,7 +83,7 @@ class Library extends SecuredModel {
      *
      * @var array
      */
-    protected $with = [ "owner" ];
+    protected $with = ["owner"];
 
     /**
      * The relationship counts that should always be loaded.
@@ -99,7 +101,7 @@ class Library extends SecuredModel {
      */
     protected string $accessRule = AccessibleLibrary::class;
 
-    protected static function boot (): void {
+    protected static function boot(): void {
         parent::boot();
 
         /**
@@ -113,10 +115,9 @@ class Library extends SecuredModel {
         });
     }
 
-    protected static function newFactory (): LibraryFactory {
+    protected static function newFactory(): LibraryFactory {
         return LibraryFactory::new();
     }
-
 
 
     /**
@@ -126,7 +127,7 @@ class Library extends SecuredModel {
      *
      * @return Builder
      */
-    public static function of (Actor $actor): Builder {
+    public static function of(Actor $actor): Builder {
         return static::selectLibraries()
                      ->where("l.owner_id", "=", $actor->getKey());
     }
@@ -136,7 +137,7 @@ class Library extends SecuredModel {
      *
      * @return Builder
      */
-    protected static function selectLibraries (): Builder {
+    protected static function selectLibraries(): Builder {
         return static::query()
                      ->select("l.*", DB::raw("COUNT(c.id) AS contents_count"))
                      ->from("libraries", "l")
@@ -161,7 +162,7 @@ class Library extends SecuredModel {
      *
      * @return Builder
      */
-    public static function sharedWith (Actor $actor): Builder {
+    public static function sharedWith(Actor $actor): Builder {
         return static::selectLibraries()
                      ->join("library_shares as ls",
                          function (JoinClause $join) {
@@ -177,7 +178,7 @@ class Library extends SecuredModel {
      *
      * @return Builder
      */
-    public static function ofChildrenOf (Actor $actor): Builder {
+    public static function ofChildrenOf(Actor $actor): Builder {
         return static::selectLibraries()
                      ->whereIn("l.owner_id", $actor->getAccessibleActors(true, false, false, false)
                                                    ->pluck("id"));
@@ -190,7 +191,7 @@ class Library extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    public function owner (): BelongsTo {
+    public function owner(): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
     }
 
@@ -201,24 +202,29 @@ class Library extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    public function shares (): BelongsToMany {
+    public function shares(): BelongsToMany {
         return $this->belongsToMany(Actor::class, 'library_shares', 'library_id', 'actor_id')
                     ->withTimestamps();
     }
 
-    public function contents (): HasMany {
+    public function contents(): HasMany {
         return $this->hasMany(Content::class, 'library_id', 'id');
     }
 
-    public function campaigns (): BelongsToMany {
+    public function campaigns(): BelongsToMany {
         return $this->belongsToMany(Campaign::class, 'campaigns_locations', 'location_id', 'campaign_id');
     }
 
-    public function getAvailableFormatsAttribute () {
-        return $this->owner->getLocations(recurs: true)->pluck("display_type.formats")->flatten()->unique("id")->filter(fn($format) => $format->is_enabled)->values();
+    public function getAvailableFormatsAttribute() {
+        return $this->owner->getLocations(recurs: true)
+                           ->pluck("display_type.formats")
+                           ->flatten()
+                           ->unique("id")
+                           ->filter(fn($format) => $format->is_enabled)
+                           ->values();
     }
 
-    public function isAccessibleBy (Actor $actor): bool {
+    public function isAccessibleBy(Actor $actor): bool {
         // Is the actor the owner ?
         if ($actor->getKey() === $this->owner_id) {
             return true;
@@ -244,8 +250,6 @@ class Library extends SecuredModel {
         if ($actor->accessibleActors()->get("id")->pluck("id")->contains($this->owner_id)) {
             return true;
         }
-
-
 
         return false;
     }

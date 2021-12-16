@@ -21,7 +21,7 @@ class UpdateLibraryRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::libraries_edit);
     }
 
@@ -30,11 +30,12 @@ class UpdateLibraryRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "name"          => [ "required", "string", "min:3" ],
-            "owner_id"      => [ "required", "integer", new AccessibleActor() ],
-            "content_limit" => [ "required", "integer", "min:0" ],
+            "name"           => ["required", "string", "min:3"],
+            "owner_id"       => ["required", "integer", new AccessibleActor()],
+            "content_limit"  => ["required", "integer", "min:0"],
+            "hidden_formats" => ["sometimes", "array"],
         ];
     }
 }

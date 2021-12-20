@@ -43,6 +43,10 @@ class ProductCategoriesController {
             $productCategory->loadMissing("impressions_models");
         }
 
+        if (in_array("products", $relations, true)) {
+            $productCategory->loadMissing(["products", "products.property"]);
+        }
+
         return new Response($productCategory);
     }
 

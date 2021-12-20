@@ -95,7 +95,7 @@ class LocationsController extends Controller {
                     $query->where("id", "=", $request->input("format"));
                 });
             })->when($request->has("actor"), function (Builder $query) use ($request) {
-                $query->whereHas("actor", function (Builder $query) use ($request) {
+                $query->whereHas("actors", function (Builder $query) use ($request) {
                     $query->where("id", "=", $request->input("actor"));
                 });
             })

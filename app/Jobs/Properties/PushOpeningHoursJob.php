@@ -28,6 +28,8 @@ use Neo\Services\Broadcast\BroadSign\Models\DayPart;
 class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public $delay = 120;
+
     public function __construct(protected int $propertyId) {
     }
 

@@ -74,7 +74,7 @@ class Product extends Model implements WithImpressionsModels {
     */
 
     public function property(): BelongsTo {
-        return $this->belongsTo(Property::class, "property_id", "property_id");
+        return $this->belongsTo(Property::class, "property_id", "actor_id");
     }
 
     public function category(): BelongsTo {

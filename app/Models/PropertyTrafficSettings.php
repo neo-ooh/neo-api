@@ -207,8 +207,9 @@ class PropertyTrafficSettings extends Model {
     }
 
     protected function getShoppingRollingWeeklyTraffic(): array {
-        $rollingTraffic  = [];
-        $mostRecentDatum = $this->weekly_data->last(fn($datum) => $datum->traffic > 0);
+        $rollingTraffic = [];
+        // We select the most recent entry with a positive traffic and who is not the 53rd week because this one is tricky
+        $mostRecentDatum = $this->weekly_data->last(fn($datum) => $datum->traffic > 0 && $datum->week !== 53);
 
         if (!$mostRecentDatum) {
             // Return an empty array if no values at all
@@ -218,7 +219,8 @@ class PropertyTrafficSettings extends Model {
             return $rollingTraffic;
         }
 
-        $referenceDatum = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week
+        $referenceDatum = $this->weekly_data->first(
+            fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week
         );
 
         if (!$referenceDatum) {

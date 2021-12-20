@@ -126,7 +126,7 @@ class ImpressionsController {
         // For each week
         do {
             // Get the week traffic
-            $traffic = $property->rolling_weekly_traffic[$datePointer->isoWeek] / 7;
+            $traffic = floor($property->rolling_weekly_traffic[(int)strftime("%W", $datePointer->timestamp)] / 7);
 
             // For each day of the week
             for ($i = 0; $i < 7; $i++) {
@@ -149,7 +149,7 @@ class ImpressionsController {
                     $model->variables
                 ));
 
-                // Because the impression for the product is spread omn all the display unit attached to it,
+                // Because the impression for the product is spread on all the display unit attached to it,
                 // we divide the number of impressions by the number of display unit for the product
                 $impressionsPerDay = $impressionsPerDay / $product->locations_count;
 
@@ -168,7 +168,7 @@ class ImpressionsController {
 
                     $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $frame->loop_policy->default_slot_duration;
 
-                    $impressionsPerHour = $impressionsPerPlay * $playsPerHour;
+                    $impressionsPerHour = round($impressionsPerPlay * $playsPerHour);
 
                     $sheet->printRow([
                         $location->external_id,

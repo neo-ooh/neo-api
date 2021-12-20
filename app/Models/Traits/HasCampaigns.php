@@ -40,14 +40,14 @@ trait HasCampaigns {
      *
      * @return HasMany
      */
-    public function own_campaigns (): HasMany {
+    public function own_campaigns(): HasMany {
         return $this->hasMany(Campaign::class, "owner_id");
     }
 
     /**
      * Returns all the campaigns shared with this entity
      */
-    public function shared_campaigns (): BelongsToMany {
+    public function shared_campaigns(): BelongsToMany {
         return $this->belongsToMany(Campaign::class, "campaign_shares", "actor_id", "campaign_id");
     }
 
@@ -62,23 +62,23 @@ trait HasCampaigns {
         $campaigns = new Collection();
 
         // Actor's own campaigns
-        if($own) {
+        if ($own) {
             $campaigns = $campaigns->merge($this->own_campaigns);
         }
 
         // Campaigns shared with the actor
-        if($shared) {
+        if ($shared) {
             $campaigns = $campaigns->merge($this->shared_campaigns);
-            $campaigns = $campaigns->merge($this->sharers->flatMap(fn(/** @var Actor $sharer */ $sharer) => $sharer->getCampaigns(true, false, true, false)));
+            $campaigns = $campaigns->merge($this->sharers->flatMap(fn(/** @var Actor $sharer */ $sharer) => $sharer->getCampaigns(true, false, false, false)));
         }
 
         // Actor's children's campaigns
-        if($children) {
+        if ($children) {
             $campaigns = $campaigns->merge($this->children_campaigns);
         }
 
         // Campaigns of the parent of the user, if applicable
-        if($parent && !$this->limited_access && ($this->details->parent_is_group ?? false) && !$this->is_group) {
+        if ($parent && !$this->limited_access && ($this->details->parent_is_group ?? false) && !$this->is_group) {
             $campaigns = $campaigns->merge($this->parent->getCampaigns(true, true, true, false));
         }
 
@@ -90,7 +90,7 @@ trait HasCampaigns {
      *
      * @return \Illuminate\Support\Collection
      */
-    public function getChildrenCampaignsAttribute (): \Illuminate\Support\Collection {
+    public function getChildrenCampaignsAttribute(): \Illuminate\Support\Collection {
         $descendants = $this->getAccessibleActors(true, false, false, false)->pluck('id');
         return Campaign::query()->whereIn("owner_id", $descendants)->get();
     }
@@ -106,7 +106,7 @@ trait HasCampaigns {
      *
      * @return bool
      */
-    public function canAccessCampaign (Campaign $campaign): bool {
+    public function canAccessCampaign(Campaign $campaign): bool {
         return $this->getCampaigns()->pluck('id')->contains($campaign->id);
     }
 }

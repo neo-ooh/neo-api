@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 
@@ -39,7 +40,7 @@ use Neo\Models\Traits\HasImpressionsModels;
  * @property Collection<ImpressionsModel> $impressions_models
  * @property Collection<Location>         $locations
  */
-class Product extends Model implements WithImpressionsModels {
+class Product extends Model implements WithImpressionsModels, WithAttachments {
     use HasImpressionsModels;
 
     protected $table = "products";
@@ -83,6 +84,10 @@ class Product extends Model implements WithImpressionsModels {
 
     public function locations(): BelongsToMany {
         return $this->belongsToMany(Location::class, "products_locations", "product_id", "location_id");
+    }
+
+    public function attachments(): BelongsToMany {
+        return $this->belongsToMany(Attachment::class, "products_attachments", "product_id", "attachment_id");
     }
 
     /*

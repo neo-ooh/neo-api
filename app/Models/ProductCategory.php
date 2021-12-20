@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Enums\ProductsFillStrategy;
+use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 
@@ -34,7 +35,7 @@ use Neo\Models\Traits\HasImpressionsModels;
  * @property ProductType                  $type
  * @property Collection<ImpressionsModel> $impressions_models
  */
-class ProductCategory extends Model implements WithImpressionsModels {
+class ProductCategory extends Model implements WithImpressionsModels, WithAttachments {
     use HasImpressionsModels;
 
     protected $table = "products_categories";
@@ -65,5 +66,9 @@ class ProductCategory extends Model implements WithImpressionsModels {
 
     public function products(): HasMany {
         return $this->hasMany(Product::class, "category_id", "id");
+    }
+
+    public function attachments(): BelongsToMany {
+        return $this->belongsToMany(Attachment::class, "products_categories_attachments", "product_category_id", "attachment_id");
     }
 }

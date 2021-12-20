@@ -80,7 +80,10 @@ class PropertiesController extends Controller {
         }
 
         if (in_array("products", $request->input("with", []), true)) {
-            $properties->loadMissing(["products"]);
+            $properties->loadMissing(["products",
+                                      "products.attachments",
+                                      "products_categories.attachments",
+            ]);
 
             if (in_array("impressions_models", $request->input("with", []), true)) {
                 $properties->loadMissing(["products.impressions_models"]);
@@ -171,7 +174,9 @@ class PropertiesController extends Controller {
                 $property->loadMissing(["products",
                                         "products.impressions_models",
                                         "products.locations",
+                                        "products.attachments",
                                         "products_categories",
+                                        "products_categories.attachments",
                                         "products_categories.product_type"]);
             }
 

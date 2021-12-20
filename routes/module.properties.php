@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\AttachmentsController;
 use Neo\Http\Controllers\CitiesController;
 use Neo\Http\Controllers\CountriesController;
 use Neo\Http\Controllers\FieldsController;
@@ -28,6 +29,7 @@ use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\PropertyPicturesController;
 use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\TrafficSourcesController;
+use Neo\Models\Attachment;
 use Neo\Models\Field;
 use Neo\Models\FieldSegment;
 use Neo\Models\Product;
@@ -100,6 +102,15 @@ Route::group([
     Route::   put("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@update");
     Route::delete("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@destroy");
 
+
+    /*
+    |----------------------------------------------------------------------
+    | Opening Hours
+    |----------------------------------------------------------------------
+    */
+
+    Route::put("properties/{property}/opening-hours/{weekday}", OpeningHoursController::class . "@update");
+
     /*
     |----------------------------------------------------------------------
     | Addresses
@@ -170,13 +181,19 @@ Route::group([
 
     Route::put("products/{product}/locations", ProductsLocationsController::class . "@sync");
 
-
     /*
     |----------------------------------------------------------------------
-    | Opening Hours
+    | Products attachments
     |----------------------------------------------------------------------
     */
 
-    Route::put("properties/{property}/opening-hours/{weekday}", OpeningHoursController::class . "@update");
+    Route::model("attachment", Attachment::class);
 
+    Route::  post("product-categories/{productCategory}/attachments", AttachmentsController::class . "@storeProductCategory");
+    Route::   put("product-categories/{productCategory}/attachments/{attachment}", AttachmentsController::class . "@updateProductCategory");
+    Route::delete("product-categories/{productCategory}/attachments/{attachment}", AttachmentsController::class . "@destroyProductCategory");
+
+    Route::  post("products/{product}/attachments", AttachmentsController::class . "@storeProduct");
+    Route::   put("products/{product}/attachments/{attachment}", AttachmentsController::class . "@updateProduct");
+    Route::delete("products/{product}/attachments/{attachment}", AttachmentsController::class . "@destroyProduct");
 });

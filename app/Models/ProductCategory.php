@@ -40,6 +40,8 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
 
     protected $table = "products_categories";
 
+    protected $primaryKey = "id";
+
     protected $fillable = [
         "type_id",
         "name_en",

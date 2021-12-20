@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use Neo\Http\Requests\Attachments\StoreAttachmentRequest;
 use Neo\Http\Requests\Attachments\UpdateAttachmentRequest;
 use Neo\Models\Attachment;
@@ -40,7 +41,7 @@ class AttachmentsController {
 
         // Store file
         $attachment = $productLike->attachments()->create([
-            "name"     => $file->getClientOriginalName(),
+            "name"     => Str::replace("_", " ", $file->getClientOriginalName()),
             "filename" => $file->getClientOriginalName(),
             "locale"   => $request->input("locale"),
         ]);

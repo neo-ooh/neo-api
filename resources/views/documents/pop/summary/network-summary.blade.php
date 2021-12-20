@@ -29,7 +29,7 @@
                 <td>{{ format($contract["networks"][$network]["{$category}_impressions"] ?? 0) }}</td>
                 <td>{{ format($networkReservations->sum("received_impressions")) }}</td>
                 <td>
-                    {{ formatCurrency($category === 'bua' ? $networkReservations->sum("received_impressions") * $contract["bua_impression_value"] : $contract["networks"][$network]["{$category}_media_value"]) }}
+                    {{ formatCurrency($category === 'bua' ? $networkReservations->sum("received_impressions") * ($contract["bua_impression_value"] ?? 0) : $contract["networks"][$network]["{$category}_media_value"]) }}
                 </td>
                 <td>{{ formatCurrency($contract["networks"][$network]["{$category}_net_investment"] ?? 0) }}</td>
             </tr>

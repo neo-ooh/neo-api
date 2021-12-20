@@ -11,6 +11,6 @@ use Neo\Models\ImpressionsModel;
  */
 trait HasImpressionsModels {
     public function impressions_models(): BelongsToMany {
-        return $this->belongsToMany(ImpressionsModel::class, $this->impressions_models_transient_table, $this->getForeignKey(), "impressions_model_id");
+        return $this->belongsToMany(ImpressionsModel::class, $this->impressions_models_pivot_table, $this->getForeignKey(), "impressions_model_id");
     }
 }

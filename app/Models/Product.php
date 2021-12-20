@@ -65,7 +65,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         "is_bonus" => "boolean",
     ];
 
-    public string $impressions_models_transient_table = "products_impressions_models";
+    public string $impressions_models_pivot_table = "products_impressions_models";
 
 
     /*

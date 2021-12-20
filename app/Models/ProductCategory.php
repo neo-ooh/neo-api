@@ -48,7 +48,7 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
         "external_id",
     ];
 
-    public string $impressions_models_transient_table = "products_categories_impressions_models";
+    public string $impressions_models_pivot_table = "products_categories_impressions_models";
 
     /*
     |--------------------------------------------------------------------------

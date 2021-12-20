@@ -29,6 +29,10 @@ class ProductCategoriesController {
             $productCategories->loadMissing("product_type");
         }
 
+        if (in_array("attachments", $relations, true)) {
+            $productCategories->loadMissing("attachments");
+        }
+
         return new Response($productCategories);
     }
 
@@ -45,6 +49,10 @@ class ProductCategoriesController {
 
         if (in_array("products", $relations, true)) {
             $productCategory->loadMissing(["products", "products.property"]);
+        }
+
+        if (in_array("attachments", $relations, true)) {
+            $productCategory->loadMissing("attachments");
         }
 
         return new Response($productCategory);

@@ -22,11 +22,11 @@ use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 
 class AttachmentsController {
     public function storeProduct(StoreAttachmentRequest $request, Product $product) {
-        $this->store($request, $product);
+        return $this->store($request, $product);
     }
 
     public function storeProductCategory(StoreAttachmentRequest $request, ProductCategory $product) {
-        $this->store($request, $product);
+        return $this->store($request, $product);
     }
 
     public function store(StoreAttachmentRequest $request, WithAttachments $productLike) {
@@ -39,24 +39,22 @@ class AttachmentsController {
         }
 
         // Store file
-        $attachment = new Attachment([
-            "name"     => $file->getFilename(),
-            "filename" => $file->getFilename(),
+        $attachment = $productLike->attachments()->create([
+            "name"     => $file->getClientOriginalName(),
+            "filename" => $file->getClientOriginalName(),
             "locale"   => $request->input("locale"),
         ]);
-
-        $attachment->save();
         $attachment->store($file);
 
         return new Response($attachment, 201);
     }
 
     public function updateProduct(UpdateAttachmentRequest $request, Product $product, Attachment $attachment) {
-        $this->update($request, $product, $attachment);
+        return $this->update($request, $product, $attachment);
     }
 
     public function updateProductCategory(UpdateAttachmentRequest $request, ProductCategory $product, Attachment $attachment) {
-        $this->update($request, $product, $attachment);
+        return $this->update($request, $product, $attachment);
     }
 
     public function update(UpdateAttachmentRequest $request, WithAttachments $productLike, Attachment $attachment) {
@@ -68,11 +66,11 @@ class AttachmentsController {
     }
 
     public function destroyProduct(UpdateAttachmentRequest $request, Product $product, Attachment $attachment) {
-        $this->update($request, $product, $attachment);
+        return $this->update($request, $product, $attachment);
     }
 
     public function destroyProductCategory(UpdateAttachmentRequest $request, ProductCategory $product, Attachment $attachment) {
-        $this->update($request, $product, $attachment);
+        return $this->update($request, $product, $attachment);
     }
 
     public function destroy(UpdateAttachmentRequest $request, WithAttachments $productLike, Attachment $attachment) {

@@ -47,13 +47,22 @@ class ProductCategoriesController {
             $productCategory->loadMissing("impressions_models");
         }
 
-        if (in_array("products", $relations, true)) {
-            $productCategory->loadMissing(["products", "products.property"]);
-        }
-
         if (in_array("attachments", $relations, true)) {
             $productCategory->loadMissing("attachments");
         }
+
+        if (in_array("products", $relations, true)) {
+            $productCategory->loadMissing(["products", "products.property", "products.locations"]);
+
+            if (in_array("impressions_models", $relations, true)) {
+                $productCategory->loadMissing("products.impressions_models");
+            }
+
+            if (in_array("attachments", $relations, true)) {
+                $productCategory->loadMissing("products.attachments");
+            }
+        }
+
 
         return new Response($productCategory);
     }

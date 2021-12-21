@@ -27,8 +27,8 @@ class AttachmentsController {
         return $this->store($request, $product);
     }
 
-    public function storeProductCategory(StoreAttachmentRequest $request, ProductCategory $product) {
-        return $this->store($request, $product);
+    public function storeProductCategory(StoreAttachmentRequest $request, ProductCategory $productCategory) {
+        return $this->store($request, $productCategory);
     }
 
     public function store(StoreAttachmentRequest $request, WithAttachments $productLike) {
@@ -55,8 +55,8 @@ class AttachmentsController {
         return $this->update($request, $product, $attachment);
     }
 
-    public function updateProductCategory(UpdateAttachmentRequest $request, ProductCategory $product, Attachment $attachment) {
-        return $this->update($request, $product, $attachment);
+    public function updateProductCategory(UpdateAttachmentRequest $request, ProductCategory $productCategory, Attachment $attachment) {
+        return $this->update($request, $productCategory, $attachment);
     }
 
     public function update(UpdateAttachmentRequest $request, WithAttachments $productLike, Attachment $attachment) {
@@ -71,8 +71,8 @@ class AttachmentsController {
         return $this->destroy($request, $product, $attachment);
     }
 
-    public function destroyProductCategory(DeleteAttachmentRequest $request, ProductCategory $product, Attachment $attachment) {
-        return $this->destroy($request, $product, $attachment);
+    public function destroyProductCategory(DeleteAttachmentRequest $request, ProductCategory $productCategory, Attachment $attachment) {
+        return $this->destroy($request, $productCategory, $attachment);
     }
 
     public function destroy(DeleteAttachmentRequest $request, WithAttachments $productLike, Attachment $attachment) {

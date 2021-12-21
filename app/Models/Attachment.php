@@ -55,15 +55,14 @@ class Attachment extends Model {
     */
 
     public function getFilePathAttribute() {
-        $ext = pathinfo($this->filename, PATHINFO_EXTENSION);
-        return "attachments/" . Hashids::encode($this->id) . "." . $ext;
+        return "attachments/" . Hashids::encode($this->id) . "/" . $this->filename;
     }
 
     /**
      * @param UploadedFile $file
      */
     public function store(UploadedFile $file) {
-        $file->storePubliclyAs('attachments/', Hashids::encode($this->id) . "." . pathinfo($this->filename, PATHINFO_EXTENSION));
+        $file->storePubliclyAs("attachments/" . Hashids::encode($this->id), $this->filename);
     }
 
     public function getUrlAttribute() {

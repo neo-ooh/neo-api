@@ -73,6 +73,7 @@ class CampaignPlannerSavesController {
             "odoo",
             "products",
             "products.impressions_models",
+            "products.attachments",
             "pictures",
             "traffic",
             "traffic.weekly_data"
@@ -85,7 +86,7 @@ class CampaignPlannerSavesController {
 
         $properties->makeHidden(["weekly_data", "weekly_traffic"]);
 
-        $categories = ProductCategory::with(["impressions_models", "product_type"])->get();
+        $categories = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
 
         Log::info("connect.log", [
             "action"   => "planner.static.load",

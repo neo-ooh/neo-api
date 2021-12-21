@@ -170,16 +170,16 @@ Route::group([
     Route::model("productCategory", ProductCategory::class);
     Route::model("productType", ProductType::class);
 
-    Route::get("product-types", ProductTypesController::class . "@index");
-    Route::put("product-types/{productType}", ProductTypesController::class . "@update");
+    Route:: get("product-types", ProductTypesController::class . "@index");
+    Route:: put("product-types/{productType}", ProductTypesController::class . "@update");
 
-    Route::get("product-categories", ProductCategoriesController::class . "@index");
-    Route::get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
-    Route::put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
+    Route:: get("product-categories", ProductCategoriesController::class . "@index");
+    Route:: get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
+    Route:: put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 
     Route::post("products/_import-mappings", ProductsController::class . "@_importMappings");
 
-    Route::put("products/{product}/locations", ProductsLocationsController::class . "@sync");
+    Route:: put("products/{product}/locations", ProductsLocationsController::class . "@sync");
 
     /*
     |----------------------------------------------------------------------

@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Neo\Http\Requests\Attachments\DeleteAttachmentRequest;
 use Neo\Http\Requests\Attachments\StoreAttachmentRequest;
 use Neo\Http\Requests\Attachments\UpdateAttachmentRequest;
 use Neo\Models\Attachment;
@@ -66,15 +67,15 @@ class AttachmentsController {
         return new Response($attachment);
     }
 
-    public function destroyProduct(UpdateAttachmentRequest $request, Product $product, Attachment $attachment) {
-        return $this->update($request, $product, $attachment);
+    public function destroyProduct(DeleteAttachmentRequest $request, Product $product, Attachment $attachment) {
+        return $this->destroy($request, $product, $attachment);
     }
 
-    public function destroyProductCategory(UpdateAttachmentRequest $request, ProductCategory $product, Attachment $attachment) {
-        return $this->update($request, $product, $attachment);
+    public function destroyProductCategory(DeleteAttachmentRequest $request, ProductCategory $product, Attachment $attachment) {
+        return $this->destroy($request, $product, $attachment);
     }
 
-    public function destroy(UpdateAttachmentRequest $request, WithAttachments $productLike, Attachment $attachment) {
+    public function destroy(DeleteAttachmentRequest $request, WithAttachments $productLike, Attachment $attachment) {
         $attachment->delete();
 
         return new Response(["status" => "OK"]);

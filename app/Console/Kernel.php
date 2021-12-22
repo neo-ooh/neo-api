@@ -17,6 +17,7 @@ use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\Creatives\RemoveUnusedCreativesFromBroadcasterJob;
+use Neo\Jobs\Maintenance\RetrySchedulesJob;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\RefreshAllContracts;
@@ -110,6 +111,9 @@ class Kernel extends ConsoleKernel {
 
         // Remove unused creatives from external broadcasters
         $schedule->job(RemoveUnusedCreativesFromBroadcasterJob::class)->daily();
+
+        // Try scheduling jobs that have not been scheduled properly
+        $schedule->job(RetrySchedulesJob::class)->daily();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()

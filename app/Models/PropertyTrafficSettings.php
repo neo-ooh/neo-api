@@ -90,6 +90,19 @@ class PropertyTrafficSettings extends Model {
                     ->orderBy("week");
     }
 
+
+    /**
+     * Provide the weekly traffic of the property grouped by year then week.
+     * [ $year => [ 1 => XXXXXX, 2 => XXXXXX, ... ] ]
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function getWeeklyTrafficAttribute(): \Illuminate\Support\Collection {
+        return $this->weekly_data->groupBy("year")
+                                 ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]))
+                                 ->sortKeys(SORT_NUMERIC, "desc");
+    }
+
     public function source(): BelongsToMany {
         return $this->belongsToMany(TrafficSource::class, "property_traffic_source", "property_id", "source_id")
                     ->withPivot("uid");
@@ -151,13 +164,11 @@ class PropertyTrafficSettings extends Model {
         return $monthly_traffic;
     }
 
-
-    public function getWeeklyTrafficAttribute(): \Illuminate\Support\Collection {
-        return $this->weekly_data->groupBy("year")
-                                 ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]))
-                                 ->sortKeys(SORT_NUMERIC, "desc");
-    }
-
+    /**
+     * This method returns an array of 53 values corresponding of the weekly traffic for the property for a year.
+     *
+     * @return array
+     */
     public function getRollingWeeklyTraffic(): array {
         if ($this->property->network_id === 1) {
             return $this->getShoppingRollingWeeklyTraffic();

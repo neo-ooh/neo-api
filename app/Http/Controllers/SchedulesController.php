@@ -138,7 +138,7 @@ class SchedulesController extends Controller {
             : $startDate->clone()->addWeeks(2);
 
         if ($endDate->isAfter($campaign->end_date)) {
-            $endDate = $campaign->clone()->end_date;
+            $endDate = $campaign->end_date->clone();
         }
 
         $endDate->setHour($campaign->end_date->hour);

@@ -10,6 +10,8 @@
 
 namespace Neo\Http\Controllers;
 
+use Error;
+use GuzzleHttp\Exception\ServerException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -57,12 +59,31 @@ class ContractBurstsController extends Controller {
         return new Response($bursts, 201);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function receive(Request $request, ContractBurst $burst): void {
         $screenshot           = new ContractScreenshot();
         $screenshot->burst_id = $burst->id;
         $screenshot->save();
 
-        $screenshot->store($request->getContent(true));
+        $tries     = 0;
+        $succeeded = false;
+        do {
+            try {
+                $screenshot->store($request->getContent(true));
+                $succeeded = true;
+            } catch (ServerException $e) {
+                if ($e->getCode() === 503) {
+                    $tries++;
+                    usleep(random_int(0, 1_000_000));
+                }
+            }
+        } while ($tries < 5 && !$succeeded);
+
+        if (!$succeeded) {
+            throw new Error("Could not reliably communicate with CDN.");
+        }
 
         // Check if the burst is complete
         if ($burst->screenshots_count === $burst->expected_screenshots) {

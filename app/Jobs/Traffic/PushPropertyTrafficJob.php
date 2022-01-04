@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs\Traffic;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -43,10 +44,20 @@ class PushPropertyTrafficJob implements ShouldQueue {
             return;
         }
 
+
         $rollingWeeklyTraffic = $property->traffic->getRollingWeeklyTraffic();
 
-        $config              = OdooConfig::fromConfig();
-        $client              = $config->getClient();
+        $config = OdooConfig::fromConfig();
+        $client = $config->getClient();
+
+        // Make sure Odoo has the proper model set up
+        try {
+            $client->client->fieldsOf(WeeklyTraffic::$slug);
+        } catch (OdooException $e) {
+            // Could not find model, do nothing
+            return;
+        }
+
         $odooPropertyTraffic = WeeklyTraffic::forProperty($client, $property->odoo->odoo_id);
 
         $toCreate = [];

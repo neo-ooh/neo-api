@@ -77,11 +77,11 @@ class SynchronizePropertyData implements ShouldQueue {
                 "external_id" => $distRentalProduct->id,
             ], [
                 "property_id" => $property->getKey(),
-                "category_id" => $productCategory->id,
-                "name_en"     => $distRentalProduct->name,
-                "name_fr"     => $distRentalProduct->name,
+                "category_id" => $productCategory->id
             ]);
 
+            $product->name_en             = $distRentalProduct->name;
+            $product->name_fr             = $distRentalProduct->name;
             $product->quantity            = $distRentalProduct->nb_screen;
             $product->unit_price          = $distRentalProduct->list_price;
             $product->external_variant_id = $distRentalProduct->product_variant_id[0];

@@ -21,7 +21,7 @@
     "aloha/twilio": "^5.0",
     "arkaitzgarro/elastic-apm-laravel": "^3.0",
     "bensampo/laravel-enum": "^4",
-    "doctrine/dbal": "3.1.4",
+    "doctrine/dbal": "^3.1.4",
     "edujugon/laradoo": "dev-php_8",
     "fideloper/proxy": "^4.4",
     "firebase/php-jwt": "^5.2",
@@ -43,7 +43,7 @@
     "ramsey/uuid": "^4.1",
     "skagarwal/google-places-api": "^1.7",
     "spatie/image": "^1.10",
-    "symfony/expression-language": "^5.3",
+    "symfony/expression-language": "^6.0.1",
     "toin0u/geocoder-laravel": "^4.4",
     "vinkla/hashids": "^9.1"
   },

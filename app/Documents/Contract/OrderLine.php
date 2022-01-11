@@ -174,6 +174,8 @@ class OrderLine {
 
         $this->net_investment = $this->subtotal;
 
+        $this->cpm = $this->net_investment / $this->impressions * 1000;
+
         // Set the order type before modifying anything;
         $this->inferOrderType();
 

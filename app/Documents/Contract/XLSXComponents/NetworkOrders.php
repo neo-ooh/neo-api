@@ -54,7 +54,7 @@ class NetworkOrders extends Component {
 
             // Start by printing our header
             $ws->moveCursor(0, 2);
-            $ws->mergeCellsRelative(16);
+            $ws->mergeCellsRelative(15);
             $ws->getCurrentCell()
                ->setValue($subsection ? __("network-" . $this->network . "-" . $subsection) : __("network-" . $this->network));
 
@@ -86,7 +86,7 @@ class NetworkOrders extends Component {
 
             $statePropertiesTraffic = 0;
 
-            $ws->getStyle($ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::tableHeader());
+            $ws->getStyle($ws->getRelativeRange(15, 1))->applyFromArray(XLSXStyleFactory::tableHeader());
             $ws->getRowDimension($ws->getCursorRow())->setRowHeight(30);
 
             $ws->printRow([
@@ -131,7 +131,7 @@ class NetworkOrders extends Component {
                 $ws->moveCursor(0, 2);
 
                 // Stylize the table
-                $ws->getStyle($ws->getRelativeRange(16, count($lines)))->applyFromArray(XLSXStyleFactory::tableBody());
+                $ws->getStyle($ws->getRelativeRange(15, count($lines)))->applyFromArray(XLSXStyleFactory::tableBody());
 
                 $ws->pushPosition();
                 $ws->moveCursor(12, 0);
@@ -160,7 +160,7 @@ class NetworkOrders extends Component {
                     $ws->setRelativeCellFormat(NumberFormat::FORMAT_NUMBER_00, 9, 0);
                     $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
                     $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
-                    $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
+                    $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 14, 0);
 
                     // Handle merging of rows.
                     // When we have multiple rows for the same property, we want to merge their market, properties, annual traffic and campaign traffic column.
@@ -232,7 +232,7 @@ class NetworkOrders extends Component {
                 $ws->pushPosition();
 
                 // Stylize the table footer
-                $ws->getStyle($ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::tableFooter($this->network));
+                $ws->getStyle($ws->getRelativeRange(15, 1))->applyFromArray(XLSXStyleFactory::tableFooter($this->network));
 
                 $ws->pushPosition();
                 $ws->moveCursor(12, 0);
@@ -253,7 +253,7 @@ class NetworkOrders extends Component {
                 // Monetary values
                 $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
                 $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
-                $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
+                $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 14, 0);
 
                 $ws->moveCursor(2, 0);
 
@@ -276,7 +276,6 @@ class NetworkOrders extends Component {
                     $lines->sum("media_value"),
                     $lines->sum("net_investment"),
                     $lines->sum("impressions"),
-                    $lines->sum("impressions"),
                     $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
                 ]);
 
@@ -291,7 +290,7 @@ class NetworkOrders extends Component {
             $ws->pushPosition();
 
             // Stylize the table footer
-            $ws->getStyle($ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::tableFooter($this->network));
+            $ws->getStyle($ws->getRelativeRange(15, 1))->applyFromArray(XLSXStyleFactory::tableFooter($this->network));
 
             $ws->pushPosition();
             $ws->moveCursor(12, 0);
@@ -312,7 +311,7 @@ class NetworkOrders extends Component {
             // Monetary values
             $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
             $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
-            $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
+            $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 14, 0);
 
             $ws->moveCursor(2, 0);
 
@@ -346,7 +345,7 @@ class NetworkOrders extends Component {
         $ws->pushPosition();
 
         // Stylize the network footer
-        $ws->getStyle($ws->getRelativeRange(16, 1))->applyFromArray(XLSXStyleFactory::networkFooter());
+        $ws->getStyle($ws->getRelativeRange(15, 1))->applyFromArray(XLSXStyleFactory::networkFooter());
         $ws->getRowDimension($ws->getCursorRow())->setRowHeight(20);
 
         $ws->mergeCellsRelative(2);
@@ -355,7 +354,7 @@ class NetworkOrders extends Component {
         // Monetary values
         $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
         $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 12, 0);
-        $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 15, 0);
+        $ws->setRelativeCellFormat(XLSXStyleFactory::FORMAT_CURRENCY_TWO_PLACES, 14, 0);
 
         $ws->moveCursor(2, 0);
 

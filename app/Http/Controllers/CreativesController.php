@@ -110,8 +110,8 @@ class CreativesController extends Controller {
         $creative->save();
 
         // File its settings
-        /** @var StaticCreative $properties */
-        $properties = StaticCreative::query()->create([
+        /** @var StaticCreative $creativeProperties */
+        $creativeProperties = StaticCreative::query()->create([
             "creative_id" => $creative->id,
             "extension"   => $file->extension(),
             "checksum"    => hash_file('sha256', $file->path()),
@@ -121,7 +121,7 @@ class CreativesController extends Controller {
         $content->refresh();
 
         // And store the creative
-        $properties->store($file);
+        $creativeProperties->store($file);
 
         // Properly rename the ad if applicable
         if ($content->creatives_count === 1) {

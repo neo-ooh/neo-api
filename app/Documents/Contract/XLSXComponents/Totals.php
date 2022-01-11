@@ -99,10 +99,10 @@ class Totals extends Component {
         $ws->moveCursor(0, 4);
 
         // Prepare our calculations
-        $cpmTotal = $this->order->getGuaranteedOrders()->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->getGuaranteedOrders()->sum("impressions")) * 1000 : 0;
-        $cpm = $this->order->orderLines->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->orderLines->sum("impressions")) * 1000 : 0;
-        $covidGuaranteedImpressions = $this->order->getGuaranteedOrders()->sum("covid_impressions");
-        $covidPotentialmpressions = $this->order->orderLines->sum("covid_impressions");
+        $cpmTotal = $this->order->getGuaranteedOrders()
+                                ->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->getGuaranteedOrders()
+                                                                                                       ->sum("impressions")) * 1000 : 0;
+        $cpm      = $this->order->orderLines->sum("impressions") > 0 ? ($this->order->net_investment / $this->order->orderLines->sum("impressions")) * 1000 : 0;
 
         // Finally, we print the footer excerpts
         $ws->pushPosition();
@@ -115,16 +115,6 @@ class Totals extends Component {
         $this->addRow($ws, __("common.potential-impressions"), $this->order->orderLines->sum("impressions"));
 
         $this->addRow($ws, __("common.potential-cpm"), $cpm, '$#,##0.00');
-
-        $this->addRow($ws, __("common.guaranteed-impressions-covid"), $covidGuaranteedImpressions);
-
-        $this->addRow($ws, __("common.cpm-covid"), $covidGuaranteedImpressions > 0 ? ($this->order->net_investment / $covidGuaranteedImpressions) * 1000 : 0, '$#,##0.00');
-
-        $this->addRow($ws, __("common.potential-impressions-covid"), $covidPotentialmpressions);
-
-        $this->addRow($ws, __("common.potential-cpm-covid"), $covidPotentialmpressions > 0 ? ($this->order->net_investment / $covidPotentialmpressions ) * 1000 : 0, '$#,##0.00');
-
-        $ws->moveCursor(7, -16);
 
         $this->addRow($ws, __("SAVINGS"), $this->order->potential_value - $this->order->grand_total_investment, NumberFormat::FORMAT_CURRENCY_USD);
 
@@ -147,7 +137,7 @@ class Totals extends Component {
         $ws->getCurrentCell()->setValue($label);
         $ws->moveCursor(2, 0);
 
-        if($format) {
+        if ($format) {
             $ws->setRelativeCellFormat($format);
         }
 

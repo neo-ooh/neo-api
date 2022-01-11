@@ -57,9 +57,9 @@ class Kernel extends HttpKernel {
         "default"   => [
             "throttle:api",
             'auth:neo-loa-4,access-tokens',
-            'access.logs',
             SubstituteBindings::class,
             SimpleErrors::class,
+            'access.logs',
         ],
         'guests'    => [
             'throttle:api',

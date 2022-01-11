@@ -25,19 +25,6 @@ class OrderLine {
     public const TYPE_EXTENSION_STRATEGY = 4;
     public const TYPE_ADSERVER_PRODUCT = 5;
 
-    public const COVID_TRAFFIC_FACTOR = [
-        "Digital - Vertical [shopping]"   => 0.5,
-        "Digital - Horizontal [shopping]" => 0.3,
-        "Digital - Spectacular"           => 0.3,
-        "Column poster"                   => 0.5,
-        "Mall poster"                     => 0.5,
-        "Mall+ poster"                    => 0.5,
-        "Rotating column"                 => 0.5,
-        "Sky poster"                      => 0.5,
-        "Unik poster"                     => 0.5,
-        "Banner"                          => 0.5,
-    ];
-
     public string $orderLine;
     public string $description;
     public float $discount;
@@ -49,8 +36,6 @@ class OrderLine {
 
     public int $impressions;
     public string $traffic;
-    public int $covid_impressions = 0;
-    public float $covid_cpm = 0;
 
     public string $market;
     public string $market_name;
@@ -179,7 +164,7 @@ class OrderLine {
 
         $this->property_name           = $record["order_line/shopping_center_id/name"];
         $this->property_city           = $record["order_line/shopping_center_id/city"];
-        $this->property_street           = $record["order_line/shopping_center_id/street"];
+        $this->property_street         = $record["order_line/shopping_center_id/street"];
         $this->property_state          = $record["order_line/shopping_center_id/state_id"];
         $this->property_lat            = $record["order_line/shopping_center_id/partner_latitude"];
         $this->property_lng            = $record["order_line/shopping_center_id/partner_longitude"];
@@ -208,18 +193,9 @@ class OrderLine {
         }
 
         if ($this->isAdServerProduct()) {
-            $this->market_name       = $record["order_line/market_name"];
-            $this->network  = $record["order_line/network"];
-            $this->cpm               = (float)$record["order_line/cpm"];
-        }
-
-        if ($this->impressions > 0 && isset($this->product_category) && $this->isNetwork(Network::NEO_SHOPPING) && array_key_exists($this->product_category, static::COVID_TRAFFIC_FACTOR)) {
-            $this->covid_impressions = $this->impressions * static::COVID_TRAFFIC_FACTOR[$this->product_category];
-            $this->covid_cpm         = ($this->net_investment / $this->covid_impressions) * 1000;
-        } else {
-            // for lins without covid specific impressions and cpm, we simply carry on the regular ones
-            $this->covid_impressions = $this->impressions;
-            $this->covid_cpm         = $this->impressions > 0 ? ($this->net_investment / $this->impressions) * 1000 : 0;
+            $this->market_name = $record["order_line/market_name"];
+            $this->network     = $record["order_line/network"];
+            $this->cpm         = (float)$record["order_line/cpm"];
         }
     }
 
@@ -249,6 +225,7 @@ class OrderLine {
 
     /**
      * Confirm if the current line is of the given network or not
+     *
      * @param string $network
      * @return bool
      */
@@ -267,10 +244,11 @@ class OrderLine {
 
     /**
      * Tell if the current order line is for an indoor property on the on-the-go network
+     *
      * @return bool
      */
     public function isIndoor() {
-        if(!$this->isNetwork(Network::NEO_OTG)) {
+        if (!$this->isNetwork(Network::NEO_OTG)) {
             return false;
         }
 
@@ -279,10 +257,11 @@ class OrderLine {
 
     /**
      * Tell if the current order line is for an outdoor property on the on-the-go network
+     *
      * @return bool
      */
     public function isOutdoor() {
-        if(!$this->isNetwork(Network::NEO_OTG)) {
+        if (!$this->isNetwork(Network::NEO_OTG)) {
             return false;
         }
 

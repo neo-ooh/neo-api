@@ -55,7 +55,8 @@ class NetworkOrders extends Component {
             // Start by printing our header
             $ws->moveCursor(0, 2);
             $ws->mergeCellsRelative(16);
-            $ws->getCurrentCell()->setValue($subsection ? __("network-" . $this->network . "-" . $subsection) : __("network-" . $this->network));
+            $ws->getCurrentCell()
+               ->setValue($subsection ? __("network-" . $this->network . "-" . $subsection) : __("network-" . $this->network));
 
             // Stylize the cell
             $ws->getStyle($ws->getCursorPosition())->applyFromArray(XLSXStyleFactory::networkSectionHeader($this->network));
@@ -103,7 +104,6 @@ class NetworkOrders extends Component {
                 __("contract.table-media-value"),
                 __("contract.table-net-investment"),
                 __("contract.table-impressions"),
-                __("contract.table-impressions-covid"),
                 __("contract.table-cpm")
             ]);
 
@@ -221,8 +221,7 @@ class NetworkOrders extends Component {
                         $line->media_value,
                         $line->net_investment,
                         $line->impressions,
-                        $line->covid_impressions,
-                        $line->covid_cpm,
+                        $line->cpm,
                     ]);
 
                     $lastLine = $line;
@@ -277,8 +276,8 @@ class NetworkOrders extends Component {
                     $lines->sum("media_value"),
                     $lines->sum("net_investment"),
                     $lines->sum("impressions"),
-                    $lines->sum("covid_impressions"),
-                    $lines->sum("covid_impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000 : 0,
+                    $lines->sum("impressions"),
+                    $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
                 ]);
 
                 $statePropertiesTraffic += $propertiesTraffic;
@@ -332,8 +331,7 @@ class NetworkOrders extends Component {
                 $lines->sum("media_value"),
                 $lines->sum("net_investment"),
                 $lines->sum("impressions"),
-                $lines->sum("covid_impressions"),
-                $lines->sum("covid_impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000 : 0,
+                $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
             ]);
 
             $ws->popPosition();
@@ -376,8 +374,7 @@ class NetworkOrders extends Component {
             $lines->sum("media_value"),
             $lines->sum("net_investment"),
             $lines->sum("impressions"),
-            $lines->sum("covid_impressions"),
-            $lines->sum("covid_impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("covid_impressions")) * 1000 : 0,
+            $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
         ]);
 
         $ws->popPosition();

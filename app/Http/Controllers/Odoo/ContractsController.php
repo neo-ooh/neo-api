@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers\Odoo;
 
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -47,7 +48,7 @@ class ContractsController {
             "company"          => $contract->company_id,
             "campaign_ids"     => $contract->campaign_ids,
             "access_url"       => $contract->access_url,
-            "date_order"       => $contract->date_order,
+            "date_order"       => Carbon::createFromFormat("Y-m-d H:i:s", $contract->date_order)->toDateString(),
         ]);
     }
 

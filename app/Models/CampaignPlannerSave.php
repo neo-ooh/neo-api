@@ -13,17 +13,16 @@ namespace Neo\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Date;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * @property integer $id
- * @property string $uid
- * @property string $name
+ * @property string  $uid
+ * @property string  $name
  * @property integer $actor_id
- * @property array $data
- * @property Carbon $created_at
- * @property Carbon $updated_at
+ * @property array   $data
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
  */
 class CampaignPlannerSave extends Model {
     protected $table = "campaign_planner_saves";

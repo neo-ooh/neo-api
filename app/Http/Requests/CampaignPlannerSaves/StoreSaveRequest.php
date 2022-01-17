@@ -17,8 +17,8 @@ use Neo\Enums\Capability;
 class StoreSaveRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name" => ["required", "string"],
-            "data" => ["required", "array"]
+            "plan"  => ["required", "array"],
+            "_meta" => ["required", "array"]
         ];
     }
 

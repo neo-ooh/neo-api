@@ -12,13 +12,15 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\CampaignPlannerSaves\DestroySaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\ListSavesRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\StoreSaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\UpdateSaveRequest;
+use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Actor;
 use Neo\Models\CampaignPlannerSave;
+use Neo\Models\Network;
 use Neo\Models\ProductCategory;
 use Neo\Models\Property;
 
@@ -27,28 +29,35 @@ class CampaignPlannerSavesController {
         return new Response($actor->campaign_planner_saves()->get(["id", "name", "created_at", "updated_at"]));
     }
 
-    public function store(StoreSaveRequest $request, Actor $actor) {
+    public function store(StoreSaveRequest $request) {
         $save = new CampaignPlannerSave([
-            "actor_id" => $actor->id,
-            "name"     => $request->input("name"),
-            "data"     => $request->input("data"),
+            "actor_id" => Auth::user()->id,
+            "name"     => $request->input("_meta")["name"],
+            "data"     => [
+                "plan"  => $request->input("plan"),
+                "_meta" => $request->input("_meta")
+            ]
         ]);
 
         $save->save();
 
-        return new Response($save, 201);
+
+        return new Response(new CampaignPlannerSaveResource($save), 201);
     }
 
     public function show(Actor $actor, CampaignPlannerSave $campaignPlannerSave) {
-        return new Response($campaignPlannerSave);
+        return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
     }
 
     public function update(UpdateSaveRequest $request, Actor $actor, CampaignPlannerSave $campaignPlannerSave) {
-        $campaignPlannerSave->name = $request->input("name");
-        $campaignPlannerSave->data = $request->input("data");
+        $campaignPlannerSave->name = $request->input("_meta")["name"];
+        $campaignPlannerSave->data = [
+            "plan"  => $request->input("plan"),
+            "_meta" => $request->input("_meta")
+        ];
         $campaignPlannerSave->save();
 
-        return new Response($campaignPlannerSave);
+        return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
     }
 
     public function destroy(DestroySaveRequest $request, Actor $actor, CampaignPlannerSave $campaignPlannerSave) {
@@ -60,23 +69,21 @@ class CampaignPlannerSavesController {
     public function showWithData(Request $request, CampaignPlannerSave $campaignPlannerSave) {
         // We return the save and the data needed by the save in one go.
         // Extract properties IDs from the save
-        $propertiesIds = collect($campaignPlannerSave->data["flights"])->pluck("selection")->flatten(1)->pluck("0.0");
-        $properties    = Property::query()->whereIn("actor_id", $propertiesIds)->get();
+        $properties = Property::query()->get();
 
         $properties->load([
-            "actor",
-            "address",
             "data",
-            "fields_values",
-            "network",
-            "network.properties_fields",
+            "address",
             "odoo",
+            "fields_values",
             "products",
-            "products.impressions_models",
             "products.attachments",
-            "pictures",
+            "products.impressions_models",
             "traffic",
-            "traffic.weekly_data"
+            "traffic.weekly_data",
+            "pictures",
+            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
+
         ]);
 
 
@@ -87,19 +94,13 @@ class CampaignPlannerSavesController {
         $properties->makeHidden(["weekly_data", "weekly_traffic"]);
 
         $categories = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
-
-        Log::info("connect.log", [
-            "action"   => "planner.static.load",
-            "save_id"  => $campaignPlannerSave->id,
-            "name"     => $campaignPlannerSave->name,
-            "owner_id" => $campaignPlannerSave->actor_id,
-            "contract" => $campaignPlannerSave->data["odoo"]["contract"] ?? "",
-        ]);
+        $networks   = Network::query()->with(["properties_fields"])->get();
 
         return new Response([
             "save"       => $campaignPlannerSave,
             "properties" => $properties,
-            "categories" => $categories
+            "categories" => $categories,
+            "networks"   => $networks,
         ]);
     }
 }

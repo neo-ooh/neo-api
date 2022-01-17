@@ -6,16 +6,18 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 
-class ListNetworksRequest extends FormRequest
-{
+class ListNetworksRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::networks_edit) || Gate::allows(Capability::campaigns_edit) || Gate::allows(Capability::dynamics_weather) || Gate::allows(Capability::properties_edit);
+    public function authorize() {
+        return Gate::allows(Capability::networks_edit)
+            || Gate::allows(Capability::campaigns_edit)
+            || Gate::allows(Capability::dynamics_weather)
+            || Gate::allows(Capability::properties_edit)
+            || Gate::allows(Capability::tools_planning);
     }
 
     /**
@@ -23,10 +25,9 @@ class ListNetworksRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "with" => ["sometimes", "array"],
+            "with"  => ["sometimes", "array"],
             "actor" => ["sometimes", "integer", "exists:actors,id"]
         ];
     }

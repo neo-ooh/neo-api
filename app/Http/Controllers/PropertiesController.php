@@ -32,7 +32,6 @@ class PropertiesController extends Controller {
         $properties->load([
             "data",
             "address",
-            "actor" => fn($q) => $q->select(["id", "name"]),
             "odoo",
         ]);
 
@@ -82,7 +81,6 @@ class PropertiesController extends Controller {
         if (in_array("products", $request->input("with", []), true)) {
             $properties->loadMissing(["products",
                                       "products.attachments",
-                                      "products_categories.attachments",
             ]);
 
             if (in_array("impressions_models", $request->input("with", []), true)) {
@@ -96,7 +94,6 @@ class PropertiesController extends Controller {
 
         if (in_array("fields", $request->input("with", []), true)) {
             $properties->load([
-                "network.properties_fields",
                 "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"])
             ]);
         }

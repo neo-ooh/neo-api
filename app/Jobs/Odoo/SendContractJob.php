@@ -41,11 +41,7 @@ class SendContractJob implements ShouldQueue {
 
         // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required orderlines
         foreach ($this->flights as $flightIndex => $flight) {
-            if (!$flight['send']) {
-                continue;
-            }
-
-            SendContractFlightJobBatch::dispatch($this->contract, $flight, $flightIndex);
+            SendContractFlightJob::dispatchSync($this->contract, $flight, $flightIndex);
 
             $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
         }

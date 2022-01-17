@@ -17,8 +17,8 @@ use Neo\Enums\Capability;
 class SendContractRequest extends FormRequest {
     public function rules(): array {
         return [
-            "flights" => ["required", "array"],
-            "odoo" => ["required", "array"],
+            "flights"     => ["required", "array"],
+            "contract"    => ["required", "string"],
             "clearOnSend" => ["required", "boolean"],
         ];
     }

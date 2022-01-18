@@ -54,7 +54,7 @@ class ProductsController {
 
             if (!$product || !$location) {
                 clock("Error for pair $odooId => $displayUnitId. ({$product?->getKey()} || {$location?->getKey()})");
-                $errored[] = ["product_id" => $product->getKey(), "location_id" => $location->getKey()];
+                $errored[] = ["product_id" => $odooId, "location_id" => $displayUnitId];
                 continue;
             }
 

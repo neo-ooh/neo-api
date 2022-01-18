@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Products\ImportMappingsRequest;
 use Neo\Models\Location;
@@ -60,5 +61,7 @@ class ProductsController {
         }
 
         DB::table("products_locations")->insertOrIgnore($pairs->toArray());
+
+        return new Response($pairs);
     }
 }

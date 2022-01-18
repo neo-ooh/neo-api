@@ -45,7 +45,8 @@ class ProductsController {
         $locations = Location::query()->setEagerLoads([])->whereIn("external_id", $displayUnitsIds)->get();
 
 
-        $pairs = collect();
+        $pairs   = collect();
+        $errored = collect();
 
         foreach ($idPairs as [$odooId, $displayUnitId]) {
             $product  = $products->firstWhere("external_id", "=", $odooId);
@@ -53,6 +54,7 @@ class ProductsController {
 
             if (!$product || !$location) {
                 clock("Error for pair $odooId => $displayUnitId. ({$product?->getKey()} || {$location?->getKey()})");
+                $errored[] = ["product_id" => $product->getKey(), "location_id" => $location->getKey()];
                 continue;
             }
 
@@ -61,8 +63,6 @@ class ProductsController {
 
         DB::table("products_locations")->insertOrIgnore($pairs->toArray());
 
-        clock($pairs);
-
-        return new Response($pairs);
+        return new Response($errored);
     }
 }

@@ -30,6 +30,7 @@ use Neo\Rules\AccessibleProperty;
  * @property Collection<PropertyPicture>           $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
  * @property Collection<OpeningHours>              $opening_hours
+ * @property Collection<Brand>                     $tenants
  *
  * @property array                                 $rolling_weekly_traffic
  */
@@ -135,6 +136,10 @@ class Property extends SecuredModel {
 
     public function opening_hours(): HasMany {
         return $this->hasMany(OpeningHours::class, "property_id")->orderBy("weekday");
+    }
+
+    public function tenants(): BelongsToMany {
+        return $this->belongsToMany(Brand::class, "properties_tenants", "property_id", "brand_id")->orderBy("name");
     }
 
 

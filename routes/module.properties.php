@@ -10,6 +10,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\AttachmentsController;
+use Neo\Http\Controllers\BrandsController;
 use Neo\Http\Controllers\CitiesController;
 use Neo\Http\Controllers\CountriesController;
 use Neo\Http\Controllers\FieldsController;
@@ -25,11 +26,13 @@ use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
 use Neo\Http\Controllers\PropertiesFieldsSegmentsController;
 use Neo\Http\Controllers\PropertiesStatisticsController;
+use Neo\Http\Controllers\PropertiesTenantsController;
 use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\PropertyPicturesController;
 use Neo\Http\Controllers\ProvincesController;
 use Neo\Http\Controllers\TrafficSourcesController;
 use Neo\Models\Attachment;
+use Neo\Models\Brand;
 use Neo\Models\Field;
 use Neo\Models\FieldSegment;
 use Neo\Models\Product;
@@ -196,4 +199,20 @@ Route::group([
     Route::  post("products/{product}/attachments", AttachmentsController::class . "@storeProduct");
     Route::   put("products/{product}/attachments/{attachment}", AttachmentsController::class . "@updateProduct");
     Route::delete("products/{product}/attachments/{attachment}", AttachmentsController::class . "@destroyProduct");
+
+    /*
+    |----------------------------------------------------------------------
+    | Products attachments
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("brand", Brand::class);
+
+    Route::   get("brands", BrandsController::class . "@index");
+    Route::  post("brands", BrandsController::class . "@store");
+    Route::   put("brands/{brand}", BrandsController::class . "@update");
+    Route::delete("brands/{brand}", BrandsController::class . "@destroy");
+
+    Route:: get("properties/{property}/tenants", PropertiesTenantsController::class . "@index");
+    Route::post("properties/{property}/tenants", PropertiesTenantsController::class . "@sync");
 });

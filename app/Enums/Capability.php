@@ -161,4 +161,9 @@ final class Capability extends Enum {
      * Allows the user to request an excel file of the property
      */
     public const properties_export = "properties.export";
+
+    /**
+     * Allows the user to access the list of tenants of properties
+     */
+    public const properties_tenants = "properties.tenants";
 }

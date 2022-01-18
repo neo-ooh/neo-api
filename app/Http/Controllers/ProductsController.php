@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Products\ImportMappingsRequest;
 use Neo\Models\Location;
@@ -44,15 +45,16 @@ class ProductsController {
         $locations = Location::query()->setEagerLoads([])->whereIn("external_id", $displayUnitsIds)->get();
 
 
-        $pairs = collect();
+        $pairs   = collect();
+        $errored = collect();
 
         foreach ($idPairs as [$odooId, $displayUnitId]) {
             $product  = $products->firstWhere("external_id", "=", $odooId);
             $location = $locations->firstWhere("external_id", "=", $displayUnitId);
 
             if (!$product || !$location) {
-                /** @noinspection ForgottenDebugOutputInspection */
-                dump("Error for pair $odooId => $displayUnitId");
+                clock("Error for pair $odooId => $displayUnitId. ({$product?->getKey()} || {$location?->getKey()})");
+                $errored[] = ["product_id" => $odooId, "location_id" => $displayUnitId];
                 continue;
             }
 
@@ -60,5 +62,7 @@ class ProductsController {
         }
 
         DB::table("products_locations")->insertOrIgnore($pairs->toArray());
+
+        return new Response($errored);
     }
 }

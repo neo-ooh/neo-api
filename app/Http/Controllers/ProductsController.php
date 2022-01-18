@@ -52,8 +52,7 @@ class ProductsController {
             $location = $locations->firstWhere("external_id", "=", $displayUnitId);
 
             if (!$product || !$location) {
-                /** @noinspection ForgottenDebugOutputInspection */
-                dump("Error for pair $odooId => $displayUnitId");
+                clock("Error for pair $odooId => $displayUnitId");
                 continue;
             }
 

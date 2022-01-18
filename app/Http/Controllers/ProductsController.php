@@ -62,6 +62,8 @@ class ProductsController {
 
         DB::table("products_locations")->insertOrIgnore($pairs->toArray());
 
+        clock($pairs);
+
         return new Response($pairs);
     }
 }

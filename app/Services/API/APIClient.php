@@ -23,7 +23,6 @@ class APIClient implements APIClientInterface {
 //        $stack->setHandler(new CurlHandler());
 
 
-
         $client  = new Client($endpoint->options);
         $request = new Request($endpoint->method, $endpoint->getUrl(), $headers);
 

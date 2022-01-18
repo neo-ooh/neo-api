@@ -52,7 +52,7 @@ class ProductsController {
             $location = $locations->firstWhere("external_id", "=", $displayUnitId);
 
             if (!$product || !$location) {
-                clock("Error for pair $odooId => $displayUnitId. ($product || $displayUnitsIds)");
+                clock("Error for pair $odooId => $displayUnitId. ({$product?->getKey()} || {$location?->getKey()})");
                 continue;
             }
 

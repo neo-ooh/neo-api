@@ -69,7 +69,7 @@ class PropertiesController extends Controller {
         }
 
         if (in_array("rolling_weekly_traffic", $request->input("with", []), true)) {
-            $properties->loadMissing(["traffic", "traffic.weekly_data"]);
+            $properties->loadMissing(["traffic"]);
 
             clock()->event("Calculating rolling weekly traffic")->begin();
             $properties->each(function ($p) {

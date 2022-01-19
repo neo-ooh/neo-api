@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\Brands\DestroyBrandRequest;
 use Neo\Http\Requests\Brands\ListBrandsRequest;
 use Neo\Http\Requests\Brands\StoreBrandRequest;
+use Neo\Http\Requests\Brands\StoreBrandsBatchRequest;
 use Neo\Http\Requests\Brands\UpdateBrandRequest;
 use Neo\Models\Brand;
 
@@ -29,6 +30,17 @@ class BrandsController {
         $brand->save();
 
         return new Response($brand, 201);
+    }
+
+    public function storeBatch(StoreBrandsBatchRequest $request) {
+        $brandNames = collect($request->input("names"));
+        Brand::query()->create([
+            $brandNames->map(fn($brandName) => [$brandName])
+        ]);
+
+        $brands = Brand::query()->whereIn("name", $brandNames);
+
+        return new Response($brands, 201);
     }
 
     public function update(UpdateBrandRequest $request, Brand $brand) {

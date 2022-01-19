@@ -109,7 +109,7 @@ class PropertyDump extends XLSXDocument {
         $this->displayUnitsData = collect();
         $this->playersData      = collect();
 
-        $weeklyTraffic = collect($this->property->traffic->getRollingWeeklyTraffic())->median();
+        $weeklyTraffic = collect($this->property->traffic->getRollingWeeklyTraffic($this->property->network_id))->median();
 
         $addressComponents = [
             "Address"      => trim($this->property->address->line_1 . " " . $this->property->address->line_2),

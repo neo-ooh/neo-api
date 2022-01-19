@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 use stdClass;
 
 /**
@@ -169,52 +170,57 @@ class PropertyTrafficSettings extends Model {
      *
      * @return array
      */
-    public function getRollingWeeklyTraffic(): array {
-        if ($this->property->network_id === 1) {
-            return $this->getShoppingRollingWeeklyTraffic();
-        }
+    public function getRollingWeeklyTraffic(int $networkId): array {
+        $cacheKey    = "property-$this->property_id-rolling-weekly-traffic";
+        $cacheLength = 3600;
 
-        $rollingTraffic = [];
-        $trafficData    = $this->weekly_traffic;
+        return Cache::remember($cacheKey, $cacheLength, function () use ($networkId) {
+            if ($networkId === 1) {
+                return $this->getShoppingRollingWeeklyTraffic();
+            }
 
-        $yearTrafficIt = $trafficData->getIterator();
+            $rollingTraffic = [];
+            $trafficData    = $this->weekly_traffic;
 
-        $validData      = $this->weekly_data->where("traffic", "!==", 0);
-        $propertyMedian = $validData->count() > 0
-            ? $validData->where("traffic", "!==", 0)->pluck("traffic")->sum() / $validData->count()
-            : 0;
+            $yearTrafficIt = $trafficData->getIterator();
 
-        for ($week = 1; $week <= 53; $week++) {
-            $yearTrafficIt->rewind();
-            $weekTraffic    = 0;
-            $weekComponents = 0;
+            $validData      = $this->weekly_data->where("traffic", "!==", 0);
+            $propertyMedian = $validData->count() > 0
+                ? $validData->where("traffic", "!==", 0)->pluck("traffic")->sum() / $validData->count()
+                : 0;
 
-            do {
-                $t = $yearTrafficIt->current()[$week] ?? 0;
+            for ($week = 1; $week <= 53; $week++) {
+                $yearTrafficIt->rewind();
+                $weekTraffic    = 0;
+                $weekComponents = 0;
 
-                if ($t !== 0) {
-                    $weekTraffic    += $t;
-                    $weekComponents += 1;
+                do {
+                    $t = $yearTrafficIt->current()[$week] ?? 0;
+
+                    if ($t !== 0) {
+                        $weekTraffic    += $t;
+                        $weekComponents += 1;
+                    }
+
+                    $yearTrafficIt->next();
+                } while ($yearTrafficIt->valid());
+
+                if ($weekComponents > 0) {
+                    $rollingTraffic[$week] = round($weekTraffic / $weekComponents);
+                    continue;
                 }
 
-                $yearTrafficIt->next();
-            } while ($yearTrafficIt->valid());
+                if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
+                    $weekTraffic = $this->placeholder_value / 4;
+                } else {
+                    $weekTraffic = $propertyMedian;
+                }
 
-            if ($weekComponents > 0) {
-                $rollingTraffic[$week] = round($weekTraffic / $weekComponents);
-                continue;
+                $rollingTraffic[$week] = round($weekTraffic);
             }
 
-            if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
-                $weekTraffic = $this->placeholder_value / 4;
-            } else {
-                $weekTraffic = $propertyMedian;
-            }
-
-            $rollingTraffic[$week] = round($weekTraffic);
-        }
-
-        return $rollingTraffic;
+            return $rollingTraffic;
+        });
     }
 
     protected function getShoppingRollingWeeklyTraffic(): array {

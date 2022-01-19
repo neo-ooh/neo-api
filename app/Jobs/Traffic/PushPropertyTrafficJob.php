@@ -45,7 +45,7 @@ class PushPropertyTrafficJob implements ShouldQueue {
         }
 
 
-        $rollingWeeklyTraffic = $property->traffic->getRollingWeeklyTraffic();
+        $rollingWeeklyTraffic = $property->traffic->getRollingWeeklyTraffic($property->network_id);
 
         $config = OdooConfig::fromConfig();
         $client = $config->getClient();

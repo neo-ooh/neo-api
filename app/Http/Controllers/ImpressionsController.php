@@ -60,7 +60,7 @@ class ImpressionsController {
         $property                         = Property::query()
                                                     ->with(["opening_hours", "traffic.weekly_data"])
                                                     ->find($product->property_id);
-        $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic();
+        $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic($property->network_id);
 
         // Load all the frames, of the display unit, and load their loop policies as well
         $frames = Skin::byDisplayUnit($client, ["display_unit_id" => $location->external_id]);

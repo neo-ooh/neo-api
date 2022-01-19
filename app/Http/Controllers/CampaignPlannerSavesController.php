@@ -87,8 +87,8 @@ class CampaignPlannerSavesController {
         ]);
 
 
-        $properties->each(function ($p) {
-            $p->rolling_weekly_traffic = $p->traffic->getRollingWeeklyTraffic();
+        $properties->each(function (Property $property) {
+            $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic($property->network_id);
         });
 
         $properties->makeHidden(["weekly_data", "weekly_traffic"]);
@@ -97,7 +97,7 @@ class CampaignPlannerSavesController {
         $networks   = Network::query()->with(["properties_fields"])->get();
 
         return new Response([
-            "save"       => $campaignPlannerSave,
+            "save"       => new CampaignPlannerSaveResource($campaignPlannerSave),
             "properties" => $properties,
             "categories" => $categories,
             "networks"   => $networks,

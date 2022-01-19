@@ -100,6 +100,12 @@ class PropertiesController extends Controller {
             ]);
         }
 
+        if (in_array("tenants", $request->input("with", []), true)) {
+            $properties->load([
+                "tenants" => fn($q) => $q->select(["id"])
+            ]);
+        }
+
         return $properties;
     }
 

@@ -83,7 +83,7 @@ class CampaignPlannerSavesController {
             "traffic.weekly_data",
             "pictures",
             "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
-
+            "tenants"       => fn($q) => $q->select(["id"]),
         ]);
 
 

@@ -72,6 +72,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::properties_products,
                 \Neo\Enums\Capability::products_impressions,
                 \Neo\Enums\Capability::properties_export,
+                \Neo\Enums\Capability::properties_tenants,
                 \Neo\Enums\Capability::odoo_properties,
             ],
             "NETWORK"    => [

@@ -34,11 +34,9 @@ class BrandsController {
 
     public function storeBatch(StoreBrandsBatchRequest $request) {
         $brandNames = collect($request->input("names"));
-        Brand::query()->create([
-            $brandNames->map(fn($brandName) => [$brandName])
-        ]);
+        Brand::query()->insert($brandNames->map(fn($brandName) => ["name" => $brandName])->toArray());
 
-        $brands = Brand::query()->whereIn("name", $brandNames);
+        $brands = Brand::query()->whereIn("name", $brandNames)->get();
 
         return new Response($brands, 201);
     }

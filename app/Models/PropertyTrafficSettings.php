@@ -165,16 +165,17 @@ class PropertyTrafficSettings extends Model {
         return $monthly_traffic;
     }
 
+    public function getRollingWeeklyTrafficCacheKey(): string {
+        return "property-$this->property_id-rolling-weekly-traffic";
+    }
+
     /**
      * This method returns an array of 53 values corresponding of the weekly traffic for the property for a year.
      *
      * @return array
      */
     public function getRollingWeeklyTraffic(int $networkId): array {
-        $cacheKey    = "property-$this->property_id-rolling-weekly-traffic";
-        $cacheLength = 3600;
-
-        return Cache::remember($cacheKey, $cacheLength, function () use ($networkId) {
+        return Cache::remember($this->getRollingWeeklyTrafficCacheKey(), 3600 * 24, function () use ($networkId) {
             if ($networkId === 1) {
                 return $this->getShoppingRollingWeeklyTraffic();
             }

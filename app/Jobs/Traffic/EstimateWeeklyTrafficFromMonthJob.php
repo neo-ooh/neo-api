@@ -17,6 +17,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Neo\Models\PropertyTraffic;
 use Neo\Models\PropertyTrafficMonthly;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -116,5 +117,8 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
 
         // All good, Push the new values to Odoo
         PushPropertyTrafficJob::dispatch($this->propertyId);
+
+        // And clear our cache
+        Cache::forget("property-$this->propertyId-rolling-weekly-traffic");
     }
 }

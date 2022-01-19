@@ -71,14 +71,11 @@ class PropertiesController extends Controller {
         if (in_array("rolling_weekly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing(["traffic", "traffic.weekly_data"]);
 
+            clock()->event("Calculating rolling weekly traffic")->begin();
             $properties->each(function ($p) {
-                clock()
-                    ->event("Calculating rolling weekly traffic")
-                    ->name("property-$p->actor_id-rolling-weekly-traffic")
-                    ->begin();
                 $p->rolling_weekly_traffic = $p->traffic->getRollingWeeklyTraffic($p->network_id);
-                clock()->event("property-$p->actor_id-rolling-weekly-traffic")->end();
             });
+            clock()->event("Calculating rolling weekly traffic")->end();
 
             $properties->makeHidden(["weekly_data", "weekly_traffic"]);
         }

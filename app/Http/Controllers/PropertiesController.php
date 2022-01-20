@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
+use Neo\Documents\PropertyDump\MultiPropertyDump;
 use Neo\Documents\PropertyDump\PropertyDump;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
+use Neo\Http\Requests\Properties\DumpPropertiesRequest;
 use Neo\Http\Requests\Properties\DumpPropertyRequest;
 use Neo\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Http\Requests\Properties\ShowPropertyRequest;
@@ -224,7 +226,8 @@ class PropertiesController extends Controller {
     }
 
     public function update(UpdatePropertyRequest $request, Property $property) {
-        $property->network_id = $request->input("network_id");
+        $property->network_id  = $request->input("network_id");
+        $property->has_tenants = $request->input("has_tenants");
         $property->save();
 
         return new Response($property);
@@ -276,6 +279,20 @@ class PropertiesController extends Controller {
 
     public function dump(DumpPropertyRequest $request, Property $property) {
         $doc = new PropertyDump($property->getKey());
+        $doc->build();
+        $doc->output();
+    }
+
+    /**
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
+     */
+    public function networkDump(DumpPropertiesRequest $request) {
+        $propertiesIds = Property::query()->select("actor_id")
+                                 ->where("network_id", "=", $request->input("network_id"))
+                                 ->get()
+                                 ->pluck("actor_id");
+        $doc           = new MultiPropertyDump($propertiesIds);
         $doc->build();
         $doc->output();
     }

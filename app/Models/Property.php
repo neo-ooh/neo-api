@@ -30,9 +30,12 @@ use Neo\Rules\AccessibleProperty;
  * @property Collection<PropertyPicture>           $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
  * @property Collection<OpeningHours>              $opening_hours
+ * @property boolean                               $has_tenants
+ * @property Date|null                             $tenants_updated_at
  * @property Collection<Brand>                     $tenants
  *
  * @property array                                 $rolling_weekly_traffic
+ *
  */
 class Property extends SecuredModel {
     use HasFactory;
@@ -74,6 +77,10 @@ class Property extends SecuredModel {
     public $casts = [
         "require_traffic"        => "boolean",
         "traffic_grace_override" => "date"
+    ];
+
+    protected $dates = [
+        "tenants_updated_at"
     ];
 
     /**

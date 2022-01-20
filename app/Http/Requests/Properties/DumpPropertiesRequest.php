@@ -5,24 +5,23 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdatePropertyRequest.php
+ * @neo/api - DumpPropertyRequest.php
  */
 
 namespace Neo\Http\Requests\Properties;
 
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class UpdatePropertyRequest extends FormRequest {
+class DumpPropertiesRequest extends FormRequest {
     public function rules(): array {
         return [
-            "network_id"  => ["nullable", "exists:networks,id"],
-            "has_tenants" => ["required", "boolean"],
+            "network_id" => ["required", "integer", "exists:networks,id"]
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_export);
     }
 }

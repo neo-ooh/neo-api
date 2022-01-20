@@ -17,7 +17,7 @@ use Neo\Enums\Capability;
 class SyncTenantsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "tenants"   => ["required", "array"],
+            "tenants"   => ["present", "array"],
             "tenants.*" => ["exists:brands,id"]
         ];
     }

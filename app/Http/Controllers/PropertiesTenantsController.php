@@ -22,7 +22,7 @@ class PropertiesTenantsController {
     }
 
     public function sync(SyncTenantsRequest $request, Property $property) {
-        $property->tenants()->sync($request->input("tenants"));
+        $property->tenants()->sync($request->input("tenants", []));
 
         $property->tenants_updated_at = Date::now();
         $property->save();

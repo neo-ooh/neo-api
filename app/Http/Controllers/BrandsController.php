@@ -53,7 +53,7 @@ class BrandsController {
 
         /** @var Property $property */
         foreach ($properties as $property) {
-            $property->tenants()->detach([$fromIds]);
+            $property->tenants()->detach($fromIds);
             $property->tenants()->attach($receiverId);
         }
 

@@ -18,4 +18,8 @@ class DestroyBrandRequest extends FormRequest {
     public function authorize(): bool {
         return Gate::allows(Capability::properties_edit);
     }
+
+    public function rules(): array {
+        return [];
+    }
 }

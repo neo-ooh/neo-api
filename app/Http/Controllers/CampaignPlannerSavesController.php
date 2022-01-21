@@ -19,6 +19,7 @@ use Neo\Http\Requests\CampaignPlannerSaves\StoreSaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\UpdateSaveRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Actor;
+use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
 use Neo\Models\Network;
 use Neo\Models\ProductCategory;
@@ -95,12 +96,14 @@ class CampaignPlannerSavesController {
 
         $categories = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
         $networks   = Network::query()->with(["properties_fields"])->get();
+        $brands     = Brand::query()->get();
 
         return new Response([
             "save"       => new CampaignPlannerSaveResource($campaignPlannerSave),
             "properties" => $properties,
             "categories" => $categories,
             "networks"   => $networks,
+            "brands"     => $brands,
         ]);
     }
 }

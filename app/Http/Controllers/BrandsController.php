@@ -57,6 +57,8 @@ class BrandsController {
             $property->tenants()->attach($receiverId);
         }
 
+        Brand::query()->whereIn("id", $fromIds)->delete();
+
         return new Response();
     }
 

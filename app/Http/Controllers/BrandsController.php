@@ -13,10 +13,12 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Brands\DestroyBrandRequest;
 use Neo\Http\Requests\Brands\ListBrandsRequest;
+use Neo\Http\Requests\Brands\MergeBrandsRequest;
 use Neo\Http\Requests\Brands\StoreBrandRequest;
 use Neo\Http\Requests\Brands\StoreBrandsBatchRequest;
 use Neo\Http\Requests\Brands\UpdateBrandRequest;
 use Neo\Models\Brand;
+use Neo\Models\Property;
 
 class BrandsController {
     public function index(ListBrandsRequest $request): Response {
@@ -39,6 +41,23 @@ class BrandsController {
         $brands = Brand::query()->whereIn("name", $brandNames)->get();
 
         return new Response($brands, 201);
+    }
+
+    public function merge(MergeBrandsRequest $request) {
+        $receiverId = $request->input("receiver");
+        $fromIds    = $request->input("from");
+
+        $properties = Property::query()->whereHas("tenants", function ($query) use ($fromIds) {
+            $query->whereIn("id", $fromIds);
+        })->get();
+
+        /** @var Property $property */
+        foreach ($properties as $property) {
+            $property->tenants()->detach([$fromIds]);
+            $property->tenants()->attach($receiverId);
+        }
+
+        return new Response();
     }
 
     public function update(UpdateBrandRequest $request, Brand $brand) {

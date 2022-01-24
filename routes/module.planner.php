@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\CampaignPlannerController;
 use Neo\Http\Controllers\CampaignPlannerPolygonsController;
 use Neo\Http\Controllers\CampaignPlannerSavesController;
 
@@ -38,12 +39,15 @@ Route::group([
     Route::  post("actors/{actor}/campaign-planner-polygons", CampaignPlannerPolygonsController::class . "@store");
     Route::   get("actors/{actor}/campaign-planner-polygons/{campaignPlannerPolygon}", CampaignPlannerPolygonsController::class . "@show");
     Route::delete("actors/{actor}/campaign-planner-polygons/{campaignPlannerPolygon}", CampaignPlannerPolygonsController::class . "@destroy");
+
+    Route::   get("campaign-planner/_data", CampaignPlannerController::class . "@data");
 });
+
 
 // Open two specific routes to guest to be able to display a planner instance when using a share link
 Route::group([
     "middleware" => "guests",
     "prefix"     => "v1"
 ], function () {
-    Route::   get("campaign-planner/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@showWithData");
+    Route::   get("campaign-planner/{campaignPlannerSave}", CampaignPlannerController::class . "@saveAndDate");
 });

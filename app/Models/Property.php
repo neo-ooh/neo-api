@@ -34,6 +34,8 @@ use Neo\Rules\AccessibleProperty;
  * @property Date|null                             $tenants_updated_at
  * @property Collection<Brand>                     $tenants
  *
+ * @property Collection<Product>                   $products
+ *
  * @property array                                 $rolling_weekly_traffic
  *
  */

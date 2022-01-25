@@ -68,7 +68,7 @@ class CampaignPlannerController {
 
         $categories = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
         $networks   = Network::query()->with(["properties_fields"])->get();
-        $brands     = Brand::query()->get();
+        $brands     = Brand::query()->with("child_brands:id,parent_id")->get();
 
         return [
             "properties" => CampaignPlannerPropertyResource::collection($properties),

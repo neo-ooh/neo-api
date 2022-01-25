@@ -18,6 +18,10 @@ class CreatePropertiesTenantsTable extends Migration {
             $table->foreignId("property_id")->constrained("properties", "actor_id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId("brand_id")->constrained("brands", "id")->cascadeOnUpdate()->cascadeOnDelete();
         });
+
+        Schema::table("properties_tenants", function (Blueprint $table) {
+            $table->unique(["property_id", "brand_id"]);
+        });
     }
 
     public function down() {

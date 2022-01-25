@@ -32,11 +32,11 @@ class Brand extends Model {
     protected $fillable = ["name_en", "name_fr"];
 
     public function parent_brand(): BelongsTo {
-        return $this->belongsTo(Brand::class, "parent_id", "id");
+        return $this->belongsTo(__CLASS__, "parent_id", "id");
     }
 
     public function child_brands(): HasMany {
-        return $this->hasMany(Brand::class, "parent_id", "id");
+        return $this->hasMany(__CLASS__, "parent_id", "id");
     }
 
     public function properties(): BelongsToMany {

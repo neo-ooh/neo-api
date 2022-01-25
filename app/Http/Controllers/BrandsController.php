@@ -23,11 +23,11 @@ class BrandsController {
     public function index(ListBrandsRequest $request): Response {
         $brands = Brand::query()
                        ->with([
-                           "child_brands:id"
+                           "child_brands:id,parent_id"
                        ])->get();
 
         if (in_array("properties", $request->input("with", []), true)) {
-            $brands->load("properties.actor.name");
+            $brands->load("properties.actor:id,name");
         }
 
         return new Response($brands);
@@ -54,8 +54,13 @@ class BrandsController {
         return new Response($brands, 201);
     }
 
+    public function show(ListBrandsRequest $request, Brand $brand): Response {
+        $brand->load(["child_brands:id,parent_id", "properties.actor:id,name"]);
+        return new Response($brand);
+    }
+
     public function syncChildren(AssociateBrandsRequest $request, Brand $brand) {
-        $brands = $request->input("brands");
+        $brands = $request->input("brands", []);
 
         $brand->child_brands()->whereNotIn("id", $brands)->update(["parent_id" => null]);
         Brand::query()->whereIn("id", $brands)->update(["parent_id" => $brand->id]);

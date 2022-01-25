@@ -17,7 +17,7 @@ use Neo\Enums\Capability;
 class AssociateBrandsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "brands"   => ["required", "array"],
+            "brands"   => ["nullable", "array"],
             "brands.*" => ["integer", "exists:brands,id"],
         ];
     }

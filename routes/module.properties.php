@@ -213,6 +213,7 @@ Route::group([
     Route::  post("brands", BrandsController::class . "@store");
     Route::  post("brands/_batch", BrandsController::class . "@storeBatch");
     Route::  post("brands/{brand}/_sync_children", BrandsController::class . "@syncChildren");
+    Route::   get("brands/{brand}", BrandsController::class . "@show");
     Route::   put("brands/{brand}", BrandsController::class . "@update");
     Route::delete("brands/{brand}", BrandsController::class . "@destroy");
 

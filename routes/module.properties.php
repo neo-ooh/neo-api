@@ -215,6 +215,7 @@ Route::group([
     Route::  post("brands/{brand}/_sync_children", BrandsController::class . "@syncChildren");
     Route::   get("brands/{brand}", BrandsController::class . "@show");
     Route::   put("brands/{brand}", BrandsController::class . "@update");
+    Route::   post("brands/{brand}/_merge", BrandsController::class . "@merge");
     Route::delete("brands/{brand}", BrandsController::class . "@destroy");
 
     Route:: get("properties/{property}/tenants", PropertiesTenantsController::class . "@index");

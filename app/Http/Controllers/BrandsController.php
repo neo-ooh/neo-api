@@ -14,10 +14,12 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\Brands\AssociateBrandsRequest;
 use Neo\Http\Requests\Brands\DestroyBrandRequest;
 use Neo\Http\Requests\Brands\ListBrandsRequest;
+use Neo\Http\Requests\Brands\MergeBrandsRequest;
 use Neo\Http\Requests\Brands\StoreBrandRequest;
 use Neo\Http\Requests\Brands\StoreBrandsBatchRequest;
 use Neo\Http\Requests\Brands\UpdateBrandRequest;
 use Neo\Models\Brand;
+use Neo\Models\Property;
 
 class BrandsController {
     public function index(ListBrandsRequest $request): Response {
@@ -75,6 +77,25 @@ class BrandsController {
         $brand->save();
 
         return new Response($brand, 200);
+    }
+
+
+    public function merge(MergeBrandsRequest $request, Brand $brand) {
+        $fromIds = $request->input("brands");
+
+        $properties = Property::query()->whereHas("tenants", function ($query) use ($fromIds) {
+            $query->whereIn("id", $fromIds);
+        })->get();
+
+        /** @var Property $property */
+        foreach ($properties as $property) {
+            $property->tenants()->detach($fromIds);
+            $property->tenants()->attach($brand->id);
+        }
+
+        Brand::query()->whereIn("id", $fromIds)->delete();
+
+        return new Response();
     }
 
     public function destroy(DestroyBrandRequest $request, Brand $brand) {

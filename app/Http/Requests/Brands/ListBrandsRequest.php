@@ -15,7 +15,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class ListBrandsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "with"   => ["nullable", "array"],
+            "with"   => ["sometimes", "array"],
             "with.*" => ["in:properties"],
         ];
     }

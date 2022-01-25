@@ -15,8 +15,15 @@ use Illuminate\Support\Facades\Schema;
 class CreatePropertiesTenantsTable extends Migration {
     public function up() {
         Schema::create('properties_tenants', function (Blueprint $table) {
-            $table->foreignId("property_id")->constrained("properties", "actor_id")->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreignId("brand_id")->constrained("brands", "id")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId("property_id")
+                  ->constrained("properties", "actor_id")
+                  ->cascadeOnUpdate()
+                  ->cascadeOnDelete();
+
+            $table->foreignId("brand_id")
+                  ->constrained("brands", "id")
+                  ->cascadeOnUpdate()
+                  ->cascadeOnDelete();
         });
 
         Schema::table("properties_tenants", function (Blueprint $table) {

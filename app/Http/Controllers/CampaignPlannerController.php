@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JetBrains\PhpStorm\ArrayShape;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDataRequest;
+use Neo\Http\Resources\CampaignPlannerPropertyResource;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
@@ -70,7 +71,7 @@ class CampaignPlannerController {
         $brands     = Brand::query()->get();
 
         return [
-            "properties" => $properties,
+            "properties" => CampaignPlannerPropertyResource::collection($properties),
             "categories" => $categories,
             "networks"   => $networks,
             "brands"     => $brands,

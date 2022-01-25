@@ -148,7 +148,7 @@ class Property extends SecuredModel {
     }
 
     public function tenants(): BelongsToMany {
-        return $this->belongsToMany(Brand::class, "properties_tenants", "property_id", "brand_id")->orderBy("name");
+        return $this->belongsToMany(Brand::class, "properties_tenants", "property_id", "brand_id");
     }
 
 

@@ -14,12 +14,11 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class MergeBrandsRequest extends FormRequest {
+class AssociateBrandsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "from"     => ["required", "array"],
-            "from.*"   => ["integer", "exists:brands,id"],
-            "receiver" => ["required", "integer", "exists:brands,id"]
+            "brands"   => ["required", "array"],
+            "brands.*" => ["integer", "exists:brands,id"],
         ];
     }
 

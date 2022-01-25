@@ -19,11 +19,9 @@ class CampaignPlannerPropertyResource extends JsonResource {
             "network_id"              => $this->network_id,
             "products"                => $this->products,
             "products_ids"            => $this->products->pluck("id"),
-            "products_categories_ids" => array_map(
-                static fn($categoryId, $products) => $products->pluck('id'),
-                $this->products->groupBy("category_id")->all()
-            ),
-            "traffic"                 => $this->traffic,
+            "products_categories_ids" => $this->products->groupBy("category_id")
+                                                        ->map(static fn($products) => $products->pluck('id')),
+            "traffic"                 => $this->rolling_weekly_traffic,
             "data"                    => $this->data,
             "pictures"                => $this->pictures,
             "fields_values"           => $this->fields_values,

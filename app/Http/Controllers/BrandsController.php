@@ -11,24 +11,32 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\Brands\AssociateBrandsRequest;
 use Neo\Http\Requests\Brands\DestroyBrandRequest;
 use Neo\Http\Requests\Brands\ListBrandsRequest;
-use Neo\Http\Requests\Brands\MergeBrandsRequest;
 use Neo\Http\Requests\Brands\StoreBrandRequest;
 use Neo\Http\Requests\Brands\StoreBrandsBatchRequest;
 use Neo\Http\Requests\Brands\UpdateBrandRequest;
 use Neo\Models\Brand;
-use Neo\Models\Property;
 
 class BrandsController {
     public function index(ListBrandsRequest $request): Response {
-        $brands = Brand::query()->orderBy("name")->get();
+        $brands = Brand::query()
+                       ->with([
+                           "child_brands:id"
+                       ])->get();
+
+        if (in_array("properties", $request->input("with", []), true)) {
+            $brands->load("properties.actor.name");
+        }
+
         return new Response($brands);
     }
 
     public function store(StoreBrandRequest $request) {
-        $brand       = new Brand();
-        $brand->name = $request->input("name");
+        $brand          = new Brand();
+        $brand->name_en = $request->input("name_en");
+        $brand->name_fr = $request->input("name_fr");
         $brand->save();
 
         return new Response($brand, 201);
@@ -36,34 +44,29 @@ class BrandsController {
 
     public function storeBatch(StoreBrandsBatchRequest $request) {
         $brandNames = collect($request->input("names"));
-        Brand::query()->insert($brandNames->map(fn($brandName) => ["name" => $brandName])->toArray());
+        Brand::query()->insert($brandNames->map(fn($brandName) => [
+            "name_en" => $brandName,
+            "name_fr" => $brandName,
+        ])->toArray());
 
-        $brands = Brand::query()->whereIn("name", $brandNames)->get();
+        $brands = Brand::query()->whereIn("name_en", $brandNames)->get();
 
         return new Response($brands, 201);
     }
 
-    public function merge(MergeBrandsRequest $request) {
-        $receiverId = $request->input("receiver");
-        $fromIds    = $request->input("from");
+    public function syncChildren(AssociateBrandsRequest $request, Brand $brand) {
+        $brands = $request->input("brands");
 
-        $properties = Property::query()->whereHas("tenants", function ($query) use ($fromIds) {
-            $query->whereIn("id", $fromIds);
-        })->get();
-
-        /** @var Property $property */
-        foreach ($properties as $property) {
-            $property->tenants()->detach($fromIds);
-            $property->tenants()->attach($receiverId);
-        }
-
-        Brand::query()->whereIn("id", $fromIds)->delete();
+        $brand->child_brands()->whereNotIn("id", $brands)->update(["parent_id" => null]);
+        Brand::query()->whereIn("id", $brands)->update(["parent_id" => $brand->id]);
 
         return new Response();
     }
 
     public function update(UpdateBrandRequest $request, Brand $brand) {
-        $brand->name = $request->input("name");
+        $brand->name_en   = $request->input("name_en");
+        $brand->name_fr   = $request->input("name_fr");
+        $brand->parent_id = $request->input("parent_id");
         $brand->save();
 
         return new Response($brand, 200);

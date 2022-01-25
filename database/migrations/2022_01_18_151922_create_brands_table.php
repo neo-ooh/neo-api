@@ -17,9 +17,14 @@ class CreateBrandsTable extends Migration {
         Schema::create('brands', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->string("name", 64);
+            $table->string("name_en", 64);
+            $table->string("name_fr", 64);
 
             $table->timestamps();
+        });
+
+        Schema::table("brands", function (Blueprint $table) {
+            $table->foreignId("parent_id")->after("name_fr")->nullable()->constrained("brands", "id");
         });
     }
 

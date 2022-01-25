@@ -17,7 +17,9 @@ use Neo\Enums\Capability;
 class UpdateBrandRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name" => ["required", "string"]
+            "name_en"   => ["required", "string"],
+            "name_fr"   => ["required", "string"],
+            "parent_id" => ["nullable", "integer", "exists:brands,id"]
         ];
     }
 

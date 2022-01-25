@@ -17,7 +17,8 @@ use Neo\Enums\Capability;
 class StoreBrandRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name" => ["required", "string"]
+            "name_en" => ["required", "string"],
+            "name_fr" => ["required", "string"],
         ];
     }
 

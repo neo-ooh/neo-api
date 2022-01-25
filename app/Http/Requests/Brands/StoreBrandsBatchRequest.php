@@ -18,7 +18,7 @@ class StoreBrandsBatchRequest extends FormRequest {
     public function rules(): array {
         return [
             "names"   => ["required", "array"],
-            "names.*" => ["string"]
+            "names.*" => ["string"],
         ];
     }
 

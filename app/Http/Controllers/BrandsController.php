@@ -87,6 +87,8 @@ class BrandsController {
             $query->whereIn("id", $fromIds);
         })->get();
 
+        Brand::query()->whereIn("parent_id", $fromIds)->update(["parent_id" => $brand->id]);
+
         /** @var Property $property */
         foreach ($properties as $property) {
             $property->tenants()->detach($fromIds);
@@ -95,7 +97,7 @@ class BrandsController {
 
         Brand::query()->whereIn("id", $fromIds)->delete();
 
-        return new Response();
+        return new Response($brand->refresh()->load(["child_brands:id,parent_id", "properties.actor:id,name"]));
     }
 
     public function destroy(DestroyBrandRequest $request, Brand $brand) {

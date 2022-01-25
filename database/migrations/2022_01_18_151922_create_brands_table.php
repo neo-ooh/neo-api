@@ -24,7 +24,12 @@ class CreateBrandsTable extends Migration {
         });
 
         Schema::table("brands", function (Blueprint $table) {
-            $table->foreignId("parent_id")->after("name_fr")->nullable()->constrained("brands", "id");
+            $table->foreignId("parent_id")
+                  ->after("name_fr")
+                  ->nullable()
+                  ->constrained("brands", "id")
+                  ->cascadeOnUpdate()
+                  ->nullOnDelete();
         });
     }
 

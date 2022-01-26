@@ -27,10 +27,13 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class FillMissingTrafficValueJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public function __construct(protected int $rewind = 1) {
+    }
+
     public function handle() {
         $output = new ConsoleOutput();
 
-        $date         = Date::now()->subMonths(1);
+        $date         = Date::now()->subMonths($this->rewind);
         $currentYear  = $date->year;
         $currentMonth = $date->month - 1;
 

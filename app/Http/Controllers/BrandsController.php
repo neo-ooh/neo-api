@@ -37,8 +37,8 @@ class BrandsController {
 
     public function store(StoreBrandRequest $request) {
         $brand          = new Brand();
-        $brand->name_en = $request->input("name_en");
-        $brand->name_fr = $request->input("name_fr");
+        $brand->name_en = trim(trim($request->input("name_en")), '"');
+        $brand->name_fr = trim(trim($request->input("name_fr")), '"');
         $brand->save();
 
         return new Response($brand, 201);
@@ -47,8 +47,8 @@ class BrandsController {
     public function storeBatch(StoreBrandsBatchRequest $request) {
         $brandNames = collect($request->input("names"));
         Brand::query()->insert($brandNames->map(fn($brandName) => [
-            "name_en" => $brandName,
-            "name_fr" => $brandName,
+            "name_en" => trim(trim($brandName), '"'),
+            "name_fr" => trim(trim($brandName), '"'),
         ])->toArray());
 
         $brands = Brand::query()->whereIn("name_en", $brandNames)->get();

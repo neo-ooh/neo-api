@@ -21,6 +21,16 @@ use Neo\Http\Requests\Brands\UpdateBrandRequest;
 use Neo\Models\Brand;
 use Neo\Models\Property;
 
+/**
+ * Remove the first and last quote from a quoted string of text
+ *
+ * @param mixed $text
+ * @link https://stackoverflow.com/a/25353877
+ */
+function stripQuotes($text) {
+    return preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3', $text);
+}
+
 class BrandsController {
     public function index(ListBrandsRequest $request): Response {
         $brands = Brand::query()
@@ -37,8 +47,8 @@ class BrandsController {
 
     public function store(StoreBrandRequest $request) {
         $brand          = new Brand();
-        $brand->name_en = trim(trim($request->input("name_en")), '"');
-        $brand->name_fr = trim(trim($request->input("name_fr")), '"');
+        $brand->name_en = stripQuotes($request->input("name_en"));
+        $brand->name_fr = stripQuotes($request->input("name_fr"));
         $brand->save();
 
         return new Response($brand, 201);
@@ -47,8 +57,8 @@ class BrandsController {
     public function storeBatch(StoreBrandsBatchRequest $request) {
         $brandNames = collect($request->input("names"));
         Brand::query()->insert($brandNames->map(fn($brandName) => [
-            "name_en" => trim(trim($brandName), '"'),
-            "name_fr" => trim(trim($brandName), '"'),
+            "name_en" => stripQuotes($brandName),
+            "name_fr" => stripQuotes($brandName),
         ])->toArray());
 
         $brands = Brand::query()->whereIn("name_en", $brandNames)->get();

@@ -127,12 +127,12 @@ class Kernel extends ConsoleKernel {
 
         // Pull traffic data for property with Linkett pairing
         $schedule->job(PullLatestTrafficData::class)->monthly();
+        $schedule->job(FillMissingTrafficValueJob::class)->monthlyOn(2);
 
         // Send Reminder about traffic data to users
         $schedule->job(TrafficRequiredReminder::class)->monthlyOn(7);
 
         // Input last month traffic value were missing
-        $schedule->job(FillMissingTrafficValueJob::class)->monthlyOn(15);
     }
 
     /**

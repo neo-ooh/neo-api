@@ -10,14 +10,15 @@
 
 namespace Neo\Jobs\Traffic;
 
-use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Date;
 use Neo\Models\Property;
 use Neo\Models\PropertyTrafficMonthly;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 
 /**
@@ -26,17 +27,26 @@ use Neo\Models\PropertyTrafficMonthly;
 class FillMissingTrafficValueJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public function __construct(protected int $rewind = 1) {
+    }
+
     public function handle() {
-        $currentYear  = Carbon::now()->year;
-        $currentMonth = Carbon::now()->month - 2;
+        $output = new ConsoleOutput();
+
+        $date         = Date::now()->subMonths($this->rewind);
+        $currentYear  = $date->year;
+        $currentMonth = $date->month - 1;
 
         $properties = Property::with(["traffic", "traffic.data", "address", "address.city", "address.city.province"])->get();
+
+        $output->writeln("Checking traffic value for " . $date->toDateString());
 
         /** @var Property $property */
         foreach ($properties as $property) {
             // Check if the property has a record for this month traffic
             if ($property->traffic->data->first(fn(PropertyTrafficMonthly $t) => $t->year === $currentYear && $t->month === $currentMonth)) {
                 // ignore
+                $output->writeln($property->actor->name . " - has traffic");
                 continue;
             }
 
@@ -45,6 +55,8 @@ class FillMissingTrafficValueJob implements ShouldQueue {
             // Check the missing value strategy for the property.
             // If it is set to default value, we will use this one,
             if ($property->traffic->missing_value_strategy === "USE_PLACEHOLDER") {
+                $output->writeln($property->actor->name . " - using placeholder");
+
                 PropertyTrafficMonthly::query()->create([
                     "property_id" => $property->actor_id,
                     "year"        => $currentYear,
@@ -62,6 +74,7 @@ class FillMissingTrafficValueJob implements ShouldQueue {
             $prevRecord = $property->traffic->data->first(fn(PropertyTrafficMonthly $t) => $t->year === 2019 && $t->month === $currentMonth);
 
             if (!$prevRecord) {
+                $output->writeln($property->actor->name . " - no previous record");
                 continue;
             }
 
@@ -74,6 +87,8 @@ class FillMissingTrafficValueJob implements ShouldQueue {
                 "month"       => $currentMonth,
                 "temporary"   => $traffic
             ]);
+
+            $output->writeln($property->actor->name . " - reused previous record");
 
             EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $currentYear, $currentMonth);
         }

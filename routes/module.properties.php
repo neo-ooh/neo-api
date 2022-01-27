@@ -220,4 +220,5 @@ Route::group([
 
     Route:: get("properties/{property}/tenants", PropertiesTenantsController::class . "@index");
     Route::post("properties/{property}/tenants", PropertiesTenantsController::class . "@sync");
+    Route::delete("properties/{property}/tenants/{brand}", PropertiesTenantsController::class . "@remove");
 });

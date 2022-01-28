@@ -5,6 +5,7 @@ namespace Neo\Http\Controllers;
 use Gate;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\PropertiesTraffic\ListTrafficRequest;
 use Neo\Http\Requests\PropertiesTraffic\StoreTrafficRequest;
@@ -77,6 +78,8 @@ class PropertiesTrafficController extends Controller {
                                 "uid" => $request->input("venue_id")
                             ]);
         }
+
+        Cache::forget($trafficSettings->getRollingWeeklyTrafficCacheKey());
 
         if ($forcePull) {
             Artisan::queue("property:pull-traffic $property->actor_id");

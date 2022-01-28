@@ -13,18 +13,17 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\CampaignPlannerSaves\DestroySaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\ListSavesRequest;
-use Neo\Http\Requests\CampaignPlannerSaves\StoreSaveRequest;
+use Neo\Http\Requests\CampaignPlannerSaves\StorePolygonsRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\UpdateSaveRequest;
 use Neo\Models\Actor;
 use Neo\Models\CampaignPlannerPolygon;
-use Neo\Models\CampaignPlannerSave;
 
 class CampaignPlannerPolygonsController {
     public function index(ListSavesRequest $request, Actor $actor) {
         return new Response($actor->campaign_planner_polygons);
     }
 
-    public function store(StoreSaveRequest $request, Actor $actor) {
+    public function store(StorePolygonsRequest $request, Actor $actor) {
         $save = new CampaignPlannerPolygon([
             "actor_id" => $actor->id,
             "name"     => $request->input("name"),

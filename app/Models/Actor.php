@@ -271,7 +271,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->hasMany(CampaignPlannerSave::class, 'actor_id', 'id');
     }
 
-    public function campaign_planner_polygons() {
+    public function campaign_planner_polygons(): \Illuminate\Database\Eloquent\Relations\HasMany {
         return $this->hasMany(CampaignPlannerPolygon::class, 'actor_id', 'id');
     }
 

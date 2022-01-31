@@ -12,6 +12,7 @@ namespace Neo\Auth;
 
 use Exception;
 use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -52,17 +53,20 @@ abstract class JwtGuard implements Guard {
 
     /**
      * Specify if a user who has not validated its two factor authentication is allowed by the guard
+     *
      * @var bool
      */
     protected bool $allowNonValidated2FA;
 
     /** Specify if a user who has not approved the terms of service is allowed by the guard
+     *
      * @var bool
      */
     protected bool $allowNonApprovedTos;
 
     /**
      * Specify if a user who's account is disabled is allowed by the guard
+     *
      * @var bool
      */
     protected bool $allowDisabledAccount;
@@ -73,9 +77,9 @@ abstract class JwtGuard implements Guard {
      *
      * @param UserProvider $actorProvider
      */
-    public function __construct (UserProvider $actorProvider) {
+    public function __construct(UserProvider $actorProvider) {
         $this->provider = $actorProvider;
-        $this->token = $this->getToken();
+        $this->token    = $this->getToken();
 
         // Try to grab and store the user
         // Do we have a token ?
@@ -94,7 +98,7 @@ abstract class JwtGuard implements Guard {
         }
 
         // Make sure a group is not getting logged in
-        if($actor->is_group) {
+        if ($actor->is_group) {
             return;
         }
 
@@ -112,13 +116,14 @@ abstract class JwtGuard implements Guard {
      *
      * @return array|null
      */
-    protected function getToken (): ?array {
+    protected function getToken(): ?array {
         // Get the Authorization/Bearer token
-        $token = Request::bearerToken();
+        $token     = Request::bearerToken();
+        $publicKey = config('auth.jwt_public_key');
 
         // Try to decode the token
         try {
-            $data = JWT::decode($token, config('auth.jwt_public_key'), [ 'RS256' ]);
+            $data = JWT::decode($token, new Key($publicKey, 'RS256'));
         } catch (Exception $ex) {
             // Invalid token, this is not a user
             return null;
@@ -131,12 +136,12 @@ abstract class JwtGuard implements Guard {
         // If its an impersonating token, we need to validate its accompanying token
         $isImpersonating = array_key_exists("imp", $this->token) && $this->token["imp"];
 
-        if($isImpersonating && !$this->validateImpersonator()) {
+        if ($isImpersonating && !$this->validateImpersonator()) {
             // We could not validate the impersonator, reject the auth
             return false;
         }
 
-        if($isImpersonating) {
+        if ($isImpersonating) {
             return true;
         }
 
@@ -145,17 +150,17 @@ abstract class JwtGuard implements Guard {
 
     public function checkActorMeetsCriteria(Actor $actor): bool {
         // Validate that the token has its two factor auth OR that the guard allows it to be missing
-        if(!$actor->is2FAValid() && !$this->allowNonValidated2FA) {
+        if (!$actor->is2FAValid() && !$this->allowNonValidated2FA) {
             return false;
         }
 
         // Validate that the user has approved the Tos
-        if(!$actor->tos_accepted && !$this->allowNonApprovedTos) {
+        if (!$actor->tos_accepted && !$this->allowNonApprovedTos) {
             return false;
         }
 
         // Validate the the user account is not locked, OR that a locked account is allowed to log in
-        if($actor->is_locked && !$this->allowDisabledAccount) {
+        if ($actor->is_locked && !$this->allowDisabledAccount) {
             return false;
         }
 
@@ -164,6 +169,7 @@ abstract class JwtGuard implements Guard {
 
     /**
      * Validate the existence of a second Authorization token validating the use of the main token for impersonation.
+     *
      * @return bool
      */
     protected function validateImpersonator(): bool {
@@ -171,14 +177,14 @@ abstract class JwtGuard implements Guard {
 
         try {
             $impersonatorData = (array)JWT::decode($impersonatorToken, config('auth.jwt_public_key'), ['RS256']);
-        } catch(Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
 
         $impersonator = Actor::findOrFail($impersonatorData["uid"]);
 
         // Validate the impersonator and make sure it has the capability to impersonate
-        if(!$this->checkActorMeetsCriteria($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate())) {
+        if (!$this->checkActorMeetsCriteria($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate())) {
             return false;
         }
 
@@ -191,7 +197,7 @@ abstract class JwtGuard implements Guard {
      *
      * @return bool
      */
-    public function check (): bool {
+    public function check(): bool {
         return !is_null($this->actor);
     }
 
@@ -200,7 +206,7 @@ abstract class JwtGuard implements Guard {
      *
      * @return bool
      */
-    public function guest (): bool {
+    public function guest(): bool {
         // A guest is everything but a user
         return !$this->check();
     }
@@ -210,7 +216,7 @@ abstract class JwtGuard implements Guard {
      *
      * @return Authenticatable|Actor|null
      */
-    public function user () {
+    public function user() {
         return $this->actor;
     }
 
@@ -219,7 +225,7 @@ abstract class JwtGuard implements Guard {
      *
      * @return int|null
      */
-    public function id () {
+    public function id() {
         if (is_null($this->user())) {
             return null;
         }
@@ -234,7 +240,7 @@ abstract class JwtGuard implements Guard {
      *
      * @return bool
      */
-    public function validate (array $credentials = []): bool {
+    public function validate(array $credentials = []): bool {
         $actor = $this->provider->retrieveByCredentials($credentials);
 
         if (is_null($actor)) {
@@ -253,7 +259,7 @@ abstract class JwtGuard implements Guard {
      *
      * @return void
      */
-    public function setUser (?Authenticatable $user): void {
+    public function setUser(?Authenticatable $user): void {
         /* Authenticatable => Actor */
         $this->actor = $user;
     }

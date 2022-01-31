@@ -28,7 +28,6 @@ class AuthServiceProvider extends ServiceProvider {
      * @return void
      */
     public function register(): void {
-        // Register convenient FFMpeg initializer
         $this->app->bind(UserProvider::class, Auth::createUserProvider());
     }
 

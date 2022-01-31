@@ -11,8 +11,8 @@
 namespace Neo\Http\Controllers;
 
 use Carbon\Carbon;
+use Illuminate\Http\Response;
 use Neo\Documents\XLSX\Worksheet;
-use Neo\Exceptions\InvalidRequestException;
 use Neo\Http\Requests\Impressions\ExportBroadsignImpressionsRequest;
 use Neo\Models\Location;
 use Neo\Models\OpeningHours;
@@ -33,13 +33,21 @@ class ImpressionsController {
         $location = Location::query()->where("external_id", "=", $displayUnitId)->first();
 
         if (!$location) {
-            throw new InvalidRequestException("The provided Display Unit Id is not registered on Connect.");
+            return new Response([
+                "error"   => true,
+                "type"    => "unknown-value",
+                "message" => "The provided Display Unit Id is not registered on Connect.",
+            ], 400);
         }
 
         $config = Broadcast::network($location->network_id)->getConfig();
 
         if (!($config instanceof BroadSignConfig)) {
-            throw new InvalidRequestException("The provided Display Unit Id is not a BroadSign Display Unit.");
+            return new Response([
+                "error"   => true,
+                "type"    => "invalid-value",
+                "message" => "The provided Display Unit Id is not a BroadSign Display Unit.",
+            ], 400);
         }
 
         $client = new BroadsignClient($config);
@@ -53,7 +61,11 @@ class ImpressionsController {
                             ->first();
 
         if (!$product) {
-            throw new InvalidRequestException("The Display Unit is not associated with a product.");
+            return new Response([
+                "error"   => true,
+                "type"    => "invalid-value",
+                "message" => "The Display Unit is not associated with a product.",
+            ], 400);
         }
 
         /** @var Property $property */

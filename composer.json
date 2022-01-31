@@ -24,7 +24,7 @@
     "doctrine/dbal": "^3.1.4",
     "edujugon/laradoo": "dev-php_8",
     "fideloper/proxy": "^4.4",
-    "firebase/php-jwt": "^5.2",
+    "firebase/php-jwt": "^6",
     "fruitcake/laravel-cors": "^2.0",
     "grimzy/laravel-mysql-spatial": "^5.0",
     "guzzlehttp/guzzle": "^7.0.1",

@@ -19,7 +19,7 @@ use Neo\Models\Actor;
 use Neo\Models\CampaignPlannerPolygon;
 
 class CampaignPlannerPolygonsController {
-    public function index(ListSavesRequest $request, Actor $actor) {
+    public function index(ListSavesRequest $request, Actor $actor): Response {
         return new Response($actor->campaign_planner_polygons);
     }
 

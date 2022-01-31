@@ -34,6 +34,11 @@ class SynchronizePropertyData implements ShouldQueue {
         /** @var Property $property */
         $property = Property::findOrFail($this->propertyId);
 
+        // Ignore property #252 as it is used for testing
+        if ($property->getKey() === 252) {
+            return;
+        }
+
         // Check the property is matched with an odoo property
         if (!$property->odoo) {
             return;

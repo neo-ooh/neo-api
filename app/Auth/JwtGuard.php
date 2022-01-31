@@ -174,9 +174,10 @@ abstract class JwtGuard implements Guard {
      */
     protected function validateImpersonator(): bool {
         $impersonatorToken = Str::substr(Request::header('X-Impersonator-Authorization', ''), strlen("Bearer "));
+        $publicKey         = config("auth.jwt_public_key");
 
         try {
-            $impersonatorData = (array)JWT::decode($impersonatorToken, config('auth.jwt_public_key'), ['RS256']);
+            $impersonatorData = (array)JWT::decode($impersonatorToken, new Key($publicKey, 'RS256'));
         } catch (Exception $e) {
             return false;
         }

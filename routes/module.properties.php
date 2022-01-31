@@ -59,6 +59,7 @@ Route::group([
     Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 
     Route::get("properties/{property}/_dump", PropertiesController::class . "@dump");
+    Route::get("networks/{network}/_dump_properties", PropertiesController::class . "@dumpNetwork");
 
 
     /*
@@ -220,5 +221,4 @@ Route::group([
 
     Route:: get("properties/{property}/tenants", PropertiesTenantsController::class . "@index");
     Route::post("properties/{property}/tenants", PropertiesTenantsController::class . "@sync");
-    Route::delete("properties/{property}/tenants/{brand}", PropertiesTenantsController::class . "@remove");
 });

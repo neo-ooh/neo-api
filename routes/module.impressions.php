@@ -11,7 +11,6 @@
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\ImpressionsController;
 use Neo\Http\Controllers\ImpressionsModelsController;
-use Neo\Http\Controllers\TrafficController;
 use Neo\Models\ImpressionsModel;
 
 Route::group([
@@ -43,14 +42,6 @@ Route::group([
         ImpressionsModelsController::class . "@updateProduct");
     Route::delete("products/{product}/impressions-models/{impressionsModel}",
         ImpressionsModelsController::class . "@destroyProduct");
-
-    /*
-    |----------------------------------------------------------------------
-    | Traffic export
-    |----------------------------------------------------------------------
-    */
-
-    Route::post("traffic/_export", TrafficController::class . "@export");
 
     /*
     |----------------------------------------------------------------------

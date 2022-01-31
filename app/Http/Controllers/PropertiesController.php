@@ -6,11 +6,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
-use Neo\Documents\PropertyDump\MultiPropertyDump;
 use Neo\Documents\PropertyDump\PropertyDump;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
-use Neo\Http\Requests\Properties\DumpPropertiesRequest;
 use Neo\Http\Requests\Properties\DumpPropertyRequest;
 use Neo\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Http\Requests\Properties\ShowPropertyRequest;
@@ -25,6 +23,7 @@ use Neo\Models\Actor;
 use Neo\Models\Address;
 use Neo\Models\City;
 use Neo\Models\Location;
+use Neo\Models\Network;
 use Neo\Models\Property;
 use Neo\Models\Province;
 
@@ -111,7 +110,7 @@ class PropertiesController extends Controller {
         return $properties;
     }
 
-    public function store(StorePropertyRequest $request) {
+    public function store(StorePropertyRequest $request): Response {
         // We need to make sure that the targeted actor is indeed a group
         $actorId = $request->input("actor_id");
         /** @var Actor $actor */
@@ -164,7 +163,7 @@ class PropertiesController extends Controller {
         return new Response($property, 201);
     }
 
-    public function show(ShowPropertyRequest $request, int $propertyId) {
+    public function show(ShowPropertyRequest $request, int $propertyId): Response {
         // Is this group a property ?
         /** @var Property $property */
         $property  = Property::query()->find($propertyId);
@@ -225,7 +224,7 @@ class PropertiesController extends Controller {
         return new Response($actor);
     }
 
-    public function update(UpdatePropertyRequest $request, Property $property) {
+    public function update(UpdatePropertyRequest $request, Property $property): Response {
         $property->network_id  = $request->input("network_id");
         $property->has_tenants = $request->input("has_tenants");
         $property->save();
@@ -233,7 +232,7 @@ class PropertiesController extends Controller {
         return new Response($property);
     }
 
-    public function updateAddress(UpdateAddressRequest $request, Property $property) {
+    public function updateAddress(UpdateAddressRequest $request, Property $property): Response {
         /** @var Province $province */
         $province = Province::query()
                             ->where("slug", "=", $request->input("province"))
@@ -264,7 +263,7 @@ class PropertiesController extends Controller {
         return new Response($address);
     }
 
-    public function destroy(DestroyPropertyRequest $request, Property $property) {
+    public function destroy(DestroyPropertyRequest $request, Property $property): Response {
         $address = $property->address;
         $property->pictures->each(fn($picture) => $picture->delete());
 
@@ -277,22 +276,20 @@ class PropertiesController extends Controller {
         return new Response(["status" => "ok"]);
     }
 
-    public function dump(DumpPropertyRequest $request, Property $property) {
-        $doc = new PropertyDump($property->getKey());
+    public function dump(DumpPropertyRequest $request, Property $property): void {
+        $doc = new PropertyDump([$property->getKey()]);
         $doc->build();
         $doc->output();
     }
 
-    /**
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
-     * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
-     */
-    public function networkDump(DumpPropertiesRequest $request) {
-        $propertiesIds = Property::query()->select("actor_id")
-                                 ->where("network_id", "=", $request->input("network_id"))
-                                 ->get()
-                                 ->pluck("actor_id");
-        $doc           = new MultiPropertyDump($propertiesIds);
+    public function dumpNetwork(DumpPropertyRequest $request, Network $network): void {
+        $doc = new PropertyDump(Property::query()
+                                        ->where("network_id", "=", $network->getKey())
+                                        ->setEagerLoads([])
+                                        ->get()
+                                        ->pluck("actor_id")
+                                        ->toArray());
+
         $doc->build();
         $doc->output();
     }

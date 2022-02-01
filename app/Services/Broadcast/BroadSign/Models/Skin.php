@@ -37,9 +37,9 @@ use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
  * @property int    $y
  * @property int    $z
  *
- * @method static Skin[] all(BroadsignClient $client)
- * @method static Skin[] get(BroadsignClient $client, int $frameID)
- * @method static Skin[] byReservable(BroadsignClient $client, array $params)
+ * @method static Collection all(BroadsignClient $client)
+ * @method static Collection get(BroadsignClient $client, int $frameID)
+ * @method static Collection byReservable(BroadsignClient $client, array $params)
  * @method static Collection byDisplayUnit(BroadsignClient $client, int|array $params)
  */
 class Skin extends BroadSignModel {

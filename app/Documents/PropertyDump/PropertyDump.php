@@ -74,6 +74,9 @@ class PropertyDump extends XLSXDocument {
 
     protected Collection $displayTypes;
     protected Collection $players;
+    protected Collection $dayParts;
+    protected Collection $skins;
+    protected Collection $loopPolicies;
 
     protected Collection $displayUnitsRows;
     protected Collection $playersRows;
@@ -120,21 +123,25 @@ class PropertyDump extends XLSXDocument {
         $this->displayTypes = Format::getMultiple($client, $this->properties
             ->flatMap(fn($property) => $property->actor
                 ->own_locations
-                ->pluck("external_id")
-            )->toArray());
+                ->pluck("display_type.external_id")
+            )->unique()->toArray());
 
         $this->players = BSPlayer::getMultiple($client, $this->properties
             ->flatMap(fn($property) => $property->actor
                 ->own_locations
                 ->flatMap(fn($location) => $location->players->pluck("external_id"))
-            )->toArray());
+            )->unique()->toArray());
+
+        $this->dayParts     = DayPart::all($client);
+        $this->skins        = Skin::all($client);
+        $this->loopPolicies = LoopPolicy::all($client);
 
         foreach ($this->properties as $property) {
             if (!$property) {
                 return false;
             }
 
-            [$displayUnitsRows, $playersRows] = $this->buildPropertyRows($property);
+            [$displayUnitsRows, $playersRows] = $this->buildPropertyRows($property, $client);
 
             $this->displayUnitsRows->push(...$displayUnitsRows);
             $this->playersRows->push(...$playersRows);
@@ -143,7 +150,7 @@ class PropertyDump extends XLSXDocument {
         return true;
     }
 
-    protected function buildPropertyRows(Property $property): array {
+    protected function buildPropertyRows(Property $property, BroadsignClient $client): array {
         $displayUnitsRows = collect();
         $playersRows      = collect();
 
@@ -191,15 +198,6 @@ class PropertyDump extends XLSXDocument {
             }
 
             $displayUnitPlayersData = collect();
-
-            // Start by pulling the player from Broadsign. We ignore non-BroadSign locations
-            $config = Broadcast::network($location->network_id)->getConfig();
-
-            if ($config->broadcaster !== Broadcaster::BROADSIGN) {
-                continue;
-            }
-
-            $client = new BroadsignClient($config);
 
             $bsDisplayType = $this->displayTypes->firstWhere("id", "=", $location->display_type->external_id);
             $bsPlayers     = $this->players->whereIn("id", $location->players->pluck("external_id"));
@@ -252,8 +250,8 @@ class PropertyDump extends XLSXDocument {
     protected function getPropertyImpressionsForBroadSign(BroadSignClient $client, Location $location, float $openLength, float $weeklyTraffic) {
         $now = Carbon::now()->startOfWeek(CarbonInterface::MONDAY);
 
-        $bsSkins    = Skin::byDisplayUnit($client, ["display_unit_id" => $location->external_id]);
-        $bsDayParts = DayPart::getMultiple($client, $bsSkins->pluck("parent_id")->toArray());
+        $bsDayParts = $this->dayParts->where("parent_id", "=", $location->external_id);
+        $bsSkins    = $this->skins->whereIn("parent_id", $bsDayParts->pluck("id"));
 
         // Get the proper frame
         // 1. Filter by dates
@@ -285,7 +283,7 @@ class PropertyDump extends XLSXDocument {
         ], $model->variables));
 
         /** @var LoopPolicy $loopPolicy */
-        $loopPolicy = LoopPolicy::get($client, $skin->loop_policy_id);
+        $loopPolicy = $this->loopPolicies->firstWhere("id", "=", $skin->loop_policy_id);
         $adsPerLoop = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
 
         return $impressionsPerWeekForOneAd * $adsPerLoop;

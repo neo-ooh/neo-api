@@ -38,6 +38,7 @@ use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
  * @property string virtual_start_date
  * @property int    weight
  *
+ * @method static Collection<DayPart> all(BroadsignClient $client)
  * @method static DayPart get(BroadsignClient $client, int $dayPartId)
  */
 class DayPart extends BroadSignModel {
@@ -63,6 +64,9 @@ class DayPart extends BroadSignModel {
 
     protected static function actions(): array {
         return [
+            "all"          => Endpoint::get("/day_part/v5/")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
             "get"          => Endpoint::get("/day_part/v5/{id}")
                                       ->unwrap(static::$unwrapKey)
                                       ->parser(new SingleResourcesParser(static::class))

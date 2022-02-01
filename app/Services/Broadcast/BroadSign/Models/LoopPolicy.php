@@ -39,8 +39,8 @@ use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
  *
  * @property int    $max_booking
  *
- * @method static LoopPolicy[] all(BroadsignClient $client)
- * @method static LoopPolicy[] get(BroadsignClient $client, int $loopPolicyID)
+ * @method static Collection all(BroadsignClient $client)
+ * @method static Collection get(BroadsignClient $client, int $loopPolicyID)
  */
 class LoopPolicy extends BroadSignModel {
 
@@ -48,7 +48,7 @@ class LoopPolicy extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all"          => Endpoint::get("/loop_policy/v10/all")
+            "all"          => Endpoint::get("/loop_policy/v10")
                                       ->unwrap(static::$unwrapKey)
                                       ->parser(new MultipleResourcesParser(static::class)),
             "get"          => Endpoint::get("/loop_policy/v10/{id}")

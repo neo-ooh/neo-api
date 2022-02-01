@@ -282,7 +282,7 @@ class PropertiesController extends Controller {
         $doc->output();
     }
 
-    public function dumpNetwork(DumpPropertyRequest $request, Network $network): void {
+    public function dumpNetwork(DumpPropertyRequest $request, Network $network) {
         $doc = new PropertyDump(Property::query()
                                         ->where("network_id", "=", $network->getKey())
                                         ->setEagerLoads([])
@@ -291,6 +291,8 @@ class PropertiesController extends Controller {
                                         ->toArray());
 
         $doc->build();
-        $doc->output();
+//        $doc->output();
+
+        return new Response();
     }
 }

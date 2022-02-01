@@ -157,7 +157,7 @@ class PropertyDump extends XLSXDocument {
         $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic($property->network_id))->median();
 
         $addressComponents = [
-            "Address"      => trim($property->address->line_1 . " " . $property->address->line_2),
+            "Address"      => trim($property->address->line_1 . " " . !!$property->address->line_2 ? $property->address->line_2 : ""),
             "City"         => $property->address->city->name,
             "Province"     => $property->address->city->province->slug,
             "Country"      => $property->address->city->province->country->slug,

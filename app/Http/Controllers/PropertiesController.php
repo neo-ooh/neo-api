@@ -283,6 +283,7 @@ class PropertiesController extends Controller {
     }
 
     public function dumpNetwork(DumpPropertyRequest $request, Network $network) {
+        set_time_limit(90);
         $doc = new PropertyDump(Property::query()
                                         ->where("network_id", "=", $network->getKey())
                                         ->setEagerLoads([])

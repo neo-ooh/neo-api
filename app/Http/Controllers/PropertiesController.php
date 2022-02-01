@@ -291,8 +291,8 @@ class PropertiesController extends Controller {
                                         ->toArray());
 
         $doc->build();
-//        $doc->output();
+        $doc->output();
 
-        return new Response();
+//        return new Response();
     }
 }

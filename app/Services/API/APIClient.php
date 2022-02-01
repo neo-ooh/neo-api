@@ -2,8 +2,11 @@
 
 namespace Neo\Services\API;
 
+use Clockwork\Support\Vanilla\Clockwork;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Profiling\Middleware;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Client\Response;
@@ -22,8 +25,14 @@ class APIClient implements APIClientInterface {
 //        $stack = new HandlerStack();
 //        $stack->setHandler(new CurlHandler());
 
+        $handlerStack = HandlerStack::create();
+        $handlerStack->unshift(new Middleware(Clockwork::instance()->getClockwork()->timeline()));
 
-        $client  = new Client($endpoint->options);
+        $clientOptions = array_merge([
+            "handler" => $handlerStack,
+        ], $endpoint->options);
+
+        $client  = new Client($clientOptions);
         $request = new Request($endpoint->method, $endpoint->getUrl(), $headers);
 
         // Create a middleware that echoes parts of the request.

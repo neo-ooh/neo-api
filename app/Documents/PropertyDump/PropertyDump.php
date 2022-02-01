@@ -72,6 +72,9 @@ class PropertyDump extends XLSXDocument {
 
     protected \Illuminate\Database\Eloquent\Collection $properties;
 
+    protected Collection $displayTypes;
+    protected Collection $players;
+
     protected Collection $displayUnitsRows;
     protected Collection $playersRows;
 
@@ -106,6 +109,26 @@ class PropertyDump extends XLSXDocument {
         $this->displayUnitsRows = collect();
         $this->playersRows      = collect();
 
+        $config = Broadcast::network($this->properties->first()->network_id)->getConfig();
+
+        if ($config->broadcaster !== Broadcaster::BROADSIGN) {
+            throw new \Exception("Only Broadsign properties are supported");
+        }
+
+        $client = new BroadsignClient($config);
+
+        $this->displayTypes = Format::getMultiple($client, $this->properties
+            ->flatMap(fn($property) => $property->actor
+                ->own_locations
+                ->pluck("external_id")
+            )->toArray());
+
+        $this->players = BSPlayer::getMultiple($client, $this->properties
+            ->flatMap(fn($property) => $property->actor
+                ->own_locations
+                ->flatMap(fn($location) => $location->players->pluck("external_id"))
+            )->toArray());
+
         foreach ($this->properties as $property) {
             if (!$property) {
                 return false;
@@ -118,6 +141,154 @@ class PropertyDump extends XLSXDocument {
         }
 
         return true;
+    }
+
+    protected function buildPropertyRows(Property $property): array {
+        $displayUnitsRows = collect();
+        $playersRows      = collect();
+
+        $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic($property->network_id))->median();
+
+        $addressComponents = [
+            "Address"      => trim($property->address->line_1 . " " . $property->address->line_2),
+            "City"         => $property->address->city->name,
+            "Province"     => $property->address->city->province->slug,
+            "Country"      => $property->address->city->province->country->slug,
+            "Postal Code"  => $property->address->zipcode,
+            "Full Address" => $property->address->string_representation,
+            "Longitude"    => $property->address->geolocation->getLng(),
+            "Latitude"     => $property->address->geolocation->getLat(),
+        ];
+
+        $operatingHoursComponents = [
+            "Monday Open"     => $property->opening_hours->firstWhere("weekday", "=", 1)?->open_at->toTimeString('minutes'),
+            "Monday Close"    => $property->opening_hours->firstWhere("weekday", "=", 1)?->close_at->toTimeString('minutes'),
+            "Tuesday Open"    => $property->opening_hours->firstWhere("weekday", "=", 2)?->open_at->toTimeString('minutes'),
+            "Tuesday Close"   => $property->opening_hours->firstWhere("weekday", "=", 2)?->close_at->toTimeString('minutes'),
+            "Wednesday Open"  => $property->opening_hours->firstWhere("weekday", "=", 3)?->open_at->toTimeString('minutes'),
+            "Wednesday Close" => $property->opening_hours->firstWhere("weekday", "=", 3)?->close_at->toTimeString('minutes'),
+            "Thursday Open"   => $property->opening_hours->firstWhere("weekday", "=", 4)?->open_at->toTimeString('minutes'),
+            "Thursday Close"  => $property->opening_hours->firstWhere("weekday", "=", 4)?->close_at->toTimeString('minutes'),
+            "Friday Open"     => $property->opening_hours->firstWhere("weekday", "=", 5)?->open_at->toTimeString('minutes'),
+            "Friday Close"    => $property->opening_hours->firstWhere("weekday", "=", 5)?->close_at->toTimeString('minutes'),
+            "Saturday Open"   => $property->opening_hours->firstWhere("weekday", "=", 6)?->open_at->toTimeString('minutes'),
+            "Saturday Close"  => $property->opening_hours->firstWhere("weekday", "=", 6)?->close_at->toTimeString('minutes'),
+            "Sunday Open"     => $property->opening_hours->firstWhere("weekday", "=", 7)?->open_at->toTimeString('minutes'),
+            "Sunday Close"    => $property->opening_hours->firstWhere("weekday", "=", 7)?->close_at->toTimeString('minutes'),
+            "Total Hours"     => $property->opening_hours->map(fn($hours) => $hours->open_at->floatDiffInHours($hours->close_at, true))
+                                                         ->sum(),
+        ];
+
+        $openLengths = $property->opening_hours->map(
+            fn(OpeningHours $hours) => $hours->open_at->diffInMinutes($hours->close_at, true)
+        )->sum();
+
+        /** @var Location $location */
+        foreach ($property->actor->own_locations as $location) {
+            // Skip locations not associated with products
+            if ($location->products->count() === 0) {
+                continue;
+            }
+
+            $displayUnitPlayersData = collect();
+
+            // Start by pulling the player from Broadsign. We ignore non-BroadSign locations
+            $config = Broadcast::network($location->network_id)->getConfig();
+
+            if ($config->broadcaster !== Broadcaster::BROADSIGN) {
+                continue;
+            }
+
+            $client = new BroadsignClient($config);
+
+            $bsDisplayType = $this->displayTypes->firstWhere("id", "=", $location->display_type->external_id);
+            $bsPlayers     = $this->players->whereIn("id", $location->players->pluck("external_id"));
+
+            $impressionsPerWeek = $this->getPropertyImpressionsForBroadSign($client, $location, $openLengths, $weeklyTraffic);
+
+            $totalScreens          = $location->products->where("is_bonus", "=", false)->first()->quantity;
+            $impressionsPerScreens = $impressionsPerWeek / $totalScreens;
+
+            /** @var Player $player */
+            foreach ($location->players as $player) {
+                $player = $bsPlayers->firstWhere("id", "=", $player->external_id);
+
+                $displayUnitPlayersData->push(array_merge([
+                    "Venue Name"      => $property->actor->name,
+                    "Display Unit ID" => $location->external_id,
+                    "Player ID"       => $player->id,
+                    "Name"            => $player->name,
+                    "Screens"         => $player->nscreens,
+                    "Width"           => $bsDisplayType->res_width,
+                    "Height"          => $bsDisplayType->res_height,
+                    "Resolution"      => $bsDisplayType->res_width . "x" . $bsDisplayType->res_height,
+                ], $addressComponents, $operatingHoursComponents, [
+                    "Weekly Traffic"                => $weeklyTraffic,
+                    "Weekly Impressions"            => $impressionsPerScreens * $player->nscreens,
+                    "Weekly Impressions per screen" => $impressionsPerScreens,
+                ]));
+            }
+
+            $playersRows->push(...$displayUnitPlayersData);
+            $displayUnitsRows->push(array_merge([
+                "Venue Name"      => $property->actor->name,
+                "Display Unit ID" => $location->external_id,
+                "Name"            => $location->name,
+                "Screens"         => $displayUnitPlayersData->sum("Screens"),
+                "Width"           => $displayUnitPlayersData->first()["Width"],
+                "Height"          => $displayUnitPlayersData->first()["Height"],
+                "Resolution"      => $displayUnitPlayersData->first()["Resolution"]
+            ], $addressComponents, $operatingHoursComponents, [
+                "Weekly Traffic"     => $weeklyTraffic,
+                "Weekly Impressions" => $impressionsPerWeek,
+            ]));
+        }
+
+        return [$displayUnitsRows, $playersRows];
+    }
+
+
+    /** @noinspection PhpSuspiciousNameCombinationInspection */
+    protected function getPropertyImpressionsForBroadSign(BroadSignClient $client, Location $location, float $openLength, float $weeklyTraffic) {
+        $now = Carbon::now()->startOfWeek(CarbonInterface::MONDAY);
+
+        $bsSkins    = Skin::byDisplayUnit($client, ["display_unit_id" => $location->external_id]);
+        $bsDayParts = DayPart::getMultiple($client, $bsSkins->pluck("parent_id")->toArray());
+
+        // Get the proper frame
+        // 1. Filter by dates
+        // 2. Then by name if required
+        $skins = $bsSkins->filter(function (Skin $skin) use ($bsDayParts, $now) {
+            /** @var DayPart $dayPart */
+            $dayPart      = $bsDayParts->firstWhere("id", "=", $skin->parent_id);
+            $dayPartStart = Carbon::parse($dayPart->virtual_start_date)->setYear($now->year);
+            $dayPartEnd   = Carbon::parse($dayPart->virtual_end_date)->setYear($now->year);
+            return $dayPartStart->isBefore($now) && $dayPartEnd->isAfter($now);
+        });
+
+        /** @var Skin $skin */
+        $skin = $skins->first(fn(Skin $skin) => str_starts_with($skin->name, "Main") || str_starts_with($skin->name, "Primary"), $skins->first());
+
+        // Calculate impressions
+        /** @var Product $product */
+        $product = $location->products->where("is_bonus", "=", false)->first();
+
+        if (!$product || !($model = $product->getImpressionModel($now))) {
+            return 0;
+        }
+
+        $el                         = new ExpressionLanguage();
+        $impressionsPerWeekForOneAd = $el->evaluate($model->formula, array_merge([
+            "traffic" => $weeklyTraffic,
+            "faces"   => $product->quantity,
+            "spots"   => 1
+        ], $model->variables));
+
+        /** @var LoopPolicy $loopPolicy */
+        $loopPolicy = LoopPolicy::get($client, $skin->loop_policy_id);
+        $adsPerLoop = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
+
+        return $impressionsPerWeekForOneAd * $adsPerLoop;
     }
 
     /**
@@ -235,154 +406,5 @@ class PropertyDump extends XLSXDocument {
      */
     public function getName(): string {
         return "Property Dump";
-    }
-
-    protected function buildPropertyRows(Property $property): array {
-        $displayUnitsRows = collect();
-        $playersRows      = collect();
-
-        $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic($property->network_id))->median();
-
-        $addressComponents = [
-            "Address"      => trim($property->address->line_1 . " " . $property->address->line_2),
-            "City"         => $property->address->city->name,
-            "Province"     => $property->address->city->province->slug,
-            "Country"      => $property->address->city->province->country->slug,
-            "Postal Code"  => $property->address->zipcode,
-            "Full Address" => $property->address->string_representation,
-            "Longitude"    => $property->address->geolocation->getLng(),
-            "Latitude"     => $property->address->geolocation->getLat(),
-        ];
-
-        $operatingHoursComponents = [
-            "Monday Open"     => $property->opening_hours->firstWhere("weekday", "=", 1)?->open_at->toTimeString('minutes'),
-            "Monday Close"    => $property->opening_hours->firstWhere("weekday", "=", 1)?->close_at->toTimeString('minutes'),
-            "Tuesday Open"    => $property->opening_hours->firstWhere("weekday", "=", 2)?->open_at->toTimeString('minutes'),
-            "Tuesday Close"   => $property->opening_hours->firstWhere("weekday", "=", 2)?->close_at->toTimeString('minutes'),
-            "Wednesday Open"  => $property->opening_hours->firstWhere("weekday", "=", 3)?->open_at->toTimeString('minutes'),
-            "Wednesday Close" => $property->opening_hours->firstWhere("weekday", "=", 3)?->close_at->toTimeString('minutes'),
-            "Thursday Open"   => $property->opening_hours->firstWhere("weekday", "=", 4)?->open_at->toTimeString('minutes'),
-            "Thursday Close"  => $property->opening_hours->firstWhere("weekday", "=", 4)?->close_at->toTimeString('minutes'),
-            "Friday Open"     => $property->opening_hours->firstWhere("weekday", "=", 5)?->open_at->toTimeString('minutes'),
-            "Friday Close"    => $property->opening_hours->firstWhere("weekday", "=", 5)?->close_at->toTimeString('minutes'),
-            "Saturday Open"   => $property->opening_hours->firstWhere("weekday", "=", 6)?->open_at->toTimeString('minutes'),
-            "Saturday Close"  => $property->opening_hours->firstWhere("weekday", "=", 6)?->close_at->toTimeString('minutes'),
-            "Sunday Open"     => $property->opening_hours->firstWhere("weekday", "=", 7)?->open_at->toTimeString('minutes'),
-            "Sunday Close"    => $property->opening_hours->firstWhere("weekday", "=", 7)?->close_at->toTimeString('minutes'),
-            "Total Hours"     => $property->opening_hours->map(fn($hours) => $hours->open_at->floatDiffInHours($hours->close_at, true))
-                                                         ->sum(),
-        ];
-
-        $openLengths = $property->opening_hours->map(
-            fn(OpeningHours $hours) => $hours->open_at->diffInMinutes($hours->close_at, true)
-        )->sum();
-
-        /** @var Location $location */
-        foreach ($property->actor->own_locations as $location) {
-            // Skip locations not associated with products
-            if ($location->products->count() === 0) {
-                continue;
-            }
-
-            $displayUnitPlayersData = collect();
-
-            // Start by pulling the player from Broadsign. We ignore non-BroadSign locations
-            $config = Broadcast::network($location->network_id)->getConfig();
-
-            if ($config->broadcaster !== Broadcaster::BROADSIGN) {
-                continue;
-            }
-
-            $client = new BroadsignClient($config);
-
-            $bsDiplayType = Format::get($client, $location->display_type->external_id);
-            /** @var Collection $bsPlayers */
-            $bsPlayers = BSPlayer::getMultiple($client, $location->players->pluck("external_id")->toArray());
-
-            $impressionsPerWeek = $this->getPropertyImpressionsForBroadSign($client, $location, $openLengths, $weeklyTraffic);
-
-            $totalScreens          = $location->products->where("is_bonus", "=", false)->first()->quantity;
-            $impressionsPerScreens = $impressionsPerWeek / $totalScreens;
-
-            /** @var Player $player */
-            foreach ($location->players as $player) {
-                $player = $bsPlayers->firstWhere("id", "=", $player->external_id);
-
-                $displayUnitPlayersData->push(array_merge([
-                    "Venue Name"      => $property->actor->name,
-                    "Display Unit ID" => $location->external_id,
-                    "Player ID"       => $player->id,
-                    "Name"            => $player->name,
-                    "Screens"         => $player->nscreens,
-                    "Width"           => $bsDiplayType->res_width,
-                    "Height"          => $bsDiplayType->res_height,
-                    "Resolution"      => $bsDiplayType->res_width . "x" . $bsDiplayType->res_height,
-                ], $addressComponents, $operatingHoursComponents, [
-                    "Weekly Traffic"                => $weeklyTraffic,
-                    "Weekly Impressions"            => $impressionsPerScreens * $player->nscreens,
-                    "Weekly Impressions per screen" => $impressionsPerScreens,
-                ]));
-            }
-
-            $playersRows->push(...$displayUnitPlayersData);
-            $displayUnitsRows->push(array_merge([
-                "Venue Name"      => $property->actor->name,
-                "Display Unit ID" => $location->external_id,
-                "Name"            => $location->name,
-                "Screens"         => $displayUnitPlayersData->sum("Screens"),
-                "Width"           => $displayUnitPlayersData->first()["Width"],
-                "Height"          => $displayUnitPlayersData->first()["Height"],
-                "Resolution"      => $displayUnitPlayersData->first()["Resolution"]
-            ], $addressComponents, $operatingHoursComponents, [
-                "Weekly Traffic"     => $weeklyTraffic,
-                "Weekly Impressions" => $impressionsPerWeek,
-            ]));
-        }
-
-        return [$displayUnitsRows, $playersRows];
-    }
-
-
-    /** @noinspection PhpSuspiciousNameCombinationInspection */
-    protected function getPropertyImpressionsForBroadSign(BroadSignClient $client, Location $location, float $openLength, float $weeklyTraffic) {
-        $now = Carbon::now()->startOfWeek(CarbonInterface::MONDAY);
-
-        $bsSkins    = Skin::byDisplayUnit($client, ["display_unit_id" => $location->external_id]);
-        $bsDayParts = DayPart::getMultiple($client, $bsSkins->pluck("parent_id")->toArray());
-
-        // Get the proper frame
-        // 1. Filter by dates
-        // 2. Then by name if required
-        $skins = $bsSkins->filter(function (Skin $skin) use ($bsDayParts, $now) {
-            /** @var DayPart $dayPart */
-            $dayPart      = $bsDayParts->firstWhere("id", "=", $skin->parent_id);
-            $dayPartStart = Carbon::parse($dayPart->virtual_start_date)->setYear($now->year);
-            $dayPartEnd   = Carbon::parse($dayPart->virtual_end_date)->setYear($now->year);
-            return $dayPartStart->isBefore($now) && $dayPartEnd->isAfter($now);
-        });
-
-        /** @var Skin $skin */
-        $skin = $skins->first(fn(Skin $skin) => str_starts_with($skin->name, "Main") || str_starts_with($skin->name, "Primary"), $skins->first());
-
-        // Calculate impressions
-        /** @var Product $product */
-        $product = $location->products->where("is_bonus", "=", false)->first();
-
-        if (!$product || !($model = $product->getImpressionModel($now))) {
-            return 0;
-        }
-
-        $el                         = new ExpressionLanguage();
-        $impressionsPerWeekForOneAd = $el->evaluate($model->formula, array_merge([
-            "traffic" => $weeklyTraffic,
-            "faces"   => $product->quantity,
-            "spots"   => 1
-        ], $model->variables));
-
-        /** @var LoopPolicy $loopPolicy */
-        $loopPolicy = LoopPolicy::get($client, $skin->loop_policy_id);
-        $adsPerLoop = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
-
-        return $impressionsPerWeekForOneAd * $adsPerLoop;
     }
 }

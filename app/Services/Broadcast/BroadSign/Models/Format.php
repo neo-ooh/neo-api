@@ -41,12 +41,15 @@ class Format extends BroadSignModel {
 
     protected static function actions(): array {
         return [
-            "all" => Endpoint::get("/display_unit_type/v6")
-                             ->unwrap(static::$unwrapKey)
-                             ->parser(new MultipleResourcesParser(static::class)),
-            "get" => Endpoint::get("/display_unit_type/v6/{id}")
-                             ->unwrap(static::$unwrapKey)
-                             ->parser(new SingleResourcesParser(static::class)),
+            "all"          => Endpoint::get("/display_unit_type/v6")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
+            "get"          => Endpoint::get("/display_unit_type/v6/{id}")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new SingleResourcesParser(static::class)),
+            "get_multiple" => Endpoint::get("/display_unit_type/v6/by_id")
+                                      ->unwrap(static::$unwrapKey)
+                                      ->parser(new MultipleResourcesParser(static::class)),
         ];
     }
 
@@ -59,5 +62,9 @@ class Format extends BroadSignModel {
         }
 
         return $locations[0]->frames();
+    }
+
+    public static function getMultiple(BroadsignClient $client, array $displayTypesIds) {
+        return static::get_multiple($client, ["ids" => implode(",", $displayTypesIds)]);
     }
 }

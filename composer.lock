@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "00208841811d1613dacf0805cf9004f1",
+    "content-hash": "c9e237dc13c3bc922ad0d4acf67cd408",
     "packages": [
         {
             "name": "alchemy/binary-driver",
@@ -417,16 +417,16 @@
         },
         {
             "name": "bensampo/laravel-enum",
-            "version": "v4.1.0",
+            "version": "v4.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/BenSampo/laravel-enum.git",
-                "reference": "27e5a82e1830495e6b88bab6d38389b730c05e39"
+                "reference": "ab1e261cd3214cf43521101858c50504bcd8e431"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/BenSampo/laravel-enum/zipball/27e5a82e1830495e6b88bab6d38389b730c05e39",
-                "reference": "27e5a82e1830495e6b88bab6d38389b730c05e39",
+                "url": "https://api.github.com/repos/BenSampo/laravel-enum/zipball/ab1e261cd3214cf43521101858c50504bcd8e431",
+                "reference": "ab1e261cd3214cf43521101858c50504bcd8e431",
                 "shasum": ""
             },
             "require": {
@@ -488,7 +488,7 @@
             ],
             "support": {
                 "issues": "https://github.com/BenSampo/laravel-enum/issues",
-                "source": "https://github.com/BenSampo/laravel-enum/tree/v4.1.0"
+                "source": "https://github.com/BenSampo/laravel-enum/tree/v4.2.0"
             },
             "funding": [
                 {
@@ -496,7 +496,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-11-16T10:29:06+00:00"
+            "time": "2022-01-31T19:46:11+00:00"
         },
         {
             "name": "brick/math",
@@ -2724,6 +2724,131 @@
             "time": "2020-03-05T20:41:28+00:00"
         },
         {
+            "name": "hannesvdvreken/guzzle-clockwork",
+            "version": "4.0.0-RC1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hannesvdvreken/guzzle-clockwork.git",
+                "reference": "c1779b0894b780ea17d4bf35e8cf78b8c99c74cc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hannesvdvreken/guzzle-clockwork/zipball/c1779b0894b780ea17d4bf35e8cf78b8c99c74cc",
+                "reference": "c1779b0894b780ea17d4bf35e8cf78b8c99c74cc",
+                "shasum": ""
+            },
+            "require": {
+                "hannesvdvreken/guzzle-profiler": "^2.0",
+                "itsgoingd/clockwork": "^5.0",
+                "php": ">=7.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.2.20",
+                "illuminate/support": ">=6",
+                "phpunit/phpunit": "^8.2.3|^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Profiling\\Clockwork\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Van De Vreken",
+                    "email": "vandevreken.hannes@gmail.com"
+                }
+            ],
+            "description": "A Guzzle middleware that logs requests with Clockwork",
+            "keywords": [
+                "Clockwork",
+                "Devtools",
+                "Guzzle",
+                "browser",
+                "log",
+                "middleware",
+                "php",
+                "profiler",
+                "profiling"
+            ],
+            "support": {
+                "issues": "https://github.com/hannesvdvreken/guzzle-clockwork/issues",
+                "source": "https://github.com/hannesvdvreken/guzzle-clockwork/tree/4.0.0-RC1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/hannesvdvreken",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-09-20T15:01:36+00:00"
+        },
+        {
+            "name": "hannesvdvreken/guzzle-profiler",
+            "version": "2.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/hannesvdvreken/guzzle-profiler.git",
+                "reference": "88f5fa31569d8e69fd644e5c9e768841bbaea033"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/hannesvdvreken/guzzle-profiler/zipball/88f5fa31569d8e69fd644e5c9e768841bbaea033",
+                "reference": "88f5fa31569d8e69fd644e5c9e768841bbaea033",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^6.0|^7.0",
+                "php": ">=7.2"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.2.20",
+                "phpunit/phpunit": "^8.2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Profiling\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Hannes Van De Vreken",
+                    "email": "vandevreken.hannes@gmail.com"
+                }
+            ],
+            "description": "A Guzzle middleware that profiles requests made by the client.",
+            "keywords": [
+                "Guzzle",
+                "debug",
+                "http",
+                "log",
+                "middleware",
+                "profiler",
+                "profiling",
+                "timeline"
+            ],
+            "support": {
+                "issues": "https://github.com/hannesvdvreken/guzzle-profiler/issues",
+                "source": "https://github.com/hannesvdvreken/guzzle-profiler/tree/2.1.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sponsors/hannesvdvreken",
+                    "type": "github"
+                }
+            ],
+            "time": "2021-09-23T17:50:56+00:00"
+        },
+        {
             "name": "hashids/hashids",
             "version": "4.1.0",
             "source": {
@@ -3230,16 +3355,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v8.81.0",
+            "version": "v8.82.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "9cc0efd724ce67a190b1695ba31a27bbb1ae9177"
+                "reference": "411d5243c58cbf12b0fc89cab1ceb50088968c27"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/9cc0efd724ce67a190b1695ba31a27bbb1ae9177",
-                "reference": "9cc0efd724ce67a190b1695ba31a27bbb1ae9177",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/411d5243c58cbf12b0fc89cab1ceb50088968c27",
+                "reference": "411d5243c58cbf12b0fc89cab1ceb50088968c27",
                 "shasum": ""
             },
             "require": {
@@ -3399,20 +3524,20 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2022-01-25T16:41:46+00:00"
+            "time": "2022-02-01T16:13:57+00:00"
         },
         {
             "name": "laravel/serializable-closure",
-            "version": "v1.0.5",
+            "version": "v1.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/serializable-closure.git",
-                "reference": "25de3be1bca1b17d52ff0dc02b646c667ac7266c"
+                "reference": "65c9faf50d567b65d81764a44526545689e3fe63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/25de3be1bca1b17d52ff0dc02b646c667ac7266c",
-                "reference": "25de3be1bca1b17d52ff0dc02b646c667ac7266c",
+                "url": "https://api.github.com/repos/laravel/serializable-closure/zipball/65c9faf50d567b65d81764a44526545689e3fe63",
+                "reference": "65c9faf50d567b65d81764a44526545689e3fe63",
                 "shasum": ""
             },
             "require": {
@@ -3458,7 +3583,7 @@
                 "issues": "https://github.com/laravel/serializable-closure/issues",
                 "source": "https://github.com/laravel/serializable-closure"
             },
-            "time": "2021-11-30T15:53:04+00:00"
+            "time": "2022-02-01T16:29:39+00:00"
         },
         {
             "name": "laravel/tinker",
@@ -11999,16 +12124,16 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "1.4.3",
+            "version": "1.4.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "89d10839dbfc95eeb7da656578b4a899ad2b59b1"
+                "reference": "f7409da1e26c6dee172cce744034b869a2f27a9e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/89d10839dbfc95eeb7da656578b4a899ad2b59b1",
-                "reference": "89d10839dbfc95eeb7da656578b4a899ad2b59b1",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/f7409da1e26c6dee172cce744034b869a2f27a9e",
+                "reference": "f7409da1e26c6dee172cce744034b869a2f27a9e",
                 "shasum": ""
             },
             "require": {
@@ -12039,7 +12164,7 @@
             "description": "PHPStan - PHP Static Analysis Tool",
             "support": {
                 "issues": "https://github.com/phpstan/phpstan/issues",
-                "source": "https://github.com/phpstan/phpstan/tree/1.4.3"
+                "source": "https://github.com/phpstan/phpstan/tree/1.4.4"
             },
             "funding": [
                 {
@@ -12059,7 +12184,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-28T16:27:17+00:00"
+            "time": "2022-01-31T16:50:49+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -12538,12 +12663,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "f2fdb4f34a593f9435ff6f994a4ca47600f285d9"
+                "reference": "fa60732bcafd446e9ff858eefa06cdcbae8d9823"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/f2fdb4f34a593f9435ff6f994a4ca47600f285d9",
-                "reference": "f2fdb4f34a593f9435ff6f994a4ca47600f285d9",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/fa60732bcafd446e9ff858eefa06cdcbae8d9823",
+                "reference": "fa60732bcafd446e9ff858eefa06cdcbae8d9823",
                 "shasum": ""
             },
             "conflict": {
@@ -12689,7 +12814,7 @@
                 "klaviyo/magento2-extension": ">=1,<3",
                 "kreait/firebase-php": ">=3.2,<3.8.1",
                 "la-haute-societe/tcpdf": "<6.2.22",
-                "laminas/laminas-form": "<3.1.1",
+                "laminas/laminas-form": "<2.17.2|>=3,<3.0.2|>=3.1,<3.1.1",
                 "laminas/laminas-http": "<2.14.2",
                 "laravel/framework": "<6.20.42|>=7,<7.30.6|>=8,<8.75",
                 "laravel/socialite": ">=1,<1.0.99|>=2,<2.0.10",
@@ -12796,7 +12921,7 @@
                 "shopware/platform": "<=6.4.6",
                 "shopware/production": "<=6.3.5.2",
                 "shopware/shopware": "<5.7.7",
-                "showdoc/showdoc": "<2.10",
+                "showdoc/showdoc": "<2.10.2",
                 "silverstripe/admin": ">=1,<1.8.1",
                 "silverstripe/assets": ">=1,<1.4.7|>=1.5,<1.5.2",
                 "silverstripe/cms": "<4.3.6|>=4.4,<4.4.4",
@@ -12842,7 +12967,7 @@
                 "symfony/dependency-injection": ">=2,<2.0.17|>=2.7,<2.7.51|>=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7",
                 "symfony/error-handler": ">=4.4,<4.4.4|>=5,<5.0.4",
                 "symfony/form": ">=2.3,<2.3.35|>=2.4,<2.6.12|>=2.7,<2.7.50|>=2.8,<2.8.49|>=3,<3.4.20|>=4,<4.0.15|>=4.1,<4.1.9|>=4.2,<4.2.1",
-                "symfony/framework-bundle": ">=2,<2.3.18|>=2.4,<2.4.8|>=2.5,<2.5.2|>=2.7,<2.7.51|>=2.8,<2.8.50|>=3,<3.4.26|>=4,<4.1.12|>=4.2,<4.2.7|>=5.3.14,<=5.3.14|>=5.4.3,<=5.4.3|>=6.0.3,<=6.0.3",
+                "symfony/framework-bundle": "<5.3.15|>=5.4,<5.4.4|>=6,<6.0.4",
                 "symfony/http-foundation": ">=2,<2.8.52|>=3,<3.4.35|>=4,<4.2.12|>=4.3,<4.3.8|>=4.4,<4.4.7|>=5,<5.0.7",
                 "symfony/http-kernel": ">=2,<2.8.52|>=3,<3.4.35|>=4,<4.2.12|>=4.3,<4.4.13|>=5,<5.1.5|>=5.2,<5.3.12",
                 "symfony/intl": ">=2.7,<2.7.38|>=2.8,<2.8.31|>=3,<3.2.14|>=3.3,<3.3.13",
@@ -12977,7 +13102,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-29T19:13:00+00:00"
+            "time": "2022-02-01T15:19:50+00:00"
         },
         {
             "name": "sebastian/cli-parser",

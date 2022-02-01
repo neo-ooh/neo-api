@@ -136,7 +136,7 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
         $bsSchedule->start_date       = $startDateTime->toDateString();
         $bsSchedule->start_time       = $startDateTime->setSecond(0)->toTimeString();
         $bsSchedule->end_date         = $endDateTime->toDateString();
-        $bsSchedule->end_time         = $endDateTime->toTimeString();
+        $bsSchedule->end_time         = $endDateTime->setSeconds(0)->toTimeString();
         $bsSchedule->weight           = 1;
         $bsSchedule->create();
 

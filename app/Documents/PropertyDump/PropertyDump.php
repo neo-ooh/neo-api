@@ -192,8 +192,8 @@ class PropertyDump extends XLSXDocument {
 
         /** @var Location $location */
         foreach ($property->actor->own_locations as $location) {
-            // Skip locations not associated with products
-            if ($location->products->count() === 0) {
+            // Skip locations not associated with products, or locations without any player
+            if ($location->products->count() === 0 || $location->players->count() === 0) {
                 continue;
             }
 

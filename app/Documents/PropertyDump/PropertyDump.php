@@ -90,15 +90,15 @@ class PropertyDump extends XLSXDocument {
                                         "actor",
                                         "actor.own_locations",
                                         "actor.own_locations.products",
+                                        "actor.own_locations.products.impressions_models",
+                                        "actor.own_locations.products.products_categories",
+                                        "actor.own_locations.products.products_categories.impressions_models",
                                         "actor.own_locations.players",
                                         "actor.own_locations.display_type",
                                         "traffic",
                                         "traffic.weekly_data",
                                         "address",
                                         "opening_hours",
-                                        "products",
-                                        "products.impressions_models",
-                                        "products_categories.impressions_models"
                                     ])
                                     ->whereIn("actor_id", $this->propertiesId)
                                     ->get();

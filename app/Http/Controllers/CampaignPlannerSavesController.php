@@ -15,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\CampaignPlannerSaves\DestroySaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\ListSavesRequest;
+use Neo\Http\Requests\CampaignPlannerSaves\ShareSaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\StoreSaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\UpdateSaveRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
@@ -27,7 +28,7 @@ use Neo\Models\Property;
 
 class CampaignPlannerSavesController {
     public function index(ListSavesRequest $request, Actor $actor) {
-        return new Response($actor->campaign_planner_saves()->get(["id", "name", "created_at", "updated_at"]));
+        return new Response(CampaignPlannerSaveResource::collection($actor->campaign_planner_saves()->get()));
     }
 
     public function store(StoreSaveRequest $request) {
@@ -59,6 +60,18 @@ class CampaignPlannerSavesController {
         $campaignPlannerSave->save();
 
         return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
+    }
+
+    public function share(ShareSaveRequest $request, Actor $actor, CampaignPlannerSave $campaignPlannerSave) {
+        $receivers = $request->input("actors");
+
+        foreach ($receivers as $receiverId) {
+            $newSave           = $campaignPlannerSave->replicate();
+            $newSave->actor_id = $receiverId;
+            $newSave->save();
+        }
+
+        return new Response([]);
     }
 
     public function destroy(DestroySaveRequest $request, Actor $actor, CampaignPlannerSave $campaignPlannerSave) {

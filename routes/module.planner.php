@@ -27,6 +27,7 @@ Route::group([
     Route::  post("actors/{actor}/campaign-planner-saves", CampaignPlannerSavesController::class . "@store");
     Route::   get("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@show");
     Route::   put("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@update");
+    Route::  post("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}/_share", CampaignPlannerSavesController::class . "@share");
     Route::delete("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@destroy");
 
     /*

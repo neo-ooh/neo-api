@@ -20,7 +20,7 @@ use Neo\Models\ContractScreenshot;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
     /*
     |----------------------------------------------------------------------
@@ -30,7 +30,7 @@ Route::group([
 
     Route::model("client", Client::class);
 
-    Route::get("clients"         , ClientsController::class . "@index");
+    Route::get("clients", ClientsController::class . "@index");
     Route::get("clients/{client}", ClientsController::class . "@show");
 
     /*
@@ -41,9 +41,10 @@ Route::group([
 
     Route::model("contract", Contract::class);
 
-    Route::  post("contracts"                    , ContractsController::class . "@store");
-    Route::   get("contracts/{contract}"         , ContractsController::class . "@show");
-    Route::delete("contracts/{contract}"         , ContractsController::class . "@destroy");
+    Route::  get("contracts/_recent", ContractsController::class . "@recent");
+    Route::  post("contracts", ContractsController::class . "@store");
+    Route::   get("contracts/{contract}", ContractsController::class . "@show");
+    Route::delete("contracts/{contract}", ContractsController::class . "@destroy");
     Route::  post("contracts/{contract}/_refresh", ContractsController::class . "@refresh");
 
 
@@ -55,7 +56,7 @@ Route::group([
 
     Route::model("burst", ContractBurst::class);
 
-    Route::  post("bursts"        , ContractBurstsController::class . "@store");
+    Route::  post("bursts", ContractBurstsController::class . "@store");
     Route::   get("bursts/{burst}", ContractBurstsController::class . "@show");
     Route::delete("bursts/{burst}", ContractBurstsController::class . "@destroy");
 

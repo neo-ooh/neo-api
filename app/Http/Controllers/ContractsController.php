@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 use Neo\Http\Requests\Contracts\DestroyContractRequest;
+use Neo\Http\Requests\Contracts\ListContractsRequest;
 use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
@@ -16,19 +17,28 @@ use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\Models\Customer;
 
 class ContractsController extends Controller {
+    public function recent(ListContractsRequest $request) {
+        $contracts = Contract::query()->where("owner_id", "=", Auth::id())
+                             ->orderBy("updated_at", "desc")
+                             ->limit(5)
+                             ->get();
+
+        return new Response($contracts);
+    }
+
     public function store(StoreContractRequest $request) {
-        $clientId   = $request->input("client_id");
+        $clientId = $request->input("client_id");
 
         // The contract ID is a sensitive value, as it is the one that will be used to match additional campaigns with the contract.
         // Now, for some f***ing reason, hyphens are not made equal, and contract name are not standardized. So we want to make sure all stored contract name uses hyphen-minus, which is the default hyphen on a keyboard (looking at you Word).
         $contractId = strtoupper(str_replace(mb_chr(8208, 'UTF-8'), '-', $request->input("contract_id")));
-        $client = Client::query()->where("broadsign_customer_id", "=", $clientId)->first();
+        $client     = Client::query()->where("broadsign_customer_id", "=", $clientId)->first();
 
         if (!$client) {
             $customer = Customer::get(new BroadsignClient(Contract::getConnectionConfig()), $clientId);
 
             if ($customer !== null) {
-                $client   = Client::query()->create([
+                $client = Client::query()->create([
                     "broadsign_customer_id" => $clientId,
                     "name"                  => $customer->name]);
             } else {

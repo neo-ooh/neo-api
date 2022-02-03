@@ -25,6 +25,7 @@ Route::group([
 
     Route::   get("actors/{actor}/campaign-planner-saves", CampaignPlannerSavesController::class . "@index");
     Route::  post("actors/{actor}/campaign-planner-saves", CampaignPlannerSavesController::class . "@store");
+    Route::   get("actors/{actor}/campaign-planner-saves/_recent", CampaignPlannerSavesController::class . "@recent");
     Route::   get("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@show");
     Route::   put("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}", CampaignPlannerSavesController::class . "@update");
     Route::  post("actors/{actor}/campaign-planner-saves/{campaignPlannerSave}/_share", CampaignPlannerSavesController::class . "@share");

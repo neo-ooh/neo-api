@@ -47,6 +47,13 @@ class CampaignPlannerSavesController {
         return new Response(new CampaignPlannerSaveResource($save), 201);
     }
 
+    public function recent(ListSavesRequest $request, Actor $actor) {
+        return new Response(CampaignPlannerSaveResource::collection($actor->campaign_planner_saves()
+                                                                          ->orderBy("updated_at", "desc")
+                                                                          ->limit(5)
+                                                                          ->get()));
+    }
+
     public function show(Actor $actor, CampaignPlannerSave $campaignPlannerSave) {
         return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
     }

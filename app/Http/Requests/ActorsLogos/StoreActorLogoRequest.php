@@ -30,7 +30,7 @@ class StoreActorLogoRequest extends FormRequest {
         $actor = $this->route('actor');
 
         if (!Auth::user()->is_group && Auth::user()->is($actor)) {
-            return false; // The actor cannot update its own logo itself
+            return true; // The actor can update its own logo
         }
 
         if (!Gate::allows(Capability::actors_edit)) {

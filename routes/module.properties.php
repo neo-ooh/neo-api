@@ -56,6 +56,7 @@ Route::group([
     Route::   get("properties/_need_attention", PropertiesController::class . "@needAttention");
     Route::   get("properties/{propertyId}", PropertiesController::class . "@show");
     Route::   put("properties/{property}", PropertiesController::class . "@update");
+    Route::   put("properties/{property}/_mark_reviewed", PropertiesController::class . "@markReviewed");
     Route::   put("properties/{property}/address", PropertiesController::class . "@updateAddress");
     Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 

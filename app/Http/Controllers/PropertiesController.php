@@ -10,9 +10,11 @@ use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
 use Neo\Documents\PropertyDump\PropertyDump;
 use Neo\Enums\Capability;
+use Neo\Http\Requests\ListPropertiesPendingReviewRequest;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
 use Neo\Http\Requests\Properties\DumpPropertyRequest;
 use Neo\Http\Requests\Properties\ListPropertiesRequest;
+use Neo\Http\Requests\Properties\MarkPropertyReviewedRequest;
 use Neo\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Http\Requests\Properties\UpdateAddressRequest;
@@ -112,14 +114,23 @@ class PropertiesController extends Controller {
         return $properties;
     }
 
-    public function needAttention(ListPropertiesRequest $request) {
+    public function needAttention(ListPropertiesPendingReviewRequest $request) {
         /** @noinspection NullPointerExceptionInspection */
         $accessibleActors = Auth::user()->getAccessibleActors()->pluck("id");
         $properties       = Property::query()->whereIn("actor_id", $accessibleActors)
                                     ->where("last_review_at", "<", Date::now()->startOf("month"))
+                                    ->with(["traffic", "traffic.data", "tenants"])
+                                    ->limit(5)
                                     ->get();
 
         return new Response($properties);
+    }
+
+    public function markReviewed(MarkPropertyReviewedRequest $request, Property $property) {
+        $property->last_review_at = Date::now();
+        $property->save();
+
+        new Response(["status" => "ok"]);
     }
 
     public function store(StorePropertyRequest $request): Response {
@@ -186,7 +197,25 @@ class PropertiesController extends Controller {
             $property->load(["actor", "traffic", "traffic.data", "address"]);
 
             if (Gate::allows(Capability::properties_edit)) {
-                $property->loadMissing(["data", "network", "network.properties_fields", "pictures", "fields_values", "traffic.source", "opening_hours"]);
+                $property->loadMissing([
+                    "data",
+                    "network",
+                    "network.properties_fields",
+                    "pictures",
+                    "fields_values",
+                    "traffic.source",
+                    "opening_hours"
+                ]);
+            }
+
+            if (in_array("products", $relations, true)) {
+                $property->loadMissing(["products",
+                                        "products.impressions_models",
+                                        "products.locations",
+                                        "products.attachments",
+                                        "products_categories",
+                                        "products_categories.attachments",
+                                        "products_categories.product_type"]);
             }
 
             if (in_array("products", $relations, true)) {

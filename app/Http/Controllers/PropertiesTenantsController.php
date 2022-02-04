@@ -26,7 +26,7 @@ class PropertiesTenantsController {
     public function sync(SyncTenantsRequest $request, Property $property): Response {
         $property->tenants()->sync($request->input("tenants", []));
 
-        $property->tenants_updated_at = Date::now();
+        $property->last_review_at = Date::now();
         $property->save();
 
         return new Response($property->tenants);

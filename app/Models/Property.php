@@ -31,7 +31,7 @@ use Neo\Rules\AccessibleProperty;
  * @property Collection<PropertyFieldSegmentValue> $fields_values
  * @property Collection<OpeningHours>              $opening_hours
  * @property boolean                               $has_tenants
- * @property Date|null                             $tenants_updated_at
+ * @property Date                                  $last_review_at
  * @property Collection<Brand>                     $tenants
  *
  * @property Collection<Product>                   $products
@@ -82,7 +82,7 @@ class Property extends SecuredModel {
     ];
 
     protected $dates = [
-        "tenants_updated_at"
+        "last_review_at"
     ];
 
     /**

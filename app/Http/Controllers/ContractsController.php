@@ -4,6 +4,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use InvalidArgumentException;
 use Neo\Http\Requests\Contracts\DestroyContractRequest;
 use Neo\Http\Requests\Contracts\ListContractsRequest;
@@ -19,7 +20,9 @@ use Neo\Services\Broadcast\BroadSign\Models\Customer;
 class ContractsController extends Controller {
     public function recent(ListContractsRequest $request) {
         $contracts = Contract::query()->where("owner_id", "=", Auth::id())
-                             ->orderBy("updated_at", "desc")
+                             ->where("start_date", "<", Date::now())
+                             ->where("end_date", ">", Date::now())
+                             ->orderBy("end_date", "asc")
                              ->limit(5)
                              ->get();
 

@@ -4,6 +4,8 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
 use Neo\Documents\PropertyDump\PropertyDump;
@@ -110,6 +112,16 @@ class PropertiesController extends Controller {
         return $properties;
     }
 
+    public function needAttention(ListPropertiesRequest $request) {
+        /** @noinspection NullPointerExceptionInspection */
+        $accessibleActors = Auth::user()->getAccessibleActors()->pluck("id");
+        $properties       = Property::query()->whereIn("actor_id", $accessibleActors)
+                                    ->where("last_review_at", "<", Date::now()->startOf("month"))
+                                    ->get();
+
+        return new Response($properties);
+    }
+
     public function store(StorePropertyRequest $request): Response {
         // We need to make sure that the targeted actor is indeed a group
         $actorId = $request->input("actor_id");
@@ -127,8 +139,9 @@ class PropertiesController extends Controller {
 
         // All good
         // Create the property
-        $property           = new Property();
-        $property->actor_id = $actorId;
+        $property                 = new Property();
+        $property->actor_id       = $actorId;
+        $property->last_review_at = Date::now();
         $property->save();
         $property->refresh();
 

@@ -166,4 +166,9 @@ final class Capability extends Enum {
      * Allows the user to access the list of tenants of properties
      */
     public const properties_tenants = "properties.tenants";
+
+    /**
+     * Allows the user to access other users plans in the planner
+     */
+    public const planning_fullaccess = "planning.fullaccess";
 }

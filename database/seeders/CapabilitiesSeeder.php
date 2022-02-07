@@ -86,6 +86,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::inventory_read,
 
                 \Neo\Enums\Capability::tools_planning,
+                \Neo\Enums\Capability::planning_fullaccess,
                 \Neo\Enums\Capability::odoo_contracts,
             ],
             "DYNAMICS"   => [

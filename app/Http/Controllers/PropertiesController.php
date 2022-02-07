@@ -117,10 +117,12 @@ class PropertiesController extends Controller {
     public function needAttention(ListPropertiesPendingReviewRequest $request) {
         /** @noinspection NullPointerExceptionInspection */
         $accessibleActors = Auth::user()->getAccessibleActors()->pluck("id");
-        $properties       = Property::query()->whereIn("actor_id", $accessibleActors)
+        $properties       = Property::query()
+                                    ->whereIn("actor_id", $accessibleActors)
                                     ->where("last_review_at", "<", Date::now()->startOf("month"))
+                                    ->limit(26)
+                                    ->orderBy("last_review_at")
                                     ->with(["traffic", "traffic.data", "tenants"])
-                                    ->limit(5)
                                     ->get();
 
         return new Response($properties);
@@ -218,14 +220,8 @@ class PropertiesController extends Controller {
                                         "products_categories.product_type"]);
             }
 
-            if (in_array("products", $relations, true)) {
-                $property->loadMissing(["products",
-                                        "products.impressions_models",
-                                        "products.locations",
-                                        "products.attachments",
-                                        "products_categories",
-                                        "products_categories.attachments",
-                                        "products_categories.product_type"]);
+            if (in_array("tenants", $relations, true)) {
+                $property->loadMissing(["tenants"]);
             }
 
             if (Gate::allows(Capability::odoo_properties)) {
@@ -233,6 +229,10 @@ class PropertiesController extends Controller {
             }
 
             return new Response($property);
+        }
+
+        if (!$request->input("fallbackToGroup", false)) {
+            return new Response(null, 404);
         }
 
 

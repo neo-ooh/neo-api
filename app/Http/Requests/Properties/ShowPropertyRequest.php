@@ -23,7 +23,8 @@ class ShowPropertyRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "with" => ["array"]
+            "fallbackToGroup" => ["sometimes", "boolean"],
+            "with"            => ["array"]
         ];
     }
 }

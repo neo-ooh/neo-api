@@ -75,7 +75,7 @@ class ActorsController extends Controller {
             $actors = $actors->filter(fn(Actor $actor) => $actor->hasCapability(Capability::fromValue($request->input("capability"))));
         }
 
-        if (in_array("logo", $request->input("with", []))) {
+        if (in_array("logo", $request->input("with", []), true)) {
             $actors->load("logo");
         }
 

@@ -71,6 +71,14 @@ class ActorsController extends Controller {
             $actors->load(Gate::allows(Capability::odoo_properties) ? "property.odoo" : "property");
         }
 
+        if ($request->has("capability")) {
+            $actors = $actors->filter(fn(Actor $actor) => $actor->hasCapability(Capability::fromValue($request->input("capability"))));
+        }
+
+        if (in_array("logo", $request->input("with", []))) {
+            $actors->load("logo");
+        }
+
         return new Response($actors->unique("id")->sortBy("name")->values());
     }
 

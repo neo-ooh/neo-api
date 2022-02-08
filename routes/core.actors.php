@@ -79,4 +79,13 @@ Route::group([
 
     Route::   put("actors/{actor}/phone", ActorsPhoneController::class . "@store");
     Route::delete("actors/{actor}/phone", ActorsPhoneController::class . "@destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Actors Tags
+    |----------------------------------------------------------------------
+    */
+
+    Route::   put("actors/{actor}/tags", ActorsPhoneController::class . "@sync");
 });

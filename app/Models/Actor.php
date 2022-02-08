@@ -96,6 +96,7 @@ use Neo\Rules\AccessibleActor;
  * @property ?ActorLogo     logo
  *
  * @property string         campaigns_status
+ * @property Collection     $tags
  *
  * @method Builder    accessibleActors()
  * @method Builder      SharedActors()
@@ -273,6 +274,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     public function campaign_planner_polygons(): \Illuminate\Database\Eloquent\Relations\HasMany {
         return $this->hasMany(CampaignPlannerPolygon::class, 'actor_id', 'id');
+    }
+
+    public function tags() {
+        return $this->belongsToMany(Tag::class, "actors_tags", "actor_id", "tag_id");
     }
 
 

@@ -196,7 +196,7 @@ class PropertiesController extends Controller {
         $relations = $request->input("with", []);
 
         if ($property) {
-            $property->load(["actor", "traffic", "traffic.data", "address"]);
+            $property->load(["actor", "actor.tags", "traffic", "traffic.data", "address"]);
 
             if (Gate::allows(Capability::properties_edit)) {
                 $property->loadMissing([

@@ -171,4 +171,9 @@ final class Capability extends Enum {
      * Allows the user to access other users plans in the planner
      */
     public const planning_fullaccess = "planning.fullaccess";
+
+    /**
+     * Allows the user to edit tags
+     */
+    public const tags_edit = "tags.edit";
 }

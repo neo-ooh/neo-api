@@ -14,8 +14,11 @@ use Neo\Http\Controllers\ActorsController;
 use Neo\Http\Controllers\ActorsLogosController;
 use Neo\Http\Controllers\ActorsPhoneController;
 use Neo\Http\Controllers\ActorsSharingsController;
+use Neo\Http\Controllers\ActorsTagsController;
+use Neo\Http\Controllers\TagsController;
 use Neo\Http\Controllers\TwoFactorAuthController;
 use Neo\Models\Actor;
+use Neo\Models\Tag;
 
 Route::group([
     "middleware" => "default",
@@ -87,5 +90,11 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::   put("actors/{actor}/tags", ActorsPhoneController::class . "@sync");
+    Route::model("tag", Tag::class);
+
+    Route::   get("tags", TagsController::class . "@list");
+    Route::   put("tags/{tag}", TagsController::class . "@update");
+    Route::delete("tags/{tag}", TagsController::class . "@destroy");
+
+    Route::   put("actors/{actor}/tags", ActorsTagsController::class . "@sync");
 });

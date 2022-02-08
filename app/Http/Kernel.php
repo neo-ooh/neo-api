@@ -79,6 +79,7 @@ class Kernel extends HttpKernel {
         ],
         'broadsign' => [
             SubstituteBindings::class,
+            'access.logs',
         ],
     ];
 

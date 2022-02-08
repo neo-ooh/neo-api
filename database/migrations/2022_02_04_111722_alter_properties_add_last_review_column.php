@@ -17,7 +17,7 @@ class AlterPropertiesAddLastReviewColumn extends Migration {
     public function up() {
         Schema::table('properties', function (Blueprint $table) {
             $table->dropColumn("tenants_updated_at");
-            $table->timestamp("last_review_at");
+            $table->timestamp("last_review_at")->useCurrent()->useCurrentOnUpdate();
         });
 
         Property::query()->get()->each(function (Property $property) {

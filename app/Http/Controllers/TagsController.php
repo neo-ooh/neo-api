@@ -30,8 +30,8 @@ class TagsController {
     }
 
     public function update(UpdateTagRequest $request, Tag $tag) {
-        $tag->name  = $request->input("name");
-        $tag->color = $request->input("color");
+        $tag->name = $request->input("name");
+//        $tag->color = $request->input("color");
         $tag->save();
 
         return new Response($tag);

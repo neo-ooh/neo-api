@@ -17,8 +17,8 @@ use Neo\Enums\Capability;
 class UpdateTagRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name"  => ["required", "string"],
-            "color" => ["required", "string"],
+            "name" => ["required", "string"],
+            //            "color" => ["required", "string"],
         ];
     }
 

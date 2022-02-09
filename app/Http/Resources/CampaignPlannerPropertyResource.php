@@ -27,6 +27,7 @@ class CampaignPlannerPropertyResource extends JsonResource {
             "fields_values"           => $this->fields_values,
             "has_tenants"             => $this->has_tenants,
             "tenants"                 => $this->tenants->pluck('id'),
+            "tags"                    => $this->actor->tags,
         ];
     }
 }

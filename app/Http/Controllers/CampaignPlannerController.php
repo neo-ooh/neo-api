@@ -45,6 +45,7 @@ class CampaignPlannerController {
         $properties = Property::query()->get();
 
         $properties->load([
+            "actor.tags",
             "data",
             "address",
             "odoo",

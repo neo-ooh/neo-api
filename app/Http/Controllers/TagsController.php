@@ -13,12 +13,20 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Tags\DestroyTagRequest;
 use Neo\Http\Requests\Tags\ListTagsRequest;
+use Neo\Http\Requests\Tags\StoreTagRequest;
 use Neo\Http\Requests\Tags\UpdateTagRequest;
 use Neo\Models\Tag;
 
 class TagsController {
     public function index(ListTagsRequest $request) {
         return new Response(Tag::query()->orderBy("name")->get());
+    }
+
+    public function store(StoreTagRequest $request) {
+        $tag = new Tag(["name" => $request->input("name")]);
+        $tag->save();
+
+        return new Response($tag, 201);
     }
 
     public function update(UpdateTagRequest $request, Tag $tag) {

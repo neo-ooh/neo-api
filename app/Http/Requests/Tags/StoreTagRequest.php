@@ -5,22 +5,22 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - SycTagsRequest.php
+ * @neo/api - ListTagsRequest.php
  */
 
-namespace Neo\Http\Requests\ActorsTags;
+namespace Neo\Http\Requests\Tags;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 
-class SyncTagsRequest extends FormRequest {
-    public function rules() {
+class StoreTagRequest extends FormRequest {
+    public function rules(): array {
         return [
-            "tags" => ["array", "nullable", "exists:tags,id"]
+            "name" => ["required", "string"]
         ];
     }
 
-    public function authorize() {
-        return Gate::allows("actors.edit") || Gate::allows("properties.edit");
+    public function authorize(): bool {
+        return Gate::allows('actors.edit');
     }
 }

@@ -92,7 +92,7 @@ Route::group([
 
     Route::model("tag", Tag::class);
 
-    Route::   get("tags", TagsController::class . "@list");
+    Route::   get("tags", TagsController::class . "@index");
     Route::   put("tags/{tag}", TagsController::class . "@update");
     Route::delete("tags/{tag}", TagsController::class . "@destroy");
 

@@ -37,16 +37,16 @@ class Asset extends PiSignageModel {
 
     protected static function actions(): array {
         return [
-            "all"          => Endpoint::get("/files")->parser(new MultipleResourcesParser(static::class)),
-            "createStatic" => Endpoint::post("/files")
-                                      ->multipart()
-                                      ->parser(new MultipleResourcesParser(static::class)),
+            "all"           => Endpoint::get("/files")->parser(new MultipleResourcesParser(static::class)),
+            "createStatic"  => Endpoint::post("/files")
+                                       ->multipart()
+                                       ->parser(new MultipleResourcesParser(static::class)),
             "createDynamic" => Endpoint::post("/links")
-                                      ->parser(new MultipleResourcesParser(static::class)),
-            "get"          => Endpoint::get("/files/{name}")->parser(new SingleResourcesParser(static::class)),
-            "update"       => Endpoint::post("/files/{name}")->parser(new SingleResourcesParser(static::class)),
-            "delete"       => Endpoint::delete("/files/{name}"),
-            "postupload"   => Endpoint::post("/postupload"),
+                                       ->parser(new MultipleResourcesParser(static::class)),
+            "get"           => Endpoint::get("/files/{name}")->parser(new SingleResourcesParser(static::class)),
+            "update"        => Endpoint::post("/files/{name}")->parser(new SingleResourcesParser(static::class)),
+            "delete"        => Endpoint::delete("/files/{name}"),
+            "postupload"    => Endpoint::post("/postupload"),
         ];
     }
 
@@ -71,10 +71,10 @@ class Asset extends PiSignageModel {
     public static function makeDynamic(PiSignageClient $client, string $filename, $url) {
         static::createDynamic($client, [
             "details" => [
-                "name" => Str::endsWith($filename, ".link") ? substr($filename, 0, -5): $filename,
+                "name" => Str::endsWith($filename, ".link") ? substr($filename, 0, -5) : $filename,
                 "type" => ".link",
                 "link" => $url,
-              ]
+            ]
         ]);
     }
 
@@ -89,13 +89,11 @@ class Asset extends PiSignageModel {
     }
 
     public static function inferNameFromCreative(Creative $creative, int $scheduleId): ?string {
-        switch ($creative->type) {
-            case Creative::TYPE_STATIC:
-                return $creative->id . "@" . $scheduleId . "." . $creative->properties->extension;
-            case Creative::TYPE_DYNAMIC:
-                return $creative->id . "@" . $scheduleId . ".link";
-        }
+        return match ($creative->type) {
+            Creative::TYPE_STATIC  => $creative->id . "@" . $scheduleId . "." . $creative->properties->extension,
+            Creative::TYPE_DYNAMIC => $creative->id . "@" . $scheduleId . ".link",
+            default                => null,
+        };
 
-        return null;
     }
 }

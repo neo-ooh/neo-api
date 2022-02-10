@@ -11,9 +11,10 @@
 namespace Neo\Exceptions;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Throwable;
 
 class InvalidRequestException extends HttpException {
-    public function __construct($message = null, \Throwable $previous = null, array $headers = [], $code = 0) {
+    public function __construct($message = null, Throwable $previous = null, array $headers = [], $code = 0) {
         parent::__construct(400, $message, $previous, $headers, $code);
     }
 }

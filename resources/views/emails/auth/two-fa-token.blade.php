@@ -6,73 +6,86 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style type="text/css">
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #F4F4F5;
+        body
+        {
+            font-family      : 'Poppins', sans-serif;
+            background-color : #F4F4F5;
         }
 
-        table {
-            margin: auto;
-            width: 550px;
+        table
+        {
+            margin : auto;
+            width  : 550px;
         }
 
-        .main {
-            background-color: #FFFFFF;
+        .main
+        {
+            background-color : #FFFFFF;
         }
 
-        .main td {
-            padding: 20px;
-            border: 1px solid #BBBBBB;
-            border-radius: 5px;
+        .main td
+        {
+            padding       : 20px;
+            border        : 1px solid #BBBBBB;
+            border-radius : 5px;
         }
 
-        h1 {
-            margin: 25px 25px 50px;
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #2B2C43;
-            text-align: center;
+        h1
+        {
+            margin      : 25px 25px 50px;
+            font-size   : 1.8em;
+            font-weight : bold;
+            color       : #2B2C43;
+            text-align  : center;
         }
 
-        p {
-            margin: 1em;
+        p
+        {
+            margin : 1em;
         }
 
-        h3 {
-            margin-top: 40px;
-            text-align: center;
+        h3
+        {
+            margin-top : 40px;
+            text-align : center;
         }
 
-        h3 span {
-            display: inline-block;
-            width: 20px;
-            padding: 5px 2px;
-            margin: 5px;
+        h3 span
+        {
+            display   : inline-block;
+            width     : 20px;
+            padding   : 5px 2px;
+            margin    : 5px;
 
-            font-size: 1.5em;
+            font-size : 1.5em;
         }
 
-        span.letter-spacer {
-            border: none;
-            width: 0;
+        span.letter-spacer
+        {
+            border : none;
+            width  : 0;
         }
 
-        .spacer td {
-            padding: 20px;
+        .spacer td
+        {
+            padding : 20px;
         }
 
-        .logos img {
-            margin: 50px;
-            height: 75px;
+        .logos img
+        {
+            margin : 50px;
+            height : 75px;
         }
 
-        .legals {
-            color: #888888;
-            font-size: .8em;
+        .legals
+        {
+            color     : #888888;
+            font-size : .8em;
         }
 
-        .legals td {
-            padding-bottom: 15px;
+        .legals td
+        {
+            padding-bottom : 15px;
         }
     </style>
 </head>
@@ -85,13 +98,13 @@
                 {!! __("email-2fa-body") !!}
             </p>
             <h3>
-                <span>{{ substr($token, 0, 1) }}</span>
-                <span>{{ substr($token, 1, 1) }}</span>
-                <span>{{ substr($token, 2, 1) }}</span>
+                <span>{{ $token[0] }}</span>
+                <span>{{ $token[1] }}</span>
+                <span>{{ $token[2] }}</span>
                 <span class="letter-spacer"></span>
-                <span>{{ substr($token, 3, 1) }}</span>
-                <span>{{ substr($token, 4, 1) }}</span>
-                <span>{{ substr($token, 5, 1) }}</span>
+                <span>{{ $token[3] }}</span>
+                <span>{{ $token[4] }}</span>
+                <span>{{ $token[5] }}</span>
             </h3>
         </td>
     </tr>

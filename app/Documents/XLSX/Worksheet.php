@@ -7,7 +7,6 @@ namespace Neo\Documents\XLSX;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\Exception;
-use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 /**
  * Class Worksheet
@@ -28,7 +27,7 @@ class Worksheet extends \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet {
     }
 
     public function popPosition() {
-        if(count($this->positionStack) === 0) {
+        if (count($this->positionStack) === 0) {
             // Do nothing
             return;
         }
@@ -59,7 +58,7 @@ class Worksheet extends \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet {
         $end = $this->getCursorPosition();
 
         $this->popPosition();
-        return $start. ":" . $end;
+        return $start . ":" . $end;
     }
 
     /**
@@ -124,10 +123,6 @@ class Worksheet extends \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet {
     }
 
     public function printRow(array $row) {
-        if (!is_array($row)) {
-            $row = func_get_args();
-        }
-
         $this->fromArray([$row]);
     }
 
@@ -153,7 +148,7 @@ class Worksheet extends \PhpOffice\PhpSpreadsheet\Worksheet\Worksheet {
 
     public function setRelativeCellFormat(string $formatCode, $dcol = 0, $drow = 0) {
         $this->getStyleByColumnAndRow($this->getCursorColIndex() + $dcol, $this->getCursorRow() + $drow)
-           ->getNumberFormat()
-           ->setFormatCode($formatCode);
+             ->getNumberFormat()
+             ->setFormatCode($formatCode);
     }
 }

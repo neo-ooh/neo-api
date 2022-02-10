@@ -16,13 +16,11 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use Neo\Models\Campaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
 use Neo\Services\Broadcast\PiSignage\Models\Group;
 use Neo\Services\Broadcast\PiSignage\Models\Playlist;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * @package Neo\Jobs
@@ -76,7 +74,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
         $playlist->save();
 
         $playlistAssets = collect($playlist->assets)->pluck("filename");
-        $playlistFile = "__{$playlist->name}.json";
+        $playlistFile   = "__$playlist->name.json";
 
         // Assigned the playlist to all desired locations and remove it from other
         $groups = Group::all($this->getAPIClient());
@@ -101,7 +99,9 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
                 $group->playlists = collect($group->playlists)->filter(fn($p) => $p["name"] !== $playlist->name)->toArray();
 
                 // We also remove the required assets
-                $group->assets = collect($group->assets)->filter(fn($a) => !$playlistAssets->contains($a) && $a !== $playlistFile)->toArray();
+                $group->assets = collect($group->assets)
+                    ->filter(fn($a) => !$playlistAssets->contains($a) && $a !== $playlistFile)
+                    ->toArray();
             }
 
             if ($groupIsTargeted) {
@@ -111,7 +111,7 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
 
                 // Add the playlist assets as well
                 $group->assets[] = $playlistFile;
-                $group->assets = [...$group->assets, ...$playlistAssets->toArray()];
+                $group->assets   = [...$group->assets, ...$playlistAssets->toArray()];
             }
 
             // Save

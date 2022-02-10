@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\Access\Authorizable;
@@ -272,7 +273,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->hasMany(CampaignPlannerSave::class, 'actor_id', 'id');
     }
 
-    public function campaign_planner_polygons(): \Illuminate\Database\Eloquent\Relations\HasMany {
+    public function campaign_planner_polygons(): HasMany {
         return $this->hasMany(CampaignPlannerPolygon::class, 'actor_id', 'id');
     }
 
@@ -589,7 +590,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // If the token is validated but is too old, create a new one and say not validated
-        if ($token->validated && $token->validated_at->diffInMonths(Date::now()) >= 1) {
+        if ($token->validated_at->diffInMonths(Date::now()) >= 1) {
             $token->delete();
 
             if ($updateIfNecessary) {

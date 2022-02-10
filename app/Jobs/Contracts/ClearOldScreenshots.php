@@ -35,7 +35,7 @@ class ClearOldScreenshots extends Command {
     public function handle(): int {
         // Get all screenshots older than 60 days and not locked
         $screenshots = ContractScreenshot::query()
-                                         ->whereDate("created_at", "<", Carbon::now()->subMonth(3))
+                                         ->whereDate("created_at", "<", Carbon::now()->subMonths(3))
                                          ->where("is_locked", "=", "0")
                                          ->get();
 

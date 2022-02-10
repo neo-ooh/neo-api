@@ -226,7 +226,7 @@ trait HasRoles {
     public function scopeRoles(Builder $query): Builder {
         $roles = $query->OwnRoles();
 
-        if(!$this->is_group && ($this->parent->is_group ?? false)) {
+        if (!$this->is_group && ($this->parent->is_group ?? false)) {
             $roles->union($this->InheritedRoles());
         }
 
@@ -308,8 +308,10 @@ trait HasRoles {
      * This returns the user.s in the current group or above that have the specified capability.
      * The method stops searching once it finds at least one actor with the specified capability.
      * If multiple actors in the same group have the capability, they will all be returned.
+     *
      * @param CapabilityEnum $capability
-     * @return \Illuminate\Support\Collection<Actor> A list of actors with the capability. These actors are guaranteed to have access to the current actor.
+     * @return \Illuminate\Support\Collection<Actor> A list of actors with the capability. These actors are guaranteed to have
+     *                                               access to the current actor.
      */
     public function getActorsInHierarchyWithCapability(CapabilityEnum $capability) {
         // We start by the current actor and we move upward until we found someone
@@ -326,7 +328,7 @@ trait HasRoles {
                 if ($reviewers->count() > 0) {
                     return $reviewers;
                 }
-            } else if (!$actor->is_group && $actor->hasCapability(Capability::contents_review())) {
+            } else if ($actor->hasCapability(Capability::contents_review())) {
                 // This actor has the proper capability, use it
                 return collect([$actor]);
             }

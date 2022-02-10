@@ -13,6 +13,7 @@ namespace Neo\Auth;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\Request;
+use JetBrains\PhpStorm\Pure;
 use Neo\Models\AccessToken;
 
 /**
@@ -74,6 +75,11 @@ class AccessTokenGuard implements Guard {
     public function guest(): bool {
         // A guest is everything but a user
         return !$this->check();
+    }
+
+    #[Pure]
+    public function hasUser() {
+        return $this->user() !== null;
     }
 
     /**

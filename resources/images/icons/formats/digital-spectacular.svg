@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--suppress XmlDefaultAttributeValue, XmlDefaultAttributeValue -->
-<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="50px" height="50px" viewBox="0 0 50 50" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <title>icons/formats/digital-spectacular</title>
     <g id="icons/formats/digital-spectacular" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <path d="M31,29 L31,33 L3,33 C1.34314575,33 0,31.6568542 0,30 L0,20 C0,18.3431458 1.34314575,17 3,17 L15,17 L15,21 L4,21 L4,29 L31,29 Z" id="Combined-Shape" fill="#2B2C43" fill-rule="nonzero"></path>
-        <path d="M50,29 L50,33 L22,33 C20.3431458,33 19,31.6568542 19,30 L19,20 C19,18.3431458 20.3431458,17 22,17 L34,17 L34,21 L23,21 L23,29 L50,29 Z" id="Combined-Shape-Copy" fill="#00AAF3" fill-rule="nonzero" transform="translate(34.500000, 25.000000) rotate(-180.000000) translate(-34.500000, -25.000000) "></path>
+        <path d="M31,29 L31,33 L3,33 C1.34314575,33 0,31.6568542 0,30 L0,20 C0,18.3431458 1.34314575,17 3,17 L15,17 L15,21 L4,21 L4,29 L31,29 Z"
+              id="Combined-Shape" fill="#2B2C43" fill-rule="nonzero"></path>
+        <path d="M50,29 L50,33 L22,33 C20.3431458,33 19,31.6568542 19,30 L19,20 C19,18.3431458 20.3431458,17 22,17 L34,17 L34,21 L23,21 L23,29 L50,29 Z"
+              id="Combined-Shape-Copy" fill="#00AAF3" fill-rule="nonzero"
+              transform="translate(34.500000, 25.000000) rotate(-180.000000) translate(-34.500000, -25.000000) "></path>
     </g>
 </svg>

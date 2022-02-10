@@ -76,13 +76,6 @@ class Location extends SecuredModel {
         "city",
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [];
-
     protected $casts = [
         "scheduled_sleep" => "boolean"
     ];
@@ -158,9 +151,7 @@ class Location extends SecuredModel {
     */
 
     public function loadHierarchy(): self {
-        if ($this->container !== null) {
-            $this->container->append('parents_list');
-        }
+        $this->container?->append('parents_list');
 
         return $this;
     }

@@ -2,11 +2,10 @@
 
 namespace Neo\Services\Traffic;
 
-use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Support\Facades\Log;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
-use Neo\Services\API\Endpoint;
+use Spatie\FlareClient\Http\Exceptions\BadResponse;
 
 class LinkettAPIClient implements APIClientInterface {
 
@@ -29,8 +28,8 @@ class LinkettAPIClient implements APIClientInterface {
 
         do {
             $response = $this->client->call($endpoint, $payload, [
-                "Accept"      => "application/json",
-                "Connection"  => "close",
+                "Accept"     => "application/json",
+                "Connection" => "close",
             ]);
 
             $tries++;
@@ -38,7 +37,7 @@ class LinkettAPIClient implements APIClientInterface {
 
         if (!$response->successful()) {
             $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);
-            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload",);
+            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload");
             Log::channel("broadsign")
                ->error("pisignage response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 

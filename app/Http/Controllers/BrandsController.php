@@ -27,7 +27,7 @@ use Neo\Models\Property;
  * @param mixed $text
  * @link https://stackoverflow.com/a/25353877
  */
-function stripQuotes($text) {
+function stripQuotes(string $text) {
     return preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3', $text);
 }
 

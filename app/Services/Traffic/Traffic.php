@@ -2,9 +2,7 @@
 
 namespace Neo\Services\Traffic;
 
-use Carbon\Traits\Date;
 use InvalidArgumentException;
-use Neo\Models\Property;
 use Neo\Models\TrafficSource;
 
 abstract class Traffic {

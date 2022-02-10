@@ -56,7 +56,7 @@ abstract class Model implements Arrayable {
     }
 
     protected function setAttributes(array $attributes) {
-        $this->attributes = (array)$attributes;
+        $this->attributes = $attributes;
 
         // Format relations
         foreach (static::$relations as $relation => $modelType) {

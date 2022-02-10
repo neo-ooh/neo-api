@@ -30,7 +30,7 @@ use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
-use Swift_TransportException;
+use Symfony\Component\Mailer\Exception\TransportException;
 
 /**
  * Class ActorsController
@@ -253,13 +253,9 @@ class ActorsController extends Controller {
                 break;
         }
 
-        if ($actor->property) {
-            $actor->property->delete();
-        }
+        $actor->property?->delete();
 
-        if ($actor->phone) {
-            $actor->phone->delete();
-        }
+        $actor->phone?->delete();
 
         $actor->delete();
 
@@ -282,7 +278,7 @@ class ActorsController extends Controller {
                 // Otherwise, simply resend the email
                 Mail::to($actor)->send(new ActorWelcomeEmail($actor->signupToken));
             }
-        } catch (Swift_TransportException $e) {
+        } catch (TransportException $e) {
             // Email could not be delivered because recipient does not exist.
             // Not my problem
         }
@@ -312,14 +308,10 @@ class ActorsController extends Controller {
 
     public function security(ShowActorSecurityStatusRequest $request, Actor $actor): Response {
         $twoFAToken = $actor->twoFactorToken;
-        if ($twoFAToken) {
-            $twoFAToken->makeVisible("token");
-        }
+        $twoFAToken?->makeVisible("token");
 
         $signupToken = $actor->signupToken;
-        if ($signupToken) {
-            $signupToken->makeVisible("token");
-        }
+        $signupToken?->makeVisible("token");
 
         return new Response([
             "signup_token"     => $signupToken,

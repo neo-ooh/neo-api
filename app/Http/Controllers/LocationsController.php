@@ -82,7 +82,7 @@ class LocationsController extends Controller {
         $q = strtolower($request->query("q", ""));
 
         // We allow search with empty string only when an actor is provided.
-        if (($q === null || $q === '') && !$request->has("actor")) {
+        if (($q === '') && !$request->has("actor")) {
             return new Response([]);
         }
 
@@ -210,7 +210,7 @@ class LocationsController extends Controller {
         //Make sure the location supports screen controls
         $config = Broadcast::network($location->network_id)->getConfig();
         if (!($config instanceof BroadSignConfig)) {
-            throw new UnsupportedBroadcasterOptionException("{$location->name} does not support playlist force refresh");
+            throw new UnsupportedBroadcasterOptionException("$location->name does not support playlist force refresh");
         }
 
         $client = new BroadsignClient($config);

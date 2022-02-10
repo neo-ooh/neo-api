@@ -232,16 +232,16 @@ class OrderLine {
      * @return bool
      */
     public function isNetwork(string $network) {
-        switch ($network) {
-            case Network::NEO_SHOPPING:
-                return strtolower($this->property_type) === 'shopping';
-            case Network::NEO_OTG:
-                return strtolower($this->property_type) === 'service station' || strtolower($this->property_type) === 'c-store' || strtolower($this->property_type) === 'station service' || strtolower($this->property_type) === 'dépanneur';
-            case Network::NEO_FITNESS:
-                return strtolower($this->property_type) === 'fitness';
-        }
+        return match ($network) {
+            Network::NEO_SHOPPING => strtolower($this->property_type) === 'shopping',
+            Network::NEO_OTG      => strtolower($this->property_type) === 'service station' ||
+                strtolower($this->property_type) === 'c-store' ||
+                strtolower($this->property_type) === 'station service' ||
+                strtolower($this->property_type) === 'dépanneur',
+            Network::NEO_FITNESS  => strtolower($this->property_type) === 'fitness',
+            default               => false,
+        };
 
-        return false;
     }
 
     /**

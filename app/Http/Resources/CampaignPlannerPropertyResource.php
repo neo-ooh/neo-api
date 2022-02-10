@@ -4,8 +4,9 @@ namespace Neo\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Neo\Models\Property;
 
-/** @mixin \Neo\Models\Property */
+/** @mixin Property */
 class CampaignPlannerPropertyResource extends JsonResource {
     /**
      * @param Request $request

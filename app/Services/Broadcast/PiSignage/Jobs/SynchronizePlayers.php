@@ -47,11 +47,11 @@ class SynchronizePlayers extends PiSignageJob implements ShouldBeUnique {
         /** @var PiSignagePlayer $distPlayer */
         foreach ($distPlayers as $distPlayer) {
             // Ignore players without a name
-            if(!$distPlayer->name) {
+            if (!$distPlayer->name) {
                 continue;
             }
 
-            (new ConsoleOutput())->writeLn("{$distPlayer->name}...\n\n");
+            (new ConsoleOutput())->writeLn("$distPlayer->name...\n\n");
 
             // Get the location associated with the player
             /** @var Location $location */

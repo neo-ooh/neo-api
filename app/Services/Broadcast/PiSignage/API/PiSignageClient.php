@@ -3,7 +3,6 @@
 namespace Neo\Services\Broadcast\PiSignage\API;
 
 use Cache;
-use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Log;
 use JsonException;
@@ -11,6 +10,7 @@ use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
 use Neo\Services\API\Endpoint;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
+use Spatie\FlareClient\Http\Exceptions\BadResponse;
 
 class PiSignageClient implements APIClientInterface {
 
@@ -28,14 +28,14 @@ class PiSignageClient implements APIClientInterface {
 
     /**
      * @param Endpoint $endpoint
-     * @param mixed             $payload
-     * @param array             $headers
+     * @param mixed    $payload
+     * @param array    $headers
      * @return Response
      * @throws BadResponse
      */
     public function call($endpoint, $payload, array $headers = []) {
         // Set the base path for the request to the API.
-        $apiUrl = str_ends_with($this->config->apiURL, "/") ? substr($this->config->apiURL, 0, -1) : $this->config->apiURL;
+        $apiUrl         = str_ends_with($this->config->apiURL, "/") ? substr($this->config->apiURL, 0, -1) : $this->config->apiURL;
         $endpoint->base = $apiUrl . "/api";
 
         // Add the connection auth header
@@ -45,14 +45,14 @@ class PiSignageClient implements APIClientInterface {
         if (count($uriParams) > 0) {
             if ($uriParams[0] === "id" && is_numeric($payload)) {
                 $endpoint->setParam("id", $payload);
-            } else if(is_array($payload)) {
+            } else if (is_array($payload)) {
                 foreach ($uriParams as $param) {
                     $endpoint->setParam($param, $payload[$param]);
                 }
             }
         }
 
-        if(is_numeric($payload)) {
+        if (is_numeric($payload)) {
             $payload = null;
         }
 
@@ -83,19 +83,19 @@ class PiSignageClient implements APIClientInterface {
         if (!$response->successful()) {
             // Request was not successful, log the exchange
             $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);
-            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload", );
+            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload");
             Log::channel("broadsign")
                ->error("pisignage response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 
             throw new BadResponse($response->body(), $response->status());
         }
 
-        if(array_key_exists("data", $responseBody)) {
+        if (array_key_exists("data", $responseBody)) {
             // Unwrap response content
             $responseBody = $responseBody["data"];
 
             // pages routes will have another level of nesting
-            if(array_key_exists("objects", $responseBody)) {
+            if (array_key_exists("objects", $responseBody)) {
                 // Unwrap response content
                 $responseBody = $responseBody["objects"];
             }

@@ -50,7 +50,7 @@ class PullPropertyTraffic extends Command {
 
         $source = $property->traffic->source->first();
 
-        $period = CarbonPeriod::since(Carbon::create($property->traffic->start_year))->month(1)->until("now");
+        $period = CarbonPeriod::since(Carbon::create($property->traffic->start_year))->month()->until("now");
 
         $trafficSource = Traffic::from($source);
 

@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited

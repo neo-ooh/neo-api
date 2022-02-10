@@ -31,9 +31,7 @@ class ActorsLogosController extends Controller {
         }
 
         // Remove the actor logo if one is already present
-        if ($actor->logo !== null) {
-            $actor->logo->erase();
-        }
+        $actor->logo?->erase();
 
         // The request has already validated that the file is an image, but we want to make sure we only store pngs
         $actorLogo = $actor->logo()->make([
@@ -47,9 +45,7 @@ class ActorsLogosController extends Controller {
     }
 
     public function destroy(DestroyActorLogoRequest $request, Actor $actor) {
-        if ($actor->logo !== null) {
-            $actor->logo->erase();
-        }
+        $actor->logo?->erase();
 
         return new Response();
     }

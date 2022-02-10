@@ -23,7 +23,10 @@ use Neo\Models\ActorClosure;
  *
  * @propertu Actor parent
  *
- * @property int               parents_count
+ * @package  Neo\Models\Traits
+ *
+ * @mixin Model
+ * @mixin QueryBuilder
  * @property Collection<Actor> parents
  *
  * @property int               children_count
@@ -36,10 +39,7 @@ use Neo\Models\ActorClosure;
  * @method Builder Parent() scope
  * @method Builder Children() scope
  *
- * @package  Neo\Models\Traits
- *
- * @mixin Model
- * @mixin QueryBuilder
+ * @property int               parents_count
  */
 trait HasHierarchy {
     use WithRelationCaching;
@@ -52,13 +52,13 @@ trait HasHierarchy {
     /**
      * Bind to specific model events
      */
-    public static function bootHasHierarchy (): void {
+    public static function bootHasHierarchy(): void {
         static::created(function (Actor $node) {
             $parent_id = $node->actor_parent_id ?? null;
 
             // Here we handle the user integration into the global hierarchy.
             // We use its parent closure to build this user additional closures, and give one for itself
-            ActorClosure::query()->insertUsing([ "ancestor_id", "descendant_id", "depth" ],
+            ActorClosure::query()->insertUsing(["ancestor_id", "descendant_id", "depth"],
                 function (QueryBuilder $query) use ($node, $parent_id) {
                     $query->selectRaw("ancestor_id, {$node->getKey()} as d, depth + 1")
                           ->from("actors_closures")
@@ -84,7 +84,7 @@ trait HasHierarchy {
      *
      * @return string Qualified name of the column "<table>.<column>"
      */
-    public function getQualifiedClosureColumn (string $column): string {
+    public function getQualifiedClosureColumn(string $column): string {
         return "actors_closures." . $column;
     }
 
@@ -101,11 +101,11 @@ trait HasHierarchy {
      *
      * @return Builder
      */
-    public function selectActors (): Builder {
+    public function selectActors(): Builder {
         return $this->newQuery()->select([
-                        'actors.*',
-                        $this->getQualifiedClosureColumn('depth'),
-                    ]);
+            'actors.*',
+            $this->getQualifiedClosureColumn('depth'),
+        ]);
     }
 
     /**
@@ -115,8 +115,8 @@ trait HasHierarchy {
      *
      * @return Builder
      */
-    public function scopeParents (Builder $query): Builder {
-        $ancestorColumn = $this->getQualifiedClosureColumn("ancestor_id");
+    public function scopeParents(Builder $query): Builder {
+        $ancestorColumn   = $this->getQualifiedClosureColumn("ancestor_id");
         $descendantColumn = $this->getQualifiedClosureColumn("descendant_id");
 
         return $query->join("actors_closures", $ancestorColumn, "=", $this->getQualifiedKeyName())
@@ -131,18 +131,18 @@ trait HasHierarchy {
      *
      * @return Collection
      */
-    public function getParentsAttribute (): Collection {
+    public function getParentsAttribute(): Collection {
         return $this->getCachedRelation("parents",
-            fn () => $this->selectActors()
-                          ->parents()
-                          ->get()
+            fn() => $this->selectActors()
+                         ->parents()
+                         ->get()
         );
     }
 
     /**
      * @return int Number of parents in the hierarchy of this model
      */
-    public function getParentsCountAttribute (): int {
+    public function getParentsCountAttribute(): int {
         return $this->Parents()->count();
     }
 
@@ -155,7 +155,7 @@ trait HasHierarchy {
      * @see HasHierarchy::scopeParents()
      *
      */
-    public function scopeParent (Builder $query): Builder {
+    public function scopeParent(Builder $query): Builder {
         return $query->join("actors_closures",
             $this->getQualifiedClosureColumn("ancestor_id"),
             "=",
@@ -169,12 +169,12 @@ trait HasHierarchy {
      *
      * @return Actor|null
      */
-    public function getParentAttribute (): ?Actor {
+    public function getParentAttribute(): ?Actor {
         return $this->getCachedRelation("parent",
-            fn () => $this->selectActors()
-                          ->Parent()
-                          ->with('details')
-                          ->first()
+            fn() => $this->selectActors()
+                         ->Parent()
+                         ->with('details')
+                         ->first()
         );
     }
 
@@ -185,8 +185,8 @@ trait HasHierarchy {
      *
      * @return Builder
      */
-    public function scopeChildren (Builder $query): Builder {
-        $ancestorColumn = $this->getQualifiedClosureColumn('ancestor_id');
+    public function scopeChildren(Builder $query): Builder {
+        $ancestorColumn   = $this->getQualifiedClosureColumn('ancestor_id');
         $descendantColumn = $this->getQualifiedClosureColumn('descendant_id');
 
         return $query->join("actors_closures", $descendantColumn, "=", $this->getQualifiedKeyName())
@@ -195,14 +195,14 @@ trait HasHierarchy {
                      ->orderBy('depth');
     }
 
-    public function getChildrenAttribute () {
+    public function getChildrenAttribute() {
         return $this->getCachedRelation("children",
-            fn () => $this->selectActors()
-                          ->children()
-                          ->get());
+            fn() => $this->selectActors()
+                         ->children()
+                         ->get());
     }
 
-    public function getChildrenCountAttribute (): int {
+    public function getChildrenCountAttribute(): int {
         return $this->Children()->count();
     }
 
@@ -211,13 +211,13 @@ trait HasHierarchy {
      *
      * @return Builder
      */
-    public function scopeDirectChildren (): Builder {
+    public function scopeDirectChildren(): Builder {
         return $this->Children()
                     ->where($this->getQualifiedClosureColumn("depth"), "=", "1");
     }
 
-    public function getDirectChildrenAttribute () {
-        return $this->getCachedRelation("direct_children", fn () => $this->selectActors()->directChildren()->get());
+    public function getDirectChildrenAttribute() {
+        return $this->getCachedRelation("direct_children", fn() => $this->selectActors()->directChildren()->get());
     }
 
 
@@ -234,8 +234,8 @@ trait HasHierarchy {
      *
      * @return HasHierarchy
      */
-    public function moveTo (Actor $parent): self {
-        if ($parent === null || $this->is($parent)) {
+    public function moveTo(Actor $parent): self {
+        if ($this->is($parent)) {
             return $this;
         }
 
@@ -269,7 +269,7 @@ trait HasHierarchy {
             ]);
 
         $this->details->parent_is_group = $parent->is_group;
-        $this->details->parent_id = $parent->id;
+        $this->details->parent_id       = $parent->id;
         $this->setRelation("parent", $parent);
 
         return $this;
@@ -289,8 +289,8 @@ trait HasHierarchy {
      *
      * @return boolean
      */
-    public function isParentOf (Actor $node): bool {
-        $ancestorColumn = $this->getQualifiedClosureColumn('ancestor_id');
+    public function isParentOf(Actor $node): bool {
+        $ancestorColumn   = $this->getQualifiedClosureColumn('ancestor_id');
         $descendantColumn = $this->getQualifiedClosureColumn('descendant_id');
 
         // Count is either 1 if the current actor is a parent, or false otherwise

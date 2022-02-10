@@ -18,13 +18,13 @@ use Neo\Models\ActorCapability;
 use Neo\Models\Capability;
 
 class ActorsCapabilitiesController extends Controller {
-    public function index (ListActorCapabilitiesRequest $request, Actor $actor): Response {
+    public function index(ListActorCapabilitiesRequest $request, Actor $actor): Response {
         $capabilities = $actor->standalone_capabilities;
 
         return new Response($capabilities);
     }
 
-    public function sync (SyncActorCapabilitiesRequest $request, Actor $actor): Response {
+    public function sync(SyncActorCapabilitiesRequest $request, Actor $actor): Response {
         $capabilities = $request->validated()['capabilities'];
 
         // Make sure the listed capabilities are all standalone
@@ -41,17 +41,17 @@ class ActorsCapabilitiesController extends Controller {
         // All good, add the capabilities
         $capabilitiesID = $actor->standalone_capabilities->pluck("id")->values()->toArray();
 
-        $toAdd = array_diff($capabilities, $capabilitiesID);
+        $toAdd    = array_diff($capabilities, $capabilitiesID);
         $toRemove = array_diff($capabilitiesID, $capabilities);
 
         foreach ($toAdd as $cID) {
             ActorCapability::query()->create([
-                "actor_id"       => $actor->getKey(),
+                "actor_id"      => $actor->getKey(),
                 "capability_id" => $cID,
             ]);
         }
 
-        if(count($toRemove) > 0) {
+        if (count($toRemove) > 0) {
             $binds = implode(", ", array_fill(0, count($toRemove), "?"));
 
             DB::delete("DELETE FROM `actors_capabilities` WHERE `capability_id` IN ($binds) AND `actor_id` = ?",

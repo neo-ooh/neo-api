@@ -78,7 +78,7 @@ class ImpressionsController {
         $frames = Skin::byDisplayUnit($client, ["display_unit_id" => $location->external_id]);
         $frames->each(/**
          * @param Skin $frame
-         */ function ($frame) use ($client) {
+         */ function (Skin $frame) use ($client) {
             $frame->loop_policy = LoopPolicy::get($client, $frame->loop_policy_id);
         });
 
@@ -133,7 +133,7 @@ class ImpressionsController {
         $openLengths = $property->opening_hours->mapWithKeys(/**
          * @param OpeningHours $hours
          * @return array
-         */ fn($hours) => [$hours->weekday => $hours->open_at->diffInMinutes($hours->close_at, true)]);
+         */ fn(OpeningHours $hours) => [$hours->weekday => $hours->open_at->diffInMinutes($hours->close_at, true)]);
 
         // For each week
         do {

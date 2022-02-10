@@ -56,7 +56,7 @@ class DocumentsGenerationController extends Controller {
                 $format = $reader->fetchOne() ["export_in_excel"] === "True" ? 'xlsx' : 'pdf';
                 unset($reader);
 
-                if($format === 'xlsx') {
+                if ($format === 'xlsx') {
                     $document = XLSXProposal::make($file->getContent());
                 } else {
                     $document = PDFContract::makeProposal($file->getContent());
@@ -87,7 +87,7 @@ class DocumentsGenerationController extends Controller {
                 throw new UnknownDocumentException();
         }
 
-        if (!$document || !$document->build()) {
+        if (!$document->build()) {
             throw new UnknownDocumentException();
         }
 

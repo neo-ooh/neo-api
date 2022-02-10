@@ -1,12 +1,11 @@
 <?php
 
 use Geocoder\Provider\Chain\Chain;
-use Geocoder\Provider\GeoPlugin\GeoPlugin;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
-use \Http\Adapter\Guzzle7\Client;
+use Http\Adapter\Guzzle7\Client;
 
 return [
-    'cache' => [
+    'cache'     => [
 
         /*
         |-----------------------------------------------------------------------
@@ -78,7 +77,7 @@ return [
     | Default: Client::class (FQCN for CURL adapter)
     |
     */
-    'adapter'  => Client::class,
+    'adapter'   => Client::class,
 
     /*
     |---------------------------------------------------------------------------
@@ -104,6 +103,6 @@ return [
     |   ],
     |
     */
-    'reader' => null,
+    'reader'    => null,
 
 ];

@@ -10,6 +10,7 @@
 
 namespace Neo\Console;
 
+use DateTimeZone;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\CacheInventory;
@@ -138,7 +139,7 @@ class Kernel extends ConsoleKernel {
     /**
      * Get the timezone that should be used by default for scheduled events.
      *
-     * @return \DateTimeZone|string|null
+     * @return DateTimeZone|string|null
      */
     protected function scheduleTimezone() {
         return 'America/Toronto';

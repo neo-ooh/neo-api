@@ -13,10 +13,12 @@ namespace Neo\Documents\PropertyDump;
 
 use Carbon\Carbon;
 use Carbon\CarbonInterface;
+use Exception;
 use Illuminate\Support\Collection;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
+use Neo\Exceptions\InvalidBroadcastServiceException;
 use Neo\Models\Location;
 use Neo\Models\OpeningHours;
 use Neo\Models\Player;
@@ -88,7 +90,7 @@ class PropertyDump extends XLSXDocument {
 
     /**
      * @inheritDoc
-     * @throws \Neo\Exceptions\InvalidBroadcastServiceException
+     * @throws InvalidBroadcastServiceException
      */
     protected function ingest($data): bool {
         $this->properties = Property::query()
@@ -115,7 +117,7 @@ class PropertyDump extends XLSXDocument {
         $config = Broadcast::network($this->properties->first()->network_id)->getConfig();
 
         if ($config->broadcaster !== Broadcaster::BROADSIGN) {
-            throw new \Exception("Only Broadsign properties are supported");
+            throw new Exception("Only Broadsign properties are supported");
         }
 
         $client = new BroadsignClient($config);

@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Creatives;
 
 use DateInterval;
+use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -189,7 +190,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
         exec($curl_command, $output, $exit_code);
 
         if ($exit_code !== 0 || (int)$output[1] !== 200) {
-            throw new \Error("Error while executing cURL request: " . implode(", ", $output));
+            throw new Error("Error while executing cURL request: " . implode(", ", $output));
         }
 
         $responseBody = json_decode($output[0], true, 512, JSON_THROW_ON_ERROR)[$endpoint->unwrapKey];

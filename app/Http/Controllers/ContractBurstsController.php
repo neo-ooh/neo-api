@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Error;
+use Exception;
 use GuzzleHttp\Exception\ServerException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -60,7 +61,7 @@ class ContractBurstsController extends Controller {
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function receive(Request $request, ContractBurst $burst): void {
         $screenshot           = new ContractScreenshot();

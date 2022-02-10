@@ -148,6 +148,9 @@ abstract class JwtGuard implements Guard {
         return $this->checkActorMeetsCriteria($actor);
     }
 
+    /**
+     * @throws Exception
+     */
     public function checkActorMeetsCriteria(Actor $actor): bool {
         // Validate that the token has its two factor auth OR that the guard allows it to be missing
         if (!$actor->is2FAValid() && !$this->allowNonValidated2FA) {
@@ -210,6 +213,11 @@ abstract class JwtGuard implements Guard {
     public function guest(): bool {
         // A guest is everything but a user
         return !$this->check();
+    }
+
+
+    public function hasUser() {
+        return $this->user() !== null;
     }
 
     /**

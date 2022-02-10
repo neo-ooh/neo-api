@@ -88,9 +88,7 @@ class WeatherBackgroundsController extends Controller {
                                                    ->where("period", "=", $request->input('period'))
                                                    ->where("weather", "=", $request->input('weather'))->first();
 
-            if ($existingBackground) {
-                $existingBackground->delete();
-            }
+            $existingBackground?->delete();
         }
 
         // Validate the uploaded file before storing

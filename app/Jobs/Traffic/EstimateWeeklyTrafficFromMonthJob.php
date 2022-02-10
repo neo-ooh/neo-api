@@ -11,6 +11,7 @@
 namespace Neo\Jobs\Traffic;
 
 use Carbon\Carbon;
+use Carbon\CarbonInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -34,7 +35,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
         // List all the weeks we are working on
         $weeks = [];
         // Special case for january
-        $datePointer = Carbon::create($this->year, $this->month)->startOfWeek(Carbon::MONDAY);
+        $datePointer = Carbon::create($this->year, $this->month)->startOfWeek(CarbonInterface::MONDAY);
         $boundary    = Carbon::create($this->year, $this->month)->addMonth();
 
         do {
@@ -42,7 +43,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
             $datePointer->addWeek();
         } while ($datePointer->lte($boundary));
 
-        $weeks[] = $weeks[array_key_last($weeks)]->clone()->endOfWeek(Carbon::SUNDAY);
+        $weeks[] = $weeks[array_key_last($weeks)]->clone()->endOfWeek(CarbonInterface::SUNDAY);
 
         // List the month we need to get data from
         $monthTraffic = collect($weeks)
@@ -99,7 +100,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
         }
         if ($this->month === 12 && Carbon::create($this->year, $this->month)
                                          ->endOfMonth()
-                                         ->startOfWeek(Carbon::MONDAY)
+                                         ->startOfWeek(CarbonInterface::MONDAY)
                                          ->subDay()->isoWeek === 52) {
 
 

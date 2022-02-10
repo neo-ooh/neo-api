@@ -50,12 +50,13 @@ class CampaignsController extends Controller {
             "format_id"            => $campaign->format_id,
             "name"                 => $campaign->name,
             "schedules_max_length" => $campaign->schedules_default_length,
-            "schedules_max_length" => $campaign->schedules_max_length,
             "start_date"           => $campaign->start_date,
             "end_date"             => $campaign->end_date,
             "loop_saturation"      => $campaign->loop_saturation,
             "priority"             => $campaign->priority,
         ] = $request->validated();
+
+        $campaign->schedules_default_length = $campaign->schedules_max_length;
 
         // If no name was specified for the campaign, we generate one
         if ($campaign->name === null) {

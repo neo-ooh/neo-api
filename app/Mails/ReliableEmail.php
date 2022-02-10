@@ -11,17 +11,21 @@
 namespace Neo\Mails;
 
 use Illuminate\Mail\Mailable;
-use Swift_Message;
-use Swift_Signers_DKIMSigner;
+use Symfony\Component\Mime\Crypto\DkimOptions;
+use Symfony\Component\Mime\Crypto\DkimSigner;
+use Symfony\Component\Mime\Email;
 
 abstract class ReliableEmail extends Mailable {
     public $locale;
 
     public function __construct() {
         // Set DKIM signature
-        $this->withSwiftMessage(function(Swift_Message $message) {
-            $signer = new Swift_Signers_DKIMSigner(config('mail.dkim.private-key'), config('mail.dkim.domain'), config('mail.dkim.selector'));
-            $message->attachSigner($signer);
+        $this->withSymfonyMessage(function (Email $message) {
+            $signer      = new DkimSigner(config('mail.dkim.private-key'), config('mail.dkim.domain'), config('mail.dkim.selector'));
+            $signedEmail = $signer->sign($message, (new DkimOptions())->toArray());
+
+            $message->setHeaders($signedEmail->getHeaders());
+            $message->setBody($signedEmail->getBody());
         });
     }
 }

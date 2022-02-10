@@ -243,6 +243,8 @@ class Schedule extends Model {
     public function getAvailableOptionsAttribute(): array {
 //        $network = $this->campaign->network;
 
+        /** @noinspection PhpUnnecessaryLocalVariableInspection */
+        /** @noinspection OneTimeUseVariablesInspection */
         $options = ["dates", "time"];
 
 //        switch ($network->broadcaster_connection->broadcaster) {

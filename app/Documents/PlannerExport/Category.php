@@ -3,10 +3,11 @@
 namespace Neo\Documents\PlannerExport;
 
 use Illuminate\Support\Collection;
+use Neo\Models\ProductCategory;
 
 class Category {
     public int $id;
-    public \Neo\Models\ProductCategory $category;
+    public ProductCategory $category;
 
     public int $faces;
     public int $impressions;
@@ -17,7 +18,7 @@ class Category {
 
     public Collection $products;
 
-    public function __construct(array $compiledCategory, \Neo\Models\ProductCategory $category, \Illuminate\Database\Eloquent\Collection $products) {
+    public function __construct(array $compiledCategory, ProductCategory $category, \Illuminate\Database\Eloquent\Collection $products) {
         $this->id = $compiledCategory["id"];
 
         $this->category = $category;

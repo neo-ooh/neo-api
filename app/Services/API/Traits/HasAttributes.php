@@ -10,8 +10,6 @@
 
 namespace Neo\Services\API\Traits;
 
-use Illuminate\Database\Eloquent\JsonEncodingException;
-use Illuminate\Support\Facades\Log;
 use JsonException;
 
 trait HasAttributes {
@@ -26,8 +24,7 @@ trait HasAttributes {
         // Check if a method with the specified name exists
         if (method_exists($this, $name)) {
             // Yes call it and return
-            $relation = $this->{$name}();
-            return $relation;
+            return $this->{$name}();
         }
 
         // Return the attribute with the provided name

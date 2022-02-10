@@ -13,17 +13,17 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @package Neo\Services\Broadcast\PiSignage\Models
  *
  * @property string   $name
- * @property integer $version
- * @property string $layout
+ * @property integer  $version
+ * @property string   $layout
  * @property string   $templateName
- * @property array $videoWindow = [
+ * @property array    $videoWindow = [
  *  "length" => "integer",
  *  "width" => "integer",
  *  "xoffset" => "integer",
  *  "yoffset" => "integer"
  * ]
- * @property array $zoneVideoWindow
- * @property array $assets = [
+ * @property array    $zoneVideoWindow
+ * @property array    $assets      = [
  *      [
  *          "filename" => "string",
  *          "duration" => "integer",
@@ -38,8 +38,8 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  *          "zone6" => "string",
  *      ]
  * ]
- * @property array $settings
- * @property array $schedule = [
+ * @property array    $settings
+ * @property array    $schedule    = [
  *     "durationEnable" => "boolean",
  *     "startDate" => "string",
  *     "endDate" => "string",
@@ -47,14 +47,11 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  *     "startTime" => "boolean",
  *     "endTime" => "boolean",
  *     "weekdays" => [1, 2, 3, 4, 5, 6, 7],
- *     "monthdays" => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 26, 27, 28, 29, 30, 31],
+ *     "monthdays" => [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 26, 27, 28,
+ *     29, 30, 31],
  * ]
  * @property string[] $groupIds
  * @property string[] $labels
- *
- *
- * @method static get(PiSignageClient $client, array $name)
- *
  */
 class Playlist extends PiSignageModel {
     protected static string $key = "name";
@@ -89,7 +86,7 @@ class Playlist extends PiSignageModel {
      * @return mixed
      */
     public static function make(PiSignageClient $client, $name): Playlist {
-        $playlist = new Playlist($client);
+        $playlist       = new Playlist($client);
         $playlist->file = $name;
         $playlist->create();
 
@@ -103,7 +100,7 @@ class Playlist extends PiSignageModel {
     public static function get(PiSignageClient $client, $name): ?Playlist {
         $playlist = (new static($client))->callAction("get", ["name" => $name]);
 
-        if(!$playlist) {
+        if (!$playlist) {
             return null;
         }
 

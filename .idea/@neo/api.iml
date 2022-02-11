@@ -26,11 +26,8 @@
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/_laravel_idea" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/hannesvdvreken/guzzle-clockwork" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/hannesvdvreken/guzzle-profiler" />
-      <excludeFolder url="file://$MODULE_DIR$/../../vendor/spatie/backtrace" />
-      <excludeFolder url="file://$MODULE_DIR$/../../vendor/spatie/ignition" />
-      <excludeFolder url="file://$MODULE_DIR$/../../vendor/spatie/flare-client-php" />
-      <excludeFolder url="file://$MODULE_DIR$/../../vendor/spatie/laravel-ignition" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/mailer" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/flysystem-ftp" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

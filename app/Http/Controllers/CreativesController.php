@@ -97,7 +97,7 @@ class CreativesController extends Controller {
         // Control the uploaded creative
         // This methods returns only if the creative is valid
         try {
-            $this->validateStaticCreative($file, $frame, $content);
+            clock("Static creative is valid: ", $this->validateStaticCreative($file, $frame, $content));
         } catch (BaseException $exc) {
             return $exc->asResponse();
         }
@@ -122,6 +122,7 @@ class CreativesController extends Controller {
 
         // And store the creative
         $creativeProperties->store($file);
+
 
         // Properly rename the ad if applicable
         if ($content->creatives_count === 1) {

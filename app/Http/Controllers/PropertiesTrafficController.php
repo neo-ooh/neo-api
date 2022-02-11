@@ -6,7 +6,6 @@ use Gate;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Date;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\PropertiesTraffic\ListTrafficRequest;
 use Neo\Http\Requests\PropertiesTraffic\StoreTrafficRequest;
@@ -42,8 +41,7 @@ class PropertiesTrafficController extends Controller {
 
                 EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $request->input("year"), $request->input("month") + 1);
 
-                $property->last_review_at = Date::now();
-                $property->save();
+                $property->touch("last_review_at");
 
                 return new Response([], 200);
             }
@@ -58,8 +56,7 @@ class PropertiesTrafficController extends Controller {
 
         EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $request->input("year"), $request->input("month") + 1);
 
-        $property->last_review_at = Date::now();
-        $property->save();
+        $property->touch("last_review_at");
 
         return new Response($traffic, 201);
     }

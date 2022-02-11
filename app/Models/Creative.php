@@ -103,7 +103,6 @@ class Creative extends Model {
                 $creative->content->save();
             }
 
-            $creative->eraseFile();
             if ($creative->isForceDeleting()) {
                 $creative->eraseThumbnail();
             }
@@ -111,11 +110,15 @@ class Creative extends Model {
     }
 
     public function eraseFile(): void {
-        Storage::delete($this->file_path);
+        if ($this->type === self::TYPE_STATIC) {
+            Storage::delete($this->properties->file_path);
+        }
     }
 
     public function eraseThumbnail(): void {
-        Storage::delete($this->thumbnail_path);
+        if ($this->type === self::TYPE_STATIC) {
+            Storage::delete($this->properties->thumbnail_path);
+        }
     }
 
     protected static function newFactory(): CreativeFactory {

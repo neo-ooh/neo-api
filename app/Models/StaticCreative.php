@@ -88,8 +88,12 @@ class StaticCreative extends Model {
             Storage::delete($this->file_path);
         }
 
-        $this->createThumbnail($file);
-        $file->storePubliclyAs('creatives/', $this->creative_id . '.' . $this->extension);
+        clock("thumbnail created:", $this->createThumbnail($file));
+        clock(
+            "creative put " . ($this->creative_id . '.' . $this->extension) . ":",
+//            $file->storePubliclyAs('creatives/', $this->creative_id . '.' . $this->extension),
+            Storage::putFileAs("creatives", $file, $this->creative_id . '.' . $this->extension, ["visibility" => "public"]),
+        );
     }
 
     /*
@@ -107,23 +111,27 @@ class StaticCreative extends Model {
      * @return void
      * @throws FileNotFoundException
      */
-    public function createThumbnail(UploadedFile $file): void {
+    public function createThumbnail(UploadedFile $file): bool {
         if (Storage::exists($this->thumbnail_path)) {
             Storage::delete($this->thumbnail_path);
         }
+
+        $result = false;
 
         switch (strtolower($file->extension())) {
             case "jpg":
             case "jpeg":
             case "png":
-                $this->createImageThumbnail($file);
+                $result = $this->createImageThumbnail($file);
                 break;
             case "mp4":
-                $this->createVideoThumbnail($file);
+                $result = $this->createVideoThumbnail($file);
                 break;
         }
 
         Storage::setVisibility($this->thumbnail_path, 'public');
+
+        return $result;
     }
 
 
@@ -134,14 +142,14 @@ class StaticCreative extends Model {
      *
      * @return void
      */
-    private function createImageThumbnail(UploadedFile $file): void {
+    private function createImageThumbnail(UploadedFile $file): bool {
         $img = Image::make($file);
         $img->resize(1280, 1280, function ($constraint) {
             $constraint->aspectRatio();
             $constraint->upsize();
         });
 
-        Storage::put($this->thumbnail_path, $img->encode("jpg", 75)->getEncoded());
+        return Storage::put($this->thumbnail_path, $img->encode("jpg", 75)->getEncoded());
     }
 
 
@@ -153,7 +161,7 @@ class StaticCreative extends Model {
      * @return void
      * @throws FileNotFoundException
      */
-    private function createVideoThumbnail(UploadedFile $file): void {
+    private function createVideoThumbnail(UploadedFile $file): bool {
         $ffmpeg = FFMpeg::create(config('ffmpeg'));
 
         $tempName = 'thumb_' . $this->checksum;
@@ -163,8 +171,12 @@ class StaticCreative extends Model {
         $video = $ffmpeg->open($file->path());
         $frame = $video->frame(TimeCode::fromSeconds(1));
         $frame->save($tempFile);
-        Storage::writeStream($this->thumbnail_path, Storage::disk('local')->readStream($tempName));
+        $result = Storage::writeStream($this->thumbnail_path, Storage::disk('local')->readStream($tempName));
+
+        // Clean temporary file
         Storage::disk('local')->delete($tempName);
+
+        return $result;
     }
 
 

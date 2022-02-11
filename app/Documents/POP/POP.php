@@ -61,6 +61,7 @@ class POP extends PDFDocument {
         $this->contract["current_bonus_value"]      = 0;
         $this->contract["current_bua_value"]        = 0;
         $this->contract["current_value"]            = 0;
+        $this->contract["bua_impression_value"]     = 0;
 
         // If we received any impression, we are able to deduce the current cpm
         if ($this->contract["total_received_impressions"] > 0) {

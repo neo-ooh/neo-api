@@ -38,16 +38,16 @@
     margin-bottom  : 0;
 
     &.center {
-      text-align: center;
+      text-align : center;
     }
   }
 
   h3 {
-    text-align: center;
-    margin-top: -2mm;
+    text-align : center;
+    margin-top : -2mm;
 
     &.small {
-      font-size: 9pt;
+      font-size : 9pt;
     }
   }
 
@@ -94,7 +94,6 @@
       margin-top : 4mm;
     }
   }
-
 
 
   .payable-contact {
@@ -194,42 +193,42 @@
   }
 
   .payable-accounts-wrapper {
-    margin-top: 3mm;
+    margin-top : 3mm;
   }
 
   .payable-accounts {
-    margin-top      : -6.5mm;
-    margin-left     : 50mm;
+    margin-top  : -6.5mm;
+    margin-left : 50mm;
 
     .payable-account-email {
-      font-family: $font-bold;
-      font-weight: bold;
-      margin-left: 5mm;
+      font-family : $font-bold;
+      font-weight : bold;
+      margin-left : 5mm;
     }
   }
 
   .payment-terms {
-    margin-top: 3mm;
+    margin-top : 3mm;
 
     .payment-steps {
-      margin-top      : -6.5mm;
-      margin-left     : 50mm;
-      margin-bottom: 5mm;
+      margin-top    : -6.5mm;
+      margin-left   : 50mm;
+      margin-bottom : 5mm;
 
       tr {
         td:nth-child(1) {
-          padding-right: 5mm;
+          padding-right : 5mm;
 
-          font-family: $font-bold;
-          font-weight: bold;
-          text-align: right;
+          font-family   : $font-bold;
+          font-weight   : bold;
+          text-align    : right;
         }
 
         td:nth-child(3) {
-          padding-left: 5mm;
+          padding-left : 5mm;
 
-          font-family: $font-bold;
-          font-weight: bold;
+          font-family  : $font-bold;
+          font-weight  : bold;
         }
       }
     }
@@ -446,16 +445,16 @@
 }
 
 .extension-strategy-cpm {
-  width: 100%;
-  text-align: right;
-  font-style: italic;
-  font-size: .889rem;
+  width      : 100%;
+  text-align : right;
+  font-style : italic;
+  font-size  : .889rem;
 }
 
 .audience-extension-table {
-  border-spacing: 0;
-  width         : 100%;
-  margin-bottom : 5mm;
+  border-spacing : 0;
+  width          : 100%;
+  margin-bottom  : 5mm;
 
   thead tr th {
     width            : 24.5mm;
@@ -470,36 +469,36 @@
     border-left      : 1px solid #FFFFFF;
 
     &:nth-child(1) {
-      border-left: none;
+      border-left : none;
     }
   }
 
   tbody tr {
     td {
-      padding     : 2mm 0;
+      padding       : 2mm 0;
 
-      color       : #000000;
-      text-align  : center;
-      font-size   : .79em;
+      color         : #000000;
+      text-align    : center;
+      font-size     : .79em;
 
-      border-bottom: 1px solid $dark-blue;
-      border-left : 1px solid #FFFFFF;
-      border-top  : 1px solid #FFFFFF;
+      border-bottom : 1px solid $dark-blue;
+      border-left   : 1px solid #FFFFFF;
+      border-top    : 1px solid #FFFFFF;
 
       &:nth-child(1) {
-        border-left: none;
+        border-left : none;
       }
     }
 
     &.strategy-type-row td {
       padding          : .5mm 0;
       text-align       : center;
-      border-bottom: none;
+      border-bottom    : none;
 
-      font-size   : .889em;
+      font-size        : .889em;
       color            : #FFFFFF;
       background-color : $dark-blue;
-      border-top  : 1px solid #FFFFFF;
+      border-top       : 1px solid #FFFFFF;
     }
   }
 }
@@ -663,9 +662,9 @@
       }
 
       &.property-city {
-        padding    : 2mm 1mm 1mm;
-        text-align : center;
-        font-weight: 400;
+        padding     : 2mm 1mm 1mm;
+        text-align  : center;
+        font-weight : 400;
       }
 
       &:nth-child(11), &.last {
@@ -685,7 +684,7 @@
         }
 
         &.property-city {
-          font-family      : $font-bold;
+          font-family : $font-bold;
           //font-weight      : bold;
         }
       }

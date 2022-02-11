@@ -52,7 +52,6 @@
     "vinkla/hashids": "^10.0"
   },
   "require-dev": {
-    "spatie/laravel-ignition": "^1.0",
     "fakerphp/faker": "^1.9.1",
     "mockery/mockery": "^1.4.2",
     "nunomaduro/collision": "^6.1",

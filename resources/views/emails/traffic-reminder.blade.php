@@ -6,27 +6,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
     <style type="text/css">
-        body {
+        body
+        {
             font-family      : 'Poppins', sans-serif;
             background-color : #F4F4F5;
         }
 
-        table {
+        table
+        {
             margin : auto;
             width  : 550px;
         }
 
-        .main {
+        .main
+        {
             background-color : #FFFFFF;
         }
 
-        .main td {
+        .main td
+        {
             padding       : 20px;
             border        : 1px solid #BBBBBB;
             border-radius : 5px;
         }
 
-        h1 {
+        h1
+        {
             margin      : 25px 25px 50px;
             font-size   : 1.8em;
             font-weight : bold;
@@ -34,16 +39,19 @@
             text-align  : center;
         }
 
-        p {
+        p
+        {
             margin : 1em;
         }
 
-        h3 {
+        h3
+        {
             margin-top : 40px;
             text-align : center;
         }
 
-        a {
+        a
+        {
             padding          : 10px 15px;
 
             font-weight      : bold;
@@ -55,21 +63,25 @@
 
         }
 
-        .spacer td {
+        .spacer td
+        {
             padding : 20px;
         }
 
-        .logos img {
+        .logos img
+        {
             margin : 50px;
             height : 75px;
         }
 
-        .legals {
+        .legals
+        {
             color     : #888888;
             font-size : .8em;
         }
 
-        .legals td {
+        .legals td
+        {
             padding-bottom : 15px;
         }
     </style>

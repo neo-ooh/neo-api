@@ -15,19 +15,19 @@ use Illuminate\Support\Facades\Storage;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
- * @property int $id
- * @property string $extension
- * @property string $name
- * @property int $property_id
- * @property int $width
- * @property int $height
- * @property int $order
+ * @property int      $id
+ * @property string   $extension
+ * @property string   $name
+ * @property int      $property_id
+ * @property int      $width
+ * @property int      $height
+ * @property int      $order
  *
  * @property Property $property
  *
- * @property string $uid
- * @property string $file_path
- * @property string $url
+ * @property string   $uid
+ * @property string   $file_path
+ * @property string   $url
  *
  */
 class PropertyPicture extends Model {
@@ -52,7 +52,7 @@ class PropertyPicture extends Model {
         parent::boot();
 
         static::deleting(static function (PropertyPicture $picture) {
-            Storage::delete($picture->file_path);
+            Storage::disk("public")->delete($picture->file_path);
         });
     }
 
@@ -69,6 +69,6 @@ class PropertyPicture extends Model {
     }
 
     public function getUrlAttribute() {
-        return Storage::url($this->file_path);
+        return Storage::disk("public")->url($this->file_path);
     }
 }

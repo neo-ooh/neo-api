@@ -50,7 +50,7 @@ class GetDynamicCreativePreview implements ShouldQueue {
 
         if ($creative->properties->thumbnail_path) {
             // Delete existing creative
-            Storage::delete($creative->properties->thumbnail_path);
+            Storage::disk("public")->delete($creative->properties->thumbnail_path);
         }
 
         // Get the link target and validate its type
@@ -63,7 +63,7 @@ class GetDynamicCreativePreview implements ShouldQueue {
         }
 
         // Check the file is an image
-        if(!Str::startsWith($file->header("Content-Type"), "image/")) {
+        if (!Str::startsWith($file->header("Content-Type"), "image/")) {
             // Not an image, fallback
             //  TODO: Finish this
         }

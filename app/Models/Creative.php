@@ -111,13 +111,13 @@ class Creative extends Model {
 
     public function eraseFile(): void {
         if ($this->type === self::TYPE_STATIC) {
-            Storage::delete($this->properties->file_path);
+            Storage::disk("public")->delete($this->properties->file_path);
         }
     }
 
     public function eraseThumbnail(): void {
         if ($this->type === self::TYPE_STATIC) {
-            Storage::delete($this->properties->thumbnail_path);
+            Storage::disk("public")->delete($this->properties->thumbnail_path);
         }
     }
 

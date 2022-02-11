@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Neo\Http\Requests\PropertiesPictures\StorePictureRequest;
 use Neo\Http\Requests\PropertiesPictures\UpdatePictureRequest;
 use Neo\Models\Property;
@@ -42,7 +43,9 @@ class PropertyPicturesController {
         ]);
 
         $picture->save();
-        $image->storePubliclyAs("/properties/pictures/", "$picture->uid.$picture->extension");
+
+        Storage::disk("public")
+               ->putFileAs("/properties/pictures", $image, "$picture->uid.$picture->extension", ["visibility" => "public"]);
 
         return new Response($picture, 201);
     }

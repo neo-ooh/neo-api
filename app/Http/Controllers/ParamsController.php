@@ -79,14 +79,13 @@ class ParamsController extends Controller {
         // File is OK, store it properly
         if ($parameter->slug === "tos") {
             $fileName = "terms-of-service.pdf";
-            if (Storage::exists($fileName)) {
-                Storage::delete($fileName);
+            if (Storage::disk("public")->exists($fileName)) {
+                Storage::disk("public")->delete($fileName);
             }
 
-            $file->storePubliclyAs('/', $fileName);
-            $parameter->value = Storage::url($fileName);
+            $parameter->value = Storage::disk("public")->putFileAs("/common", $file, $fileName, ["visibility" => "public"]);
 
-            // Tos have been updated, now require everyone to accept it again
+            // Tos have been updated, now require everyone to accept them again
             Actor::query()->update(['tos_accepted' => false]);
         }
     }

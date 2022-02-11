@@ -44,7 +44,7 @@ class Attachment extends Model {
         parent::boot();
 
         static::deleting(static function (Attachment $screenshot) {
-            Storage::delete($screenshot->file_path);
+            Storage::disk("public")->delete($screenshot->file_path);
         });
     }
 
@@ -60,12 +60,14 @@ class Attachment extends Model {
 
     /**
      * @param UploadedFile $file
+     * @return false|string
      */
     public function store(UploadedFile $file) {
-        $file->storePubliclyAs("attachments/" . Hashids::encode($this->id), $this->filename);
+        return Storage::disk("public")
+                      ->putFileAs("attachments/" . Hashids::encode($this->id), $file, $this->filename, ["visibility" => "public"]);
     }
 
     public function getUrlAttribute() {
-        return Storage::url($this->file_path);
+        return Storage::disk("public")->url($this->file_path);
     }
 }

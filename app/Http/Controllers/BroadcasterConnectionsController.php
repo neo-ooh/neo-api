@@ -3,6 +3,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 use Neo\Http\Requests\BroadcasterConnections\DestroyConnectionRequest;
 use Neo\Http\Requests\BroadcasterConnections\ListConnectionRequest;
@@ -59,7 +60,8 @@ class BroadcasterConnectionsController extends Controller {
 
             // !! IMPORTANT !! Visibility has to be set to private, this key has no password
             // The key is stored on the shared storage to be accessible by all the API nodes
-            $cert->storeAs($connection->settings->certificate_path, $connection->settings->file_name, ["visibility" => "private"]);
+            Storage::disk("public")
+                   ->putFileAs($connection->settings->certificate_path, $cert, $connection->settings->file_name, ["visibility" => "private"]);
         }
 
         // We are good, return the ID of the created resource
@@ -95,7 +97,8 @@ class BroadcasterConnectionsController extends Controller {
                         throw new UploadException($cert->getErrorMessage(), $cert->getError());
                     }
 
-                    $cert->storeAs($connectionSettings->certificate_path, $connectionSettings->file_name, ["visibility" => "private"]);
+                    Storage::disk("public")
+                           ->putFileAs($connection->settings->certificate_path, $cert, $connectionSettings->file_name, ["visibility" => "private"]);
                 }
                 break;
             case "pisignage":

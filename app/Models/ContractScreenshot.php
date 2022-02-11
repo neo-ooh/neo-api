@@ -49,7 +49,7 @@ class ContractScreenshot extends Model {
         parent::boot();
 
         static::deleting(static function (ContractScreenshot $screenshot) {
-            Storage::delete($screenshot->file_path);
+            Storage::disk("public")->delete($screenshot->file_path);
         });
     }
 
@@ -78,11 +78,11 @@ class ContractScreenshot extends Model {
      */
     public function store($screenshot) {
         // And store the request
-        Storage::writeStream($this->file_path, $screenshot, ["visibility" => "public"]);
+        Storage::disk("public")->writeStream($this->file_path, $screenshot, ["visibility" => "public"]);
     }
 
     public function getUrlAttribute() {
-        return Storage::url($this->file_path);
+        return Storage::disk("public")->url($this->file_path);
     }
 
 }

@@ -114,7 +114,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
         $metadata = [
             "name"             => $creative->owner->email . " - " . $creative->original_name,
             "originalfilename" => $creative->original_name,
-            "size"             => Storage::size($creative->properties->file_path),
+            "size"             => Storage::disk("public")->size($creative->properties->file_path),
             "feeds"            => "",
             "attributes"       => $this->getAttributesForCreative($creative),
             "mime"             => $creative->properties->extension,

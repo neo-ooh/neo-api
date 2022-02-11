@@ -66,9 +66,9 @@ class BrandingFile extends Model {
      *
      * @var array
      */
-    protected $appends = [ 'file_path' ];
+    protected $appends = ['file_path'];
 
-    protected static function newFactory (): Factories\BrandingFileFactory {
+    protected static function newFactory(): Factories\BrandingFileFactory {
         return Factories\BrandingFileFactory::new();
     }
 
@@ -79,7 +79,7 @@ class BrandingFile extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function branding (): BelongsTo {
+    public function branding(): BelongsTo {
         return $this->belongsTo(Branding::class, 'branding_id', 'id');
     }
 
@@ -90,8 +90,8 @@ class BrandingFile extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function getFilePathAttribute (): string {
-        return Storage::url('brandings/' . $this->branding_id . '/' . $this->filename);
+    public function getFilePathAttribute(): string {
+        return Storage::disk("public")->url('brandings/' . $this->branding_id . '/' . $this->filename);
     }
 
     /*
@@ -104,7 +104,8 @@ class BrandingFile extends Model {
      * @param UploadedFile $file
      */
     public function store(UploadedFile $file): void {
-        $file->storePubliclyAs('brandings/'.$this->branding_id.'/', $this->filename);
+        Storage::disk("public")
+               ->putFileAs("/brandings", $file, $this->branding_id . '/' . $this->filename, ["visibility" => "public"]);
     }
 
     /**
@@ -112,7 +113,7 @@ class BrandingFile extends Model {
      */
     public function erase(): void {
         // Delete the file
-        Storage::delete($this->filePath);
+        Storage::disk("public")->delete($this->filePath);
         $this->delete();
     }
 }

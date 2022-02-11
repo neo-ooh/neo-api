@@ -2,6 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
+use http\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -98,13 +99,20 @@ class WeatherBackgroundsController extends Controller {
             throw new UploadException("An error occurred while uploading the background");
         }
 
+        $path = Storage::disk("public")
+                       ->putFileAs("dynamics/weather/backgrounds", $file, $file->hashName(), ["visibility" => "public"]);
+
+        if (!$path) {
+            throw new RuntimeException("Could not store file. CDN may be temporarily unavailable");
+        }
+
         $background                      = new WeatherBackground();
         $background->weather             = $request->input("weather");
         $background->period              = $request->input("period");
         $background->network_id          = $request->input("network_id");
         $background->weather_location_id = $location->id;
         $background->format_id           = $request->input("format_id");
-        $background->path                = $file->storePubliclyAs(Storage::path("dynamics/weather/backgrounds/"), $file->hashName());
+        $background->path                = $path;
         $background->save();
 
         return new Response($background, 201);

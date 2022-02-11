@@ -61,14 +61,14 @@ class ActorLogo extends Model {
     */
 
     public function getFilePathAttribute(): string {
-        return Storage::url("actors_logo/{$this->getKey()}.png");
+        return Storage::disk("public")->url("actors_logo/{$this->getKey()}.png");
     }
 
     /**
      * @param UploadedFile $file
      */
     public function store(UploadedFile $file): void {
-        Storage::put("actors_logo/{$this->getKey()}.png", Image::make($file)->encode("png"), 'public');
+        Storage::disk("public")->put("actors_logo/{$this->getKey()}.png", Image::make($file)->encode("png"), 'public');
     }
 
     /**
@@ -76,7 +76,7 @@ class ActorLogo extends Model {
      */
     public function erase(): void {
         // Delete the file
-        Storage::delete($this->file_path);
+        Storage::disk("public")->delete($this->file_path);
         $this->delete();
     }
 }

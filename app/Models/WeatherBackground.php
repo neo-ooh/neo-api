@@ -12,18 +12,17 @@ use Illuminate\Support\Facades\Storage;
  *
  * @package Neo\Models
  *
- * @property int $id
+ * @property int    $id
  * @property string $weather
  * @property string $period
- * @property int $network_id
+ * @property int    $network_id
  * @property string $weather_location_id
  * @property string $format_id
  * @property string $path
- * @property Date $created_at
- * @property Date $updated_at
+ * @property Date   $created_at
+ * @property Date   $updated_at
  */
-class WeatherBackground extends Model
-{
+class WeatherBackground extends Model {
     use HasFactory;
 
     protected $table = "weather_backgrounds";
@@ -31,7 +30,7 @@ class WeatherBackground extends Model
     protected $appends = ["url"];
 
     protected $casts = [
-        "format_id" => "integer",
+        "format_id"  => "integer",
         "network_id" => "integer",
     ];
 
@@ -39,11 +38,11 @@ class WeatherBackground extends Model
         parent::boot();
 
         static::deleting(function (WeatherBackground $background) {
-            Storage::delete($background->path);
+            Storage::disk("public")->delete($background->path);
         });
     }
 
     public function getUrlAttribute(): string {
-        return Storage::url($this->path);
+        return Storage::disk("public")->url($this->path);
     }
 }

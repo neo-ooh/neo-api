@@ -40,7 +40,7 @@ class NewsRecord extends Model {
     ];
 
     public function getMediaUrlAttribute() {
-        if($this->media === null) {
+        if ($this->media === null) {
             return null;
         }
 

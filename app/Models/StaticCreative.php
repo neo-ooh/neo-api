@@ -59,7 +59,7 @@ class StaticCreative extends Model {
     */
 
     public function getFileUrlAttribute(): ?string {
-        return Storage::url($this->file_path);
+        return Storage::disk("public")->url($this->file_path);
     }
 
     public function getFilePathAttribute(): ?string {
@@ -67,7 +67,7 @@ class StaticCreative extends Model {
     }
 
     public function getThumbnailUrlAttribute(): ?string {
-        return Storage::url($this->thumbnail_path);
+        return Storage::disk("public")->url($this->thumbnail_path);
     }
 
     public function getThumbnailPathAttribute(): ?string {
@@ -84,16 +84,13 @@ class StaticCreative extends Model {
      * @throws FileNotFoundException
      */
     public function store(UploadedFile $file): void {
-        if (Storage::exists($this->file_path)) {
-            Storage::delete($this->file_path);
+        if (Storage::disk("public")->exists($this->file_path)) {
+            Storage::disk("public")->delete($this->file_path);
         }
 
-        clock("thumbnail created:", $this->createThumbnail($file));
-        clock(
-            "creative put " . ($this->creative_id . '.' . $this->extension) . ":",
-//            $file->storePubliclyAs('creatives/', $this->creative_id . '.' . $this->extension),
-            Storage::putFileAs("creatives", $file, $this->creative_id . '.' . $this->extension, ["visibility" => "public"]),
-        );
+        $this->createThumbnail($file);
+        Storage::disk("public")
+               ->putFileAs("creatives", $file, $this->creative_id . '.' . $this->extension, ["visibility" => "public"]);
     }
 
     /*
@@ -112,8 +109,8 @@ class StaticCreative extends Model {
      * @throws FileNotFoundException
      */
     public function createThumbnail(UploadedFile $file): bool {
-        if (Storage::exists($this->thumbnail_path)) {
-            Storage::delete($this->thumbnail_path);
+        if (Storage::disk("public")->exists($this->thumbnail_path)) {
+            Storage::disk("public")->delete($this->thumbnail_path);
         }
 
         $result = false;
@@ -129,7 +126,7 @@ class StaticCreative extends Model {
                 break;
         }
 
-        Storage::setVisibility($this->thumbnail_path, 'public');
+        Storage::disk("public")->setVisibility($this->thumbnail_path, 'public');
 
         return $result;
     }
@@ -149,7 +146,7 @@ class StaticCreative extends Model {
             $constraint->upsize();
         });
 
-        return Storage::put($this->thumbnail_path, $img->encode("jpg", 75)->getEncoded());
+        return Storage::disk("public")->put($this->thumbnail_path, $img->encode("jpg", 75)->getEncoded());
     }
 
 
@@ -171,7 +168,7 @@ class StaticCreative extends Model {
         $video = $ffmpeg->open($file->path());
         $frame = $video->frame(TimeCode::fromSeconds(1));
         $frame->save($tempFile);
-        $result = Storage::writeStream($this->thumbnail_path, Storage::disk('local')->readStream($tempName));
+        $result = Storage::disk("public")->writeStream($this->thumbnail_path, Storage::disk('local')->readStream($tempName));
 
         // Clean temporary file
         Storage::disk('local')->delete($tempName);

@@ -2,6 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
+use http\Exception\RuntimeException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\NewsBackgrounds\DestroyBackgroundRequest;
@@ -51,13 +52,22 @@ class NewsBackgroundsController extends Controller {
 
         // The request validated that we actually received an image, we validated that the transfer was successful, and we delegate the creative dimensions validation to the front-end.
 
+        // Store the file
+        $path = Storage::disk("public")
+                       ->putFileAs("dynamics/news/backgrounds", $file, $file->hashName(), ["visibility" => "public"]);
+
+        if (!$path) {
+            // Error when storing
+            throw new RuntimeException("Could not store file. CDN may be temporarily unavailable");
+        }
+
         $background            = new NewsBackground();
         $background->category  = $category;
         $background->network   = $network;
         $background->format_id = $formatId;
         $background->locale    = $locale;
-        $background->path      = $file->storePubliclyAs(Storage::path("dynamics/news/backgrounds/"), $file->hashName());
-        $background->save();
+        $background->path      =
+            $background->save();
 
         return new Response($background, 201);
     }

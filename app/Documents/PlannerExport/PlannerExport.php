@@ -163,7 +163,7 @@ class PlannerExport extends XLSXDocument {
         $this->ws->popPosition();
 
         $this->ws->printRow([
-            "Flight #" . $flightIndex + 1,
+            $flight->name ?? "Flight #" . $flightIndex + 1,
             $flight->start->toDateString(),
             '→',
             $flight->end->toDateString(),
@@ -264,7 +264,7 @@ class PlannerExport extends XLSXDocument {
         $this->ws->popPosition();
 
         $this->ws->printRow([
-            "Flight #" . $flightIndex + 1,
+            $flight->name ?? "Flight #" . $flightIndex + 1,
             $flight->start->toDateString(),
             '→',
             $flight->end->toDateString(),

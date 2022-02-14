@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Neo\Models\ProductCategory;
 
 class Flight {
+    public string|null $name;
     public Carbon $start;
     public Carbon $end;
     public float $length;
@@ -23,6 +24,7 @@ class Flight {
     public float $cpmPrice;
 
     public function __construct(array $compiledFlight) {
+        $this->name   = $compiledFlight["name"];
         $this->start  = Carbon::parse($compiledFlight['start']);
         $this->end    = Carbon::parse($compiledFlight['end']);
         $this->length = $compiledFlight['length'];

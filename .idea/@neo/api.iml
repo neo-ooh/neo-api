@@ -9,7 +9,6 @@
       <sourceFolder url="file://$MODULE_DIR$/../../spec" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/../../bootstrap" />
       <excludeFolder url="file://$MODULE_DIR$/../../public" />
-      <excludeFolder url="file://$MODULE_DIR$/../../storage" />
       <excludeFolder url="file://$MODULE_DIR$/../dataSources" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/skagarwal/google-places-api" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/laravel/framework" />
@@ -28,6 +27,9 @@
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/hannesvdvreken/guzzle-profiler" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/mailer" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/flysystem-ftp" />
+      <excludeFolder url="file://$MODULE_DIR$/../../storage/app" />
+      <excludeFolder url="file://$MODULE_DIR$/../../storage/clockwork" />
+      <excludeFolder url="file://$MODULE_DIR$/../../storage/framework" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

@@ -15,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
+use Neo\Exceptions\Odoo\ContractNotFoundException;
 use Neo\Http\Requests\Odoo\Contracts\SendContractRequest;
 use Neo\Http\Requests\Odoo\Contracts\ShowContractRequest;
 use Neo\Jobs\Odoo\SendContractJob;
@@ -28,7 +29,7 @@ class ContractsController {
         $contract = Contract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
 
         if ($contract === null) {
-            return new ResourceNotFoundException("Could not found any contract with name $contractName");
+            return new ContractNotFoundException($contractName);
         }
 
         Log::info("connect.log", [

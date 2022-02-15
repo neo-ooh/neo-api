@@ -28,8 +28,8 @@ use Neo\Services\API\Odoo\Model;
  * @property int    $over_qty
  * @property int    $product_uom_qty
  * @property int    $customer_lead
- * @property int    $rental_start
- * @property int    $rental_end
+ * @property string $rental_start
+ * @property string $rental_end
  * @property int    $is_rental_line
  * @property int    $is_linked_line
  * @property int    $discount

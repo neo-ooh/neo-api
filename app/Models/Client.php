@@ -13,16 +13,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @package Neo\Models
  *
- * @property integer $id
- * @property integer $broadsign_customer_id
- * @property string name
- * @property Date $created_at
- * @property Date $updated_at
+ * @property integer    $id
+ * @property integer    $external_id
+ * @property integer    $broadsign_customer_id
+ * @property string     name
+ * @property Date       $created_at
+ * @property Date       $updated_at
  *
  * @property Collection $contracts
  */
-class Client extends Model
-{
+class Client extends Model {
     use HasFactory;
 
     protected $table = "clients";

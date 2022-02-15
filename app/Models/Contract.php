@@ -25,7 +25,9 @@ use RuntimeException;
  * @property string                          $contract_id // ID of the contract has set by sales (not related to the actual ID of
  *           the contract inside Connect)
  * @property integer                         $client_id
- * @property integer                         $owner_id
+ * @property integer                         $external_id
+ * @property integer                         $salesperson_id
+ * @property integer                         $advertiser_id
  * @property Date                            $start_date
  * @property array                           $end_date
  * @property array                           $data
@@ -48,7 +50,7 @@ class Contract extends Model {
     protected $fillable = [
         "contract_id",
         "client_id",
-        "owner_id"
+        "salesperson_id"
     ];
 
     protected $casts = [
@@ -94,6 +96,10 @@ class Contract extends Model {
 
     public function data(): HasMany {
         return $this->hasMany(ContractNetworkData::class, "contract_id", "id");
+    }
+
+    public function flights(): HasMany {
+        return $this->hasMany(ContractFlight::class, "contract_id", "id");
     }
 
 

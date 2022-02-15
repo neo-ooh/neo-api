@@ -11,8 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Models\Location;
-use Neo\Models\Property;
+use Neo\Models\Contract;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -20,17 +19,26 @@ class TestCommand extends Command {
     protected $description = 'Internal tests';
 
     public function handle() {
-        $properties = Property::all();
+//        $productId  = 23119; // Alexis Nihon - DV
+//        $productId = 22075; // Alexis Nihon - DV
+//        $start     = "2022-03-01";
+//        $end       = "2022-03-14";
+//
+//        $odooConfig = OdooConfig::fromConfig();
+//        $client     = $odooConfig->getClient();
+//
+//        $lines = OrderLine::all($client, [
+//            ["product_id", "=", $productId], // Specific product
+//            ["rental_start", "<=", $end], // when range overlaps
+//            ["rental_end", ">=", $start],
+//            ["state", "=", ["sent", "done"]], // Filter by contracts state
+//        ]);
+//
+//        dump($lines->toArray());
 
-        foreach ($properties as $property) {
-            $property->network_id = Location::query()->whereHas("actor", function ($query) use ($property) {
-                $query->where("id", "=", $property->actor_id);
-            })
-                                            ->get("network_id")
-                                            ->pluck("network_id")
-                                            ->first();
+//        MigrateContractsJob::dispatchSync();
 
-            $property->save();
-        }
+        Contract::query()->where("contract_id", "=", "OTG-222-21")->first()->load(["flights"]);
+
     }
 }

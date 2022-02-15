@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
@@ -32,8 +33,12 @@ use Neo\Models\Traits\HasImpressionsModels;
  * @property int                          $external_id
  * @property int                          $external_variant_id
  * @property int                          $external_linked_id
+ * @property int                          $spot_length
+ * @property int                          $spots_count
+ * @property int                          $extra_spots
  * @property Carbon                       $created_at
  * @property Carbon                       $updated_at
+ * @property Carbon                       $deleted_at
  *
  * @property Property                     $property
  * @property ProductCategory              $category
@@ -42,6 +47,7 @@ use Neo\Models\Traits\HasImpressionsModels;
  */
 class Product extends Model implements WithImpressionsModels, WithAttachments {
     use HasImpressionsModels;
+    use SoftDeletes;
 
     protected $table = "products";
 
@@ -59,6 +65,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         "external_id",
         "external_variant_id",
         "external_linked_id",
+        "spot_length",
+        "spots_count",
+        "extra_spots",
+
     ];
 
     protected $casts = [

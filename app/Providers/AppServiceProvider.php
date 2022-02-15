@@ -37,8 +37,8 @@ class AppServiceProvider extends ServiceProvider {
 
         // Register table morph names mapping
         Relation::morphMap([
-            'static' => StaticCreative::class,
-            'dynamic'  => DynamicCreative::class,
+            'static'  => StaticCreative::class,
+            'dynamic' => DynamicCreative::class,
         ]);
     }
 

@@ -14,14 +14,13 @@ use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use InvalidArgumentException;
+use Neo\Exceptions\Odoo\ContractIsNotDraftException;
 use Neo\Exceptions\Odoo\ContractNotFoundException;
 use Neo\Http\Requests\Odoo\Contracts\SendContractRequest;
 use Neo\Http\Requests\Odoo\Contracts\ShowContractRequest;
 use Neo\Jobs\Odoo\SendContractJob;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\OdooConfig;
-use Symfony\Component\Routing\Exception\ResourceNotFoundException;
 
 class ContractsController {
     public function show(ShowContractRequest $request, string $contractName) {
@@ -29,14 +28,12 @@ class ContractsController {
         $contract = Contract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
 
         if ($contract === null) {
-            return new ContractNotFoundException($contractName);
+            throw new ContractNotFoundException($contractName);
         }
 
-        Log::info("connect.log", [
-            "action"    => "planner.assoc",
-            "contract"  => $contract->name,
-            "sales_rep" => Auth::user()->name
-        ]);
+        if ($contract->state !== 'draft' && $contract->state !== 'sale') {
+            throw new ContractIsNotDraftException($contractName);
+        }
 
         return new Response([
             "name"             => $contract->name,
@@ -58,11 +55,11 @@ class ContractsController {
         $contract = Contract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
 
         if ($contract === null) {
-            return new ResourceNotFoundException("Could not found any contract with name $contractName");
+            throw new ContractNotFoundException($contractName);
         }
 
         if ($contract->state !== 'draft' && $contract->state !== 'sale') {
-            return new InvalidArgumentException("Cannot update a contract whose state is " . $contract->state);
+            throw new ContractIsNotDraftException($contract->name);
         }
 
         SendContractJob::dispatchSync($contract, $request->input("flights"), $request->input("clearOnSend"));

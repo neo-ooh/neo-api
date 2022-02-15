@@ -12,8 +12,8 @@ namespace Neo\Exceptions\Odoo;
 
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ContractNotFoundException extends HttpException {
+class ContractIsNotDraftException extends HttpException {
     public function __construct($contractName = null) {
-        parent::__construct(400, "No contract named $contractName could be found.");
+        parent::__construct(400, "Cannot pull contract $contractName as it is not editable.");
     }
 }

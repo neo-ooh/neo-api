@@ -25,14 +25,13 @@ class MigrateContractsJob implements ShouldQueue {
     public function __construct() {
         $client = OdooConfig::fromConfig()->getClient();
 
-        $output = new ConsoleOutput();
-//        $contracts = Contract::query()->inRandomOrder()->limit(3)->lazy(100);
-        $contracts = Contract::query()->inRandomOrder()->limit(3)->get();
+        $output    = new ConsoleOutput();
+        $contracts = Contract::query()->inRandomOrder()->lazy(100);
 
         /** @var Contract $contract */
         foreach ($contracts as $contract) {
             $section = $output->section();
-            $section->writeln($contract->contract_id . "...");
+            $section->writeln("<info>" . $contract->contract_id . "...</info>");
 
             // Check if the contract is present in ODOO
             $odooContract = \Neo\Services\Odoo\Models\Contract::findByName($client, $contract->contract_id);
@@ -42,8 +41,17 @@ class MigrateContractsJob implements ShouldQueue {
                 $contract->delete();
 
                 $section->clear();
-                $section->writeln($contract->contract_id . ": Not found. Removed!");
+                $section->writeln("<error>" . $contract->contract_id . ": Not found. Removed!</error>");
                 continue;
+            }
+
+            if ($odooContract->state === 'draft') {
+                // This is still a proposal!
+                $contract->delete();
+
+                $section->clear();
+                $section->writeln("<error>" . $contract->contract_id . ": Still a proposal. Removed!</error>");
+
             }
 
             ImportContractJob::dispatchSync($contract->getKey(), $odooContract);

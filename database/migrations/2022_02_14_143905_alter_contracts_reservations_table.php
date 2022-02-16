@@ -22,6 +22,8 @@ class AlterContractsReservationsTable extends Migration {
                   ->cascadeOnDelete()
                   ->cascadeOnUpdate();
         });
+
+        \Neo\Jobs\Contracts\MigrateContractsJob::dispatchSync();
     }
 
     public function down() {

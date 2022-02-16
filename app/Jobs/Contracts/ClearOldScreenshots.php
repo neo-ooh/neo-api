@@ -6,9 +6,6 @@ use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Neo\Models\ContractBurst;
 use Neo\Models\ContractScreenshot;
-use Neo\Models\Network;
-use Neo\Services\Broadcast\Broadcast;
-use Queue;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -50,7 +47,8 @@ class ClearOldScreenshots extends Command {
         $progressBar->finish();
 
         // Delete finished bursts without any screenshots
-        ContractBurst::query()->where("status", "=", "OK")->whereDoesntHave("screenshots")->delete();
+        ContractBurst::query()->whereDate("start_at", "<", Carbon::now()->subMonths(3))
+                     ->whereDoesntHave("screenshots")->delete();
 
         return 0;
     }

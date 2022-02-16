@@ -11,7 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Models\Contract;
+use Neo\Jobs\Contracts\MigrateContractsJob;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -36,9 +36,9 @@ class TestCommand extends Command {
 //
 //        dump($lines->toArray());
 
-//        MigrateContractsJob::dispatchSync();
+        MigrateContractsJob::dispatchSync();
 
-        Contract::query()->where("contract_id", "=", "OTG-222-21")->first()->load(["flights"]);
+//        Contract::query()->where("contract_id", "=", "OTG-222-21")->first()->load(["flights"]);
 
     }
 }

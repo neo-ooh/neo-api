@@ -102,7 +102,7 @@ class BrandsController {
         /** @var Property $property */
         foreach ($properties as $property) {
             $property->tenants()->detach($fromIds);
-            $property->tenants()->attach($brand->id);
+            $property->tenants()->syncWithoutDetaching([$brand->id]);
         }
 
         Brand::query()->whereIn("id", $fromIds)->delete();

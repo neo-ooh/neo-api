@@ -58,7 +58,7 @@ class ImportContractJob implements ShouldQueue {
             "name" => $this->odooContract->partner_id[1]
         ]);
 
-        $output->writeln("Set client to $client->name (#$client->id))");
+        $output->writeln($contract->contract_id . ": Set client to $client->name (#$client->id))");
 
         $advertiser = null;
 
@@ -70,7 +70,7 @@ class ImportContractJob implements ShouldQueue {
                 "name" => $this->odooContract->analytic_account_id[1]
             ]);
 
-            $output->writeln("Set advertiser to $advertiser->name (#$advertiser->id))");
+            $output->writeln($contract->contract_id . ": Set advertiser to $advertiser->name (#$advertiser->id))");
         }
 
         $contract->external_id   = $this->odooContract->id;
@@ -81,11 +81,11 @@ class ImportContractJob implements ShouldQueue {
         // Now, we pull all the lines from the contract and put them in their own flights
         $flights = collect();
 
-        $orderLines    = OrderLine::findBy($odooClient, "order_id", $this->odooContract->id);
+        $orderLines    = OrderLine::findBy($odooClient, "order_id", $this->odooContract->id)->where("is_linked_line", "!=", 1);
         $contractLines = [];
 
-        $output->writeln("Importing {$orderLines->count()} lines in the contract...");
-
+        $output->writeln($contract->contract_id . ": Importing {$orderLines->count()} lines in the contract...");
+        $products = Product::query()->whereIn("external_variant_id", $orderLines->pluck("product_id.0")->unique())->get();
         /** @var OrderLine $orderLine */
         foreach ($orderLines as $orderLine) {
             if ($orderLine->is_linked_line) {
@@ -94,7 +94,7 @@ class ImportContractJob implements ShouldQueue {
             }
 
             /** @var Product|null $product */
-            $product = Product::query()->where("external_variant_id", "=", $orderLine->product_id[0])->first();
+            $product = $products->firstWhere("external_variant_id", "=", $orderLine->product_id[0]);
 
             if ($product === null) {
                 // Unknown product, ignore
@@ -141,8 +141,8 @@ class ImportContractJob implements ShouldQueue {
             ];
         }
 
-        ContractLine::query()->insert($contractLines);
-        $output->writeln("{$flights->count()} Flights attached with contract {$contract->contract_id}");
+        ContractLine::query()->insertOrIgnore($contractLines);
+        $output->writeln($contract->contract_id . ": {$flights->count()} Flights attached.");
 
         // Remove any flights attached with the contract that are not part of the current run
         $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();

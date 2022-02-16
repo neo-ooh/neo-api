@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
@@ -108,6 +109,20 @@ class Contract extends Model {
     | Additional Attributes
     |--------------------------------------------------------------------------
     */
+
+    public function getStartDateAttribute(): Carbon|null {
+        return $this->flights()
+                    ->where("type", "!=", ContractFlight::BUA)
+                    ->orderBy("start_date")
+                    ->first()?->start_date;
+    }
+
+    public function getEndDateAttribute(): Carbon|null {
+        return $this->flights()
+                    ->where("type", "!=", ContractFlight::BUA)
+                    ->orderBy("end_date", "desc")
+                    ->first()?->end_date;
+    }
 
     public function getPerformancesAttribute(): array {
         $config          = static::getConnectionConfig();

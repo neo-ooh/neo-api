@@ -87,7 +87,7 @@ class ContractBurstsController extends Controller {
         }
 
         // Check if the burst is complete
-        if ($burst->screenshots_count === $burst->expected_screenshots) {
+        if ($burst->screenshots_count >= $burst->expected_screenshots - 1) {
             $burst->status = "OK";
             $burst->save();
         }

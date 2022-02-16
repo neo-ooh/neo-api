@@ -21,6 +21,9 @@ use Neo\Services\API\Odoo\Model;
  * @property mixed  $product_type_id
  * @property mixed  $categ_id
  * @property int    $nb_screen
+ * @property int    $nb_spots
+ * @property int    $nb_extra_spots
+ * @property int    $message_duration
  * @property int    $list_price
  * @property array  $product_variant_id
  * @property array  $external_linked_id

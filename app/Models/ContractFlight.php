@@ -25,6 +25,10 @@ use Illuminate\Support\Carbon;
  * @property-read Carbon $updated_at
  */
 class ContractFlight extends Model {
+    const GUARANTEED = "guaranteed";
+    const BONUS = "bonus";
+    const BUA = "bua";
+
     protected $table = "contracts_flights";
 
     protected $primaryKey = "id";
@@ -45,4 +49,5 @@ class ContractFlight extends Model {
     public function lines(): HasMany {
         return $this->hasMany(ContractLine::class, "flight_id", "id");
     }
+
 }

@@ -11,19 +11,28 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Neo\Jobs\Contracts\MigrateContractsJob;
 
 class AlterContractsReservationsTable extends Migration {
     public function up() {
         Schema::table('contracts_reservations', function (Blueprint $table) {
-            $table->foreignId("flights")
+            $table->foreignId("flight_id")
                   ->after("contract_id")
                   ->nullable()
                   ->constrained("contracts_flights", "id")
                   ->cascadeOnDelete()
                   ->cascadeOnUpdate();
+
+            $table->dropColumn(["network"]);
+
+            $table->foreignId("network_id")
+                  ->nullable()
+                  ->constrained("networks", "id")
+                  ->cascadeOnUpdate()
+                  ->nullOnDelete();
         });
 
-        \Neo\Jobs\Contracts\MigrateContractsJob::dispatchSync();
+        MigrateContractsJob::dispatchSync();
     }
 
     public function down() {

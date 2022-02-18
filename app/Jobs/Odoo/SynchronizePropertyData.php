@@ -78,15 +78,15 @@ class SynchronizePropertyData implements ShouldQueue {
 
             // Store or update the product in our db
             /** @var \Neo\Models\Product $product */
-            $product = \Neo\Models\Product::query()->firstOrCreate([
+            $product = \Neo\Models\Product::query()->firstOrNew([
                 "external_id" => $distRentalProduct->id,
             ], [
                 "property_id" => $property->getKey(),
-                "category_id" => $productCategory->id
             ]);
 
             $product->name_en             = $distRentalProduct->name;
             $product->name_fr             = $distRentalProduct->name;
+            $product->category_id         = $productCategory->id;
             $product->quantity            = $distRentalProduct->nb_screen;
             $product->unit_price          = $distRentalProduct->list_price;
             $product->external_variant_id = $distRentalProduct->product_variant_id[0];
@@ -126,12 +126,16 @@ class SynchronizePropertyData implements ShouldQueue {
 
     protected function getProductCategory(int $odooCategoryId, int $productTypeId, string $internalName) {
         /** @var ProductCategory $productCategory */
-        return ProductCategory::query()->firstOrCreate([
+        $productCategory = ProductCategory::query()->firstOrCreate([
             "external_id" => $odooCategoryId,
         ], [
             "name_en" => $internalName,
             "name_fr" => $internalName,
-            "type_id" => $productTypeId,
         ]);
+
+        $productCategory->type_id = $productTypeId;
+        $productCategory->save();
+
+        return $productCategory;
     }
 }

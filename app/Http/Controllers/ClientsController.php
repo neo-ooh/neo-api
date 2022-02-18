@@ -8,6 +8,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Neo\Enums\Capability;
+use Neo\Http\Requests\Clients\ListClientsByIdsRequest;
 use Neo\Http\Requests\Clients\ListClientsRequest;
 use Neo\Http\Requests\Clients\ShowClientRequest;
 use Neo\Models\Client;
@@ -55,6 +56,10 @@ class ClientsController extends Controller {
                          ->get();
 
         return new Response($clients->values());
+    }
+
+    public function byId(ListClientsByIdsRequest $request) {
+        return new Response(Client::query()->whereIn("id", $request->input("ids"))->orderBy("name")->get());
     }
 
     public function store() {

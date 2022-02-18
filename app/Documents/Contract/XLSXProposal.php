@@ -40,26 +40,26 @@ class XLSXProposal extends XLSXDocument {
         $header = new Header($this->order, $this->customer);
         $header->render($this->ws);
 
-        for($i = 0; $i < 26; ++$i) {
+        for ($i = 0; $i < 26; ++$i) {
             $this->ws->getColumnDimensionByColumn($i)->setWidth(15);
         }
 
         $totalCampaignTraffic = 0;
-        $totalAnnualTraffic = 0;
+        $totalAnnualTraffic   = 0;
 
         $adServerLines = $this->order->getAdServerLines();
-        if($adServerLines->count() > 0) {
+        if ($adServerLines->count() > 0) {
             $adServerPrinter = new AdServerProducts($adServerLines);
             $adServerPrinter->render($this->ws);
         }
 
         // Print orderlines for eeach network
-        foreach(["shopping", "otg", "fitness"] as $network ) {
+        foreach (["shopping", "otg", "fitness"] as $network) {
             $networkPrinter = new NetworkOrders($network, $this->order);
             $networkPrinter->render($this->ws);
 
             $totalCampaignTraffic += $networkPrinter->networkTotalTraffic;
-            $totalAnnualTraffic += $networkPrinter->totalAnnualTraffic;
+            $totalAnnualTraffic   += $networkPrinter->totalAnnualTraffic;
         }
 
         // Print the totals

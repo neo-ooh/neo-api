@@ -21,7 +21,6 @@ use Neo\Documents\Contract\PDFComponents\DetailedSummary;
 use Neo\Documents\Contract\PDFComponents\GeneralConditions;
 use Neo\Documents\Contract\PDFComponents\Totals;
 use Neo\Documents\PDFDocument;
-use Neo\Jobs\ImportContractDataFromDocumentJob;
 
 class PDFContract extends PDFDocument {
     public const TYPE_PROPOSAL = 'proposal';
@@ -74,8 +73,6 @@ class PDFContract extends PDFDocument {
 
     public function ingest($data): bool {
         [$this->customer, $this->order] = ContractImporter::parse($data);
-
-        ImportContractDataFromDocumentJob::dispatch($this->customer, $this->order);
 
         return true;
     }

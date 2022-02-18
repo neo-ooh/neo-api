@@ -1,21 +1,19 @@
 <?php
 
-namespace Neo\Http\Requests\Contracts;
+namespace Neo\Http\Requests\Clients;
 
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Models\Contract;
 
-class StoreContractRequest extends FormRequest {
+class ListClientsByIdsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
     public function authorize() {
-        /** @var Contract $contract */
-        return Gate::allows(Capability::contracts_edit);
+        return Gate::allows(Capability::contracts_edit) || Gate::allows(Capability::contracts_manage);
     }
 
     /**
@@ -25,7 +23,8 @@ class StoreContractRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "contract_id" => ["required", "string"],
+            "ids"   => ["required", "array"],
+            "ids.*" => ["exists:clients,id"]
         ];
     }
 }

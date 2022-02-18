@@ -12,19 +12,19 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @package Neo\Models
  *
- * @property integer $id
- * @property integer $contract_id
- * @property integer $external_id
+ * @property int    $id
+ * @property int    $contract_id
+ * @property int    $flight_id
+ * @property int    $external_id
  * @property string $network
  * @property string $name
  * @property string $original_name
- * @property Date $start_date
- * @property Date $end_date
- * @property Date $created_at
- * @property Date $updated_at
+ * @property Date   $start_date
+ * @property Date   $end_date
+ * @property Date   $created_at
+ * @property Date   $updated_at
  */
-class ContractReservation extends Model
-{
+class ContractReservation extends Model {
     use HasFactory;
 
     protected $table = "contracts_reservations";

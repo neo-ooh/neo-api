@@ -31,6 +31,7 @@ Route::group([
     Route::model("client", Client::class);
 
     Route::get("clients", ClientsController::class . "@index");
+    Route::get("clients/_by_id", ClientsController::class . "@byId");
     Route::get("clients/{client}", ClientsController::class . "@show");
 
     /*
@@ -41,8 +42,9 @@ Route::group([
 
     Route::model("contract", Contract::class);
 
-    Route::  get("contracts/_recent", ContractsController::class . "@recent");
+    Route::   get("contracts", ContractsController::class . "@index");
     Route::  post("contracts", ContractsController::class . "@store");
+    Route::   get("contracts/_recent", ContractsController::class . "@recent");
     Route::   get("contracts/{contract}", ContractsController::class . "@show");
     Route::delete("contracts/{contract}", ContractsController::class . "@destroy");
     Route::  post("contracts/{contract}/_refresh", ContractsController::class . "@refresh");

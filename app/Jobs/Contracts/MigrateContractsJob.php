@@ -26,7 +26,7 @@ class MigrateContractsJob implements ShouldQueue {
         $client = OdooConfig::fromConfig()->getClient();
 
         $output    = new ConsoleOutput();
-        $contracts = Contract::query()->inRandomOrder()->lazy(100);
+        $contracts = Contract::query()->whereNull("advertiser_id")->inRandomOrder()->lazy(100);
 
         /** @var Contract $contract */
         foreach ($contracts as $contract) {

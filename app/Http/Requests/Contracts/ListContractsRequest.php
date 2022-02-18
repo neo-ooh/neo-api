@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Gate;
 class ListContractsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "actor_id" => ["sometimes", "exists:actor,id"]
+            "actor_id" => ["sometimes", "exists:actors,id"]
         ];
     }
 

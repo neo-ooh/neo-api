@@ -9,10 +9,12 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\AdvertisersController;
 use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
+use Neo\Models\Advertiser;
 use Neo\Models\Client;
 use Neo\Models\Contract;
 use Neo\Models\ContractBurst;
@@ -22,6 +24,17 @@ Route::group([
     "middleware" => "default",
     "prefix"     => "v1"
 ], function () {
+    /*
+    |----------------------------------------------------------------------
+    | Advertisers
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("advertiser", Advertiser::class);
+
+    Route::get("advertisers/_by_id", AdvertisersController::class . "@byId");
+
+
     /*
     |----------------------------------------------------------------------
     | Clients

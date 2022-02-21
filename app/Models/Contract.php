@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
@@ -39,9 +41,11 @@ use RuntimeException;
  * @property integer                         $updated_at
  *
  * @property Client                          $client
+ * @property Collection<ContractFlight>      $flights
  * @property Actor                           $owner
  * @property Collection<ContractBurst>       $bursts
  * @property Collection<ContractReservation> $reservations
+ * @property array                           $performances
  */
 class Contract extends Model {
     use HasFactory;
@@ -52,15 +56,6 @@ class Contract extends Model {
         "contract_id",
         "client_id",
         "salesperson_id"
-    ];
-
-    protected $casts = [
-        "data" => "array",
-    ];
-
-    protected $dates = [
-        "start_date",
-        "end_date"
     ];
 
     protected static function boot() {
@@ -78,6 +73,14 @@ class Contract extends Model {
     | Relations
     |--------------------------------------------------------------------------
     */
+
+    public function salesperson(): BelongsTo {
+        return $this->belongsTo(Actor::class, "salesperson_id", "id");
+    }
+
+    public function advertiser(): BelongsTo {
+        return $this->belongsTo(Advertiser::class, "advertiser_id", "id");
+    }
 
     public function client(): BelongsTo {
         return $this->belongsTo(Client::class, "client_id", "id");
@@ -103,6 +106,33 @@ class Contract extends Model {
         return $this->hasMany(ContractFlight::class, "contract_id", "id");
     }
 
+    public function screenshots(): HasManyThrough {
+        return $this->hasManyThrough(ContractScreenshot::class, ContractBurst::class, 'contract_id', 'burst_id');
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | External Relations
+    |--------------------------------------------------------------------------
+    */
+
+    public function getPerformancesAttribute(): array {
+        $config          = static::getConnectionConfig();
+        $broadsignClient = new BroadsignClient($config);
+
+        $reservations = $this->reservations;
+
+        if ($reservations->isEmpty()) {
+            return [];
+        }
+
+        $performances = ReservablePerformance::byReservable($broadsignClient, $reservations->pluck('external_id')
+                                                                                           ->values()
+                                                                                           ->toArray());
+
+        return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
+    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -124,21 +154,26 @@ class Contract extends Model {
                     ->first()?->end_date;
     }
 
-    public function getPerformancesAttribute(): array {
-        $config          = static::getConnectionConfig();
-        $broadsignClient = new BroadsignClient($config);
+    public function getExpectedImpressionsAttribute(): int {
+        $contractsFlightsTable = (new ContractFlight())->getTable();
+        $contractsLinesTable   = (new ContractLine())->getTable();
+        return (int)ContractLine::query()
+                                ->join($contractsFlightsTable, function ($join) use ($contractsLinesTable, $contractsFlightsTable) {
+                                    $join->on("$contractsLinesTable.flight_id", "=", "$contractsFlightsTable.id");
+                                })
+                                ->where("$contractsFlightsTable.type", "!=", ContractFlight::BUA)
+                                ->where("$contractsFlightsTable.contract_id", "=", $this->id)
+                                ->sum("impressions");
+    }
 
-        $reservations = $this->reservations;
+    public function getReceivedTrafficCacheKey(): string {
+        return "contract-$this->id-received-traffic";
+    }
 
-        if ($reservations->isEmpty()) {
-            return [];
-        }
-
-        $performances = ReservablePerformance::byReservable($broadsignClient, $reservations->pluck('external_id')
-                                                                                           ->values()
-                                                                                           ->toArray());
-
-        return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
+    public function getReceivedImpressionsAttribute(): int {
+        return Cache::remember($this->getReceivedTrafficCacheKey(), 3600 * 12, function () {
+            return collect($this->performances)->flatten()->sum("total_impressions");
+        });
     }
 
     public function loadReservationsLocations(): void {

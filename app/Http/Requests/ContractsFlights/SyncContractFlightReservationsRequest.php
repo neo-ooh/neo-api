@@ -5,23 +5,22 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListAdvertisersByIdRequest.php
+ * @neo/api - SyncContractFlightReservationsRequest.php
  */
 
-namespace Neo\Http\Requests\Advertisers;
+namespace Neo\Http\Requests\ContractsFlights;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
-use Neo\Enums\Capability;
 
-class ListAdvertisersByIdRequest extends FormRequest {
+class SyncContractFlightReservationsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "ids" => ["required", "array"],
+            "reservations"   => ["nullable", "array"],
+            "reservations.*" => ["integer", "exists:contracts_reservations,id"]
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::contracts_edit);
+        return true;
     }
 }

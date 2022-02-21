@@ -11,7 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Jobs\Contracts\MigrateContractsJob;
+use Neo\Jobs\RefreshContractReservations;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -19,26 +19,13 @@ class TestCommand extends Command {
     protected $description = 'Internal tests';
 
     public function handle() {
-//        $productId  = 23119; // Alexis Nihon - DV
-//        $productId = 22075; // Alexis Nihon - DV
-//        $start     = "2022-03-01";
-//        $end       = "2022-03-14";
+//        /** @var Contract $contract */
+//        $contract = Contract::query()
+//                            ->find(728)
+//                            ->append(["expected_impressions", "received_impressions"]);
 //
-//        $odooConfig = OdooConfig::fromConfig();
-//        $client     = $odooConfig->getClient();
-//
-//        $lines = OrderLine::all($client, [
-//            ["product_id", "=", $productId], // Specific product
-//            ["rental_start", "<=", $end], // when range overlaps
-//            ["rental_end", ">=", $start],
-//            ["state", "=", ["sent", "done"]], // Filter by contracts state
-//        ]);
-//
-//        dump($lines->toArray());
+//        dump($contract->toArray());
 
-        MigrateContractsJob::dispatchSync();
-
-//        Contract::query()->where("contract_id", "=", "OTG-222-21")->first()->load(["flights"]);
-
+        RefreshContractReservations::dispatchSync(725);
     }
 }

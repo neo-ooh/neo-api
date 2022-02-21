@@ -13,11 +13,13 @@ use Neo\Http\Controllers\AdvertisersController;
 use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractsController;
+use Neo\Http\Controllers\ContractsFlightsReservationsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Models\Advertiser;
 use Neo\Models\Client;
 use Neo\Models\Contract;
 use Neo\Models\ContractBurst;
+use Neo\Models\ContractFlight;
 use Neo\Models\ContractScreenshot;
 
 Route::group([
@@ -61,6 +63,16 @@ Route::group([
     Route::   get("contracts/{contract}", ContractsController::class . "@show");
     Route::delete("contracts/{contract}", ContractsController::class . "@destroy");
     Route::  post("contracts/{contract}/_refresh", ContractsController::class . "@refresh");
+
+    /*
+    |----------------------------------------------------------------------
+    | Contracts flights
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("flight", ContractFlight::class);
+
+    Route::   put("contracts/{contract}/flights/{flight}/reservations/_sync", ContractsFlightsReservationsController::class . "@_sync");
 
 
     /*

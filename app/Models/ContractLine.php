@@ -11,6 +11,7 @@
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
@@ -30,6 +31,8 @@ class ContractLine extends Model {
 
     protected $table = "contracts_lines";
 
+    public $incrementing = false;
+
     protected $primaryKey = ["product_id", "flight_id"];
 
     protected $fillable = [
@@ -43,9 +46,15 @@ class ContractLine extends Model {
         "price",
         "traffic",
         "impressions",
+        "created_at",
+        "updated_at",
     ];
 
-    public function product(): \Illuminate\Database\Eloquent\Relations\BelongsTo {
+    public function flight(): BelongsTo {
+        return $this->belongsTo(ContractFlight::class, "flight_id", "id");
+    }
+
+    public function product(): BelongsTo {
         return $this->belongsTo(Product::class, "product_id", "id");
     }
 }

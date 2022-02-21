@@ -10,19 +10,22 @@
 
 namespace Neo\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 
 /**
- * @property-read int    $id
- * @property-read int    $contract_id
- * @property string      $name
- * @property Carbon      $start_date
- * @property Carbon      $end_date
- * @property string      $type
- * @property-read Carbon $created_at
- * @property-read Carbon $updated_at
+ * @property-read int                 $id
+ * @property-read int                 $contract_id
+ * @property string                   $name
+ * @property Carbon                   $start_date
+ * @property Carbon                   $end_date
+ * @property string                   $type
+ * @property-read Carbon              $created_at
+ * @property-read Carbon              $updated_at
+ *
+ * @property Collection<ContractLine> $lines
  */
 class ContractFlight extends Model {
     const GUARANTEED = "guaranteed";
@@ -50,4 +53,7 @@ class ContractFlight extends Model {
         return $this->hasMany(ContractLine::class, "flight_id", "id");
     }
 
+    public function reservations(): HasMany {
+        return $this->hasMany(ContractReservation::class, "flight_id", "id");
+    }
 }

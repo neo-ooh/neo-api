@@ -29,7 +29,9 @@ class ContractsController extends Controller {
         return new Response(Contract::query()
                                     ->where("salesperson_id", "=", $userToSearch)
                                     ->orderBy("contract_id")
-                                    ->get());
+                                    ->get()
+                                    ->append(["start_date", "end_date", "expected_impressions", "received_impressions"])
+                                    ->makeHidden('reservations'));
     }
 
     public function recent(ListContractsRequest $request) {
@@ -96,12 +98,24 @@ class ContractsController extends Controller {
 
         $contract->append(["start_date", "end_date"]);
 
+        if (in_array("salesperson", $with, true)) {
+            $contract->load("salesperson", "salesperson.logo");
+        }
+
         if (in_array("client", $with, true)) {
             $contract->load("client");
         }
 
+        if (in_array("advertiser", $with, true)) {
+            $contract->load("advertiser");
+        }
+
         if (in_array("reservations", $with, true)) {
             $contract->load("reservations");
+        }
+
+        if (in_array("flights", $with, true)) {
+            $contract->load("flights");
         }
 
         if (in_array("reservations.locations", $with, true)) {

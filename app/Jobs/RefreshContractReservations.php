@@ -51,6 +51,7 @@ class RefreshContractReservations implements ShouldQueue {
 
         /** @var Contract $contract */
         $contract = Contract::find($this->contractId);
+        $contract->load("flights");
 
         if (!$contract) {
             // Contract does not exist, stop here
@@ -98,8 +99,10 @@ class RefreshContractReservations implements ShouldQueue {
             $rr->start_date    = Carbon::parse($reservation->start_date . " " . $reservation->start_time);
             $rr->end_date      = Carbon::parse($reservation->end_date . " " . $reservation->end_time);
 
-
-            if (!$rr->flight_id) {
+            if ($contract->flights->count() === 1) {
+                // If only one flight, assign by default
+                $rr->flight_id = $contract->flights->first()->id;
+            } else if (!$rr->flight_id) {
                 $flight = $contract->flights()->where("start_date", "=", $reservation->start_date)
                                    ->where("end_date", "=", $reservation->end_date)
                                    ->when(str_ends_with($reservation->name, "BUA"), function ($query) {

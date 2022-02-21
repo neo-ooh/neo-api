@@ -53,4 +53,8 @@ class ContractReservation extends Model {
     public function contract(): BelongsTo {
         return $this->belongsTo(Contract::class, "contract_id");
     }
+
+    public function flight(): BelongsTo {
+        return $this->belongsTo(ContractFlight::class, "flight_id");
+    }
 }

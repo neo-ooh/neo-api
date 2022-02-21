@@ -56,4 +56,8 @@ class ContractFlight extends Model {
     public function reservations(): HasMany {
         return $this->hasMany(ContractReservation::class, "flight_id", "id");
     }
+
+    public function getExpectedImpressionsAttribute() {
+        return $this->lines()->sum("impressions");
+    }
 }

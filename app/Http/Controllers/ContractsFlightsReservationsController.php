@@ -19,10 +19,10 @@ use Neo\Models\ContractReservation;
 class ContractsFlightsReservationsController {
     public function sync(SyncContractFlightReservationsRequest $request, Contract $contract, ContractFlight $flight) {
         $flight->reservations()
-               ->whereNotIn("id", $request->input("reservations"))
+               ->whereNotIn("id", $request->input("reservations", []))
                ->update(["flight_id" => null]);
         ContractReservation::query()
-                           ->whereIn("id", "=", $request->input("reservations"))
+                           ->whereIn("id", $request->input("reservations", []))
                            ->update(["flight_id" => $flight->getKey()]);
 
         return new Response($flight->reservations);

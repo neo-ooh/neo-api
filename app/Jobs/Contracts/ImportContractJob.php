@@ -137,7 +137,7 @@ class ImportContractJob implements ShouldQueue {
                 "discount_type" => "relative",
                 "price"         => $orderLine->price_subtotal,
                 "traffic"       => 0,
-                "impressions"   => $orderLine->connect_impression
+                "impressions"   => $orderLine->connect_impression ?: $orderLine->impression
             ];
         }
 

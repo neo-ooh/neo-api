@@ -72,7 +72,7 @@ Route::group([
 
     Route::model("flight", ContractFlight::class);
 
-    Route::   put("contracts/{contract}/flights/{flight}/reservations/_sync", ContractsFlightsReservationsController::class . "@_sync");
+    Route::   put("contracts/{contract}/flights/{flight}/reservations/_sync", ContractsFlightsReservationsController::class . "@sync");
 
 
     /*

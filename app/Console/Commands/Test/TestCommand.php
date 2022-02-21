@@ -11,7 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Jobs\RefreshContractReservations;
+use Neo\Models\Contract;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -21,11 +21,22 @@ class TestCommand extends Command {
     public function handle() {
 //        /** @var Contract $contract */
 //        $contract = Contract::query()
-//                            ->find(728)
+//                            ->find(697)
 //                            ->append(["expected_impressions", "received_impressions"]);
 //
-//        dump($contract->toArray());
+//        dump($contract->getReceivedImpressionsAttribute());
 
-        RefreshContractReservations::dispatchSync(725);
+        /*Contract::query()
+                ->where("salesperson_id", "=", 20)
+                ->get()
+                ->each(function (Contract $contract) {
+                    ImportContractJob::dispatchSync($contract->id);
+                    RefreshContractReservations::dispatchSync($contract->id);
+                });*/
+
+        Contract::query()
+                ->where("salesperson_id", "=", 20)
+                ->has("flights", "=", 0)
+                ->delete();
     }
 }

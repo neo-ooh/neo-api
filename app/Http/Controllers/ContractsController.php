@@ -116,6 +116,7 @@ class ContractsController extends Controller {
 
         if (in_array("flights", $with, true)) {
             $contract->load("flights");
+            $contract->flights->append("expected_impressions");
         }
 
         if (in_array("reservations.locations", $with, true)) {

@@ -116,21 +116,29 @@ class Contract extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function getPerformancesAttribute(): array {
-        $config          = static::getConnectionConfig();
-        $broadsignClient = new BroadsignClient($config);
+    public function getContractPerformancesCacheKey(): string {
+        return "contract-$this->id-performances";
+    }
 
-        $reservations = $this->reservations;
+    public function getPerformancesAttribute() {
+        return Cache::tags(["contract-performances"])->remember($this->getContractPerformancesCacheKey(), 3600 * 12, function () {
+            $config          = static::getConnectionConfig();
+            $broadsignClient = new BroadsignClient($config);
 
-        if ($reservations->isEmpty()) {
-            return [];
-        }
+            $reservations = $this->reservations;
 
-        $performances = ReservablePerformance::byReservable($broadsignClient, $reservations->pluck('external_id')
-                                                                                           ->values()
-                                                                                           ->toArray());
+            if ($reservations->isEmpty()) {
+                return collect();
+            }
 
-        return $performances->values()->groupBy(["played_on", "reservable_id"])->all();
+            $performances = ReservablePerformance::byReservable(
+                $broadsignClient,
+                $reservations->pluck('external_id')
+                             ->values()
+                             ->toArray());
+
+            return $performances->values();
+        });
     }
 
 
@@ -141,17 +149,35 @@ class Contract extends Model {
     */
 
     public function getStartDateAttribute(): Carbon|null {
-        return $this->flights()
-                    ->where("type", "!=", ContractFlight::BUA)
-                    ->orderBy("start_date")
-                    ->first()?->start_date;
+        $flight = $this->flights()
+                       ->where("type", "!=", ContractFlight::BUA)
+                       ->orderBy("start_date")
+                       ->first();
+
+        if (!$flight) {
+            $flight = $this->flights()
+                           ->where("type", "=", ContractFlight::BUA)
+                           ->orderBy("start_date")
+                           ->first();
+        }
+
+        return $flight?->start_date;
     }
 
     public function getEndDateAttribute(): Carbon|null {
-        return $this->flights()
-                    ->where("type", "!=", ContractFlight::BUA)
-                    ->orderBy("end_date", "desc")
-                    ->first()?->end_date;
+        $flight = $this->flights()
+                       ->where("type", "!=", ContractFlight::BUA)
+                       ->orderBy("end_date", "desc")
+                       ->first();
+
+        if (!$flight) {
+            $flight = $this->flights()
+                           ->where("type", "=", ContractFlight::BUA)
+                           ->orderBy("end_date", "desc")
+                           ->first();
+        }
+
+        return $flight?->end_date;
     }
 
     public function getExpectedImpressionsAttribute(): int {
@@ -166,14 +192,13 @@ class Contract extends Model {
                                 ->sum("impressions");
     }
 
-    public function getReceivedTrafficCacheKey(): string {
-        return "contract-$this->id-received-traffic";
-    }
-
-    public function getReceivedImpressionsAttribute(): int {
-        return Cache::remember($this->getReceivedTrafficCacheKey(), 3600 * 12, function () {
-            return collect($this->performances)->flatten()->sum("total_impressions");
-        });
+    public function getReceivedImpressionsAttribute() {
+        $guaranteedReservations = $this->reservations()->whereHas("flight", function ($query) {
+            $query->where("type", "!=", ContractFlight::BUA);
+        })->get()->pluck("external_id");
+        return $this->performances
+            ->whereIn("reservable_id", $guaranteedReservations)
+            ->sum("total_impressions");
     }
 
     public function loadReservationsLocations(): void {

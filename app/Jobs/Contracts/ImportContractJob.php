@@ -141,6 +141,13 @@ class ImportContractJob implements ShouldQueue {
             ];
         }
 
+        if (count($contractLines) === 0) {
+            // If there is no lines, in the contract, we delete it
+            $output->writeln($contract->contract_id . ": No orderlines found, deleting contract");
+            $contract->delete();
+            return;
+        }
+
         ContractLine::query()->insertOrIgnore($contractLines);
         $output->writeln($contract->contract_id . ": {$flights->count()} Flights attached.");
 

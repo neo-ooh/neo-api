@@ -20,6 +20,8 @@ use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\RefreshContractReservations;
 use Neo\Models\Actor;
 use Neo\Models\Contract;
+use Neo\Models\ContractFlight;
+use Neo\Models\ContractLine;
 use Neo\Services\Odoo\OdooConfig;
 
 class ContractsController extends Controller {
@@ -117,6 +119,15 @@ class ContractsController extends Controller {
         if (in_array("flights", $with, true)) {
             $contract->load("flights");
             $contract->flights->append("expected_impressions");
+
+            // Add the network ID to each order line
+            $contract->flights = $contract->flights->map(function (ContractFlight $flight) {
+                return $flight->lines->map(function (ContractLine $line) {
+                    $line->network_id = $line->product->property->network_id;
+                    $line->makeHidden("product");
+                    return $line->toArray();
+                });
+            });
         }
 
         if (in_array("reservations.locations", $with, true)) {

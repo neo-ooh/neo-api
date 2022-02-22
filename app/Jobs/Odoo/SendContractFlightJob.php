@@ -84,16 +84,17 @@ class SendContractFlightJob implements ShouldQueue {
             $dbproduct = $this->products->firstWhere("id", "=", $compiledProduct["id"]);
 
             if (!$dbproduct) {
+                clock("Unknown product " . $compiledProduct["id"]);
                 continue;
             }
 
             $orderLinesToAdd->push(...$this->buildLines($dbproduct, $compiledProduct));
         }
 
-        $sendGroups = $orderLinesToAdd->split(max(1, $orderLinesToAdd->count() / 100));
+        $sendGroups = $orderLinesToAdd->chunk(100);
 
         foreach ($sendGroups as $sendGroup) {
-            clock($client->client->call(OrderLine::$slug, "create", [$sendGroup->toArray()]));
+            $client->client->call(OrderLine::$slug, "create", [$sendGroup->toArray()]);
         }
 
         // And we are done

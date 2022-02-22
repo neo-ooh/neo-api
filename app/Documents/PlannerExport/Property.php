@@ -18,7 +18,7 @@ class Property {
 
     public Collection $categories;
 
-    public function __construct(array $compiledProperty, \Neo\Models\Property $property, \Illuminate\Database\Eloquent\Collection $categories, \Illuminate\Database\Eloquent\Collection $products) {
+    public function __construct(array $compiledProperty, \Neo\Models\Property $property, \Illuminate\Database\Eloquent\Collection $categories, Collection $products) {
         $this->propertyId = $compiledProperty["id"];
 
         $this->property   = $property;

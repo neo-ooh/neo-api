@@ -18,7 +18,7 @@ class Category {
 
     public Collection $products;
 
-    public function __construct(array $compiledCategory, ProductCategory $category, \Illuminate\Database\Eloquent\Collection $products) {
+    public function __construct(array $compiledCategory, ProductCategory $category, Collection $products) {
         $this->id = $compiledCategory["id"];
 
 

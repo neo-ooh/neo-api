@@ -64,6 +64,7 @@ class SendContractFlightJob implements ShouldQueue {
         $this->products         = new Collection();
         $compiledProductsChunks = $compiledProducts->chunk(500);
 
+        // Eloquent `whereIn` fails silently for references above ~1000 reference values
         foreach ($compiledProductsChunks as $chunk) {
             $this->products = $this->products->merge(Product::query()
                                                             ->whereIn("id", $chunk->pluck("id")->toArray())

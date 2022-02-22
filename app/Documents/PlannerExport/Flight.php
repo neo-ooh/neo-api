@@ -33,9 +33,19 @@ class Flight {
         $propertiesIds = array_map(fn(array $property) => $property["id"], $compiledFlight["properties"]);
         $properties    = \Neo\Models\Property::query()->with(["network", "address"])->whereIn("actor_id", $propertiesIds)->get();
         $categories    = ProductCategory::query()->get();
-        $products      = \Neo\Models\Product::query()
-                                            ->whereIn("id", collect($compiledFlight["properties"])->flatMap(fn($property) => collect($property["categories"])->flatMap(fn($category) => collect($category["products"])->pluck("id"))))
-                                            ->get();
+
+        $productidsChunks = collect($compiledFlight["properties"])
+            ->flatMap(fn($property) => collect($property["categories"])->flatMap(fn($category) => collect($category["products"])->pluck("id")))
+            ->chunk(500);
+
+        $products = collect();
+
+        // Eloquent `whereIn` fails silently for references above ~1000 reference values
+        foreach ($productidsChunks as $chunk) {
+            $products = $products->merge(\Neo\Models\Product::query()
+                                                            ->whereIn("id", $chunk)
+                                                            ->get());
+        }
 
         $this->properties = collect($compiledFlight['properties'])->map(fn(array $property) => new Property($property, $properties->firstWhere("actor_id", "=", $property["id"]), $categories, $products));
 

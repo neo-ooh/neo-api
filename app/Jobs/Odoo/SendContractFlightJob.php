@@ -60,10 +60,15 @@ class SendContractFlightJob implements ShouldQueue {
         // We need to extract all the products included in this flight.
         // This way, we only make one request to the db for the correct Odoo ids
         $compiledProducts = collect($this->flight["properties"])->flatMap(fn($property) => collect($property["categories"])->flatMap(fn($category) => $category["products"]));
-        /** @var Collection<Product> $products */
 
-        $this->products = Product::query()->whereIn("id", $compiledProducts->pluck("id")->toArray())->get();
-        clock($this->products->count());
+        $this->products         = new Collection();
+        $compiledProductsChunks = $compiledProducts->chunk(500);
+
+        foreach ($compiledProductsChunks as $chunk) {
+            $this->products = $this->products->merge(Product::query()
+                                                            ->whereIn("id", $chunk->pluck("id")->toArray())
+                                                            ->get());
+        }
 
         // Load linked products id as well
         $linkedProductsIds = $this->products->pluck("external_linked_id")->filter()->unique();

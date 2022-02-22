@@ -62,14 +62,17 @@ class SendContractFlightJob implements ShouldQueue {
         $compiledProducts = collect($this->flight["properties"])->flatMap(fn($property) => collect($property["categories"])->flatMap(fn($category) => $category["products"]));
         /** @var Collection<Product> $products */
         $this->products = Product::query()->whereIn("id", $compiledProducts->pluck("id"))->get();
+        clock($this->products->count());
 
         // Load linked products id as well
-        $linkedProductsIds = $this->products->pluck("external_linked_id")->filter();
-        $this->products    = $this->products->merge(Product::query()
-                                                           ->whereIn("external_id", $linkedProductsIds)
-                                                           ->get())->unique();
+        $linkedProductsIds = $this->products->pluck("external_linked_id")->filter()->unique();
 
-        clock($this->products->count());
+        if ($linkedProductsIds->count() > 0) {
+            $this->products = $this->products->merge(Product::query()
+                                                            ->whereIn("external_id", $linkedProductsIds)
+                                                            ->get())->unique();
+            clock($this->products->count());
+        }
 
         // Register the flight campaign in the contract
         Campaign::create($client, [

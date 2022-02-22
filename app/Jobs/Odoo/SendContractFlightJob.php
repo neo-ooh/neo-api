@@ -93,7 +93,7 @@ class SendContractFlightJob implements ShouldQueue {
         $sendGroups = $orderLinesToAdd->split(max(1, $orderLinesToAdd->count() / 100));
 
         foreach ($sendGroups as $sendGroup) {
-            $client->client->call(OrderLine::$slug, "create", [$sendGroup->toArray()]);
+            clock($client->client->call(OrderLine::$slug, "create", [$sendGroup->toArray()]));
         }
 
         // And we are done

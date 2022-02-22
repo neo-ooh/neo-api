@@ -81,7 +81,13 @@ class SendContractFlightJob implements ShouldQueue {
         $orderLinesToAdd = collect();
 
         foreach ($compiledProducts as $compiledProduct) {
-            $orderLinesToAdd->push(...$this->buildLines($this->products->firstWhere("id", "=", $compiledProduct["id"]), $compiledProduct));
+            $dbproduct = $this->products->firstWhere("id", "=", $compiledProduct["id"]);
+
+            if (!$dbproduct) {
+                continue;
+            }
+
+            $orderLinesToAdd->push(...$this->buildLines($dbproduct, $compiledProduct));
         }
 
         $client->client->call(OrderLine::$slug, "create", [$orderLinesToAdd->toArray()]);

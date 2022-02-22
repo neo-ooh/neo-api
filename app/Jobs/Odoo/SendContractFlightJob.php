@@ -61,6 +61,7 @@ class SendContractFlightJob implements ShouldQueue {
         // This way, we only make one request to the db for the correct Odoo ids
         $compiledProducts = collect($this->flight["properties"])->flatMap(fn($property) => collect($property["categories"])->flatMap(fn($category) => $category["products"]));
         /** @var Collection<Product> $products */
+
         $this->products = Product::query()->whereIn("id", $compiledProducts->pluck("id"))->get();
         clock($this->products->count());
 

@@ -121,7 +121,7 @@ class Contract extends Model {
     }
 
     public function getPerformancesAttribute() {
-        return Cache::tags(["contract-performances"])->remember($this->getContractPerformancesCacheKey(), 3600 * 12, function () {
+        return Cache::tags(["contract-performances"])->remember($this->getContractPerformancesCacheKey(), 3600 * 2, function () {
             $config          = static::getConnectionConfig();
             $broadsignClient = new BroadsignClient($config);
 

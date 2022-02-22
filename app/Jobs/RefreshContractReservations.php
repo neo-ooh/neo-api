@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\ContractReservation;
@@ -46,17 +47,18 @@ class RefreshContractReservations implements ShouldQueue {
      * @return void
      */
     public function handle(): void {
-        $config          = Contract::getConnectionConfig();
-        $broadsignClient = new BroadsignClient($config);
-
         /** @var Contract $contract */
         $contract = Contract::find($this->contractId);
-        $contract->load("flights");
 
         if (!$contract) {
             // Contract does not exist, stop here
             return;
         }
+
+        $contract->load("flights");
+
+        $config          = Contract::getConnectionConfig();
+        $broadsignClient = new BroadsignClient($config);
 
         $identifier = strtoupper($contract->contract_id);
 
@@ -123,5 +125,7 @@ class RefreshContractReservations implements ShouldQueue {
         }
 
         $contract->reservations()->whereNotIn("id", $storedReservationsId)->delete();
+
+        Cache::delete($contract->getContractPerformancesCacheKey());
     }
 }

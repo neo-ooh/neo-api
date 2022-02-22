@@ -29,7 +29,8 @@ class Client extends Model {
 
     protected $fillable = [
         "broadsign_customer_id",
-        "name"
+        "external_id",
+        "name",
     ];
 
     /*

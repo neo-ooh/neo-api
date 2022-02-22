@@ -62,7 +62,7 @@ class SendContractFlightJob implements ShouldQueue {
         $compiledProducts = collect($this->flight["properties"])->flatMap(fn($property) => collect($property["categories"])->flatMap(fn($category) => $category["products"]));
         /** @var Collection<Product> $products */
 
-        $this->products = Product::query()->whereIn("id", $compiledProducts->pluck("id"))->get();
+        $this->products = Product::query()->whereIn("id", $compiledProducts->pluck("id")->toArray())->get();
         clock($this->products->count());
 
         // Load linked products id as well

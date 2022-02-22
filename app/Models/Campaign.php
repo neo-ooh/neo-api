@@ -89,7 +89,7 @@ class Campaign extends SecuredModel {
      */
     protected $fillable = [
         'owner_id',
-        'forant_id',
+        'format_id',
         'name',
         'schedules_default_length',
         'schedules_max_length',

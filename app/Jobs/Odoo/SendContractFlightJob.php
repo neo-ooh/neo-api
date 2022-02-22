@@ -69,6 +69,8 @@ class SendContractFlightJob implements ShouldQueue {
                                                            ->whereIn("external_id", $linkedProductsIds)
                                                            ->get())->unique();
 
+        clock($this->products->count());
+
         // Register the flight campaign in the contract
         Campaign::create($client, [
             "order_id"   => $this->contract->id,

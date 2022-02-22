@@ -60,14 +60,26 @@ class SendContractFlightJob implements ShouldQueue {
         // We need to extract all the products included in this flight.
         // This way, we only make one request to the db for the correct Odoo ids
         $compiledProducts = collect($this->flight["properties"])->flatMap(fn($property) => collect($property["categories"])->flatMap(fn($category) => $category["products"]));
-        /** @var Collection<Product> $products */
-        $this->products = Product::query()->whereIn("id", $compiledProducts->pluck("id"))->get();
+
+        $this->products         = new Collection();
+        $compiledProductsChunks = $compiledProducts->chunk(500);
+
+        // Eloquent `whereIn` fails silently for references above ~1000 reference values
+        foreach ($compiledProductsChunks as $chunk) {
+            $this->products = $this->products->merge(Product::query()
+                                                            ->whereIn("id", $chunk->pluck("id")->toArray())
+                                                            ->get());
+        }
 
         // Load linked products id as well
-        $linkedProductsIds = $this->products->pluck("external_linked_id")->filter();
-        $this->products    = $this->products->merge(Product::query()
-                                                           ->whereIn("external_id", $linkedProductsIds)
-                                                           ->get())->unique();
+        $linkedProductsIds = $this->products->pluck("external_linked_id")->filter()->unique();
+
+        if ($linkedProductsIds->count() > 0) {
+            $this->products = $this->products->merge(Product::query()
+                                                            ->whereIn("external_id", $linkedProductsIds)
+                                                            ->get())->unique();
+            clock($this->products->count());
+        }
 
         // Register the flight campaign in the contract
         Campaign::create($client, [
@@ -81,10 +93,21 @@ class SendContractFlightJob implements ShouldQueue {
         $orderLinesToAdd = collect();
 
         foreach ($compiledProducts as $compiledProduct) {
-            $orderLinesToAdd->push(...$this->buildLines($this->products->firstWhere("id", "=", $compiledProduct["id"]), $compiledProduct));
+            $dbproduct = $this->products->firstWhere("id", "=", $compiledProduct["id"]);
+
+            if (!$dbproduct) {
+                clock("Unknown product " . $compiledProduct["id"]);
+                continue;
+            }
+
+            $orderLinesToAdd->push(...$this->buildLines($dbproduct, $compiledProduct));
         }
 
-        $client->client->call(OrderLine::$slug, "create", [$orderLinesToAdd->toArray()]);
+        $sendGroups = $orderLinesToAdd->chunk(100);
+
+        foreach ($sendGroups as $sendGroup) {
+            $client->client->call(OrderLine::$slug, "create", [$sendGroup->toArray()]);
+        }
 
         // And we are done
     }

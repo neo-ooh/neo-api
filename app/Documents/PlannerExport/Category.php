@@ -18,11 +18,20 @@ class Category {
 
     public Collection $products;
 
-    public function __construct(array $compiledCategory, ProductCategory $category, \Illuminate\Database\Eloquent\Collection $products) {
+    public function __construct(array $compiledCategory, ProductCategory $category, Collection $products) {
         $this->id = $compiledCategory["id"];
 
+
         $this->category = $category;
-        $this->products = collect($compiledCategory['products'])->map(fn(array $product) => new Product($product, $products->firstWhere("id", $product["id"])));
+        $this->products = collect($compiledCategory['products'])->map(function (array $product) use ($products) {
+            $dbproduct = $products->firstWhere("id", $product["id"]);
+
+            if (!$dbproduct) {
+                return null;
+            }
+
+            return new Product($product, $dbproduct);
+        })->whereNotNull();
 
         $this->faces       = $compiledCategory["faces_count"];
         $this->impressions = $compiledCategory["impressions"];

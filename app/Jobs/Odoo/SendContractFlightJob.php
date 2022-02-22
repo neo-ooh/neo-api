@@ -90,7 +90,11 @@ class SendContractFlightJob implements ShouldQueue {
             $orderLinesToAdd->push(...$this->buildLines($dbproduct, $compiledProduct));
         }
 
-        $client->client->call(OrderLine::$slug, "create", [$orderLinesToAdd->toArray()]);
+        $sendGroups = $orderLinesToAdd->split(max(1, $orderLinesToAdd->count() / 100));
+
+        foreach ($sendGroups as $sendGroup) {
+            $client->client->call(OrderLine::$slug, "create", [$sendGroup->toArray()]);
+        }
 
         // And we are done
     }

@@ -132,7 +132,7 @@ class ImportContractJob implements ShouldQueue {
                 "flight_id"     => $flight->getKey(),
                 "external_id"   => $orderLine->getKey(),
                 "spots"         => $orderLine->product_uom_qty,
-                "media_value"   => 0,
+                "media_value"   => $orderLine->price_unit * $orderLine->nb_weeks * $orderLine->nb_screen * $orderLine->product_uom_qty,
                 "discount"      => $orderLine->discount,
                 "discount_type" => "relative",
                 "price"         => $orderLine->price_subtotal,

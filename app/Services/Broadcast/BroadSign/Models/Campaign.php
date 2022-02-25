@@ -11,10 +11,10 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Illuminate\Support\Collection;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
 
 /**
@@ -234,6 +234,8 @@ class Campaign extends BroadSignModel {
 
     public static function search(BroadsignClient $client, array $query) {
         $results = ResourceQuery::byName($client, $query["name"], "reservation");
+
+        clock($query, $results);
 
         if (count($results) === 0) {
             return new Collection();

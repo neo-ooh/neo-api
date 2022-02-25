@@ -14,6 +14,7 @@ use Illuminate\Console\Command;
 use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\RefreshContractReservations;
 use Neo\Models\Contract;
+use Ripcord_TransportException;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -29,12 +30,16 @@ class TestCommand extends Command {
 //        dump($contract->getReceivedImpressionsAttribute());
 
         Contract::query()
-                ->where("id", "=", 611)
-//                ->where("salesperson_id", "=", 22)
+                ->where("id", "=", 616)
+//                ->where("salesperson_id", "=", 23)
                 ->get()
                 ->each(function (Contract $contract) {
-                    ImportContractJob::dispatchSync($contract->id);
-                    RefreshContractReservations::dispatchSync($contract->id);
+                    try {
+                        ImportContractJob::dispatchSync($contract->id);
+                        RefreshContractReservations::dispatchSync($contract->id);
+                    } catch (Ripcord_TransportException $e) {
+                        $this->error($e->getMessage());
+                    }
                 });
 
 //        Contract::query()

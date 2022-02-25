@@ -53,7 +53,7 @@ class ContractBurstsController extends Controller {
             $burst->save();
             $burst->refresh();
 
-            $bursts[] = $burst;
+            $bursts[] = $burst->load("location");
         }
 
         // And return the burst

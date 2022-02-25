@@ -84,9 +84,9 @@ class RefreshContractReservations implements ShouldQueue {
         /** @var Campaign $reservation */
         foreach ($reservations as $reservation) {
             // In the case of contract with identical numbers but different prefix, the Broadsign API will return both. eg: NEO-092-21 and OTG-092-21. We need to validate the beggining of the campaign names as an additional filter step
-            if (!str_starts_with($reservation->name, $identifier)) {
-                continue;
-            }
+//            if (!str_starts_with($reservation->name, $identifier)) {
+//                continue;
+//            }
 
             /** @var ContractReservation $rr */
             $rr = ContractReservation::query()->firstOrNew([
@@ -125,6 +125,6 @@ class RefreshContractReservations implements ShouldQueue {
 
         $contract->reservations()->whereNotIn("id", $storedReservationsId)->delete();
 
-        Cache::delete($contract->getContractPerformancesCacheKey());
+        Cache::forget($contract->getContractPerformancesCacheKey());
     }
 }

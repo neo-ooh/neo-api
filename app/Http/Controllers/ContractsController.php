@@ -114,6 +114,10 @@ class ContractsController extends Controller {
 
         if (in_array("reservations", $with, true)) {
             $contract->load("reservations");
+
+            if (in_array("reservations.locations", $with, true)) {
+                $contract->loadReservationsLocations();
+            }
         }
 
         if (in_array("flights", $with, true)) {
@@ -130,16 +134,16 @@ class ContractsController extends Controller {
             });
         }
 
-        if (in_array("reservations.locations", $with, true)) {
-            $contract->loadReservationsLocations();
-        }
-
         if (in_array("performances", $with, true)) {
             $contract->append("performances");
         }
 
         if (in_array("bursts", $with, true)) {
             $contract->load("bursts", "bursts.screenshots", "bursts.location");
+        }
+
+        if (in_array("validated_screenshots", $with, true)) {
+            $contract->load("validated_screenshots");
         }
 
         return new Response($contract);

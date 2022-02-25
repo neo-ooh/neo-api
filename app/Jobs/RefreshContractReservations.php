@@ -60,24 +60,23 @@ class RefreshContractReservations implements ShouldQueue {
         $config          = Contract::getConnectionConfig();
         $broadsignClient = new BroadsignClient($config);
 
-        $identifier = strtoupper($contract->contract_id);
+
+        // Because there is always problems witht he dashes in the name of reservations,
+        // we are gonna do three requests, with variation on the hyphens, and merge all the results
 
         // Get all the Broadsign Reservations matching the report's contract Id
+        $identifier   = strtoupper($contract->contract_id);
         $reservations = Campaign::search($broadsignClient, ["name" => $identifier]);
 
-        if (count($reservations) === 0) {
-            // No campaigns where found, let's try again, replacing hyphen-minus with hyphen...
-            $identifier = strtoupper(str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id));
+        // let's do another request, this time replacing hyphen-minus with hyphen...
+        $identifier   = strtoupper(str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id));
+        $reservations = $reservations->merge(Campaign::search($broadsignClient, ["name" => $identifier]));
 
-            $reservations = Campaign::search($broadsignClient, ["name" => $identifier]);
+        // Finally, we do a final one with an underscore this time
+        $identifier   = strtoupper(str_replace('-', '_', $contract->contract_id));
+        $reservations = $reservations->merge(Campaign::search($broadsignClient, ["name" => $identifier]));
 
-            if (count($reservations) === 0) {
-                // Still nothing, let's try with an underscore this time
-                $identifier = strtoupper(str_replace('-', '_', $contract->contract_id));
-
-                $reservations = Campaign::search($broadsignClient, ["name" => $identifier]);
-            }
-        }
+        $reservations = $reservations->unique("id");
 
         $storedReservationsId = [];
 

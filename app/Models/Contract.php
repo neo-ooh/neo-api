@@ -103,11 +103,16 @@ class Contract extends Model {
     }
 
     public function flights(): HasMany {
-        return $this->hasMany(ContractFlight::class, "contract_id", "id");
+        return $this->hasMany(ContractFlight::class, "contract_id", "id")->orderBy("start_date");
     }
 
     public function screenshots(): HasManyThrough {
         return $this->hasManyThrough(ContractScreenshot::class, ContractBurst::class, 'contract_id', 'burst_id');
+    }
+
+    public function validated_screenshots(): HasManyThrough {
+        return $this->hasManyThrough(ContractScreenshot::class, ContractBurst::class, 'contract_id', 'burst_id')
+                    ->where("is_locked", "=", true);
     }
 
     /*

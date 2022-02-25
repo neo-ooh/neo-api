@@ -61,6 +61,7 @@ class PDFContract extends PDFDocument {
         $document               = parent::make($data);
         $document->documentType = self::TYPE_CONTRACT;
 
+
         return $document;
     }
 

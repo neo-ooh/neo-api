@@ -122,7 +122,7 @@ class Contract extends Model {
     */
 
     public function getContractPerformancesCacheKey(): string {
-        return "contract-$this->id-performances";
+        return "contract-" . $this->id . "-performances";
     }
 
     public function getPerformancesAttribute() {

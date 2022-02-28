@@ -44,19 +44,19 @@
                 <table class="header-contract-data">
                     <tr>
                         <td class="header-contract-data-label">{!! __("common.header-contract") !!}</td>
-                        <td class="header-contract-data-value">{{ $contract["contract_id"] }}</td>
+                        <td class="header-contract-data-value">{{ $data->contract_name }}</td>
                     </tr>
                     <tr>
                         <td class="header-contract-data-label">{!! __("common.header-advertiser") !!}</td>
-                        <td class="header-contract-data-value">{{ $contract["advertiser"]["name"] }}</td>
+                        <td class="header-contract-data-value">{{ $data->advertiser["name"] }}</td>
                     </tr>
                     <tr>
                         <td class="header-contract-data-label">{!! __("common.header-client") !!}</td>
-                        <td class="header-contract-data-value">{{ $contract["client"]["name"] }}</td>
+                        <td class="header-contract-data-value">{{ $data->client["name"] }}</td>
                     </tr>
                     <tr class="last">
                         <td class="header-contract-data-label">{!! __("common.header-account-executive") !!}</td>
-                        <td class="header-contract-data-value">{{ $contract["executive"] }}</td>
+                        <td class="header-contract-data-value">{{ $data->salesperson["name"] }}</td>
                     </tr>
                 </table>
             </td>

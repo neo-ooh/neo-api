@@ -15,35 +15,46 @@
         </tr>
         </thead>
         <tbody>
-        @foreach(['shopping', 'otg', 'fitness'] as $network)
+        @foreach($values->networks as $networkValues)
             @php
-                $networkReservations = $reservations->where("network", $network)
+                $color = [1 => "#3e9cca", 2 => "#d63641", 3 => "#e5782c"][$networkValues->network->id];
             @endphp
-            @if($networkReservations->count() === 0)
-                @continue
-            @endif
-            <tr class="{{$network}}">
-                <td>{{ __("network-$network") }}</td>
-                <td>{{ $networkReservations->min("start_date")->format("Y-m-d") }}</td>
-                <td>{{ $networkReservations->max("end_date")->format("Y-m-d") }}</td>
-                <td>{{ format($contract["networks"][$network]["{$category}_impressions"] ?? 0) }}</td>
-                <td>{{ format($networkReservations->sum("received_impressions")) }}</td>
-                <td>
-                    {{ formatCurrency($category === 'bua' ? $networkReservations->sum("received_impressions") * ($contract["bua_impression_value"] ?? 0) : $contract["networks"][$network]["{$category}_media_value"]) }}
+            <tr>
+                <td style="background-color: {{ $color }}">
+                    {{ $networkValues->network->name }}
                 </td>
-                <td>{{ formatCurrency($contract["networks"][$network]["{$category}_net_investment"] ?? 0) }}</td>
+                <td style="background-color: {{ $color }}">
+                    {{ $networkValues->start_date->format("Y-m-d") }}
+                </td>
+                <td style="background-color: {{ $color }}">
+                    {{ $networkValues->end_date->format("Y-m-d") }}
+                </td>
+                <td style="background-color: {{ $color }}">
+                    {{ format($networkValues->contracted_impressions) }}
+                </td>
+                <td style="background-color: {{ $color }}">
+                    {{ format($networkValues->counted_impressions) }}
+                </td>
+                <td style="background-color: {{ $color }}">
+                    {{ formatCurrency($category === 'bua'
+? ($networkValues->media_value / $networkValues->contracted_impressions) * $networkValues->counted_impressions
+: $networkValues->media_value) }}
+                </td>
+                <td style="background-color: {{ $color }}"> {{ formatCurrency($networkValues->net_investment) }}</td>
             </tr>
         @endforeach
         </tbody>
         <tfoot>
         <tr>
             <td></td>
-            <td>{{ $reservations->min("start_date")->format("Y-m-d") }}</td>
-            <td>{{ $reservations->max("end_date")->format("Y-m-d") }}</td>
-            <td>{{ format($contract["{$category}_impressions"]) }}</td>
-            <td>{{ format($reservations->sum("received_impressions")) }}</td>
-            <td>{{ formatCurrency($category === 'bua' ? $reservations->sum("received_impressions") * $contract["bua_impression_value"] : $contract["{$category}_media_value"]) }}</td>
-            <td>{{ formatCurrency($category === "guaranteed" ? $contract["net_investment"] : 0) }}</td>
+            <td>{{ $values->start_date->format("Y-m-d") }}</td>
+            <td>{{ $values->end_date->format("Y-m-d") }}</td>
+            <td>{{ format($values->contracted_impressions) }}</td>
+            <td>{{ format($values->counted_impressions) }}</td>
+            <td>{{ formatCurrency($category === 'bua'
+? ($values->media_value / $values->contracted_impressions) * $values->counted_impressions
+: $values->media_value) }}</td>
+            <td>{{ formatCurrency($values->net_investment) }}</td>
         </tr>
         </tfoot>
     </table>

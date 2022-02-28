@@ -30,7 +30,7 @@ class TestCommand extends Command {
 //        dump($contract->getReceivedImpressionsAttribute());
 
         Contract::query()
-                ->where("id", "=", 616)
+                ->where("id", "=", 333)
 //                ->where("salesperson_id", "=", 23)
                 ->get()
                 ->each(function (Contract $contract) {

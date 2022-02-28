@@ -42,7 +42,7 @@ class ContractScreenshot extends Model {
     ];
 
     protected $appends = [
-        "url"
+        "url",
     ];
 
     public static function boot() {
@@ -84,5 +84,4 @@ class ContractScreenshot extends Model {
     public function getUrlAttribute() {
         return Storage::disk("public")->url($this->file_path);
     }
-
 }

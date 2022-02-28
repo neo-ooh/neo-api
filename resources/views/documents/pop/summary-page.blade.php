@@ -1,8 +1,8 @@
 <section id="summary">
-    @includeWhen(count($purchaseReservations) > 0, 'documents.pop.summary.network-summary', ["category" => "guaranteed", "reservations" => $purchaseReservations])
-    @includeWhen(count($bonusReservations) > 0, 'documents.pop.summary.network-summary', ["category" => "bonus", "reservations" => $bonusReservations])
-    @includeWhen(count($buaReservations) > 0, 'documents.pop.summary.network-summary', ["category" => "bua", "reservations" => $buaReservations])
+    @includeWhen($data->has_guaranteed_buys, 'documents.pop.summary.network-summary', ["category" => "guaranteed", "values" => $guaranteed_values])
+    @includeWhen($data->has_bonus_buys, 'documents.pop.summary.network-summary', ["category" => "bonus", "values" => $bonus_values])
+    @includeWhen($data->has_bua_buys, 'documents.pop.summary.network-summary', ["category" => "bua", "values" => $bua_values])
 </section>
-@includeWhen(count($contract["reservations"]) > 0, 'documents.pop.totals', [
-    "contract" => $contract,
+@includeWhen(count($data->values) > 0, 'documents.pop.totals', [
+    "data" => $data,
 ])

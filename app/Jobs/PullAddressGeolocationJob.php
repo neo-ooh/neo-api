@@ -14,10 +14,10 @@ use Geocoder\Laravel\ProviderAndDumperAggregator as Geocoder;
 use Geocoder\Model\Coordinates;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Neo\Models\Address;
 
 class PullAddressGeolocationJob implements ShouldQueue {
@@ -29,7 +29,7 @@ class PullAddressGeolocationJob implements ShouldQueue {
     public function handle(Geocoder $geocoder) {
         $res = $geocoder->geocode($this->address->string_representation)->get();
 
-        if($res->isEmpty()) {
+        if ($res->isEmpty()) {
             // No geolocation found for address. clean up and end.
             $this->address->geolocation = null;
             $this->address->save();
@@ -38,7 +38,7 @@ class PullAddressGeolocationJob implements ShouldQueue {
 
         // We got results, take the first one and save it.
         /** @var Coordinates $response */
-        $coordinates = $res->first()->getCoordinates();
+        $coordinates                = $res->first()->getCoordinates();
         $this->address->geolocation = new Point($coordinates->getLatitude(), $coordinates->getLongitude());
         $this->address->save();
     }

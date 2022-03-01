@@ -11,7 +11,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Neo\Jobs\Contracts\MigrateContractsJob;
 
 class AlterContractsReservationsTable extends Migration {
     public function up() {
@@ -31,8 +30,6 @@ class AlterContractsReservationsTable extends Migration {
                   ->cascadeOnUpdate()
                   ->nullOnDelete();
         });
-
-        MigrateContractsJob::dispatchSync();
     }
 
     public function down() {

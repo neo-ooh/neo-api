@@ -98,7 +98,7 @@ class ContractsController extends Controller {
     public function show(ShowContractRequest $request, Contract $contract) {
         $with = $request->get("with", []);
 
-        $contract->append(["start_date", "end_date"]);
+        $contract->append(["start_date", "end_date", "expected_impressions"]);
 
         if (in_array("salesperson", $with, true)) {
             $contract->load("salesperson", "salesperson.logo");

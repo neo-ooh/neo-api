@@ -106,9 +106,11 @@ class ImportContractJob implements ShouldQueue {
 
             if ($product && $product->is_bonus) {
                 $type = 'bua';
-            } else if ($orderLine->discount === 100) {
+            } else if ($orderLine->discount > 99.9) {
                 $type = 'bonus';
             }
+
+            dump($product->name_en . ":" . $type);
 
             $flight = $flights->filter(function (ContractFlight $flight) use ($type, $orderLine) {
                 return $flight->start_date->toDateString() === $orderLine->rental_start

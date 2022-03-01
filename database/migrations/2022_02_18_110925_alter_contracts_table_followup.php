@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Schema;
 class AlterContractsTableFollowup extends Migration {
     public function up() {
         Schema::table('contracts', function (Blueprint $table) {
-            $table->dropColumn(["start_date", "end_date", "advertiser_name", "executive_name", "presented_to"]);
+            $table->dropColumn(["start_date", "end_date", "data", "advertiser_name", "executive_name", "presented_to"]);
         });
     }
 

@@ -5,10 +5,10 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - RefreshContractReservations.php
+ * @neo/api - ImportContractReservations.php
  */
 
-namespace Neo\Jobs;
+namespace Neo\Jobs\Contracts;
 
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
@@ -29,7 +29,7 @@ use Neo\Services\Broadcast\BroadSign\Models\Campaign;
  * @package Neo\Jobs
  *
  */
-class RefreshContractReservations implements ShouldQueue {
+class ImportContractReservations implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected int $contractId;

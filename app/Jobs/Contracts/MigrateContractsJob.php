@@ -51,10 +51,9 @@ class MigrateContractsJob implements ShouldQueue {
 
                 $section->clear();
                 $section->writeln("<error>" . $contract->contract_id . ": Still a proposal. Removed!</error>");
-
             }
 
-            ImportContractJob::dispatchSync($contract->getKey(), $odooContract);
+            ImportContractDataJob::dispatchSync($contract->getKey(), $odooContract);
 
             $section->writeln($contract->contract_id . ": OK");
         }

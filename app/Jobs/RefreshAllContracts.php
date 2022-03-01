@@ -5,14 +5,14 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - RefreshContractReservations.php
+ * @neo/api - ImportContractReservations.php
  */
 
 namespace Neo\Jobs;
 
 use Illuminate\Console\Command;
+use Neo\Jobs\Contracts\ImportContractReservations;
 use Neo\Models\Contract;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 
 /**
  * Class CreateSignupToken
@@ -45,7 +45,7 @@ class RefreshAllContracts extends Command {
 
         /** @var Contract $contract */
         foreach ($contracts as $contract) {
-            RefreshContractReservations::dispatchSync($contract->id);
+            ImportContractReservations::dispatchSync($contract->id);
         }
 
         return 0;

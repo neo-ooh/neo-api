@@ -5,9 +5,6 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Gate;
-use Neo\Enums\Capability;
-use Neo\Exceptions\Odoo\CannotAccessAnotherSalespersonContractException;
 use Neo\Exceptions\Odoo\ContractAlreadyExistException;
 use Neo\Exceptions\Odoo\ContractIsDraftException;
 use Neo\Exceptions\Odoo\ContractNotFoundException;
@@ -16,13 +13,14 @@ use Neo\Http\Requests\Contracts\ListContractsRequest;
 use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
+use Neo\Jobs\Contracts\ImportContractDataJob;
 use Neo\Jobs\Contracts\ImportContractJob;
-use Neo\Jobs\RefreshContractReservations;
-use Neo\Models\Actor;
+use Neo\Jobs\Contracts\ImportContractReservations;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\ContractLine;
 use Neo\Services\Odoo\OdooConfig;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ContractsController extends Controller {
     public function index(ListContractsRequest $request) {
@@ -71,26 +69,13 @@ class ContractsController extends Controller {
             throw new ContractIsDraftException($contractId);
         }
 
-        $owner = Actor::query()->where("name", "=", $odooContract->user_id[1])->first();
+        ImportContractJob::dispatchSync($contractId, $odooContract);
 
-        // If no owner could be matched, we attach it to the current user
-        if (!$owner) {
-            $owner = Auth::user();
+        $contract = Contract::query()->where("contract_id", "=", $odooContract->name)->first();
+
+        if (!$contract) {
+            throw new HttpException(400, "Could not import contract.");
         }
-
-        // Is the user is not allowed to access all contract, we check that it indeed owns the contract
-        if ($owner->isNot(Auth::user()) && !Gate::allows(Capability::contracts_manage)) {
-            throw new CannotAccessAnotherSalespersonContractException();
-        }
-
-        $contract = new Contract([
-            "contract_id"    => $contractId,
-            "salesperson_id" => $owner->id,
-        ]);
-        $contract->save();
-
-        ImportContractJob::dispatchSync($contract->getKey(), $odooContract);
-        RefreshContractReservations::dispatch($contract->id);
 
         return new Response($contract, 201);
     }
@@ -150,8 +135,8 @@ class ContractsController extends Controller {
     }
 
     public function refresh(RefreshContractRequest $request, Contract $contract) {
-        ImportContractJob::dispatchSync($contract->id);
-        RefreshContractReservations::dispatchSync($contract->id);
+        ImportContractDataJob::dispatchSync($contract->id);
+        ImportContractReservations::dispatchSync($contract->id);
 
         return new Response(["status" => "ok"]);
     }

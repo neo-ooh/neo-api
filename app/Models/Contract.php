@@ -2,7 +2,6 @@
 
 namespace Neo\Models;
 
-use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -27,16 +26,10 @@ use RuntimeException;
  * @property integer                         $id
  * @property string                          $contract_id // ID of the contract has set by sales (not related to the actual ID of
  *           the contract inside Connect)
- * @property integer                         $client_id
  * @property integer                         $external_id
+ * @property integer                         $client_id
  * @property integer                         $salesperson_id
  * @property integer                         $advertiser_id
- * @property Date                            $start_date
- * @property array                           $end_date
- * @property array                           $data
- * @property string                          $advertiser_name
- * @property string                          $executive_name
- * @property string                          $presented_to
  * @property integer                         $created_at
  * @property integer                         $updated_at
  *

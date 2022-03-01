@@ -74,6 +74,10 @@ return [
         "geocoding" => [
             "driver"     => "redis",
             "connection" => "geocoding",
+        ],
+
+        "none" => [
+            "driver" => 'null',
         ]
         //
         //        'memcached' => [

@@ -33,19 +33,24 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
         /** @var Property $property */
         $property = Property::find($this->property_id);
 
-        if(!$property || !$property->odoo) {
+        if (!$property || !$property->odoo) {
             // Do nothing
             return;
         }
 
         // Pull the property from Odoo
-        $odooConfig = OdooConfig::fromConfig();
-        $odooClient = $odooConfig->getClient();
+        $odooConfig   = OdooConfig::fromConfig();
+        $odooClient   = $odooConfig->getClient();
         $odooProperty = \Neo\Services\Odoo\Models\Property::get($odooClient, $property->odoo->odoo_id);
 
-        $address = $property->address ?? new Address();
-        $address->line_1 = $odooProperty->street;
-        $address->line_2 = $odooProperty->street2 === 0 ? null : $odooProperty->street2 ;
+        if ($odooProperty === null) {
+            // Property could not be found
+            return;
+        }
+
+        $address          = $property->address ?? new Address();
+        $address->line_1  = $odooProperty->street;
+        $address->line_2  = $odooProperty->street2 === 0 ? null : $odooProperty->street2;
         $address->zipcode = str_replace(" ", "", $odooProperty->zip);
 
         /** @var Province $province */
@@ -55,7 +60,7 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
 
         /** @var City $city */
         $city = City::query()->firstOrCreate([
-            "name" => $odooProperty->city,
+            "name"        => $odooProperty->city,
             "province_id" => $province->id,
         ]);
 
@@ -69,7 +74,7 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
         $property->address()->associate($address);
         $property->save();
 
-        if($refreshCoordinates) {
+        if ($refreshCoordinates) {
             PullAddressGeolocationJob::withChain([
                 new PushPropertyGeolocationJob($this->property_id)
             ])->dispatch($address);

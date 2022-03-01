@@ -24,7 +24,8 @@ trait HasAttributes {
         // Check if a method with the specified name exists
         if (method_exists($this, $name)) {
             // Yes call it and return
-            return $this->{$name}();
+            $val = $this->{$name}();
+            return $val;
         }
 
         // Return the attribute with the provided name

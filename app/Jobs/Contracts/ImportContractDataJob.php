@@ -79,9 +79,27 @@ class ImportContractDataJob implements ShouldQueue {
         $contract->save();
 
         // Now, we pull all the lines from the contract and put them in their own flights
-        $flights = collect();
+        $flights    = collect();
+        $orderLines = collect();
+        $chunkSize  = 50;
 
-        $orderLines    = OrderLine::findBy($odooClient, "order_id", $this->odooContract->id)->where("is_linked_line", "!=", 1);
+        do {
+            $hasMore = false;
+
+            $lines = OrderLine::all($odooClient, [
+                ["order_id", '=', $this->odooContract->id],
+                ["is_linked_line", '!=', 1]
+            ], $chunkSize, $orderLines->count());
+
+            if ($lines->count() === $chunkSize) {
+                $hasMore = true;
+            }
+
+            $output->writeln($contract->contract_id . ": Received {$lines->count()} lines...");
+
+            $orderLines = $orderLines->merge($lines);
+        } while ($hasMore);
+
         $contractLines = [];
 
         $output->writeln($contract->contract_id . ": Importing {$orderLines->count()} lines in the contract...");

@@ -34,13 +34,19 @@ class Client {
 
     }
 
-    public function get(string $model, array $filters = [], array $fields = []) {
+    public function get(string $model, array $filters = [], array $fields = [], int|null $limit = null, int $offset = 0) {
+        $request = $this->client;
+
         foreach ($filters as $filter) {
-            $this->client->where(...$filter);
+            $request->where(...$filter);
         }
 
-        return $this->client->fields($fields)
-                            ->get($model);
+        if ($limit !== null) {
+            $request->limit($limit, $offset);
+        }
+
+        return $request->fields($fields)
+                       ->get($model);
     }
 
     /**
@@ -65,9 +71,14 @@ class Client {
                             ->update($model::$slug, $values);
     }
 
-    public function findBy(string $model, string $field, $value) {
-        return $this->client->where($field, "=", $value)
-                            ->get($model);
+    public function findBy(string $model, string $field, $value, int|null $limit = null, int $offset = 0) {
+        $request = $this->client->where($field, "=", $value);
+
+        if ($limit !== null) {
+            $request->limit($limit, $offset);
+        }
+
+        return $request->get($model);
     }
 
     public function create(string $model, array $fields) {

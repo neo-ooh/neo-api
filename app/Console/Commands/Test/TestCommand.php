@@ -11,7 +11,10 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Jobs\Contracts\ImportContractJob;
+use Neo\Jobs\Contracts\ImportContractDataJob;
+use Neo\Jobs\Contracts\ImportContractReservations;
+use Neo\Models\Contract;
+use Ripcord_TransportException;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -26,18 +29,18 @@ class TestCommand extends Command {
 //
 //        dump($contract->getReceivedImpressionsAttribute());
 
-//        Contract::query()
-//                ->where("id", "=", 549)
-////                ->where("salesperson_id", "=", 23)
-//                ->get()
-//                ->each(function (Contract $contract) {
-//                    try {
-//                        ImportContractDataJob::dispatchSync($contract->id);
-//                        ImportContractReservations::dispatchSync($contract->id);
-//                    } catch (Ripcord_TransportException $e) {
-//                        $this->error($e->getMessage());
-//                    }
-//                });
+        Contract::query()
+                ->where("id", "=", 247)
+//                ->where("salesperson_id", "=", 23)
+                ->get()
+                ->each(function (Contract $contract) {
+                    try {
+                        ImportContractDataJob::dispatchSync($contract->id);
+                        ImportContractReservations::dispatchSync($contract->id);
+                    } catch (Ripcord_TransportException $e) {
+                        $this->error($e->getMessage());
+                    }
+                });
 
 //        Contract::query()
 //                ->where("salesperson_id", "=", 20)
@@ -46,7 +49,5 @@ class TestCommand extends Command {
 
 //        /** @var Contract $contract */
 //        $contract = Contract::with("flights", "flights.lines", "flights.lines.product.property")->firstWhere("id", "=", 611);
-
-        ImportContractJob::dispatchSync("NEO-100-22");
     }
 }

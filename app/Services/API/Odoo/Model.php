@@ -85,8 +85,8 @@ abstract class Model implements Arrayable {
      * @param array  $filters
      * @return Collection
      */
-    public static function all(Client $client, array $filters = []): Collection {
-        $rawModels = $client->get(static::$slug, array_merge(static::$filters, $filters), static::$fields);
+    public static function all(Client $client, array $filters = [], int|null $limit = null, int $offset = 0): Collection {
+        $rawModels = $client->get(static::$slug, array_merge(static::$filters, $filters), static::$fields, $limit, $offset);
 
         return $rawModels->map(static fn($model) => new static($client, $model));
     }
@@ -98,8 +98,8 @@ abstract class Model implements Arrayable {
      * @param array|Collection $ids
      * @return Collection<static>
      */
-    public static function findBy(Client $client, string $field, $value): Collection {
-        return $client->findBy(static::$slug, $field, $value)->map(fn($record) => new static($client, $record));
+    public static function findBy(Client $client, string $field, $value, int|null $limit = null, int $offset = 0): Collection {
+        return $client->findBy(static::$slug, $field, $value, $limit, $offset)->map(fn($record) => new static($client, $record));
     }
 
     /**

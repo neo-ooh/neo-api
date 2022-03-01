@@ -26,7 +26,7 @@ class MigrateContractsJob implements ShouldQueue {
         $client = OdooConfig::fromConfig()->getClient();
 
         $output    = new ConsoleOutput();
-        $contracts = Contract::query()->whereNull("advertiser_id")->inRandomOrder()->lazy(100);
+        $contracts = Contract::query()->whereDoesntHave("flights")->inRandomOrder()->get();
 
         /** @var Contract $contract */
         foreach ($contracts as $contract) {
@@ -54,6 +54,7 @@ class MigrateContractsJob implements ShouldQueue {
             }
 
             ImportContractDataJob::dispatchSync($contract->getKey(), $odooContract);
+            ImportContractReservations::dispatchSync($contract->getKey());
 
             $section->writeln($contract->contract_id . ": OK");
         }

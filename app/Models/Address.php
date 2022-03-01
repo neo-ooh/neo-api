@@ -22,11 +22,13 @@ use Illuminate\Database\Eloquent\Model;
  * @property Date   $created_at
  * @property Date   $updated_at
  *
- * @property string    $string_representation Human-readable version of the address
+ * @property string $string_representation Human-readable version of the address
  */
 class Address extends Model {
     use HasFactory;
     use SpatialTrait;
+
+    public bool $wktOptions = false;
 
     protected $table = "addresses";
 
@@ -53,7 +55,7 @@ class Address extends Model {
 
     public function getStringRepresentationAttribute(): string {
         $str = $this->line_1;
-        if($this->line_2 && strlen($this->line_2) > 0) {
+        if ($this->line_2 && strlen($this->line_2) > 0) {
             $str .= ", $this->line_2";
         }
 

@@ -10,6 +10,7 @@
 
 namespace Neo\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Neo\Models\Traits\HasCompositePrimaryKey;
@@ -56,5 +57,17 @@ class ContractLine extends Model {
 
     public function product(): BelongsTo {
         return $this->belongsTo(Product::class, "product_id", "id");
+    }
+
+    public function getNetworkIdAttribute() {
+        return Property::query()->whereHas("products", function (Builder $query) {
+                $query->where("id", "=", $this->product_id);
+            })->setEagerLoads([])->first()?->network_id ?? null;
+    }
+
+    public function getProductTypeAttribute() {
+        return ProductCategory::query()->whereHas("products", function (Builder $query) {
+                $query->where("id", "=", $this->product_id);
+            })->setEagerLoads([])->first()?->fill_strategy ?? null;
     }
 }

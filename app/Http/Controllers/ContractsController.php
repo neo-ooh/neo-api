@@ -6,6 +6,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Neo\Exceptions\Odoo\ContractAlreadyExistException;
+use Neo\Exceptions\Odoo\ContractIsCancelledException;
 use Neo\Exceptions\Odoo\ContractIsDraftException;
 use Neo\Exceptions\Odoo\ContractNotFoundException;
 use Neo\Http\Requests\Contracts\DestroyContractRequest;
@@ -18,7 +19,6 @@ use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\Contracts\ImportContractReservations;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
-use Neo\Models\ContractLine;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -69,6 +69,10 @@ class ContractsController extends Controller {
             throw new ContractIsDraftException($contractId);
         }
 
+        if ($odooContract->state === 'cancelled') {
+            throw new ContractIsCancelledException($contractId);
+        }
+
         ImportContractJob::dispatchSync($contractId, $odooContract);
 
         $contract = Contract::query()->where("contract_id", "=", $odooContract->name)->first();
@@ -110,13 +114,7 @@ class ContractsController extends Controller {
             $contract->flights->append("expected_impressions");
 
             // Add the network ID to each order line
-            $contract->flights = $contract->flights->map(function (ContractFlight $flight) {
-                return $flight->lines->map(function (ContractLine $line) {
-                    $line->network_id = $line->product->property->network_id;
-                    $line->makeHidden("product");
-                    return $line->toArray();
-                });
-            });
+            $contract->flights->each(fn(ContractFlight $flight) => $flight->lines->append(["network_id", "product_type"]));
         }
 
         if (in_array("performances", $with, true)) {

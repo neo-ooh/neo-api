@@ -51,6 +51,17 @@ class MigrateContractsJob implements ShouldQueue {
 
                 $section->clear();
                 $section->writeln("<error>" . $contract->contract_id . ": Still a proposal. Removed!</error>");
+                continue;
+            }
+
+
+            if ($odooContract->state === 'cancel') {
+                // This contract has been cancelled!
+                $contract->delete();
+
+                $section->clear();
+                $section->writeln("<error>" . $contract->contract_id . ": Has been cancelled. Removed!</error>");
+                continue;
             }
 
             ImportContractDataJob::dispatchSync($contract->getKey(), $odooContract);

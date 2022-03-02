@@ -46,6 +46,11 @@ class ImportContractJob implements ShouldQueue, ShouldBeUnique {
             return;
         }
 
+        if ($this->odooContract->state === 'cancel') {
+            // This contract has been cancelled!
+            return;
+        }
+
         $salesperson = Actor::query()->where("name", "=", $this->odooContract->user_id[1])->first();
         if (!$salesperson) {
             $currentUser = Auth::user();

@@ -10,10 +10,12 @@
 
 namespace Neo\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Neo\Enums\ProductsFillStrategy;
 
 /**
  * @property-read int                 $id
@@ -58,6 +60,10 @@ class ContractFlight extends Model {
     }
 
     public function getExpectedImpressionsAttribute() {
-        return $this->lines()->sum("impressions");
+        return $this->lines()->whereHas('product', function (Builder $query) {
+            $query->whereHas("category", function (Builder $query) {
+                $query->where("fill_strategy", "=", ProductsFillStrategy::digital);
+            });
+        })->sum("impressions");
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Neo\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use Neo\Enums\ProductsFillStrategy;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
@@ -179,15 +181,16 @@ class Contract extends Model {
     }
 
     public function getExpectedImpressionsAttribute(): int {
-        $contractsFlightsTable = (new ContractFlight())->getTable();
-        $contractsLinesTable   = (new ContractLine())->getTable();
-        return (int)ContractLine::query()
-                                ->join($contractsFlightsTable, function ($join) use ($contractsLinesTable, $contractsFlightsTable) {
-                                    $join->on("$contractsLinesTable.flight_id", "=", "$contractsFlightsTable.id");
-                                })
-                                ->where("$contractsFlightsTable.type", "!=", ContractFlight::BUA)
-                                ->where("$contractsFlightsTable.contract_id", "=", $this->id)
-                                ->sum("impressions");
+        return ContractLine::query()
+                           ->whereHas("flight", function (Builder $query) {
+                               $query->where("type", '!=', ContractFlight::BUA);
+                               $query->where("contract_id", "=", $this->id);
+                           })
+                           ->whereHas('product', function (Builder $query) {
+                               $query->whereHas("category", function (Builder $query) {
+                                   $query->where("fill_strategy", "=", ProductsFillStrategy::digital);
+                               });
+                           })->sum("impressions");
     }
 
     public function getReceivedImpressionsAttribute() {

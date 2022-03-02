@@ -27,7 +27,7 @@
     "doctrine/dbal": "^3.1.4",
     "edujugon/laradoo": "dev-laravel9",
     "firebase/php-jwt": "^6",
-    "fruitcake/laravel-cors": "^2.0",
+    "fruitcake/laravel-cors": "^3.0",
     "grimzy/laravel-mysql-spatial": "dev-laravel9",
     "guzzlehttp/guzzle": "^7.0.1",
     "hannesvdvreken/guzzle-clockwork": "4.0.0-RC1",

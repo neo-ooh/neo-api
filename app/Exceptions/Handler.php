@@ -27,7 +27,10 @@ class Handler extends ExceptionHandler {
 //                return new Response(["message" => $e->getMessage(), "code" => $e->getCode()], 500);
 //            }
 
-            return null;
+            return [
+                "status"  => $e->getCode(),
+                "message" => $e->getMessage(),
+            ];
         });
 
         $this->reportable(static function (Throwable $e) {

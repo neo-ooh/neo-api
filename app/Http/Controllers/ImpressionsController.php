@@ -28,7 +28,13 @@ use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsController {
-    public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, int $displayUnitId) {
+    public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, $displayUnitId) {
+        if (!is_int($displayUnitId)) {
+            return new Response(["Invalid display unit id: $displayUnitId"], 400);
+        }
+
+        $displayUnitId = (int)$displayUnitId;
+
         /** @var Location|null $location */
         $location = Location::query()->where("external_id", "=", $displayUnitId)->first();
 

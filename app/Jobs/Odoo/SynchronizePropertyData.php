@@ -129,13 +129,16 @@ class SynchronizePropertyData implements ShouldQueue {
 
     protected function getProductCategory(int $odooCategoryId, int $productTypeId, string $internalName) {
         /** @var ProductCategory $productCategory */
-        $productCategory = ProductCategory::query()->updateOrInsert([
+        $productCategory = ProductCategory::query()->firstOrCreate([
             "external_id" => $odooCategoryId,
         ], [
             "type_id" => $productTypeId,
             "name_en" => $internalName,
             "name_fr" => $internalName,
         ]);
+
+        $productCategory->type_id = $productTypeId;
+        $productCategory->save();
 
         return $productCategory;
     }

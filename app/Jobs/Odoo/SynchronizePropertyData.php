@@ -27,7 +27,10 @@ use Neo\Services\Odoo\Models\Property as OdooProperty;
 class SynchronizePropertyData implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected int $propertyId, protected Client $client, protected ?OdooProperty $odooProperty = null, protected ?Collection $odooProducts = null) {
+    public function __construct(protected int           $propertyId,
+                                protected Client        $client,
+                                protected ?OdooProperty $odooProperty = null,
+                                protected ?Collection   $odooProducts = null) {
     }
 
     public function handle() {
@@ -129,6 +132,7 @@ class SynchronizePropertyData implements ShouldQueue {
         $productCategory = ProductCategory::query()->firstOrCreate([
             "external_id" => $odooCategoryId,
         ], [
+            "type_id" => $productTypeId,
             "name_en" => $internalName,
             "name_fr" => $internalName,
         ]);

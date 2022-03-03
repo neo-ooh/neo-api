@@ -241,7 +241,7 @@ class PropertyTrafficSettings extends Model {
             fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week
         );
 
-        if (!$referenceDatum) {
+        if (!$referenceDatum || $referenceDatum->traffic === 0) {
             for ($week = 1; $week <= 53; $week++) {
                 $rollingTraffic[$week] = 0;
             }

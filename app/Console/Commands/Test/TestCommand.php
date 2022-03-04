@@ -11,8 +11,6 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Jobs\Odoo\SynchronizePropertyData;
-use Neo\Services\Odoo\OdooConfig;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -48,7 +46,12 @@ class TestCommand extends Command {
 //        /** @var Contract $contract */
 //        $contract = Contract::with("flights", "flights.lines", "flights.lines.product.property")->firstWhere("id", "=", 611);
 
-        $propertyId = 964;
-        SynchronizePropertyData::dispatchSync($propertyId, OdooConfig::fromConfig()->getClient());
+//        $propertyId = 964;
+//        SynchronizePropertyData::dispatchSync($propertyId, OdooConfig::fromConfig()->getClient());
+
+//        $tag    = Tag::query()->find("17");
+//        $actors = Actor::find(88)->direct_children;
+//        $actors->each(fn(Actor $actor) => $actor->tags()->attach($tag));
+
     }
 }

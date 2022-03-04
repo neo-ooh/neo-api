@@ -3,7 +3,7 @@
 namespace Neo\Services\Broadcast\BroadSign\API;
 
 use Cache;
-use Facade\FlareClient\Http\Exceptions\BadResponse;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
 use JsonException;
 use Neo\Services\API\APIClient;
@@ -28,6 +28,9 @@ class BroadsignClient implements APIClientInterface {
      * @param BroadSignEndpoint $endpoint
      * @param mixed             $payload
      * @param array             $headers
+     * @return false|mixed|string|null
+     * @throws GuzzleException
+     * @throws JsonException
      */
     public function call($endpoint, $payload, array $headers = []) {
         // Set the base path for the request to the API.
@@ -64,7 +67,7 @@ class BroadsignClient implements APIClientInterface {
 
             // Cache and return the response
             return Cache::remember((string)$endpoint, $endpoint->cache, fn() => $this->call_impl__($endpoint, $payload, $headers));
-        } catch (BadResponse $exception) {
+        } catch (BadAPIPResponseException $exception) {
             Log::error($exception->getMessage(), [
                 $endpoint,
                 $payload
@@ -79,10 +82,11 @@ class BroadsignClient implements APIClientInterface {
      * @param                   $payload
      * @param array             $headers
      * @return false|mixed|string|null
-     * @throws BadResponse
+     * @throws BadAPIPResponseException
      * @throws JsonException
+     * @throws GuzzleException
      */
-    protected function call_impl__(BroadSignEndpoint $endpoint, $payload, array $headers) {
+    protected function call_impl__(BroadSignEndpoint $endpoint, $payload, array $headers): mixed {
         // Execute the request
         $response = $this->client->call($endpoint, $payload, $headers);
 
@@ -98,7 +102,7 @@ class BroadsignClient implements APIClientInterface {
             Log::channel("broadsign")
                ->error("response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 
-            throw new BadResponse($response->body(), $response->status());
+            throw new BadAPIPResponseException($response->body(), $response->status());
         }
 
         // Unwrap response content if needed

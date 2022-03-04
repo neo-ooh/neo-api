@@ -9,6 +9,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
+use Neo\Models\Network;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -192,38 +193,16 @@ class PlannerExport extends XLSXDocument {
             in_array("weeks", $this->columns, true) ? Lang::get("contract.table-weeks") : "",
         ]);
 
-        $networks = $flight->properties->groupBy("property.network_id");
-
-        /** @var Collection $properties */
-        foreach ($networks as $properties) {
-            $this->ws->setRelativeCellFormat("#,##0_-", 1);
-            $this->ws->setRelativeCellFormat("#,##0_-", 2);
-            $this->ws->setRelativeCellFormat("#,##0_-", 3);
-            $this->ws->setRelativeCellFormat("#,##0_-", 4);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 7);
-
-            $impressions = $properties->sum("impressions");
-            $cpm         = $impressions > 0 ? $properties->sum("cpmPrice") / $impressions * 1000 : 0;
-
-            $this->ws->printRow([
-                $properties[0]->property->network->name,
-                count($properties),
-                in_array("faces", $this->columns, true) ? $properties->sum("facesCount") : "",
-                in_array("traffic", $this->columns, true) ? $properties->sum("traffic") : "",
-                in_array("impressions", $this->columns, true) ? $properties->sum("impressions") : "",
-                in_array("media-value", $this->columns, true) ? $properties->sum("mediaValue") : "",
-                in_array("price", $this->columns, true) ? $properties->sum("price") : "",
-                in_array("cpm", $this->columns, true) ? $cpm : "",
-                in_array("weeks", $this->columns, true) ? $flight->length : "",
-            ]);
+        if ($flight->groups->count() === 1 && $flight->groups[0]->group === null) {
+            $this->printFlightSummaryByNetwork($flight);
+        } else {
+            $this->printFlightSummaryByGroup($flight);
         }
 
         $this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::simpleTableTotals());
 
         $flightValues = [
-            "propertiesCount" => count($flight->properties),
+            "propertiesCount" => $flight->groups->sum("properties_count"),
             "faces"           => $flight->faces,
             "traffic"         => $flight->traffic,
             "impressions"     => $flight->impressions,
@@ -251,6 +230,79 @@ class PlannerExport extends XLSXDocument {
         $this->ws->moveCursor(0, 2);
 
         return $flightValues;
+    }
+
+    public function printFlightSummaryByNetwork(Flight $flight) {
+        $networksIds = $flight->groups[0]->properties->pluck("property.network_id")->unique();
+        $networks    = Network::query()->whereIn("id", $networksIds)->orderBy("id")->get();
+
+        /** @var Network $network */
+        foreach ($networks as $network) {
+            $properties = $flight->groups[0]->properties->where("property.network_id", "=", $network->getKey());
+
+            $this->ws->setRelativeCellFormat("#,##0_-", 1);
+            $this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
+                "font" => [
+                    "color" => [
+                        "argb" => "FF" . $network->color,
+                    ]
+                ],
+            ]);
+            $this->ws->setRelativeCellFormat("#,##0_-", 2);
+            $this->ws->setRelativeCellFormat("#,##0_-", 3);
+            $this->ws->setRelativeCellFormat("#,##0_-", 4);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 7);
+
+            $impressions = $properties->sum("impressions");
+            $cpmPrice    = $properties->sum("cpmPrice");
+            $cpm         = $impressions > 0 ? $cpmPrice / $impressions * 1000 : 0;
+
+            $this->ws->printRow([
+                $network?->name ?? "-",
+                $properties->count(),
+                in_array("faces", $this->columns, true) ? $properties->sum("faces") : "",
+                in_array("traffic", $this->columns, true) ? $properties->sum("traffic") : "",
+                in_array("impressions", $this->columns, true) ? $impressions : "",
+                in_array("media-value", $this->columns, true) ? $properties->sum("mediaValue") : "",
+                in_array("price", $this->columns, true) ? $properties->sum("price") : "",
+                in_array("cpm", $this->columns, true) ? $cpm : "",
+                in_array("weeks", $this->columns, true) ? $flight->length : "",
+            ]);
+        }
+    }
+
+    public function printFlightSummaryByGroup(Flight $flight) {
+        /** @var Group $group */
+        foreach ($flight->groups as $group) {
+            $this->ws->setRelativeCellFormat("#,##0_-", 1);
+            $this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
+                "font" => [
+                    "color" => [
+                        "argb" => "FF" . $group->group?->color ?? "000000",
+                    ]
+                ],
+            ]);
+            $this->ws->setRelativeCellFormat("#,##0_-", 2);
+            $this->ws->setRelativeCellFormat("#,##0_-", 3);
+            $this->ws->setRelativeCellFormat("#,##0_-", 4);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 7);
+
+            $this->ws->printRow([
+                $group->group?->name ?? Lang::get("contract.group-remaining-properties"),
+                $group->properties_count,
+                in_array("faces", $this->columns, true) ? $group->faces : "",
+                in_array("traffic", $this->columns, true) ? $group->traffic : "",
+                in_array("impressions", $this->columns, true) ? $group->impressions : "",
+                in_array("media-value", $this->columns, true) ? $group->mediaValue : "",
+                in_array("price", $this->columns, true) ? $group->price : "",
+                in_array("cpm", $this->columns, true) ? $group->cpm : "",
+                in_array("weeks", $this->columns, true) ? $flight->length : "",
+            ]);
+        }
     }
 
     /**
@@ -283,47 +335,19 @@ class PlannerExport extends XLSXDocument {
 
         $this->printFlightHeader($flight, $flightIndex, width: 10);
 
-        $networks = $flight->properties->groupBy("property.network_id");
+        /** @var Group $group */
+        foreach ($flight->groups as $group) {
+            $gorupsCount = $flight->groups->count();
 
-        foreach ($networks as $networkProperties) {
-            // Property / Products table header
-            $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
-            $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
-                "font" => [
-                    'size'  => "14",
-                    "color" => [
-                        "argb" => "FF" . $networkProperties->first()->property->network->color,
-                    ]
-                ],
-                "fill" => [
-                    'fillType'   => Fill::FILL_SOLID,
-                    'startColor' => [
-                        'argb' => "FFFFFFFF",
-                    ],
-                ]
-            ]);
-
-            $this->ws->printRow([
-                $networkProperties->first()->property->network->name,
-                in_array("zipcode", $this->columns, true) ? Lang::get("contract.table-zipcode") : "",
-                in_array("location", $this->columns, true) ? Lang::get("contract.table-location") : "",
-                in_array("faces", $this->columns, true) ? Lang::get("contract.table-faces") : "",
-                in_array("spots", $this->columns, true) ? Lang::get("contract.table-spots") : "",
-                in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
-                in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
-                in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
-                in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
-                in_array("cpm-lines", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
-            ]);
-
-            $networkProperties = $networkProperties->sortBy("property.actor.name");
-
-            /** @var Property $property */
-            foreach ($networkProperties as $property) {
+            if ($gorupsCount !== 1 || ($gorupsCount === 1 && $group->group !== null)) {
+                // Group header
+                $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
                 $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
                     "font" => [
-                        "size" => 12,
-                        'bold' => true,
+                        'size'  => "14",
+                        "color" => [
+                            "argb" => "FF" . $group->group?->color ?? "000000",
+                        ]
                     ],
                     "fill" => [
                         'fillType'   => Fill::FILL_SOLID,
@@ -333,47 +357,62 @@ class PlannerExport extends XLSXDocument {
                     ]
                 ]);
 
-                $this->ws->setRelativeCellFormat("#,##0_-", 3);
-                $this->ws->setRelativeCellFormat("#,##0_-", 4);
-                $this->ws->setRelativeCellFormat("#,##0_-", 5);
-                $this->ws->setRelativeCellFormat("#,##0_-", 6);
-                $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
-                $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
-                $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 9);
-
                 $this->ws->printRow([
-                    $property->property->actor->name,
-                    in_array("zipcode", $this->columns, true) ? substr($property->property->address->zipcode, 0, 3) . " " . substr($property->property->address->zipcode, 3) : "",
-                    in_array("location", $this->columns, true) ? $property->property->address->city->name : "",
-                    in_array("faces", $this->columns, true) ? $property->faces : "",
-                    "",
-                    in_array("traffic", $this->columns, true) ? $property->traffic : "",
-                    in_array("impressions", $this->columns, true) ? $property->impressions : "",
-                    in_array("media-value", $this->columns, true) ? $property->mediaValue : "",
-                    in_array("price", $this->columns, true) ? $property->price : "",
-                    in_array("cpm-lines", $this->columns, true) ? $property->cpm : "",
+                    $group->group?->name ?? Lang::get("contract.group-remaining-properties"),
+                ]);
+            }
+
+            $networks = Network::query()
+                               ->whereIn("id", $group->properties->pluck("property.network_id")->unique())
+                               ->orderBy("id")
+                               ->get();
+
+            /** @var Network $network */
+            foreach ($networks as $network) {
+                $properties = $group->properties->where("property.network_id", "=", $network->getKey());
+
+                // Network header
+                $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+                $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
+                    "font" => [
+                        'size'  => "14",
+                        "color" => [
+                            "argb" => "FF" . $network->color,
+                        ]
+                    ],
+                    "fill" => [
+                        'fillType'   => Fill::FILL_SOLID,
+                        'startColor' => [
+                            'argb' => "FFFFFFFF",
+                        ],
+                    ]
                 ]);
 
-                $categories = collect($property->categories)->sortBy("category.name_" . Lang::locale());
+                $this->ws->printRow([
+                    $network->name,
+                    in_array("zipcode", $this->columns, true) ? Lang::get("contract.table-zipcode") : "",
+                    in_array("location", $this->columns, true) ? Lang::get("contract.table-location") : "",
+                    in_array("faces", $this->columns, true) ? Lang::get("contract.table-faces") : "",
+                    in_array("spots", $this->columns, true) ? Lang::get("contract.table-spots") : "",
+                    in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
+                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
+                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
+                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
+                    in_array("cpm-lines", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
+                ]);
 
-                /** @var Category $category */
-                foreach ($categories as $category) {
+                /** @var Property $property */
+                foreach ($properties as $property) {
                     $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
                         "font" => [
-                            "size" => 11,
-                            "bold" => true,
+                            "size" => 12,
+                            'bold' => true,
                         ],
                         "fill" => [
                             'fillType'   => Fill::FILL_SOLID,
                             'startColor' => [
                                 'argb' => "FFFFFFFF",
                             ],
-                        ]
-                    ]);
-
-                    $this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
-                        'alignment' => [
-                            "indent" => 4
                         ]
                     ]);
 
@@ -386,63 +425,81 @@ class PlannerExport extends XLSXDocument {
                     $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 9);
 
                     $this->ws->printRow([
-                        $category->category["name_" . Lang::locale()],
+                        $property->property->actor->name,
+                        in_array("zipcode", $this->columns, true) ? substr($property->property->address->zipcode, 0, 3) . " " . substr($property->property->address->zipcode, 3) : "",
+                        in_array("location", $this->columns, true) ? $property->property->address->city->name : "",
+                        in_array("faces", $this->columns, true) ? $property->faces : "",
                         "",
-                        "",
-                        in_array("faces", $this->columns, true) ? $category->faces : "",
-                        "",
-                        "",
-                        in_array("impressions", $this->columns, true) ? $category->impressions : "",
-                        in_array("media-value", $this->columns, true) ? $category->mediaValue : "",
-                        in_array("price", $this->columns, true) ? $category->price : "",
-                        in_array("cpm-lines", $this->columns, true) ? $category->cpm : "",
+                        in_array("traffic", $this->columns, true) ? $property->traffic : "",
+                        in_array("impressions", $this->columns, true) ? $property->impressions : "",
+                        in_array("media-value", $this->columns, true) ? $property->mediaValue : "",
+                        in_array("price", $this->columns, true) ? $property->price : "",
+                        in_array("cpm-lines", $this->columns, true) ? $property->cpm : "",
                     ]);
 
-                    $products = collect($category->products)->sortBy("product.name_" . Lang::locale());
+                    $categories = collect($property->categories)->sortBy("category.name_" . Lang::locale());
 
-                    /** @var Product $product */
-                    foreach ($products as $product) {
-                        $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
-                            "font" => [
-                                "size" => 10
-                            ],
-                            "fill" => [
-                                'fillType'   => Fill::FILL_SOLID,
-                                'startColor' => [
-                                    'argb' => "FFFFFFFF",
+                    /** @var Category $category */
+                    foreach ($categories as $category) {
+                        $products = collect($category->products)->sortBy("product.name_" . Lang::locale());
+
+                        /** @var Product $product */
+                        foreach ($products as $product) {
+                            $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
+                                "font" => [
+                                    "size" => 10
                                 ],
-                            ]
-                        ]);
+                                "fill" => [
+                                    'fillType'   => Fill::FILL_SOLID,
+                                    'startColor' => [
+                                        'argb' => "FFFFFFFF",
+                                    ],
+                                ]
+                            ]);
 
-                        $this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
-                            'alignment' => [
-                                "indent" => 8
-                            ]
-                        ]);
+                            $this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
+                                'alignment' => [
+                                    "indent" => 8
+                                ]
+                            ]);
 
-                        $this->ws->setRelativeCellFormat("#,##0_-", 3);
-                        $this->ws->setRelativeCellFormat("#,##0_-", 4);
-                        $this->ws->setRelativeCellFormat("#,##0_-", 5);
-                        $this->ws->setRelativeCellFormat("#,##0_-", 6);
-                        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
-                        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
-                        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 9);
+                            $this->ws->setRelativeCellFormat("#,##0_-", 3);
+                            $this->ws->setRelativeCellFormat("#,##0_-", 4);
+                            $this->ws->setRelativeCellFormat("#,##0_-", 5);
+                            $this->ws->setRelativeCellFormat("#,##0_-", 6);
+                            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
+                            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+                            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 9);
 
-                        $this->ws->printRow([
-                            $product->product["name_" . Lang::locale()],
-                            "",
-                            "",
-                            in_array("faces", $this->columns, true) ? $product->faces : "",
-                            in_array("spots", $this->columns, true) ? $product->spots : "",
-                            "",
-                            in_array("impressions", $this->columns, true) ? $product->impressions : "",
-                            in_array("media-value", $this->columns, true) ? $product->mediaValue : "",
-                            in_array("price", $this->columns, true) ? $product->price : "",
-                            in_array("cpm-lines", $this->columns, true) ? $product->cpm : "",
-                        ]);
+                            $this->ws->printRow([
+                                $product->product["name_" . Lang::locale()],
+                                "",
+                                "",
+                                in_array("faces", $this->columns, true) ? $product->faces : "",
+                                in_array("spots", $this->columns, true) ? $product->spots : "",
+                                "",
+                                in_array("impressions", $this->columns, true) ? $product->impressions : "",
+                                in_array("media-value", $this->columns, true) ? $product->mediaValue : "",
+                                in_array("price", $this->columns, true) ? $product->price : "",
+                                in_array("cpm-lines", $this->columns, true) ? $product->cpm : "",
+                            ]);
+                        }
                     }
                 }
+
+                $this->ws->getStyle($this->ws->getRelativeRange(10, 2))->applyFromArray([
+                    "fill" => [
+                        'fillType'   => Fill::FILL_SOLID,
+                        'startColor' => [
+                            'argb' => "FFFFFFFF",
+                        ],
+                    ]
+                ]);
+
+                $this->ws->moveCursor(0, 2);
+
             }
+
             $this->ws->getStyle($this->ws->getRelativeRange(10, 2))->applyFromArray([
                 "fill" => [
                     'fillType'   => Fill::FILL_SOLID,

@@ -127,4 +127,5 @@ return [
     "type-paper"             => "Paper",
     "payable-contact-header" => "Accounts payable contact (to be filled out by the client, in block letters)",
 
+    "group-remaining-properties" => "Remaining properties"
 ];

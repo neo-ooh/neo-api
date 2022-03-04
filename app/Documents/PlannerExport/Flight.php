@@ -4,7 +4,6 @@ namespace Neo\Documents\PlannerExport;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Neo\Models\ProductCategory;
 
 class Flight {
     public string|null $name;
@@ -13,7 +12,7 @@ class Flight {
     public float $length;
     public string $type;
 
-    public Collection $properties;
+    public Collection $groups;
 
     public int $faces;
     public int $traffic;
@@ -30,24 +29,8 @@ class Flight {
         $this->length = $compiledFlight['length'];
         $this->type   = $compiledFlight['type'];
 
-        $propertiesIds = array_map(fn(array $property) => $property["id"], $compiledFlight["properties"]);
-        $properties    = \Neo\Models\Property::query()->with(["network", "address"])->whereIn("actor_id", $propertiesIds)->get();
-        $categories    = ProductCategory::query()->get();
-
-        $productidsChunks = collect($compiledFlight["properties"])
-            ->flatMap(fn($property) => collect($property["categories"])->flatMap(fn($category) => collect($category["products"])->pluck("id")))
-            ->chunk(500);
-
-        $products = collect();
-
-        // Eloquent `whereIn` fails silently for references above ~1000 reference values
-        foreach ($productidsChunks as $chunk) {
-            $products = $products->merge(\Neo\Models\Product::query()
-                                                            ->whereIn("id", $chunk)
-                                                            ->get());
-        }
-
-        $this->properties = collect($compiledFlight['properties'])->map(fn(array $property) => new Property($property, $properties->firstWhere("actor_id", "=", $property["id"]), $categories, $products));
+        $this->groups = collect($compiledFlight['groups'])
+            ->map(fn(array $group) => new Group(collect($group["properties"]), $group["group"]));
 
         $this->faces       = $compiledFlight["faces_count"];
         $this->traffic     = $compiledFlight["traffic"];

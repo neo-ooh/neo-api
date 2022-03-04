@@ -2,6 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Grimzy\LaravelMysqlSpatial\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -36,13 +37,15 @@ class ContractsController extends Controller {
 
     public function recent(ListContractsRequest $request) {
         $contracts = Contract::query()->where("salesperson_id", "=", Auth::id())
-                             ->join("contracts_flights", "contracts.id", "=", "contracts_flights.contract_id")
-                             ->where("contracts_flights.start_date", "<", Date::now())
-                             ->where("contracts_flights.end_date", ">", Date::now())
-                             ->orderBy("contracts_flights.end_date", "asc")
+                             ->whereHas("flights", function (Builder $query) {
+                                 $query->where("start_date", "<", Date::now());
+                                 $query->where("end_date", ">", Date::now());
+                             })
                              ->limit(5)
                              ->get()
-                             ->append(["start_date", "end_date"]);
+                             ->append(["start_date", "end_date", "expected_impressions", "received_impressions"])
+                             ->sortBy("end_date", "asc")
+                             ->makeHidden('reservations');
 
         return new Response($contracts);
     }

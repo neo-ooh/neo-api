@@ -21,7 +21,6 @@ class Category {
     public function __construct(array $compiledCategory, ProductCategory $category, Collection $products) {
         $this->id = $compiledCategory["id"];
 
-
         $this->category = $category;
         $this->products = collect($compiledCategory['products'])->map(function (array $product) use ($products) {
             $dbproduct = $products->firstWhere("id", $product["id"]);

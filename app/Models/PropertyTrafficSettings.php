@@ -174,7 +174,7 @@ class PropertyTrafficSettings extends Model {
      *
      * @return array
      */
-    public function getRollingWeeklyTraffic(int $networkId): array {
+    public function getRollingWeeklyTraffic(int|null $networkId): array {
         return Cache::remember($this->getRollingWeeklyTrafficCacheKey(), 3600 * 24, function () use ($networkId) {
             if ($networkId === 1) {
                 return $this->getShoppingRollingWeeklyTraffic();

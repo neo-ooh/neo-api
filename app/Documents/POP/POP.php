@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
 use Mpdf\HTMLParserMode;
 use Neo\Documents\PDFDocument;
-use Neo\Models\ContractScreenshot;
 
 class POP extends PDFDocument {
     protected POPData $data;
@@ -24,13 +23,6 @@ class POP extends PDFDocument {
 
     protected function ingest($data): bool {
         $this->data = new POPData($data);
-
-        // Lock the screenshots
-        $this->data->screenshots->each(function (ContractScreenshot $screenshot) {
-            $screenshot->is_locked = true;
-            $screenshot->save();
-            $screenshot->created_at = $screenshot->created_at->tz("America/Toronto");
-        });
 
         return true;
     }

@@ -4,6 +4,7 @@ namespace Neo\Services\Weather;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use JsonException;
 use Neo\Models\WeatherLocation;
 
@@ -42,18 +43,30 @@ class MeteoMediaInterface implements WeatherService {
         // Since all informations to the API are sent through the URL, we can use it as a key for caching the response
         $url = $this->buildURL($endpoint["url"], $location, $locale . '-CA');
 
-        $record = Cache::store("weather-cache")->remember($url, 2700, function () use ($url) {
-            $client = new Client();
-            $res    = $client->request('GET', $url);
+        // Check if the record is already cached
+        $record = Cache::store("weather-cache")->get($url);
 
-            // Error
-            if ($res->getStatusCode() !== 200) {
-                return null;
-            }
+        if ($record) {
+            return json_decode($record, true, 512, JSON_THROW_ON_ERROR);
+        }
 
-            // Here's our response
-            return $res->getBody()->getContents();
-        });
+        // Request the record
+        $client = new Client();
+        $res    = $client->request('GET', $url);
+
+        // If the record could not be retrieved, do not cache
+        if ($res->getStatusCode() !== 200) {
+            Log::warning("Could not retrieve Meteo-Media record", [
+                "url"   => $url,
+                "error" => $res->getBody()->getContents()
+            ]);
+
+            return null;
+        }
+
+        // Record is value, unpack, cache and return
+        $record = $res->getBody()->getContents();
+        Cache::store("weather-cache")->tags(["dynamics", "weather-dynamic"])->put($url, $record, random_int(2700, 4500));
 
         return json_decode($record, true, 512, JSON_THROW_ON_ERROR);
     }

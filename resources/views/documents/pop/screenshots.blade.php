@@ -7,12 +7,12 @@
         <div class="screenshot-card {{ $loop->index % 4 === 0 ? "flush-left" : "" }}">
             <div class="thumbnail-wrapper">
                 <div class="thumbnail"
-                     style="background-image: url({!! $screenshot->url !!})"></div>
+                     style="background-image: url({!! $screenshot->dataURI !!})"></div>
             </div>
             <div class="info">
                 <div class="location">
-                    {{ $screenshot->burst->location->city }}, {{ $screenshot->burst->location->province }}
-                    - {{ $screenshot->burst->location->display_type->name }}
+                    {{ $screenshot->city }}, {{ $screenshot->province }}
+                    - {{ $screenshot->format }}
                 </div>
                 <div class="date">
                     <img class="screenshot-card-date-icon"

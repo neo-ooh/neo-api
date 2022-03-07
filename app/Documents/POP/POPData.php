@@ -2,7 +2,6 @@
 
 namespace Neo\Documents\POP;
 
-use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 use JetBrains\PhpStorm\ArrayShape;
 use Neo\Models\ContractScreenshot;
@@ -33,9 +32,9 @@ class POPData {
     public array $salesperson;
 
     /**
-     * @var EloquentCollection<ContractScreenshot>
+     * @var Collection<Screenshot>
      */
-    public EloquentCollection $screenshots;
+    public Collection $screenshots;
 
     /**
      * @var Collection<POPBuyTypeValues>
@@ -80,7 +79,12 @@ class POPData {
         $this->salesperson   = [
             "name" => $data["salesperson"]["name"],
         ];
-        $this->screenshots   = ContractScreenshot::query()->whereIn("id", $data["screenshots"])->get();
+        $this->screenshots   = ContractScreenshot::query()
+                                                 ->whereIn("id", $data["screenshots"])
+                                                 ->with(["burst", "burst.location", "burst.location.display_type"])
+                                                 ->get()
+                                                 ->toBase()
+                                                 ->map(fn(ContractScreenshot $screenshot) => new Screenshot($screenshot));
 
         $this->values = collect($data["values"])->map(static fn(array $values) => new POPBuyTypeValues($values));
 

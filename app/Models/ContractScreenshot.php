@@ -2,7 +2,7 @@
 
 namespace Neo\Models;
 
-use Carbon\Traits\Date;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Storage;
  * @property integer       $id
  * @property integer       $burst_id
  * @property boolean       $is_locked
- * @property Date          $created_at
- * @property Date          $updated_at
+ * @property Carbon        $created_at
+ * @property Carbon        $updated_at
  *
  * @property ContractBurst $burst
  *

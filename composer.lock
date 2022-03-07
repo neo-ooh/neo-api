@@ -5011,12 +5011,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/neo-ooh/mpdf.git",
-                "reference": "7a65db8a6fac3ddcd4909b913c059063078329ad"
+                "reference": "4256c4dff420285d48923dd9ff4ba611cb8470cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/neo-ooh/mpdf/zipball/7a65db8a6fac3ddcd4909b913c059063078329ad",
-                "reference": "7a65db8a6fac3ddcd4909b913c059063078329ad",
+                "url": "https://api.github.com/repos/neo-ooh/mpdf/zipball/4256c4dff420285d48923dd9ff4ba611cb8470cf",
+                "reference": "4256c4dff420285d48923dd9ff4ba611cb8470cf",
                 "shasum": ""
             },
             "require": {
@@ -5099,7 +5099,7 @@
                     "url": "https://www.paypal.me/mpdf"
                 }
             ],
-            "time": "2022-03-07T19:01:54+00:00"
+            "time": "2022-03-07T19:05:10+00:00"
         },
         {
             "name": "mtdowling/jmespath.php",

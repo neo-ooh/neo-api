@@ -16,7 +16,9 @@ use Neo\Models\Actor;
 
 class ActorsTagsController {
     public function sync(SyncTagsRequest $request, Actor $actor) {
-        $actor->tags()->sync($request->input("tags", []));
+        $tags = collect($request->input("tags", []));
+
+        $actor->tags()->sync($tags->unique());
 
         return new Response($actor->tags);
     }

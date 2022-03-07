@@ -337,9 +337,9 @@ class PlannerExport extends XLSXDocument {
 
         /** @var Group $group */
         foreach ($flight->groups as $group) {
-            $gorupsCount = $flight->groups->count();
+            $groupsCount = $flight->groups->count();
 
-            if ($gorupsCount !== 1 || ($gorupsCount === 1 && $group->group !== null)) {
+            if ($groupsCount !== 1 || ($groupsCount === 1 && $group->group !== null)) {
                 // Group header
                 $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
                 $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
@@ -487,7 +487,7 @@ class PlannerExport extends XLSXDocument {
                     }
                 }
 
-                $this->ws->getStyle($this->ws->getRelativeRange(10, 2))->applyFromArray([
+                $this->ws->getStyle($this->ws->getRelativeRange(10, 1))->applyFromArray([
                     "fill" => [
                         'fillType'   => Fill::FILL_SOLID,
                         'startColor' => [
@@ -496,9 +496,30 @@ class PlannerExport extends XLSXDocument {
                     ]
                 ]);
 
-                $this->ws->moveCursor(0, 2);
-
+                $this->ws->moveCursor(0, 1);
             }
+
+            // Group footer
+            $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray(XLSXStyleFactory::totals());
+            $this->ws->setRelativeCellFormat("#,##0_-", 3);
+            $this->ws->setRelativeCellFormat("#,##0_-", 5);
+            $this->ws->setRelativeCellFormat("#,##0_-", 6);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 9);
+
+            $this->ws->printRow([
+                "Total",
+                "",
+                "",
+                in_array("faces", $this->columns, true) ? $group->faces : "",
+                "",
+                in_array("impressions", $this->columns, true) ? $group->traffic : "",
+                in_array("impressions", $this->columns, true) ? $group->impressions : "",
+                in_array("media-value", $this->columns, true) ? $group->mediaValue : "",
+                in_array("price", $this->columns, true) ? $group->price : "",
+                in_array("cpm", $this->columns, true) ? $group->cpm : "",
+            ]);
 
             $this->ws->getStyle($this->ws->getRelativeRange(10, 2))->applyFromArray([
                 "fill" => [

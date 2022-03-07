@@ -12,7 +12,7 @@ class Screenshot {
     public string $format;
     public Carbon $created_at;
 
-    public string $dataURI;
+    public string $url;
 
     public function __construct(ContractScreenshot $screenshot) {
         $this->city       = $screenshot->burst->location->city;
@@ -21,7 +21,7 @@ class Screenshot {
         $this->created_at = $screenshot->created_at->tz("America/Toronto");
 
 
-        $this->dataURI = 'data: image/jpeg;base64,' . base64_encode(file_get_contents($screenshot->url));
+        $this->url = $screenshot->url;
 
         // Mark the screenshot as locked
         $screenshot->is_locked = true;

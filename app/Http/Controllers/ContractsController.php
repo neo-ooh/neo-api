@@ -2,10 +2,12 @@
 
 namespace Neo\Http\Controllers;
 
-use Grimzy\LaravelMysqlSpatial\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 use Neo\Exceptions\Odoo\ContractAlreadyExistException;
 use Neo\Exceptions\Odoo\ContractIsCancelledException;
 use Neo\Exceptions\Odoo\ContractIsDraftException;
@@ -25,10 +27,14 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ContractsController extends Controller {
     public function index(ListContractsRequest $request) {
-        $userToSearch = $request->input("actor_id", Auth::id());
+        $salespersonId = $request->input("actor_id", null);
+
+        if (!$salespersonId && !Gate::allows(Capability::contracts_manage)) {
+            $salespersonId = Auth::id();
+        }
 
         return new Response(Contract::query()
-                                    ->where("salesperson_id", "=", $userToSearch)
+                                    ->when($salespersonId !== null, fn(Builder $query) => $query->where("salesperson_id", "=", $salespersonId))
                                     ->orderBy("contract_id")
                                     ->get()
                                     ->append(["start_date", "end_date", "expected_impressions", "received_impressions"])
@@ -44,8 +50,8 @@ class ContractsController extends Controller {
                              ->limit(5)
                              ->get()
                              ->append(["start_date", "end_date", "expected_impressions", "received_impressions"])
-                             ->sortBy("end_date", "asc")
-                             ->makeHidden('reservations');
+                             ->sortBy("end_date", 0, "asc")
+                             ->makeHidden('reservations')->values();
 
         return new Response($contracts);
     }

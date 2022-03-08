@@ -17,6 +17,7 @@ use Neo\Http\Requests\Contracts\ListContractsRequest;
 use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
+use Neo\Http\Requests\Contracts\UpdateContractRequest;
 use Neo\Jobs\Contracts\ImportContractDataJob;
 use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\Contracts\ImportContractReservations;
@@ -137,6 +138,13 @@ class ContractsController extends Controller {
         if (in_array("validated_screenshots", $with, true)) {
             $contract->load("validated_screenshots");
         }
+
+        return new Response($contract);
+    }
+
+    public function update(UpdateContractRequest $request, Contract $contract) {
+        $contract->salesperson_id = $request->input("salesperson_id");
+        $contract->save();
 
         return new Response($contract);
     }

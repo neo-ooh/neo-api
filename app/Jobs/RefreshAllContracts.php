@@ -28,7 +28,7 @@ class RefreshAllContracts extends Command {
      *
      * @var string
      */
-    protected $signature = 'network:update-contracts';
+    protected $signature = 'contracts:update';
 
     /**
      * The console command description.

@@ -43,7 +43,7 @@ class RefreshContractsPerformancesJob implements ShouldQueue {
 
                 /** @var ContractFlight|null $flight */
                 $flight = $contract->flights->firstWhere("id", "=", $reservation->flight_id);
-                return $flight && $flight->type === ContractFlight::BUA;
+                return $flight && $flight->type !== ContractFlight::BUA;
             })->pluck("external_id");
 
             $contract->received_impressions = $contract->performances->whereIn("reservable_id", $reservationExternalIds)

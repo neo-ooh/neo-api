@@ -35,7 +35,7 @@ class UpdateContractRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "salesperson_id" => ["required", "in:actors,id"]
+            "salesperson_id" => ["required", "exists:actors,id"]
         ];
     }
 }

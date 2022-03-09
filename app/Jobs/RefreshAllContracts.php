@@ -11,7 +11,9 @@
 namespace Neo\Jobs;
 
 use Illuminate\Console\Command;
+use Neo\Jobs\Contracts\ImportContractDataJob;
 use Neo\Jobs\Contracts\ImportContractReservations;
+use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Models\Contract;
 
 /**
@@ -45,7 +47,9 @@ class RefreshAllContracts extends Command {
 
         /** @var Contract $contract */
         foreach ($contracts as $contract) {
+            ImportContractDataJob::dispatchSync($contract->id);
             ImportContractReservations::dispatchSync($contract->id);
+            RefreshContractsPerformancesJob::dispatchSync($contract->id);
         }
 
         return 0;

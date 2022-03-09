@@ -29,23 +29,27 @@ class RefreshContractsPerformancesJob implements ShouldQueue {
 
     public function handle() {
         Cache::tags("contract-performances")->clear();
-        Contract::query()
-                ->when($this->contract_id !== null, function (Builder $query) {
-                    $query->where("id", "=", $this->contract_id);
-                })
-                ->with(["flights", "reservations"])
-                ->get()
-                ->append(["performances"])
-                ->each(function (Contract $contract) {
-                    $reservationExternalIds = $contract->reservations->filter(function (ContractReservation $reservation) use ($contract) {
+        $contracts = Contract::query()
+                             ->when($this->contract_id !== null, function (Builder $query) {
+                                 $query->where("id", "=", $this->contract_id);
+                             })
+                             ->with(["flights", "reservations"])
+                             ->get()
+                             ->append(["performances"]);
 
-                        /** @var ContractFlight|null $flight */
-                        $flight = $contract->flights->firstWhere("id", "=", $reservation->flight_id);
-                        return $flight && $flight->type === ContractFlight::BUA;
-                    })->pluck("external_id");
+        /** @var Contract $contract */
+        foreach ($contracts as $contract) {
+            $reservationExternalIds = $contract->reservations->filter(function (ContractReservation $reservation) use ($contract) {
 
-                    $contract->received_impressions = $contract->performances->whereIn("reservable_id", $reservationExternalIds)
-                                                                             ->sum("total_impressions");
-                });
+                /** @var ContractFlight|null $flight */
+                $flight = $contract->flights->firstWhere("id", "=", $reservation->flight_id);
+                return $flight && $flight->type === ContractFlight::BUA;
+            })->pluck("external_id");
+
+            $contract->received_impressions = $contract->performances->whereIn("reservable_id", $reservationExternalIds)
+                                                                     ->sum("total_impressions");
+            $contract->save();
+
+        }
     }
 }

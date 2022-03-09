@@ -28,6 +28,7 @@ Route::group([
     Route::model("actor", Actor::class);
 
     Route::   get("actors", ActorsController::class . "@index");
+    Route::  get("actors/_by_id", ActorsController::class . "@byId");
     Route::  post("actors", ActorsController::class . "@store");
 
     Route::   get("actors/{actor}", ActorsController::class . "@show");

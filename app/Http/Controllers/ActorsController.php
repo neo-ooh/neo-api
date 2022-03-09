@@ -21,6 +21,7 @@ use InvalidArgumentException;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ImpersonateActorRequest;
+use Neo\Http\Requests\Actors\ListActorsByIdRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
 use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\ShowActorSecurityStatusRequest;
@@ -80,6 +81,10 @@ class ActorsController extends Controller {
         }
 
         return new Response($actors->unique("id")->sortBy("name")->values());
+    }
+
+    public function byId(ListActorsByIdRequest $request) {
+        return new Response(Actor::query()->whereIn("id", $request->input("ids"))->orderBy("name")->get());
     }
 
     public function show(Request $request, Actor $actor): Response {

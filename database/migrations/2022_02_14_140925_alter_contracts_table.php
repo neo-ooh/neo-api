@@ -17,7 +17,12 @@ class AlterContractsTable extends Migration {
         Schema::table('contracts', function (Blueprint $table) {
             $table->foreignId("external_id")->after("contract_id")->nullable();
             $table->renameColumn("owner_id", "salesperson_id");
-            $table->foreignId("advertiser_id")->nullable()->constrained("advertisers", "id")->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId("advertiser_id")
+                  ->nullable()
+                  ->constrained("advertisers", "id")
+                  ->cascadeOnUpdate()
+                  ->nullOnDelete()
+                  ->after("salesperson_id");
             $table->foreignId("client_id")->nullable()->change();
         });
     }

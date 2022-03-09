@@ -2,7 +2,7 @@
 
 namespace Neo\Http\Controllers;
 
-use Grimzy\LaravelMysqlSpatial\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -17,9 +17,11 @@ use Neo\Http\Requests\Contracts\ListContractsRequest;
 use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
+use Neo\Http\Requests\Contracts\UpdateContractRequest;
 use Neo\Jobs\Contracts\ImportContractDataJob;
 use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\Contracts\ImportContractReservations;
+use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Services\Odoo\OdooConfig;
@@ -34,11 +36,9 @@ class ContractsController extends Controller {
         }
 
         return new Response(Contract::query()
-                                    ->when(@$salespersonId !== null, fn(\Illuminate\Database\Eloquent\Builder $query) => $query->where("salesperson_id", "=", $salespersonId))
+                                    ->when($salespersonId !== null, fn(Builder $query) => $query->where("salesperson_id", "=", $salespersonId))
                                     ->orderBy("contract_id")
-                                    ->get()
-                                    ->append(["start_date", "end_date", "expected_impressions", "received_impressions"])
-                                    ->makeHidden('reservations'));
+                                    ->get());
     }
 
     public function recent(ListContractsRequest $request) {
@@ -49,9 +49,7 @@ class ContractsController extends Controller {
                              })
                              ->limit(5)
                              ->get()
-                             ->append(["start_date", "end_date", "expected_impressions", "received_impressions"])
-                             ->sortBy("end_date", "asc")
-                             ->makeHidden('reservations');
+                             ->sortBy("end_date", 0, "asc")->values();
 
         return new Response($contracts);
     }
@@ -96,8 +94,6 @@ class ContractsController extends Controller {
     public function show(ShowContractRequest $request, Contract $contract) {
         $with = $request->get("with", []);
 
-        $contract->append(["start_date", "end_date", "expected_impressions"]);
-
         if (in_array("salesperson", $with, true)) {
             $contract->load("salesperson", "salesperson.logo");
         }
@@ -141,9 +137,17 @@ class ContractsController extends Controller {
         return new Response($contract);
     }
 
+    public function update(UpdateContractRequest $request, Contract $contract) {
+        $contract->salesperson_id = $request->input("salesperson_id");
+        $contract->save();
+
+        return new Response($contract);
+    }
+
     public function refresh(RefreshContractRequest $request, Contract $contract) {
         ImportContractDataJob::dispatchSync($contract->id);
         ImportContractReservations::dispatchSync($contract->id);
+        RefreshContractsPerformancesJob::dispatchSync($contract->id);
 
         return new Response(["status" => "ok"]);
     }

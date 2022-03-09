@@ -61,6 +61,7 @@ Route::group([
     Route::  post("contracts", ContractsController::class . "@store");
     Route::   get("contracts/_recent", ContractsController::class . "@recent");
     Route::   get("contracts/{contract}", ContractsController::class . "@show");
+    Route::   put("contracts/{contract}", ContractsController::class . "@update");
     Route::delete("contracts/{contract}", ContractsController::class . "@destroy");
     Route::  post("contracts/{contract}/_refresh", ContractsController::class . "@refresh");
 

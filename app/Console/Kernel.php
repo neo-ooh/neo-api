@@ -17,6 +17,7 @@ use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
+use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Jobs\Creatives\RemoveUnusedCreativesFromBroadcasterJob;
 use Neo\Jobs\Maintenance\RetrySchedulesJob;
 use Neo\Jobs\NotifyEndOfSchedules;
@@ -51,7 +52,7 @@ class Kernel extends ConsoleKernel {
         // network:cache-inventory
         CacheInventory::class,
 
-        // network:update-contracts
+        // contracts:update
         RefreshAllContracts::class,
 
         // contracts:clear-screenshots
@@ -97,8 +98,8 @@ class Kernel extends ConsoleKernel {
         // Cache Broadsign inventory for fast access in Connect
         $schedule->command('network:cache-inventory')->everyThreeHours();
 
-        // Refresh Contracts reservations
-        $schedule->command('network:update-contracts')->everyThreeHours();
+        // Refresh Contracts performances
+        $schedule->job(RefreshContractsPerformancesJob::class)->everyThreeHours();
 
 
         /* -----------------

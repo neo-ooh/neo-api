@@ -2,16 +2,13 @@
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
-use Neo\Enums\ProductsFillStrategy;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
@@ -25,22 +22,26 @@ use RuntimeException;
  *
  * @package Neo\Models
  *
- * @property integer                         $id
- * @property string                          $contract_id // ID of the contract has set by sales (not related to the actual ID of
- *           the contract inside Connect)
- * @property integer                         $external_id
- * @property integer                         $client_id
- * @property integer                         $salesperson_id
- * @property integer                         $advertiser_id
- * @property integer                         $created_at
- * @property integer                         $updated_at
+ * @property integer                           $id
+ * @property string                            $contract_id // ID of the contract has set by sales (not related to the actual ID
+ *           of the contract inside Connect)
+ * @property integer                           $external_id
+ * @property integer                           $client_id
+ * @property integer                           $salesperson_id
+ * @property integer                           $advertiser_id
+ * @property \Carbon\Carbon                    $start_date
+ * @property \Carbon\Carbon                    $end_date
+ * @property integer                           $expected_impressions
+ * @property integer                           $received_impressions
+ * @property integer                           $created_at
+ * @property integer                           $updated_at
  *
- * @property Client                          $client
- * @property Collection<ContractFlight>      $flights
- * @property Actor                           $owner
- * @property Collection<ContractBurst>       $bursts
- * @property Collection<ContractReservation> $reservations
- * @property array                           $performances
+ * @property Client                            $client
+ * @property Collection<ContractFlight>        $flights
+ * @property Actor                             $owner
+ * @property Collection<ContractBurst>         $bursts
+ * @property Collection<ContractReservation>   $reservations
+ * @property Collection<ReservablePerformance> $performances
  */
 class Contract extends Model {
     use HasFactory;
@@ -51,6 +52,11 @@ class Contract extends Model {
         "contract_id",
         "client_id",
         "salesperson_id"
+    ];
+
+    protected $dates = [
+        "start_date",
+        "end_date",
     ];
 
     protected static function boot() {
@@ -121,7 +127,7 @@ class Contract extends Model {
     }
 
     public function getPerformancesAttribute() {
-        return Cache::tags(["contract-performances"])->remember($this->getContractPerformancesCacheKey(), 3600 * 2, function () {
+        return Cache::tags(["contract-performances"])->remember($this->getContractPerformancesCacheKey(), 3600 * 3, function () {
             $config          = static::getConnectionConfig();
             $broadsignClient = new BroadsignClient($config);
 
@@ -147,60 +153,6 @@ class Contract extends Model {
     | Additional Attributes
     |--------------------------------------------------------------------------
     */
-
-    public function getStartDateAttribute(): Carbon|null {
-        $flight = $this->flights()
-                       ->where("type", "!=", ContractFlight::BUA)
-                       ->orderBy("start_date")
-                       ->first();
-
-        if (!$flight) {
-            $flight = $this->flights()
-                           ->where("type", "=", ContractFlight::BUA)
-                           ->orderBy("start_date")
-                           ->first();
-        }
-
-        return $flight?->start_date;
-    }
-
-    public function getEndDateAttribute(): Carbon|null {
-        $flight = $this->flights()
-                       ->where("type", "!=", ContractFlight::BUA)
-                       ->orderBy("end_date", "desc")
-                       ->first();
-
-        if (!$flight) {
-            $flight = $this->flights()
-                           ->where("type", "=", ContractFlight::BUA)
-                           ->orderBy("end_date", "desc")
-                           ->first();
-        }
-
-        return $flight?->end_date;
-    }
-
-    public function getExpectedImpressionsAttribute(): int {
-        return ContractLine::query()
-                           ->whereHas("flight", function (Builder $query) {
-                               $query->where("type", '!=', ContractFlight::BUA);
-                               $query->where("contract_id", "=", $this->id);
-                           })
-                           ->whereHas('product', function (Builder $query) {
-                               $query->whereHas("category", function (Builder $query) {
-                                   $query->where("fill_strategy", "=", ProductsFillStrategy::digital);
-                               });
-                           })->sum("impressions");
-    }
-
-    public function getReceivedImpressionsAttribute() {
-        $guaranteedReservations = $this->reservations()->whereHas("flight", function ($query) {
-            $query->where("type", "!=", ContractFlight::BUA);
-        })->get()->pluck("external_id");
-        return $this->performances
-            ->whereIn("reservable_id", $guaranteedReservations)
-            ->sum("total_impressions");
-    }
 
     public function loadReservationsLocations(): void {
         $config          = static::getConnectionConfig();

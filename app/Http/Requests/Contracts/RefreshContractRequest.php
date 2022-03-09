@@ -8,18 +8,16 @@ use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 use Neo\Models\Contract;
 
-class RefreshContractRequest extends FormRequest
-{
+class RefreshContractRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         /** @var Contract $contract */
         $contract = $this->route("contract");
-        return $contract->owner_id === Auth::id() || Gate::allows(Capability::contracts_manage);
+        return $contract->salesperson_id === Auth::id() || Gate::allows(Capability::contracts_manage);
     }
 
     /**
@@ -27,8 +25,7 @@ class RefreshContractRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             //
         ];

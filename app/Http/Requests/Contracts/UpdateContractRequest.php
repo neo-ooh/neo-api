@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - UpdateContractRequest.php
+ */
 
 namespace Neo\Http\Requests\Contracts;
 
@@ -8,7 +16,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 use Neo\Models\Contract;
 
-class ShowContractRequest extends FormRequest {
+class UpdateContractRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -27,7 +35,7 @@ class ShowContractRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "with" => ["sometimes", "array"]
+            "salesperson_id" => ["required", "exists:actors,id"]
         ];
     }
 }

@@ -15,6 +15,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
+use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Advertiser;
 use Neo\Models\Client;
 use Neo\Models\Contract;
@@ -100,10 +102,15 @@ class ImportContractDataJob implements ShouldQueue {
             $orderLines = $orderLines->merge($lines);
         } while ($hasMore);
 
-        $contractLines = [];
+        $contractLines              = [];
+        $expectedDigitalImpressions = 0;
 
         $output->writeln($contract->contract_id . ": Importing {$orderLines->count()} lines in the contract...");
-        $products = Product::query()->whereIn("external_variant_id", $orderLines->pluck("product_id.0")->unique())->get();
+        $products = Product::query()
+                           ->whereIn("external_variant_id", $orderLines->pluck("product_id.0")->unique())
+                           ->with(["category"])
+                           ->get();
+
         /** @var OrderLine $orderLine */
         foreach ($orderLines as $orderLine) {
             if ($orderLine->is_linked_line) {
@@ -128,6 +135,7 @@ class ImportContractDataJob implements ShouldQueue {
                 $type = 'bonus';
             }
 
+            /** @var ContractFlight|null $flight */
             $flight = $flights->filter(function (ContractFlight $flight) use ($type, $orderLine) {
                 return $flight->start_date->toDateString() === $orderLine->rental_start
                     && $flight->end_date->toDateString() === $orderLine->rental_end
@@ -144,7 +152,7 @@ class ImportContractDataJob implements ShouldQueue {
                 $flights->push($flight);
             }
 
-            $contractLines[] = [
+            $line = [
                 "product_id"    => $product->getKey(),
                 "flight_id"     => $flight->getKey(),
                 "external_id"   => $orderLine->getKey(),
@@ -156,6 +164,14 @@ class ImportContractDataJob implements ShouldQueue {
                 "traffic"       => 0,
                 "impressions"   => $orderLine->connect_impression ?: $orderLine->impression
             ];
+
+            $contractLines[] = $line;
+
+            // If the line is guaranteed and for a digital product, sum its impressions
+            if ($product->category->fill_strategy === ProductsFillStrategy::digital &&
+                $flight->type !== ContractFlight::BUA) {
+                $expectedDigitalImpressions += $line["impressions"];
+            }
         }
 
         if (count($contractLines) === 0) {
@@ -167,6 +183,28 @@ class ImportContractDataJob implements ShouldQueue {
 
         ContractLine::query()->insertOrIgnore($contractLines);
         $output->writeln($contract->contract_id . ": {$flights->count()} Flights attached.");
+
+        // Update contract start date, end date and expected impressions
+        $startDate = $flights
+            ->where("type", "!=", ContractFlight::BUA)
+            ->whenEmpty(function (Collection $flights) {
+                return $flights->where("type", "=", ContractFlight::BUA);
+            })
+            ->sortBy("start_date")
+            ->first()?->start_date;
+
+        $endDate = $flights
+            ->where("type", "!=", ContractFlight::BUA)
+            ->whenEmpty(function (Collection $flights) {
+                return $flights->where("type", "=", ContractFlight::BUA);
+            })
+            ->sortBy("end_date", SORT_REGULAR, "desc")
+            ->first()?->end_date;
+
+        $contract->start_date           = $startDate;
+        $contract->end_date             = $endDate;
+        $contract->expected_impressions = $expectedDigitalImpressions;
+        $contract->save();
 
         // Remove any flights attached with the contract that are not part of the current run
         $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();

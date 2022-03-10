@@ -151,6 +151,10 @@ class Property extends SecuredModel {
         return $this->belongsToMany(Brand::class, "properties_tenants", "property_id", "brand_id");
     }
 
+    public function demographicValues(): HasMany {
+        return $this->hasMany(DemographicValue::class, "property_id", "actor_id");
+    }
+
 
     /*
     |--------------------------------------------------------------------------

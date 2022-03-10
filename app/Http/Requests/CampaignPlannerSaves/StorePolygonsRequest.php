@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - StoreSaveRequest.php
+ * @neo/api - StorePolygonsRequest.php
  */
 
 namespace Neo\Http\Requests\CampaignPlannerSaves;

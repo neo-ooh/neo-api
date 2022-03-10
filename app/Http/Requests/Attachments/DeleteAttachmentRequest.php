@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - StoreAttachmentRequest.php
+ * @neo/api - DeleteAttachmentRequest.php
  */
 
 namespace Neo\Http\Requests\Attachments;

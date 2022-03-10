@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - AccessibleActor.php
+ * @neo/api - AccessibleProperty.php
  */
 
 namespace Neo\Rules;

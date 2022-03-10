@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ShowContractRequest.php
+ * @neo/api - SendContractRequest.php
  */
 
 namespace Neo\Http\Requests\Odoo\Contracts;

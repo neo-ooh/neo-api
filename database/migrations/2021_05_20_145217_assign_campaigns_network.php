@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - 2021_05_20_145217_assign_campaigns_network.php
+ */
 
 use Illuminate\Database\Migrations\Migration;
 use Neo\Models\Campaign;

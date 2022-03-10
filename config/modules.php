@@ -157,7 +157,7 @@ return [
         "enabled" => env('MODULE_IMPRESSIONS_ENABLED', true),
     ],
 
-    "odoo"    => [
+    "odoo"         => [
         "enabled" => env('MODULE_ODOO_ENABLED', true),
 
         "server-url" => env('MODULE_ODOO_SERVER_URL'),
@@ -166,7 +166,12 @@ return [
 
         "database" => env('MODULE_ODOO_DATABASE')
     ],
-    "planner" => [
+    "planner"      => [
         "enabled" => env('MODULE_PLANNER_ENABLED', true),
+    ],
+    "demographics" => [
+        "enabled" => env('MODULE_DEMOGRAPHICS_ENABLED', true),
+
+        "providers" => ["environics"]
     ]
 ];

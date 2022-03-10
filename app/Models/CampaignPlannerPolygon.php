@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - CampaignPlannerSave.php
+ * @neo/api - CampaignPlannerPolygon.php
  */
 
 namespace Neo\Models;

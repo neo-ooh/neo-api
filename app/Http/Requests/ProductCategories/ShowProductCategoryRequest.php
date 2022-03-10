@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListProductCategoriesRequest.php
+ * @neo/api - ShowProductCategoryRequest.php
  */
 
 namespace Neo\Http\Requests\ProductCategories;

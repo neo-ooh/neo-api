@@ -1,1 +1,10 @@
+<!--
+  - Copyright 2020 (c) Neo-OOH - All Rights Reserved
+  - Unauthorized copying of this file, via any medium is strictly prohibited
+  - Proprietary and confidential
+  - Written by Valentin Dufois <vdufois@neo-ooh.com>
+  -
+  - @neo/api - libraries.svg
+  -->
+
 <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 296.56"><defs><style>.cls-1{fill:#2a2e43;}</style></defs><path class="cls-1" d="M280,265.11H164a24.94,24.94,0,0,0-17.39-17.38V222.67h16.78a1.7,1.7,0,0,0,1.7-1.7V12.53l.21-.88a1.75,1.75,0,0,1-.21-.82V1.7a1.7,1.7,0,0,0-1.7-1.7H116.42a1.7,1.7,0,0,0-1.7,1.7V221a1.7,1.7,0,0,0,1.7,1.7h17v25.05A25,25,0,0,0,116,265.11H0v13.16H116a24.85,24.85,0,0,0,47.94,0H280Z"/><path class="cls-1" d="M46.3,222.67H93.24a1.7,1.7,0,0,0,1.7-1.7V12.53l.21-.88a1.75,1.75,0,0,1-.21-.82V1.7A1.7,1.7,0,0,0,93.24,0H46.3a1.7,1.7,0,0,0-1.7,1.7V221A1.7,1.7,0,0,0,46.3,222.67Z"/><path class="cls-1" d="M186.55,222.67h46.93a1.7,1.7,0,0,0,1.7-1.7V12.53l.22-.88a1.65,1.65,0,0,1-.22-.82V1.7a1.7,1.7,0,0,0-1.7-1.7H186.55a1.7,1.7,0,0,0-1.7,1.7V221A1.7,1.7,0,0,0,186.55,222.67Z"/></svg>

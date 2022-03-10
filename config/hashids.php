@@ -1,12 +1,12 @@
 <?php
 
-/**
- * Copyright (c) Vincent Klaiber.
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- *
- * @see https://github.com/vinkla/laravel-hashids
+ * @neo/api - hashids.php
  */
 
 return [

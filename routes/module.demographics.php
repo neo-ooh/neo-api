@@ -5,9 +5,14 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - validation.php
+ * @neo/api - module.demographics.php
  */
 
-return [
-    "phone" => "Le champ :attribute n'est pas un numéro de téléphone valide.",
-];
+use Illuminate\Support\Facades\Route;
+
+Route::group([
+    "middleware" => "default",
+    "prefix"     => "v1"
+], function () {
+
+});

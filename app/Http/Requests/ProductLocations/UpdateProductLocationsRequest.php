@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdateProductsLocationsRequest.php
+ * @neo/api - UpdateProductLocationsRequest.php
  */
 
 namespace Neo\Http\Requests\ProductLocations;

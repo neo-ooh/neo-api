@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - SyncTenantsRequest.php
+ * @neo/api - RemoveTenantRequest.php
  */
 
 namespace Neo\Http\Requests\PropertiesTenants;

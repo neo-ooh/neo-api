@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - LaravelLogFormatter.php
+ * @neo/api - ActivityLogFormatter.php
  */
 
 namespace Neo\Logging;

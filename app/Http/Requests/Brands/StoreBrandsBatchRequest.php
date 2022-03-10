@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - StoreBrandRequest.php
+ * @neo/api - StoreBrandsBatchRequest.php
  */
 
 namespace Neo\Http\Requests\Brands;

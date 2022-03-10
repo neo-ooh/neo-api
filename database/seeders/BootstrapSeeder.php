@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - BoostrapSeeder.php
+ * @neo/api - BootstrapSeeder.php
  */
 
 namespace Database\Seeders;

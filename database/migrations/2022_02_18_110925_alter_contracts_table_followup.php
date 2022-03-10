@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - 2022_02_14_140925_alter_contracts_table.php
+ * @neo/api - 2022_02_18_110925_alter_contracts_table_followup.php
  */
 
 use Illuminate\Database\Migrations\Migration;

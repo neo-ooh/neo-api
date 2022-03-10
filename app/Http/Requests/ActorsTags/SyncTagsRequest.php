@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - SycTagsRequest.php
+ * @neo/api - SyncTagsRequest.php
  */
 
 namespace Neo\Http\Requests\ActorsTags;

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ImportContractReservations.php
+ * @neo/api - RefreshAllContracts.php
  */
 
 namespace Neo\Jobs;

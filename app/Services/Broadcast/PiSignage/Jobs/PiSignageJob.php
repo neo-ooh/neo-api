@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - BroadSignJob.php
+ * @neo/api - PiSignageJob.php
  */
 
 namespace Neo\Services\Broadcast\PiSignage\Jobs;

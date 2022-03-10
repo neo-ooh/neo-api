@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - SynchronizeLocations.php
+ * @neo/api - TargetCampaign.php
  */
 
 namespace Neo\Services\Broadcast\PiSignage\Jobs\Campaigns;

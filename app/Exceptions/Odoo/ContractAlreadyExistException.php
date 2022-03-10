@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ContractIsNotDraftException.php
+ * @neo/api - ContractAlreadyExistException.php
  */
 
 namespace Neo\Exceptions\Odoo;

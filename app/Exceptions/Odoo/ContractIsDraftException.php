@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ContractIsNotDraftException.php
+ * @neo/api - ContractIsDraftException.php
  */
 
 namespace Neo\Exceptions\Odoo;

@@ -1,19 +1,12 @@
-/*!
+/*
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - _colors.scss
+ * @neo/api - pop.css
  */
-/*!
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Valentin Dufois <vdufois@neo-ooh.com>
- *
- * @neo/api - _fonts.scss
- */
+
 h1, h2
 {
     font-family    : "poppins-bold";
@@ -64,30 +57,6 @@ h2.head
     color : #d63641;
 }
 
-/*!
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Valentin Dufois <vdufois@neo-ooh.com>
- *
- * @neo/api - _header.scss
- */
-/*!
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Valentin Dufois <vdufois@neo-ooh.com>
- *
- * @neo/api - _colors.scss
- */
-/*!
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Valentin Dufois <vdufois@neo-ooh.com>
- *
- * @neo/api - _fonts.scss
- */
 header
 {
     margin : -5mm 0 3mm;
@@ -163,30 +132,6 @@ header .header-table
     font-weight : bold;
 }
 
-/*!
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Valentin Dufois <vdufois@neo-ooh.com>
- *
- * @neo/api - _footer.scss
- */
-/*!
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Valentin Dufois <vdufois@neo-ooh.com>
- *
- * @neo/api - _colors.scss
- */
-/*!
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * Proprietary and confidential
- * Written by Valentin Dufois <vdufois@neo-ooh.com>
- *
- * @neo/api - _fonts.scss
- */
 footer
 {
     width : 100%;

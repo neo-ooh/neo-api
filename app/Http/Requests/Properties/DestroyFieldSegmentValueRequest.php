@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - StoreFieldSegmentValueRequest.php
+ * @neo/api - DestroyFieldSegmentValueRequest.php
  */
 
 namespace Neo\Http\Requests\Properties;

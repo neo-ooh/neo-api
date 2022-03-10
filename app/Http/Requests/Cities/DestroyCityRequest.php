@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdateCityRequest.php
+ * @neo/api - DestroyCityRequest.php
  */
 
 namespace Neo\Http\Requests\Cities;

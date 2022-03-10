@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - CampaignPlannerSavesController.php
+ * @neo/api - CampaignPlannerPolygonsController.php
  */
 
 namespace Neo\Http\Controllers;

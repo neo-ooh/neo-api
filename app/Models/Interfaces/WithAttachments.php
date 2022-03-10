@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - WithImpressionsModels.php
+ * @neo/api - WithAttachments.php
  */
 
 namespace Neo\Models\Interfaces;

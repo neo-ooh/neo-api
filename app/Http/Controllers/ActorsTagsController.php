@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ActorTagsController.php
+ * @neo/api - ActorsTagsController.php
  */
 
 namespace Neo\Http\Controllers;

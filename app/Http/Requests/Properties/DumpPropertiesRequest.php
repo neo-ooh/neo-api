@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - DumpPropertyRequest.php
+ * @neo/api - DumpPropertiesRequest.php
  */
 
 namespace Neo\Http\Requests\Properties;

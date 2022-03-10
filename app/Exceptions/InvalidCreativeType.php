@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - IncompatibleFrameAndFormat.php
+ * @neo/api - InvalidCreativeType.php
  */
 
 namespace Neo\Exceptions;

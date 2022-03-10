@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - PhonesController.php
+ * @neo/api - ActorsPhoneController.php
  */
 
 namespace Neo\Http\Controllers;

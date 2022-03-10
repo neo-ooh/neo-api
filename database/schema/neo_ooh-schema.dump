@@ -1,3 +1,12 @@
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - neo_ooh-schema.dump
+ */
+
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -92,7 +101,7 @@ DROP TABLE IF EXISTS `actors_details`;
 /*!50001 DROP VIEW IF EXISTS `actors_details`*/;
 SET @saved_cs_client     = @@character_set_client;
 /*!50503 SET character_set_client = utf8mb4 */;
-/*!50001 CREATE VIEW `actors_details` AS SELECT 
+/*!50001 CREATE VIEW `actors_details` AS SELECT
  1 AS `id`,
  1 AS `parent_id`,
  1 AS `parent_is_group`,

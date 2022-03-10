@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - DestroyPhoneRequest.php
+ * @neo/api - StorePhoneRequest.php
  */
 
 namespace Neo\Http\Requests\ActorsPhones;

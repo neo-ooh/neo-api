@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Contract.php
+ * @neo/api - Campaign.php
  */
 
 namespace Neo\Services\Odoo\Models;

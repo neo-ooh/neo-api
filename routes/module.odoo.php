@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - core.misc.php
+ * @neo/api - module.odoo.php
  */
 
 use Illuminate\Support\Facades\Route;

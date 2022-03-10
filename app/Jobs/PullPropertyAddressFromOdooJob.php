@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - PullPropertyAddressFromBroadSignJob.php
+ * @neo/api - PullPropertyAddressFromOdooJob.php
  */
 
 namespace Neo\Jobs;

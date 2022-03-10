@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Property.php
+ * @neo/api - Product.php
  */
 
 namespace Neo\Services\Odoo\Models;

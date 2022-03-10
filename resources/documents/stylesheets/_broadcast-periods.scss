@@ -8,24 +8,24 @@
  */
 
 .broadcast-periods-table {
-  margin: -1.5mm 0 3mm -1mm;
+  margin : -1.5mm 0 3mm -1mm;
 
   &.no-space-after {
-    margin-bottom: 0;
+    margin-bottom : 0;
   }
 
   tr {
     td {
-      font-style: italic;
+      font-style     : italic;
       vertical-align : top;
-      font-size: 9pt;
+      font-size      : 9pt;
 
       &.label {
-        font-weight: bold;
+        font-weight : bold;
       }
 
       &.periods-col {
-        padding-left: 3mm;
+        padding-left : 3mm;
       }
     }
   }

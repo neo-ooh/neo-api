@@ -15,17 +15,14 @@ use Neo\Models\BroadcasterConnection;
 use Neo\Models\UnstructuredData\ConnectionSettingsBroadSign;
 use Neo\Models\UnstructuredData\ConnectionSettingsPiSignage;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      *
      * @return void
      */
-    public function up()
-    {
-        Schema::table("broadcasters_connections", function (Blueprint $table)
-        {
+    public function up() {
+        Schema::table("broadcasters_connections", function (Blueprint $table) {
             $table->json("settings")->after("active");
 
         });
@@ -33,7 +30,7 @@ return new class extends Migration
         $broadsignSettings = \Illuminate\Support\Facades\DB::table("connection_settings_broadsign")->get();
 
         foreach ($broadsignSettings as $settings) {
-            $broadcaster = BroadcasterConnection::find($settings->connection_id);
+            $broadcaster           = BroadcasterConnection::find($settings->connection_id);
             $broadcaster->settings = new ConnectionSettingsBroadSign((array)$settings);
             $broadcaster->save();
         }
@@ -41,7 +38,7 @@ return new class extends Migration
         $pisignageSettings = \Illuminate\Support\Facades\DB::table("connection_settings_pisignage")->get();
 
         foreach ($pisignageSettings as $settings) {
-            $broadcaster = BroadcasterConnection::find($settings->connection_id);
+            $broadcaster           = BroadcasterConnection::find($settings->connection_id);
             $broadcaster->settings = new ConnectionSettingsPiSignage((array)$settings);
             $broadcaster->save();
         }
@@ -55,8 +52,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         //
     }
 };

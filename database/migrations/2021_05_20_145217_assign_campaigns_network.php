@@ -38,7 +38,7 @@ return new class extends Migration {
 
             $location = $campaign->locations()->first(["network_id"]);
 
-            if($location === null) {
+            if ($location === null) {
                 continue;
             }
 

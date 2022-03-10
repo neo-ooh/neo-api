@@ -13,10 +13,10 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Neo\Models\DisplayType;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Schema table name to migrate
+     *
      * @var string
      */
     public string $tableName = "display_types_prints_factors";
@@ -26,8 +26,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create($this->tableName, function (Blueprint $table) {
             $table->id();
             $table->foreignId("display_type_id")->constrained("display_types");
@@ -46,8 +45,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists($this->tableName);
     }
 };

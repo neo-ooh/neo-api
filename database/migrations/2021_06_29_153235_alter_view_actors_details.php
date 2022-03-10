@@ -12,8 +12,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     protected function dropView() {
         return <<<SQL
     DROP VIEW IF EXISTS `actors_details`;
@@ -29,8 +28,7 @@ SQL;
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         DB::statement($this->dropView());
         DB::statement($this->createView());
     }
@@ -40,8 +38,7 @@ SQL;
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         //
     }
 };

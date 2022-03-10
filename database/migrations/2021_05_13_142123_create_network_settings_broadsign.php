@@ -12,10 +12,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Schema table name to migrate
+     *
      * @var string
      */
     public string $tableName = "network_settings_broadsign";

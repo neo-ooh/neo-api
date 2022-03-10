@@ -12,10 +12,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Schema table name to migrate
+     *
      * @var string
      */
     public string $tableName = "connection_settings_broadsign";
@@ -25,10 +25,13 @@ return new class extends Migration
      *
      * @return void
      */
-    public function up()
-    {
+    public function up() {
         Schema::create($this->tableName, function (Blueprint $table) {
-            $table->foreignId("connection_id")->primary()->constrained("broadcasters_connections")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId("connection_id")
+                  ->primary()
+                  ->constrained("broadcasters_connections")
+                  ->cascadeOnUpdate()
+                  ->cascadeOnDelete();
             $table->unsignedBigInteger("domain_id");
             $table->unsignedBigInteger("default_customer_id")->nullable();
             $table->unsignedBigInteger("default_tracking_id")->nullable();
@@ -40,8 +43,7 @@ return new class extends Migration
      *
      * @return void
      */
-    public function down()
-    {
+    public function down() {
         Schema::dropIfExists($this->tableName);
     }
 };

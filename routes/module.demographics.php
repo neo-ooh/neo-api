@@ -9,10 +9,16 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\DemographicValuesController;
+use Neo\Http\Controllers\DemographicVariablesController;
 
 Route::group([
     "middleware" => "default",
     "prefix"     => "v1"
 ], function () {
+    Route::get("demographic_variables", DemographicVariablesController::class . "@index");
 
+    if (config("modules.properties.enabled")) {
+        Route::post("properties/{property}/demographic_values", DemographicValuesController::class . "@store");
+    }
 });

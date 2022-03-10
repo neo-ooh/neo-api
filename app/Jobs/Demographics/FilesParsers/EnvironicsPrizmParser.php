@@ -4,7 +4,7 @@ namespace Neo\Jobs\Demographics\FilesParsers;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
-class EnvironicsDefaultParser {
+class EnvironicsPrizmParser {
     public function __construct(protected string $filePath) {
 
     }
@@ -19,21 +19,21 @@ class EnvironicsDefaultParser {
         $spreadsheet = $workbook->getActiveSheet();
         $data        = $spreadsheet->toArray();
 
-        // for this kind of file, value rows are identifyiable by the variable id on the first column, that always start with ECY
+        // for the prizm file, we only have a variable number, on the third column
 
         $entries = [];
         /** @var array $row */
         foreach ($data as $row) {
             // Is this a value row ?
-            if (!str_starts_with(trim($row[0]), "ECY")) {
+            if (!is_numeric(trim($row[2]))) {
                 continue;
             }
 
             $entries[] = [
-                "id"              => trim($row[0]),
-                "label"           => trim($row[1]),
-                "value"           => (float)trim($row[2]),
-                "reference_value" => (float)trim($row[4]),
+                "id"              => "PZML" . trim($row[2]),
+                "label"           => trim($row[3]),
+                "value"           => (float)trim($row[5]),
+                "reference_value" => (float)trim($row[7]),
             ];
         }
 

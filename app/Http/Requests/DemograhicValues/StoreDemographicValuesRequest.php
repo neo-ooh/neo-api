@@ -17,9 +17,10 @@ use Neo\Enums\Capability;
 class StoreDemographicValuesRequest extends FormRequest {
     public function rules(): array {
         return [
-            "files"          => ["required", "array"],
-            "files.*.file"   => ["required", "file"],
-            "files.*.format" => ["required", "string"]
+            "files"     => ["required", "array"],
+            "files.*"   => ["required", "file"],
+            "formats"   => ["required", "array"],
+            "formats.*" => ["required", "string"]
         ];
     }
 

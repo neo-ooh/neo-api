@@ -24,7 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Carbon $updated_at
  */
 class DemographicValue extends Model {
-    protected $table = "demographic_value";
+    protected $table = "demographic_values";
 
     protected $primaryKey = "id";
 

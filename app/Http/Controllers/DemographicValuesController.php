@@ -10,11 +10,23 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Http\UploadedFile;
 use Neo\Http\Requests\DemograhicValues\StoreDemographicValuesRequest;
+use Neo\Jobs\Demographics\IngestDemographicFileJob;
 use Neo\Models\Property;
 
 class DemographicValuesController {
     public function store(StoreDemographicValuesRequest $request, Property $property) {
-        dd($request->input("files"));
+        $files = array_map(null, array_values($request->file("files")), $request->input("formats"));
+
+        /**
+         * @var UploadedFile $file
+         * @var string       $format
+         */
+        foreach ($files as [$file, $format]) {
+            $tempName = tempnam(sys_get_temp_dir(), "connect_prop_demo_");
+            file_put_contents($tempName, $file->getContent());
+            IngestDemographicFileJob::dispatchSync($property->getKey(), $tempName, $format);
+        }
     }
 }

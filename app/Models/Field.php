@@ -14,14 +14,15 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
- * @property string $name_en
- * @property string $name_fr
- * @property string $type One of 'int', 'float' or 'bool'
- * @property string $unit
- * @property bool $is_filter
- * @property Carbon $created_at
- * @property Carbon $update_at
+ * @property int      $id
+ * @property int|null $category_id
+ * @property string   $name_en
+ * @property string   $name_fr
+ * @property string   $type One of 'int', 'float' or 'bool'
+ * @property string   $unit
+ * @property bool     $is_filter
+ * @property Carbon   $created_at
+ * @property Carbon   $update_at
  */
 class Field extends Model {
     protected $primaryKey = "id";
@@ -29,6 +30,7 @@ class Field extends Model {
     protected $table = "fields";
 
     protected $fillable = [
+        "category_id",
         "name_en",
         "name_fr",
         "type",
@@ -44,5 +46,9 @@ class Field extends Model {
 
     public function segments() {
         return $this->hasMany(FieldSegment::class, "field_id", "id")->orderBy("order");
+    }
+
+    public function category() {
+        return $this->belongsTo(FieldsCategory::class, "category_id", "id");
     }
 }

@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\Fields\DestroyFieldRequest;
 use Neo\Http\Requests\Fields\ListFieldsRequest;
 use Neo\Http\Requests\Fields\StoreFieldRequest;
 use Neo\Http\Requests\Fields\UpdateFieldRequest;
@@ -27,11 +28,12 @@ class FieldsController {
 
     public function store(StoreFieldRequest $request): Response {
         $field = new Field([
-            "name_en"   => $request->input("name_en"),
-            "name_fr"   => $request->input("name_fr"),
-            "type"      => $request->input("type"),
-            "unit"      => $request->input("unit"),
-            "is_filter" => $request->input("is_filter"),
+            "category_id" => $request->input("category_id"),
+            "name_en"     => $request->input("name_en"),
+            "name_fr"     => $request->input("name_fr"),
+            "type"        => $request->input("type"),
+            "unit"        => $request->input("unit"),
+            "is_filter"   => $request->input("is_filter"),
         ]);
         $field->save();
 
@@ -39,24 +41,25 @@ class FieldsController {
         $field->segments()->create([
             "name_en" => "Default",
             "name_fr" => "Default",
-            "order" => 0
+            "order"   => 0
         ]);
 
         return new Response($field->load("segments"), 201);
     }
 
     public function update(UpdateFieldRequest $request, Field $field): Response {
-        $field->name_en   = $request->input("name_en");
-        $field->name_fr   = $request->input("name_fr");
-        $field->type      = $request->input("type");
-        $field->unit      = $request->input("unit");
-        $field->is_filter = $request->input("is_filter");
+        $field->category_id = $request->input("category_id");
+        $field->name_en     = $request->input("name_en");
+        $field->name_fr     = $request->input("name_fr");
+        $field->type        = $request->input("type");
+        $field->unit        = $request->input("unit");
+        $field->is_filter   = $request->input("is_filter");
         $field->save();
 
         return new Response($field);
     }
 
-    public function destroy(Field $field): Response {
+    public function destroy(DestroyFieldRequest $request, Field $field): Response {
         $field->delete();
 
         return new Response();

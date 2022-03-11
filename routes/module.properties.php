@@ -13,6 +13,7 @@ use Neo\Http\Controllers\AttachmentsController;
 use Neo\Http\Controllers\BrandsController;
 use Neo\Http\Controllers\CitiesController;
 use Neo\Http\Controllers\CountriesController;
+use Neo\Http\Controllers\FieldsCategoriesController;
 use Neo\Http\Controllers\FieldsController;
 use Neo\Http\Controllers\FieldSegmentsController;
 use Neo\Http\Controllers\MarketsController;
@@ -34,6 +35,7 @@ use Neo\Http\Controllers\TrafficSourcesController;
 use Neo\Models\Attachment;
 use Neo\Models\Brand;
 use Neo\Models\Field;
+use Neo\Models\FieldsCategory;
 use Neo\Models\FieldSegment;
 use Neo\Models\Product;
 use Neo\Models\ProductCategory;
@@ -148,8 +150,15 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
+    Route::model("fieldsCategory", FieldsCategory::class);
     Route::model("field", Field::class);
     Route::model("segment", FieldSegment::class);
+
+    Route::   get("fields-categories", FieldsCategoriesController::class . "@index");
+    Route::  post("fields-categories", FieldsCategoriesController::class . "@store");
+    Route::   get("fields-categories/_by_id", FieldsCategoriesController::class . "@byid");
+    Route::   put("fields-categories/{fieldsCategory}", FieldsCategoriesController::class . "@update");
+    Route::delete("fields-categories/{fieldsCategory}", FieldsCategoriesController::class . "@destroy");
 
     Route::   get("fields", FieldsController::class . "@index");
     Route::  post("fields", FieldsController::class . "@store");

@@ -5,25 +5,20 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - StoreFieldRequest.php
+ * @neo/api - ListCategoriesRequest.php
  */
 
-namespace Neo\Http\Requests\Fields;
+namespace Neo\Http\Requests\FieldsCategories;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rule;
 use Neo\Enums\Capability;
 
-class StoreFieldRequest extends FormRequest {
+class ListCategoriesByIdRequest extends FormRequest {
     public function rules(): array {
         return [
-            "category_id" => ["nullable", "exists:fields_categories,id"],
-            "name_en"     => ["required", "string"],
-            "name_fr"     => ["required", "string"],
-            "type"        => ["required", Rule::in(["int", "float", "bool"])],
-            "unit"        => ["nullable", "string"],
-            "is_filter"   => ["required", "boolean"]
+            "ids"   => ["array"],
+            "ids.*" => ["exists:fields_categories,id"],
         ];
     }
 

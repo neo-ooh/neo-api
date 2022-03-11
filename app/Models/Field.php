@@ -12,6 +12,8 @@ namespace Neo\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int      $id
@@ -44,11 +46,11 @@ class Field extends Model {
 
     protected $with = ["segments"];
 
-    public function segments() {
+    public function segments(): HasMany {
         return $this->hasMany(FieldSegment::class, "field_id", "id")->orderBy("order");
     }
 
-    public function category() {
+    public function category(): BelongsTo {
         return $this->belongsTo(FieldsCategory::class, "category_id", "id");
     }
 }

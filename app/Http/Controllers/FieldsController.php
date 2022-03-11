@@ -23,7 +23,7 @@ class FieldsController {
     }
 
     public function show(ListFieldsRequest $request, Field $field): Response {
-        return new Response($field);
+        return new Response($field->load("category"));
     }
 
     public function store(StoreFieldRequest $request): Response {

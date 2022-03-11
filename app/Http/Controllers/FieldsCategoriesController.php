@@ -28,7 +28,7 @@ class FieldsCategoriesController {
 
     public function byId(ListCategoriesByIdRequest $request) {
         $sortKey    = "name_" . Lang::locale();
-        $categories = FieldsCategory::query()->whereIn("id", $request->input("ids", []))->sortBy($sortKey)->get();
+        $categories = FieldsCategory::query()->whereIn("id", $request->input("ids", []))->orderBy($sortKey)->get();
         return new Response($categories);
     }
 

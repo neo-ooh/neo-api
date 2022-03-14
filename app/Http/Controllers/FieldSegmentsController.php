@@ -22,8 +22,13 @@ class FieldSegmentsController {
         $segment = new FieldSegment([
             "name_en" => $request->input("name_en"),
             "name_fr" => $request->input("name_fr"),
-            "order" => $field->segments()->count(),
+            "order"   => $field->segments()->count(),
+            "color"   => $request->input("color"),
         ]);
+
+        if ($field->demographic_filled) {
+            $segment->variable_id = $request->input("variable_id");
+        }
 
         $field->segments()->save($segment);
 
@@ -31,9 +36,12 @@ class FieldSegmentsController {
     }
 
     public function update(UpdateFieldSegmentRequest $request, Field $field, FieldSegment $segment) {
-        $segment->name_en = $request->input("name_en");
-        $segment->name_fr = $request->input("name_fr");
-        $segment->order   = $request->input("order");
+        $segment->name_en     = $request->input("name_en");
+        $segment->name_fr     = $request->input("name_fr");
+        $segment->order       = $request->input("order");
+        $segment->color       = $request->input("color");
+        $segment->variable_id = $field->demographic_filled ? $request->input("variable_id") : null;
+
         $segment->save();
 
         return new Response($segment);

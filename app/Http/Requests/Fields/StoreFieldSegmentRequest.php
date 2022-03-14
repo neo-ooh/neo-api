@@ -17,8 +17,10 @@ use Neo\Enums\Capability;
 class StoreFieldSegmentRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name_en" => ["required", "string"],
-            "name_fr" => ["required", "string"],
+            "name_en"     => ["required", "string"],
+            "name_fr"     => ["required", "string"],
+            "color"       => ["sometimes", "nullable", "string"],
+            "variable_id" => ["sometimes", "nullable", "exists:demographic_variables,id"],
         ];
     }
 

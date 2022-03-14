@@ -28,12 +28,14 @@ class FieldsController {
 
     public function store(StoreFieldRequest $request): Response {
         $field = new Field([
-            "category_id" => $request->input("category_id"),
-            "name_en"     => $request->input("name_en"),
-            "name_fr"     => $request->input("name_fr"),
-            "type"        => $request->input("type"),
-            "unit"        => $request->input("unit"),
-            "is_filter"   => $request->input("is_filter"),
+            "category_id"        => $request->input("category_id"),
+            "name_en"            => $request->input("name_en"),
+            "name_fr"            => $request->input("name_fr"),
+            "type"               => $request->input("type"),
+            "unit"               => $request->input("unit"),
+            "is_filter"          => $request->input("is_filter"),
+            "demographic_filled" => $request->input("demographic_filled"),
+            "visualization"      => $request->input("visualization"),
         ]);
         $field->save();
 
@@ -48,12 +50,20 @@ class FieldsController {
     }
 
     public function update(UpdateFieldRequest $request, Field $field): Response {
-        $field->category_id = $request->input("category_id");
-        $field->name_en     = $request->input("name_en");
-        $field->name_fr     = $request->input("name_fr");
-        $field->type        = $request->input("type");
-        $field->unit        = $request->input("unit");
-        $field->is_filter   = $request->input("is_filter");
+        $field->category_id        = $request->input("category_id");
+        $field->name_en            = $request->input("name_en");
+        $field->name_fr            = $request->input("name_fr");
+        $field->type               = $request->input("type");
+        $field->unit               = $request->input("unit");
+        $field->is_filter          = $request->input("is_filter");
+        $field->demographic_filled = $request->input("demographic_filled");
+        $field->visualization      = $request->input("visualization");
+
+        // If the field is losing the `demographic_filled` flag, we reset all the variable assigment on its segments
+        if ($field->isDirty("demographic_filled") && !$field->demographic_filled) {
+            $field->segments()->update(["variable_id" => null]);
+        }
+
         $field->save();
 
         return new Response($field);

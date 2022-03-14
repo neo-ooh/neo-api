@@ -18,12 +18,14 @@ use Neo\Enums\Capability;
 class UpdateFieldRequest extends FormRequest {
     public function rules(): array {
         return [
-            "category_id" => ["nullable", "exists:fields_categories,id"],
-            "name_en"     => ["required", "string"],
-            "name_fr"     => ["required", "string"],
-            "type"        => ["required", Rule::in(["int", "float", "bool"])],
-            "unit"        => ["nullable", "string"],
-            "is_filter"   => ["required", "boolean"]
+            "category_id"        => ["nullable", "exists:fields_categories,id"],
+            "name_en"            => ["required", "string"],
+            "name_fr"            => ["required", "string"],
+            "type"               => ["required", Rule::in(["int", "float", "bool"])],
+            "unit"               => ["nullable", "string"],
+            "is_filter"          => ["required", "boolean"],
+            "demographic_filled" => ["required", "boolean"],
+            "visualization"      => ["nullable", "string"],
         ];
     }
 

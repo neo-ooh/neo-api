@@ -16,15 +16,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int      $id
- * @property int|null $category_id
- * @property string   $name_en
- * @property string   $name_fr
- * @property string   $type One of 'int', 'float' or 'bool'
- * @property string   $unit
- * @property bool     $is_filter
- * @property Carbon   $created_at
- * @property Carbon   $update_at
+ * @property int         $id
+ * @property int|null    $category_id
+ * @property string      $name_en
+ * @property string      $name_fr
+ * @property string      $type One of 'int', 'float' or 'bool'
+ * @property string      $unit
+ * @property bool        $is_filter
+ * @property boolean     $demographic_filled
+ * @property string|null $visualization
+ * @property Carbon      $created_at
+ * @property Carbon      $update_at
  */
 class Field extends Model {
     protected $primaryKey = "id";
@@ -37,11 +39,14 @@ class Field extends Model {
         "name_fr",
         "type",
         "unit",
-        "is_filter"
+        "is_filter",
+        "demographic_filled",
+        "visualization",
     ];
 
     protected $casts = [
-        "is_filter" => "boolean"
+        "is_filter"          => "boolean",
+        "demographic_filled" => "boolean",
     ];
 
     protected $with = ["segments"];

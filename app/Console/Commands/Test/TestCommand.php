@@ -11,6 +11,8 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
+use Neo\Models\DemographicVariable;
+use Neo\Models\FieldSegment;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -53,5 +55,18 @@ class TestCommand extends Command {
 //        $actors = Actor::find(88)->direct_children;
 //        $actors->each(fn(Actor $actor) => $actor->tags()->attach($tag));
 
+
+        // Set up PRIZM field segments
+        $field_id  = 15;
+        $variables = DemographicVariable::query()->where("id", "like", "PZML%")->orderBy("id")->get();
+
+        FieldSegment::query()->insert(
+            $variables->map(fn(DemographicVariable $var, int $i) => [
+                "field_id"    => $field_id,
+                "name_en"     => str_pad($i + 1, 2, "0", STR_PAD_LEFT) . " - " . $var->label,
+                "name_fr"     => str_pad($i + 1, 2, "0", STR_PAD_LEFT) . " - " . $var->label,
+                "variable_id" => $var->id,
+            ])->toArray()
+        );
     }
 }

@@ -14,11 +14,13 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int $id
- * @property int $field_id
+ * @property int    $id
+ * @property int    $field_id
  * @property string $name_en
  * @property string $name_fr
- * @property int $order
+ * @property int    $order
+ * @property string $color
+ * @property string $variable_id
  * @property Carbon $created_at
  * @property Carbon $update_at
  */
@@ -29,7 +31,9 @@ class FieldSegment extends Model {
         "field_id",
         "name_en",
         "name_fr",
-        "order"
+        "order",
+        "color",
+        "variable_id",
     ];
 
     public function field() {

@@ -17,9 +17,11 @@ use Neo\Enums\Capability;
 class UpdateFieldSegmentRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name_en" => ["required", "string"],
-            "name_fr" => ["required", "string"],
-            "order"   => ["required", "int"],
+            "name_en"     => ["required", "string"],
+            "name_fr"     => ["required", "string"],
+            "order"       => ["required", "int"],
+            "color"       => ["sometimes", "nullable", "string"],
+            "variable_id" => ["sometimes", "nullable", "exists:demographic_variables,id"],
         ];
     }
 

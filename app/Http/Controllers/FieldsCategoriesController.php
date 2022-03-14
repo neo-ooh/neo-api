@@ -55,5 +55,9 @@ class FieldsCategoriesController {
             $field->category_id = null;
             $field->save();
         });
+
+        $fieldsCategory->delete();
+
+        return new Response();
     }
 }

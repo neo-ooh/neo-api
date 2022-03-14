@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\UploadedFile;
 use Neo\Http\Requests\DemograhicValues\StoreDemographicValuesRequest;
 use Neo\Jobs\Demographics\IngestDemographicFileJob;
+use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Models\Property;
 
 class DemographicValuesController {
@@ -28,5 +29,7 @@ class DemographicValuesController {
             file_put_contents($tempName, $file->getContent());
             IngestDemographicFileJob::dispatchSync($property->getKey(), $tempName, $format);
         }
+
+        UpdateDemographicFieldsJob::dispatch($property->getKey(), null);
     }
 }

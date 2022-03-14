@@ -11,22 +11,25 @@
 namespace Neo\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property int         $id
- * @property int|null    $category_id
- * @property string      $name_en
- * @property string      $name_fr
- * @property string      $type One of 'int', 'float' or 'bool'
- * @property string      $unit
- * @property bool        $is_filter
- * @property boolean     $demographic_filled
- * @property string|null $visualization
- * @property Carbon      $created_at
- * @property Carbon      $update_at
+ * @property int                      $id
+ * @property int|null                 $category_id
+ * @property string                   $name_en
+ * @property string                   $name_fr
+ * @property string                   $type One of 'int', 'float' or 'bool'
+ * @property string                   $unit
+ * @property bool                     $is_filter
+ * @property boolean                  $demographic_filled
+ * @property string|null              $visualization
+ * @property Carbon                   $created_at
+ * @property Carbon                   $update_at
+ *
+ * @property Collection<FieldSegment> $segments
  */
 class Field extends Model {
     protected $primaryKey = "id";

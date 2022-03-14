@@ -11,6 +11,7 @@
 namespace Neo\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -34,5 +35,34 @@ class DemographicValue extends Model {
 
     public function property(): BelongsTo {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scopes
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @param Builder $query
+     * @param array   $columns
+     * @param array   $values
+     *
+     * @return Builder
+     */
+    public static function scopeWhereInMultiple(Builder $query, array $columns, array $values) {
+        collect($values)
+            ->transform(function ($v) use ($columns) {
+                $clause = [];
+                foreach ($columns as $index => $column) {
+                    $clause[] = [$column, '=', $v[$index]];
+                }
+                return $clause;
+            })
+            ->each(function ($clause, $index) use ($query) {
+                $query->where($clause, null, null, $index === 0 ? 'and' : 'or');
+            });
+
+        return $query;
     }
 }

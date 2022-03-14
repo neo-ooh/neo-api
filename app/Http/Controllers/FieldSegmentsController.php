@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\Fields\DestroyFieldSegmentRequest;
 use Neo\Http\Requests\Fields\StoreFieldSegmentRequest;
 use Neo\Http\Requests\Fields\UpdateFieldSegmentRequest;
+use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Models\Field;
 use Neo\Models\FieldSegment;
 
@@ -32,6 +33,8 @@ class FieldSegmentsController {
 
         $field->segments()->save($segment);
 
+        UpdateDemographicFieldsJob::dispatch(null, $field->getKey());
+
         return new Response($segment, 201);
     }
 
@@ -43,6 +46,8 @@ class FieldSegmentsController {
         $segment->variable_id = $field->demographic_filled ? $request->input("variable_id") : null;
 
         $segment->save();
+
+        UpdateDemographicFieldsJob::dispatch(null, $field->getKey());
 
         return new Response($segment);
     }

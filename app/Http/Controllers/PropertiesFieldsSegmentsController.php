@@ -19,11 +19,16 @@ use Neo\Models\PropertyFieldSegmentValue;
 
 class PropertiesFieldsSegmentsController {
     public function store(StoreFieldSegmentValueRequest $request, Property $property, Field $field) {
+        // Prevent manually updating a demographic-filled field.
+        if ($field->demographic_filled) {
+            throw new \Error("Cannot update the value of a field marked as being filled with demographic data.");
+        }
+
         $segmentId = $request->input("segment_id");
         $value     = $request->input("value");
 
         $entry = PropertyFieldSegmentValue::query()->firstOrNew([
-            "property_id"      => $property->getKey(),
+            "property_id"       => $property->getKey(),
             "fields_segment_id" => $segmentId
         ]);
         // We go the pedantic way here because `value` is a generic word and may conflict with Eloquent methods.

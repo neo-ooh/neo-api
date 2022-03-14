@@ -29,7 +29,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsController {
     public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, $displayUnitId) {
-        if (!is_int($displayUnitId)) {
+        if (!is_numeric($displayUnitId)) {
             return new Response(["Invalid display unit id: $displayUnitId"], 400);
         }
 

@@ -12,6 +12,7 @@ namespace Neo\Jobs\Traffic;
 
 use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -22,8 +23,12 @@ use Neo\Services\Odoo\Models\WeeklyTraffic;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-class PushPropertyTrafficJob implements ShouldQueue {
+class PushPropertyTrafficJob implements ShouldQueue, ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public function uniqueId(): int {
+        return $this->propertyId;
+    }
 
     public function __construct(protected int $propertyId) {
     }
@@ -40,7 +45,7 @@ class PushPropertyTrafficJob implements ShouldQueue {
         }
 
         if (!$property->odoo) {
-            Log::debug("Property #$this->propertyId is not associated with Odoo");
+            Log::debug("Property #{$property->actor->name} is not associated with Odoo");
             return;
         }
 

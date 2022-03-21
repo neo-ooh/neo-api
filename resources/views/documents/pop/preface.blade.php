@@ -29,5 +29,5 @@
 </section>
 <div class="neo-logo-footer">
     <img class="small-neo-logo"
-         src="{{ resource_path('/logos/main.dark.'.$data->locale.'.svg')  }}" alt="Neo-OOH"/>
+         src="{{ resource_path('/logos/main.dark.png')  }}" alt="Neo-OOH"/>
 </div>

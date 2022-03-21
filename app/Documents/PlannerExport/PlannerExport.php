@@ -97,7 +97,7 @@ class PlannerExport extends XLSXDocument {
         $drawing = new Drawing();
         $drawing->setName('Neo-OOH');
         $drawing->setDescription('Neo Out of Home');
-        $drawing->setPath(resource_path("logos/main.light.en.png"));
+        $drawing->setPath(resource_path("logos/main.light.png"));
         $drawing->setHeight(65);
         $drawing->setWorksheet($this->ws);
         $drawing->setCoordinates('D2');

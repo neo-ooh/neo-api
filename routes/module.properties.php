@@ -158,6 +158,7 @@ Route::group([
     Route::  post("fields-categories", FieldsCategoriesController::class . "@store");
     Route::   get("fields-categories/_by_id", FieldsCategoriesController::class . "@byid");
     Route::   put("fields-categories/{fieldsCategory}", FieldsCategoriesController::class . "@update");
+    Route::put("fields-categories/{fieldsCategory}/_reorder", FieldsCategoriesController::class . "@reorder");
     Route::delete("fields-categories/{fieldsCategory}", FieldsCategoriesController::class . "@destroy");
 
     Route::   get("fields", FieldsController::class . "@index");

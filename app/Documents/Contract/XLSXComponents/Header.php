@@ -13,7 +13,7 @@ class Header extends Component {
     protected Customer $customer;
 
     public function __construct(Order $order, Customer $customer) {
-        $this->order = $order;
+        $this->order    = $order;
         $this->customer = $customer;
     }
 
@@ -24,7 +24,7 @@ class Header extends Component {
         $drawing = new Drawing();
         $drawing->setName('Neo-OOH');
         $drawing->setDescription('Neo Out of Home');
-        $drawing->setPath(resource_path("logos/main.dark.en@2x.png"));
+        $drawing->setPath(resource_path("logos/main.dark.png"));
         $drawing->setHeight(60);
         $drawing->setWorksheet($ws);
         $drawing->setCoordinates('F2');

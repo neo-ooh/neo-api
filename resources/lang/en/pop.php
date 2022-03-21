@@ -18,4 +18,6 @@ return [
     "totals-actual"                => "Actual",
     "totals-bonus"                 => "Guaranteed bonus",
     "totals-bua"                   => "Bonus upon availability",
+
+    "pop-from-broadsign" => "Proof of Performance provided by BroadSign",
 ];

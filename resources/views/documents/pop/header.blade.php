@@ -35,7 +35,7 @@
         <tr>
             <td class="header-company-logo">
                 <img class="header-neo-logo"
-                     src="{{ resource_path('/logos/main.dark.'.$locale.'.svg')  }}" alt="Neo-OOH logo"/>
+                     src="{{ resource_path('/logos/main.dark.png')  }}" alt="Neo-OOH logo"/>
             </td>
             <td class="header-title">
                 {{ $title }}

@@ -17,6 +17,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Creative as BSCreative;
@@ -76,6 +77,10 @@ class DisableBroadSignCreative extends BroadSignJob implements ShouldBeUnique {
 
         $bsCreative->active = false;
         $bsCreative->save();
+
+        Log::channel("activity")->info("broadsign.creative.deactivated", [
+            "external-id" => $bsCreative->id,
+        ]);
     }
 }
 

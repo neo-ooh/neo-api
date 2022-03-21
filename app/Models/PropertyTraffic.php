@@ -27,7 +27,8 @@ class PropertyTraffic extends Model {
     public $incrementing = false;
 
     protected $casts = [
-        "is_estimate" => "boolean"
+        "is_estimate" => "boolean",
+        "year"        => "integer",
     ];
 
     protected $fillable = [

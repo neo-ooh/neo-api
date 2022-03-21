@@ -16,7 +16,7 @@ return new class extends Migration {
     public function up() {
         Schema::table('fields', function (Blueprint $table) {
             $table->boolean("demographic_filled")->default(false)->after("is_filter");
-            $table->string("visualization", 16)->nullable()->after("demographic_filled");
+            $table->string("visualization", 32)->nullable()->after("demographic_filled");
         });
 
         Schema::table('fields_segments', function (Blueprint $table) {

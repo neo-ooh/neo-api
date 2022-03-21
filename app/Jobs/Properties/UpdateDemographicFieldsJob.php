@@ -11,7 +11,7 @@
 namespace Neo\Jobs\Properties;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -24,10 +24,8 @@ use Neo\Models\FieldSegment;
 use Neo\Models\Property;
 use Neo\Models\PropertyFieldSegmentValue;
 
-class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUnique {
+class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
-
-    public $delay = 60;
 
     public function uniqueId() {
         $pId = $this->propertyId ? (string)$this->propertyId : 'all';
@@ -38,6 +36,7 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUnique {
 
     public function __construct(protected int|null $propertyId = null,
                                 protected int|null $fieldId = null) {
+        $this->delay = 30;
     }
 
     public function handle() {

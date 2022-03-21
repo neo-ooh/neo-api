@@ -68,7 +68,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
     }
 
     protected function parseLocations($broadSignLocations) {
-        if (count($broadSignLocations) === 0) {
+        if (!$broadSignLocations || count($broadSignLocations) === 0) {
             return;
         }
 
@@ -109,7 +109,6 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
             $displayType = $this->getDisplayType($bslocation->display_unit_type_id);
 
             // for now, we only identify locations by their externa ID and not their network to prevent erasing the currently stored locations and f***ing up the campaigns.
-            // TODO: Once the deployment is good and everything is running, move the network_id assignment to the  identifying par of the request.
             /** @var Location $location */
             $location = Location::query()->firstOrCreate([
                 "external_id" => $bslocation->id,

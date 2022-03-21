@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\NetworkFields\ListFieldsRequest;
 use Neo\Http\Requests\NetworkFields\UpdateFieldsRequest;
+use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Models\Network;
 
 class NetworkFieldsController {
@@ -22,7 +23,11 @@ class NetworkFieldsController {
 
     public function update(UpdateFieldsRequest $request, Network $network) {
         $entries = collect($request->input("fields"))->mapWithKeys(fn($field) => [$field["field_id"] => ["order" => $field["order"]]]);
-        $network->properties_fields()->sync($entries);
+        $changes = $network->properties_fields()->sync($entries);
+
+        foreach ($changes['attached'] as $fieldId) {
+            UpdateDemographicFieldsJob::dispatch(null, $fieldId);
+        }
 
         return new Response($network->refresh()->properties_fields);
     }

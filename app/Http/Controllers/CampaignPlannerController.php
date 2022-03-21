@@ -18,6 +18,7 @@ use Neo\Http\Resources\CampaignPlannerPropertyResource;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
+use Neo\Models\FieldsCategory;
 use Neo\Models\Network;
 use Neo\Models\ProductCategory;
 use Neo\Models\Property;
@@ -56,7 +57,7 @@ class CampaignPlannerController {
             "traffic",
             "traffic.weekly_data",
             "pictures",
-            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
+            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value"]),
             "tenants"       => fn($q) => $q->select(["id"]),
         ]);
 
@@ -67,15 +68,17 @@ class CampaignPlannerController {
 
         $properties->makeHidden(["weekly_data", "weekly_traffic"]);
 
-        $categories = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
-        $networks   = Network::query()->with(["properties_fields"])->get();
-        $brands     = Brand::query()->with("child_brands:id,parent_id")->get();
+        $categories      = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
+        $fieldCategories = FieldsCategory::query()->get();
+        $networks        = Network::query()->with(["properties_fields"])->get();
+        $brands          = Brand::query()->with("child_brands:id,parent_id")->get();
 
         return [
-            "properties" => CampaignPlannerPropertyResource::collection($properties),
-            "categories" => $categories,
-            "networks"   => $networks,
-            "brands"     => $brands,
+            "properties"        => CampaignPlannerPropertyResource::collection($properties),
+            "categories"        => $categories,
+            "networks"          => $networks,
+            "fields_categories" => $fieldCategories,
+            "brands"            => $brands,
         ];
     }
 }

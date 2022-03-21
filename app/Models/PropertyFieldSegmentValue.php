@@ -16,12 +16,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
- * @property int         $property_id
- * @property int         $fields_segment_id
- * @property double      $value
- * @property double|null $reference_value
- * @property Carbon      $created_at
- * @property Carbon      $updated_at
+ * @property int          $property_id
+ * @property int          $fields_segment_id
+ * @property double       $value
+ * @property double|null  $reference_value
+ * @property integer|null $index
+ * @property Carbon       $created_at
+ * @property Carbon       $updated_at
  */
 class PropertyFieldSegmentValue extends Model {
     use HasCompositePrimaryKey;

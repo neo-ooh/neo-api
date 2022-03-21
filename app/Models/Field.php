@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @property int                      $id
  * @property int|null                 $category_id
+ * @property int                      $order
  * @property string                   $name_en
  * @property string                   $name_fr
  * @property string                   $type One of 'int', 'float' or 'bool'

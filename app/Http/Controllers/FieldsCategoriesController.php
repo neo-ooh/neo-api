@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Lang;
 use Neo\Http\Requests\FieldsCategories\DestroyCategoryRequest;
 use Neo\Http\Requests\FieldsCategories\ListCategoriesByIdRequest;
 use Neo\Http\Requests\FieldsCategories\ListCategoriesRequest;
+use Neo\Http\Requests\FieldsCategories\ReorderFieldsRequest;
 use Neo\Http\Requests\FieldsCategories\StoreCategoryRequest;
 use Neo\Http\Requests\FieldsCategories\UpdateCategoryRequest;
 use Neo\Models\Field;
@@ -46,6 +47,17 @@ class FieldsCategoriesController {
         $fieldsCategory->name_en = $request->input("name_en");
         $fieldsCategory->name_fr = $request->input("name_fr");
         $fieldsCategory->save();
+
+        return new Response($fieldsCategory);
+    }
+
+    public function reorder(ReorderFieldsRequest $request, FieldsCategory $fieldsCategory) {
+        $fieldsIds = $request->input("fields", []);
+        /** @var Field $field */
+        foreach ($fieldsCategory->fields as $field) {
+            $field->order = array_search($field->id, $fieldsIds, true);
+            $field->save();
+        }
 
         return new Response($fieldsCategory);
     }

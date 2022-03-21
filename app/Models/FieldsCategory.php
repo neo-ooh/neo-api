@@ -35,6 +35,6 @@ class FieldsCategory extends Model {
     ];
 
     public function fields(): HasMany {
-        return $this->hasMany(Field::class, "category_id", "id");
+        return $this->hasMany(Field::class, "category_id", "id")->orderBy("order");
     }
 }

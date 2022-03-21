@@ -19,6 +19,8 @@ class UpdateFieldRequest extends FormRequest {
     public function rules(): array {
         return [
             "category_id"        => ["nullable", "exists:fields_categories,id"],
+            "network_ids"        => ["array"],
+            "network_ids.*"      => ["integer", "exists:networks,id"],
             "name_en"            => ["required", "string"],
             "name_fr"            => ["required", "string"],
             "type"               => ["required", Rule::in(["int", "float", "bool"])],

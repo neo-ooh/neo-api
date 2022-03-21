@@ -17,7 +17,6 @@ use Neo\Http\Controllers\FieldsCategoriesController;
 use Neo\Http\Controllers\FieldsController;
 use Neo\Http\Controllers\FieldSegmentsController;
 use Neo\Http\Controllers\MarketsController;
-use Neo\Http\Controllers\NetworkFieldsController;
 use Neo\Http\Controllers\OpeningHoursController;
 use Neo\Http\Controllers\ProductCategoriesController;
 use Neo\Http\Controllers\ProductsController;
@@ -170,9 +169,6 @@ Route::group([
     Route::  post("fields/{field}/segments", FieldSegmentsController::class . "@store");
     Route::   put("fields/{field}/segments/{segment}", FieldSegmentsController::class . "@update");
     Route::delete("fields/{field}/segments/{segment}", FieldSegmentsController::class . "@destroy");
-
-    Route::   get("networks/{network}/fields", NetworkFieldsController::class . "@index");
-    Route::  post("networks/{network}/fields", NetworkFieldsController::class . "@update");
 
     Route::  post("properties/{property}/fields/{field}", PropertiesFieldsSegmentsController::class . "@store");
     Route::delete("properties/{property}/fields/{field}", PropertiesFieldsSegmentsController::class . "@destroy");

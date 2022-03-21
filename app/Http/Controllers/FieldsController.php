@@ -15,6 +15,7 @@ use Neo\Http\Requests\Fields\DestroyFieldRequest;
 use Neo\Http\Requests\Fields\ListFieldsRequest;
 use Neo\Http\Requests\Fields\StoreFieldRequest;
 use Neo\Http\Requests\Fields\UpdateFieldRequest;
+use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Models\Field;
 
 class FieldsController {
@@ -23,7 +24,12 @@ class FieldsController {
     }
 
     public function show(ListFieldsRequest $request, Field $field): Response {
-        return new Response($field->load("category"));
+        $field->load(["category", "networks:id"]);
+
+        $field->network_ids = $field->networks->map(fn($n) => $n->id);
+        $field->makeHidden("networks");
+
+        return new Response($field);
     }
 
     public function store(StoreFieldRequest $request): Response {
@@ -38,6 +44,8 @@ class FieldsController {
             "visualization"      => $request->input("visualization"),
         ]);
         $field->save();
+
+        $field->networks()->sync($request->input("network_ids", []));
 
         // And add a first, default segment
         $field->segments()->create([
@@ -65,6 +73,17 @@ class FieldsController {
         }
 
         $field->save();
+
+        $newNetworks = $field->networks()->sync($request->input("network_ids", []))["attached"];
+
+        // If the field is attached to a new network, we trigger an update of its values
+        if (count($newNetworks) > 0) {
+            UpdateDemographicFieldsJob::dispatch(null, $field->id);
+        }
+
+        $field->load(["category", "networks:id"]);
+        $field->network_ids = $field->networks->map(fn($n) => $n->id);
+        $field->makeHidden("networks");
 
         return new Response($field);
     }

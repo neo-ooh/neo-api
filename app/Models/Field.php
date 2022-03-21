@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -31,6 +32,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon                   $update_at
  *
  * @property Collection<FieldSegment> $segments
+ * @property Collection<Network>      $networks
  */
 class Field extends Model {
     protected $primaryKey = "id";
@@ -54,6 +56,10 @@ class Field extends Model {
     ];
 
     protected $with = ["segments"];
+
+    public function networks(): BelongsToMany {
+        return $this->belongsToMany(Network::class, "fields_networks", "field_id", "network_id");
+    }
 
     public function segments(): HasMany {
         return $this->hasMany(FieldSegment::class, "field_id", "id")->orderBy("order");

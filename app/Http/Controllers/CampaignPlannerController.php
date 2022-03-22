@@ -57,7 +57,7 @@ class CampaignPlannerController {
             "traffic",
             "traffic.weekly_data",
             "pictures",
-            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value"]),
+            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"]),
             "tenants"       => fn($q) => $q->select(["id"]),
         ]);
 

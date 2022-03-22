@@ -86,7 +86,8 @@ class POPData {
                                                  ->toBase()
                                                  ->map(fn(ContractScreenshot $screenshot) => new Screenshot($screenshot));
 
-        $this->values = collect($data["values"])->map(static fn(array $values) => new POPBuyTypeValues($values));
+        $this->values = collect($data["values"])->map(static fn(array $values) => new POPBuyTypeValues($values))
+                                                ->filter(fn(POPBuyTypeValues $values) => $values->networks->count() > 0);
 
         $guaranteedEntries = $this->values->where("type", "===", "guaranteed")->where("show", "=", true);
 

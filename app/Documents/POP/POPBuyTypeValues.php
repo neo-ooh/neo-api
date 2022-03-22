@@ -30,6 +30,10 @@ class POPBuyTypeValues {
 
         $this->networks = collect($data["networks"])->map(fn(array $values) => new POPTypeNetworkValues($values));
 
+        if ($this->networks->count() === 0) {
+            return;
+        }
+
         $this->start_date = $this->networks->min("start_date");
         $this->end_date   = $this->networks->max("end_date");
 

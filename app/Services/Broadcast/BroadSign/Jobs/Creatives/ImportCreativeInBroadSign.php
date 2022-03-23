@@ -98,7 +98,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
                 case "mp4":
                     $attributes["height"]   = $creative->frame->height;
                     $attributes["width"]    = $creative->frame->width;
-                    $attributes["duration"] = $creative->content->duration * 1000;
+                    $attributes["duration"] = $creative->content->duration * 1000; // ms
             }
         }
 

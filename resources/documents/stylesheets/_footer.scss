@@ -12,34 +12,43 @@
 
 footer {
   width : 100%;
+}
 
-  .footer-table {
+.footer {
+  &__table {
     width : 100%;
+
   }
-}
 
-.footer-caption {
-  font-size : .889rem;
-  color     : $dark-grey;
-}
+  &__broadsign-logo {
+    width         : 200px;
+    margin-bottom : 5px;
+  }
 
-.footer-logo {
-  width : 20mm;
+  &__caption {
+    font-size : .889rem;
+    color     : $dark-grey;
+  }
 
-  .footer-company-branding-logo {
+  &__logo {
     width : 20mm;
-  }
-}
 
-.footer-folio {
-  text-align : right;
-
-  &-current {
-    font-size : 1.2rem;
+    &__company-branding-logo {
+      width : 20mm;
+    }
   }
 
-  &-group {
-    font-size : .75rem;
-    color     : $idle-grey;
+  &__folio {
+    text-align     : right;
+    vertical-align : bottom;
+
+    &__current {
+      font-size : 1.2rem;
+    }
+
+    &__group {
+      font-size : .75rem;
+      color     : $idle-grey;
+    }
   }
 }

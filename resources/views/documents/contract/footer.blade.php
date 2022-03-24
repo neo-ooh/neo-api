@@ -1,9 +1,9 @@
 <footer>
-    <table class="footer-table">
+    <table class="footer__table">
         <tr>
-            <td class="footer-folio">
-                <span class="footer-folio-current">{PAGENO}</span>
-                <span class="footer-folio-group">/{nbpg}</span>
+            <td class="footer__folio">
+                <span class="footer__folio__current">{PAGENO}</span>
+                <span class="footer__folio__group">/{nbpg}</span>
             </td>
         </tr>
     </table>

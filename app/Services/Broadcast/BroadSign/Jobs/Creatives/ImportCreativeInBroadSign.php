@@ -10,7 +10,6 @@
 
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Creatives;
 
-use DateInterval;
 use Error;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -99,7 +98,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
                 case "mp4":
                     $attributes["height"]   = $creative->frame->height;
                     $attributes["width"]    = $creative->frame->width;
-                    $attributes["duration"] = (new DateInterval("PT" . $creative->content->duration . "S"))->format("%H:%I:%S");
+                    $attributes["duration"] = $creative->content->duration * 1000; // ms
             }
         }
 

@@ -17,6 +17,8 @@ use Neo\Http\Requests\Fields\StoreFieldRequest;
 use Neo\Http\Requests\Fields\UpdateFieldRequest;
 use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Models\Field;
+use Neo\Models\Property;
+use Neo\Models\PropertyFieldSegmentValue;
 
 class FieldsController {
     public function index(ListFieldsRequest $request): Response {
@@ -74,11 +76,24 @@ class FieldsController {
 
         $field->save();
 
-        $newNetworks = $field->networks()->sync($request->input("network_ids", []))["attached"];
+        $networksDelta = $field->networks()->sync($request->input("network_ids", []));
 
         // If the field is attached to a new network, we trigger an update of its values
-        if (count($newNetworks) > 0) {
+        if (count($networksDelta["attached"]) > 0) {
             UpdateDemographicFieldsJob::dispatch(null, $field->id);
+        }
+
+        // If the field was removed from a network, we need to remove all the values of properties in the detached network
+        // as to prevent polluting.
+        if (count($networksDelta["detached"]) > 0) {
+            $fieldSegmentsId = $field->segments->pluck("id");
+            PropertyFieldSegmentValue::query()
+                                     ->whereIn("property_id", Property::query()
+                                                                      ->whereIn("network_id", $networksDelta['detached'])
+                                                                      ->get("actor_id")
+                                                                      ->pluck("actor_id"))
+                                     ->whereIn("fields_segment_id", $fieldSegmentsId)
+                                     ->delete();
         }
 
         $field->load(["category", "networks:id"]);

@@ -10,13 +10,25 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Neo\Http\Requests\DemograhicValues\ListPipelinesRequest;
 use Neo\Http\Requests\DemograhicValues\StoreDemographicValuesRequest;
 use Neo\Jobs\Demographics\IngestDemographicFileJob;
 use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Models\Property;
 
 class DemographicValuesController {
+    public function listPipelines(ListPipelinesRequest $request) {
+        return new Response([
+            [
+                "slug"    => "environics-default",
+                "name_en" => "Environics - Default",
+                "name_fr" => "Environics - Défaut",
+            ]
+        ]);
+    }
+
     public function store(StoreDemographicValuesRequest $request, Property $property) {
         $files = array_map(null, array_values($request->file("files")), $request->input("formats"));
 

@@ -154,6 +154,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      */
     protected $casts = [
         "is_group"       => "boolean",
+        "is_property"    => "boolean",
         "is_locked"      => "boolean",
         "tos_accepted"   => "boolean",
         "limited_access" => "boolean",

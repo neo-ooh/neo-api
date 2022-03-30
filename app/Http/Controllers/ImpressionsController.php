@@ -28,7 +28,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsController {
-    public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, $displayUnitId) {
+    public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, int $displayUnitId) {
         if (!is_int($displayUnitId)) {
             return new Response(["Invalid display unit id: $displayUnitId"], 400);
         }

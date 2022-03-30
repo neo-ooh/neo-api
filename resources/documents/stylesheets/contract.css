@@ -1,1387 +1,1040 @@
-/*
+/*!
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - contract.css
+ * @neo/api - contract.scss
  */
-
-h1, h2
-{
-    font-family    : "poppins-bold", sans-serif;
-    text-transform : uppercase;
-    margin         : 0;
-    font-size      : 1.125rem;
-}
-
-h1.head
-{
-    margin-bottom  : 0;
-    text-align     : center;
-    color          : #252734;
-    font-size      : 1.5rem;
-    font-family    : "poppins-regular", sans-serif;
-    text-transform : uppercase;
-}
-
-.subtitle.head
-{
-    margin-top     : -3mm;
-    text-align     : center;
-    text-transform : uppercase;
-    font-size      : 0.8rem;
-    font-family    : "poppins-bold", sans-serif;
-}
-
-h2.head
-{
-    text-transform : uppercase;
-    font-size      : 1.125rem;
-    font-weight    : 500;
-    margin-bottom  : 0;
-}
-
-.shopping
-{
-    color : #3e9cca;
-}
-
-.otg
-{
-    color : #e5782c;
-}
-
-.fitness
-{
-    color : #d63641;
-}
-
-header
-{
-    margin : -5mm 0 3mm;
-    width  : 100%;
-}
-
-header .header-table
-{
-    margin-top : -10mm;
-    width      : 100%;
-}
-
-.header-company-logo
-{
-    width : 40mm;
-}
-
-.header-neo-logo
-{
-    width : 40mm;
-}
-
-.header-title
-{
-    text-align  : center;
-    font-family : "poppins-extra-light", sans-serif;
-    font-size   : 24pt;
-}
-
-.header-contract
-{
-    width : 70mm;
-}
-
-.header-contract-data
-{
-    width           : 80mm;
-    border-collapse : collapse;
-}
-
-.header-contract-data tr td
-{
-    border-bottom : 1px solid #000000;
-    font-size     : 8pt;
-}
-
-.header-contract-data tr td:nth-child(1)
-{
-    border-right : 1px solid #000000;
-    padding      : 0.5mm 1mm 0.5mm 0;
-    white-space  : nowrap;
-    width        : 35mm;
-}
-
-.header-contract-data tr td:nth-child(2)
-{
-    padding : 0.5mm 0 0.5mm 1mm;
-}
-
-.header-contract-data tr.last td
-{
-    border-bottom : none;
-}
-
-.header-contract-data-label
-{
-    font-family : "poppins-light", sans-serif;
-    text-align  : right;
-}
-
-.header-contract-data-value
-{
-    font-weight : bold;
-}
-
-footer
-{
-    width : 100%;
-}
-
-footer .footer-table
-{
-    width : 100%;
-}
-
-.footer-logo
-{
-    width : 20mm;
-}
-
-.footer-logo .footer-company-branding-logo
-{
-    width : 20mm;
-}
-
-.footer-folio
-{
-    text-align : right;
-}
-
-.footer-folio-current
-{
-    font-size : 1.2rem;
-}
-
-.footer-folio-group
-{
-    font-size : 0.75rem;
-    color     : #888888;
-}
-
-.broadcast-periods-table
-{
-    margin : -1.5mm 0 3mm -1mm;
-}
-
-.broadcast-periods-table.no-space-after
-{
-    margin-bottom : 0;
-}
-
-.broadcast-periods-table tr td
-{
-    font-style     : italic;
-    vertical-align : top;
-    font-size      : 9pt;
-}
-
-.broadcast-periods-table tr td.label
-{
-    font-weight : bold;
-}
-
-.broadcast-periods-table tr td.periods-col
-{
-    padding-left : 3mm;
-}
-
-@page
-{
-    size             : portrait;
-    background-color : #FFFFFF;
-    margin-left      : 15mm;
-    margin-right     : 15mm;
-    header           : html_default_header;
-    footer           : html_default_footer;
-}
-
-.contract-home-page h1
-{
-    margin-bottom : 0;
-    text-align    : center;
-    color         : #252734;
-    font-size     : 1.5rem;
-    font-family   : "poppins-regular", sans-serif;
-}
-
-.contract-home-page h2
-{
-    text-transform : uppercase;
-    font-size      : 10.5pt;
-    font-family    : "poppins-regular", sans-serif;
-    margin-bottom  : 0;
-}
-
-.contract-home-page h2.center
-{
-    text-align : center;
-}
-
-.contract-home-page h3
-{
-    text-align : center;
-    margin-top : -2mm;
-}
-
-.contract-home-page h3.small
-{
-    font-size : 9pt;
-}
-
-.contract-home-page .contract-party
-{
-    font-size : 9pt;
-}
-
-.contract-home-page .contract-party-left-column
-{
-    width          : 35mm;
-    float          : left;
-    font-size      : 12pt;
-    text-transform : uppercase;
-}
-
-.contract-home-page .contract-party-right-column
-{
-    float : left;
-}
-
-.contract-home-page .contract-party-right-column .party-infos
-{
-    font-size       : 9pt;
-    border-collapse : collapse;
-}
-
-.contract-home-page .contract-party-right-column .party-infos tr td:nth-child(2)
-{
-    padding-left : 2mm;
-    font-family  : "poppins-bold";
-    color        : #252734;
-}
-
-.contract-home-page .contract-party .first-party-name
-{
-    line-height : 1.3;
-    margin-top  : 0;
-}
-
-.contract-home-page .contract-party .first-party-name strong
-{
-    font-family : "poppins-bold";
-}
-
-.contract-home-page .contract-party.second-party
-{
-    margin-top : 4mm;
-}
-
-.contract-home-page .payable-contact
-{
-    width           : 200mm;
-    margin-top      : 6mm;
-    border-collapse : collapse;
-    border          : 1px solid #252734;
-    font-size       : 9pt;
-}
-
-.contract-home-page .payable-contact tr th
-{
-    height           : 8mm;
-    padding          : 0 4mm;
-    background-color : #252734;
-    color            : #FFFFFF;
-    text-align       : left;
-}
-
-.contract-home-page .payable-contact tr td
-{
-    height        : 8mm;
-    border-bottom : 1px solid #595959;
-}
-
-.contract-home-page .payable-contact tr td:nth-child(1)
-{
-    width        : 38mm;
-    padding      : 0 2mm;
-    text-align   : right;
-    border-right : 1px solid #595959;
-}
-
-.contract-home-page .payable-contact tr td:nth-child(2)
-{
-    background-color : #EEEEEE;
-}
-
-.contract-home-page .payable-contact tr td.invoice-type-cell
-{
-    padding-left : 3mm;
-}
-
-.contract-home-page .costs-recap
-{
-    margin-top : 3mm;
-}
-
-.contract-home-page .costs-recap p
-{
-    margin    : 0;
-    font-size : 10pt;
-}
-
-.contract-home-page .costs-recap .investment-label
-{
-    margin-top : 0;
-    width      : 50mm;
-}
-
-.contract-home-page .costs-recap .costs-recap-table
-{
-    margin-top      : -5mm;
-    margin-left     : 50mm;
-    width           : 80mm;
-    border-collapse : collapse;
-    border          : 1px solid #252734;
-    font-size       : 9pt;
-}
-
-.contract-home-page .costs-recap .costs-recap-table tr td, .contract-home-page .costs-recap .costs-recap-table tr th
-{
-    height  : 6mm;
-    padding : 0 2mm;
-}
-
-.contract-home-page .costs-recap .costs-recap-table tr td:nth-child(1)
-{
-    border-right : 1px solid #252734;
-}
-
-.contract-home-page .costs-recap .costs-recap-table tr td:nth-child(2)
-{
-    background-color : #EEEEEE;
-    text-align       : right;
-}
-
-.contract-home-page .costs-recap .costs-recap-table tr td.value.row-1
-{
-    border-bottom : 1px solid #252734;
-}
-
-.contract-home-page .costs-recap .costs-recap-table tr.footer th
-{
-    text-transform   : uppercase;
-    background-color : #252734;
-    color            : #FFFFFF;
-}
-
-.contract-home-page .costs-recap .costs-recap-table tr.footer th:nth-child(2)
-{
-    text-align : right;
-}
-
-.contract-home-page .payable-accounts-wrapper
-{
-    margin-top : 3mm;
-}
-
-.contract-home-page .payable-accounts
-{
-    margin-top  : -6.5mm;
-    margin-left : 50mm;
-}
-
-.contract-home-page .payable-accounts .payable-account-email
-{
-    font-family : "poppins-bold";
-    font-weight : bold;
-    margin-left : 5mm;
-}
-
-.contract-home-page .payment-terms
-{
-    margin-top : 3mm;
-}
-
-.contract-home-page .payment-terms .payment-steps
-{
-    margin-top    : -6.5mm;
-    margin-left   : 50mm;
-    margin-bottom : 5mm;
-}
-
-.contract-home-page .payment-terms .payment-steps tr td:nth-child(1)
-{
-    padding-right : 5mm;
-    font-family   : "poppins-bold";
-    font-weight   : bold;
-    text-align    : right;
-}
-
-.contract-home-page .payment-terms .payment-steps tr td:nth-child(3)
-{
-    padding-left : 5mm;
-    font-family  : "poppins-bold";
-    font-weight  : bold;
-}
-
-.contract-home-page .payment-terms ul
-{
-    margin-top : -2mm;
-}
-
-.contract-home-page .payment-terms ul li
-{
-    font-size   : 9pt;
-    line-height : 1.6;
-}
-
-.contract-home-page .payment-terms ul li strong
-{
-    font-family : "poppins-bold";
-}
-
-.contract-home-page .intervention h2
-{
-    margin : 0;
-}
-
-.contract-home-page .intervention p
-{
-    margin      : 0;
-    font-size   : 9pt;
-    line-height : 1.6;
-}
-
-.contract-home-page .signatures
-{
-    border-collapse : collapse;
-    border          : 1px solid #252734;
-    width           : 200mm;
-    font-size       : 9pt;
-    margin-top      : 5mm;
-}
-
-.contract-home-page .signatures tr td, .contract-home-page .signatures tr th
-{
-    height : 8mm;
-}
-
-.contract-home-page .signatures tr.header th
-{
-    padding        : 0 2mm;
-    border-bottom  : 1px solid #252734;
-    text-transform : uppercase;
-    text-align     : left;
-}
-
-.contract-home-page .signatures tr .v-separator, .contract-home-page .signatures tr .end-spacing
-{
-    width : 10mm;
-}
-
-.contract-home-page .signatures tr.client-top-row td:nth-child(1), .contract-home-page .signatures tr.neo-top-row td:nth-child(1)
-{
-    padding : 0 2mm;
-    width   : 65mm;
-}
-
-.contract-home-page .signatures tr.client-top-row td.date-placeholder, .contract-home-page .signatures tr.neo-top-row td.date-placeholder
-{
-    border-bottom : 1px solid #BBBBBB;
-}
-
-.contract-home-page .signatures tr.client-top-row td.signed-by, .contract-home-page .signatures tr.neo-top-row td.signed-by
-{
-    width   : 16mm;
-    padding : 0 2mm;
-}
-
-.contract-home-page .signatures tr.client-top-row td.signature-placeholder, .contract-home-page .signatures tr.neo-top-row td.signature-placeholder
-{
-    width         : 55mm;
-    border-bottom : 1px solid #BBBBBB;
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _fonts.scss
+ */
+h1, h2 {
+  font-family: "poppins-bold";
+  text-transform: uppercase;
+  margin: 0;
+  font-size: 1.125rem;
+}
+
+h1.head {
+  margin-bottom: 0;
+  text-align: center;
+  color: #252734;
+  font-size: 1.5rem;
+  font-family: "poppins-regular";
+  text-transform: uppercase;
+}
+
+.subtitle.head {
+  margin-top: -3mm;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  font-family: "poppins-bold";
+}
+
+h2.head {
+  text-transform: uppercase;
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin-bottom: 0;
+}
+
+.shopping {
+  color: #3e9cca;
+}
+
+.otg {
+  color: #e5782c;
+}
+
+.fitness {
+  color: #d63641;
+}
+
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _header.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _fonts.scss
+ */
+header {
+  margin: -5mm 0 3mm;
+  width: 100%;
+}
+header .header-table {
+  margin-top: -10mm;
+  width: 100%;
+}
+
+.header-company-logo {
+  width: 40mm;
+}
+.header-neo-logo {
+  width: 40mm;
+}
+.header-title {
+  text-align: center;
+  font-family: "poppins-extra-light";
+  font-size: 24pt;
+}
+.header-contract {
+  width: 70mm;
+}
+.header-contract-data {
+  width: 80mm;
+  border-collapse: collapse;
+}
+.header-contract-data tr td {
+  border-bottom: 1px solid #000000;
+  font-size: 8pt;
+}
+.header-contract-data tr td:nth-child(1) {
+  border-right: 1px solid #000000;
+  padding: 0.5mm 1mm 0.5mm 0;
+  white-space: nowrap;
+  width: 35mm;
+}
+.header-contract-data tr td:nth-child(2) {
+  padding: 0.5mm 0 0.5mm 1mm;
+}
+.header-contract-data tr.last td {
+  border-bottom: none;
+}
+.header-contract-data-label {
+  font-family: "poppins-light";
+  text-align: right;
+}
+.header-contract-data-value {
+  font-weight: bold;
+}
+
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _footer.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _colors.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _fonts.scss
+ */
+footer {
+  width: 100%;
+}
+
+.footer__table {
+  width: 100%;
+}
+.footer__broadsign-logo {
+  width: 200px;
+  margin-bottom: 5px;
+}
+.footer__caption {
+  font-size: 0.889rem;
+  color: #595959;
+}
+.footer__logo {
+  width: 20mm;
+}
+.footer__logo__company-branding-logo {
+  width: 20mm;
+}
+.footer__folio {
+  text-align: right;
+  vertical-align: bottom;
+}
+.footer__folio__current {
+  font-size: 1.2rem;
+}
+.footer__folio__group {
+  font-size: 0.75rem;
+  color: #888888;
+}
+
+.broadcast-periods-table {
+  margin: -1.5mm 0 3mm -1mm;
+}
+.broadcast-periods-table.no-space-after {
+  margin-bottom: 0;
+}
+.broadcast-periods-table tr td {
+  font-style: italic;
+  vertical-align: top;
+  font-size: 9pt;
+}
+.broadcast-periods-table tr td.label {
+  font-weight: bold;
+}
+.broadcast-periods-table tr td.periods-col {
+  padding-left: 3mm;
+}
+
+@page {
+  size: portrait;
+  background-color: #FFFFFF;
+  margin-left: 15mm;
+  margin-right: 15mm;
+  header: html_default_header;
+  footer: html_default_footer;
+}
+.contract-home-page h1 {
+  margin-bottom: 0;
+  text-align: center;
+  color: #252734;
+  font-size: 1.5rem;
+  font-family: "poppins-regular";
+}
+.contract-home-page h2 {
+  text-transform: uppercase;
+  font-size: 10.5pt;
+  font-weight: "poppins-regular";
+  margin-bottom: 0;
+}
+.contract-home-page h2.center {
+  text-align: center;
+}
+.contract-home-page h3 {
+  text-align: center;
+  margin-top: -2mm;
+}
+.contract-home-page h3.small {
+  font-size: 9pt;
+}
+.contract-home-page .contract-party {
+  font-size: 9pt;
+}
+.contract-home-page .contract-party-left-column {
+  width: 35mm;
+  float: left;
+  font-size: 12pt;
+  text-transform: uppercase;
+}
+.contract-home-page .contract-party-right-column {
+  float: left;
+}
+.contract-home-page .contract-party-right-column .party-infos {
+  font-size: 9pt;
+  border-collapse: collapse;
+}
+.contract-home-page .contract-party-right-column .party-infos tr td:nth-child(2) {
+  padding-left: 2mm;
+  font-family: "poppins-bold";
+  color: #252734;
+}
+.contract-home-page .contract-party .first-party-name {
+  line-height: 1.3;
+  margin-top: 0;
+}
+.contract-home-page .contract-party .first-party-name strong {
+  font-family: "poppins-bold";
+}
+.contract-home-page .contract-party.second-party {
+  margin-top: 4mm;
+}
+.contract-home-page .payable-contact {
+  width: 200mm;
+  margin-top: 6mm;
+  border-collapse: collapse;
+  border: 1px solid #252734;
+  font-size: 9pt;
+}
+.contract-home-page .payable-contact tr th {
+  height: 8mm;
+  padding: 0 4mm;
+  background-color: #252734;
+  color: #FFFFFF;
+  text-align: left;
+}
+.contract-home-page .payable-contact tr td {
+  height: 8mm;
+  border-bottom: 1px solid #595959;
+}
+.contract-home-page .payable-contact tr td:nth-child(1) {
+  width: 38mm;
+  padding: 0 2mm;
+  text-align: right;
+  border-right: 1px solid #595959;
+}
+.contract-home-page .payable-contact tr td:nth-child(2) {
+  background-color: #EEEEEE;
+}
+.contract-home-page .payable-contact tr td.invoice-type-cell {
+  padding-left: 3mm;
+}
+.contract-home-page .costs-recap {
+  margin-top: 3mm;
+}
+.contract-home-page .costs-recap p {
+  margin: 0;
+  font-size: 10pt;
+}
+.contract-home-page .costs-recap .investment-label {
+  margin-top: 0;
+  width: 50mm;
+}
+.contract-home-page .costs-recap .costs-recap-table {
+  margin-top: -5mm;
+  margin-left: 50mm;
+  width: 80mm;
+  border-collapse: collapse;
+  border: 1px solid #252734;
+  font-size: 9pt;
+}
+.contract-home-page .costs-recap .costs-recap-table tr td, .contract-home-page .costs-recap .costs-recap-table tr th {
+  height: 6mm;
+  padding: 0 2mm;
+}
+.contract-home-page .costs-recap .costs-recap-table tr td:nth-child(1) {
+  border-right: 1px solid #252734;
+}
+.contract-home-page .costs-recap .costs-recap-table tr td:nth-child(2) {
+  background-color: #EEEEEE;
+  text-align: right;
+}
+.contract-home-page .costs-recap .costs-recap-table tr td.value.row-1 {
+  border-bottom: 1px solid #252734;
+}
+.contract-home-page .costs-recap .costs-recap-table tr.footer th {
+  text-transform: uppercase;
+  background-color: #252734;
+  color: #FFFFFF;
+}
+.contract-home-page .costs-recap .costs-recap-table tr.footer th:nth-child(2) {
+  text-align: right;
+}
+.contract-home-page .payable-accounts-wrapper {
+  margin-top: 3mm;
+}
+.contract-home-page .payable-accounts {
+  margin-top: -6.5mm;
+  margin-left: 50mm;
+}
+.contract-home-page .payable-accounts .payable-account-email {
+  font-family: "poppins-bold";
+  font-weight: bold;
+  margin-left: 5mm;
+}
+.contract-home-page .payment-terms {
+  margin-top: 3mm;
+}
+.contract-home-page .payment-terms .payment-steps {
+  margin-top: -6.5mm;
+  margin-left: 50mm;
+  margin-bottom: 5mm;
+}
+.contract-home-page .payment-terms .payment-steps tr td:nth-child(1) {
+  padding-right: 5mm;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: right;
+}
+.contract-home-page .payment-terms .payment-steps tr td:nth-child(3) {
+  padding-left: 5mm;
+  font-family: "poppins-bold";
+  font-weight: bold;
+}
+.contract-home-page .payment-terms ul {
+  margin-top: -2mm;
+}
+.contract-home-page .payment-terms ul li {
+  font-size: 9pt;
+  line-height: 1.6;
+}
+.contract-home-page .payment-terms ul li strong {
+  font-family: "poppins-bold";
+}
+.contract-home-page .intervention h2 {
+  margin: 0;
+}
+.contract-home-page .intervention p {
+  margin: 0;
+  font-size: 9pt;
+  line-height: 1.6;
+}
+.contract-home-page .signatures {
+  border-collapse: collapse;
+  border: 1px solid #252734;
+  width: 200mm;
+  font-size: 9pt;
+  margin-top: 5mm;
+}
+.contract-home-page .signatures tr td, .contract-home-page .signatures tr th {
+  height: 8mm;
+}
+.contract-home-page .signatures tr.header th {
+  padding: 0 2mm;
+  border-bottom: 1px solid #252734;
+  text-transform: uppercase;
+  text-align: left;
+}
+.contract-home-page .signatures tr .v-separator, .contract-home-page .signatures tr .end-spacing {
+  width: 10mm;
+}
+.contract-home-page .signatures tr.client-top-row td:nth-child(1), .contract-home-page .signatures tr.neo-top-row td:nth-child(1) {
+  padding: 0 2mm;
+  width: 65mm;
+}
+.contract-home-page .signatures tr.client-top-row td.date-placeholder, .contract-home-page .signatures tr.neo-top-row td.date-placeholder {
+  border-bottom: 1px solid #BBBBBB;
+}
+.contract-home-page .signatures tr.client-top-row td.signed-by, .contract-home-page .signatures tr.neo-top-row td.signed-by {
+  width: 16mm;
+  padding: 0 2mm;
+}
+.contract-home-page .signatures tr.client-top-row td.signature-placeholder, .contract-home-page .signatures tr.neo-top-row td.signature-placeholder {
+  width: 55mm;
+  border-bottom: 1px solid #BBBBBB;
+}
+.contract-home-page .signatures tr.client-bottom-row td.date, .contract-home-page .signatures tr.client-bottom-row td.client-name, .contract-home-page .signatures tr.neo-bottom-row td.date, .contract-home-page .signatures tr.neo-bottom-row td.client-name {
+  text-align: center;
+}
+.contract-home-page .signatures tr.client-bottom-row td {
+  border-bottom: 1px solid #252734;
+}
+.contract-home-page .signatures tr.client-top-row .v-separator, .contract-home-page .signatures tr.client-bottom-row .v-separator {
+  border-right: 1px solid #595959;
+}
+.contract-home-page .signatures tr.client-top-row .signed-by, .contract-home-page .signatures tr.client-top-row .signed-by-spacer, .contract-home-page .signatures tr.client-top-row .signature-placeholder, .contract-home-page .signatures tr.client-top-row .client-name, .contract-home-page .signatures tr.client-top-row .end-spacing, .contract-home-page .signatures tr.client-bottom-row .signed-by, .contract-home-page .signatures tr.client-bottom-row .signed-by-spacer, .contract-home-page .signatures tr.client-bottom-row .signature-placeholder, .contract-home-page .signatures tr.client-bottom-row .client-name, .contract-home-page .signatures tr.client-bottom-row .end-spacing {
+  background-color: #EEEEEE;
+}
+
+#general-conditions {
+  border-top: 1px solid #EEEEEE;
+}
+#general-conditions h1 {
+  text-align: center;
+  color: #252734;
+  font-size: 1.5rem;
+  font-family: "poppins-regular";
+}
+#general-conditions h2 {
+  text-transform: uppercase;
+  font-size: 14pt;
+  font-weight: "poppins-regular";
+  margin-bottom: 0;
+}
+#general-conditions p {
+  font-size: 9pt;
+}
+#general-conditions .signature {
+  margin-top: 20mm;
+  border-collapse: collapse;
+  font-size: 9pt;
+}
+#general-conditions .signature tr td:nth-child(1) {
+  padding-right: 5mm;
+}
+#general-conditions .signature tr td.date-placeholder {
+  width: 25mm;
+  border-bottom: 1px solid #888888;
+}
+#general-conditions .signature tr td:nth-child(3) {
+  padding: 0 5mm;
+}
+#general-conditions .signature tr td.signature-placeholder {
+  width: 50mm;
+  border-bottom: 1px solid #888888;
+}
+#general-conditions .signature .date-placeholder {
+  border-left: 5mm solid #FFFFFF;
+  border-right: 5mm solid #FFFFFF;
+}
+
+.summary-purchases-table {
+  border-collapse: collapse;
+  margin-bottom: 5mm;
+}
+.summary-purchases-table thead tr th {
+  width: 24.5mm;
+  padding: 2mm 1mm;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  text-align: center;
+  font-size: 0.85em;
+  background-color: #252734;
+  border-left: 1px solid #FFFFFF;
+}
+.summary-purchases-table thead tr th:nth-child(1) {
+  width: 39mm;
+  border-left: none;
+}
+.summary-purchases-table tbody tr td {
+  padding: 3mm 0;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  text-align: center;
+  font-size: 0.889em;
+  border-left: 1px solid #FFFFFF;
+  border-top: 1px solid #FFFFFF;
+}
+.summary-purchases-table tbody tr td:nth-child(1) {
+  border-left: none;
+}
+.summary-purchases-table tbody tr.shopping td {
+  background-color: #3e9cca;
+}
+.summary-purchases-table tbody tr.otg td {
+  background-color: #e5782c;
+}
+.summary-purchases-table tbody tr.fitness td {
+  background-color: #d63641;
+}
+.summary-purchases-table tfoot tr td {
+  padding: 4mm 0;
+  color: #252734;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+  font-size: 0.889em;
+}
+
+.extension-strategy-cpm {
+  width: 100%;
+  text-align: right;
+  font-style: italic;
+  font-size: 0.889rem;
+}
+
+.audience-extension-table {
+  border-spacing: 0;
+  width: 100%;
+  margin-bottom: 5mm;
+}
+.audience-extension-table thead tr th {
+  width: 24.5mm;
+  padding: 2mm 1mm;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  text-align: center;
+  font-size: 0.85em;
+  background-color: #252734;
+  border-left: 1px solid #FFFFFF;
+}
+.audience-extension-table thead tr th:nth-child(1) {
+  border-left: none;
+}
+.audience-extension-table tbody tr td {
+  padding: 2mm 0;
+  color: #000000;
+  text-align: center;
+  font-size: 0.79em;
+  border-bottom: 1px solid #252734;
+  border-left: 1px solid #FFFFFF;
+  border-top: 1px solid #FFFFFF;
+}
+.audience-extension-table tbody tr td:nth-child(1) {
+  border-left: none;
+}
+.audience-extension-table tbody tr.strategy-type-row td {
+  padding: 0.5mm 0;
+  text-align: center;
+  border-bottom: none;
+  font-size: 0.889em;
+  color: #FFFFFF;
+  background-color: #252734;
+  border-top: 1px solid #FFFFFF;
+}
+
+.detailed-purchases-title {
+  margin-bottom: 0;
+  text-transform: uppercase;
+  font-size: 14pt;
+}
+.detailed-purchases-title .shopping {
+  color: #3e9cca;
+}
+.detailed-purchases-title .otg {
+  color: #e5782c;
+}
+.detailed-purchases-title .fitness {
+  color: #d63641;
 }
-
-.contract-home-page .signatures tr.client-bottom-row td.date, .contract-home-page .signatures tr.client-bottom-row td.client-name, .contract-home-page .signatures tr.neo-bottom-row td.date, .contract-home-page .signatures tr.neo-bottom-row td.client-name
-{
-    text-align : center;
-}
-
-.contract-home-page .signatures tr.client-bottom-row td
-{
-    border-bottom : 1px solid #252734;
-}
-
-.contract-home-page .signatures tr.client-top-row .v-separator, .contract-home-page .signatures tr.client-bottom-row .v-separator
-{
-    border-right : 1px solid #595959;
-}
-
-.contract-home-page .signatures tr.client-top-row .signed-by, .contract-home-page .signatures tr.client-top-row .signed-by-spacer, .contract-home-page .signatures tr.client-top-row .signature-placeholder, .contract-home-page .signatures tr.client-top-row .client-name, .contract-home-page .signatures tr.client-top-row .end-spacing, .contract-home-page .signatures tr.client-bottom-row .signed-by, .contract-home-page .signatures tr.client-bottom-row .signed-by-spacer, .contract-home-page .signatures tr.client-bottom-row .signature-placeholder, .contract-home-page .signatures tr.client-bottom-row .client-name, .contract-home-page .signatures tr.client-bottom-row .end-spacing
-{
-    background-color : #EEEEEE;
-}
-
-#general-conditions
-{
-    border-top : 1px solid #EEEEEE;
-}
-
-#general-conditions h1
-{
-    text-align  : center;
-    color       : #252734;
-    font-size   : 1.5rem;
-    font-family : "poppins-regular", sans-serif;
-}
-
-#general-conditions h2
-{
-    text-transform : uppercase;
-    font-size      : 14pt;
-    font-family    : "poppins-regular", sans-serif;
-    margin-bottom  : 0;
-}
-
-#general-conditions p
-{
-    font-size : 9pt;
-}
-
-#general-conditions .signature
-{
-    margin-top      : 20mm;
-    border-collapse : collapse;
-    font-size       : 9pt;
-}
-
-#general-conditions .signature tr td:nth-child(1)
-{
-    padding-right : 5mm;
-}
-
-#general-conditions .signature tr td.date-placeholder
-{
-    width         : 25mm;
-    border-bottom : 1px solid #888888;
-}
-
-#general-conditions .signature tr td:nth-child(3)
-{
-    padding : 0 5mm;
-}
-
-#general-conditions .signature tr td.signature-placeholder
-{
-    width         : 50mm;
-    border-bottom : 1px solid #888888;
-}
-
-#general-conditions .signature .date-placeholder
-{
-    border-left  : 5mm solid #FFFFFF;
-    border-right : 5mm solid #FFFFFF;
-}
-
-.summary-purchases-table
-{
-    border-collapse : collapse;
-    margin-bottom   : 5mm;
-}
-
-.summary-purchases-table thead tr th
-{
-    width            : 24.5mm;
-    padding          : 2mm 1mm;
-    color            : #FFFFFF;
-    font-family      : "poppins-bold";
-    text-align       : center;
-    font-size        : 0.85em;
-    background-color : #252734;
-    border-left      : 1px solid #FFFFFF;
-}
-
-.summary-purchases-table thead tr th:nth-child(1)
-{
-    width       : 39mm;
-    border-left : none;
-}
-
-.summary-purchases-table tbody tr td
-{
-    padding     : 3mm 0;
-    color       : #FFFFFF;
-    font-family : "poppins-bold";
-    text-align  : center;
-    font-size   : 0.889em;
-    border-left : 1px solid #FFFFFF;
-    border-top  : 1px solid #FFFFFF;
-}
-
-.summary-purchases-table tbody tr td:nth-child(1)
-{
-    border-left : none;
-}
-
-.summary-purchases-table tbody tr.shopping td
-{
-    background-color : #3e9cca;
-}
-
-.summary-purchases-table tbody tr.otg td
-{
-    background-color : #e5782c;
+
+.detailed-purchases-wrapper {
+  border-collapse: collapse;
+  margin: 0;
 }
-
-.summary-purchases-table tbody tr.fitness td
-{
-    background-color : #d63641;
-}
-
-.summary-purchases-table tfoot tr td
-{
-    padding     : 4mm 0;
-    color       : #252734;
-    font-family : "poppins-bold";
-    font-weight : bold;
-    text-align  : center;
-    font-size   : 0.889em;
-}
-
-.extension-strategy-cpm
-{
-    width      : 100%;
-    text-align : right;
-    font-style : italic;
-    font-size  : 0.889rem;
-}
-
-.audience-extension-table
-{
-    border-spacing : 0;
-    width          : 100%;
-    margin-bottom  : 5mm;
-}
-
-.audience-extension-table thead tr th
-{
-    width            : 24.5mm;
-    padding          : 2mm 1mm;
-    color            : #FFFFFF;
-    font-family      : "poppins-bold";
-    text-align       : center;
-    font-size        : 0.85em;
-    background-color : #252734;
-    border-left      : 1px solid #FFFFFF;
-}
-
-.audience-extension-table thead tr th:nth-child(1)
-{
-    border-left : none;
-}
-
-.audience-extension-table tbody tr td
-{
-    padding       : 2mm 0;
-    color         : #000000;
-    text-align    : center;
-    font-size     : 0.79em;
-    border-bottom : 1px solid #252734;
-    border-left   : 1px solid #FFFFFF;
-    border-top    : 1px solid #FFFFFF;
-}
-
-.audience-extension-table tbody tr td:nth-child(1)
-{
-    border-left : none;
-}
-
-.audience-extension-table tbody tr.strategy-type-row td
-{
-    padding          : 0.5mm 0;
-    text-align       : center;
-    border-bottom    : none;
-    font-size        : 0.889em;
-    color            : #FFFFFF;
-    background-color : #252734;
-    border-top       : 1px solid #FFFFFF;
-}
-
-.detailed-purchases-title
-{
-    margin-bottom  : 0;
-    text-transform : uppercase;
-    font-size      : 14pt;
-}
-
-.detailed-purchases-title .shopping
-{
-    color : #3e9cca;
-}
-
-.detailed-purchases-title .otg
-{
-    color : #e5782c;
-}
-
-.detailed-purchases-title .fitness
-{
-    color : #d63641;
+.detailed-purchases-wrapper tr td, .detailed-purchases-wrapper tr th {
+  padding: 0;
 }
-
-.detailed-purchases-wrapper
-{
-    border-collapse : collapse;
-    margin          : 0;
-}
-
-.detailed-purchases-wrapper tr td, .detailed-purchases-wrapper tr th
-{
-    padding : 0;
-}
-
-.detailed-purchases-wrapper tr.spacer-row td
-{
-    height : 2mm;
+.detailed-purchases-wrapper tr.spacer-row td {
+  height: 2mm;
 }
 
-.detailed-purchases-table
-{
-    border-collapse : collapse;
+.detailed-purchases-table {
+  border-collapse: collapse;
 }
-
-.detailed-purchases-table tr td, .detailed-purchases-table tr th
-{
-    width : 25mm;
+.detailed-purchases-table tr td, .detailed-purchases-table tr th {
+  width: 25mm;
 }
-
-.detailed-purchases-table tr td:nth-child(1), .detailed-purchases-table tr th:nth-child(1)
-{
-    width : 57.5mm;
+.detailed-purchases-table tr td:nth-child(1), .detailed-purchases-table tr th:nth-child(1) {
+  width: 57.5mm;
 }
-
-.detailed-purchases-table tr td.larger, .detailed-purchases-table tr th.larger
-{
-    width : 120mm;
+.detailed-purchases-table tr td.larger, .detailed-purchases-table tr th.larger {
+  width: 120mm;
 }
-
-.detailed-purchases-table tr td:nth-child(2), .detailed-purchases-table tr th:nth-child(2)
-{
-    width : 40mm;
+.detailed-purchases-table tr td:nth-child(2), .detailed-purchases-table tr th:nth-child(2) {
+  width: 40mm;
 }
-
-.detailed-purchases-table tr td.investment-col, .detailed-purchases-table tr th.investment-col
-{
-    width : 27.5mm;
+.detailed-purchases-table tr td.investment-col, .detailed-purchases-table tr th.investment-col {
+  width: 27.5mm;
 }
-
-.detailed-purchases-table tr.without-invest td:nth-child(1), .detailed-purchases-table tr.without-invest th:nth-child(1)
-{
-    width : 110mm;
+.detailed-purchases-table tr.without-invest td:nth-child(1), .detailed-purchases-table tr.without-invest th:nth-child(1) {
+  width: 110mm;
 }
-
-.detailed-purchases-table tr.without-invest td:nth-child(2), .detailed-purchases-table tr.without-invest th:nth-child(2)
-{
-    width : 50mm;
+.detailed-purchases-table tr.without-invest td:nth-child(2), .detailed-purchases-table tr.without-invest th:nth-child(2) {
+  width: 50mm;
 }
-
-.detailed-purchases-table tr th
-{
-    padding          : 2mm 0;
-    background-color : #252734;
-    color            : #FFFFFF;
-    font-family      : "poppins-bold";
-    font-weight      : bold;
-    text-align       : center;
-    font-size        : 9pt;
-    border-right     : 2px solid #FFFFFF;
+.detailed-purchases-table tr th {
+  padding: 2mm 0;
+  background-color: #252734;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+  font-size: 9pt;
+  border-right: 2px solid #FFFFFF;
 }
-
-.detailed-purchases-table tr th:nth-child(11), .detailed-purchases-table tr th.last
-{
-    border-right : none;
+.detailed-purchases-table tr th:nth-child(11), .detailed-purchases-table tr th.last {
+  border-right: none;
 }
 
-.region-row-wrapper
-{
-    margin : 0;
+.region-row-wrapper {
+  margin: 0;
 }
 
-.region-row-table
-{
-    border-collapse : collapse;
-    padding         : 0;
+.region-row-table {
+  border-collapse: collapse;
+  padding: 0;
 }
-
-.region-row-table tr td
-{
-    font-size        : 9pt;
-    padding          : 1mm 0;
-    text-align       : center;
-    font-weight      : bold;
-    background-color : #EEEEEE;
+.region-row-table tr td {
+  font-size: 9pt;
+  padding: 1mm 0;
+  text-align: center;
+  font-weight: bold;
+  background-color: #EEEEEE;
 }
-
-.region-row-table tr td:nth-child(1)
-{
-    border-right : 2px solid #FFFFFF;
-    width        : 57.5mm;
+.region-row-table tr td:nth-child(1) {
+  border-right: 2px solid #FFFFFF;
+  width: 57.5mm;
 }
-
-.region-row-table tr td:nth-child(2)
-{
-    width : 267.5mm;
+.region-row-table tr td:nth-child(2) {
+  width: 267.5mm;
 }
-
-.region-row-table tr.without-invest td:nth-child(1)
-{
-    width : 110mm;
+.region-row-table tr.without-invest td:nth-child(1) {
+  width: 110mm;
 }
-
-.region-row-table tr.without-invest td:nth-child(2)
-{
-    width : 225mm;
+.region-row-table tr.without-invest td:nth-child(2) {
+  width: 225mm;
 }
 
-.property-purchases-table
-{
-    border-collapse   : collapse;
-    page-break-inside : avoid;
+.property-purchases-table {
+  border-collapse: collapse;
+  page-break-inside: avoid;
 }
-
-.property-purchases-table tr td, .property-purchases-table tr th
-{
-    width : 25mm;
+.property-purchases-table tr td, .property-purchases-table tr th {
+  width: 25mm;
 }
-
-.property-purchases-table tr td:nth-child(1), .property-purchases-table tr th:nth-child(1)
-{
-    width : 57.5mm;
+.property-purchases-table tr td:nth-child(1), .property-purchases-table tr th:nth-child(1) {
+  width: 57.5mm;
 }
-
-.property-purchases-table tr td.larger, .property-purchases-table tr th.larger
-{
-    width : 120mm;
+.property-purchases-table tr td.larger, .property-purchases-table tr th.larger {
+  width: 120mm;
 }
-
-.property-purchases-table tr td:nth-child(2), .property-purchases-table tr th:nth-child(2)
-{
-    width : 40mm;
+.property-purchases-table tr td:nth-child(2), .property-purchases-table tr th:nth-child(2) {
+  width: 40mm;
 }
-
-.property-purchases-table tr td.investment-col, .property-purchases-table tr th.investment-col
-{
-    width : 27.5mm;
+.property-purchases-table tr td.investment-col, .property-purchases-table tr th.investment-col {
+  width: 27.5mm;
 }
-
-.property-purchases-table tr.without-invest td:nth-child(1), .property-purchases-table tr.without-invest th:nth-child(1)
-{
-    width : 110mm;
+.property-purchases-table tr.without-invest td:nth-child(1), .property-purchases-table tr.without-invest th:nth-child(1) {
+  width: 110mm;
 }
-
-.property-purchases-table tr.without-invest td:nth-child(2), .property-purchases-table tr.without-invest th:nth-child(2)
-{
-    width : 50mm;
+.property-purchases-table tr.without-invest td:nth-child(2), .property-purchases-table tr.without-invest th:nth-child(2) {
+  width: 50mm;
 }
-
-.property-purchases-table tr th
-{
-    width     : 25mm;
-    padding   : 2mm 0 1mm;
-    font-size : 9pt;
+.property-purchases-table tr th {
+  width: 25mm;
+  padding: 2mm 0 1mm;
+  font-size: 9pt;
 }
-
-.property-purchases-table tr th.property-name
-{
-    text-align  : left;
-    font-family : "poppins-bold";
-    font-size   : 10pt;
+.property-purchases-table tr th.property-name {
+  text-align: left;
+  font-family: "poppins-bold";
+  font-size: 10pt;
 }
-
-.property-purchases-table tr th.property-name.shopping
-{
-    color : #3e9cca;
+.property-purchases-table tr th.property-name.shopping {
+  color: #3e9cca;
 }
-
-.property-purchases-table tr th.property-name.otg
-{
-    color : #e5782c;
+.property-purchases-table tr th.property-name.otg {
+  color: #e5782c;
 }
-
-.property-purchases-table tr th.property-name.fitness
-{
-    color : #d63641;
+.property-purchases-table tr th.property-name.fitness {
+  color: #d63641;
 }
-
-.property-purchases-table tr th.property-city
-{
-    padding     : 2mm 1mm 1mm;
-    text-align  : center;
-    font-weight : 400;
+.property-purchases-table tr th.property-city {
+  padding: 2mm 1mm 1mm;
+  text-align: center;
+  font-weight: 400;
 }
-
-.property-purchases-table tr th:nth-child(11), .property-purchases-table tr th.last
-{
-    border-right : none;
+.property-purchases-table tr th:nth-child(11), .property-purchases-table tr th.last {
+  border-right: none;
 }
-
-.property-purchases-table tr.purchase-row td
-{
-    padding    : 1mm 0;
-    text-align : center;
-    font-size  : 9pt;
+.property-purchases-table tr.purchase-row td {
+  padding: 1mm 0;
+  text-align: center;
+  font-size: 9pt;
 }
-
-.property-purchases-table tr.purchase-row td.product-type
-{
-    padding-left : 7.5mm;
-    text-align   : left;
+.property-purchases-table tr.purchase-row td.product-type {
+  padding-left: 7.5mm;
+  text-align: left;
 }
-
-.property-purchases-table tr.purchase-row td.property-city
-{
-    font-family : "poppins-bold";
+.property-purchases-table tr.purchase-row td.property-city {
+  font-family: "poppins-bold";
 }
-
-.property-purchases-table tr.purchase-row.last td
-{
-    padding-bottom : 2mm;
-    border-bottom  : 1px solid #000000;
+.property-purchases-table tr.purchase-row.last td {
+  padding-bottom: 2mm;
+  border-bottom: 1px solid #000000;
 }
-
-.property-purchases-table tr.purchase-row.shopping td.border-right
-{
-    border-right : 1px solid #3e9cca;
+.property-purchases-table tr.purchase-row.shopping td.border-right {
+  border-right: 1px solid #3e9cca;
 }
-
-.property-purchases-table tr.purchase-row.otg td.border-right
-{
-    border-right : 1px solid #e5782c;
+.property-purchases-table tr.purchase-row.otg td.border-right {
+  border-right: 1px solid #e5782c;
 }
-
-.property-purchases-table tr.purchase-row.fitness td.border-right
-{
-    border-right : 1px solid #d63641;
+.property-purchases-table tr.purchase-row.fitness td.border-right {
+  border-right: 1px solid #d63641;
 }
-
-.property-purchases-table tr.shopping td.border-right, .property-purchases-table tr.shopping th.border-right
-{
-    border-right : 1px solid #3e9cca;
+.property-purchases-table tr.shopping td.border-right, .property-purchases-table tr.shopping th.border-right {
+  border-right: 1px solid #3e9cca;
 }
-
-.property-purchases-table tr.otg td.border-right, .property-purchases-table tr.otg th.border-right
-{
-    border-right : 1px solid #e5782c;
+.property-purchases-table tr.otg td.border-right, .property-purchases-table tr.otg th.border-right {
+  border-right: 1px solid #e5782c;
 }
-
-.property-purchases-table tr.fitness td.border-right, .property-purchases-table tr.fitness th.border-right
-{
-    border-right : 1px solid #d63641;
+.property-purchases-table tr.fitness td.border-right, .property-purchases-table tr.fitness th.border-right {
+  border-right: 1px solid #d63641;
 }
 
-.region-footer-table
-{
-    border-collapse : collapse;
+.region-footer-table {
+  border-collapse: collapse;
 }
-
-.region-footer-table tr td, .region-footer-table tr th
-{
-    width : 25mm;
+.region-footer-table tr td, .region-footer-table tr th {
+  width: 25mm;
 }
-
-.region-footer-table tr td:nth-child(1), .region-footer-table tr th:nth-child(1)
-{
-    width : 57.5mm;
+.region-footer-table tr td:nth-child(1), .region-footer-table tr th:nth-child(1) {
+  width: 57.5mm;
 }
-
-.region-footer-table tr td.larger, .region-footer-table tr th.larger
-{
-    width : 120mm;
+.region-footer-table tr td.larger, .region-footer-table tr th.larger {
+  width: 120mm;
 }
-
-.region-footer-table tr td:nth-child(2), .region-footer-table tr th:nth-child(2)
-{
-    width : 40mm;
+.region-footer-table tr td:nth-child(2), .region-footer-table tr th:nth-child(2) {
+  width: 40mm;
 }
-
-.region-footer-table tr td.investment-col, .region-footer-table tr th.investment-col
-{
-    width : 27.5mm;
+.region-footer-table tr td.investment-col, .region-footer-table tr th.investment-col {
+  width: 27.5mm;
 }
-
-.region-footer-table tr.without-invest td:nth-child(1), .region-footer-table tr.without-invest th:nth-child(1)
-{
-    width : 110mm;
+.region-footer-table tr.without-invest td:nth-child(1), .region-footer-table tr.without-invest th:nth-child(1) {
+  width: 110mm;
 }
-
-.region-footer-table tr.without-invest td:nth-child(2), .region-footer-table tr.without-invest th:nth-child(2)
-{
-    width : 50mm;
+.region-footer-table tr.without-invest td:nth-child(2), .region-footer-table tr.without-invest th:nth-child(2) {
+  width: 50mm;
 }
-
-.region-footer-table tr td
-{
-    padding          : 1mm 0;
-    text-align       : center;
-    font-family      : "poppins-bold";
-    font-weight      : bold;
-    font-size        : 9pt;
-    color            : #FFFFFF;
-    background-color : #BBBBBB;
+.region-footer-table tr td {
+  padding: 1mm 0;
+  text-align: center;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  font-size: 9pt;
+  color: #FFFFFF;
+  background-color: #BBBBBB;
 }
-
-.region-footer-table tr td:nth-child(1)
-{
-    border-right : 2px solid #FFFFFF;
+.region-footer-table tr td:nth-child(1) {
+  border-right: 2px solid #FFFFFF;
 }
-
-.region-footer-table tr.shopping td.border-right, .region-footer-table tr.shopping th.border-right
-{
-    border-right : 1px solid #3e9cca;
+.region-footer-table tr.shopping td.border-right, .region-footer-table tr.shopping th.border-right {
+  border-right: 1px solid #3e9cca;
 }
-
-.region-footer-table tr.otg td.border-right, .region-footer-table tr.otg th.border-right
-{
-    border-right : 1px solid #e5782c;
+.region-footer-table tr.otg td.border-right, .region-footer-table tr.otg th.border-right {
+  border-right: 1px solid #e5782c;
 }
-
-.region-footer-table tr.fitness td.border-right, .region-footer-table tr.fitness th.border-right
-{
-    border-right : 1px solid #d63641;
+.region-footer-table tr.fitness td.border-right, .region-footer-table tr.fitness th.border-right {
+  border-right: 1px solid #d63641;
 }
 
-.totals-wrapper
-{
-    border-collapse : collapse;
+.totals-wrapper {
+  border-collapse: collapse;
 }
-
-.totals-wrapper tr td, .totals-wrapper tr th
-{
-    width : 25mm;
+.totals-wrapper tr td, .totals-wrapper tr th {
+  width: 25mm;
 }
-
-.totals-wrapper tr td:nth-child(1), .totals-wrapper tr th:nth-child(1)
-{
-    width : 57.5mm;
+.totals-wrapper tr td:nth-child(1), .totals-wrapper tr th:nth-child(1) {
+  width: 57.5mm;
 }
-
-.totals-wrapper tr td.larger, .totals-wrapper tr th.larger
-{
-    width : 120mm;
+.totals-wrapper tr td.larger, .totals-wrapper tr th.larger {
+  width: 120mm;
 }
-
-.totals-wrapper tr td:nth-child(2), .totals-wrapper tr th:nth-child(2)
-{
-    width : 40mm;
+.totals-wrapper tr td:nth-child(2), .totals-wrapper tr th:nth-child(2) {
+  width: 40mm;
 }
-
-.totals-wrapper tr td.investment-col, .totals-wrapper tr th.investment-col
-{
-    width : 27.5mm;
+.totals-wrapper tr td.investment-col, .totals-wrapper tr th.investment-col {
+  width: 27.5mm;
 }
-
-.totals-wrapper tr.without-invest td:nth-child(1), .totals-wrapper tr.without-invest th:nth-child(1)
-{
-    width : 110mm;
+.totals-wrapper tr.without-invest td:nth-child(1), .totals-wrapper tr.without-invest th:nth-child(1) {
+  width: 110mm;
 }
-
-.totals-wrapper tr.without-invest td:nth-child(2), .totals-wrapper tr.without-invest th:nth-child(2)
-{
-    width : 50mm;
+.totals-wrapper tr.without-invest td:nth-child(2), .totals-wrapper tr.without-invest th:nth-child(2) {
+  width: 50mm;
 }
-
-.totals-wrapper tr td
-{
-    color       : #FFFFFF;
-    padding     : 1mm 0;
-    font-size   : 9pt;
-    font-family : "poppins-bold";
-    font-weight : bold;
-    text-align  : center;
+.totals-wrapper tr td {
+  color: #FFFFFF;
+  padding: 1mm 0;
+  font-size: 9pt;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
 }
-
-.totals-wrapper tr td.label-row
-{
-    border-right : 2px solid #FFFFFF;
+.totals-wrapper tr td.label-row {
+  border-right: 2px solid #FFFFFF;
 }
-
-.totals-wrapper tr td.border-right
-{
-    border-right : 1px solid #FFFFFF;
+.totals-wrapper tr td.border-right {
+  border-right: 1px solid #FFFFFF;
 }
-
-.totals-wrapper tr.shopping td
-{
-    background-color : #3e9cca;
+.totals-wrapper tr.shopping td {
+  background-color: #3e9cca;
 }
-
-.totals-wrapper tr.otg td
-{
-    background-color : #e5782c;
+.totals-wrapper tr.otg td {
+  background-color: #e5782c;
 }
-
-.totals-wrapper tr.fitness td
-{
-    background-color : #d63641;
+.totals-wrapper tr.fitness td {
+  background-color: #d63641;
 }
 
-.detailed-purchases-footer
-{
-    height : 10mm;
-    width  : 50mm;
+.detailed-purchases-footer {
+  height: 10mm;
+  width: 50mm;
 }
 
-.detailed-purchases-summary-table
-{
-    border-collapse : collapse;
-    margin-top      : -5mm;
+.detailed-purchases-summary-table {
+  border-collapse: collapse;
+  margin-top: -5mm;
 }
-
-.detailed-purchases-summary-table tr td
-{
-    width : 24.5mm;
+.detailed-purchases-summary-table tr td {
+  width: 24.5mm;
 }
-
-.detailed-purchases-summary-table tr.with-invest td
-{
-    width : 25mm;
+.detailed-purchases-summary-table tr.with-invest td {
+  width: 25mm;
 }
-
-.detailed-purchases-summary-table tr td
-{
-    padding          : 1.5mm 0;
-    background-color : #252734;
-    border-right     : 1px solid #FFFFFF;
-    color            : #FFFFFF;
-    font-family      : "poppins-bold";
-    font-weight      : bold;
-    text-align       : center;
-    font-size        : 10pt;
-    text-transform   : uppercase;
-    letter-spacing   : -0.025em;
+.detailed-purchases-summary-table tr td {
+  padding: 1.5mm 0;
+  background-color: #252734;
+  border-right: 1px solid #FFFFFF;
+  color: #FFFFFF;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  text-align: center;
+  font-size: 10pt;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
 }
-
-.detailed-purchases-summary-table tr td:nth-child(1)
-{
-    width              : 57.5mm;
-    border-right-width : 2px;
+.detailed-purchases-summary-table tr td:nth-child(1) {
+  width: 57.5mm;
+  border-right-width: 2px;
 }
-
-.detailed-purchases-summary-table tr td:nth-child(2)
-{
-    width : 90mm;
+.detailed-purchases-summary-table tr td:nth-child(2) {
+  width: 90mm;
 }
-
-.detailed-purchases-summary-table tr td.larger
-{
-    width : 108mm;
+.detailed-purchases-summary-table tr td.larger {
+  width: 108mm;
 }
-
-.detailed-purchases-summary-table tr td.larger-2
-{
-    width : 98mm;
+.detailed-purchases-summary-table tr td.larger-2 {
+  width: 98mm;
 }
-
-.detailed-purchases-summary-table tr td.investment-col
-{
-    width : 27.5mm;
+.detailed-purchases-summary-table tr td.investment-col {
+  width: 27.5mm;
 }
-
-.detailed-purchases-summary-table tr td:nth-child(9), .detailed-purchases-summary-table tr td.last
-{
-    border-right : none;
+.detailed-purchases-summary-table tr td:nth-child(9), .detailed-purchases-summary-table tr td.last {
+  border-right: none;
 }
 
-.production-specs-table
-{
-    border-collapse : collapse;
+.production-specs-table {
+  border-collapse: collapse;
 }
-
-.production-specs-table thead tr th
-{
-    width            : 46.68mm;
-    padding          : 5mm 1mm;
-    color            : #FFFFFF;
-    text-align       : center;
-    font-size        : 0.889em;
-    background-color : #252734;
-    border-left      : 2px solid #FFFFFF;
+.production-specs-table thead tr th {
+  width: 46.68mm;
+  padding: 5mm 1mm;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 0.889em;
+  background-color: #252734;
+  border-left: 2px solid #FFFFFF;
 }
-
-.production-specs-table thead tr th:nth-child(1)
-{
-    border-left : none;
+.production-specs-table thead tr th:nth-child(1) {
+  border-left: none;
 }
-
-.production-specs-table tbody tr td
-{
-    padding     : 2mm 0;
-    text-align  : center;
-    font-weight : normal;
-    font-size   : 0.79em;
-    border-top  : 1px solid #252734;
+.production-specs-table tbody tr td {
+  padding: 2mm 0;
+  text-align: center;
+  font-weight: normal;
+  font-size: 0.79em;
+  border-top: 1px solid #252734;
 }
-
-.production-specs-table tfoot tr td
-{
-    padding          : 2mm 1mm;
-    color            : #FFFFFF;
-    text-align       : center;
-    font-size        : 0.889em;
-    background-color : #252734;
+.production-specs-table tfoot tr td {
+  padding: 2mm 1mm;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 0.889em;
+  background-color: #252734;
 }
 
-.technical-specs-title
-{
-    margin         : 15mm 0 0 0;
-    font-size      : 1.2rem;
-    text-transform : uppercase;
+.technical-specs-title {
+  margin: 15mm 0 0 0;
+  font-size: 1.2rem;
+  text-transform: uppercase;
 }
 
-.technical-specs-table
-{
-    border-collapse : collapse;
+.technical-specs-table {
+  border-collapse: collapse;
 }
-
-.technical-specs-table thead tr th
-{
-    width            : 30mm;
-    padding          : 2mm 1mm;
-    color            : #FFFFFF;
-    text-align       : center;
-    font-size        : 0.889em;
-    background-color : #252734;
+.technical-specs-table thead tr th {
+  width: 30mm;
+  padding: 2mm 1mm;
+  color: #FFFFFF;
+  text-align: center;
+  font-size: 0.889em;
+  background-color: #252734;
 }
-
-.technical-specs-table thead tr th:nth-child(1)
-{
-    width : 50mm;
+.technical-specs-table thead tr th:nth-child(1) {
+  width: 50mm;
 }
-
-.technical-specs-table tbody tr td
-{
-    padding     : 2mm 0;
-    text-align  : center;
-    font-weight : normal;
-    font-size   : 0.79em;
-    border-top  : 1px solid #252734;
+.technical-specs-table tbody tr td {
+  padding: 2mm 0;
+  text-align: center;
+  font-weight: normal;
+  font-size: 0.79em;
+  border-top: 1px solid #252734;
 }
 
-.summary-right-col
-{
-    position : fixed;
-    top      : 5mm;
-    left     : 170mm;
+.summary-right-col {
+  position: fixed;
+  top: 5mm;
+  left: 170mm;
 }
 
-.summary-totals-table
-{
-    border-collapse : collapse;
+.summary-totals-table {
+  border-collapse: collapse;
 }
-
-.summary-totals-table thead tr th
-{
-    width            : 25mm;
-    padding          : 2mm 0;
-    color            : #FFFFFF;
-    text-align       : center;
-    font-family      : "poppins-bold";
-    font-size        : 0.889em;
-    background-color : #252734;
-    border-bottom    : 1px solid #252734;
+.summary-totals-table thead tr th {
+  width: 25mm;
+  padding: 2mm 0;
+  color: #FFFFFF;
+  text-align: center;
+  font-family: "poppins-bold";
+  font-size: 0.889em;
+  background-color: #252734;
+  border-bottom: 1px solid #252734;
 }
-
-.summary-totals-table thead tr th.placeholder
-{
-    background-color : transparent;
+.summary-totals-table thead tr th.placeholder {
+  background-color: transparent;
 }
-
-.summary-totals-table thead tr th:nth-child(1)
-{
-    width            : 63mm;
-    background-color : #FFFFFF;
-    font-size        : 1.125em;
-    color            : #252734;
-    text-transform   : uppercase;
+.summary-totals-table thead tr th:nth-child(1) {
+  width: 63mm;
+  background-color: #FFFFFF;
+  font-size: 1.125em;
+  color: #252734;
+  text-transform: uppercase;
 }
-
-.summary-totals-table.full
-{
-    margin-top   : 5mm;
-    table-layout : fixed;
+.summary-totals-table.full {
+  margin-top: 5mm;
+  table-layout: fixed;
 }
-
-.summary-totals-table.full thead tr th:nth-child(1)
-{
-    width : 40mm;
+.summary-totals-table.full thead tr th:nth-child(1) {
+  width: 40mm;
 }
-
-.summary-totals-table tbody tr td
-{
-    height        : 12mm;
-    text-align    : center;
-    color         : #252734;
-    font-family   : "poppins-bold";
-    font-weight   : bold;
-    font-size     : 0.889em;
-    border-bottom : 1px solid #888888;
+.summary-totals-table tbody tr td {
+  height: 12mm;
+  text-align: center;
+  color: #252734;
+  font-family: "poppins-bold";
+  font-weight: bold;
+  font-size: 0.889em;
+  border-bottom: 1px solid #888888;
 }
-
-.summary-totals-table tbody tr td.investment
-{
-    background-color : #cae4f0;
+.summary-totals-table tbody tr td.investment {
+  background-color: #cae4f0;
 }
-
-.summary-totals-table tbody tr td:nth-child(1)
-{
-    border-right : 1px solid #888888;
+.summary-totals-table tbody tr td:nth-child(1) {
+  border-right: 1px solid #888888;
 }
-
-.summary-totals-table tbody tr.grand-total td
-{
-    background-color : #EEEEEE;
+.summary-totals-table tbody tr.grand-total td {
+  background-color: #EEEEEE;
 }
-
-.summary-totals-table tbody tr.grand-total td.investment
-{
-    background-color : #8ec5e0;
+.summary-totals-table tbody tr.grand-total td.investment {
+  background-color: #8ec5e0;
 }
-
-.summary-totals-table tbody tr.cpm td
-{
-    border-bottom : none;
+.summary-totals-table tbody tr.cpm td {
+  border-bottom: none;
 }
-
-.summary-totals-table tbody tr.cpm td.investment
-{
-    background-color : #8ec5e0;
+.summary-totals-table tbody tr.cpm td.investment {
+  background-color: #8ec5e0;
 }
 
-.summary-notices
-{
-    margin-top : 15mm;
-    color      : #252734;
+.summary-notices {
+  margin-top: 15mm;
+  color: #252734;
 }
-
-.summary-notices p strong
-{
-    font-family : "poppins-bold";
-    font-weight : bold;
+.summary-notices p strong {
+  font-family: "poppins-bold";
+  font-weight: bold;
 }
-
-.summary-notices p .emphase
-{
-    font-family : "poppins-regular";
-    font-weight : bold;
+.summary-notices p .emphase {
+  font-family: "poppins-regular";
+  font-weight: bold;
 }
 
 /*# sourceMappingURL=contract.css.map */

@@ -49,5 +49,6 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::get("impressions/broadsign/{displayUnitId}", ImpressionsController::class . "@broadsignDisplayUnit");
+    Route::get("impressions/broadsign/{displayUnitId}", ImpressionsController::class . "@broadsignDisplayUnit")
+         ->whereNumber('displayUnitId');
 });

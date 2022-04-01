@@ -35,6 +35,7 @@ Route::group([
     Route::model("advertiser", Advertiser::class);
 
     Route::get("advertisers/_by_id", AdvertisersController::class . "@byId");
+    Route::get("advertisers/{advertiser}", AdvertisersController::class . "@show");
 
 
     /*

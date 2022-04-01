@@ -12,10 +12,15 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Advertisers\ListAdvertisersByIdRequest;
+use Neo\Http\Requests\Advertisers\ShowAdvertiserRequest;
 use Neo\Models\Advertiser;
 
 class AdvertisersController {
     public function byId(ListAdvertisersByIdRequest $request) {
         return new Response(Advertiser::query()->whereIn("id", $request->input("ids"))->orderBy("name")->get());
+    }
+
+    public function show(ShowAdvertiserRequest $request, Advertiser $advertiser) {
+        return new Response($advertiser);
     }
 }

@@ -66,6 +66,7 @@ class ActorsController extends Controller {
 
         if ($request->has("campaigns_status")) {
             $actors->load("own_campaigns", "own_campaigns.schedules");
+            $actors->each(fn(Actor $actor) => $actor->own_campaigns->makeHidden(["schedules", "network"]));
         }
 
         if ($request->has("property")) {

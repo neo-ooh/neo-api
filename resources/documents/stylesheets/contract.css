@@ -12,6 +12,14 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
+ * @neo/api - _common.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
  * @neo/api - _colors.scss
  */
 /*!
@@ -197,6 +205,14 @@ footer {
   color: #888888;
 }
 
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _broadcast-periods.scss
+ */
 .broadcast-periods-table {
   margin: -1.5mm 0 3mm -1mm;
 }

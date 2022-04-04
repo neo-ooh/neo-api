@@ -118,7 +118,7 @@ abstract class JwtGuard implements Guard {
      */
     protected function getToken(): ?array {
         // Get the Authorization/Bearer token
-        $token     = Request::bearerToken();
+        $token     = Request::bearerToken() ?? '';
         $publicKey = config('auth.jwt_public_key');
 
         // Try to decode the token

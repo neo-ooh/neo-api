@@ -26,6 +26,7 @@ use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
 use Neo\Http\Controllers\PropertiesFieldsSegmentsController;
 use Neo\Http\Controllers\PropertiesStatisticsController;
+use Neo\Http\Controllers\PropertiesStatsController;
 use Neo\Http\Controllers\PropertiesTenantsController;
 use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\PropertyPicturesController;
@@ -63,6 +64,8 @@ Route::group([
 
     Route::get("properties/{property}/_dump", PropertiesController::class . "@dump");
     Route::get("networks/{network}/_dump_properties", PropertiesController::class . "@dumpNetwork");
+
+    Route::   get("properties-statistics/{actor}", PropertiesStatsController::class . "@show");
 
 
     /*

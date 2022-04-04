@@ -42,6 +42,6 @@ class DemographicValuesController {
             IngestDemographicFileJob::dispatchSync($property->getKey(), $tempName, $format);
         }
 
-        UpdateDemographicFieldsJob::dispatch($property->getKey(), null);
+        UpdateDemographicFieldsJob::dispatchSync($property->getKey(), null);
     }
 }

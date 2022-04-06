@@ -31,6 +31,24 @@ class ContentsController extends Controller {
      * @throws LibraryStorageFullException
      */
     public function store(StoreContentRequest $request) {
+        // We want to prevent creating new empty content in a library if an empty one is already there.
+        // Check if there is already an empty content
+        /** @var Content|null $emptyContent */
+        $emptyContent = Content::query()
+                               ->where("library_id", "=", $request->input("library_id"))
+                               ->where("layout_id", "=", $request->input("layout_id"))
+                               ->doesntHave("creatives")
+                               ->first();
+
+        if ($emptyContent) {
+            // We have an already existing empty content, reassign it to the proper user, and return that
+            $emptyContent->owner_id = $request->input("owner_id");
+            $emptyContent->save();
+
+            // Since the content already exist in the library, we don't have to check the library's content limit.
+            return new Response($emptyContent->load("layout.frames"), 200);
+        }
+
         /** @var Library $library */
         $library = Library::query()->find($request->validated()["library_id"]);
 

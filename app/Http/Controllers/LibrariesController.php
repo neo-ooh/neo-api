@@ -43,14 +43,15 @@ class LibrariesController extends Controller {
         $q = strtolower($request->input("q"));
 
         /** @noinspection NullPointerExceptionInspection We are necessarily logged in if we passed the route and request checks */
-        $libraries    = Auth::user()->getLibraries()->load("contents", "contents.layout");
+        $libraries    = Auth::user()->getLibraries();
         $searchEngine = new Fuse($libraries->toArray(), [
             "keys" => [
                 "name"
             ]
         ]);
+        $results      = collect($searchEngine->search($q));
 
-        return new Response(collect($searchEngine->search($q))->map(fn($result) => $result->get("item")));
+        return new Response($results->map(fn($result) => $result["item"]));
     }
 
     /**

@@ -17,7 +17,7 @@ use Neo\Enums\Capability;
 class UpdateProductLocationsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "locations"   => ["required", "array"],
+            "locations"   => ["array"],
             "locations.*" => ["integer", "exists:locations,id"]
         ];
     }

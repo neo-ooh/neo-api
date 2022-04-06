@@ -10,7 +10,6 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -34,7 +33,6 @@ use Neo\Jobs\PullPropertyAddressFromBroadSignJob;
 use Neo\Models\Actor;
 use Neo\Models\Address;
 use Neo\Models\City;
-use Neo\Models\Location;
 use Neo\Models\Network;
 use Neo\Models\Property;
 use Neo\Models\Province;
@@ -162,19 +160,10 @@ class PropertiesController extends Controller {
         // Create the property
         $property                 = new Property();
         $property->actor_id       = $actorId;
+        $property->network_id     = $request->input("network_id");
         $property->last_review_at = Date::now();
         $property->save();
         $property->refresh();
-
-        // Try to identify the network from the property's actor locations
-        $property->network_id = Location::query()->whereHas("actors", function ($query) use ($property) {
-            $query->where("id", "=", $property->actor_id);
-        })
-                                        ->get("network_id")
-                                        ->pluck("network_id")
-                                        ->first();
-
-        $property->save();
 
         // Create the data and traffic records for the property
         $property->data()->create();
@@ -202,76 +191,41 @@ class PropertiesController extends Controller {
         /** @var Property $property */
         $property  = Property::query()->find($propertyId);
         $relations = $request->input("with", []);
+        $property->load(["actor", "actor.tags", "traffic", "traffic.data", "address"]);
 
-        if ($property) {
-            $property->load(["actor", "actor.tags", "traffic", "traffic.data", "address"]);
+        if (Gate::allows(Capability::properties_edit)) {
+            $property->loadMissing([
+                "data",
+                "network",
+                "network.properties_fields",
+                "pictures",
+                "fields_values",
+                "traffic.source",
+                "opening_hours"
+            ]);
 
-            if (Gate::allows(Capability::properties_edit)) {
-                $property->loadMissing([
-                    "data",
-                    "network",
-                    "network.properties_fields",
-                    "pictures",
-                    "fields_values",
-                    "traffic.source",
-                    "opening_hours"
-                ]);
-            }
-
-            if (in_array("products", $relations, true)) {
-                $property->loadMissing(["products",
-                                        "products.impressions_models",
-                                        "products.locations",
-                                        "products.attachments",
-                                        "products_categories",
-                                        "products_categories.attachments",
-                                        "products_categories.product_type"]);
-            }
-
-            if (in_array("tenants", $relations, true)) {
-                $property->loadMissing(["tenants"]);
-            }
-
-            if (Gate::allows(Capability::odoo_properties)) {
-                $property->loadMissing(["odoo"]);
-            }
-
-            return new Response($property);
+            $property->append(["warnings"]);
         }
 
-        if (!$request->input("fallbackToGroup", false)) {
-            return new Response(null, 404);
+        if (in_array("products", $relations, true)) {
+            $property->loadMissing(["products",
+                                    "products.impressions_models",
+                                    "products.locations",
+                                    "products.attachments",
+                                    "products_categories",
+                                    "products_categories.attachments",
+                                    "products_categories.product_type"]);
         }
 
-
-        // Since the requested actor is not a property, we'll either load all its children data in a compound, or its own.
-        /** @var Actor $actor */
-        $actor = Actor::query()->find($propertyId);
-
-        if ($request->input("summed", false)) {
-            $actor->append("compound_traffic");
-            $actor->makeHidden("property");
-            return new Response($actor);
+        if (in_array("tenants", $relations, true)) {
+            $property->loadMissing(["tenants"]);
         }
 
-        // Is there any children bellow ?
-        /** @var Collection $childGroups */
-        $childGroups = $actor->selectActors()
-                             ->directChildren()
-                             ->where("is_group", "=", true)
-                             ->orderBy("name")
-                             ->get();
-
-        if ($childGroups->isEmpty()) {
-            // No group children, and not a property, return 404;
-            return new Response(null, 404);
+        if (Gate::allows(Capability::odoo_properties)) {
+            $property->loadMissing(["odoo"]);
         }
 
-        $actor->properties = $childGroups->append("compound_traffic");
-
-        $actor->properties->makeHidden("property");
-
-        return new Response($actor);
+        return new Response($property);
     }
 
     public function update(UpdatePropertyRequest $request, Property $property): Response {

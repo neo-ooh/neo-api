@@ -16,7 +16,7 @@ use Neo\Models\Product;
 
 class ProductsLocationsController {
     public function sync(UpdateProductLocationsRequest $request, Product $product) {
-        $product->locations()->sync($request->input("locations"));
+        $product->locations()->sync($request->input("locations", []));
 
         return new Response($product->locations);
     }

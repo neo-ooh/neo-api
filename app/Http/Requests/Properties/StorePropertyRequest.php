@@ -15,15 +15,13 @@ use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Rules\AccessibleActor;
 
-class StorePropertyRequest extends FormRequest
-{
+class StorePropertyRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         return Gate::allows(Capability::properties_edit);
     }
 
@@ -32,10 +30,10 @@ class StorePropertyRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "actor_id" => ["required", "exists:actors,id", new AccessibleActor()],
+            "actor_id"   => ["required", "exists:actors,id", new AccessibleActor()],
+            "network_id" => ["required", "exists:networks,id"],
         ];
     }
 }

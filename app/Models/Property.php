@@ -11,12 +11,14 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Odoo\Property as OdooProperty;
 use Neo\Rules\AccessibleProperty;
 
@@ -182,5 +184,58 @@ class Property extends SecuredModel {
         }
 
         return $traffic->final_traffic;
+    }
+
+    public function getWarningsAttribute() {
+        $warnings = [];
+
+        // Check fields that don't have any values
+        $this->load("fields_values");
+        $fields     = Field::query()->whereHas("networks", function (Builder $query) {
+            $query->where("id", "=", $this->network_id);
+        })
+                           ->with("segments")
+                           ->get();
+        $segmentIds = $this->fields_values->map(fn(PropertyFieldSegmentValue $value) => $value->fields_segment_id);
+
+        $missingFields = [];
+
+        /** @var Field $field */
+        foreach ($fields as $field) {
+            $missingSegments = $field->segments->whereNotIn("id", $segmentIds);
+
+            if ($missingSegments->count() > 0) {
+                $missingFields[] = [
+                    ...$field->toArray(),
+                    "segments" => $missingSegments->values(),
+                ];
+            }
+        }
+
+        if (count($missingFields) > 0) {
+            $warnings["empty-fields"] = $missingFields;
+        }
+
+        // List products without any locations associated
+        $productsWithoutLocations = $this->products()
+                                         ->whereRelation("category", "fill_strategy", "=", ProductsFillStrategy::digital)
+                                         ->whereDoesntHave("locations")->get();
+
+        if ($productsWithoutLocations->count() > 0) {
+            $warnings["products-without-locations"] = $productsWithoutLocations;
+        }
+
+        // Check that the traffic reference year is correctly filled
+        $refYearEntriesCount = $this->traffic->data()->where("year", "=", $this->traffic->start_year)->count();
+
+        if ($refYearEntriesCount < 12) {
+            $warnings["incomplete-traffic"] = [];
+        }
+
+        if ($this->has_tenants && $this->tenants()->count() === 0) {
+            $warnings["empty-directory"] = [];
+        }
+
+        return $warnings;
     }
 }

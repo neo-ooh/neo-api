@@ -14,8 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class DestroyBrandingFileRequest extends FormRequest
-{
+class DestroyBrandingFileRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -31,8 +30,6 @@ class DestroyBrandingFileRequest extends FormRequest
      * @return array
      */
     public function rules(): array {
-        return [
-            "file_id" => ["required", "integer", "exists:brandings_files,id"],
-        ];
+        return [];
     }
 }

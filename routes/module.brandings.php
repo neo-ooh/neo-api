@@ -14,7 +14,7 @@ use Neo\Http\Controllers\BrandingsFilesController;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
     /*
     |----------------------------------------------------------------------
@@ -38,5 +38,5 @@ Route::group([
 
     Route::   get("brandings/{branding}/files", BrandingsFilesController::class . "@index");
     Route::  post("brandings/{branding}/files", BrandingsFilesController::class . "@store");
-    Route::delete("brandings/{branding}/files", BrandingsFilesController::class . "@destroy");
+    Route::delete("brandings/{branding}/files/{file}", BrandingsFilesController::class . "@destroy");
 });

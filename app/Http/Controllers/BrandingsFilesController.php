@@ -30,7 +30,7 @@ class BrandingsFilesController extends Controller {
      *
      * @return Response
      */
-    public function index (ListBrandingFilesRequest $request, Branding $branding): Response {
+    public function index(ListBrandingFilesRequest $request, Branding $branding): Response {
         return new Response($branding->files);
     }
 
@@ -45,8 +45,8 @@ class BrandingsFilesController extends Controller {
      * @return Response
      * @throws Exception
      */
-    public function store (StoreBrandingFileRequest $request, Branding $branding): Response {
-        [ "type" => $type ] = $request->validated();
+    public function store(StoreBrandingFileRequest $request, Branding $branding): Response {
+        ["type" => $type] = $request->validated();
         /** @var UploadedFile $uploadedFile */
         $uploadedFile = $request->file("file");
 
@@ -89,8 +89,7 @@ class BrandingsFilesController extends Controller {
      * @return Response
      * @throws Exception
      */
-    public function destroy (DestroyBrandingFileRequest $request): Response {
-        $file = BrandingFile::query()->find($request->validated()['file_id']);
+    public function destroy(DestroyBrandingFileRequest $request, Branding $branding, BrandingFile $file): Response {
         $file->erase();
 
         return new Response([]);

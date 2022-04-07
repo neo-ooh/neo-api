@@ -244,7 +244,7 @@ class PropertyDump extends XLSXDocument {
                 "Resolution"      => $displayUnitPlayersData->first()["Resolution"]
             ], $addressComponents, $operatingHoursComponents, [
                 "Weekly Traffic"     => $weeklyTraffic,
-                "Weekly Impressions" => $impressionsPerWeek,
+                "Weekly Impressions" => $displayUnitImpressions,
             ]));
         }
 

@@ -206,7 +206,7 @@ class PropertyDump extends XLSXDocument {
 
             $impressionsPerWeek = $this->getPropertyImpressionsForBroadSign($client, $location, $openLengths, $weeklyTraffic);
 
-            $totalScreens          = $location->products->where("is_bonus", "=", false)->first()->quantity;
+            $totalScreens          = $bsPlayers->sum("nscreens");
             $impressionsPerScreens = $impressionsPerWeek / $totalScreens;
 
             /** @var Player $player */

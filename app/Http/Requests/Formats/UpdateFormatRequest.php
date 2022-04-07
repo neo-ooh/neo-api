@@ -31,9 +31,8 @@ class UpdateFormatRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "name"          => ["required", "string"],
-            "slug"          => ["required", "string"],
-            "is_enabled"    => ["required", "boolean"],
+            "name"       => ["required", "string"],
+            "is_enabled" => ["required", "boolean"],
         ];
     }
 }

@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property int                      id
  * @property string                   name
- * @property string                   slug
  * @property boolean                  is_fullscreen
  * @property boolean                  is_enabled
  *
@@ -61,7 +60,6 @@ class Format extends Model {
      * @var array
      */
     protected $fillable = [
-        "slug",
         "name",
         "is_enabled",
     ];
@@ -89,6 +87,8 @@ class Format extends Model {
      * @var array
      */
     protected $withCount = ["layouts", "display_types"];
+
+    protected $hidden = ["slug"];
 
 
     /*

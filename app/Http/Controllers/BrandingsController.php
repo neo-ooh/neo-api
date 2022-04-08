@@ -28,8 +28,8 @@ class BrandingsController extends Controller {
      *
      * @return Response
      */
-    public function index (ListBrandingsRequest $request): Response {
-        return new Response(Branding::all());
+    public function index(ListBrandingsRequest $request): Response {
+        return new Response(Branding::query()->orderBy("name")->get());
     }
 
     /**
@@ -39,8 +39,8 @@ class BrandingsController extends Controller {
      *
      * @return Response
      */
-    public function store (StoreBrandingRequest $request): Response {
-        [ 'name' => $name ] = $request->validated();
+    public function store(StoreBrandingRequest $request): Response {
+        ['name' => $name] = $request->validated();
 
         $branding = new Branding([
             "name" => $name,
@@ -57,7 +57,7 @@ class BrandingsController extends Controller {
      *
      * @return Response
      */
-    public function show (Branding $branding): Response {
+    public function show(Branding $branding): Response {
         return new Response($branding);
     }
 
@@ -69,8 +69,8 @@ class BrandingsController extends Controller {
      *
      * @return Response
      */
-    public function update (UpdateBrandingRequest $request, Branding $branding): Response {
-        [ 'name' => $name ] = $request->validated();
+    public function update(UpdateBrandingRequest $request, Branding $branding): Response {
+        ['name' => $name] = $request->validated();
 
         $branding->name = $name;
         $branding->save();
@@ -87,7 +87,7 @@ class BrandingsController extends Controller {
      * @return Response
      * @throws Exception
      */
-    public function destroy (DestroyBrandingRequest $request, Branding $branding): Response {
+    public function destroy(DestroyBrandingRequest $request, Branding $branding): Response {
         $files = $branding->files;
 
         foreach ($files as $file) {

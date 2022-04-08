@@ -211,6 +211,7 @@ class ImpressionsController {
         } while ($datePointer->isBefore($endBoundary));
 
         $writer = new Csv($doc);
+        $writer->setEnclosure('');
         $writer->setPreCalculateFormulas(false);
 
         header("access-control-allow-origin: *");

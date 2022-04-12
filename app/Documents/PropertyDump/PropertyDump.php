@@ -209,6 +209,11 @@ class PropertyDump extends XLSXDocument {
             $productScreens     = $location->products->where("is_bonus", "=", false)->first()->quantity;
             $displayUnitScreens = $bsPlayers->sum("nscreens");
 
+            // If this display unit is configured as having no screens, we skip it
+            if ($displayUnitScreens === 0) {
+                continue;
+            }
+
             $displayUnitShares      = $displayUnitScreens / $productScreens;
             $displayUnitImpressions = $impressionsPerWeek * $displayUnitShares;
             $impressionsPerScreens  = $displayUnitImpressions / $displayUnitScreens;

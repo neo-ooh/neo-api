@@ -11,7 +11,7 @@
             {!! __("contract.contract-number-title", ["number" => $order->reference]) !!}
         </h2>
     @endif
-    <h3  @if($order->use_invoice_plan) class="small" @endif >{!! $order->campaign_name !!}</h3>
+    <h3 @if($order->use_invoice_plan) class="small" @endif >{!! $order->campaign_name !!}</h3>
     <div class="parties">
         <div class="contract-party first-party">
             <div class="contract-party-left-column">{!! __("contract.first-party-title") !!}</div>

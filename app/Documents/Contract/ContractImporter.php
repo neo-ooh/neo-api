@@ -42,12 +42,12 @@ class ContractImporter {
                 Carbon::setLocale($locale);
             }
 
-            if(empty($record["order_line"]) && !empty($record["invoice_plan_ids/invoice_move_ids/nb_in_plan"])) {
+            if (empty($record["order_line"]) && !empty($record["invoice_plan_ids/invoice_move_ids/nb_in_plan"])) {
                 $order->addInvoicePlanStep($record);
                 continue;
             }
 
-            if(empty($record["order_line"])) {
+            if (empty($record["order_line"])) {
                 // ignore line
                 continue;
             }
@@ -66,7 +66,7 @@ class ContractImporter {
                 continue;
             }
 
-            if($orderLine->quantity < PHP_FLOAT_EPSILON) {
+            if ($orderLine->quantity < PHP_FLOAT_EPSILON) {
                 continue;
             }
 

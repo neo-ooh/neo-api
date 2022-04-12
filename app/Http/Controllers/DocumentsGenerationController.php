@@ -11,6 +11,8 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
 use Neo\Documents\Contract\PDFContract;
 use Neo\Documents\Contract\XLSXProposal;
@@ -31,6 +33,7 @@ class DocumentsGenerationController extends Controller {
      */
     public function make(MakeDocumentRequest $request): Response {
         // Input can either be done using a file or a json object named data
+        /** @var UploadedFile $file */
         $file = $request->file("file");
         $data = $request->input("data");
 
@@ -39,6 +42,8 @@ class DocumentsGenerationController extends Controller {
                 if ($file === null) {
                     return new Response(["error" => "Missing file"], 400);
                 }
+
+                Storage::disk("public")->put("/tmp/{$file->getClientOriginalName()}", $file->getContent());
 
                 $document = PDFContract::makeContract($file->getContent());
                 break;

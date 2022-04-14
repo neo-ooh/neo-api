@@ -254,7 +254,10 @@ Route::group([
 
     Route::get("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@index");
     Route::post("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@store");
-    Route::get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@show");
-    Route::put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@update");
-    Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@destroy");
+    Route::get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@show")
+         ->scopeBindings();
+    Route::put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@update")
+         ->scopeBindings();
+    Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@destroy")
+         ->scopeBindings();
 });

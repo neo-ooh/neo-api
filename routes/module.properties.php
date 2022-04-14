@@ -246,7 +246,7 @@ Route::group([
     Route::apiResource("pricelists", PricelistsController::class);
     Route::apiResource("pricelists.product-categories", PricelistProductsCategoriesController::class)
          ->parameter("product-categories", "pricelistProductsCategory")
-         ->scoped(["product-category" => "products_category_id"]);
+         ->scoped(["pricelistProductsCategory" => "products_category_id"]);
 
 //    Route::get("pricelists", PricelistsController::class . "@index");
 //    Route::post("pricelists", PricelistsController::class . "@store");

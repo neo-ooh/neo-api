@@ -191,6 +191,7 @@ Route::group([
     Route::model("productType", ProductType::class);
 
     Route:: get("product-types", ProductTypesController::class . "@index");
+    Route:: get("product-types/_by_id", ProductTypesController::class . "@byIds");
     Route:: put("product-types/{productType}", ProductTypesController::class . "@update");
 
     Route:: get("product-categories", ProductCategoriesController::class . "@index");

@@ -5,24 +5,24 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdatePricelistRequest.php
+ * @neo/api - ListProductTypesByIdsRequest.php
  */
 
-namespace Neo\Http\Requests\PriceList;
+namespace Neo\Http\Requests\ProductTypes;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class UpdatePricelistRequest extends FormRequest {
+class ListProductTypesByIdsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name"        => ["required", "string"],
-            "description" => ["nullable", "string"],
+            "ids"   => ["required", "array"],
+            "ids.*" => ["int", "exists:products_types,id"],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::pricelists_edit);
+        return Gate::allows(Capability::properties_products);
     }
 }

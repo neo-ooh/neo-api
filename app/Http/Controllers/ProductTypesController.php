@@ -30,7 +30,7 @@ class ProductTypesController {
     }
 
     public function byIds(ListProductTypesByIdsRequest $request) {
-        $productTypes = ProductType::query()->whereIn("id", $request->input("ids", []));
+        $productTypes = ProductType::query()->whereIn("id", $request->input("ids", []))->get();
 
         return new Response($productTypes);
     }

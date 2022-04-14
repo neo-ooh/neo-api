@@ -17,7 +17,7 @@ use Neo\Http\Requests\PricelistProductsCategories\StorePricelistProductCategoryR
 use Neo\Http\Requests\PricelistProductsCategories\UpdatePricelistProductCategoryRequest;
 use Neo\Http\Requests\PropertiesStatistics\ShowPropertiesStatisticsRequest;
 use Neo\Models\Pricelist;
-use Neo\Models\pricelistProductsCategory;
+use Neo\Models\PricelistProductsCategory;
 
 class PricelistProductsCategoriesController {
     public function index(ListPricelistProductsCategoriesRequest $request, Pricelist $pricelist) {
@@ -28,7 +28,7 @@ class PricelistProductsCategoriesController {
 
     public function store(StorePricelistProductCategoryRequest $request, Pricelist $pricelist) {
         $categoryPricelist = new PricelistProductsCategory([
-            "pricelist_id"         => $pricelist,
+            "pricelist_id"         => $pricelist->getKey(),
             "products_category_id" => $request->input("products_category_id"),
             "pricing"              => $request->input("pricing"),
             "value"                => $request->input("value"),
@@ -41,11 +41,11 @@ class PricelistProductsCategoriesController {
         return new Response($categoryPricelist, 201);
     }
 
-    public function show(ShowPropertiesStatisticsRequest $request, PricelistProductsCategory $pricelistProductsCategory) {
+    public function show(ShowPropertiesStatisticsRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
         return new Response($pricelistProductsCategory);
     }
 
-    public function update(UpdatePricelistProductCategoryRequest $request, PricelistProductsCategory $pricelistProductsCategory) {
+    public function update(UpdatePricelistProductCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
         $pricelistProductsCategory->fill([
             "products_category_id" => $request->input("products_category_id"),
             "pricing"              => $request->input("pricing"),
@@ -58,7 +58,7 @@ class PricelistProductsCategoriesController {
         return new Response($pricelistProductsCategory);
     }
 
-    public function destroy(DestroyPricelistProductsCategoryRequest $request, PricelistProductsCategory $pricelistProductsCategory) {
+    public function destroy(DestroyPricelistProductsCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
         $pricelistProductsCategory->delete();
 
         return new Response(["status" => "ok"]);

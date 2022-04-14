@@ -39,8 +39,6 @@ use Neo\Models\Brand;
 use Neo\Models\Field;
 use Neo\Models\FieldsCategory;
 use Neo\Models\FieldSegment;
-use Neo\Models\Pricelist;
-use Neo\Models\PricelistProductsCategory;
 use Neo\Models\Product;
 use Neo\Models\ProductCategory;
 use Neo\Models\ProductType;
@@ -245,11 +243,9 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::model("pricelist", Pricelist::class);
-    Route::model("pricelistProductsCategory", PricelistProductsCategory::class);
-
     Route::apiResource("pricelists", PricelistsController::class);
-    Route::apiResource("pricelists.product-categories", PricelistProductsCategoriesController::class);
+    Route::apiResource("pricelists.product-categories", PricelistProductsCategoriesController::class)
+         ->parameter("product-categories", "pricelistProductsCategory");
 
 //    Route::get("pricelists", PricelistsController::class . "@index");
 //    Route::post("pricelists", PricelistsController::class . "@store");

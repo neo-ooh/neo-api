@@ -243,20 +243,18 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::apiResource("pricelists", PricelistsController::class);
-    Route::apiResource("pricelists.product-categories", PricelistProductsCategoriesController::class)
-         ->parameter("product-categories", "pricelistProductsCategory")
-         ->scoped(["pricelistProductsCategory" => "products_category_id"]);
+    Route::model("pricelist", \Neo\Models\Pricelist::class);
+    Route::model("pricelistProductsCategory", Neo\Models\PricelistProductsCategory::class);
 
-//    Route::get("pricelists", PricelistsController::class . "@index");
-//    Route::post("pricelists", PricelistsController::class . "@store");
-//    Route::get("pricelists/{pricelist}", PricelistsController::class . "@show");
-//    Route::put("pricelists/{pricelist}", PricelistsController::class . "@update");
-//    Route::delete("pricelists/{pricelist}", PricelistsController::class . "@destroy");
+    Route::get("pricelists", PricelistsController::class . "@index");
+    Route::post("pricelists", PricelistsController::class . "@store");
+    Route::get("pricelists/{pricelist}", PricelistsController::class . "@show");
+    Route::put("pricelists/{pricelist}", PricelistsController::class . "@update");
+    Route::delete("pricelists/{pricelist}", PricelistsController::class . "@destroy");
 
-//    Route::get("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@index");
-//    Route::post("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@store");
-//    Route::get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@show");
-//    Route::put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@update");
-//    Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@destroy");
+    Route::get("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@index");
+    Route::post("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@store");
+    Route::get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@show");
+    Route::put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@update");
+    Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:products_category_id}", PricelistProductsCategoriesController::class . "@destroy");
 });

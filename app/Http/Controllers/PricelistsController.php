@@ -20,36 +20,36 @@ use Neo\Http\Requests\PriceList\UpdatePricelistRequest;
 use Neo\Models\Pricelist;
 
 class PricelistsController {
-    public function index(ListPricelistsRequest $request) {
-        $pricelists = Pricelist::query()->orderBy("name")->get();
+    public function index(ListPricelistsRequest $request): Response {
+        $priceLists = Pricelist::query()->orderBy("name")->get();
 
-        return new Response($pricelists);
+        return new Response($priceLists);
     }
 
-    public function byIds(ListPricelistsByIdsRequest $request) {
-        $pricelists = Pricelist::query()->whereIn("id", $request->input("ids", []))
+    public function byIds(ListPricelistsByIdsRequest $request): Response {
+        $priceLists = Pricelist::query()->whereIn("id", $request->input("ids", []))
                                ->orderBy("name")
                                ->with(["categories"])
                                ->get();
-        return new Response($pricelists);
+        return new Response($priceLists);
     }
 
-    public function store(StorePricelistRequest $request) {
-        $pricelist = new Pricelist([
+    public function store(StorePricelistRequest $request): Response {
+        $priceList = new Pricelist([
             "name"        => $request->input("name"),
             "description" => $request->input("description"),
         ]);
 
-        $pricelist->save();
+        $priceList->save();
 
-        return new Response($pricelist, 201);
+        return new Response($priceList, 201);
     }
 
-    public function show(ShowPricelistRequest $request, Pricelist $pricelist) {
+    public function show(ShowPricelistRequest $request, Pricelist $pricelist): Response {
         return new Response($pricelist->load(["categories"]));
     }
 
-    public function update(UpdatePricelistRequest $request, Pricelist $pricelist) {
+    public function update(UpdatePricelistRequest $request, Pricelist $pricelist): Response {
         $pricelist->name        = $request->input("name");
         $pricelist->description = $request->input("description");
         $pricelist->save();
@@ -57,7 +57,7 @@ class PricelistsController {
         return new Response($pricelist);
     }
 
-    public function destroy(DestroyPricelistRequest $request, Pricelist $pricelist) {
+    public function destroy(DestroyPricelistRequest $request, Pricelist $pricelist): Response {
         $pricelist->delete();
 
         return new Response(["status" => "ok"]);

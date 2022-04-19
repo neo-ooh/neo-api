@@ -255,7 +255,7 @@ Route::group([
 
     Route::   get("pricelists", PricelistsController::class . "@index");
     Route::  post("pricelists", PricelistsController::class . "@store");
-    Route::  post("pricelists/_by_id", PricelistsController::class . "@byIds");
+    Route::   get("pricelists/_by_id", PricelistsController::class . "@byIds");
     Route::   get("pricelists/{pricelist}", PricelistsController::class . "@show");
     Route::   put("pricelists/{pricelist}", PricelistsController::class . "@update");
     Route::delete("pricelists/{pricelist}", PricelistsController::class . "@destroy");

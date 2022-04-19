@@ -17,12 +17,12 @@ use Neo\Services\API\Traits\HasAttributes;
  * Class NetworkSettingsBroadSign
  *
  * @package Neo\Models
- * @property int     $network_id
- * @property int     $customer_id
- * @property int     $container_id
- * @property int     $tracking_id
- * @property int     $reservations_container_id
- * @property int     $ad_copies_container_id
+ * @property int $network_id
+ * @property int $customer_id
+ * @property int $container_id
+ * @property int $tracking_id
+ * @property int $reservations_container_id
+ * @property int $ad_copies_container_id
  */
 class NetworkSettingsBroadSign implements JsonSerializable {
     use HasAttributes;
@@ -31,7 +31,7 @@ class NetworkSettingsBroadSign implements JsonSerializable {
         $this->attributes = $attributes;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->attributes;
     }
 }

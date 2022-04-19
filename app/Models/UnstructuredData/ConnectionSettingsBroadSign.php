@@ -18,9 +18,9 @@ use Neo\Services\API\Traits\HasAttributes;
  * Class ConnectionSettingsBroadSign
  *
  * @package Neo\Models
- * @property int                   $domain_id
- * @property int                   $default_customer_id
- * @property int                   $default_tracking_id
+ * @property int $domain_id
+ * @property int $default_customer_id
+ * @property int $default_tracking_id
  *
  */
 class ConnectionSettingsBroadSign implements JsonSerializable {
@@ -37,7 +37,7 @@ class ConnectionSettingsBroadSign implements JsonSerializable {
         $this->file_path = $this->certificate_path . $this->file_name;
     }
 
-    public function jsonSerialize() {
+    public function jsonSerialize(): mixed {
         return $this->attributes;
     }
 }

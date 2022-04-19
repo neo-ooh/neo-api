@@ -229,8 +229,9 @@ class PropertiesController extends Controller {
     }
 
     public function update(UpdatePropertyRequest $request, Property $property): Response {
-        $property->network_id  = $request->input("network_id");
-        $property->has_tenants = $request->input("has_tenants");
+        $property->network_id   = $request->input("network_id");
+        $property->has_tenants  = $request->input("has_tenants");
+        $property->pricelist_id = $request->input("pricelist_id", null);
         $property->save();
 
         return new Response($property);

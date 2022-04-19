@@ -17,8 +17,9 @@ use Neo\Enums\Capability;
 class UpdatePropertyRequest extends FormRequest {
     public function rules(): array {
         return [
-            "network_id"  => ["nullable", "exists:networks,id"],
-            "has_tenants" => ["required", "boolean"],
+            "network_id"   => ["nullable", "exists:networks,id"],
+            "has_tenants"  => ["required", "boolean"],
+            "pricelist_id" => ["nullable", "exists:pricelists,id"],
         ];
     }
 

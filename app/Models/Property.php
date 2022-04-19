@@ -28,6 +28,7 @@ use Neo\Rules\AccessibleProperty;
  * @property int                                   $actor_id
  * @property int                                   $address_id
  * @property int                                   $network_id
+ * @property int|null                              $pricelist_id
  * @property Date                                  $created_at
  * @property Date                                  $updated_at
  *
@@ -43,6 +44,7 @@ use Neo\Rules\AccessibleProperty;
  * @property boolean                               $has_tenants
  * @property Date                                  $last_review_at
  * @property Collection<Brand>                     $tenants
+ * @property Pricelist                             $pricelist
  *
  * @property Collection<Product>                   $products
  *
@@ -163,6 +165,10 @@ class Property extends SecuredModel {
 
     public function demographicValues(): HasMany {
         return $this->hasMany(DemographicValue::class, "property_id", "actor_id");
+    }
+
+    public function pricelist(): BelongsTo {
+        return $this->belongsTo(Pricelist::class, "pricelist_id", "id");
     }
 
 

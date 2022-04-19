@@ -21,7 +21,8 @@ use Neo\Models\PricelistProductsCategory;
 
 class PricelistProductsCategoriesController {
     public function index(ListPricelistProductsCategoriesRequest $request, Pricelist $pricelist) {
-        $categories = $pricelist->categories;
+        $categories = PricelistProductsCategory::query()->where("pricelist_id", "=", $pricelist->getKey())
+                                               ->get();
 
         return new Response($categories);
     }
@@ -46,20 +47,18 @@ class PricelistProductsCategoriesController {
     }
 
     public function update(UpdatePricelistProductCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
-        $pricelistProductsCategory->fill([
-            "products_category_id" => $request->input("products_category_id"),
-            "pricing"              => $request->input("pricing"),
-            "value"                => $request->input("value"),
-            "min"                  => $request->input("min", null),
-            "max"                  => $request->input("max", null),
+        $pricelist->categories()->updateExistingPivot($pricelistProductsCategory->products_category_id, [
+            "pricing" => $request->input("pricing"),
+            "value"   => $request->input("value"),
+            "min"     => $request->input("min", null),
+            "max"     => $request->input("max", null),
         ]);
-        $pricelistProductsCategory->save();
 
-        return new Response($pricelistProductsCategory);
+        return new Response($pricelist->categories()->firstWhere("id", "=", $pricelistProductsCategory->products_category_id));
     }
 
     public function destroy(DestroyPricelistProductsCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
-        $pricelistProductsCategory->delete();
+        $pricelist->categories()->detach($pricelistProductsCategory->products_category_id);
 
         return new Response(["status" => "ok"]);
     }

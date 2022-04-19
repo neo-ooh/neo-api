@@ -28,7 +28,7 @@ class PricelistProductsCategory extends Pivot {
     protected $table = "pricelists_products_categories";
 
     protected $casts = [
-        "princing" => PricingType::class,
+        "pricing" => PricingType::class,
     ];
 
     protected $fillable = [
@@ -40,4 +40,7 @@ class PricelistProductsCategory extends Pivot {
         "max"
     ];
 
+    function getRouteKeyName() {
+        return "products_category_id";
+    }
 }

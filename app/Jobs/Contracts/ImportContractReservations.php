@@ -69,8 +69,8 @@ class ImportContractReservations implements ShouldQueue {
         $reservations = Campaign::search($broadsignClient, ["name" => $identifier]);
 
         // let's do another request, this time replacing hyphen-minus with hyphen...
-        $identifier   = strtoupper(str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id));
-        $reservations = $reservations->merge(Campaign::search($broadsignClient, ["name" => $identifier]));
+//        $identifier   = strtoupper(str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id));
+//        $reservations = $reservations->merge(Campaign::search($broadsignClient, ["name" => $identifier]));
 
         // Finally, we do a final one with an underscore this time
         $identifier   = strtoupper(str_replace('-', '_', $contract->contract_id));

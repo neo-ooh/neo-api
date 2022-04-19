@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\PriceList\DestroyPricelistRequest;
+use Neo\Http\Requests\PriceList\ListPricelistsByIdsRequest;
 use Neo\Http\Requests\PriceList\ListPricelistsRequest;
 use Neo\Http\Requests\PriceList\ShowPricelistRequest;
 use Neo\Http\Requests\PriceList\StorePricelistRequest;
@@ -22,6 +23,14 @@ class PricelistsController {
     public function index(ListPricelistsRequest $request) {
         $pricelists = Pricelist::query()->orderBy("name")->get();
 
+        return new Response($pricelists);
+    }
+
+    public function byIds(ListPricelistsByIdsRequest $request) {
+        $pricelists = Pricelist::query()->whereIn("id", $request->input("ids", []))
+                               ->orderBy("name")
+                               ->with(["categories"])
+                               ->get();
         return new Response($pricelists);
     }
 

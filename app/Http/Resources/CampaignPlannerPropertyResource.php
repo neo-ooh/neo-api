@@ -26,6 +26,7 @@ class CampaignPlannerPropertyResource extends JsonResource {
             "name"                    => $this->actor->name,
             "address"                 => $this->address,
             "network_id"              => $this->network_id,
+            "pricelist_id"            => $this->pricelist_id,
             "products"                => $this->products,
             "products_ids"            => $this->products->pluck("id"),
             "products_categories_ids" => $this->products->groupBy("category_id")

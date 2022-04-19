@@ -47,4 +47,8 @@ class Pricelist extends Model {
                         "max"
                     ]);
     }
+
+    public function pricings(): \Illuminate\Database\Eloquent\Relations\HasMany {
+        return $this->hasMany(PricelistProductsCategory::class, "pricelist_id", "id");
+    }
 }

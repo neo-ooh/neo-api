@@ -8,7 +8,7 @@
  * @neo/api - ListPropertiesPendingReviewRequest.php
  */
 
-namespace Neo\Http\Requests;
+namespace Neo\Http\Requests\Properties;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;

@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property int                                   $id
@@ -48,7 +49,11 @@ class Pricelist extends Model {
                     ]);
     }
 
-    public function pricings(): \Illuminate\Database\Eloquent\Relations\HasMany {
+    public function pricings(): HasMany {
         return $this->hasMany(PricelistProductsCategory::class, "pricelist_id", "id");
+    }
+
+    public function properties(): HasMany {
+        return $this->hasMany(Property::class, "pricelist_id", "id");
     }
 }

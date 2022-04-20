@@ -191,13 +191,19 @@ class PropertyTrafficSettings extends Model {
             $rollingTraffic = [];
             $trafficData    = $this->weekly_traffic;
 
+            /** Iterator across all years of data. Each year is an array whose indexes map the weeks  */
             $yearTrafficIt = $trafficData->getIterator();
 
-            $validData      = $this->weekly_data->where("traffic", "!==", 0);
+            /** List all entries whose value is above zero */
+            $validData = $this->weekly_data->where("traffic", "!==", 0);
+
+            /** Median weekly traffic of the property */
             $propertyMedian = $validData->count() > 0
                 ? $validData->where("traffic", "!==", 0)->pluck("traffic")->sum() / $validData->count()
                 : 0;
 
+            // Loop over each week of a year
+            // For each week, We try to do a median of all the entries for this week accross all available years of information
             for ($week = 1; $week <= 53; $week++) {
                 $yearTrafficIt->rewind();
                 $weekTraffic    = 0;
@@ -214,17 +220,21 @@ class PropertyTrafficSettings extends Model {
                     $yearTrafficIt->next();
                 } while ($yearTrafficIt->valid());
 
+                // Do we have at least one entry for this week? If yes, do the median.
                 if ($weekComponents > 0) {
+                    // Append the median to the rolling weekly traffic array
                     $rollingTraffic[$week] = round($weekTraffic / $weekComponents);
                     continue;
                 }
 
+                // We don't have any information for this week, fallback to the placeholder value OR the property median depending on settings
                 if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
                     $weekTraffic = $this->placeholder_value / 4;
                 } else {
                     $weekTraffic = $propertyMedian;
                 }
 
+                // Append the fallback value to the rolling weekly traffic array
                 $rollingTraffic[$week] = round($weekTraffic);
             }
 

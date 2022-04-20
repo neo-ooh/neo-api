@@ -435,6 +435,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->details->path_ids;
     }
 
+    public function parent(): BelongsTo {
+        return $this->belongsTo(Actor::class, "parent_id", "id");
+    }
+
     /*
     |----------------------------------------------------------------|
     | Relations

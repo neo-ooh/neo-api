@@ -10,6 +10,8 @@
 
 namespace Neo\Http\Controllers;
 
+use Fuse\Fuse;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -17,11 +19,12 @@ use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
 use Neo\Documents\PropertyDump\PropertyDump;
 use Neo\Enums\Capability;
-use Neo\Http\Requests\ListPropertiesPendingReviewRequest;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
 use Neo\Http\Requests\Properties\DumpPropertyRequest;
+use Neo\Http\Requests\Properties\ListPropertiesPendingReviewRequest;
 use Neo\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Http\Requests\Properties\MarkPropertyReviewedRequest;
+use Neo\Http\Requests\Properties\SearchPropertiesRequest;
 use Neo\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Http\Requests\Properties\UpdateAddressRequest;
@@ -118,6 +121,37 @@ class PropertiesController extends Controller {
         }
 
         return $properties;
+    }
+
+    public function search(SearchPropertiesRequest $request) {
+        /** @var Collection<Actor> $accessibleActors */
+        $accessibleActors = Auth::user()->getAccessibleActors();
+        $accessibleActors->load("parent");
+
+        $searchEngine = new Fuse($accessibleActors->map(fn(Actor $actor) => [
+            "id"          => $actor->getKey(),
+            "name"        => $actor->name,
+            "parent_name" => $actor->parent?->name,
+        ])->toArray(), [
+            "isCaseSensitive" => false,
+            "includeScore"    => true,
+            "keys"            => [
+                "name",
+                "parent_name",
+            ],
+        ]);
+
+        $matchedIds = collect($searchEngine->search($request->input("q")))->pluck("item.id");
+        $actorIds   = $accessibleActors->whereIn("id", $matchedIds)
+                                       ->pluck("id")
+                                       ->unique();
+
+        $properties = Property::query()
+                              ->whereIn("actor_id", $actorIds)
+                              ->orderByRaw("FIELD(actor_id, {$matchedIds->join(',')})")
+                              ->get();
+
+        return new Response($properties);
     }
 
     public function needAttention(ListPropertiesPendingReviewRequest $request) {

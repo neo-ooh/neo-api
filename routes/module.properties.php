@@ -20,6 +20,7 @@ use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\OpeningHoursController;
 use Neo\Http\Controllers\PricelistProductsCategoriesController;
 use Neo\Http\Controllers\PricelistsController;
+use Neo\Http\Controllers\PricelistsPropertiesController;
 use Neo\Http\Controllers\ProductCategoriesController;
 use Neo\Http\Controllers\ProductsController;
 use Neo\Http\Controllers\ProductsLocationsController;
@@ -60,6 +61,7 @@ Route::group([
     Route::  post("properties", PropertiesController::class . "@store");
     Route::   get("properties/_networkDump", PropertiesController::class . "@networkDump");
     Route::   get("properties/_need_attention", PropertiesController::class . "@needAttention");
+    Route::   get("properties/_search", PropertiesController::class . "@search");
     Route::   get("properties/{propertyId}", PropertiesController::class . "@show")->whereNumber("propertyId");
     Route::   put("properties/{property}", PropertiesController::class . "@update");
     Route::   put("properties/{property}/_mark_reviewed", PropertiesController::class . "@markReviewed");
@@ -265,4 +267,7 @@ Route::group([
     Route::   get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@show");
     Route::   put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@update");
     Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@destroy");
+
+    Route::   get("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@index");
+    Route::   put("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@sync");
 });

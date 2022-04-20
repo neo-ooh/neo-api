@@ -5,25 +5,23 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdatePropertyRequest.php
+ * @neo/api - DestroyPricelistRequest.php
  */
 
-namespace Neo\Http\Requests\Properties;
+namespace Neo\Http\Requests\PriceList;
 
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class UpdatePropertyRequest extends FormRequest {
+class DestroyPricelistRequest extends FormRequest {
     public function rules(): array {
         return [
-            "network_id"   => ["nullable", "exists:networks,id"],
-            "has_tenants"  => ["required", "boolean"],
-            "pricelist_id" => ["nullable", "exists:pricelists,id"],
+            //
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::pricelists_edit);
     }
 }

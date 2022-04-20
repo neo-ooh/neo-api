@@ -118,7 +118,7 @@ class SendContractFlightJob implements ShouldQueue {
         $orderLines->push([
             "order_id"           => $this->contract->id,
             "name"               => $product->name,
-            "price_unit"         => $product->unit_price,
+            "price_unit"         => $compiledProduct["unit_price"],
             "product_uom_qty"    => $compiledProduct["spots"],
             "customer_lead"      => 0.0,
             "nb_screen"          => $compiledProduct["quantity"],

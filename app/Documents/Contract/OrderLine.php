@@ -111,6 +111,7 @@ class OrderLine {
                             "order_line/shopping_center_id/annual_traffic",
                             "order_line/shopping_center_id/center_type",
                             "order_line/shopping_center_id/city",
+                            "order_line/shopping_center_id/street",
                             "order_line/shopping_center_id/name",
                             "order_line/shopping_center_id/partner_latitude",
                             "order_line/shopping_center_id/partner_longitude",

@@ -18,6 +18,8 @@ use Neo\Http\Controllers\FieldsController;
 use Neo\Http\Controllers\FieldSegmentsController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\OpeningHoursController;
+use Neo\Http\Controllers\PricelistProductsCategoriesController;
+use Neo\Http\Controllers\PricelistsController;
 use Neo\Http\Controllers\ProductCategoriesController;
 use Neo\Http\Controllers\ProductsController;
 use Neo\Http\Controllers\ProductsLocationsController;
@@ -37,6 +39,8 @@ use Neo\Models\Brand;
 use Neo\Models\Field;
 use Neo\Models\FieldsCategory;
 use Neo\Models\FieldSegment;
+use Neo\Models\Pricelist;
+use Neo\Models\PricelistProductsCategory;
 use Neo\Models\Product;
 use Neo\Models\ProductCategory;
 use Neo\Models\ProductType;
@@ -187,6 +191,7 @@ Route::group([
     Route::model("productType", ProductType::class);
 
     Route:: get("product-types", ProductTypesController::class . "@index");
+    Route:: get("product-types/_by_id", ProductTypesController::class . "@byIds");
     Route:: put("product-types/{productType}", ProductTypesController::class . "@update");
 
     Route:: get("product-categories", ProductCategoriesController::class . "@index");
@@ -232,4 +237,32 @@ Route::group([
 
     Route:: get("properties/{property}/tenants", PropertiesTenantsController::class . "@index");
     Route::post("properties/{property}/tenants", PropertiesTenantsController::class . "@sync");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Price lists
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("pricelist", Pricelist::class);
+    Route::model("pricelistProductsCategory", Neo\Models\PricelistProductsCategory::class, function ($value) {
+        return PricelistProductsCategory::query()
+                                        ->where("products_category_id", "=", $value)
+                                        ->where("pricelist_id", "=", Request::route()->parameter("pricelist"))
+                                        ->first();
+    });
+
+    Route::   get("pricelists", PricelistsController::class . "@index");
+    Route::  post("pricelists", PricelistsController::class . "@store");
+    Route::   get("pricelists/_by_id", PricelistsController::class . "@byIds");
+    Route::   get("pricelists/{pricelist}", PricelistsController::class . "@show");
+    Route::   put("pricelists/{pricelist}", PricelistsController::class . "@update");
+    Route::delete("pricelists/{pricelist}", PricelistsController::class . "@destroy");
+
+    Route::   get("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@index");
+    Route::  post("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@store");
+    Route::   get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@show");
+    Route::   put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@update");
+    Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@destroy");
 });

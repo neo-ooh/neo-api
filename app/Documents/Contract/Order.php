@@ -10,11 +10,9 @@
 
 namespace Neo\Documents\Contract;
 
-use App;
 use Arr;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Date;
 use Neo\Documents\Exceptions\MissingColumnException;
 use Neo\Documents\Network;
 
@@ -35,11 +33,11 @@ class Order {
 
     public string $bonus_impression;
 
-    public string $amount_before_discount;
-    public string $discount_amount;
-    public string $taxes;
-    public string $total;
-    public string $traffic;
+    public float $amount_before_discount;
+    public float $discount_amount;
+    public float $taxes;
+    public float $total;
+    public int $traffic;
 
     public string $show_investment;
 
@@ -107,11 +105,11 @@ class Order {
 //        $this->campaign_start         = $record["campaign_ids/date_start"];
 //        $this->campaign_end           = $record["campaign_ids/date_end"];
 //        $this->bonus_impression       = $record["bonus_impression"];
-        $this->amount_before_discount = $record["amount_undiscounted"];
+        $this->amount_before_discount = (float)$record["amount_undiscounted"];
 //        $this->discount_amount        = $record["amount_discount"];
-        $this->taxes           = $record["amount_tax"];
-        $this->total           = $record["amount_total"];
-        $this->traffic         = $record["traffic"];
+        $this->taxes           = (float)$record["amount_tax"];
+        $this->total           = (float)$record["amount_total"];
+        $this->traffic         = (int)$record["traffic"];
         $this->show_investment = $record["investment"] === "True";
 
         $this->orderLines      = new Collection();
@@ -130,7 +128,7 @@ class Order {
         $this->invoice_plan_steps->add([
             "step"   => $record["invoice_plan_ids/invoice_move_ids/nb_in_plan"],
             "date"   => Carbon::parse($record["invoice_plan_ids/plan_date_start"])->locale($this->locale),
-            "amount" => $record["invoice_plan_ids/invoice_move_ids/amount_untaxed"],
+            "amount" => (float)$record["invoice_plan_ids/invoice_move_ids/amount_untaxed"],
         ]);
     }
 

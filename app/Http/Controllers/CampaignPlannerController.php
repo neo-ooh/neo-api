@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JetBrains\PhpStorm\ArrayShape;
@@ -20,6 +21,7 @@ use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
 use Neo\Models\FieldsCategory;
 use Neo\Models\Network;
+use Neo\Models\Pricelist;
 use Neo\Models\ProductCategory;
 use Neo\Models\Property;
 
@@ -37,12 +39,15 @@ class CampaignPlannerController {
     }
 
     #[ArrayShape([
-        "properties" => "\Illuminate\Database\Eloquent\Collection<Property>",
-        "categories" => "\Illuminate\Database\Eloquent\Collection<ProductCategory>",
-        "networks"   => "\Illuminate\Database\Eloquent\Collection<Network>",
-        "brands"     => "\Illuminate\Database\Eloquent\Collection<Brand>"])
+        "properties"        => "\Illuminate\Database\Eloquent\Collection<Property>",
+        "categories"        => "\Illuminate\Database\Eloquent\Collection<ProductCategory>",
+        "networks"          => "\Illuminate\Database\Eloquent\Collection<Network>",
+        "brands"            => "\Illuminate\Database\Eloquent\Collection<Brand>",
+        "fields_categories" => "\Illuminate\Database\Eloquent\Collection<FieldsCategory>",
+        "pricelists"        => "\Illuminate\Database\Eloquent\Collection<Pricelist>"])
     ]
     protected function getCampaignPlannerData(): array {
+        /** @var Collection<Property> $properties */
         $properties = Property::query()->get();
 
         $properties->load([
@@ -73,12 +78,17 @@ class CampaignPlannerController {
         $networks        = Network::query()->with(["properties_fields"])->get();
         $brands          = Brand::query()->with("child_brands:id,parent_id")->get();
 
+        $pricelists = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
+                               ->with("pricings")
+                               ->get();
+
         return [
             "properties"        => CampaignPlannerPropertyResource::collection($properties),
             "categories"        => $categories,
             "networks"          => $networks,
             "fields_categories" => $fieldCategories,
             "brands"            => $brands,
+            "pricelists"        => $pricelists,
         ];
     }
 }

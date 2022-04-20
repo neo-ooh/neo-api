@@ -176,4 +176,9 @@ final class Capability extends Enum {
      * Allows the user to edit tags
      */
     public const tags_edit = "tags.edit";
+
+    /**
+     * Allows the user to edit pricelists
+     */
+    public const pricelists_edit = "pricelists.edit";
 }

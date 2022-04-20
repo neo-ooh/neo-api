@@ -19,13 +19,13 @@ use Neo\Exceptions\Odoo\ContractNotFoundException;
 use Neo\Http\Requests\Odoo\Contracts\SendContractRequest;
 use Neo\Http\Requests\Odoo\Contracts\ShowContractRequest;
 use Neo\Jobs\Odoo\SendContractJob;
-use Neo\Services\Odoo\Models\Contract;
+use Neo\Services\Odoo\Models\Contract as OdooContract;
 use Neo\Services\Odoo\OdooConfig;
 
 class ContractsController {
     public function show(ShowContractRequest $request, string $contractName) {
         // Get the contract from Odoo
-        $contract = Contract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
+        $contract = OdooContract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
 
         if ($contract === null) {
             throw new ContractNotFoundException($contractName);
@@ -52,7 +52,7 @@ class ContractsController {
 
     public function send(SendContractRequest $request, string $contractName) {
         // Validate that contract exist before doing anything
-        $contract = Contract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
+        $contract = OdooContract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
 
         if ($contract === null) {
             throw new ContractNotFoundException($contractName);

@@ -5,25 +5,24 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdatePropertyRequest.php
+ * @neo/api - ListProductTypesByIdsRequest.php
  */
 
-namespace Neo\Http\Requests\Properties;
+namespace Neo\Http\Requests\ProductTypes;
 
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class UpdatePropertyRequest extends FormRequest {
+class ListProductTypesByIdsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "network_id"   => ["nullable", "exists:networks,id"],
-            "has_tenants"  => ["required", "boolean"],
-            "pricelist_id" => ["nullable", "exists:pricelists,id"],
+            "ids"   => ["required", "array"],
+            "ids.*" => ["int", "exists:products_types,id"],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_products);
     }
 }

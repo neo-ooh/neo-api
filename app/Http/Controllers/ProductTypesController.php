@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\ProductTypes\ListProductTypesByIdsRequest;
 use Neo\Http\Requests\ProductTypes\ListProductTypesRequest;
 use Neo\Http\Requests\ProductTypes\UpdateProductTypeRequest;
 use Neo\Models\ProductType;
@@ -24,6 +25,12 @@ class ProductTypesController {
         if (in_array("categories", $relations, true)) {
             $productTypes->loadMissing("categories");
         }
+
+        return new Response($productTypes);
+    }
+
+    public function byIds(ListProductTypesByIdsRequest $request) {
+        $productTypes = ProductType::query()->whereIn("id", $request->input("ids", []))->get();
 
         return new Response($productTypes);
     }

@@ -184,7 +184,7 @@ class ImpressionsController {
                     $playPerDay         = $openLengths[$weekday] * 60_000 / ($frame->loop_policy->max_duration_msec);
                     $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $frame->loop_policy->default_slot_duration;
+                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $frame->loop_policy->primary_inventory_share_msec;
 
                     $impressionsPerHour = round($impressionsPerPlay * $playsPerHour);
 

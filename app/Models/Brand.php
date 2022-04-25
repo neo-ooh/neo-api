@@ -42,4 +42,8 @@ class Brand extends Model {
     public function properties(): BelongsToMany {
         return $this->belongsToMany(Property::class, "properties_tenants", "brand_id", "property_id");
     }
+
+    public function pointsOfInterest(): HasMany {
+        return $this->hasMany(PointOfInterest::class, "brand_id", "id")->orderBy("name");
+    }
 }

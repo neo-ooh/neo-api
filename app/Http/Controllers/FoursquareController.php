@@ -14,6 +14,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Foursquare\SearchPlacesRequest;
+use Neo\Models\Brand;
 
 class FoursquareController {
     public function _searchPlaces(SearchPlacesRequest $request) {
@@ -45,15 +46,34 @@ class FoursquareController {
         $places->results = array_filter($places->results, fn($place) => $place->location->country === "CA");
 
         $formattedPlaces = array_map(fn($place) => [
-            "geometry"   => [
+            "external_id" => $place->fsq_id,
+            "name"        => $place->name,
+            "address"     => ($place->location->address ?? "") . ', ' . ($place->location->postcode ?? "") . ' ' . ($place->location->locality ?? "") . ', ' . ($place->location->region ?? ""),
+            "query"       => $request->input("q"),
+            "position"    => [
                 "coordinates" => [$place->geocodes->main->longitude, $place->geocodes->main->latitude],
                 "type"        => "Point",
-            ],
-            "place_name" => $place->name . ', ' . ($place->location->address ?? "") . ', ' . ($place->location->postcode ?? "") . ' ' . ($place->location->locality ?? "") . ', ' . ($place->location->region ?? ""),
-            "id"         => $place->fsq_id,
-            "query"      => $request->input("q"),
+            ]
         ], $places->results);
 
-        return new Response(array_values($formattedPlaces));
+        $brands = [];
+
+        if ($request->input("brands", false)) {
+            $brands = Brand::query()
+                           ->whereFullText(["name_en", "name_fr"], $request->input("q"))
+                           ->orWhere("name_en", "=", $request->input("q"))
+                           ->orWhere("name_fr", "=", $request->input("q"))
+                           ->has("pointsOfInterest")
+                           ->orderBy("name_en")
+                           ->orderBy("name_fr")
+                           ->withCount("pointsOfInterest")
+                           ->get()
+                           ->where("points_of_interest_count", ">", 0);
+        }
+
+        return new Response([
+            "pois"   => array_values($formattedPlaces),
+            "brands" => $brands,
+        ]);
     }
 }

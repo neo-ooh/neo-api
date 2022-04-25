@@ -59,6 +59,8 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
         $containers = Container::inContainer($this->getAPIClient(), $containerId);
 
         foreach ($containers as $container) {
+            // We want to make sure we are not getting a container that is not the child of the current one, or is the current one.
+            // This is to prevent infinite loops.
             if ($container->id === $containerId || $container->container_id !== $containerId) {
                 continue;
             }
@@ -75,18 +77,19 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
         $progressBar = $this->makeProgressBar(count($broadSignLocations));
         $progressBar->start();
 
+        $bsContainer = $broadSignLocations[0]->getContainer();
+
+        // Make sure the location's container is present in the DB
+        $containerID = null;
+
+        if ($bsContainer !== null) {
+            $bsContainer->replicate($this->config->networkID);
+            $containerID = $containerID !== $this->config->containerId ? $bsContainer->id : null;
+        }
+
         /** @var BSLocation $bslocation */
         foreach ($broadSignLocations as $bslocation) {
             $progressBar->setMessage("$bslocation->name ($bslocation->id)");
-
-            // Make sure the location's container is present in the DB
-            $bsContainer = $bslocation->getContainer();
-            $containerID = null;
-
-            if ($bsContainer !== null) {
-                $bsContainer->replicate($this->config->networkID);
-                $containerID = $containerID !== $this->config->containerId ? $bsContainer->id : null;
-            }
 
             // Extract the province from the DisplayType address
             // Matches:

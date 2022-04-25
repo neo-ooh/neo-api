@@ -46,7 +46,8 @@ class Format extends BroadSignModel {
                                       ->parser(new MultipleResourcesParser(static::class)),
             "get"          => Endpoint::get("/display_unit_type/v6/{id}")
                                       ->unwrap(static::$unwrapKey)
-                                      ->parser(new SingleResourcesParser(static::class)),
+                                      ->parser(new SingleResourcesParser(static::class))
+                                      ->cache(3600),
             "get_multiple" => Endpoint::get("/display_unit_type/v6/by_id")
                                       ->unwrap(static::$unwrapKey)
                                       ->parser(new MultipleResourcesParser(static::class)),
@@ -54,7 +55,7 @@ class Format extends BroadSignModel {
     }
 
     public function frames(): array {
-        $locations = collect(Location::all());
+        $locations = collect(Location::all($this->api));
         /** @var Location $location */
         $locations = $locations->filter(fn($loc) => $loc->display_unit_type_id === $this->id);
         if ($locations->count() === 0) {

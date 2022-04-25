@@ -5,20 +5,19 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - SearchPlacesRequest.php
+ * @neo/api - SearchPointsOfInterestsRequest.php
  */
 
-namespace Neo\Http\Requests\Foursquare;
+namespace Neo\Http\Requests\PointsOfInterest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchPlacesRequest extends FormRequest {
+class SearchPointsOfInterestsRequest extends FormRequest {
     public function rules(): array {
         return [
             "q"      => ["required", "string", "min:3"],
             "bounds" => ["required", "array"],
-            "limit"  => ["sometimes", "integer"],
-            "brands" => ["boolean"]
+            "limit"  => ["sometimes", "integer"]
         ];
     }
 

@@ -5,24 +5,23 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - SearchPlacesRequest.php
+ * @neo/api - UpdatePointOfInterestRequest.php
  */
 
-namespace Neo\Http\Requests\Foursquare;
+namespace Neo\Http\Requests\PointsOfInterest;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 
-class SearchPlacesRequest extends FormRequest {
+class UpdatePointOfInterestRequest extends FormRequest {
     public function rules(): array {
         return [
-            "q"      => ["required", "string", "min:3"],
-            "bounds" => ["required", "array"],
-            "limit"  => ["sometimes", "integer"],
-            "brands" => ["boolean"]
+            "name" => ["required", "string"],
         ];
     }
 
     public function authorize(): bool {
-        return true;
+        return Gate::allows(Capability::planning_fullaccess) || Gate::allows(Capability::properties_tenants);
     }
 }

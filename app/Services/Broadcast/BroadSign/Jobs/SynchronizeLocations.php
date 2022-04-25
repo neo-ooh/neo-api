@@ -91,6 +91,11 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
         foreach ($broadSignLocations as $bslocation) {
             $progressBar->setMessage("$bslocation->name ($bslocation->id)");
 
+            // Ignore deactivated broadsign units
+            if (!$bslocation->active) {
+                return;
+            }
+
             // Extract the province from the DisplayType address
             // Matches:
             // [0] => Full address
@@ -116,9 +121,6 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
             $location = Location::query()->firstOrCreate([
                 "external_id" => $bslocation->id,
                 "network_id"  => $this->config->networkID,
-            ], [
-                "name"          => $bslocation->name,
-                "internal_name" => $bslocation->name,
             ]);
 
             $location->name            = $bslocation->name;

@@ -48,13 +48,19 @@ class RouteServiceProvider extends ServiceProvider {
 
             // Now, we loop all modules to load their routes
             foreach (config('modules') as $module => $config) {
-                if($module === 'core') { continue; }
+                if ($module === 'core') {
+                    continue;
+                }
 
-                if(!$config["enabled"]) { continue; }
+                if (!$config["enabled"]) {
+                    continue;
+                }
 
                 $routesFile = base_path("routes/module.$module.php");
 
-                if(!file_exists($routesFile)) { continue; }
+                if (!file_exists($routesFile)) {
+                    continue;
+                }
 
                 Route::group([], $routesFile);
             }
@@ -73,7 +79,10 @@ class RouteServiceProvider extends ServiceProvider {
     protected function configureRateLimiting(): void {
         RateLimiter::for('api',
             function (Request $request) {
-                return Limit::perMinute(60)->by(optional($request->user())->id ?: $request->ip());
+                $user       = $request->user();
+                $identifier = $user?->id ?? $request->ip();
+
+                return Limit::perMinute($user ? 256 : 10)->by($identifier);
             });
     }
 }

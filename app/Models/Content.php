@@ -73,6 +73,8 @@ class Content extends SecuredModel {
      */
     protected $table = 'contents';
 
+    protected $primaryKey = "id";
+
     /**
      * The attributes that are mass assignable.
      *

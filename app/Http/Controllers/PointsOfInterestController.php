@@ -77,16 +77,15 @@ class PointsOfInterestController {
         return new Response($pois, 201);
     }
 
-    public function update(UpdatePointOfInterestRequest $request, Brand $brand, PointOfInterest $pointOfInterest) {
-        $pointOfInterest->name = $request->input("name");
-        $pointOfInterest->save();
+    public function update(UpdatePointOfInterestRequest $request, Brand $brand, PointOfInterest $poi) {
+        $poi->name = $request->input("name");
+        $poi->save();
 
-        return new Response($pointOfInterest);
+        return new Response($poi);
     }
 
-    public function destroy(DestroyPointOfInterestRequest $request, Brand $brand, PointOfInterest $pointOfInterest) {
-        dd($pointOfInterest);
-        $pointOfInterest->delete();
+    public function destroy(DestroyPointOfInterestRequest $request, Brand $brand, PointOfInterest $poi) {
+        $poi->delete();
 
         return new Response(["status" => "ok"]);
     }

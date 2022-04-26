@@ -85,6 +85,7 @@ class PointsOfInterestController {
     }
 
     public function destroy(DestroyPointOfInterestRequest $request, Brand $brand, PointOfInterest $pointOfInterest) {
+        dd($pointOfInterest);
         $pointOfInterest->delete();
 
         return new Response(["status" => "ok"]);

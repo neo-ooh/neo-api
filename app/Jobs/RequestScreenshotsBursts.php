@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
 use Neo\Models\Contract;
 use Neo\Models\ContractBurst;
 use Neo\Models\Player;
@@ -75,7 +76,7 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
         $bsPlayer->requestScreenshotsBurst($burst->id, $burst->scale_percent, $burst->duration_ms, $burst->frequency_ms);
 
         // Update the start date to reflect the effective start date.
-        $burst->start_at = Date::now();
+        $burst->start_at = Carbon::now()->setTimezone("America/Toronto")->shiftTimezone('UTC');
         $burst->status   = "ACTIVE";
         $burst->save();
     }

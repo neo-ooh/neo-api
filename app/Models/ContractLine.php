@@ -19,7 +19,7 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  * @property-read int $product_id
  * @property-read int $flight_id
  * @property-read int $external_id
- * @property int      $spots
+ * @property double   $spots
  * @property double   $media_value
  * @property double   $discount
  * @property string   $discount_type

@@ -48,7 +48,7 @@ class CampaignPlannerController {
     ]
     protected function getCampaignPlannerData(): array {
         /** @var Collection<Property> $properties */
-        $properties = Property::query()->get();
+        $properties = Property::query()->has("odoo")->get();
 
         $properties->load([
             "actor.tags",

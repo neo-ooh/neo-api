@@ -14,16 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ShowNetworkRequest extends FormRequest
-{
+class ShowNetworkRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::networks_edit);
+    public function authorize() {
+        return Gate::allows(Capability::networks_edit) || Gate::allows(Capability::properties_edit);
     }
 
     /**
@@ -31,8 +29,7 @@ class ShowNetworkRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             "with" => ["sometimes", "array"],
         ];

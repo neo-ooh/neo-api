@@ -13,11 +13,23 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Products\ImportMappingsRequest;
+use Neo\Http\Requests\Products\ShowProductRequest;
 use Neo\Models\Location;
 use Neo\Models\Product;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 class ProductsController {
+    public function show(ShowProductRequest $request, Product $product) {
+        $product->load([
+            "attachments",
+            "impressions_models",
+            "locations",
+            "loop_configurations"
+        ]);
+
+        return new Response($product);
+    }
+
     public function _importMappings(ImportMappingsRequest $request) {
         $xlsx = new Xlsx();
         $wb   = $xlsx->load($request->file("file")->path());

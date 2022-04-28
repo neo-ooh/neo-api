@@ -246,6 +246,7 @@ class PropertiesController extends Controller {
                                     "products.impressions_models",
                                     "products.locations",
                                     "products.attachments",
+                                    "products.loop_configurations",
                                     "products_categories",
                                     "products_categories.attachments",
                                     "products_categories.product_type"]);

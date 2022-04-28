@@ -20,23 +20,26 @@ use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
+use Neo\Models\Traits\HasLoopConfigurations;
 
 /**
- * @property int                          $id
- * @property int                          $type_id
- * @property string                       $name_en
- * @property string                       $name_fr
- * @property ProductsFillStrategy         $fill_strategy
- * @property int                          $external_id
- * @property Carbon                       $created_at
- * @property Carbon                       $updated_at
+ * @property int                           $id
+ * @property int                           $type_id
+ * @property string                        $name_en
+ * @property string                        $name_fr
+ * @property ProductsFillStrategy          $fill_strategy
+ * @property int                           $external_id
+ * @property Carbon                        $created_at
+ * @property Carbon                        $updated_at
  *
- * @property Collection<Property>         $odoo_properties
- * @property ProductType                  $type
- * @property Collection<ImpressionsModel> $impressions_models
+ * @property ProductType                   $type
+ * @property Collection<Property>          $odoo_properties
+ * @property Collection<ImpressionsModel>  $impressions_models
+ * @property Collection<LoopConfiguration> $loop_configurations
  */
 class ProductCategory extends Model implements WithImpressionsModels, WithAttachments {
     use HasImpressionsModels;
+    use HasLoopConfigurations;
 
     protected $table = "products_categories";
 
@@ -51,6 +54,7 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
     ];
 
     public string $impressions_models_pivot_table = "products_categories_impressions_models";
+    public string $loop_configurations_pivot_table = "products_categories_loop_configurations";
 
     /*
     |--------------------------------------------------------------------------

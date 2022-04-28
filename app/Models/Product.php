@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
+use Neo\Models\Traits\HasLoopConfigurations;
 
 /**
  * @property int                          $id
@@ -46,8 +47,9 @@ use Neo\Models\Traits\HasImpressionsModels;
  * @property Collection<Location>         $locations
  */
 class Product extends Model implements WithImpressionsModels, WithAttachments {
-    use HasImpressionsModels;
     use SoftDeletes;
+    use HasImpressionsModels;
+    use HasLoopConfigurations;
 
     protected $table = "products";
 
@@ -76,6 +78,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     ];
 
     public string $impressions_models_pivot_table = "products_impressions_models";
+    public string $loop_configurations_pivot_table = "products_loop_configurations";
 
 
     /*

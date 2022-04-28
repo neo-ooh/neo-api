@@ -5,22 +5,20 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdateProductCategoryRequest.php
+ * @neo/api - SyncLoopConfigurationsRequest.php
  */
 
-namespace Neo\Http\Requests\ProductCategories;
+namespace Neo\Http\Requests\LoopConfigurations;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Enums\ProductsFillStrategy;
 
-class UpdateProductCategoryRequest extends FormRequest {
+class SyncLoopConfigurationsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name_en"       => ["required", "string"],
-            "name_fr"       => ["required", "string"],
-            "fill_strategy" => ["required", "in:" . implode(",", ProductsFillStrategy::getValues())],
+            "ids"   => ["array"],
+            "ids.*" => ["required", "exists:loop_configurations,id"]
         ];
     }
 

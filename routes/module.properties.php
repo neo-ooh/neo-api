@@ -16,14 +16,17 @@ use Neo\Http\Controllers\CountriesController;
 use Neo\Http\Controllers\FieldsCategoriesController;
 use Neo\Http\Controllers\FieldsController;
 use Neo\Http\Controllers\FieldSegmentsController;
+use Neo\Http\Controllers\LoopConfigurationsController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\OpeningHoursController;
 use Neo\Http\Controllers\PricelistProductsCategoriesController;
 use Neo\Http\Controllers\PricelistsController;
 use Neo\Http\Controllers\PricelistsPropertiesController;
 use Neo\Http\Controllers\ProductCategoriesController;
+use Neo\Http\Controllers\ProductsCategoriesLoopConfigurationsController;
 use Neo\Http\Controllers\ProductsController;
 use Neo\Http\Controllers\ProductsLocationsController;
+use Neo\Http\Controllers\ProductsLoopConfigurationsController;
 use Neo\Http\Controllers\ProductTypesController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
@@ -40,6 +43,7 @@ use Neo\Models\Brand;
 use Neo\Models\Field;
 use Neo\Models\FieldsCategory;
 use Neo\Models\FieldSegment;
+use Neo\Models\LoopConfiguration;
 use Neo\Models\Pricelist;
 use Neo\Models\PricelistProductsCategory;
 use Neo\Models\Product;
@@ -202,6 +206,7 @@ Route::group([
     Route:: put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 
     Route::post("products/_import-mappings", ProductsController::class . "@_importMappings");
+    Route::get("products/{product}", ProductsController::class . "@show");
 
     Route:: put("products/{product}/locations", ProductsLocationsController::class . "@sync");
 
@@ -220,6 +225,24 @@ Route::group([
     Route::  post("products/{product}/attachments", AttachmentsController::class . "@storeProduct");
     Route::   put("products/{product}/attachments/{attachment}", AttachmentsController::class . "@updateProduct");
     Route::delete("products/{product}/attachments/{attachment}", AttachmentsController::class . "@destroyProduct");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Loop Configuration
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("loopConfiguration", LoopConfiguration::class);
+
+    Route::   get("loop-configurations", LoopConfigurationsController::class . "@index");
+    Route::  post("loop-configurations", LoopConfigurationsController::class . "@store");
+    Route::   get("loop-configurations/{loopConfiguration}", LoopConfigurationsController::class . "@show");
+    Route::   put("loop-configurations/{loopConfiguration}", LoopConfigurationsController::class . "@update");
+    Route::delete("loop-configurations/{loopConfiguration}", LoopConfigurationsController::class . "@destroy");
+
+    Route::   post("products-categories/{productCategory}/loop-configurations/_sync", ProductsCategoriesLoopConfigurationsController::class . "@sync");
+    Route::   post("products/{product}/loop-configurations/_sync", ProductsLoopConfigurationsController::class . "@sync");
 
     /*
     |----------------------------------------------------------------------

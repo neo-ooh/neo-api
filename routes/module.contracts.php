@@ -10,6 +10,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\AdvertisersController;
+use Neo\Http\Controllers\AvailabilitiesController;
 use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractsController;
@@ -99,4 +100,14 @@ Route::group([
     Route::model("screenshot", ContractScreenshot::class);
 
     Route::delete("screenshots/{screenshot}", ContractsScreenshotsController::class . "@destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Availabilities
+    |----------------------------------------------------------------------
+    */
+
+    Route::post("availabilities", AvailabilitiesController::class . "@index");
+
 });

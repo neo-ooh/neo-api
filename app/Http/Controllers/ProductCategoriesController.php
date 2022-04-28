@@ -51,6 +51,10 @@ class ProductCategoriesController {
             $productCategory->loadMissing("attachments");
         }
 
+        if (in_array("loop_configurations", $relations, true)) {
+            $productCategory->loadMissing("loop_configurations");
+        }
+
         if (in_array("products", $relations, true)) {
             $productCategory->loadMissing(["products", "products.property", "products.locations"]);
 
@@ -60,6 +64,10 @@ class ProductCategoriesController {
 
             if (in_array("attachments", $relations, true)) {
                 $productCategory->loadMissing("products.attachments");
+            }
+
+            if (in_array("loop_configurations", $relations, true)) {
+                $productCategory->loadMissing("products.loop_configurations");
             }
         }
 

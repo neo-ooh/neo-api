@@ -181,4 +181,9 @@ final class Capability extends Enum {
      * Allows the user to edit pricelists
      */
     public const pricelists_edit = "pricelists.edit";
+
+    /**
+     * Allows the user to edit loop configurations
+     */
+    public const loops_edit = "loops.edit";
 }

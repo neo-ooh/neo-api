@@ -186,7 +186,7 @@ class ImpressionsController {
 
                     $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $frame->loop_policy->primary_inventory_share_msec;
 
-                    $impressionsPerHour = round($impressionsPerPlay * $playsPerHour);
+                    $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
 
                     $sheet->printRow([
                         $location->external_id,

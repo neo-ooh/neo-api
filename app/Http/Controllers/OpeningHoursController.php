@@ -11,12 +11,23 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\OpeningHours\RefreshOpeningHoursRequest;
 use Neo\Http\Requests\OpeningHours\UpdateOpeningHoursRequest;
+use Neo\Jobs\Properties\PullOpeningHoursJob;
 use Neo\Jobs\Properties\PushOpeningHoursJob;
 use Neo\Models\OpeningHours;
 use Neo\Models\Property;
 
 class OpeningHoursController {
+    public function refresh(RefreshOpeningHoursRequest $request, Property $property) {
+        $job    = new PullOpeningHoursJob($property->getKey());
+        $result = $job->handle();
+
+        return new Response([
+            "success" => !!$result,
+        ]);
+    }
+
     public function update(UpdateOpeningHoursRequest $request, Property $property, int $weekday) {
         OpeningHours::query()->updateOrInsert([
             "property_id" => $property->getKey(),

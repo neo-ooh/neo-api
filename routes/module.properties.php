@@ -126,6 +126,7 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
+    Route::post("properties/{property}/opening-hours/_refresh", OpeningHoursController::class . "@refresh");
     Route::put("properties/{property}/opening-hours/{weekday}", OpeningHoursController::class . "@update");
 
     /*

@@ -43,26 +43,26 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
                             ->find($this->propertyId);
 
         if (!$property) {
-            return;
+            return false;
         }
 
         $location = $property->actor->own_locations()->first();
         if (!$location) {
-            return;
+            return false;
         }
 
         $config = Broadcast::network($location->network_id)->getConfig();
 
         if ($config instanceof PiSignageConfig) {
             // PiSignage is unsupported at this time
-            return;
+            return false;
         }
 
         $dayPart = DayPart::getByDisplayUnit(new BroadsignClient($config), $location->external_id)
                           ->firstWhere("minute_mask", "!==", "");
 
         if (!$dayPart) {
-            return;
+            return false;
         }
 
         $days = collect(explode(";", $dayPart->minute_mask));
@@ -83,5 +83,7 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
                 "close_at" => $day[1]
             ]);
         });
+
+        return true;
     }
 }

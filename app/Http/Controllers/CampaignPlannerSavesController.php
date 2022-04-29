@@ -18,6 +18,7 @@ use Neo\Http\Requests\CampaignPlannerSaves\ListSavesRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\ShareSaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\StoreSaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\UpdateSaveRequest;
+use Neo\Http\Resources\CampaignPlannerSaveExcerptResource;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Actor;
 use Neo\Models\Brand;
@@ -28,7 +29,7 @@ use Neo\Models\Property;
 
 class CampaignPlannerSavesController {
     public function index(ListSavesRequest $request, Actor $actor) {
-        return new Response(CampaignPlannerSaveResource::collection($actor->campaign_planner_saves()->get()));
+        return new Response(CampaignPlannerSaveExcerptResource::collection($actor->campaign_planner_saves()->get()));
     }
 
     public function store(StoreSaveRequest $request) {

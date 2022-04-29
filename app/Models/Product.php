@@ -23,28 +23,29 @@ use Neo\Models\Traits\HasImpressionsModels;
 use Neo\Models\Traits\HasLoopConfigurations;
 
 /**
- * @property int                          $id
- * @property int                          $property_id
- * @property int                          $category_id
- * @property string                       $name_en
- * @property string                       $name_fr
- * @property int                          $quantity
- * @property int                          $unit_price
- * @property boolean                      $is_bonus
- * @property int                          $external_id
- * @property int                          $external_variant_id
- * @property int                          $external_linked_id
- * @property int                          $spot_length
- * @property int                          $spots_count
- * @property int                          $extra_spots
- * @property Carbon                       $created_at
- * @property Carbon                       $updated_at
- * @property Carbon                       $deleted_at
+ * @property int                           $id
+ * @property int                           $property_id
+ * @property int                           $category_id
+ * @property string                        $name_en
+ * @property string                        $name_fr
+ * @property int                           $quantity
+ * @property int                           $unit_price
+ * @property boolean                       $is_bonus
+ * @property int                           $external_id
+ * @property int                           $external_variant_id
+ * @property int                           $external_linked_id
+ * @property int                           $spot_length
+ * @property int                           $spots_count
+ * @property int                           $extra_spots
+ * @property Carbon                        $created_at
+ * @property Carbon                        $updated_at
+ * @property Carbon                        $deleted_at
  *
- * @property Property                     $property
- * @property ProductCategory              $category
- * @property Collection<ImpressionsModel> $impressions_models
- * @property Collection<Location>         $locations
+ * @property Property                      $property
+ * @property ProductCategory               $category
+ * @property Collection<ImpressionsModel>  $impressions_models
+ * @property Collection<Location>          $locations
+ * @property Collection<LoopConfiguration> $loop_configurations
  */
 class Product extends Model implements WithImpressionsModels, WithAttachments {
     use SoftDeletes;
@@ -146,5 +147,30 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         }
 
         return $model;
+    }
+
+    public function getLoopConfiguration(Carbon $date): LoopConfiguration|null {
+        $normalizedDate = $date->clone()->setYear(2000);
+
+        $configurationValidator = function (LoopConfiguration $loopConfiguration) use ($normalizedDate) {
+            $crossesNewYear = $loopConfiguration->start_date->isAfter($loopConfiguration->end_date);
+
+            // If the period crosses the new year, we have to change our comparison
+            if ($crossesNewYear) {
+                // ----x----|start|----✓----|NY|----✓----|end|----x----
+                return $normalizedDate >= $loopConfiguration->start_date || $normalizedDate <= $loopConfiguration->end_date;
+            }
+
+            // ----x----|start|----✓----|end|----x----|NY|
+            return $loopConfiguration->start_date <= $normalizedDate && $normalizedDate <= $loopConfiguration->end_date;
+        };
+
+        $loopConfiguration = $this->loop_configurations->first($configurationValidator);
+
+        if (!$loopConfiguration) {
+            $loopConfiguration = $this->category->loop_configurations->first($configurationValidator);
+        }
+
+        return $loopConfiguration;
     }
 }

@@ -23,8 +23,8 @@ return new class extends Migration {
             $table->unsignedInteger("reserved_spots")->default(0);
             $table->date("start_date");
             $table->date("end_date");
-            $table->unsignedInteger("max_spots_count")->generatedAs("`loop_length_ms` / `spot_length_ms`");
-            $table->unsignedInteger("free_spots_count")->generatedAs("`max_spots_count` / `reserved_spots`");
+            $table->unsignedInteger("max_spots_count")->virtualAs("`loop_length_ms` / `spot_length_ms`");
+            $table->unsignedInteger("free_spots_count")->virtualAs("`max_spots_count` - `reserved_spots`");
 
             $table->timestamps();
         });

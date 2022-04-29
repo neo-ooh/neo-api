@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -22,12 +23,12 @@ use Neo\Models\Product;
 
 class AvailabilitiesController {
     public function index(ListAvailabilitiesRequest $request) {
-        $productIds   = $request->input("product_ids");
-        $productSpots = $request->input("product_spots");
+        $productIds    = $request->input("product_ids");
+        $productsSpots = $request->input("product_spots");
 
         $arraySizeValidator = Validator::make([
             "product_ids_count"   => count($productIds),
-            "product_spots_count" => count($productSpots),
+            "product_spots_count" => count($productsSpots),
         ], [
             "product_spots_count" => ["same:product_ids_count"]
         ]);
@@ -39,24 +40,30 @@ class AvailabilitiesController {
         $from = Carbon::parse($request->input("from"));
         $to   = Carbon::parse($request->input("to"));
 
+        $productIdsChunk = collect($productIds)->chunk(500);
+
         // Pull all reservations made for the specified product that intersect with the provided interval
-        $reservations = DB::table('products')
-                          ->select('products.id', 'contracts_lines.spots', 'contracts_flights.start_date', 'contracts_flights.end_date')
-                          ->join('contracts_lines', 'contracts_lines.product_id', '=', 'products.id')
-                          ->join('contracts_flights', 'contracts_lines.flight_id', '=', 'contracts_flights.id')
-                          ->whereIn("products.id", $productIds)
-                          ->where('contracts_flights.start_date', '<', $to->toDateString())
-                          ->where('contracts_flights.end_date', '>', $from->toDateString())
-                          ->where('contracts_flights.type', '<>', ContractFlight::BUA)
-                          ->get()
-                          ->map(function ($reservation) {
-                              return [
-                                  "product_id" => $reservation->id,
-                                  "spots"      => $reservation->spots,
-                                  "from"       => Carbon::parse($reservation->start_date),
-                                  "to"         => Carbon::parse($reservation->end_date),
-                              ];
-                          });
+        $reservations = collect();
+
+        foreach ($productIdsChunk as $chunk) {
+            $reservations = $reservations->merge(DB::table('products')
+                                                   ->select('products.id', 'contracts_lines.spots', 'contracts_flights.start_date', 'contracts_flights.end_date')
+                                                   ->join('contracts_lines', 'contracts_lines.product_id', '=', 'products.id')
+                                                   ->join('contracts_flights', 'contracts_lines.flight_id', '=', 'contracts_flights.id')
+                                                   ->whereIn("products.id", $chunk)
+                                                   ->where('contracts_flights.start_date', '<', $to->toDateString())
+                                                   ->where('contracts_flights.end_date', '>', $from->toDateString())
+                                                   ->where('contracts_flights.type', '<>', ContractFlight::BUA)
+                                                   ->get()
+                                                   ->map(function ($reservation) {
+                                                       return [
+                                                           "product_id" => $reservation->id,
+                                                           "spots"      => $reservation->spots,
+                                                           "from"       => Carbon::parse($reservation->start_date),
+                                                           "to"         => Carbon::parse($reservation->end_date),
+                                                       ];
+                                                   }));
+        }
 
         // Prepare a dates array that will be used as a base for the response
         $datesList  = collect();
@@ -67,13 +74,20 @@ class AvailabilitiesController {
             $dateCursor->addDay();
         } while ($dateCursor->isBefore($boundary));
 
-        // Pull all products as we will need informations about them
-        $products = Product::query()->with("category")->findMany($productIds);
+        $products = new Collection();
+
+        foreach ($productIdsChunk as $chunk) {
+            // Pull all products as we will need informations about them
+            $products = $products->merge(Product::query()
+                                                ->with(["loop_configurations", "category.loop_configurations"])
+                                                ->findMany($chunk));
+        }
 
         $availabilities = [];
 
         // Loop accross all products
         foreach ($productIds as $i => $productId) {
+            clock($productId);
             /** @var Product|null $product */
             $product = $products->firstWhere("id", "=", $productId);
 
@@ -82,38 +96,43 @@ class AvailabilitiesController {
                 continue;
             }
 
-            $spots = $productSpots[$i];
+            $spots = $productsSpots[$i];
 
             // Get the reservations of the product
             $productReservations = $reservations->filter(fn($reservation) => $reservation["product_id"] === $product->id);
 
-            // If the product has no reservations attached, bypass the loop and mark it as fully available
-            if ($productReservations->count() === 0) {
-                $availabilities[] = [
-                    "product_id"     => $product->getKey(),
-                    "availabilities" => "full",
-                ];
-
-                continue;
-            }
-
             // Build the availability array for each date
             $dates = collect();
             foreach ($datesList as $date) {
+                // Determine how many time the product can be booked at the same time
+                if ($product->category->fill_strategy === ProductsFillStrategy::digital) {
+                    // Get the loop configuration for the current date
+                    $loopConfiguration = $product->getLoopConfiguration($date);
+
+                    // If the loop configuration is missing, we cannot determine the availability of the product
+                    if (!$loopConfiguration) {
+                        $dates[] = [
+                            "date"      => $date->toDateString(),
+                            "available" => "unknown",
+                        ];
+                        continue;
+                    }
+
+                    $productSpots = $loopConfiguration->free_spots_count;
+                } else {
+                    $productSpots = $product->quantity;
+                }
+
                 $dateReservations = $productReservations->filter(function ($reservation) use ($date) {
                     return $date->gte($reservation["from"]) && $date->lte($reservation["to"]);
                 });
-
-                // Determine how many time the product can be booked at the same time
-                // We have to do this in the loop as digital products available number of spots may change from one day to another
-                $spotsCounts = $product->category->fill_strategy === ProductsFillStrategy::static ? $product->quantity : $product->spots_count;
 
                 $reservedSpots = $dateReservations->sum("spots");
 
                 $dates[] = [
                     "date"             => $date->toDateString(),
-                    "available"        => $reservedSpots < $spotsCounts - $spots,
-                    "max_reservations" => $spotsCounts,
+                    "available"        => $reservedSpots <= $productSpots - $spots,
+                    "max_reservations" => $productSpots,
                     "reserved"         => $reservedSpots
                 ];
             }

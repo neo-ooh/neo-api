@@ -114,7 +114,7 @@ class ImpressionsController {
 
         // And now, for each frame of the display unit, for every day of the week, we have to calculate the hourly impressions.
         $datePointer = Carbon::now()->startOf("week");
-        $endBoundary = $datePointer->clone()->addYear();
+        $endBoundary = $datePointer->clone()->addMonth();
 
         // Dump a failover row for every frame
         foreach ($frames as $frame) {

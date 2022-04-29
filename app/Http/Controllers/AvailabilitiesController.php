@@ -138,9 +138,9 @@ class AvailabilitiesController {
             }
 
             $state = 'none';
-            if ($dates->every("available", "=", true)) {
+            if ($dates->every("available", "===", true)) {
                 $state = 'full';
-            } else if ($dates->some("available", "=", true)) {
+            } else if ($dates->some("available", "===", true)) {
                 $state = 'partial';
             }
 

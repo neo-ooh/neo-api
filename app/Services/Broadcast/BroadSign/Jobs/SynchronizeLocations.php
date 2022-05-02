@@ -93,7 +93,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
 
             // Ignore deactivated broadsign units
             if (!$bslocation->active) {
-                return;
+                continue;
             }
 
             // Extract the province from the DisplayType address

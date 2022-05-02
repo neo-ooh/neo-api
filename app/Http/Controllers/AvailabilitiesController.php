@@ -42,10 +42,24 @@ class AvailabilitiesController {
 
         $productIdsChunk = collect($productIds)->chunk(500);
 
-        // Pull all reservations made for the specified product that intersect with the provided interval
-        $reservations = collect();
+        // Pull all the products
+        $products = new Collection();
 
         foreach ($productIdsChunk as $chunk) {
+            // Pull all products as we will need informations about them
+            $products = $products->merge(Product::query()
+                                                ->with(["loop_configurations", "category.loop_configurations"])
+                                                ->findMany($chunk));
+        }
+
+
+        // Pull all reservations made for the specified product or their linked ones and who intersect with the provided interval
+        $reservations = collect();
+
+        $allProductsIds       = $products->pluck("id")->merge($products->pluck("linked_product_id")->whereNotNull())->unique();
+        $allProductsIdsChunks = $allProductsIds->chunk(500);
+
+        foreach ($allProductsIdsChunks as $chunk) {
             $reservations = $reservations->merge(DB::table('products')
                                                    ->select('products.id', 'contracts_lines.spots', 'contracts_flights.start_date', 'contracts_flights.end_date')
                                                    ->join('contracts_lines', 'contracts_lines.product_id', '=', 'products.id')
@@ -74,20 +88,10 @@ class AvailabilitiesController {
             $dateCursor->addDay();
         } while ($dateCursor->isBefore($boundary));
 
-        $products = new Collection();
-
-        foreach ($productIdsChunk as $chunk) {
-            // Pull all products as we will need informations about them
-            $products = $products->merge(Product::query()
-                                                ->with(["loop_configurations", "category.loop_configurations"])
-                                                ->findMany($chunk));
-        }
-
         $availabilities = [];
 
         // Loop accross all products
         foreach ($productIds as $i => $productId) {
-            clock($productId);
             /** @var Product|null $product */
             $product = $products->firstWhere("id", "=", $productId);
 
@@ -98,8 +102,8 @@ class AvailabilitiesController {
 
             $spots = $productsSpots[$i];
 
-            // Get the reservations of the product
-            $productReservations = $reservations->filter(fn($reservation) => $reservation["product_id"] === $product->id);
+            // Get the reservations of the product or its linked counterpart
+            $productReservations = $reservations->filter(fn($reservation) => $reservation["product_id"] === $product->id || $reservation["product_id"] === $product->linked_product_id);
 
             // Build the availability array for each date
             $dates = collect();

@@ -33,7 +33,7 @@ use Neo\Models\Traits\HasLoopConfigurations;
  * @property boolean                       $is_bonus
  * @property int                           $external_id
  * @property int                           $external_variant_id
- * @property int                           $external_linked_id
+ * @property int|null                      $linked_product_id
  * @property int                           $spot_length
  * @property int                           $spots_count
  * @property int                           $extra_spots
@@ -67,7 +67,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         "is_bonus",
         "external_id",
         "external_variant_id",
-        "external_linked_id",
+        "linked_product_id",
         "spot_length",
         "spots_count",
         "extra_spots",

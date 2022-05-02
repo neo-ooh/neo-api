@@ -72,13 +72,15 @@ class SendContractFlightJob implements ShouldQueue {
         }
 
         // Load linked products id as well
-        $linkedProductsIds = $this->products->pluck("external_linked_id")->filter()->unique();
+        $linkedProductsIds       = $this->products->pluck("linked_product_id")->filter()->unique();
+        $loadedProductsIds       = $this->products->pluck("id");
+        $linkedProductsIds       = $linkedProductsIds->whereNotIn(null, $loadedProductsIds);
+        $linkedProductsIdsChunks = $linkedProductsIds->chunk(500);
 
-        if ($linkedProductsIds->count() > 0) {
+        foreach ($linkedProductsIdsChunks as $chunk) {
             $this->products = $this->products->merge(Product::query()
-                                                            ->whereIn("external_id", $linkedProductsIds)
-                                                            ->get())->unique();
-            clock($this->products->count());
+                                                            ->whereIn("id", $chunk)
+                                                            ->get());
         }
 
         // Register the flight campaign in the contract
@@ -132,12 +134,12 @@ class SendContractFlightJob implements ShouldQueue {
             "connect_impression" => $compiledProduct["impressions"],
         ]);
 
-        if (!$product->external_linked_id) {
+        if (!$product->linked_product_id) {
             return $orderLines;
         }
 
         /** @var Product|null $product */
-        $linkedProduct = $this->products->firstWhere("external_id", "=", $product->external_linked_id);
+        $linkedProduct = $this->products->firstWhere("id", "=", $product->linked_product_id);
 
         if (!$linkedProduct) {
             return $orderLines;

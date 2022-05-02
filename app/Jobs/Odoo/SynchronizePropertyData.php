@@ -16,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Neo\Models\ProductCategory;
 use Neo\Models\ProductType;
 use Neo\Models\Property;
@@ -72,6 +73,9 @@ class SynchronizePropertyData implements ShouldQueue {
 
         $products = [];
 
+        // A product may be linked to another one. In this situation, we store the external ID reference, and enter those information in a second pass, when all products have been entered.
+        $productsLinks = [];
+
         // Now, store/update each product
         // for each product, we want to store its category, which is shared with other properties
         /** @var Product $distRentalProduct */
@@ -94,11 +98,23 @@ class SynchronizePropertyData implements ShouldQueue {
             $product->unit_price          = $distRentalProduct->list_price;
             $product->external_variant_id = $distRentalProduct->product_variant_id[0];
             $product->is_bonus            = (bool)$distRentalProduct->bonus;
-            $product->external_linked_id  = $distRentalProduct->linked_product_id ? $distRentalProduct->linked_product_id[0] : null;
 
             $product->save();
 
+            if ($distRentalProduct->linked_product_id) {
+                $productsLinks[] = [$product->getKey(), $distRentalProduct->linked_product_id[0]];
+            }
+
             $products[] = $product->id;
+        }
+
+        // Perform update of linked products
+        foreach ($productsLinks as [$productId, $externalLinkedId]) {
+            DB::update(/** @lang MariaDB */ "
+              UPDATE `products` AS `p1` 
+              LEFT JOIN `products` AS `p2` ON `p2`.`external_id` = ?
+              SET `p1`.`linked_product_id` = `p2`.`id`
+              WHERE `p1`.`id` = ?", [$externalLinkedId, $productId]);
         }
 
         $property->products()->whereNotIn("id", $products)->delete();

@@ -49,13 +49,8 @@ class ImportContractJob implements ShouldQueue, ShouldBeUnique {
             return;
         }
 
-        if ($this->odooContract->state === 'draft') {
-            // This is still a proposal!
-            return;
-        }
-
-        if ($this->odooContract->state === 'cancel') {
-            // This contract has been cancelled!
+        if (!$this->odooContract->isConfirmed()) {
+            // Contract is not in a confirmed state
             return;
         }
 

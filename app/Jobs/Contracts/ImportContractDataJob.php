@@ -15,7 +15,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Advertiser;
 use Neo\Models\Client;
@@ -187,7 +186,7 @@ class ImportContractDataJob implements ShouldQueue {
         // Update contract start date, end date and expected impressions
         $startDate = $flights
             ->where("type", "!=", ContractFlight::BUA)
-            ->whenEmpty(function (Collection $flights) {
+            ->whenEmpty(function () use ($flights) {
                 return $flights->where("type", "=", ContractFlight::BUA);
             })
             ->sortBy("start_date")
@@ -195,7 +194,7 @@ class ImportContractDataJob implements ShouldQueue {
 
         $endDate = $flights
             ->where("type", "!=", ContractFlight::BUA)
-            ->whenEmpty(function (Collection $flights) {
+            ->whenEmpty(function () use ($flights) {
                 return $flights->where("type", "=", ContractFlight::BUA);
             })
             ->sortBy("end_date", SORT_REGULAR, "desc")

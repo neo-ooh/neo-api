@@ -80,11 +80,11 @@ class ContractsController extends Controller {
             throw new ContractNotFoundException($contractId);
         }
 
-        if ($odooContract->state === 'draft') {
+        if ($odooContract->isDraft()) {
             throw new ContractIsDraftException($contractId);
         }
 
-        if ($odooContract->state === 'cancelled') {
+        if ($odooContract->isCancelled()) {
             throw new ContractIsCancelledException($contractId);
         }
 

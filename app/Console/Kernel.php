@@ -17,12 +17,12 @@ use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
+use Neo\Jobs\Contracts\RefreshContracts;
 use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Jobs\Creatives\RemoveUnusedCreativesFromBroadcasterJob;
 use Neo\Jobs\Maintenance\RetrySchedulesJob;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
-use Neo\Jobs\RefreshAllContracts;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\SynchronizeNetworks;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
@@ -53,7 +53,7 @@ class Kernel extends ConsoleKernel {
         CacheInventory::class,
 
         // contracts:update
-        RefreshAllContracts::class,
+        RefreshContracts::class,
 
         // contracts:clear-screenshots
         ClearOldScreenshots::class,

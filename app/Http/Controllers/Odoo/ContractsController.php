@@ -31,7 +31,7 @@ class ContractsController {
             throw new ContractNotFoundException($contractName);
         }
 
-        if ($contract->state !== 'draft' && $contract->state !== 'sale') {
+        if ($contract->isConfirmed()) {
             throw new ContractIsNotDraftException($contractName);
         }
 
@@ -58,7 +58,7 @@ class ContractsController {
             throw new ContractNotFoundException($contractName);
         }
 
-        if ($contract->state !== 'draft' && $contract->state !== 'sale') {
+        if ($contract->isConfirmed()) {
             throw new ContractIsNotDraftException($contract->name);
         }
 

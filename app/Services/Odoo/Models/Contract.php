@@ -37,5 +37,22 @@ class Contract extends Model {
     public static function findByName(Client $client, string $contractName): static|null {
         return static::findBy($client, "name", $contractName)->first();
     }
+
+    public function isDraft(): bool {
+        return $this->state === 'draft';
+    }
+
+    public function isCancelled(): bool {
+        return $this->state === 'cancel';
+    }
+
+    /**
+     * Tell if the contract is confirmed, and its content should be taken into account for availabilities, etc.
+     *
+     * @return void
+     */
+    public function isConfirmed(): bool {
+        return !$this->isDraft() && !$this->isCancelled();
+    }
 }
 

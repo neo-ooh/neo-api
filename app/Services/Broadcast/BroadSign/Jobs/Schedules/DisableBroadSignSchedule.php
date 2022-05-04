@@ -19,7 +19,6 @@ use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Bundle as BSBundle;
 use Neo\Services\Broadcast\BroadSign\Models\Schedule as BSSchedule;
-use Symfony\Component\Translation\Exception\InvalidResourceException;
 
 /**
  * Class DisableBroadSignSchedule
@@ -73,11 +72,6 @@ class DisableBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
 
         // Deactivate the schedule's bundles
         $bsBundles = BSBundle::getBySchedule($this->getAPIClient(), $this->broadsignScheduleId);
-
-        if ($bsBundles->count() === 0) {
-            // We do not throw error on bundle not found here as we are already trying to deactivate it.
-            throw new InvalidResourceException("BroadSign Bundle for Schedule $this->broadsignScheduleId could not be loaded.");
-        }
 
         foreach ($bsBundles as $bsBundle) {
             $bsBundle->active = false;

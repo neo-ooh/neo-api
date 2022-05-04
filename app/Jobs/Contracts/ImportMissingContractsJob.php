@@ -18,6 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\OdooConfig;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ImportMissingContractsJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -35,6 +36,7 @@ class ImportMissingContractsJob implements ShouldQueue {
 
         /** @var Contract $odooContract */
         foreach ($odooContracts as $odooContract) {
+            (new ConsoleOutput())->writeln("Importing contract $odooContract->name...");
             // try to import the contract in Connect
             ImportContractJob::dispatch($odooContract->name, $odooContract);
         }

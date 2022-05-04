@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Auth;
 use Neo\Models\Actor;
 use Neo\Models\Contract;
 use Neo\Services\Odoo\OdooConfig;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ImportContractJob implements ShouldQueue, ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -34,6 +35,7 @@ class ImportContractJob implements ShouldQueue, ShouldBeUnique {
     public function handle() {
         if (Contract::query()->where("contract_id", "=", $this->contract_name)->exists()) {
             // A contract with this name already exist, ignore
+            (new ConsoleOutput())->writeln($this->odooContract->name . ": Already in Connect.");
             return;
         }
 
@@ -51,11 +53,17 @@ class ImportContractJob implements ShouldQueue, ShouldBeUnique {
 
         if (!$this->odooContract->isConfirmed()) {
             // Contract is not in a confirmed state
+            (new ConsoleOutput())->writeln($this->odooContract->name . ": Not in a confirmed state.");
             return;
         }
 
-        $salesperson = Actor::query()->where("name", "=", $this->odooContract->user_id[1])->first();
+        $salesperson = Actor::query()
+                            ->where("is_group", "=", false)
+                            ->where("name", "=", $this->odooContract->user_id[1])
+                            ->first();
         if (!$salesperson) {
+            (new ConsoleOutput())->writeln($this->odooContract->name . ": No use found with name {$this->odooContract->user_id[1]}");
+
             $currentUser = Auth::user();
             if (!$currentUser) {
                 return;

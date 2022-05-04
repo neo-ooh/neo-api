@@ -96,9 +96,10 @@ class ImportContractDataJob implements ShouldQueue {
                 $hasMore = true;
             }
 
-            $output->writeln($contract->contract_id . ": Received {$lines->count()} lines...");
-
             $orderLines = $orderLines->merge($lines);
+
+            $output->writeln($contract->contract_id . ": Received {$orderLines->count()} lines...");
+
         } while ($hasMore);
 
         $contractLines              = [];

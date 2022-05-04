@@ -23,9 +23,9 @@ class Screenshot {
     public string $url;
 
     public function __construct(ContractScreenshot $screenshot) {
-        $this->city       = $screenshot->burst->location->city;
-        $this->province   = $screenshot->burst->location->province;
-        $this->format     = $screenshot->burst->location->display_type->name;
+        $this->city       = $screenshot->burst->location?->city ?? '-';
+        $this->province   = $screenshot->burst->location?->province ?? '-';
+        $this->format     = $screenshot->burst->location?->display_type->name ?? '-';
         $this->created_at = $screenshot->created_at->tz("America/Toronto");
 
 

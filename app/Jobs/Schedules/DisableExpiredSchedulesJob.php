@@ -40,12 +40,16 @@ class DisableExpiredSchedulesJob implements ShouldQueue {
 
         /** @var Schedule $schedule */
         foreach ($schedules as $schedule) {
-            $output->writeln("Disabling Schedule #$schedule->id");
-
             if (!($schedule->campaign->network_id)) {
                 // ignore
+
+                $schedule->external_id_1 = null;
+                $schedule->external_id_2 = null;
+                $schedule->save();
                 continue;
             }
+
+            $output->writeln("Disabling Schedule #$schedule->id");
 
             $broadcaster = Broadcast::network($schedule->campaign->network_id);
             $broadcaster->disableSchedule($schedule->getKey());
@@ -54,6 +58,8 @@ class DisableExpiredSchedulesJob implements ShouldQueue {
             $schedule->external_id_1 = null;
             $schedule->external_id_2 = null;
             $schedule->save();
+
+            break;
         }
     }
 }

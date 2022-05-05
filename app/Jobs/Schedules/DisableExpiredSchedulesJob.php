@@ -13,6 +13,7 @@ namespace Neo\Jobs\Schedules;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -29,8 +30,11 @@ class DisableExpiredSchedulesJob implements ShouldQueue {
     public function handle() {
         // We want all schedules that are expired (end_date is passed) and who have an external id
         $schedules = Schedule::query()
-                             ->where("end_date", "<", Carbon::now()->subDay())
                              ->whereNotNull("external_id_1")
+                             ->where(function (Builder $query) {
+                                 $query->where("end_date", "<", Carbon::now()->subDay())
+                                       ->orWhereNotNull("deleted_at");
+                             })
                              ->withoutEagerLoads()
                              ->with(["campaign"])
                              ->withTrashed()

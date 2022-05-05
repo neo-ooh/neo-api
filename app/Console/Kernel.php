@@ -24,6 +24,7 @@ use Neo\Jobs\Maintenance\RetrySchedulesJob;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\RequestScreenshotsBursts;
+use Neo\Jobs\Schedules\DisableExpiredSchedulesJob;
 use Neo\Jobs\SynchronizeNetworks;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
 use Neo\Jobs\Traffic\PullLatestTrafficData;
@@ -112,6 +113,7 @@ class Kernel extends ConsoleKernel {
         $schedule->command('contracts:clear-screenshots')->daily();
 
         // Remove unused creatives from external broadcasters
+        $schedule->job(DisableExpiredSchedulesJob::class)->daily();
         $schedule->job(RemoveUnusedCreativesFromBroadcasterJob::class)->daily();
 
         // Try scheduling jobs that have not been scheduled properly

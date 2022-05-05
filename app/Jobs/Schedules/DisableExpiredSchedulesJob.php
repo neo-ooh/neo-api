@@ -62,8 +62,6 @@ class DisableExpiredSchedulesJob implements ShouldQueue {
             $schedule->external_id_1 = null;
             $schedule->external_id_2 = null;
             $schedule->save();
-
-            break;
         }
     }
 }

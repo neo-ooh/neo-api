@@ -13,9 +13,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
-        Schema::drop("editor_templates");
-        Schema::drop("actors_editors");
-        Schema::drop("checksum");
+        Schema::dropIfExists("actors_editors");
+        Schema::dropIfExists("editor_templates");
+        Schema::dropIfExists("checksum");
     }
 
     public function down() {

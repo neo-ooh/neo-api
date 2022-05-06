@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs\Contracts;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Neo\Models\Contract;
 use Neo\Services\Odoo\OdooConfig;
@@ -46,7 +47,7 @@ class RefreshContracts extends Command {
         ImportMissingContractsJob::dispatch();
 
         $contracts  = Contract::query()
-//                              ->where("start_date", ">", Carbon::now()->subWeek())
+                              ->where("start_date", ">", Carbon::now()->subWeek())
                               ->get();
         $odooClient = OdooConfig::fromConfig()->getClient();
 

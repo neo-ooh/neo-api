@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs\Contracts;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -29,9 +30,16 @@ class RefreshContractsPerformancesJob implements ShouldQueue {
 
     public function handle() {
         Cache::tags("contract-performances")->clear();
+
+        // We refresh contract performances for contracts who still have flights running
         $contracts = Contract::query()
                              ->when($this->contract_id !== null, function (Builder $query) {
                                  $query->where("id", "=", $this->contract_id);
+                             })
+                             ->when($this->contract_id === null, function (Builder $query) {
+                                 $query->whereRelation("flights", function (Builder $query) {
+                                     $query->where("end_date", ">", Carbon::now()->subDays(2));
+                                 });
                              })
                              ->with(["flights", "reservations"])
                              ->get()

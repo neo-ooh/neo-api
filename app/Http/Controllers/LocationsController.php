@@ -20,14 +20,12 @@ use Neo\Exceptions\UnsupportedBroadcasterOptionException;
 use Neo\Http\Requests\Campaigns\SetScreensStateRequest;
 use Neo\Http\Requests\Locations\ForceRefreshPlaylistRequest;
 use Neo\Http\Requests\Locations\ListLocationsRequest;
-use Neo\Http\Requests\Locations\SalesLocationRequest;
 use Neo\Http\Requests\Locations\SearchLocationsRequest;
 use Neo\Http\Requests\Locations\ShowLocationRequest;
 use Neo\Http\Requests\Locations\UpdateLocationRequest;
 use Neo\Models\Actor;
 use Neo\Models\Format;
 use Neo\Models\Location;
-use Neo\Models\Network;
 use Neo\Models\Player;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
@@ -103,35 +101,6 @@ class LocationsController extends Controller {
                              })
                              ->where('locations.name', 'LIKE', "%$q%")
                              ->get();
-
-        return new Response($locations);
-    }
-
-    /**
-     * @param SalesLocationRequest $request
-     * @return Response
-     * @return Response
-     */
-    public function allByNetwork(SalesLocationRequest $request) {
-        // We want to list all the locations per network and per province
-        // retrieve our networks roots
-        $locations = [];
-
-        $networks = Network::query()->whereHas("broadcaster_connection", function (Builder $query) {
-            $query->where("broadcaster", "=", Broadcaster::BROADSIGN);
-        })->get();
-
-        /** @var Network $network */
-        foreach ($networks as $network) {
-            $locations[$network->id] = $network->locations
-                ->map(fn($location) => [
-                    "id"       => $location->id,
-                    "name"     => $location->name,
-                    "province" => $location->province,
-                    "city"     => $location->city,
-                ])
-                ->groupBy(["province", "city"]);
-        }
 
         return new Response($locations);
     }

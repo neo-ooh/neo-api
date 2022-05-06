@@ -79,7 +79,6 @@ Route::group([
 
     Route::get("locations", LocationsController::class . "@index");
     Route::get("locations/_search", LocationsController::class . "@search");
-    Route::get("locations/_network", LocationsController::class . "@allByNetwork");
     Route::get("locations/{location}", LocationsController::class . "@show");
     Route::put("locations/{location}", LocationsController::class . "@update");
 

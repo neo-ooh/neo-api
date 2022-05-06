@@ -80,9 +80,6 @@ final class Capability extends Enum {
     public const networks_edit = "networks.edit";
     public const networks_connections = "networks.connections";
 
-    // Inventory
-    public const inventory_read = "inventory.read";
-
     // Dymamics
     public const dynamics_weather = "dynamics.weather";
     public const dynamics_news = "dynamics.news";

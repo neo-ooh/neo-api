@@ -68,7 +68,7 @@ return [
         "enabled" => env('MODULE_ACCESS_TOKENS_ENABLED', true),
     ],
 
-    "documents" => [
+    "documents"        => [
         "enabled" => env('MODULE_DOCUMENTS_ENABLED', true),
     ],
 
@@ -82,14 +82,9 @@ return [
     | customization interface
     |
     */
-    "dynamics"  => [
+    "dynamics"         => [
         "enabled" => env('MODULE_DYNAMICS_ENABLED', true),
     ],
-
-    "inventory"        => [
-        "enabled" => env('MODULE_INVENTORY_ENABLED', true),
-    ],
-
 
     /*
     |--------------------------------------------------------------------------

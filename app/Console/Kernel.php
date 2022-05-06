@@ -13,7 +13,6 @@ namespace Neo\Console;
 use DateTimeZone;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Neo\Console\Commands\CacheInventory;
 use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
@@ -49,9 +48,6 @@ class Kernel extends ConsoleKernel {
 
         // network:rebuild
         RebuildResources::class,
-
-        // network:cache-inventory
-        CacheInventory::class,
 
         // contracts:update
         RefreshContracts::class,
@@ -95,9 +91,6 @@ class Kernel extends ConsoleKernel {
         /* -----------------
          * Hourly tasks
          */
-
-        // Cache Broadsign inventory for fast access in Connect
-        $schedule->command('network:cache-inventory')->everyThreeHours();
 
         // Refresh Contracts performances
         $schedule->job(RefreshContractsPerformancesJob::class)->everyThreeHours();

@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Fuse\Fuse;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Response;
@@ -34,45 +35,45 @@ class FoursquareController {
                 ],
             ]);
         } catch (ClientException $e) {
-            return new Response([]);
+            $response = null;
         }
 
-        if ($response->getStatusCode() !== 200) {
-            return new Response([]);
+        $places = [];
+
+        if ($response?->getStatusCode() === 200) {
+            $rawPlaces         = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
+            $rawPlacesFiltered = array_filter($rawPlaces->results, fn($place) => $place->location->country === "CA");
+
+            $places = array_map(fn($place) => [
+                "external_id" => $place->fsq_id,
+                "name"        => $place->name,
+                "address"     => ($place->location->address ?? "") . ', ' . ($place->location->postcode ?? "") . ' ' . ($place->location->locality ?? "") . ', ' . ($place->location->region ?? ""),
+                "query"       => $request->input("q"),
+                "position"    => [
+                    "coordinates" => [$place->geocodes->main->longitude, $place->geocodes->main->latitude],
+                    "type"        => "Point",
+                ]
+            ], $rawPlacesFiltered);
         }
-
-        $places = json_decode($response->getBody()->getContents(), false, 512, JSON_THROW_ON_ERROR);
-
-        $places->results = array_filter($places->results, fn($place) => $place->location->country === "CA");
-
-        $formattedPlaces = array_map(fn($place) => [
-            "external_id" => $place->fsq_id,
-            "name"        => $place->name,
-            "address"     => ($place->location->address ?? "") . ', ' . ($place->location->postcode ?? "") . ' ' . ($place->location->locality ?? "") . ', ' . ($place->location->region ?? ""),
-            "query"       => $request->input("q"),
-            "position"    => [
-                "coordinates" => [$place->geocodes->main->longitude, $place->geocodes->main->latitude],
-                "type"        => "Point",
-            ]
-        ], $places->results);
 
         $brands = [];
 
         if ($request->input("brands", false)) {
-            $brands = Brand::query()
-                           ->whereFullText(["name_en", "name_fr"], $request->input("q"))
-                           ->orWhere("name_en", "=", $request->input("q"))
-                           ->orWhere("name_fr", "=", $request->input("q"))
-                           ->has("pointsOfInterest")
-                           ->orderBy("name_en")
-                           ->orderBy("name_fr")
-                           ->withCount("pointsOfInterest")
-                           ->get()
-                           ->where("points_of_interest_count", ">", 0);
+            $allBrands = Brand::query()
+                              ->has("pointsOfInterest")
+                              ->orderBy("name_en")
+                              ->orderBy("name_fr")
+                              ->get()->each->toArray();
+
+            $se     = new Fuse($allBrands->toArray(), [
+                "keys"      => ["name_en", "name_fr"],
+                "threshold" => 0.3
+            ]);
+            $brands = collect($se->search($request->input("q")))->map(fn($result) => $result["item"]);
         }
 
         return new Response([
-            "pois"   => array_values($formattedPlaces),
+            "pois"   => array_values($places),
             "brands" => $brands,
         ]);
     }

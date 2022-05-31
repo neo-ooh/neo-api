@@ -22,6 +22,6 @@ class ShowPricelistRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::pricelists_edit);
+        return Gate::allows(Capability::pricelists_edit) || Gate::allows(Capability::properties_view);
     }
 }

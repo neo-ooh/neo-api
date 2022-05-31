@@ -13,9 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use JetBrains\PhpStorm\ArrayShape;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDataRequest;
-use Neo\Http\Resources\CampaignPlannerPropertyResource;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
@@ -26,27 +24,7 @@ use Neo\Models\ProductCategory;
 use Neo\Models\Property;
 
 class CampaignPlannerController {
-    public function data(GetCampaignPlannerDataRequest $request) {
-        return new Response($this->getCampaignPlannerData());
-    }
-
-    public function saveAndDate(Request $request, CampaignPlannerSave $campaignPlannerSave) {
-        return new Response(array_merge([
-            "save" => new CampaignPlannerSaveResource($campaignPlannerSave)
-        ],
-            $this->getCampaignPlannerData(),
-        ));
-    }
-
-    #[ArrayShape([
-        "properties"        => "\Illuminate\Database\Eloquent\Collection<Property>",
-        "categories"        => "\Illuminate\Database\Eloquent\Collection<ProductCategory>",
-        "networks"          => "\Illuminate\Database\Eloquent\Collection<Network>",
-        "brands"            => "\Illuminate\Database\Eloquent\Collection<Brand>",
-        "fields_categories" => "\Illuminate\Database\Eloquent\Collection<FieldsCategory>",
-        "pricelists"        => "\Illuminate\Database\Eloquent\Collection<Pricelist>"])
-    ]
-    protected function getCampaignPlannerData(): array {
+    public function dataChunk_1(GetCampaignPlannerDataRequest $request) {
         /** @var Collection<Property> $properties */
         $properties = Property::query()->has("odoo")->get();
 
@@ -55,40 +33,87 @@ class CampaignPlannerController {
             "data",
             "address",
             "odoo",
-            "fields_values",
-            "products",
-            "products.attachments",
-            "products.impressions_models",
             "traffic",
             "traffic.weekly_data",
             "pictures",
-            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"]),
-            "tenants"       => fn($q) => $q->select(["id"]),
+            "tenants" => fn($q) => $q->select(["id"]),
         ]);
 
+        return [
+            "properties" => $properties->map(fn(Property $property) => [
+                "id"           => $property->actor_id,
+                "name"         => $property->actor->name,
+                "address"      => $property->address,
+                "network_id"   => $property->network_id,
+                "pricelist_id" => $property->pricelist_id,
+                "traffic"      => $property->traffic->getRollingWeeklyTraffic($property->network_id),
+                "data"         => $property->data,
+                "pictures"     => $property->pictures,
+                "has_tenants"  => $property->has_tenants,
+                "tenants"      => $property->tenants->pluck('id'),
+                "tags"         => $property->actor->tags,
+            ]),
+        ];
+    }
 
-        $properties->each(function (Property $property) {
-            $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic($property->network_id);
-        });
+    public function dataChunk_2(GetCampaignPlannerDataRequest $request) {
+        /** @var Collection<Property> $properties */
+        $properties = Property::query()->has("odoo")->get();
 
-        $properties->makeHidden(["weekly_data", "weekly_traffic"]);
+        $properties->load([
+            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"]),
+        ]);
+
+        return [
+            "properties" => $properties->map(fn(Property $property) => [
+                "id"            => $property->actor_id,
+                "fields_values" => $property->fields_values,
+            ]),
+        ];
+    }
+
+    public function dataChunk_3(GetCampaignPlannerDataRequest $request) {
+        /** @var Collection<Property> $properties */
+        $properties = Property::query()->has("odoo")->get();
+
+        $properties->load([
+            "products",
+            "products.attachments",
+            "products.impressions_models",
+        ]);
+
+        return [
+            "properties" => $properties->map(fn(Property $property) => [
+                "id"                      => $property->actor_id,
+                "products"                => $property->products,
+                "products_ids"            => $property->products->pluck("id"),
+                "products_categories_ids" => $property->products->groupBy("category_id")
+                                                                ->map(static fn($products) => $products->pluck('id')),
+            ]),
+        ];
+    }
+
+    public function dataChunk_4(GetCampaignPlannerDataRequest $request) {
+        $properties = Property::query()->has("odoo")->get(["actor_id", "pricelist_id"]);
 
         $categories      = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
         $fieldCategories = FieldsCategory::query()->get();
         $networks        = Network::query()->with(["properties_fields"])->get();
         $brands          = Brand::query()->with("child_brands:id,parent_id")->get();
-
-        $pricelists = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
-                               ->with("pricings")
-                               ->get();
+        $pricelists      = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
+                                    ->with("pricings")
+                                    ->get();
 
         return [
-            "properties"        => CampaignPlannerPropertyResource::collection($properties),
             "categories"        => $categories,
             "networks"          => $networks,
             "fields_categories" => $fieldCategories,
             "brands"            => $brands,
             "pricelists"        => $pricelists,
         ];
+    }
+
+    public function save(Request $request, CampaignPlannerSave $campaignPlannerSave) {
+        return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
     }
 }

@@ -82,7 +82,7 @@ class RouteServiceProvider extends ServiceProvider {
                 $user       = $request->user();
                 $identifier = $user?->id ?? $request->ip();
 
-                return Limit::perMinute($user ? 256 : 10)->by($identifier);
+                return Limit::perMinute($user ? 256 : 60)->by($identifier);
             });
     }
 }

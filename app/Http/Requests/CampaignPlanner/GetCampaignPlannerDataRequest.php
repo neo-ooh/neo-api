@@ -13,6 +13,8 @@ namespace Neo\Http\Requests\CampaignPlanner;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\CampaignPlannerSave;
+use Vinkla\Hashids\Facades\Hashids;
 
 class GetCampaignPlannerDataRequest extends FormRequest {
     public function rules(): array {
@@ -22,6 +24,16 @@ class GetCampaignPlannerDataRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::tools_planning);
+        if (Gate::allows(Capability::tools_planning)) {
+            return true;
+        }
+
+        if (!$this->route()?->hasParameter("campaignPlannerSave")) {
+            return false;
+        }
+
+        return CampaignPlannerSave::query()
+                                  ->where("id", "=", Hashids::decode($this->route("campaignPlannerSave"))[0] ?? null)
+                                  ->exists();
     }
 }

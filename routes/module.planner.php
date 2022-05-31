@@ -21,6 +21,17 @@ Route::group([
 ], function () {
     /*
     |----------------------------------------------------------------------
+    | Campaign Planner data
+    |----------------------------------------------------------------------
+    */
+
+    Route::   get("campaign-planner/_chunk_1", CampaignPlannerController::class . "@dataChunk_1");
+    Route::   get("campaign-planner/_chunk_2", CampaignPlannerController::class . "@dataChunk_2");
+    Route::   get("campaign-planner/_chunk_3", CampaignPlannerController::class . "@dataChunk_3");
+    Route::   get("campaign-planner/_chunk_4", CampaignPlannerController::class . "@dataChunk_4");
+
+    /*
+    |----------------------------------------------------------------------
     | Saved Campaign Planner runs
     |----------------------------------------------------------------------
     */
@@ -44,8 +55,6 @@ Route::group([
     Route::   get("actors/{actor}/campaign-planner-polygons/{campaignPlannerPolygon}", CampaignPlannerPolygonsController::class . "@show");
     Route::delete("actors/{actor}/campaign-planner-polygons/{campaignPlannerPolygon}", CampaignPlannerPolygonsController::class . "@destroy");
 
-    Route::   get("campaign-planner/_data", CampaignPlannerController::class . "@data");
-
     /*
     |----------------------------------------------------------------------
     | Brands saved Points of Interest
@@ -68,5 +77,9 @@ Route::group([
     "middleware" => "guests",
     "prefix"     => "v1"
 ], function () {
-    Route::   get("campaign-planner/{campaignPlannerSave}", CampaignPlannerController::class . "@saveAndDate");
+    Route::   get("campaign-planner/{campaignPlannerSave}/_save", CampaignPlannerController::class . "@save");
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_1", CampaignPlannerController::class . "@dataChunk_1");
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_2", CampaignPlannerController::class . "@dataChunk_2");
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_3", CampaignPlannerController::class . "@dataChunk_3");
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_4", CampaignPlannerController::class . "@dataChunk_4");
 });

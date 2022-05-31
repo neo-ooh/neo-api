@@ -31,8 +31,9 @@ use Intervention\Image\Facades\Image;
  *
  * @property string   $file_url
  * @property string   $file_path
- * @property string   $thumbnail_url
  * @property string   $thumbnail_path
+ *
+ * @property string   $thumbnail_url
  *
  * @property Creative $creative
  */
@@ -66,20 +67,40 @@ class StaticCreative extends Model {
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * file_url
+     *
+     * @return string|null
+     */
     public function getFileUrlAttribute(): ?string {
         return Storage::disk("public")->url($this->file_path);
     }
 
+    /**
+     * file_path
+     *
+     * @return string|null
+     */
     public function getFilePathAttribute(): ?string {
         return 'creatives/' . $this->creative_id . '.' . $this->extension;
     }
 
-    public function getThumbnailUrlAttribute(): ?string {
-        return Storage::disk("public")->url($this->thumbnail_path);
-    }
-
+    /**
+     * thumbnail_path
+     *
+     * @return string|null
+     */
     public function getThumbnailPathAttribute(): ?string {
         return 'creatives/' . $this->creative_id . '_thumb.jpeg';
+    }
+
+    /**
+     * thumbnail_url
+     *
+     * @return string|null
+     */
+    public function getThumbnailUrlAttribute(): ?string {
+        return Storage::disk("public")->url($this->thumbnail_path);
     }
 
     /*

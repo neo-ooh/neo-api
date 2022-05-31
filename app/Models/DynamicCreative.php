@@ -12,18 +12,19 @@ namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class DynamicCreative
  *
  * @package Neo\Models
  *
- * @property int creative_id
+ * @property int    creative_id
  * @property string url
- * @property int refresh_interval minutes
+ * @property int    refresh_interval minutes
+ * @property string $thumbnail_path
  */
-class DynamicCreative extends Model
-{
+class DynamicCreative extends Model {
     use HasFactory;
 
     protected $table = "dynamic_creatives";
@@ -34,4 +35,15 @@ class DynamicCreative extends Model
     public $incrementing = false;
 
     protected $fillable = ["creative_id", "url", "refresh_interval"];
+
+    protected $appends = ["thumbnail_url"];
+
+    /**
+     * thumbnail_url
+     *
+     * @return string|null
+     */
+    public function getThumbnailUrlAttribute(): ?string {
+        return Storage::disk("public")->url($this->thumbnail_path);
+    }
 }

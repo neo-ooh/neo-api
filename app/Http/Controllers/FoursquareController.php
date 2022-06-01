@@ -63,6 +63,7 @@ class FoursquareController {
                               ->has("pointsOfInterest")
                               ->orderBy("name_en")
                               ->orderBy("name_fr")
+                              ->withCount("pointsOfInterest")
                               ->get()->each->toArray();
 
             $se     = new Fuse($allBrands->toArray(), [

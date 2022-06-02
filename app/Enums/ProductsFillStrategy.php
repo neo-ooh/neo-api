@@ -15,8 +15,10 @@ use BenSampo\Enum\Enum;
 /**
  * @method static self digital()
  * @method static self static ()
+ * @method static self specialty ()
  */
 final class ProductsFillStrategy extends Enum {
     public const digital = "DIGITAL";
     public const static = "STATIC";
+    public const specialty = "SPECIALTY";
 }

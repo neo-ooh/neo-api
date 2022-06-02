@@ -31,27 +31,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="$PROJECT_DIR$/../documents/PDF/Run 19/sale.order.26.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/../documents/PDF/Run 20/Contract.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="$PROJECT_DIR$/../documents/PDF/Run 20/quotation-2.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
       </map>
     </option>
   </component>

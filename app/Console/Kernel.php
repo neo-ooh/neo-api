@@ -17,7 +17,6 @@ use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\Contracts\RefreshContracts;
-use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Jobs\Creatives\RemoveUnusedCreativesFromBroadcasterJob;
 use Neo\Jobs\Maintenance\RetrySchedulesJob;
 use Neo\Jobs\NotifyEndOfSchedules;
@@ -93,7 +92,7 @@ class Kernel extends ConsoleKernel {
          */
 
         // Refresh Contracts performances
-        $schedule->job(RefreshContractsPerformancesJob::class)->everyThreeHours();
+        $schedule->command("contracts:update")->everyThreeHours();
 
 
         /* -----------------

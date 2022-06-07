@@ -180,7 +180,9 @@ class Order {
             $this->guaranteed_impressions_count = $guaranteedOrders->sum("impressions") + $extensionOrders->sum("impressions");
             $this->guaranteed_value             = $guaranteedOrders->sum("media_value") + $extensionOrders->sum("media_value");
             $this->guaranteed_investment        = $guaranteedOrders->sum("net_investment") + $extensionOrders->sum("net_investment");
-            $this->guaranteed_discount          = ($this->guaranteed_value - $this->guaranteed_investment) / $this->guaranteed_value * 100;
+
+
+            $this->guaranteed_discount = ($this->guaranteed_value - $this->guaranteed_investment) / $this->guaranteed_value * 100;
         }
 
         // Bua orders

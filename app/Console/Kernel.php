@@ -28,7 +28,6 @@ use Neo\Jobs\SynchronizeNetworks;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
 use Neo\Jobs\Traffic\PullLatestTrafficData;
 use Neo\Jobs\Traffic\TrafficRequiredReminder;
-use Neo\Services\News\NewsService;
 
 class Kernel extends ConsoleKernel {
     /**
@@ -83,9 +82,9 @@ class Kernel extends ConsoleKernel {
         /* -----------------
          * "More often that hourly but not every minutes"
          */
-        $schedule->call(function (NewsService $news) {
-            $news->updateRecords();
-        })->everyFifteenMinutes();
+        /*        $schedule->call(function (NewsService $news) {
+                    $news->updateRecords();
+                })->everyFifteenMinutes();*/
 
 
         /* -----------------

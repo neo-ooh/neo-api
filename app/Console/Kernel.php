@@ -21,6 +21,7 @@ use Neo\Jobs\Creatives\RemoveUnusedCreativesFromBroadcasterJob;
 use Neo\Jobs\Maintenance\RetrySchedulesJob;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
+use Neo\Jobs\Properties\CreateTrafficSnapshotJob;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\Schedules\DisableExpiredSchedulesJob;
 use Neo\Jobs\SynchronizeNetworks;
@@ -98,6 +99,9 @@ class Kernel extends ConsoleKernel {
         /* -----------------
          * Daily tasks
          */
+
+        // Take a snapshot of properties' traffic
+        $schedule->job(CreateTrafficSnapshotJob::class)->dailyAt("11:45");
 
         // Update network from broadsign & others
         $schedule->command('network:sync')->daily();

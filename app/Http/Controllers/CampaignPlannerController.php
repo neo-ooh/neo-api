@@ -13,7 +13,9 @@ namespace Neo\Http\Controllers;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDataRequest;
+use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
@@ -22,6 +24,7 @@ use Neo\Models\Network;
 use Neo\Models\Pricelist;
 use Neo\Models\ProductCategory;
 use Neo\Models\Property;
+use Neo\Models\PropertyTrafficSnapshot;
 
 class CampaignPlannerController {
     public function dataChunk_1(GetCampaignPlannerDataRequest $request) {
@@ -33,8 +36,6 @@ class CampaignPlannerController {
             "data",
             "address",
             "odoo",
-            "traffic",
-            "traffic.weekly_data",
             "pictures",
             "tenants" => fn($q) => $q->select(["id"]),
         ]);
@@ -46,7 +47,6 @@ class CampaignPlannerController {
                 "address"      => $property->address,
                 "network_id"   => $property->network_id,
                 "pricelist_id" => $property->pricelist_id,
-                "traffic"      => $property->traffic->getRollingWeeklyTraffic($property->network_id),
                 "data"         => $property->data,
                 "pictures"     => $property->pictures,
                 "has_tenants"  => $property->has_tenants,
@@ -110,6 +110,24 @@ class CampaignPlannerController {
             "fields_categories" => $fieldCategories,
             "brands"            => $brands,
             "pricelists"        => $pricelists,
+        ];
+    }
+
+    public function trafficChunk(GetCampaignPlannerTrafficRequest $request) {
+        $date = $request->input("date");
+
+        // If no date is provided, we use the most recent snapshot available
+        if (!$date) {
+            $date = DB::query()->select("date")
+                      ->from((new PropertyTrafficSnapshot())->getTable())
+                      ->orderBy("date", "desc")
+                      ->first()->date;
+        }
+
+        $snapshots = PropertyTrafficSnapshot::query()->where("date", "=", $date)->get();
+
+        return [
+            "traffic" => $snapshots,
         ];
     }
 

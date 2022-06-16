@@ -29,6 +29,7 @@ Route::group([
     Route::   get("campaign-planner/_chunk_2", CampaignPlannerController::class . "@dataChunk_2");
     Route::   get("campaign-planner/_chunk_3", CampaignPlannerController::class . "@dataChunk_3");
     Route::   get("campaign-planner/_chunk_4", CampaignPlannerController::class . "@dataChunk_4");
+    Route::   get("campaign-planner/_chunk_traffic", CampaignPlannerController::class . "@trafficChunk");
 
     /*
     |----------------------------------------------------------------------
@@ -82,4 +83,5 @@ Route::group([
     Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_2", CampaignPlannerController::class . "@dataChunk_2");
     Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_3", CampaignPlannerController::class . "@dataChunk_3");
     Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_4", CampaignPlannerController::class . "@dataChunk_4");
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_traffic", CampaignPlannerController::class . "@trafficChunk");
 });

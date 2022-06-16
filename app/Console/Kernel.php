@@ -101,7 +101,7 @@ class Kernel extends ConsoleKernel {
          */
 
         // Take a snapshot of properties' traffic
-        $schedule->job(CreateTrafficSnapshotJob::class)->dailyAt("11:45");
+        $schedule->job(CreateTrafficSnapshotJob::class)->dailyAt("11:38");
 
         // Update network from broadsign & others
         $schedule->command('network:sync')->daily();

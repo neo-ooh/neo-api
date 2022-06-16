@@ -255,7 +255,8 @@ class OrderLine {
             return false;
         }
 
-        return strtolower($this->property_type) === 'c-store' || strtolower($this->property_type) === 'dépanneur';
+        return str_starts_with(strtolower($this->product_category), "indoor")
+            || str_starts_with(strtolower($this->product_category), "intérieur");
     }
 
     /**
@@ -268,7 +269,8 @@ class OrderLine {
             return false;
         }
 
-        return strtolower($this->property_type) === 'service station' || strtolower($this->property_type) === 'station service';
+        return str_starts_with(strtolower($this->product_category), "outdoor")
+            || str_starts_with(strtolower($this->product_category), "extérieur");
     }
 
     public function isGuaranteed(): int {

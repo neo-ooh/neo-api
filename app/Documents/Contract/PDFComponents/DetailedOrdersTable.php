@@ -89,11 +89,11 @@ class DetailedOrdersTable extends Component {
 
             if ($subsection !== null) {
                 if ($subsection === 'outdoor') {
-                    $sectionPurchases = $sectionPurchases->filter(fn($line) => $line->isOutdoor());
+                    $sectionPurchases = $sectionPurchases->filter(fn(OrderLine $line) => $line->isOutdoor());
                 }
 
                 if ($subsection === 'indoor') {
-                    $sectionPurchases = $sectionPurchases->filter(fn($line) => $line->isIndoor());
+                    $sectionPurchases = $sectionPurchases->filter(fn(OrderLine $line) => $line->isIndoor());
                 }
             }
 

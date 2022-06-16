@@ -460,6 +460,12 @@ footer {
   background-color: #EEEEEE;
 }
 
+.contract-home-page-banner {
+  margin-top: 15mm;
+  margin-left: -15mm;
+  margin-right: -15mm;
+}
+
 #general-conditions {
   border-top: 1px solid #EEEEEE;
 }

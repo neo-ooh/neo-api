@@ -160,4 +160,9 @@
             <td class="end-spacing"></td>
         </tr>
     </table>
+    @if(!$order->use_invoice_plan)
+        <img class="contract-home-page-banner"
+             src="{{ resource_path('/images/contract-banner.png')  }}"
+             alt="Neo banner"/>
+    @endif
 </section>

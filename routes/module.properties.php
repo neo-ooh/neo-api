@@ -28,6 +28,7 @@ use Neo\Http\Controllers\ProductsController;
 use Neo\Http\Controllers\ProductsLocationsController;
 use Neo\Http\Controllers\ProductsLoopConfigurationsController;
 use Neo\Http\Controllers\ProductTypesController;
+use Neo\Http\Controllers\PropertiesContactsController;
 use Neo\Http\Controllers\PropertiesController;
 use Neo\Http\Controllers\PropertiesDataController;
 use Neo\Http\Controllers\PropertiesFieldsSegmentsController;
@@ -122,6 +123,18 @@ Route::group([
     Route::  post("properties/{property}/pictures", PropertyPicturesController::class . "@store");
     Route::   put("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@update");
     Route::delete("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@destroy");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Opening Hours
+    |----------------------------------------------------------------------
+    */
+
+    Route::  get("properties/{property}/contacts", PropertiesContactsController::class . "@show");
+    Route:: post("properties/{property}/contacts", PropertiesContactsController::class . "@store");
+    Route::  put("properties/{property}/contacts/{user}", PropertiesContactsController::class . "@update");
+    Route::delete("properties/{property}/contacts/{user}", PropertiesContactsController::class . "@destroy");
 
 
     /*

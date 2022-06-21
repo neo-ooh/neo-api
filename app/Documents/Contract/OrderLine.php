@@ -300,14 +300,16 @@ class OrderLine {
     protected function getPeriodString() {
         $format = App::currentLocale() === "fr" ? static::PERIOD_FORMAT_FR : static::PERIOD_FORMAT_EN;
 
-        $dateObj = Carbon::make($this->date_start);
+        $startDateObj = Carbon::make($this->date_start);
+        $endDateObj   = Carbon::make($this->date_end);
 
-        if (!$dateObj) {
+        if (!$startDateObj || !$endDateObj) {
             throw new InvalidArgumentException("date_start field is not a valid datetime representation : $this->date_start.");
         }
 
-        $dateObj->locale(App::getLocale());
+        $startDateObj->locale(App::getLocale());
+        $endDateObj->locale(App::getLocale());
 
-        return $dateObj->translatedFormat($format) . " x " . $this->nb_weeks . " " . trans_choice("common.weeks", $this->nb_weeks);
+        return $startDateObj->translatedFormat($format) . " - " . $endDateObj->translatedFormat($format) . " (" . $this->nb_weeks . " " . trans_choice("common.weeks", $this->nb_weeks) . ")";
     }
 }

@@ -13,7 +13,6 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -45,6 +44,7 @@ use Neo\Rules\AccessibleProperty;
  * @property Date                                  $last_review_at
  * @property Collection<Brand>                     $tenants
  * @property Pricelist                             $pricelist
+ * @property Collection<>                          $contacts
  *
  * @property Collection<Product>                   $products
  *
@@ -52,7 +52,7 @@ use Neo\Rules\AccessibleProperty;
  *
  */
 class Property extends SecuredModel {
-    use HasFactory;
+//    use HasFactory;
 
     /*
     |--------------------------------------------------------------------------
@@ -169,6 +169,13 @@ class Property extends SecuredModel {
 
     public function pricelist(): BelongsTo {
         return $this->belongsTo(Pricelist::class, "pricelist_id", "id");
+    }
+
+    public function contacts(): BelongsToMany {
+        return $this->belongsToMany(Actor::class, "properties_contacts", "property_id", "actor_id")
+                    ->with(["phone"])
+                    ->withPivot(["role"])
+                    ->as("contact");
     }
 
 

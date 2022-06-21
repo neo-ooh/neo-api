@@ -64,16 +64,20 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::contents_review,
             ],
             "PROPERTIES" => [
-                \Neo\Enums\Capability::properties_view,
-                \Neo\Enums\Capability::properties_traffic,
                 \Neo\Enums\Capability::properties_edit,
-                \Neo\Enums\Capability::properties_markets,
-                \Neo\Enums\Capability::properties_fields,
-                \Neo\Enums\Capability::properties_products,
-                \Neo\Enums\Capability::products_impressions,
+
+                \Neo\Enums\Capability::properties_contacts,
                 \Neo\Enums\Capability::properties_export,
+                \Neo\Enums\Capability::properties_fields,
+                \Neo\Enums\Capability::properties_markets,
+                \Neo\Enums\Capability::properties_products,
                 \Neo\Enums\Capability::properties_tenants,
+                \Neo\Enums\Capability::properties_traffic,
+                \Neo\Enums\Capability::properties_view,
+
                 \Neo\Enums\Capability::odoo_properties,
+
+                \Neo\Enums\Capability::products_impressions,
                 \Neo\Enums\Capability::pricelists_edit,
                 \Neo\Enums\Capability::loops_edit,
             ],

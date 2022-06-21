@@ -183,4 +183,9 @@ final class Capability extends Enum {
      * Allows the user to edit loop configurations
      */
     public const loops_edit = "loops.edit";
+
+    /**
+     * Allows the user to access properties contacts
+     */
+    public const properties_contacts = "properties.contacts";
 }

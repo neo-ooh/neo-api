@@ -227,6 +227,10 @@ class PropertiesController extends Controller {
         $relations = $request->input("with", []);
         $property->load(["actor", "actor.tags", "traffic", "traffic.data", "address"]);
 
+        if (Gate::allows(Capability::odoo_properties)) {
+            $property->loadMissing(["odoo"]);
+        }
+
         if (Gate::allows(Capability::properties_edit)) {
             $property->loadMissing([
                 "data",
@@ -256,8 +260,8 @@ class PropertiesController extends Controller {
             $property->loadMissing(["tenants"]);
         }
 
-        if (Gate::allows(Capability::odoo_properties)) {
-            $property->loadMissing(["odoo"]);
+        if (in_array("contacts", $relations, true)) {
+            $property->loadMissing(["contacts"]);
         }
 
         return new Response($property);

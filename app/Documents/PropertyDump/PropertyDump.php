@@ -159,14 +159,14 @@ class PropertyDump extends XLSXDocument {
         $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic($property->network_id))->median();
 
         $addressComponents = [
-            "Address"      => trim($property->address->line_1 . " " . ($property->address->line_2 ?: "")),
-            "City"         => $property->address->city->name,
-            "Province"     => $property->address->city->province->slug,
-            "Country"      => $property->address->city->province->country->slug,
-            "Postal Code"  => $property->address->zipcode,
-            "Full Address" => $property->address->string_representation,
-            "Longitude"    => $property->address->geolocation->getLng(),
-            "Latitude"     => $property->address->geolocation->getLat(),
+            "Address"      => trim($property->address?->line_1 . " " . ($property->address?->line_2 ?: "")),
+            "City"         => $property->address?->city->name,
+            "Province"     => $property->address?->city->province->slug,
+            "Country"      => $property->address?->city->province->country->slug,
+            "Postal Code"  => $property->address?->zipcode,
+            "Full Address" => $property->address?->string_representation,
+            "Longitude"    => $property->address?->geolocation->getLng(),
+            "Latitude"     => $property->address?->geolocation->getLat(),
         ];
 
         $operatingHoursComponents = [

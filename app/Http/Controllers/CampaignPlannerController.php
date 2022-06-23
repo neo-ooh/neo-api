@@ -97,8 +97,11 @@ class CampaignPlannerController {
         $properties = Property::query()->has("odoo")->get(["actor_id", "pricelist_id"]);
 
         $categories      = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
-        $fieldCategories = FieldsCategory::query()->get();
-        $networks        = Network::query()->with(["properties_fields"])->get();
+        $fieldCategories = FieldsCategory::query()
+                                         ->with(["fields", "fields.segments.stats"])
+                                         ->get()
+                                         ->each(fn(FieldsCategory $cat) => $cat->fields->append("network_ids"));
+        $networks        = Network::query()->get();
         $brands          = Brand::query()->with("child_brands:id,parent_id")->get();
         $pricelists      = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
                                     ->with("pricings")

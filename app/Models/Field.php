@@ -61,6 +61,10 @@ class Field extends Model {
         return $this->belongsToMany(Network::class, "fields_networks", "field_id", "network_id");
     }
 
+    public function getNetworkIdsAttribute() {
+        return $this->networks()->allRelatedIds();
+    }
+
     public function segments(): HasMany {
         return $this->hasMany(FieldSegment::class, "field_id", "id")->orderBy("order");
     }

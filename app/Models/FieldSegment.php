@@ -36,6 +36,10 @@ class FieldSegment extends Model {
         "variable_id",
     ];
 
+    public function stats() {
+        return $this->hasOne(FieldSegmentStats::class, "id", "id");
+    }
+
     public function field() {
         return $this->belongsTo(Field::class, "field_id", "id");
     }

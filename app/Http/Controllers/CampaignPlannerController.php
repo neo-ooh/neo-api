@@ -19,6 +19,7 @@ use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
+use Neo\Models\Field;
 use Neo\Models\FieldsCategory;
 use Neo\Models\Network;
 use Neo\Models\Pricelist;
@@ -97,10 +98,11 @@ class CampaignPlannerController {
         $properties = Property::query()->has("odoo")->get(["actor_id", "pricelist_id"]);
 
         $categories      = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
-        $fieldCategories = FieldsCategory::query()
-                                         ->with(["fields", "fields.segments.stats"])
-                                         ->get()
-                                         ->each(fn(FieldsCategory $cat) => $cat->fields->append("network_ids"));
+        $fieldCategories = FieldsCategory::query()->get();
+        $fields          = Field::query()
+                                ->with(["segments.stats"])
+                                ->get()
+                                ->append("network_ids");
         $networks        = Network::query()->get();
         $brands          = Brand::query()->with("child_brands:id,parent_id")->get();
         $pricelists      = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
@@ -111,6 +113,7 @@ class CampaignPlannerController {
             "categories"        => $categories,
             "networks"          => $networks,
             "fields_categories" => $fieldCategories,
+            "fields"            => $fields,
             "brands"            => $brands,
             "pricelists"        => $pricelists,
         ];

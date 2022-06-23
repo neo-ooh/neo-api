@@ -142,9 +142,9 @@ class OrderLine {
 
         $this->is_production = $record["order_line/product_id/production"] === "True";
 
-        $this->product             = $record["order_line/product_id"];
-        $this->product_description = $record["order_line/product_id/description"];
-        $this->product_category    = $record["order_line/product_id/categ_id"];
+        $this->product             = trim($record["order_line/product_id"]);
+        $this->product_description = trim($record["order_line/product_id/description"]);
+        $this->product_category    = trim($record["order_line/product_id/categ_id"]);
         $this->product_rental      = $record["order_line/is_product_rentable"] === "True";
 
         if (array_key_exists("order_line/is_mobile_product", $record)) {
@@ -295,6 +295,14 @@ class OrderLine {
 
     public function isAdServerProduct(): int {
         return $this->type === static::TYPE_ADSERVER_PRODUCT;
+    }
+
+    public function getName() {
+        if (str_ends_with($this->product, "(bonus)")) {
+            return substr($this->product, 0, -7);
+        }
+
+        return $this->product;
     }
 
     protected function getPeriodString() {

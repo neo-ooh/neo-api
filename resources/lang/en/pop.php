@@ -27,5 +27,6 @@ return [
     "totals-bonus"                 => "Guaranteed bonus",
     "totals-bua"                   => "Bonus upon availability",
 
-    "pop-from-broadsign" => "Proof of Performance provided by BroadSign",
+    "capped-impressions-disclaimer" => "Impressions counted in the performance report are capped at 150% of contracted impressions.",
+    "pop-from-broadsign"            => "Proof of Performance provided by BroadSign",
 ];

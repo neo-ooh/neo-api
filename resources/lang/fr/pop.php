@@ -27,5 +27,6 @@ return [
     "totals-bonus"                 => "Bonus Garanti",
     "totals-bua"                   => "Bonus selon disponibilité",
 
-    "pop-from-broadsign" => "Preuve de performance fournie par BroadSign",
+    "capped-impressions-disclaimer" => "Les impressions comptabilisées dans le rapport de performance sont plafonnées à 150% des impressions contractées.",
+    "pop-from-broadsign"            => "Preuve de performance fournie par BroadSign",
 ];

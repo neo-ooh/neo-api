@@ -110,6 +110,7 @@ au contrat dès que l’un ou l’autre ou les deux l’auront signé.",
     "table-zipcode"                     => "Code postale",
     "table-location"                    => "Code location",
 
+    "summary-notice-0" => 'Les impressions comptabilisées dans le rapport de performance seront plafonnées à 150% des impressions contractées.',
     "summary-notice-1" => '<span class="emphase">Position garantie:</span> 25% supplémentaires',
     "summary-notice-2" => '<span class="emphase">Digital Vertical :</span> Achat de tous les écrans ou par structure (2 faces)<br />Augmentation de 25% pour les achats sélectifs',
     "summary-notice-3" => "Le calcul de ces impressions n’inclut pas les impressions qui peuvent être générées par la créativité média",

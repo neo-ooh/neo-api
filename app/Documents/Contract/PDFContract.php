@@ -36,7 +36,7 @@ class PDFContract extends PDFDocument {
 
     public function __construct() {
         parent::__construct([
-            "margin_bottom"    => 25,
+            "margin_bottom"    => 15,
             "packTableData"    => true,
             "use_kwt"          => true,
             "setAutoTopMargin" => "pad",

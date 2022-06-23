@@ -126,7 +126,7 @@
                                 @endphp
 
                                 <tr class="purchase-row {{ $loop->last && !$isLastProperty ? 'last' : '' }} {{ $isLastProperty && $loop->last ? 'last-of-region' : '' }} {{ $network }}">
-                                    <td class="product-type">{{ $purchase->product }}</td>
+                                    <td class="product-type">{{ $purchase->getName() }}</td>
                                     <td class="property-city">{{ $city }}</td>
                                     <td>{{ $purchase->date_start }}</td>
                                     <td class="border-right">{{ $purchase->date_end }}</td>
@@ -164,7 +164,7 @@
                             <td class="border-right">-</td>
                             <td class="border-right">{{ format($regionImpressions) }}</td>
                             <td @if($order->show_investment)
-                                class="border-right"
+                                    class="border-right"
                                     @endif >
                                 {{ formatCurrency(round($regionMediaValue)) }}
                             </td>

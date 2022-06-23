@@ -324,6 +324,9 @@ footer {
 #summary {
   margin-top: 5mm;
 }
+#summary .capped-impressions-disclaimer {
+  font-size: 0.889rem;
+}
 
 .summary-network-table {
   border-collapse: collapse;

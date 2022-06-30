@@ -135,6 +135,11 @@ final class Capability extends Enum {
     public const traffic_sources = "traffic.sources";
 
     /**
+     * Allow user to refresh the current day's traffic snapshot
+     */
+    public const traffic_refresh = "traffic.refresh";
+
+    /**
      * Allow user to setup and edit odoo properties and products
      */
     public const tools_planning = "tools.planning";

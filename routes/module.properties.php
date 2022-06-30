@@ -38,6 +38,7 @@ use Neo\Http\Controllers\PropertiesTenantsController;
 use Neo\Http\Controllers\PropertiesTrafficController;
 use Neo\Http\Controllers\PropertyPicturesController;
 use Neo\Http\Controllers\ProvincesController;
+use Neo\Http\Controllers\TrafficSnapshotsController;
 use Neo\Http\Controllers\TrafficSourcesController;
 use Neo\Models\Attachment;
 use Neo\Models\Brand;
@@ -89,8 +90,15 @@ Route::group([
     Route::   put("properties/{property}/traffic", PropertiesTrafficController::class . "@update");
     Route::  post("properties/{property}/traffic", PropertiesTrafficController::class . "@store");
 
-
     Route::  get("properties/{property}/statistics", PropertiesStatisticsController::class . "@show");
+
+    /*
+    |----------------------------------------------------------------------
+    | Traffic Snapshot
+    |----------------------------------------------------------------------
+    */
+
+    Route::  post("traffic/_refresh_snapshot", TrafficSnapshotsController::class . "@refresh");
 
     /*
     |----------------------------------------------------------------------

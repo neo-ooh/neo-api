@@ -109,6 +109,7 @@ class CapabilitiesSeeder extends Seeder {
                 \Neo\Enums\Capability::access_token_edit,
 
                 \Neo\Enums\Capability::traffic_sources,
+                \Neo\Enums\Capability::traffic_refresh,
                 \Neo\Enums\Capability::impressions_export,
 
                 \Neo\Enums\Capability::tags_edit,

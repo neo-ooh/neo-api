@@ -117,6 +117,8 @@ class SendContractFlightJob implements ShouldQueue {
     protected function buildLines(Product $product, array $compiledProduct) {
         $orderLines = collect();
 
+        $discountAmount = $compiledProduct["media_value"] > 0 ? (1 - ($compiledProduct["price"] / $compiledProduct["media_value"])) * 100 : 0;
+
         $orderLines->push([
             "order_id"           => $this->contract->id,
             "name"               => $product->name,
@@ -129,7 +131,7 @@ class SendContractFlightJob implements ShouldQueue {
             "rental_end"         => $this->flight["end"],
             "is_rental_line"     => 1,
             "is_linked_line"     => 0,
-            "discount"           => (1 - ($compiledProduct["price"] / $compiledProduct["media_value"])) * 100,
+            "discount"           => $discountAmount,
             "sequence"           => $this->flightIndex * 10,
             "connect_impression" => $compiledProduct["impressions"],
         ]);

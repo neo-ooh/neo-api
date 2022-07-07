@@ -11,7 +11,6 @@
 namespace Neo\Services\Broadcast\PiSignage\Models;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 use Neo\Services\API\Endpoint;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
@@ -22,15 +21,15 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @package  Neo\Services\Broadcast\PiSignage\Models
  *
  * @property string                           $_id
- * @property string                           $name Player name or location
- * @property string                           $TZ example: Asia/Calcutta
+ * @property string                           $name            Player name or location
+ * @property string                           $TZ              example: Asia/Calcutta
  * @property string                           $cpuSerialNumber 16-digit serial number
- * @property bool                             $managed Whether this player is being managed by the pisignage.com service
- * @property string                           $configLocation Location of the player
+ * @property bool                             $managed         Whether this player is being managed by the pisignage.com service
+ * @property string                           $configLocation  Location of the player
  * @property array<string>                    $labels
  * @property array{_id: string, name: string} $group
- * @property string                           $selfGroupId Hexadecimal id of the player only group if group is not assigned
- * @property string                           $version player software version
+ * @property string                           $selfGroupId     Hexadecimal id of the player only group if group is not assigned
+ * @property string                           $version         player software version
  * @property string                           $platform_version
  * @property string                           $myIpAddress
  * @property string                           $ip
@@ -46,13 +45,14 @@ use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
  * @property string                           $lastReported
  *
  * @method static Collection all(PiSignageClient $client);
+ * @method void toggleTV(array $payload);
  */
 class Player extends PiSignageModel {
     protected static array $updatable = [];
 
     protected static function actions(): array {
         return [
-            "all" => Endpoint::get("/players")->parser(new MultipleResourcesParser(static::class)),
+            "all"      => Endpoint::get("/players")->parser(new MultipleResourcesParser(static::class)),
             "toggleTV" => Endpoint::post("/pitv/{_id}")
         ];
     }

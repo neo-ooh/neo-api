@@ -11,24 +11,21 @@
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Neo\Enums\Capability as CapabilityEnum;
 
 /**
  * Neo\Models\Capability
  *
- * @property int    id
- * @property string slug
- * @property string service
- * @property mixed  default
- * @property bool   standalone
+ * @property int    $id
+ * @property string $slug
+ * @property string $service
+ * @property mixed  $default
+ * @property bool   $standalone
  *
  * @mixin Builder
  */
 class Capability extends Model {
-    use HasFactory;
-
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -46,7 +43,7 @@ class Capability extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         "slug",
@@ -57,7 +54,7 @@ class Capability extends Model {
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'standalone' => 'boolean',
@@ -69,7 +66,10 @@ class Capability extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public static function bySlug (CapabilityEnum $capability) {
+    public static function bySlug(CapabilityEnum $capability): Capability {
+        /**
+         * @var Capability
+         */
         return static::query()->where("slug", "=", $capability->value)->first();
     }
 }

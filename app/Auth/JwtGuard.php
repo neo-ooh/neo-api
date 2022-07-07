@@ -90,7 +90,7 @@ abstract class JwtGuard implements Guard {
 
         // Token is valid, use its `uid` property to get the matching user
         // Get the user
-        /** @var Actor $actor */
+        /** @var Actor|null $actor */
         $actor = Actor::query()->find($this->token['uid']);
 
         if (is_null($actor)) {
@@ -124,7 +124,7 @@ abstract class JwtGuard implements Guard {
         // Try to decode the token
         try {
             $data = JWT::decode($token, new Key($publicKey, 'RS256'));
-        } catch (Exception $ex) {
+        } catch (Exception) {
             // Invalid token, this is not a user
             return null;
         }
@@ -153,7 +153,7 @@ abstract class JwtGuard implements Guard {
      */
     public function checkActorMeetsCriteria(Actor $actor): bool {
         // Validate that the token has its two factor auth OR that the guard allows it to be missing
-        if (!$actor->is2FAValid() && !$this->allowNonValidated2FA) {
+        if (!$this->allowNonValidated2FA && !$actor->is2FAValid()) {
             return false;
         }
 
@@ -216,7 +216,7 @@ abstract class JwtGuard implements Guard {
     }
 
 
-    public function hasUser() {
+    public function hasUser(): bool {
         return $this->user() !== null;
     }
 
@@ -225,7 +225,7 @@ abstract class JwtGuard implements Guard {
      *
      * @return Authenticatable|Actor|null
      */
-    public function user() {
+    public function user(): Actor|Authenticatable|null {
         return $this->actor;
     }
 
@@ -234,7 +234,7 @@ abstract class JwtGuard implements Guard {
      *
      * @return int|null
      */
-    public function id() {
+    public function id(): ?int {
         if (is_null($this->user())) {
             return null;
         }

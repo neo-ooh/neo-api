@@ -13,7 +13,6 @@ namespace Neo\Auth;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Facades\Request;
-use JetBrains\PhpStorm\Pure;
 use Neo\Models\AccessToken;
 
 /**
@@ -77,17 +76,16 @@ class AccessTokenGuard implements Guard {
         return !$this->check();
     }
 
-    #[Pure]
-    public function hasUser() {
+    public function hasUser(): bool {
         return $this->user() !== null;
     }
 
     /**
      * Get the currently authenticated user.
      *
-     * @return Authenticatable|null
+     * @return AccessToken|null
      */
-    public function user() {
+    public function user(): AccessToken|null {
         return $this->token;
     }
 
@@ -96,7 +94,7 @@ class AccessTokenGuard implements Guard {
      *
      * @return int|null
      */
-    public function id() {
+    public function id(): ?int {
         if (is_null($this->user())) {
             return null;
         }

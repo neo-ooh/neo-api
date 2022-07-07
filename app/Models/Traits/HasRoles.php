@@ -25,14 +25,14 @@ use Neo\Models\Role;
  *
  * @package Neo\Models\Traits
  *
- * @property Collection<Capability> capabilities                      List all capabilities directly and indirectly
+ * @property Collection<Capability> $capabilities                       List all capabilities directly and indirectly
  *           applying to this user
- * @property Collection<Capability> standalone_capabilities           List all capabilities directly and indirectly
+ * @property Collection<Capability> $standalone_capabilities            List all capabilities directly and indirectly
  *           applying to this user
- * @property Collection<Role>       roles                             List all roles directly and indirectly applying
+ * @property Collection<Role>       $roles                              List all roles directly and indirectly applying
  *           to this user
- * @property Collection<Role>       own_roles                         Roles directly applying to this actor
- * @property Collection<Role>       inherited_roles                   Roles applying to the parent of this actor, IF
+ * @property Collection<Role>       $own_roles                          Roles directly applying to this actor
+ * @property Collection<Role>       $inherited_roles                    Roles applying to the parent of this actor, IF
  *           the parent is
  *
  * @method Builder Capabilities() scope

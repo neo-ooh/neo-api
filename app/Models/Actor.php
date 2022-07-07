@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use Carbon\Carbon as Date;
-use Exception;
 use Firebase\JWT\JWT;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
@@ -42,62 +41,63 @@ use Neo\Rules\AccessibleActor;
  *
  * @package Neo\Base
  *
- * @property int            id
- * @property string         name
- * @property string         email
- * @property string         password
- * @property string         locale
- * @property bool           is_group             Tell if the current actor is a group
- * @property bool           is_property          Tell if the current actor is a property. A property is always  group, never a
- *           user.
- * @property bool           is_locked            Tell if the current actor has been locked. A locked actor cannot login
- * @property int|null       locked_by            Tell who locke this actor, if applicable
- * @property int|null       branding_id          ID of the branding applied to this user
+ * @property int                 $id
+ * @property string              $name
+ * @property string              $email
+ * @property string              $password
+ * @property string              $locale
+ * @property bool                $is_group              Tell if the current actor is a group
+ * @property bool                $is_property           Tell if the current actor is a property. A property is always  group,
+ *           never a user.
+ * @property bool                $is_locked             Tell if the current actor has been locked. A locked actor cannot login
+ * @property int|null            $locked_by             Tell who locke this actor, if applicable
+ * @property int|null            $branding_id           ID of the branding applied to this user
  *
- * @property Date           created_at
- * @property Date           updated_at
- * @property Date           last_login_at
+ * @property Date                $created_at
+ * @property Date                $updated_at
+ * @property Date                $last_login_at
  *
- * @property bool           registration_sent    Tell if the registration email was sent to the actor. Not applicable to groups
- * @property bool           is_registered        Tell if the user has registered its account. Not applicable to groups
- * @property bool           tos_accepted         Tell if the actor has accepted the current version of the TOS. Not applicable to
+ * @property bool                $registration_sent     Tell if the registration email was sent to the actor. Not applicable to
  *           groups
- * @property bool           limited_access       If set, the actor does not have access to its group and group's children
+ * @property bool                $is_registered         Tell if the user has registered its account. Not applicable to groups
+ * @property bool                $tos_accepted          Tell if the actor has accepted the current version of the TOS. Not
+ *           applicable to groups
+ * @property bool                $limited_access        If set, the actor does not have access to its group and group's children
  *           campaigns. Only to its own, its children campaigns and with user shared with it.
  *
- * @property int|null       $phone_id
- * @property Phone|null     $phone
+ * @property int|null            $phone_id
+ * @property Phone|null          $phone
  *
- * @property string         $two_fa_method
- * @property TwoFactorToken twoFactorToken
- * @property RecoveryToken  recoveryToken
- * @property SignupToken    signupToken
+ * @property string              $two_fa_method
+ * @property TwoFactorToken|null $twoFactorToken
+ * @property RecoveryToken       $recoveryToken
+ * @property SignupToken         $signupToken
  *
  *
- * @property Property       $property
+ * @property Property            $property
  *
- * @property Collection     accessible_actors
- * @property Collection     shared_actors
- * @property int|null       parent_id
- * @property Actor          parent
+ * @property Collection          $accessible_actors
+ * @property Collection          $shared_actors
+ * @property int|null            $parent_id
+ * @property Actor               $parent
  *
- * @property Collection     sharings
- * @property Collection     sharers
+ * @property Collection          $sharings
+ * @property Collection          $sharers
  *
- * @property Collection     locations
- * @property Branding|null  branding
+ * @property Collection          $locations
+ * @property Branding|null       $branding
  *
- * @property Collection     own_libraries
- * @property Collection     shared_libraries
- * @property Collection     children_libraries
+ * @property Collection          $own_libraries
+ * @property Collection          $shared_libraries
+ * @property Collection          $children_libraries
  *
- * @property Collection     campaign_planner_saves
- * @property Collection     campaign_planner_polygons
+ * @property Collection          $campaign_planner_saves
+ * @property Collection          $campaign_planner_polygons
  *
- * @property ?ActorLogo     logo
+ * @property ?ActorLogo          $logo
  *
- * @property string         campaigns_status
- * @property Collection     $tags
+ * @property string              $campaigns_status
+ * @property Collection     $$tags
  *
  * @method Builder    accessibleActors()
  * @method Builder      SharedActors()
@@ -262,15 +262,15 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->hasOne(ActorLogo::class, 'actor_id', 'id');
     }
 
-    public function property() {
+    public function property(): HasOne {
         return $this->hasOne(Property::class, 'actor_id', 'id');
     }
 
-    public function phone() {
+    public function phone(): BelongsTo {
         return $this->belongsTo(Phone::class, 'phone_id', 'id');
     }
 
-    public function campaign_planner_saves() {
+    public function campaign_planner_saves(): HasMany {
         return $this->hasMany(CampaignPlannerSave::class, 'actor_id', 'id');
     }
 
@@ -278,7 +278,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->hasMany(CampaignPlannerPolygon::class, 'actor_id', 'id');
     }
 
-    public function tags() {
+    public function tags(): BelongsToMany {
         return $this->belongsToMany(Tag::class, "actors_tags", "actor_id", "tag_id");
     }
 
@@ -319,6 +319,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     */
 
     public function getAccessibleActors($children = true, $shallow = false, $shared = true, $parent = true) {
+        /** @var Collection<Actor> $actors */
         $actors = new Collection();
 
         if ($children && $shallow) {
@@ -339,7 +340,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // By default, a user cannot see itself
-        $actors = $actors->filter(fn($actor) => $actor->id !== Auth::id());
+        $actors = $actors->filter(fn(Actor $actor) => $actor->id !== Auth::id());
 
         return $actors->values()->unique("id");
     }
@@ -436,7 +437,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     public function parent(): BelongsTo {
-        return $this->belongsTo(Actor::class, "parent_id", "id");
+        return $this->belongsTo(__CLASS__, "parent_id", "id");
     }
 
     /*
@@ -539,11 +540,11 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         $this->attributes["password"] = Hash::make($value);
     }
 
-    public function getRegistrationSentAttribute() {
+    public function getRegistrationSentAttribute(): bool {
         return $this->password !== null || $this->signupToken !== null;
     }
 
-    public function getIsRegisteredAttribute() {
+    public function getIsRegisteredAttribute(): bool {
         return $this->password !== null && $this->signupToken === null;
     }
 
@@ -555,9 +556,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     */
 
     /**
+     * @param bool $updateIfNecessary
      * @return bool
-     * @throws Exception
-     * @throws Exception
      */
     public function is2FAValid($updateIfNecessary = true): bool {
         $token = $this->twoFactorToken;
@@ -614,11 +614,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     /**
      * Build and return a JWT for the current user.
      *
+     * @param bool $isImpersonating
      * @return string
-     * @throws Exception
-     * @throws Exception
      */
-    public function getJWT($isImpersonating = false): string {
+    public function getJWT(bool $isImpersonating = false): string {
         $twoFAIsValid = $this->is2FAValid(!$isImpersonating);
 
         // If this token is for impersonating OR if the user hasn't finished all auth steps, the token should expire in the 24hrs, otherwise, it expires one month after the second FA has been done
@@ -648,7 +647,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return JWT::encode($payload, config("auth.jwt_private_key"), "RS256");
     }
 
-    public function getCampaignsStatusAttribute() {
+    public function getCampaignsStatusAttribute(): string {
         $campaignsStatus = $this->getCampaigns(true, false, false, false)
                                 ->load("schedules")
                                 ->pluck("status")

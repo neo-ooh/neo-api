@@ -32,30 +32,10 @@ class Totals extends Component {
 
     public function render(Worksheet $ws) {
         // First the bonus totals
-        $ws->moveCursor(0, 2);
-        $ws->pushPosition();
-
-        // Stylize the row
-        $ws->getStyle($ws->getRelativeRange(13, 1))->applyFromArray(XLSXStyleFactory::tableFooter("shopping"));
-
-        // Monetary values
-        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
-        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
-
-        $ws->mergeCellsRelative(2, 1);
-        $ws->getCurrentCell()->setValue("TOTAL BONUS");
-
-        $ws->moveCursor(11, 0);
-        $ws->getCurrentCell()->setValue($this->order->getBuaOrders()->sum("media_value"));
-
-        $ws->moveCursor(1, 0);
-        $ws->getCurrentCell()->setValue(0);
-
-        $ws->popPosition();
-        $ws->moveCursor(0, 1);
+        $this->renderBonusTotals($ws);
 
         // Then, the TOTAL CANADA row, with an additional header row just before
-        $ws->moveCursor(0, 1);
+        $ws->moveCursor(0, 2);
         $ws->pushPosition();
 
         $ws->getStyle($ws->getRelativeRange(13, 1))->applyFromArray(XLSXStyleFactory::tableHeader());
@@ -134,6 +114,35 @@ class Totals extends Component {
 
         $ws->popPosition();
         $ws->moveCursor(0, 16);
+    }
+
+    public function renderBonusTotals(Worksheet $ws) {
+        $bonusMediaValue = $this->order->getBuaOrders()->sum("media_value");
+
+        if ($bonusMediaValue === 0) {
+            return;
+        }
+
+        $ws->moveCursor(0, 2);
+        $ws->pushPosition();
+
+        // Stylize the row
+        $ws->getStyle($ws->getRelativeRange(13, 1))->applyFromArray(XLSXStyleFactory::tableFooter("shopping"));
+
+        // Monetary values
+        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 11, 0);
+        $ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 12, 0);
+
+        $ws->mergeCellsRelative(2, 1);
+        $ws->getCurrentCell()->setValue("TOTAL BONUS");
+
+        $ws->moveCursor(11, 0);
+        $ws->getCurrentCell()->setValue($bonusMediaValue);
+
+        $ws->moveCursor(1, 0);
+        $ws->getCurrentCell()->setValue(0);
+
+        $ws->popPosition();
     }
 
     public function addRow(Worksheet $ws, string $label, $value, $format = null) {

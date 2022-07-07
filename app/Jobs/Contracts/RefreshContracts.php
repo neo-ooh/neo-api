@@ -48,6 +48,7 @@ class RefreshContracts extends Command {
 
         $contracts  = Contract::query()
                               ->where("start_date", ">", Carbon::now()->subWeek())
+                              ->orwhere("end_date", ">", Carbon::now()->subWeek())
                               ->get();
         $odooClient = OdooConfig::fromConfig()->getClient();
 

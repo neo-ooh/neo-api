@@ -42,6 +42,8 @@ class NetworkOrders extends Component {
     public function render(Worksheet $ws) {
         $orderLines = $this->order->orderLines->filter(fn(OrderLine $line) => $line->isNetwork($this->network));
 
+//        dump($this->network, $orderLines);
+
         foreach (static::NETWORK_SUBSECTIONS[$this->network] as $subsection) {
             $sectionPurchases = collect([...$orderLines]);
 
@@ -56,8 +58,8 @@ class NetworkOrders extends Component {
             }
 
             if (count($sectionPurchases) === 0) {
-                // If there is no ordere line for this network, we don't print anything
-                return;
+                // If there is no order line for this network, we don't print anything
+                continue;
             }
 
             // Start by printing our header

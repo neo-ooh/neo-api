@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -33,8 +32,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Date   $updated_at
  */
 class ContractReservation extends Model {
-    use HasFactory;
-
     protected $table = "contracts_reservations";
 
     protected $dates = [

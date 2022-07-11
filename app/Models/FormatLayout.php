@@ -21,20 +21,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Neo\Models\FormatLayout
  *
- * @property int                  id
- * @property int                  format_id
- * @property string               name
- * @property boolean              is_fullscreen
- * @property int                  trigger_id
- * @property int                  separation_id
- * @property Date                 created_at
- * @property Date                 updated_at
- * @property Date                 deleted_at
+ * @property int                  $id
+ * @property int                  $format_id
+ * @property string               $name
+ * @property boolean              $is_fullscreen
+ * @property int                  $trigger_id
+ * @property int                  $separation_id
+ * @property Date                 $created_at
+ * @property Date                 $updated_at
+ * @property Date                 $deleted_at
  *
- * @property Format               format
- * @property Collection<Frame>    frames
- * @property ?BroadSignTrigger    trigger
- * @property ?BroadSignSeparation separation
+ * @property Format               $format
+ * @property Collection<Frame>    $frames
+ * @property ?BroadSignTrigger    $trigger
+ * @property ?BroadSignSeparation $separation
  *
  * @mixin Builder
  */

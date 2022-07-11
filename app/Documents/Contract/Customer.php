@@ -52,7 +52,6 @@ class Customer {
             "partner_id/phone"       => $this->phone,
             "partner_id/email"       => $this->email,
 
-            "company_id/name"                  => $this->company,
             "analytic_account_id/display_name" => $this->account,
 
             "partner_id/street"          => $this->address_street,
@@ -61,7 +60,7 @@ class Customer {
             "partner_id/country_id/name" => $this->address_country,
         ] = $record;
 
-        if(array_key_exists("partner_invoice_id/email", $record)) {
+        if (array_key_exists("partner_invoice_id/email", $record)) {
             $this->payable_account = $record["partner_invoice_id/email"];
         }
 

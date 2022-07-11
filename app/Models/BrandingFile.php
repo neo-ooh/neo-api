@@ -24,10 +24,10 @@ use Illuminate\Support\Facades\Storage;
  *
  * @package Neo\Models
  *
- * @property int    branding_id
- * @property string filename
+ * @property int    $branding_id
+ * @property string $filename
  *
- * @property string filePath
+ * @property string $filePath
  *
  * @mixin Builder
  */

@@ -10,25 +10,22 @@
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Country
  *
- * @property int $id
- * @property string $slug
- * @property string $name
+ * @package Neo\Models
+ * @property string               $slug
+ * @property string               $name
  *
  * @property Collection<Province> $provinces
  *
- * @package Neo\Models
+ * @property int                  $id
  */
-class Country extends Model
-{
-    use HasFactory;
-
+class Country extends Model {
     protected $table = "countries";
 
     protected $primaryKey = "id";
@@ -42,12 +39,11 @@ class Country extends Model
      *
      * @return string
      */
-    public function getRouteKeyName()
-    {
+    public function getRouteKeyName(): string {
         return 'slug';
     }
 
-    public function provinces() {
+    public function provinces(): HasMany {
         return $this->hasMany(Province::class, "country_id");
     }
 }

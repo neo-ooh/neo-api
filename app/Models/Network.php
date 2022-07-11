@@ -87,7 +87,7 @@ class Network extends Model {
         return match ($this->broadcaster_connection->broadcaster) {
             Broadcaster::BROADSIGN => new NetworkSettingsBroadSign($settings),
             Broadcaster::PISIGNAGE => new NetworkSettingsPiSignage($settings),
-            default => null,
+            default                => null,
         };
     }
 
@@ -108,12 +108,10 @@ class Network extends Model {
         return $this->hasMany(Campaign::class, 'network_id', 'id')->orderBy("name");
     }
 
-    public function printsFactors(): HasMany {
-        return $this->hasMany(DisplayTypePrintsFactors::class, "network_id", "id");
-    }
-
     public function properties_fields(): BelongsToMany {
-        return $this->belongsToMany(Field::class, "fields_networks", "network_id", "field_id")->withPivot(["order"])->orderByPivot("order");
+        return $this->belongsToMany(Field::class, "fields_networks", "network_id", "field_id")
+                    ->withPivot(["order"])
+                    ->orderByPivot("order");
     }
 
     public function getPropertiesAttribute() {

@@ -8,7 +8,7 @@
  * @neo/api - BadAPIPResponseException.php
  */
 
-namespace Neo\Services\Broadcast\BroadSign\API;
+namespace Neo\Exceptions;
 
 class BadAPIPResponseException extends \Exception {
     public function __construct(string $message = "", int $code = 0) {

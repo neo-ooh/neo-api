@@ -11,9 +11,9 @@
 namespace Neo\Services\Traffic;
 
 use Illuminate\Support\Facades\Log;
+use Neo\Exceptions\BadAPIPResponseException;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
-use Spatie\FlareClient\Http\Exceptions\BadResponse;
 
 class LinkettAPIClient implements APIClientInterface {
 
@@ -27,6 +27,7 @@ class LinkettAPIClient implements APIClientInterface {
 
     /**
      * @inheritDoc
+     * @throws BadAPIPResponseException
      */
     public function call($endpoint, $payload, array $headers = []) {
         $payload["key"] = $this->apiKey;
@@ -49,7 +50,7 @@ class LinkettAPIClient implements APIClientInterface {
             Log::channel("broadsign")
                ->error("pisignage response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 
-            throw new BadResponse($response->body(), $response->status());
+            throw new BadAPIPResponseException($response->body(), $response->status());
         }
 
         $responseBody = $response->json();

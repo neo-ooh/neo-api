@@ -17,13 +17,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Neo\Models\Branding
  *
- * @property int      id
- * @property int      parent_id
- * @property int      parent_is_group
- * @property string   is_property
- * @property bool     direct_children_count
- * @property string   path_names
- * @property string   path_ids
+ * @property int    $id
+ * @property int    $parent_id
+ * @property int    $parent_is_group
+ * @property string $is_property
+ * @property bool   $direct_children_count
+ * @property string $path_names
+ * @property string $path_ids
  *
  * @mixin Builder
  */
@@ -49,7 +49,7 @@ class ActorDetails extends Model {
      */
     protected $casts = [
         'parent_is_group' => 'boolean',
-        'is_property' => 'boolean',
+        'is_property'     => 'boolean',
     ];
 
 
@@ -59,7 +59,7 @@ class ActorDetails extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function actor (): BelongsTo {
+    public function actor(): BelongsTo {
         return $this->belongsTo(Actor::class, 'id', 'id');
     }
 }

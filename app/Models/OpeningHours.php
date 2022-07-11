@@ -15,12 +15,12 @@ use Illuminate\Support\Carbon;
 use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
- * @property int    property_id
- * @property int    weekday 1-indexed day of the week.
- * @property Carbon open_at
- * @property Carbon close_at
- * @property Carbon created_at
- * @property Carbon updated_at
+ * @property int    $property_id
+ * @property int    $weekday 1-indexed day of the week.
+ * @property Carbon $open_at
+ * @property Carbon $close_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class OpeningHours extends Model {
     use HasCompositePrimaryKey;

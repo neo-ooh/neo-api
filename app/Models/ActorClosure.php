@@ -17,12 +17,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * NeoModels\Branding
  *
- * @property int   ancestor_id
- * @property int   descendant_id
- * @property int   depth
+ * @property int   $ancestor_id
+ * @property int   $descendant_id
+ * @property int   $depth
  *
- * @property Actor ancestor
- * @property Actor descendant
+ * @property Actor $ancestor
+ * @property Actor $descendant
  *
  * @mixin Builder
  */
@@ -58,11 +58,11 @@ class ActorClosure extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function ancestor (): BelongsTo {
+    public function ancestor(): BelongsTo {
         return $this->belongsTo(Actor::class, 'ancestor_id', 'id');
     }
 
-    public function descendant (): BelongsTo {
+    public function descendant(): BelongsTo {
         return $this->belongsTo(Actor::class, 'descendant_id', 'id');
     }
 }

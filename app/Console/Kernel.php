@@ -45,9 +45,6 @@ class Kernel extends ConsoleKernel {
         // properties:push-traffic
         PushAllPropertiesTrafficCommand::class,
 
-        // network:rebuild
-        RebuildResources::class,
-
         // contracts:update
         RefreshContracts::class,
 

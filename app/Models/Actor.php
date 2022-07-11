@@ -366,7 +366,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      */
     public function getAccessibleActorsAttribute(): Collection {
         // We have access to all our children and the descendants of all the items who shared their pool with us as well as all descendants and accessible actors of our parent if it is a group. We do not use the parent `accessible users` property as we don't want to get recursive.
-        /** @var Collection $selfAccessible */
+        /** @var Collection $accessible */
         $accessible = $this->newQuery()->AccessibleActors()->get();
 
         // A user can access its group actors, but a group cannot access its parent actors, even if it is a group.

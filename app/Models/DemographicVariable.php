@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $id
  * @property string $label
  * @property string $provider
- * @property Carbon created_at
- * @property Carbon updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class DemographicVariable extends Model {
     protected $table = "demographic_variables";

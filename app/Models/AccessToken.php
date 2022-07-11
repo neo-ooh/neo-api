@@ -25,11 +25,11 @@ use Ramsey\Uuid\Uuid;
  *
  * @package Neo\Base
  *
- * @property int    id
- * @property string name
- * @property string token
- * @property Date   created_at
- * @property Date   updated_at
+ * @property int    $id
+ * @property string $name
+ * @property string $token
+ * @property Date   $created_at
+ * @property Date   $updated_at
  *
  * @mixin Builder
  */

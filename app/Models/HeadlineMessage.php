@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -20,17 +19,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @package Neo\Models
  *
- * @property int id
- * @property int headline_id
- * @property string locale
- * @property string message
- * @property Date created_at
- * @property Date updated_at
+ * @property int    $id
+ * @property int    $headline_id
+ * @property string $locale
+ * @property string $message
+ * @property Date   $created_at
+ * @property Date   $updated_at
  */
-class HeadlineMessage extends Model
-{
-    use HasFactory;
-
+class HeadlineMessage extends Model {
     protected $table = "headlines_messages";
 
     protected $fillable = [

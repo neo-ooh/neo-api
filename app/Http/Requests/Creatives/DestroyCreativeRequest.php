@@ -21,7 +21,7 @@ class DestroyCreativeRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::contents_edit) && $this->route("creative")->content->library->isAccessibleBy(Auth::user());
     }
 
@@ -30,7 +30,7 @@ class DestroyCreativeRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
             //
         ];

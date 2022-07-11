@@ -10,11 +10,12 @@
 
 namespace Neo\Models;
 
+use ArrayIterator;
 use Carbon\Carbon;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
@@ -38,8 +39,6 @@ use stdClass;
  * @property \Illuminate\Support\Collection     $weekly_traffic
  */
 class PropertyTrafficSettings extends Model {
-    use HasFactory;
-
     /**
      * The table associated with the model.
      *
@@ -71,11 +70,11 @@ class PropertyTrafficSettings extends Model {
         "grace_override" => "date"
     ];
 
-    protected $with = [];
+    protected $with;
 
     protected $fillable = ["is_required", "start_year", "grace_override"];
 
-    public function property() {
+    public function property(): BelongsTo {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
     }
 
@@ -102,7 +101,7 @@ class PropertyTrafficSettings extends Model {
 
     /**
      * Provide the weekly traffic of the property grouped by year then week.
-     * [ $year => [ 1 => XXXXXX, 2 => XXXXXX, ... ] ]
+     * [ $year => [ 1 => 000000, 2 => 0000000, ... ] ]
      *
      * @return \Illuminate\Support\Collection
      */
@@ -128,7 +127,7 @@ class PropertyTrafficSettings extends Model {
      * This methods fills the `monthly_traffic` attribute of the model as an array containing traffic monthly traffic data that
      * can be used to calculate impressions
      */
-    public function getMonthlyTraffic(?Province $province) {
+    public function getMonthlyTraffic(?Province $province): stdClass {
         $monthly_traffic = new stdClass();
         $trafficData     = $this->data->sortBy(["year, month"], descending: true);
         $currentYear     = Carbon::now()->year;
@@ -166,8 +165,8 @@ class PropertyTrafficSettings extends Model {
             }
 
             // No default value, we have to apply corrections based on the province
-            $coef                         = $province?->slug === 'QC' ? '.75' : '.65';
-            $monthly_traffic->$monthIndex = round($trafficEntry->final_traffic * $coef);
+            $provinceFactor               = $province?->slug === 'QC' ? '.75' : '.65';
+            $monthly_traffic->$monthIndex = round($trafficEntry->final_traffic * $provinceFactor);
         }
 
         return $monthly_traffic;
@@ -180,6 +179,7 @@ class PropertyTrafficSettings extends Model {
     /**
      * This method returns an array of 53 values corresponding of the weekly traffic for the property for a year.
      *
+     * @param int|null $networkId
      * @return array
      */
     public function getRollingWeeklyTraffic(int|null $networkId): array {
@@ -192,6 +192,7 @@ class PropertyTrafficSettings extends Model {
             $trafficData    = $this->weekly_traffic;
 
             /** Iterator across all years of data. Each year is an array whose indexes map the weeks  */
+            /** @var ArrayIterator $yearTrafficIt */
             $yearTrafficIt = $trafficData->getIterator();
 
             /** List all entries whose value is above zero */
@@ -203,7 +204,7 @@ class PropertyTrafficSettings extends Model {
                 : 0;
 
             // Loop over each week of a year
-            // For each week, We try to do a median of all the entries for this week accross all available years of information
+            // For each week, We try to do a median of all the entries for this week across all available years of information
             for ($week = 1; $week <= 53; $week++) {
                 $yearTrafficIt->rewind();
                 $weekTraffic    = 0;
@@ -213,8 +214,8 @@ class PropertyTrafficSettings extends Model {
                     $t = $yearTrafficIt->current()[$week] ?? 0;
 
                     if ($t !== 0) {
-                        $weekTraffic    += $t;
-                        $weekComponents += 1;
+                        $weekTraffic += $t;
+                        ++$weekComponents;
                     }
 
                     $yearTrafficIt->next();
@@ -266,7 +267,7 @@ class PropertyTrafficSettings extends Model {
             return $rollingTraffic;
         }
 
-        $evol = $mostRecentDatum->traffic / $referenceDatum->traffic;
+        $evolution = $mostRecentDatum->traffic / $referenceDatum->traffic;
 
         for ($week = 1; $week <= 53; $week++) {
 
@@ -282,11 +283,11 @@ class PropertyTrafficSettings extends Model {
             if ($mostRecentDatumForPeriod && $referenceDatumForPeriod &&
                 $mostRecentDatumForPeriod->year === $referenceDatumForPeriod->year &&
                 $mostRecentDatumForPeriod->week === $referenceDatumForPeriod->week) {
-                $rollingTraffic[$week] = round($referenceDatumForPeriod->traffic * $evol);
+                $rollingTraffic[$week] = round($referenceDatumForPeriod->traffic * $evolution);
                 continue;
             }
 
-            $rollingTraffic[$week] = round(max(($referenceDatumForPeriod->traffic ?? 0) * $evol, ($mostRecentDatumForPeriod->traffic ?? 0)));
+            $rollingTraffic[$week] = round(max(($referenceDatumForPeriod->traffic ?? 0) * $evolution, ($mostRecentDatumForPeriod->traffic ?? 0)));
         }
 
         return $rollingTraffic;

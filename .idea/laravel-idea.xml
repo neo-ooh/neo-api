@@ -14,6 +14,8 @@
         <entry key="createModel:namespace" value="Models" />
       </map>
     </option>
+    <option name="moduleSystemName" value="nwidart/laravel-modules" />
+    <option name="nwidartModuleSystemNamespace" value="Neo\Modules" />
     <option name="userClassName" value="App\Models\User" />
   </component>
 </project>

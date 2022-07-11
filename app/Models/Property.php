@@ -44,7 +44,7 @@ use Neo\Rules\AccessibleProperty;
  * @property Date                                  $last_review_at
  * @property Collection<Brand>                     $tenants
  * @property Pricelist                             $pricelist
- * @property Collection<>                          $contacts
+ * @property Collection<Actor>                     $contacts
  *
  * @property Collection<Product>                   $products
  *

@@ -39,9 +39,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Neo\Models\Branding
  *
- * @property int                      id
- * @property string                   name
- * @property Collection<BrandingFile> files
+ * @property int                      $id
+ * @property string                   $name
+ * @property Collection<BrandingFile> $files
  *
  * @mixin Builder
  */
@@ -76,12 +76,12 @@ class Branding extends Model {
      *
      * @var array
      */
-    protected $with = [ "files" ];
+    protected $with = ["files"];
 
     /**
      * @return Factories\BrandingFactory
      */
-    protected static function newFactory (): Factories\BrandingFactory {
+    protected static function newFactory(): Factories\BrandingFactory {
         return Factories\BrandingFactory::new();
     }
 
@@ -95,7 +95,7 @@ class Branding extends Model {
     /**
      * @return HasMany
      */
-    public function files (): HasMany {
+    public function files(): HasMany {
         return $this->hasMany(BrandingFile::class, 'branding_id');
     }
 }

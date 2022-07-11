@@ -10,7 +10,6 @@
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -19,14 +18,12 @@ use Illuminate\Support\Facades\Storage;
  *
  * @package Neo\Models
  *
- * @property int    creative_id
- * @property string url
- * @property int    refresh_interval minutes
+ * @property int    $creative_id
+ * @property string $url
+ * @property int    $refresh_interval minutes
  * @property string $thumbnail_path
  */
 class DynamicCreative extends Model {
-    use HasFactory;
-
     protected $table = "dynamic_creatives";
 
     protected $primaryKey = "creative_id";

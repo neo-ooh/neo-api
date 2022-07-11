@@ -12,7 +12,6 @@ namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
@@ -22,18 +21,16 @@ use Illuminate\Support\Facades\DB;
  * Containers are cached on our side to prevent too much fetching to the API
  * Everytime we need to show the hierarchy of containers
  *
- * @property int             id
- * @property int             parent_id
- * @property string          name
+ * @property int             $id
+ * @property int             $parent_id
+ * @property string          $name
  *
- * @property-read ?Container parent
- * @property-read Collection parents_list
+ * @property-read ?Container $parent
+ * @property-read Collection $parents_list
  *
  * @mixin Builder
  */
 class Container extends Model {
-    use HasFactory;
-
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -88,21 +85,21 @@ class Container extends Model {
         }
 
         return $this->hydrate(DB::select(/** @lang MySQL */ "
-            WITH RECURSIVE cte (id, name, parent_id) AS (
-                  SELECT id,
-                         name,
-                         parent_id
-                    FROM containers
-                   WHERE id = ?
+            WITH RECURSIVE `cte` (`id`, `name`, `parent_id`) AS (
+                  SELECT `id`,
+                         `name`,
+                         `parent_id`
+                    FROM `containers`
+                   WHERE `id` = ?
                UNION ALL
-                  SELECT c.id,
-                         c.name,
-                         c.parent_id
-                    FROM containers c
-              INNER JOIN cte
-                      ON c.id = cte.parent_id
+                  SELECT `c`.`id`,
+                         `c`.`name`,
+                         `c`.`parent_id`
+                    FROM `containers` `c`
+              INNER JOIN `cte`
+                      ON `c`.`id` = `cte`.`parent_id`
             )
-            SELECT * FROM cte",
+            SELECT * FROM `cte`",
             [$this->parent_id]
         ));
     }

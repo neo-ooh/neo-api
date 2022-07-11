@@ -25,17 +25,17 @@ use Neo\Rules\AccessibleLibrary;
 /**
  * Neo\Models\Branding
  *
- * @property int                 id
- * @property int                 owner_id
- * @property string              name
- * @property int                 content_limit
- * @property array               hidden_formats
+ * @property int                 $id
+ * @property int                 $owner_id
+ * @property string              $name
+ * @property int                 $content_limit
+ * @property array               $hidden_formats
  *
- * @property Actor               owner
+ * @property Actor               $owner
  *
- * @property int                 contents_count
- * @property Collection<Content> contents
- * @property Collection<Actor>   shares
+ * @property int                 $contents_count
+ * @property Collection<Content> $contents
+ * @property Collection<Actor>   $shares
  *
  * @mixin Builder
  */

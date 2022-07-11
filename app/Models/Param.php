@@ -17,11 +17,11 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Neo\Models\Param
  *
- * @property string slug
- * @property string format
- * @property string value
- * @property Date   created_at
- * @property Date   updated_at
+ * @property string $slug
+ * @property string $format
+ * @property string $value
+ * @property Date   $created_at
+ * @property Date   $updated_at
  *
  * @mixin Builder
  */
@@ -44,9 +44,9 @@ class Param extends Model {
      *
      * @var string
      */
-    protected $table      = 'parameters';
+    protected $table = 'parameters';
     protected $primaryKey = "slug";
-    protected $keyType    = 'string';
+    protected $keyType = 'string';
     /**
      * The attributes that are mass assignable.
      *

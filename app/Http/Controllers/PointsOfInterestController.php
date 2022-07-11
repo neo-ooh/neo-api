@@ -55,6 +55,8 @@ class PointsOfInterestController {
 
         // For each input, we apply the same steps as the one we do for storing a single POI.
         foreach ($inputs as $input) {
+            $poi = null;
+
             if (array_key_exists("external_id", $input)) {
                 $poi = $existingPois->where("external_id", "=", $input["external_id"])->first();
             }

@@ -47,7 +47,7 @@ class RouteServiceProvider extends ServiceProvider {
             Route::group([], base_path('routes/core.misc.php'));
 
             // Now, we loop all modules to load their routes
-            foreach (config('modules') as $module => $config) {
+            foreach (config('modules-legacy') as $module => $config) {
                 if ($module === 'core') {
                     continue;
                 }

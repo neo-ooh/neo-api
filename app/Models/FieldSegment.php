@@ -12,6 +12,8 @@ namespace Neo\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * @property int    $id
@@ -36,11 +38,11 @@ class FieldSegment extends Model {
         "variable_id",
     ];
 
-    public function stats() {
+    public function stats(): HasOne {
         return $this->hasOne(FieldSegmentStats::class, "id", "id");
     }
 
-    public function field() {
+    public function field(): BelongsTo {
         return $this->belongsTo(Field::class, "field_id", "id");
     }
 }

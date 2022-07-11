@@ -12,7 +12,6 @@ namespace Neo\Models;
 
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -24,27 +23,25 @@ use Illuminate\Support\Collection;
  * Class Headline
  *
  * @package Neo\Models
- * @property int id
- * @property int actor_id
- * @property string style
- * @property Date end_date
- * @property Date created_at
- * @property Date updated_at
- * @property Date deleted_at
+ * @property int                         $id
+ * @property int                         $actor_id
+ * @property string                      $style
+ * @property Date                        $end_date
+ * @property Date                        $created_at
+ * @property Date                        $updated_at
+ * @property Date                        $deleted_at
  *
- * @property ?Actor actor
- * @property Collection<HeadlineMessage> messages
- * @property Collection<Capability> capabilities
+ * @property ?Actor                      actor
+ * @property Collection<HeadlineMessage> $messages
+ * @property Collection<Capability>      $capabilities
  *
  */
-class Headline extends Model
-{
+class Headline extends Model {
     public const STYLE_INFO = "info";
     public const STYLE_SUCCESS = "success";
     public const STYLE_WARNING = "warning";
     public const STYLE_DANGER = "danger";
 
-    use HasFactory;
     use SoftDeletes;
 
     protected $table = "headlines";

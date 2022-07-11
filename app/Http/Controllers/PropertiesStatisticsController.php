@@ -23,7 +23,7 @@ class PropertiesStatisticsController {
         foreach ($years as $year) {
             $datasets[$year] = match ($request->input("breakdown")) {
                 "default" => $this->getDefaultBreakdown($property, $year),
-                "market" => $this->getMarketBreakdown($property, $year),
+                "market"  => $this->getMarketBreakdown($property, $year),
                 "product" => $this->getProductBreakdown($property, $year, $request->input("product_id")),
                 "network" => $this->getNetworkBreakdown($property, $year),
             };
@@ -152,6 +152,6 @@ class PropertiesStatisticsController {
                   ->where("ac.ancestor_id", "=", $parentId);
         }
 
-        return $query->get()->pluck("traffic", "month");
+        return $query->pluck("traffic", "month");
     }
 }

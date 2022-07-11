@@ -13,7 +13,9 @@ namespace Neo\Services\API\Traits;
 use JsonException;
 
 trait HasAttributes {
-    protected array $attributes;
+    protected array $attributes = [];
+
+    protected bool $dirty = false;
 
     /**
      * @param string $name

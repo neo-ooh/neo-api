@@ -22,11 +22,11 @@ use Intervention\Image\Facades\Image;
  *
  * @package Neo\Models
  *
- * @property int    id
- * @property int    actor_id
- * @property string original_name
- * @property Date   created_at
- * @property Date   updated_at
+ * @property int    $id
+ * @property int    $actor_id
+ * @property string $original_name
+ * @property Date   $created_at
+ * @property Date   $updated_at
  */
 class ActorLogo extends Model {
     /*

@@ -52,7 +52,6 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
             $query->whereIn("id", DB::query()->from("fields_networks")
                                     ->where("network_id", "=", $property->network_id)
                                     ->distinct()
-                                    ->get("field_id")
                                     ->pluck("field_id"));
             $query->where("demographic_filled", "=", true);
         })->with("segments")->get();
@@ -62,7 +61,6 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
             : Property::query()->whereIn("network_id", DB::query()->from("fields_networks")
                                                          ->whereIn("field_id", $fields->pluck("id"))
                                                          ->distinct()
-                                                         ->get("network_id")
                                                          ->pluck("network_id"))->get("actor_id")->pluck("actor_id");
 
         // List all the demo variables

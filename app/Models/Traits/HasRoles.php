@@ -328,7 +328,7 @@ trait HasRoles {
                 if ($reviewers->count() > 0) {
                     return $reviewers;
                 }
-            } else if ($actor->hasCapability(Capability::contents_review())) {
+            } else if ($actor->hasCapability(CapabilityEnum::contents_review())) {
                 // This actor has the proper capability, use it
                 return collect([$actor]);
             }

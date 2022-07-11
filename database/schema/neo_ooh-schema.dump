@@ -1,19 +1,4260 @@
-/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
-/*!40103 SET TIME_ZONE='+00:00' */;
-/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
-/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
-/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
-/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+-- phpMyAdmin SQL Dump
+-- version 5.1.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Jul 11, 2022 at 03:18 PM
+-- Server version: 10.4.25-MariaDB-1:10.4.25+maria~bionic-log
+-- PHP Version: 7.4.30
+
+SET FOREIGN_KEY_CHECKS = 0;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @`OLD_CHARACTER_SET_CLIENT` = @@`CHARACTER_SET_CLIENT` */;
+/*!40101 SET @`OLD_CHARACTER_SET_RESULTS` = @@`CHARACTER_SET_RESULTS` */;
+/*!40101 SET @`OLD_COLLATION_CONNECTION` = @@`COLLATION_CONNECTION` */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `neo_ooh`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `access_tokens`
+--
+
 DROP TABLE IF EXISTS `access_tokens`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `access_tokens` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(64) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `token` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `last_used_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `created_at` timestamp NULL DEFAULT NULL,
-  `updated_at` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
+CREATE TABLE `access_tokens`
+(
+  `id`           bigint(20) UNSIGNED                       NOT NULL,
+  `name`         varchar(64) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `token`        varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `last_used_at` timestamp                                 NOT NULL DEFAULT CURRENT_TIMESTAMP(),
+  `created_at`   timestamp                                 NULL     DEFAULT NULL,
+  `updated_at`   timestamp                                 NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `access_tokens_capabilities`
+--
+
+DROP TABLE IF EXISTS `access_tokens_capabilities`;
+CREATE TABLE `access_tokens_capabilities`
+(
+  `access_token_id` bigint(20) UNSIGNED               NOT NULL,
+  `capability_id`   bigint(20) UNSIGNED               NOT NULL,
+  `value`           text COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`      timestamp                         NULL DEFAULT NULL,
+  `updated_at`      timestamp                         NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors`
+--
+
+DROP TABLE IF EXISTS `actors`;
+CREATE TABLE `actors`
+(
+  `id`             bigint(20) UNSIGNED                                NOT NULL,
+  `email`          varchar(255) COLLATE `utf8mb4_unicode_ci`                   DEFAULT NULL,
+  `name`           varchar(64) COLLATE `utf8mb4_unicode_ci`           NOT NULL,
+  `password`       varchar(256) COLLATE `utf8mb4_unicode_ci`                   DEFAULT NULL,
+  `locale`         varchar(2) COLLATE `utf8mb4_unicode_ci`            NOT NULL DEFAULT 'fr',
+  `is_group`       tinyint(1)                                         NOT NULL DEFAULT 0,
+  `is_locked`      tinyint(1)                                         NOT NULL DEFAULT 0,
+  `locked_by`      bigint(20) UNSIGNED                                         DEFAULT NULL,
+  `limited_access` tinyint(1)                                         NOT NULL DEFAULT 0,
+  `branding_id`    bigint(20) UNSIGNED                                         DEFAULT NULL,
+  `tos_accepted`   tinyint(1)                                         NOT NULL DEFAULT 0,
+  `last_login_at`  timestamp                                          NULL     DEFAULT NULL,
+  `created_at`     timestamp                                          NULL     DEFAULT NULL,
+  `updated_at`     timestamp                                          NULL     DEFAULT NULL,
+  `phone_id`       bigint(20) UNSIGNED                                         DEFAULT NULL,
+  `two_fa_method`  set ('email','phone') COLLATE `utf8mb4_unicode_ci` NOT NULL DEFAULT 'email'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors_capabilities`
+--
+
+DROP TABLE IF EXISTS `actors_capabilities`;
+CREATE TABLE `actors_capabilities`
+(
+  `actor_id`      bigint(20) UNSIGNED NOT NULL,
+  `capability_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at`    timestamp           NULL DEFAULT NULL,
+  `updated_at`    timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors_closures`
+--
+
+DROP TABLE IF EXISTS `actors_closures`;
+CREATE TABLE `actors_closures`
+(
+  `ancestor_id`   bigint(20) UNSIGNED  NOT NULL,
+  `descendant_id` bigint(20) UNSIGNED  NOT NULL,
+  `depth`         smallint(5) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `actors_details`
+-- (See below for the actual view)
+--
+DROP VIEW IF EXISTS `actors_details`;
+CREATE TABLE `actors_details`
+(
+  `id`                    bigint(20) UNSIGNED,
+  `parent_id`             bigint(20) UNSIGNED,
+  `parent_is_group`       int(4),
+  `direct_children_count` bigint(21),
+  `is_property`           int(1),
+  `path_names`            mediumtext,
+  `path_ids`              mediumtext
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors_editors`
+--
+
+DROP TABLE IF EXISTS `actors_editors`;
+CREATE TABLE `actors_editors`
+(
+  `actor_id`    bigint(20) UNSIGNED                                    NOT NULL,
+  `template_id` bigint(20) UNSIGNED                                    NOT NULL,
+  `parameters`  longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL CHECK (JSON_VALID(`parameters`)),
+  `created_at`  timestamp                                              NULL DEFAULT NULL,
+  `updated_at`  timestamp                                              NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors_locations`
+--
+
+DROP TABLE IF EXISTS `actors_locations`;
+CREATE TABLE `actors_locations`
+(
+  `actor_id`    bigint(20) UNSIGNED NOT NULL,
+  `location_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at`  timestamp           NULL DEFAULT NULL,
+  `updated_at`  timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors_logo`
+--
+
+DROP TABLE IF EXISTS `actors_logo`;
+CREATE TABLE `actors_logo`
+(
+  `id`            bigint(20) UNSIGNED                       NOT NULL,
+  `actor_id`      bigint(20) UNSIGNED                       NOT NULL,
+  `original_name` varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`    timestamp                                 NULL DEFAULT NULL,
+  `updated_at`    timestamp                                 NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors_roles`
+--
+
+DROP TABLE IF EXISTS `actors_roles`;
+CREATE TABLE `actors_roles`
+(
+  `actor_id`   bigint(20) UNSIGNED NOT NULL,
+  `role_id`    bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp           NULL DEFAULT NULL,
+  `updated_at` timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors_shares`
+--
+
+DROP TABLE IF EXISTS `actors_shares`;
+CREATE TABLE `actors_shares`
+(
+  `sharer_id`      bigint(20) UNSIGNED NOT NULL,
+  `shared_with_id` bigint(20) UNSIGNED NOT NULL,
+  `created_at`     timestamp           NULL DEFAULT NULL,
+  `updated_at`     timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `actors_tags`
+--
+
+DROP TABLE IF EXISTS `actors_tags`;
+CREATE TABLE `actors_tags`
+(
+  `actor_id` bigint(20) UNSIGNED NOT NULL,
+  `tag_id`   bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `addresses`
+--
+
+DROP TABLE IF EXISTS `addresses`;
+CREATE TABLE `addresses`
+(
+  `id`          bigint(20) UNSIGNED                       NOT NULL,
+  `line_1`      varchar(128) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `line_2`      varchar(128) COLLATE `utf8mb4_unicode_ci`      DEFAULT NULL,
+  `city_id`     bigint(20) UNSIGNED                       NOT NULL,
+  `zipcode`     varchar(6) COLLATE `utf8mb4_unicode_ci`   NOT NULL,
+  `created_at`  timestamp                                 NULL DEFAULT NULL,
+  `updated_at`  timestamp                                 NULL DEFAULT NULL,
+  `geolocation` point                                          DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `advertisers`
+--
+
+DROP TABLE IF EXISTS `advertisers`;
+CREATE TABLE `advertisers`
+(
+  `id`          bigint(20) UNSIGNED                      NOT NULL,
+  `name`        varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `external_id` bigint(20) UNSIGNED                           DEFAULT NULL,
+  `created_at`  timestamp                                NULL DEFAULT NULL,
+  `updated_at`  timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `attachments`
+--
+
+DROP TABLE IF EXISTS `attachments`;
+CREATE TABLE `attachments`
+(
+  `id`         bigint(20) UNSIGNED                       NOT NULL,
+  `locale`     varchar(5) COLLATE `utf8mb4_unicode_ci`   NOT NULL,
+  `name`       varchar(64) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `filename`   varchar(128) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at` timestamp                                 NULL DEFAULT NULL,
+  `updated_at` timestamp                                 NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brandings`
+--
+
+DROP TABLE IF EXISTS `brandings`;
+CREATE TABLE `brandings`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `name`       varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brandings_files`
+--
+
+DROP TABLE IF EXISTS `brandings_files`;
+CREATE TABLE `brandings_files`
+(
+  `id`            bigint(20) UNSIGNED                      NOT NULL,
+  `branding_id`   bigint(20) UNSIGNED                      NOT NULL,
+  `type`          varchar(16) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `filename`      varchar(32) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `original_name` varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`    timestamp                                NULL DEFAULT NULL,
+  `updated_at`    timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `brands`
+--
+
+DROP TABLE IF EXISTS `brands`;
+CREATE TABLE `brands`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `name_en`    varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `name_fr`    varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `parent_id`  bigint(20) UNSIGNED                           DEFAULT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `broadcasters_connections`
+--
+
+DROP TABLE IF EXISTS `broadcasters_connections`;
+CREATE TABLE `broadcasters_connections`
+(
+  `id`          bigint(20) UNSIGNED                                        NOT NULL,
+  `uuid`        char(36) COLLATE `utf8mb4_unicode_ci`                      NOT NULL DEFAULT UUID(),
+  `broadcaster` set ('broadsign','pisignage') COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `name`        varchar(64) COLLATE `utf8mb4_unicode_ci`                   NOT NULL,
+  `active`      tinyint(1)                                                 NOT NULL DEFAULT 1,
+  `settings`    longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin`     NOT NULL CHECK (JSON_VALID(`settings`)),
+  `created_at`  timestamp                                                  NULL     DEFAULT NULL,
+  `updated_at`  timestamp                                                  NULL     DEFAULT NULL,
+  `deleted_at`  timestamp                                                  NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `broadsign_criteria`
+--
+
+DROP TABLE IF EXISTS `broadsign_criteria`;
+CREATE TABLE `broadsign_criteria`
+(
+  `id`                    bigint(20) UNSIGNED                      NOT NULL,
+  `name`                  varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `broadsign_criteria_id` bigint(20) UNSIGNED                      NOT NULL,
+  `created_at`            timestamp                                NULL DEFAULT NULL,
+  `updated_at`            timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `broadsign_separations`
+--
+
+DROP TABLE IF EXISTS `broadsign_separations`;
+CREATE TABLE `broadsign_separations`
+(
+  `id`                      bigint(20) UNSIGNED                      NOT NULL,
+  `name`                    varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `broadsign_separation_id` bigint(20) UNSIGNED                      NOT NULL,
+  `created_at`              timestamp                                NULL DEFAULT NULL,
+  `updated_at`              timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `broadsign_triggers`
+--
+
+DROP TABLE IF EXISTS `broadsign_triggers`;
+CREATE TABLE `broadsign_triggers`
+(
+  `id`                   bigint(20) UNSIGNED                      NOT NULL,
+  `name`                 varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `broadsign_trigger_id` bigint(20) UNSIGNED                      NOT NULL,
+  `created_at`           timestamp                                NULL DEFAULT NULL,
+  `updated_at`           timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cache`
+--
+
+DROP TABLE IF EXISTS `cache`;
+CREATE TABLE `cache`
+(
+  `key`        varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `value`      mediumtext COLLATE `utf8mb4_unicode_ci`   NOT NULL,
+  `expiration` int(11)                                   NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cache_locks`
+--
+
+DROP TABLE IF EXISTS `cache_locks`;
+CREATE TABLE `cache_locks`
+(
+  `key`        varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `owner`      varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `expiration` int(11)                                   NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `campaigns`
+--
+
+DROP TABLE IF EXISTS `campaigns`;
+CREATE TABLE `campaigns`
+(
+  `id`                       bigint(20) UNSIGNED                       NOT NULL,
+  `network_id`               bigint(20) UNSIGNED                                DEFAULT NULL,
+  `external_id`              text COLLATE `utf8mb4_unicode_ci`                  DEFAULT NULL,
+  `owner_id`                 bigint(20) UNSIGNED                       NOT NULL,
+  `format_id`                bigint(20) UNSIGNED                       NOT NULL,
+  `name`                     varchar(128) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `schedules_default_length` double UNSIGNED                           NOT NULL DEFAULT 0,
+  `schedules_max_length`     double UNSIGNED                           NOT NULL,
+  `loop_saturation`          int(10) UNSIGNED                          NOT NULL DEFAULT 1,
+  `priority`                 int(10) UNSIGNED                          NOT NULL DEFAULT 0,
+  `start_date`               timestamp                                 NULL     DEFAULT NULL,
+  `end_date`                 timestamp                                 NULL     DEFAULT NULL,
+  `created_at`               timestamp                                 NULL     DEFAULT NULL,
+  `updated_at`               timestamp                                 NULL     DEFAULT NULL,
+  `deleted_at`               timestamp                                 NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `campaign_locations`
+--
+
+DROP TABLE IF EXISTS `campaign_locations`;
+CREATE TABLE `campaign_locations`
+(
+  `campaign_id`              bigint(20) UNSIGNED NOT NULL,
+  `location_id`              bigint(20) UNSIGNED NOT NULL,
+  `broadsign_reservation_id` int(10) UNSIGNED         DEFAULT NULL,
+  `created_at`               timestamp           NULL DEFAULT NULL,
+  `updated_at`               timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `campaign_planner_polygons`
+--
+
+DROP TABLE IF EXISTS `campaign_planner_polygons`;
+CREATE TABLE `campaign_planner_polygons`
+(
+  `id`         bigint(20) UNSIGNED                                    NOT NULL,
+  `name`       varchar(64) COLLATE `utf8mb4_unicode_ci`               NOT NULL,
+  `actor_id`   bigint(20) UNSIGNED                                    NOT NULL,
+  `data`       longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL CHECK (JSON_VALID(`data`)),
+  `created_at` timestamp                                              NULL DEFAULT NULL,
+  `updated_at` timestamp                                              NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `campaign_planner_saves`
+--
+
+DROP TABLE IF EXISTS `campaign_planner_saves`;
+CREATE TABLE `campaign_planner_saves`
+(
+  `id`         bigint(20) UNSIGNED                                    NOT NULL,
+  `name`       varchar(64) COLLATE `utf8mb4_unicode_ci`               NOT NULL,
+  `actor_id`   bigint(20) UNSIGNED                                    NOT NULL,
+  `data`       longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL CHECK (JSON_VALID(`data`)),
+  `created_at` timestamp                                              NULL DEFAULT NULL,
+  `updated_at` timestamp                                              NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `campaign_shares`
+--
+
+DROP TABLE IF EXISTS `campaign_shares`;
+CREATE TABLE `campaign_shares`
+(
+  `campaign_id` bigint(20) UNSIGNED NOT NULL,
+  `actor_id`    bigint(20) UNSIGNED NOT NULL,
+  `created_at`  timestamp           NULL DEFAULT NULL,
+  `updated_at`  timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `capabilities`
+--
+
+DROP TABLE IF EXISTS `capabilities`;
+CREATE TABLE `capabilities`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `slug`       varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `service`    varchar(16) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `default`    text COLLATE `utf8mb4_unicode_ci`             DEFAULT NULL,
+  `standalone` tinyint(1)                                    DEFAULT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `checksum`
+--
+
+DROP TABLE IF EXISTS `checksum`;
+CREATE TABLE `checksum`
+(
+  `checksum` varchar(40) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `cities`
+--
+
+DROP TABLE IF EXISTS `cities`;
+CREATE TABLE `cities`
+(
+  `id`          bigint(20) UNSIGNED                       NOT NULL,
+  `name`        varchar(128) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `market_id`   bigint(20) UNSIGNED DEFAULT NULL,
+  `province_id` bigint(20) UNSIGNED                       NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `clients`
+--
+
+DROP TABLE IF EXISTS `clients`;
+CREATE TABLE `clients`
+(
+  `id`                    bigint(20) UNSIGNED                      NOT NULL,
+  `external_id`           bigint(20) UNSIGNED                           DEFAULT NULL,
+  `broadsign_customer_id` bigint(20) UNSIGNED                           DEFAULT NULL,
+  `name`                  varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`            timestamp                                NULL DEFAULT NULL,
+  `updated_at`            timestamp                                NULL DEFAULT NULL,
+  `deleted_at`            timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `containers`
+--
+
+DROP TABLE IF EXISTS `containers`;
+CREATE TABLE `containers`
+(
+  `id`         bigint(20) UNSIGNED                       NOT NULL,
+  `network_id` bigint(20) UNSIGNED DEFAULT NULL,
+  `parent_id`  bigint(20) UNSIGNED DEFAULT NULL,
+  `name`       varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contents`
+--
+
+DROP TABLE IF EXISTS `contents`;
+CREATE TABLE `contents`
+(
+  `id`                   bigint(20) UNSIGNED NOT NULL,
+  `owner_id`             bigint(20) UNSIGNED NOT NULL,
+  `library_id`           bigint(20) UNSIGNED NOT NULL,
+  `layout_id`            bigint(20) UNSIGNED                      DEFAULT NULL,
+  `broadsign_content_id` int(10) UNSIGNED                         DEFAULT NULL,
+  `broadsign_bundle_id`  int(10) UNSIGNED                         DEFAULT NULL,
+  `name`                 varchar(64) COLLATE `utf8mb4_unicode_ci` DEFAULT NULL,
+  `duration`             double UNSIGNED     NOT NULL             DEFAULT 0,
+  `is_approved`          tinyint(1)          NOT NULL             DEFAULT 0,
+  `scheduling_duration`  int(10) UNSIGNED    NOT NULL             DEFAULT 0,
+  `scheduling_times`     int(10) UNSIGNED    NOT NULL             DEFAULT 0,
+  `created_at`           timestamp           NULL                 DEFAULT NULL,
+  `updated_at`           timestamp           NULL                 DEFAULT NULL,
+  `deleted_at`           timestamp           NULL                 DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contracts`
+--
+
+DROP TABLE IF EXISTS `contracts`;
+CREATE TABLE `contracts`
+(
+  `id`                   bigint(20) UNSIGNED                      NOT NULL,
+  `contract_id`          varchar(32) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `external_id`          bigint(20) UNSIGNED                               DEFAULT NULL,
+  `client_id`            bigint(20) UNSIGNED                               DEFAULT NULL,
+  `salesperson_id`       bigint(20) UNSIGNED                               DEFAULT NULL,
+  `advertiser_id`        bigint(20) UNSIGNED                               DEFAULT NULL,
+  `start_date`           timestamp                                NULL     DEFAULT NULL,
+  `end_date`             timestamp                                NULL     DEFAULT NULL,
+  `expected_impressions` bigint(20) UNSIGNED                      NOT NULL DEFAULT 0,
+  `received_impressions` bigint(20) UNSIGNED                      NOT NULL DEFAULT 0,
+  `created_at`           timestamp                                NULL     DEFAULT NULL,
+  `updated_at`           timestamp                                NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contracts_bursts`
+--
+
+DROP TABLE IF EXISTS `contracts_bursts`;
+CREATE TABLE `contracts_bursts`
+(
+  `id`            bigint(20) UNSIGNED                      NOT NULL,
+  `contract_id`   bigint(20) UNSIGNED                      NOT NULL,
+  `actor_id`      bigint(20) UNSIGNED                               DEFAULT NULL,
+  `location_id`   bigint(20) UNSIGNED                               DEFAULT NULL,
+  `start_at`      timestamp                                NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+  `status`        varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `scale_percent` tinyint(4)                               NOT NULL,
+  `duration_ms`   int(10) UNSIGNED                         NOT NULL,
+  `frequency_ms`  int(10) UNSIGNED                         NOT NULL,
+  `created_at`    timestamp                                NULL     DEFAULT NULL,
+  `updated_at`    timestamp                                NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contracts_flights`
+--
+
+DROP TABLE IF EXISTS `contracts_flights`;
+CREATE TABLE `contracts_flights`
+(
+  `id`          bigint(20) UNSIGNED                                           NOT NULL,
+  `contract_id` bigint(20) UNSIGNED                                           NOT NULL,
+  `name`        varchar(255) COLLATE `utf8mb4_unicode_ci`                              DEFAULT NULL,
+  `start_date`  timestamp                                                     NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+  `end_date`    timestamp                                                     NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `type`        set ('guaranteed','bonus','bua') COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`  timestamp                                                     NULL     DEFAULT NULL,
+  `updated_at`  timestamp                                                     NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contracts_lines`
+--
+
+DROP TABLE IF EXISTS `contracts_lines`;
+CREATE TABLE `contracts_lines`
+(
+  `product_id`    bigint(20) UNSIGNED                                            NOT NULL,
+  `flight_id`     bigint(20) UNSIGNED                                            NOT NULL,
+  `external_id`   bigint(20) UNSIGNED                                                     DEFAULT NULL,
+  `spots`         double UNSIGNED                                                NOT NULL,
+  `media_value`   double UNSIGNED                                                NOT NULL,
+  `discount`      double                                                         NOT NULL DEFAULT 0,
+  `discount_type` set ('relative','absolute','cpm') COLLATE `utf8mb4_unicode_ci` NOT NULL DEFAULT 'relative',
+  `price`         double UNSIGNED                                                NOT NULL,
+  `traffic`       bigint(20) UNSIGNED                                            NOT NULL,
+  `impressions`   bigint(20) UNSIGNED                                            NOT NULL,
+  `created_at`    timestamp                                                      NULL     DEFAULT NULL,
+  `updated_at`    timestamp                                                      NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contracts_reservations`
+--
+
+DROP TABLE IF EXISTS `contracts_reservations`;
+CREATE TABLE `contracts_reservations`
+(
+  `id`            bigint(20) UNSIGNED                       NOT NULL,
+  `contract_id`   bigint(20) UNSIGNED                       NOT NULL,
+  `flight_id`     bigint(20) UNSIGNED                                DEFAULT NULL,
+  `external_id`   bigint(20) UNSIGNED                       NOT NULL,
+  `name`          varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `original_name` varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `start_date`    timestamp                                 NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+  `end_date`      timestamp                                 NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `created_at`    timestamp                                 NULL     DEFAULT NULL,
+  `updated_at`    timestamp                                 NULL     DEFAULT NULL,
+  `network_id`    bigint(20) UNSIGNED                                DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `contracts_screenshots`
+--
+
+DROP TABLE IF EXISTS `contracts_screenshots`;
+CREATE TABLE `contracts_screenshots`
+(
+  `id`         bigint(20) UNSIGNED NOT NULL,
+  `burst_id`   bigint(20) UNSIGNED NOT NULL,
+  `is_locked`  tinyint(1)          NOT NULL DEFAULT 0,
+  `created_at` timestamp           NULL     DEFAULT NULL,
+  `updated_at` timestamp           NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `countries`
+--
+
+DROP TABLE IF EXISTS `countries`;
+CREATE TABLE `countries`
+(
+  `id`   bigint(20) UNSIGNED                      NOT NULL,
+  `slug` varchar(2) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `name` varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `creatives`
+--
+
+DROP TABLE IF EXISTS `creatives`;
+CREATE TABLE `creatives`
+(
+  `id`            bigint(20) UNSIGNED                       NOT NULL,
+  `type`          varchar(16) COLLATE `utf8mb4_unicode_ci`           DEFAULT 'static',
+  `owner_id`      bigint(20) UNSIGNED                       NOT NULL,
+  `content_id`    bigint(20) UNSIGNED                       NOT NULL,
+  `frame_id`      bigint(20) UNSIGNED                       NOT NULL,
+  `original_name` varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL DEFAULT '',
+  `duration`      double UNSIGNED                           NOT NULL DEFAULT 0,
+  `status`        varchar(64) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `created_at`    timestamp                                 NULL     DEFAULT NULL,
+  `updated_at`    timestamp                                 NULL     DEFAULT NULL,
+  `deleted_at`    timestamp                                 NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `creatives_external_ids`
+--
+
+DROP TABLE IF EXISTS `creatives_external_ids`;
+CREATE TABLE `creatives_external_ids`
+(
+  `creative_id` bigint(20) UNSIGNED               NOT NULL,
+  `network_id`  bigint(20) UNSIGNED               NOT NULL,
+  `external_id` text COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`  timestamp                         NULL DEFAULT NULL,
+  `updated_at`  timestamp                         NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `demographic_values`
+--
+
+DROP TABLE IF EXISTS `demographic_values`;
+CREATE TABLE `demographic_values`
+(
+  `id`              bigint(20) UNSIGNED                      NOT NULL,
+  `property_id`     bigint(20) UNSIGNED                      NOT NULL,
+  `value_id`        varchar(32) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `value`           double(8, 2)                             NOT NULL,
+  `reference_value` double(8, 2)                             NOT NULL,
+  `created_at`      timestamp                                NULL DEFAULT NULL,
+  `updated_at`      timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `demographic_variables`
+--
+
+DROP TABLE IF EXISTS `demographic_variables`;
+CREATE TABLE `demographic_variables`
+(
+  `id`         varchar(32) COLLATE `utf8mb4_unicode_ci`        NOT NULL,
+  `label`      varchar(64) COLLATE `utf8mb4_unicode_ci`        NOT NULL,
+  `provider`   set ('environics') COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at` timestamp                                       NULL DEFAULT NULL,
+  `updated_at` timestamp                                       NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `display_types`
+--
+
+DROP TABLE IF EXISTS `display_types`;
+CREATE TABLE `display_types`
+(
+  `id`            bigint(20) UNSIGNED                      NOT NULL,
+  `connection_id` bigint(20) UNSIGNED                           DEFAULT NULL,
+  `external_id`   text COLLATE `utf8mb4_unicode_ci`             DEFAULT NULL,
+  `name`          varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `internal_name` varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`    timestamp                                NULL DEFAULT NULL,
+  `updated_at`    timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `dynamic_creatives`
+--
+
+DROP TABLE IF EXISTS `dynamic_creatives`;
+CREATE TABLE `dynamic_creatives`
+(
+  `creative_id`      bigint(20) UNSIGNED               NOT NULL,
+  `url`              text COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `refresh_interval` int(10) UNSIGNED                  NOT NULL DEFAULT 0,
+  `thumbnail_path`   text COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `editor_templates`
+--
+
+DROP TABLE IF EXISTS `editor_templates`;
+CREATE TABLE `editor_templates`
+(
+  `id`         bigint(20) UNSIGNED                                    NOT NULL,
+  `slug`       varchar(16) COLLATE `utf8mb4_unicode_ci`               NOT NULL,
+  `parameters` longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL CHECK (JSON_VALID(`parameters`)),
+  `created_at` timestamp                                              NULL DEFAULT NULL,
+  `updated_at` timestamp                                              NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `failed_jobs`
+--
+
+DROP TABLE IF EXISTS `failed_jobs`;
+CREATE TABLE `failed_jobs`
+(
+  `id`         bigint(20) UNSIGNED                       NOT NULL,
+  `uuid`       varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `connection` text COLLATE `utf8mb4_unicode_ci`         NOT NULL,
+  `queue`      text COLLATE `utf8mb4_unicode_ci`         NOT NULL,
+  `payload`    longtext COLLATE `utf8mb4_unicode_ci`     NOT NULL,
+  `exception`  longtext COLLATE `utf8mb4_unicode_ci`     NOT NULL,
+  `failed_at`  timestamp                                 NOT NULL DEFAULT CURRENT_TIMESTAMP()
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fields`
+--
+
+DROP TABLE IF EXISTS `fields`;
+CREATE TABLE `fields`
+(
+  `id`                 bigint(20) UNSIGNED                                     NOT NULL,
+  `category_id`        bigint(20) UNSIGNED                                              DEFAULT NULL,
+  `order`              int(10) UNSIGNED                                        NOT NULL DEFAULT 0,
+  `name_en`            varchar(255) COLLATE `utf8mb4_unicode_ci`               NOT NULL,
+  `name_fr`            varchar(255) COLLATE `utf8mb4_unicode_ci`               NOT NULL,
+  `type`               set ('int','float','bool') COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `unit`               varchar(16) COLLATE `utf8mb4_unicode_ci`                         DEFAULT NULL,
+  `is_filter`          tinyint(1)                                              NOT NULL,
+  `demographic_filled` tinyint(1)                                              NOT NULL DEFAULT 0,
+  `visualization`      varchar(32) COLLATE `utf8mb4_unicode_ci`                         DEFAULT NULL,
+  `created_at`         timestamp                                               NULL     DEFAULT NULL,
+  `updated_at`         timestamp                                               NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fields_categories`
+--
+
+DROP TABLE IF EXISTS `fields_categories`;
+CREATE TABLE `fields_categories`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `name_en`    varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `name_fr`    varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fields_networks`
+--
+
+DROP TABLE IF EXISTS `fields_networks`;
+CREATE TABLE `fields_networks`
+(
+  `field_id`   bigint(20) UNSIGNED NOT NULL,
+  `network_id` bigint(20) UNSIGNED NOT NULL,
+  `order`      int(10) UNSIGNED    NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `fields_segments`
+--
+
+DROP TABLE IF EXISTS `fields_segments`;
+CREATE TABLE `fields_segments`
+(
+  `id`          bigint(20) UNSIGNED                       NOT NULL,
+  `field_id`    bigint(20) UNSIGNED                       NOT NULL,
+  `name_en`     varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `name_fr`     varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `order`       int(10) UNSIGNED                          NOT NULL,
+  `color`       varchar(6) COLLATE `utf8mb4_unicode_ci`        DEFAULT NULL,
+  `variable_id` varchar(16) COLLATE `utf8mb4_unicode_ci`       DEFAULT NULL,
+  `created_at`  timestamp                                 NULL DEFAULT NULL,
+  `updated_at`  timestamp                                 NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `fields_segments_stats`
+-- (See below for the actual view)
+--
+DROP VIEW IF EXISTS `fields_segments_stats`;
+CREATE TABLE `fields_segments_stats`
+(
+  `id`          bigint(20) UNSIGNED,
+  `value_count` bigint(21),
+  `min_index`   int(10) UNSIGNED,
+  `max_index`   int(10) UNSIGNED
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `formats`
+--
+
+DROP TABLE IF EXISTS `formats`;
+CREATE TABLE `formats`
+(
+  `id`         bigint(20) UNSIGNED                       NOT NULL,
+  `name`       varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `is_enabled` tinyint(1)                                NOT NULL DEFAULT 1,
+  `deleted_at` timestamp                                 NULL     DEFAULT NULL,
+  `created_at` timestamp                                 NULL     DEFAULT NULL,
+  `updated_at` timestamp                                 NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `formats_display_types`
+--
+
+DROP TABLE IF EXISTS `formats_display_types`;
+CREATE TABLE `formats_display_types`
+(
+  `format_id`       bigint(20) UNSIGNED NOT NULL,
+  `display_type_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `formats_layouts`
+--
+
+DROP TABLE IF EXISTS `formats_layouts`;
+CREATE TABLE `formats_layouts`
+(
+  `id`            bigint(20) UNSIGNED                      NOT NULL,
+  `format_id`     bigint(20) UNSIGNED                      NOT NULL,
+  `name`          varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL DEFAULT '',
+  `is_fullscreen` tinyint(1)                               NOT NULL DEFAULT 0,
+  `trigger_id`    bigint(20) UNSIGNED                               DEFAULT NULL,
+  `separation_id` bigint(20) UNSIGNED                               DEFAULT NULL,
+  `created_at`    timestamp                                NULL     DEFAULT NULL,
+  `updated_at`    timestamp                                NULL     DEFAULT NULL,
+  `deleted_at`    timestamp                                NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `frames`
+--
+
+DROP TABLE IF EXISTS `frames`;
+CREATE TABLE `frames`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `layout_id`  bigint(20) UNSIGNED                           DEFAULT NULL,
+  `name`       varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `width`      int(10) UNSIGNED                         NOT NULL,
+  `height`     int(10) UNSIGNED                         NOT NULL,
+  `deleted_at` timestamp                                NULL DEFAULT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `frame_settings_broadsign`
+--
+
+DROP TABLE IF EXISTS `frame_settings_broadsign`;
+CREATE TABLE `frame_settings_broadsign`
+(
+  `frame_id`    bigint(20) UNSIGNED NOT NULL,
+  `criteria_id` bigint(20) UNSIGNED DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `frame_settings_pisignage`
+--
+
+DROP TABLE IF EXISTS `frame_settings_pisignage`;
+CREATE TABLE `frame_settings_pisignage`
+(
+  `frame_id`  bigint(20) UNSIGNED                      NOT NULL,
+  `zone_name` varchar(32) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `headlines`
+--
+
+DROP TABLE IF EXISTS `headlines`;
+CREATE TABLE `headlines`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `actor_id`   bigint(20) UNSIGNED                           DEFAULT NULL,
+  `style`      varchar(16) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `end_date`   timestamp                                NULL DEFAULT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL,
+  `deleted_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `headlines_messages`
+--
+
+DROP TABLE IF EXISTS `headlines_messages`;
+CREATE TABLE `headlines_messages`
+(
+  `id`          bigint(20) UNSIGNED                     NOT NULL,
+  `headline_id` bigint(20) UNSIGNED                     NOT NULL,
+  `locale`      varchar(5) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `message`     text COLLATE `utf8mb4_unicode_ci`       NOT NULL,
+  `created_at`  timestamp                               NULL DEFAULT NULL,
+  `updated_at`  timestamp                               NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `headline_capabilities`
+--
+
+DROP TABLE IF EXISTS `headline_capabilities`;
+CREATE TABLE `headline_capabilities`
+(
+  `headline_id`   bigint(20) UNSIGNED NOT NULL,
+  `capability_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `impressions_models`
+--
+
+DROP TABLE IF EXISTS `impressions_models`;
+CREATE TABLE `impressions_models`
+(
+  `id`          bigint(20) UNSIGNED                                    NOT NULL,
+  `start_month` int(10) UNSIGNED                                       NOT NULL DEFAULT 1,
+  `end_month`   int(10) UNSIGNED                                       NOT NULL DEFAULT 12,
+  `formula`     text COLLATE `utf8mb4_unicode_ci`                      NOT NULL,
+  `variables`   longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL CHECK (JSON_VALID(`variables`)),
+  `created_at`  timestamp                                              NULL     DEFAULT NULL,
+  `updated_at`  timestamp                                              NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `inventory`
+--
+
+DROP TABLE IF EXISTS `inventory`;
+CREATE TABLE `inventory`
+(
+  `skin_id`     bigint(20) UNSIGNED                                    NOT NULL,
+  `year`        int(10) UNSIGNED                                       NOT NULL,
+  `location_id` bigint(20) UNSIGNED                                    NOT NULL,
+  `bookings`    longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL CHECK (JSON_VALID(`bookings`)),
+  `max_booking` int(10) UNSIGNED                                       NOT NULL,
+  `name`        varchar(128) COLLATE `utf8mb4_unicode_ci`              NOT NULL,
+  `start_date`  date                                                   NOT NULL,
+  `end_date`    date                                                   NOT NULL,
+  `created_at`  timestamp                                              NULL DEFAULT NULL,
+  `updated_at`  timestamp                                              NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `jobs`
+--
+
+DROP TABLE IF EXISTS `jobs`;
+CREATE TABLE `jobs`
+(
+  `id`           bigint(20) UNSIGNED                       NOT NULL,
+  `queue`        varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `payload`      longtext COLLATE `utf8mb4_unicode_ci`     NOT NULL,
+  `attempts`     tinyint(3) UNSIGNED                       NOT NULL,
+  `reserved_at`  int(10) UNSIGNED DEFAULT NULL,
+  `available_at` int(10) UNSIGNED                          NOT NULL,
+  `created_at`   int(10) UNSIGNED                          NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `libraries`
+--
+
+DROP TABLE IF EXISTS `libraries`;
+CREATE TABLE `libraries`
+(
+  `id`             bigint(20) UNSIGNED                                    NOT NULL,
+  `owner_id`       bigint(20) UNSIGNED                                    NOT NULL,
+  `name`           varchar(64) COLLATE `utf8mb4_unicode_ci`               NOT NULL DEFAULT '',
+  `content_limit`  int(10) UNSIGNED                                       NOT NULL DEFAULT 0,
+  `hidden_formats` longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL DEFAULT '[]' CHECK (JSON_VALID(`hidden_formats`)),
+  `created_at`     timestamp                                              NULL     DEFAULT NULL,
+  `updated_at`     timestamp                                              NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `library_shares`
+--
+
+DROP TABLE IF EXISTS `library_shares`;
+CREATE TABLE `library_shares`
+(
+  `library_id` bigint(20) UNSIGNED NOT NULL,
+  `actor_id`   bigint(20) UNSIGNED NOT NULL,
+  `created_at` timestamp           NULL DEFAULT NULL,
+  `updated_at` timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `locations`
+--
+
+DROP TABLE IF EXISTS `locations`;
+CREATE TABLE `locations`
+(
+  `id`              bigint(20) UNSIGNED                       NOT NULL,
+  `network_id`      bigint(20) UNSIGNED                                DEFAULT NULL,
+  `external_id`     text COLLATE `utf8mb4_unicode_ci`                  DEFAULT NULL,
+  `display_type_id` bigint(20) UNSIGNED                       NOT NULL,
+  `name`            varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `internal_name`   varchar(256) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `container_id`    bigint(20) UNSIGNED                                DEFAULT NULL,
+  `province`        varchar(2) COLLATE `utf8mb4_unicode_ci`   NOT NULL,
+  `city`            varchar(128) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `scheduled_sleep` tinyint(1)                                NOT NULL DEFAULT 0,
+  `created_at`      timestamp                                 NULL     DEFAULT NULL,
+  `updated_at`      timestamp                                 NULL     DEFAULT NULL,
+  `sleep_end`       time                                               DEFAULT NULL,
+  `sleep_start`     time                                               DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `loop_configurations`
+--
+
+DROP TABLE IF EXISTS `loop_configurations`;
+CREATE TABLE `loop_configurations`
+(
+  `id`               bigint(20) UNSIGNED                      NOT NULL,
+  `name`             varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `loop_length_ms`   bigint(20) UNSIGNED                      NOT NULL,
+  `spot_length_ms`   bigint(20) UNSIGNED                      NOT NULL,
+  `reserved_spots`   int(10) UNSIGNED                         NOT NULL DEFAULT 0,
+  `start_date`       date                                     NOT NULL,
+  `end_date`         date                                     NOT NULL,
+  `max_spots_count`  int(10) UNSIGNED GENERATED ALWAYS AS (`loop_length_ms` / `spot_length_ms`) VIRTUAL,
+  `free_spots_count` int(10) UNSIGNED GENERATED ALWAYS AS (`max_spots_count` - `reserved_spots`) VIRTUAL,
+  `created_at`       timestamp                                NULL     DEFAULT NULL,
+  `updated_at`       timestamp                                NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `markets`
+--
+
+DROP TABLE IF EXISTS `markets`;
+CREATE TABLE `markets`
+(
+  `id`          bigint(20) UNSIGNED                      NOT NULL,
+  `province_id` bigint(20) UNSIGNED                      NOT NULL,
+  `name_en`     varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `name_fr`     varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `migrations`
+--
+
+DROP TABLE IF EXISTS `migrations`;
+CREATE TABLE `migrations`
+(
+  `id`        int(10) UNSIGNED                          NOT NULL,
+  `migration` varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `batch`     int(11)                                   NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `networks`
+--
+
+DROP TABLE IF EXISTS `networks`;
+CREATE TABLE `networks`
+(
+  `id`            bigint(20) UNSIGNED                                    NOT NULL,
+  `uuid`          char(36) COLLATE `utf8mb4_unicode_ci`                  NOT NULL DEFAULT UUID(),
+  `connection_id` bigint(20) UNSIGNED                                    NOT NULL,
+  `name`          varchar(64) COLLATE `utf8mb4_unicode_ci`               NOT NULL,
+  `color`         varchar(6) COLLATE `utf8mb4_unicode_ci`                NOT NULL DEFAULT '000000',
+  `settings`      longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL CHECK (JSON_VALID(`settings`)),
+  `created_at`    timestamp                                              NULL     DEFAULT NULL,
+  `updated_at`    timestamp                                              NULL     DEFAULT NULL,
+  `deleted_at`    timestamp                                              NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `news_backgrounds`
+--
+
+DROP TABLE IF EXISTS `news_backgrounds`;
+CREATE TABLE `news_backgrounds`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `category`   smallint(5) UNSIGNED                     NOT NULL,
+  `network`    varchar(16) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `format_id`  bigint(20) UNSIGNED                      NOT NULL,
+  `locale`     varchar(5) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `path`       text COLLATE `utf8mb4_unicode_ci`        NOT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `news_records`
+--
+
+DROP TABLE IF EXISTS `news_records`;
+CREATE TABLE `news_records`
+(
+  `id`           int(10) UNSIGNED                          NOT NULL,
+  `cp_id`        varchar(64) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `subject`      varchar(32) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `locale`       varchar(5) COLLATE `utf8mb4_unicode_ci`   NOT NULL,
+  `headline`     varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `date`         datetime                                  NOT NULL,
+  `media`        varchar(255) COLLATE `utf8mb4_unicode_ci`      DEFAULT NULL,
+  `media_width`  int(11)                                        DEFAULT NULL,
+  `media_height` int(11)                                        DEFAULT NULL,
+  `created_at`   timestamp                                 NULL DEFAULT NULL,
+  `updated_at`   timestamp                                 NULL DEFAULT NULL
+) ENGINE = MyISAM
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `odoo_properties`
+--
+
+DROP TABLE IF EXISTS `odoo_properties`;
+CREATE TABLE `odoo_properties`
+(
+  `property_id`   bigint(20) UNSIGNED                      NOT NULL,
+  `odoo_id`       bigint(20) UNSIGNED                      NOT NULL,
+  `internal_name` varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL COMMENT 'Name of the property in Odoo',
+  `created_at`    timestamp                                NULL DEFAULT NULL,
+  `updated_at`    timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `opening_hours`
+--
+
+DROP TABLE IF EXISTS `opening_hours`;
+CREATE TABLE `opening_hours`
+(
+  `property_id` bigint(20) UNSIGNED NOT NULL,
+  `weekday`     tinyint(3) UNSIGNED NOT NULL,
+  `open_at`     time                NOT NULL,
+  `close_at`    time                NOT NULL,
+  `created_at`  timestamp           NULL DEFAULT NULL,
+  `updated_at`  timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `parameters`
+--
+
+DROP TABLE IF EXISTS `parameters`;
+CREATE TABLE `parameters`
+(
+  `slug`       varchar(32) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `format`     varchar(16) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `value`      text COLLATE `utf8mb4_unicode_ci`             DEFAULT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `password_resets`
+--
+
+DROP TABLE IF EXISTS `password_resets`;
+CREATE TABLE `password_resets`
+(
+  `email`      varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `token`      varchar(32) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `created_at` timestamp                                 NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `phones`
+--
+
+DROP TABLE IF EXISTS `phones`;
+CREATE TABLE `phones`
+(
+  `id`             bigint(20) UNSIGNED                       NOT NULL,
+  `number_country` varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `number`         varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`     timestamp                                 NULL DEFAULT NULL,
+  `updated_at`     timestamp                                 NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `players`
+--
+
+DROP TABLE IF EXISTS `players`;
+CREATE TABLE `players`
+(
+  `id`          bigint(20) UNSIGNED                      NOT NULL,
+  `network_id`  bigint(20) UNSIGNED                           DEFAULT NULL,
+  `external_id` text COLLATE `utf8mb4_unicode_ci`        NOT NULL,
+  `location_id` bigint(20) UNSIGNED                      NOT NULL,
+  `name`        varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`  timestamp                                NULL DEFAULT NULL,
+  `updated_at`  timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `points_of_interest`
+--
+
+DROP TABLE IF EXISTS `points_of_interest`;
+CREATE TABLE `points_of_interest`
+(
+  `id`          bigint(20) UNSIGNED                       NOT NULL,
+  `brand_id`    bigint(20) UNSIGNED                       NOT NULL,
+  `external_id` varchar(64) COLLATE `utf8mb4_unicode_ci`       DEFAULT NULL,
+  `name`        varchar(128) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `address`     text COLLATE `utf8mb4_unicode_ci`         NOT NULL,
+  `position`    point                                     NOT NULL,
+  `created_at`  timestamp                                 NULL DEFAULT NULL,
+  `updated_at`  timestamp                                 NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pricelists`
+--
+
+DROP TABLE IF EXISTS `pricelists`;
+CREATE TABLE `pricelists`
+(
+  `id`          bigint(20) UNSIGNED                      NOT NULL,
+  `name`        varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `description` text COLLATE `utf8mb4_unicode_ci`             DEFAULT NULL,
+  `created_at`  timestamp                                NULL DEFAULT NULL,
+  `updated_at`  timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pricelists_products_categories`
+--
+
+DROP TABLE IF EXISTS `pricelists_products_categories`;
+CREATE TABLE `pricelists_products_categories`
+(
+  `pricelist_id`         bigint(20) UNSIGNED                             NOT NULL,
+  `products_category_id` bigint(20) UNSIGNED                             NOT NULL,
+  `pricing`              set ('unit','cpm') COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `value`                double UNSIGNED                                 NOT NULL,
+  `min`                  double UNSIGNED                                      DEFAULT NULL,
+  `max`                  double UNSIGNED                                      DEFAULT NULL,
+  `created_at`           timestamp                                       NULL DEFAULT NULL,
+  `updated_at`           timestamp                                       NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products`
+--
+
+DROP TABLE IF EXISTS `products`;
+CREATE TABLE `products`
+(
+  `id`                  bigint(20) UNSIGNED                       NOT NULL,
+  `property_id`         bigint(20) UNSIGNED                       NOT NULL,
+  `category_id`         bigint(20) UNSIGNED                       NOT NULL,
+  `external_id`         bigint(20) UNSIGNED                       NOT NULL,
+  `name_en`             varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `name_fr`             varchar(64) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `quantity`            int(10) UNSIGNED                          NOT NULL DEFAULT 0,
+  `unit_price`          double UNSIGNED                           NOT NULL DEFAULT 0,
+  `external_variant_id` bigint(20) UNSIGNED                                DEFAULT NULL,
+  `is_bonus`            tinyint(1)                                NOT NULL DEFAULT 0,
+  `linked_product_id`   bigint(20) UNSIGNED                                DEFAULT NULL,
+  `spot_length`         int(10) UNSIGNED                          NOT NULL DEFAULT 0,
+  `spots_count`         int(10) UNSIGNED                          NOT NULL DEFAULT 0,
+  `extra_spots`         int(10) UNSIGNED                          NOT NULL DEFAULT 0,
+  `created_at`          timestamp                                 NULL     DEFAULT NULL,
+  `updated_at`          timestamp                                 NULL     DEFAULT NULL,
+  `deleted_at`          timestamp                                 NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_attachments`
+--
+
+DROP TABLE IF EXISTS `products_attachments`;
+CREATE TABLE `products_attachments`
+(
+  `product_id`    bigint(20) UNSIGNED NOT NULL,
+  `attachment_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_categories`
+--
+
+DROP TABLE IF EXISTS `products_categories`;
+CREATE TABLE `products_categories`
+(
+  `id`            bigint(20) UNSIGNED                                                NOT NULL,
+  `external_id`   bigint(20) UNSIGNED                                                NOT NULL,
+  `type_id`       bigint(20) UNSIGNED                                                NOT NULL,
+  `name_en`       varchar(64) COLLATE `utf8mb4_unicode_ci`                           NOT NULL,
+  `name_fr`       varchar(64) COLLATE `utf8mb4_unicode_ci`                           NOT NULL,
+  `fill_strategy` enum ('DIGITAL','STATIC','SPECIALTY') COLLATE `utf8mb4_unicode_ci` NOT NULL DEFAULT 'DIGITAL',
+  `created_at`    timestamp                                                          NULL     DEFAULT NULL,
+  `updated_at`    timestamp                                                          NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_categories_attachments`
+--
+
+DROP TABLE IF EXISTS `products_categories_attachments`;
+CREATE TABLE `products_categories_attachments`
+(
+  `product_category_id` bigint(20) UNSIGNED NOT NULL,
+  `attachment_id`       bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_categories_impressions_models`
+--
+
+DROP TABLE IF EXISTS `products_categories_impressions_models`;
+CREATE TABLE `products_categories_impressions_models`
+(
+  `product_category_id`  bigint(20) UNSIGNED NOT NULL,
+  `impressions_model_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_categories_loop_configurations`
+--
+
+DROP TABLE IF EXISTS `products_categories_loop_configurations`;
+CREATE TABLE `products_categories_loop_configurations`
+(
+  `product_category_id`   bigint(20) UNSIGNED NOT NULL,
+  `loop_configuration_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_impressions_models`
+--
+
+DROP TABLE IF EXISTS `products_impressions_models`;
+CREATE TABLE `products_impressions_models`
+(
+  `product_id`           bigint(20) UNSIGNED NOT NULL,
+  `impressions_model_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_locations`
+--
+
+DROP TABLE IF EXISTS `products_locations`;
+CREATE TABLE `products_locations`
+(
+  `product_id`  bigint(20) UNSIGNED NOT NULL,
+  `location_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_loop_configurations`
+--
+
+DROP TABLE IF EXISTS `products_loop_configurations`;
+CREATE TABLE `products_loop_configurations`
+(
+  `product_id`            bigint(20) UNSIGNED NOT NULL,
+  `loop_configuration_id` bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `products_types`
+--
+
+DROP TABLE IF EXISTS `products_types`;
+CREATE TABLE `products_types`
+(
+  `id`          bigint(20) UNSIGNED                      NOT NULL,
+  `external_id` bigint(20) UNSIGNED                      NOT NULL,
+  `name_en`     varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `name_fr`     varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`  timestamp                                NULL DEFAULT NULL,
+  `updated_at`  timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties`
+--
+
+DROP TABLE IF EXISTS `properties`;
+CREATE TABLE `properties`
+(
+  `actor_id`       bigint(20) UNSIGNED NOT NULL,
+  `address_id`     bigint(20) UNSIGNED          DEFAULT NULL,
+  `network_id`     bigint(20) UNSIGNED          DEFAULT NULL,
+  `pricelist_id`   bigint(20) UNSIGNED          DEFAULT NULL,
+  `has_tenants`    tinyint(1)          NOT NULL DEFAULT 0,
+  `created_at`     timestamp           NULL     DEFAULT NULL,
+  `updated_at`     timestamp           NULL     DEFAULT NULL,
+  `last_review_at` timestamp           NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties_contacts`
+--
+
+DROP TABLE IF EXISTS `properties_contacts`;
+CREATE TABLE `properties_contacts`
+(
+  `property_id` bigint(20) UNSIGNED                      NOT NULL,
+  `actor_id`    bigint(20) UNSIGNED                      NOT NULL,
+  `role`        varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties_data`
+--
+
+DROP TABLE IF EXISTS `properties_data`;
+CREATE TABLE `properties_data`
+(
+  `property_id`        bigint(20) UNSIGNED NOT NULL,
+  `website`            varchar(128) COLLATE `utf8mb4_unicode_ci` DEFAULT NULL,
+  `description_fr`     text COLLATE `utf8mb4_unicode_ci`         DEFAULT NULL,
+  `description_en`     text COLLATE `utf8mb4_unicode_ci`         DEFAULT NULL,
+  `stores_count`       int(10) UNSIGNED                          DEFAULT NULL,
+  `visit_length`       double UNSIGNED                           DEFAULT NULL,
+  `average_income`     bigint(20) UNSIGNED                       DEFAULT NULL,
+  `is_downtown`        tinyint(1)                                DEFAULT NULL,
+  `market_population`  bigint(20) UNSIGNED                       DEFAULT NULL,
+  `gross_area`         bigint(20) UNSIGNED                       DEFAULT NULL,
+  `spending_per_visit` double UNSIGNED                           DEFAULT NULL,
+  `data_source`        varchar(64) COLLATE `utf8mb4_unicode_ci`  DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties_fields_segments_values`
+--
+
+DROP TABLE IF EXISTS `properties_fields_segments_values`;
+CREATE TABLE `properties_fields_segments_values`
+(
+  `property_id`       bigint(20) UNSIGNED NOT NULL,
+  `fields_segment_id` bigint(20) UNSIGNED NOT NULL,
+  `value`             double              NOT NULL,
+  `reference_value`   double                   DEFAULT NULL,
+  `index`             int(10) UNSIGNED GENERATED ALWAYS AS (ROUND(`value` / `reference_value` * 100, 0)) STORED,
+  `created_at`        timestamp           NULL DEFAULT NULL,
+  `updated_at`        timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties_pictures`
+--
+
+DROP TABLE IF EXISTS `properties_pictures`;
+CREATE TABLE `properties_pictures`
+(
+  `id`          bigint(20) UNSIGNED                       NOT NULL,
+  `extension`   varchar(8) COLLATE `utf8mb4_unicode_ci`   NOT NULL,
+  `name`        varchar(128) COLLATE `utf8mb4_unicode_ci` NOT NULL DEFAULT '',
+  `property_id` bigint(20) UNSIGNED                       NOT NULL,
+  `width`       int(10) UNSIGNED                          NOT NULL,
+  `height`      int(10) UNSIGNED                          NOT NULL,
+  `order`       int(10) UNSIGNED                          NOT NULL,
+  `created_at`  timestamp                                 NULL     DEFAULT NULL,
+  `updated_at`  timestamp                                 NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties_tenants`
+--
+
+DROP TABLE IF EXISTS `properties_tenants`;
+CREATE TABLE `properties_tenants`
+(
+  `property_id` bigint(20) UNSIGNED NOT NULL,
+  `brand_id`    bigint(20) UNSIGNED NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties_traffic`
+--
+
+DROP TABLE IF EXISTS `properties_traffic`;
+CREATE TABLE `properties_traffic`
+(
+  `property_id` bigint(20) UNSIGNED NOT NULL,
+  `year`        year(4)             NOT NULL,
+  `week`        int(10) UNSIGNED    NOT NULL,
+  `traffic`     bigint(20) UNSIGNED NOT NULL,
+  `is_estimate` tinyint(1)          NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties_traffic_monthly`
+--
+
+DROP TABLE IF EXISTS `properties_traffic_monthly`;
+CREATE TABLE `properties_traffic_monthly`
+(
+  `property_id`   bigint(20) UNSIGNED NOT NULL,
+  `year`          year(4)             NOT NULL,
+  `month`         tinyint(3) UNSIGNED NOT NULL,
+  `traffic`       bigint(20) UNSIGNED      DEFAULT NULL,
+  `temporary`     bigint(20) UNSIGNED      DEFAULT NULL,
+  `final_traffic` bigint(20) UNSIGNED GENERATED ALWAYS AS (IFNULL(`traffic`, `temporary`)) VIRTUAL,
+  `created_at`    timestamp           NULL DEFAULT NULL,
+  `updated_at`    timestamp           NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `properties_traffic_snapshots`
+--
+
+DROP TABLE IF EXISTS `properties_traffic_snapshots`;
+CREATE TABLE `properties_traffic_snapshots`
+(
+  `property_id` bigint(20) UNSIGNED                                    NOT NULL,
+  `date`        date                                                   NOT NULL,
+  `traffic`     longtext CHARACTER SET `utf8mb4` COLLATE `utf8mb4_bin` NOT NULL CHECK (JSON_VALID(`traffic`))
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `property_traffic_settings`
+--
+
+DROP TABLE IF EXISTS `property_traffic_settings`;
+CREATE TABLE `property_traffic_settings`
+(
+  `property_id`            bigint(20) UNSIGNED                                             NOT NULL,
+  `is_required`            tinyint(1)                                                      NOT NULL DEFAULT 0,
+  `start_year`             int(10) UNSIGNED                                                NOT NULL DEFAULT 2019,
+  `grace_override`         timestamp                                                       NULL     DEFAULT NULL,
+  `input_method`           set ('MANUAL','LINKETT') COLLATE `utf8mb4_unicode_ci`           NOT NULL DEFAULT 'MANUAL',
+  `missing_value_strategy` set ('USE_LAST','USE_PLACEHOLDER') COLLATE `utf8mb4_unicode_ci` NOT NULL DEFAULT 'USE_LAST',
+  `placeholder_value`      int(10) UNSIGNED                                                NOT NULL DEFAULT 0,
+  `created_at`             timestamp                                                       NULL     DEFAULT NULL,
+  `updated_at`             timestamp                                                       NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `property_traffic_source`
+--
+
+DROP TABLE IF EXISTS `property_traffic_source`;
+CREATE TABLE `property_traffic_source`
+(
+  `property_id` bigint(20) UNSIGNED                       NOT NULL,
+  `source_id`   bigint(20) UNSIGNED                       NOT NULL,
+  `uid`         varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at`  timestamp                                 NULL DEFAULT NULL,
+  `updated_at`  timestamp                                 NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `provinces`
+--
+
+DROP TABLE IF EXISTS `provinces`;
+CREATE TABLE `provinces`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `slug`       varchar(2) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `country_id` bigint(20) UNSIGNED                      NOT NULL,
+  `name`       varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `reviews`
+--
+
+DROP TABLE IF EXISTS `reviews`;
+CREATE TABLE `reviews`
+(
+  `id`          bigint(20) UNSIGNED NOT NULL,
+  `schedule_id` bigint(20) UNSIGNED NOT NULL,
+  `reviewer_id` bigint(20) UNSIGNED NOT NULL,
+  `approved`    tinyint(1)          NOT NULL,
+  `message`     text COLLATE `utf8mb4_unicode_ci` DEFAULT NULL,
+  `created_at`  timestamp           NULL          DEFAULT NULL,
+  `updated_at`  timestamp           NULL          DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `review_templates`
+--
+
+DROP TABLE IF EXISTS `review_templates`;
+CREATE TABLE `review_templates`
+(
+  `id`         bigint(20) UNSIGNED               NOT NULL,
+  `text`       text COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `owner_id`   bigint(20) UNSIGNED               NOT NULL,
+  `created_at` timestamp                         NULL DEFAULT NULL,
+  `updated_at` timestamp                         NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `roles`
+--
+
+DROP TABLE IF EXISTS `roles`;
+CREATE TABLE `roles`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `name`       varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `desc`       text COLLATE `utf8mb4_unicode_ci`             DEFAULT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `roles_capabilities`
+--
+
+DROP TABLE IF EXISTS `roles_capabilities`;
+CREATE TABLE `roles_capabilities`
+(
+  `role_id`       bigint(20) UNSIGNED NOT NULL,
+  `capability_id` bigint(20) UNSIGNED NOT NULL,
+  `value`         text COLLATE `utf8mb4_unicode_ci` DEFAULT NULL,
+  `created_at`    timestamp           NULL          DEFAULT NULL,
+  `updated_at`    timestamp           NULL          DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `schedules`
+--
+
+DROP TABLE IF EXISTS `schedules`;
+CREATE TABLE `schedules`
+(
+  `id`            bigint(20) UNSIGNED NOT NULL,
+  `campaign_id`   bigint(20) UNSIGNED NOT NULL,
+  `content_id`    bigint(20) UNSIGNED NOT NULL,
+  `owner_id`      bigint(20) UNSIGNED NOT NULL,
+  `external_id_1` text COLLATE `utf8mb4_unicode_ci` DEFAULT NULL,
+  `external_id_2` text COLLATE `utf8mb4_unicode_ci` DEFAULT NULL,
+  `start_date`    timestamp           NULL          DEFAULT NULL,
+  `end_date`      timestamp           NULL          DEFAULT NULL,
+  `order`         int(10) UNSIGNED    NOT NULL      DEFAULT 999,
+  `locked`        tinyint(1)          NOT NULL      DEFAULT 0,
+  `is_approved`   tinyint(1)          NOT NULL      DEFAULT 0,
+  `print_count`   int(10) UNSIGNED    NOT NULL      DEFAULT 0,
+  `created_at`    timestamp           NULL          DEFAULT NULL,
+  `updated_at`    timestamp           NULL          DEFAULT NULL,
+  `deleted_at`    timestamp           NULL          DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `schedules_details`
+-- (See below for the actual view)
+--
+DROP VIEW IF EXISTS `schedules_details`;
+CREATE TABLE `schedules_details`
+(
+  `id`       bigint(20) UNSIGNED,
+  `approved` tinyint(1)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `signup_tokens`
+--
+
+DROP TABLE IF EXISTS `signup_tokens`;
+CREATE TABLE `signup_tokens`
+(
+  `actor_id`   bigint(20) UNSIGNED                      NOT NULL,
+  `token`      varchar(32) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at` timestamp                                NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP()
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `static_creatives`
+--
+
+DROP TABLE IF EXISTS `static_creatives`;
+CREATE TABLE `static_creatives`
+(
+  `creative_id` bigint(20) UNSIGNED                      NOT NULL,
+  `extension`   varchar(8) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `checksum`    varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tags`
+--
+
+DROP TABLE IF EXISTS `tags`;
+CREATE TABLE `tags`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `name`       varchar(45) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `color`      varchar(6) COLLATE `utf8mb4_unicode_ci`       DEFAULT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `traffic_sources`
+--
+
+DROP TABLE IF EXISTS `traffic_sources`;
+CREATE TABLE `traffic_sources`
+(
+  `id`         bigint(20) UNSIGNED                      NOT NULL,
+  `type`       varchar(16) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `name`       varchar(64) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `created_at` timestamp                                NULL DEFAULT NULL,
+  `updated_at` timestamp                                NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `traffic_source_settings_linkett`
+--
+
+DROP TABLE IF EXISTS `traffic_source_settings_linkett`;
+CREATE TABLE `traffic_source_settings_linkett`
+(
+  `source_id` bigint(20) UNSIGNED                       NOT NULL,
+  `api_key`   varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `two-factor-tokens`
+--
+
+DROP TABLE IF EXISTS `two-factor-tokens`;
+CREATE TABLE `two-factor-tokens`
+(
+  `actor_id`     bigint(20) UNSIGNED NOT NULL,
+  `token`        varchar(6) COLLATE `utf8mb4_unicode_ci` DEFAULT NULL,
+  `validated`    tinyint(1)          NOT NULL            DEFAULT 0,
+  `created_at`   timestamp           NOT NULL            DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
+  `validated_at` timestamp           NULL                DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `weather_backgrounds`
+--
+
+DROP TABLE IF EXISTS `weather_backgrounds`;
+CREATE TABLE `weather_backgrounds`
+(
+  `id`                  bigint(20) UNSIGNED                                                              NOT NULL,
+  `weather`             varchar(32) COLLATE `utf8mb4_unicode_ci`                                              DEFAULT NULL,
+  `period`              set ('ALL','MORNING','DAY','DUSK','NIGHT','RANDOM') COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `network_id`          bigint(20) UNSIGNED                                                                   DEFAULT NULL,
+  `weather_location_id` bigint(20) UNSIGNED                                                              NOT NULL,
+  `format_id`           bigint(20) UNSIGNED                                                              NOT NULL,
+  `path`                text COLLATE `utf8mb4_unicode_ci`                                                NOT NULL,
+  `created_at`          timestamp                                                                        NULL DEFAULT NULL,
+  `updated_at`          timestamp                                                                        NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `weather_locations`
+--
+
+DROP TABLE IF EXISTS `weather_locations`;
+CREATE TABLE `weather_locations`
+(
+  `id`                    bigint(20) UNSIGNED                      NOT NULL,
+  `country`               varchar(2) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `province`              varchar(2) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `city`                  varchar(30) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `background_selection`  varchar(10) COLLATE `utf8mb4_unicode_ci` NOT NULL DEFAULT 'WEATHER',
+  `selection_revert_date` timestamp                                NULL     DEFAULT NULL,
+  `created_at`            timestamp                                NULL     DEFAULT NULL,
+  `updated_at`            timestamp                                NULL     DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `weather_records`
+--
+
+DROP TABLE IF EXISTS `weather_records`;
+CREATE TABLE `weather_records`
+(
+  `id`          bigint(20) UNSIGNED                     NOT NULL,
+  `endpoint`    varchar(3) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `location_id` bigint(20) UNSIGNED                     NOT NULL,
+  `locale`      varchar(5) COLLATE `utf8mb4_unicode_ci` NOT NULL,
+  `content`     text COLLATE `utf8mb4_unicode_ci`       NOT NULL,
+  `created_at`  timestamp                               NULL DEFAULT NULL,
+  `updated_at`  timestamp                               NULL DEFAULT NULL
+) ENGINE = InnoDB
+  DEFAULT CHARSET = `utf8mb4`
+  COLLATE = `utf8mb4_unicode_ci`;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `actors_details`
+--
+DROP TABLE IF EXISTS `actors_details`;
+
+DROP VIEW IF EXISTS `actors_details`;
+CREATE ALGORITHM = UNDEFINED DEFINER =`valentindufois`@`%` SQL SECURITY DEFINER VIEW `actors_details` AS
+SELECT `a`.`id`                                                                                     AS `id`,
+       `ac`.`ancestor_id`                                                                           AS `parent_id`,
+       CASE WHEN `asp`.`is_group` IS NOT NULL THEN `asp`.`is_group` ELSE 0 END                      AS `parent_is_group`,
+       COUNT(`acc`.`descendant_id`)                                                                 AS `direct_children_count`,
+       (SELECT EXISTS(SELECT 1 FROM `properties` WHERE `properties`.`actor_id` = `a`.`id` LIMIT 1)) AS `is_property`,
+       COALESCE((SELECT GROUP_CONCAT(`apn`.`name` ORDER BY `ac`.`depth` DESC SEPARATOR '/')
+                   FROM (`actors` `apn` JOIN `actors_closures` `ac` ON (`ac`.`ancestor_id` = `apn`.`id` AND `ac`.`depth` > 0))
+                  WHERE `ac`.`descendant_id` = `a`.`id`
+                    AND `apn`.`is_group` = 1
+                  GROUP BY `ac`.`descendant_id`), '')                                               AS `path_names`,
+       COALESCE((SELECT GROUP_CONCAT(`apn`.`id` ORDER BY `ac`.`depth` DESC SEPARATOR '/')
+                   FROM (`actors` `apn` JOIN `actors_closures` `ac` ON (`ac`.`ancestor_id` = `apn`.`id` AND `ac`.`depth` > 0))
+                  WHERE `ac`.`descendant_id` = `a`.`id`
+                    AND `apn`.`is_group` = 1
+                  GROUP BY `ac`.`descendant_id`), '')                                               AS `path_ids`
+  FROM (((`actors` `a` LEFT JOIN `actors_closures` `ac`
+          ON (`ac`.`descendant_id` = `a`.`id` AND `ac`.`depth` = 1)) LEFT JOIN `actors_closures` `acc`
+         ON (`acc`.`ancestor_id` = `a`.`id` AND `acc`.`depth` = 1)) LEFT JOIN `actors` `asp` ON (`asp`.`id` = `ac`.`ancestor_id`))
+ GROUP BY `a`.`id`, `ac`.`ancestor_id`;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `fields_segments_stats`
+--
+DROP TABLE IF EXISTS `fields_segments_stats`;
+
+DROP VIEW IF EXISTS `fields_segments_stats`;
+CREATE ALGORITHM = UNDEFINED DEFINER =`valentindufois`@`%` SQL SECURITY DEFINER VIEW `fields_segments_stats` AS
+SELECT `fs`.`id`                   AS `id`,
+       COUNT(`pfsv`.`property_id`) AS `value_count`,
+       MIN(`pfsv`.`index`)         AS `min_index`,
+       MAX(`pfsv`.`index`)         AS `max_index`
+  FROM (`fields_segments` `fs` LEFT JOIN `properties_fields_segments_values` `pfsv` ON (`pfsv`.`fields_segment_id` = `fs`.`id`))
+ GROUP BY `fs`.`id`;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `schedules_details`
+--
+DROP TABLE IF EXISTS `schedules_details`;
+
+DROP VIEW IF EXISTS `schedules_details`;
+CREATE ALGORITHM = UNDEFINED DEFINER =`valentindufois`@`%` SQL SECURITY DEFINER VIEW `schedules_details` AS
+SELECT `s`.`id` AS `id`, `r`.`approved` AS `approved`
+  FROM (`schedules` `s` LEFT JOIN `reviews` `r` ON (`r`.`schedule_id` = `s`.`id`))
+ WHERE `r`.`id` = (SELECT MAX(`reviews`.`id`) FROM `reviews` WHERE `reviews`.`schedule_id` = `s`.`id`);
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `access_tokens`
+--
+ALTER TABLE `access_tokens`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `access_tokens_capabilities`
+--
+ALTER TABLE `access_tokens_capabilities`
+  ADD KEY `access_tokens_capabilities_access_token_id_foreign` (`access_token_id`),
+  ADD KEY `access_tokens_capabilities_capability_id_foreign` (`capability_id`);
+
+--
+-- Indexes for table `actors`
+--
+ALTER TABLE `actors`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `actors_email_unique` (`email`),
+  ADD KEY `actors_locked_by_foreign` (`locked_by`),
+  ADD KEY `actors_name_index` (`name`),
+  ADD KEY `actors_is_group_index` (`is_group`),
+  ADD KEY `actors_branding_id_foreign` (`branding_id`),
+  ADD KEY `actors_phone_id_foreign` (`phone_id`);
+
+--
+-- Indexes for table `actors_capabilities`
+--
+ALTER TABLE `actors_capabilities`
+  ADD PRIMARY KEY (`actor_id`, `capability_id`),
+  ADD KEY `actors_capabilities_capability_id_foreign` (`capability_id`);
+
+--
+-- Indexes for table `actors_closures`
+--
+ALTER TABLE `actors_closures`
+  ADD PRIMARY KEY (`ancestor_id`, `descendant_id`),
+  ADD KEY `actors_closures_descendant_id_foreign` (`descendant_id`),
+  ADD KEY `actors_closures_depth_index` (`depth`);
+
+--
+-- Indexes for table `actors_editors`
+--
+ALTER TABLE `actors_editors`
+  ADD KEY `actors_editors_actor_id_foreign` (`actor_id`),
+  ADD KEY `actors_editors_template_id_foreign` (`template_id`);
+
+--
+-- Indexes for table `actors_locations`
+--
+ALTER TABLE `actors_locations`
+  ADD KEY `actors_locations_actor_id_foreign` (`actor_id`),
+  ADD KEY `actors_locations_location_id_foreign` (`location_id`);
+
+--
+-- Indexes for table `actors_logo`
+--
+ALTER TABLE `actors_logo`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `actors_logo_actor_id_index` (`actor_id`);
+
+--
+-- Indexes for table `actors_roles`
+--
+ALTER TABLE `actors_roles`
+  ADD PRIMARY KEY (`actor_id`, `role_id`),
+  ADD KEY `actors_roles_role_id_foreign` (`role_id`);
+
+--
+-- Indexes for table `actors_shares`
+--
+ALTER TABLE `actors_shares`
+  ADD PRIMARY KEY (`sharer_id`, `shared_with_id`),
+  ADD KEY `actors_shares_shared_with_id_foreign` (`shared_with_id`);
+
+--
+-- Indexes for table `actors_tags`
+--
+ALTER TABLE `actors_tags`
+  ADD KEY `actors_tags_actor_id_foreign` (`actor_id`),
+  ADD KEY `actors_tags_tag_id_foreign` (`tag_id`);
+
+--
+-- Indexes for table `addresses`
+--
+ALTER TABLE `addresses`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `addresses_city_id_foreign` (`city_id`);
+
+--
+-- Indexes for table `advertisers`
+--
+ALTER TABLE `advertisers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `attachments`
+--
+ALTER TABLE `attachments`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `brandings`
+--
+ALTER TABLE `brandings`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `brandings_files`
+--
+ALTER TABLE `brandings_files`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `brandings_files_branding_id_foreign` (`branding_id`);
+
+--
+-- Indexes for table `brands`
+--
+ALTER TABLE `brands`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `brands_parent_id_foreign` (`parent_id`);
+ALTER TABLE `brands`
+  ADD FULLTEXT KEY `brands_name_en_name_fr_fulltext` (`name_en`, `name_fr`);
+
+--
+-- Indexes for table `broadcasters_connections`
+--
+ALTER TABLE `broadcasters_connections`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `broadcasters_connections_uuid_index` (`uuid`);
+
+--
+-- Indexes for table `broadsign_criteria`
+--
+ALTER TABLE `broadsign_criteria`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `broadsign_separations`
+--
+ALTER TABLE `broadsign_separations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `broadsign_triggers`
+--
+ALTER TABLE `broadsign_triggers`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `cache`
+--
+ALTER TABLE `cache`
+  ADD UNIQUE KEY `cache_key_unique` (`key`);
+
+--
+-- Indexes for table `cache_locks`
+--
+ALTER TABLE `cache_locks`
+  ADD PRIMARY KEY (`key`);
+
+--
+-- Indexes for table `campaigns`
+--
+ALTER TABLE `campaigns`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `campaigns_owner_id_index` (`owner_id`),
+  ADD KEY `campaigns_format_id_index` (`format_id`),
+  ADD KEY `campaigns_network_id_index` (`network_id`);
+
+--
+-- Indexes for table `campaign_locations`
+--
+ALTER TABLE `campaign_locations`
+  ADD PRIMARY KEY (`campaign_id`, `location_id`),
+  ADD KEY `campaign_locations_location_id_foreign` (`location_id`);
+
+--
+-- Indexes for table `campaign_planner_polygons`
+--
+ALTER TABLE `campaign_planner_polygons`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `campaign_planner_polygons_actor_id_foreign` (`actor_id`);
+
+--
+-- Indexes for table `campaign_planner_saves`
+--
+ALTER TABLE `campaign_planner_saves`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `campaign_planner_saves_actor_id_foreign` (`actor_id`);
+
+--
+-- Indexes for table `campaign_shares`
+--
+ALTER TABLE `campaign_shares`
+  ADD PRIMARY KEY (`campaign_id`, `actor_id`),
+  ADD KEY `campaign_shares_actor_id_foreign` (`actor_id`);
+
+--
+-- Indexes for table `capabilities`
+--
+ALTER TABLE `capabilities`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug_UNIQUE` (`slug`);
+
+--
+-- Indexes for table `checksum`
+--
+ALTER TABLE `checksum`
+  ADD UNIQUE KEY `checksum_checksum_unique` (`checksum`);
+
+--
+-- Indexes for table `cities`
+--
+ALTER TABLE `cities`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `cities_market_id_foreign` (`market_id`),
+  ADD KEY `cities_province_id_foreign` (`province_id`);
+
+--
+-- Indexes for table `clients`
+--
+ALTER TABLE `clients`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `containers`
+--
+ALTER TABLE `containers`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `containers_parent_id_index` (`parent_id`),
+  ADD KEY `containers_network_id_foreign` (`network_id`);
+
+--
+-- Indexes for table `contents`
+--
+ALTER TABLE `contents`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contents_owner_id_index` (`owner_id`),
+  ADD KEY `contents_library_id_index` (`library_id`),
+  ADD KEY `contents_layout_id_index` (`layout_id`);
+
+--
+-- Indexes for table `contracts`
+--
+ALTER TABLE `contracts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contracts_client_id_foreign` (`client_id`),
+  ADD KEY `contracts_owner_id_foreign` (`salesperson_id`),
+  ADD KEY `contracts_advertiser_id_foreign` (`advertiser_id`);
+
+--
+-- Indexes for table `contracts_bursts`
+--
+ALTER TABLE `contracts_bursts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contracts_bursts_contract_id_foreign` (`contract_id`),
+  ADD KEY `contracts_bursts_actor_id_foreign` (`actor_id`),
+  ADD KEY `contracts_bursts_location_id_foreign` (`location_id`);
+
+--
+-- Indexes for table `contracts_flights`
+--
+ALTER TABLE `contracts_flights`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contracts_flights_contract_id_foreign` (`contract_id`);
+
+--
+-- Indexes for table `contracts_lines`
+--
+ALTER TABLE `contracts_lines`
+  ADD PRIMARY KEY (`product_id`, `flight_id`),
+  ADD KEY `contracts_lines_flight_id_foreign` (`flight_id`);
+
+--
+-- Indexes for table `contracts_reservations`
+--
+ALTER TABLE `contracts_reservations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contracts_reservations_contract_id_foreign` (`contract_id`),
+  ADD KEY `contracts_reservations_flight_id_foreign` (`flight_id`),
+  ADD KEY `contracts_reservations_network_id_foreign` (`network_id`);
+
+--
+-- Indexes for table `contracts_screenshots`
+--
+ALTER TABLE `contracts_screenshots`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `contracts_screenshots_burst_id_foreign` (`burst_id`);
+
+--
+-- Indexes for table `countries`
+--
+ALTER TABLE `countries`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`);
+
+--
+-- Indexes for table `creatives`
+--
+ALTER TABLE `creatives`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `creatives_owner_id_foreign` (`owner_id`),
+  ADD KEY `creatives_frame_id_foreign` (`frame_id`),
+  ADD KEY `creatives_content_id_index` (`content_id`),
+  ADD KEY `creatives_type_index` (`type`);
+
+--
+-- Indexes for table `creatives_external_ids`
+--
+ALTER TABLE `creatives_external_ids`
+  ADD PRIMARY KEY (`creative_id`, `network_id`),
+  ADD KEY `creatives_external_ids_network_id_foreign` (`network_id`);
+
+--
+-- Indexes for table `demographic_values`
+--
+ALTER TABLE `demographic_values`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `demographic_values_property_id_value_id_unique` (`property_id`, `value_id`),
+  ADD KEY `demographic_values_value_id_foreign` (`value_id`),
+  ADD KEY `demographic_values_property_id_index` (`property_id`);
+
+--
+-- Indexes for table `demographic_variables`
+--
+ALTER TABLE `demographic_variables`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `display_types`
+--
+ALTER TABLE `display_types`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `display_types_connection_id_index` (`connection_id`);
+
+--
+-- Indexes for table `dynamic_creatives`
+--
+ALTER TABLE `dynamic_creatives`
+  ADD PRIMARY KEY (`creative_id`);
+
+--
+-- Indexes for table `editor_templates`
+--
+ALTER TABLE `editor_templates`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `editor_templates_slug_unique` (`slug`);
+
+--
+-- Indexes for table `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `failed_jobs_uuid_unique` (`uuid`);
+
+--
+-- Indexes for table `fields`
+--
+ALTER TABLE `fields`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fields_category_id_foreign` (`category_id`);
+
+--
+-- Indexes for table `fields_categories`
+--
+ALTER TABLE `fields_categories`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `fields_networks`
+--
+ALTER TABLE `fields_networks`
+  ADD KEY `fields_networks_field_id_foreign` (`field_id`),
+  ADD KEY `fields_networks_network_id_foreign` (`network_id`);
+
+--
+-- Indexes for table `fields_segments`
+--
+ALTER TABLE `fields_segments`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fields_segments_field_id_foreign` (`field_id`);
+
+--
+-- Indexes for table `formats`
+--
+ALTER TABLE `formats`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `formats_display_types`
+--
+ALTER TABLE `formats_display_types`
+  ADD KEY `formats_display_types_format_id_foreign` (`format_id`),
+  ADD KEY `formats_display_types_display_type_id_foreign` (`display_type_id`);
+
+--
+-- Indexes for table `formats_layouts`
+--
+ALTER TABLE `formats_layouts`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `formats_layouts_format_id_index` (`format_id`),
+  ADD KEY `formats_layouts_trigger_id_foreign` (`trigger_id`),
+  ADD KEY `formats_layouts_separation_id_foreign` (`separation_id`);
+
+--
+-- Indexes for table `frames`
+--
+ALTER TABLE `frames`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `frames_layout_id_index` (`layout_id`);
+
+--
+-- Indexes for table `frame_settings_broadsign`
+--
+ALTER TABLE `frame_settings_broadsign`
+  ADD PRIMARY KEY (`frame_id`),
+  ADD KEY `frame_settings_broadsign_criteria_id_foreign` (`criteria_id`);
+
+--
+-- Indexes for table `frame_settings_pisignage`
+--
+ALTER TABLE `frame_settings_pisignage`
+  ADD PRIMARY KEY (`frame_id`);
+
+--
+-- Indexes for table `headlines`
+--
+ALTER TABLE `headlines`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `headlines_actor_id_foreign` (`actor_id`),
+  ADD KEY `headlines_end_date_index` (`end_date`);
+
+--
+-- Indexes for table `headlines_messages`
+--
+ALTER TABLE `headlines_messages`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `headlines_messages_headline_id_locale_unique` (`headline_id`, `locale`);
+
+--
+-- Indexes for table `headline_capabilities`
+--
+ALTER TABLE `headline_capabilities`
+  ADD KEY `headline_capabilities_headline_id_foreign` (`headline_id`),
+  ADD KEY `headline_capabilities_capability_id_foreign` (`capability_id`);
+
+--
+-- Indexes for table `impressions_models`
+--
+ALTER TABLE `impressions_models`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `inventory`
+--
+ALTER TABLE `inventory`
+  ADD PRIMARY KEY (`skin_id`, `year`);
+
+--
+-- Indexes for table `jobs`
+--
+ALTER TABLE `jobs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `jobs_queue_index` (`queue`);
+
+--
+-- Indexes for table `libraries`
+--
+ALTER TABLE `libraries`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `libraries_owner_id_foreign` (`owner_id`);
+
+--
+-- Indexes for table `library_shares`
+--
+ALTER TABLE `library_shares`
+  ADD PRIMARY KEY (`library_id`, `actor_id`),
+  ADD KEY `library_shares_actor_id_foreign` (`actor_id`);
+
+--
+-- Indexes for table `locations`
+--
+ALTER TABLE `locations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `locations_container_id_index` (`container_id`),
+  ADD KEY `locations_province_index` (`province`),
+  ADD KEY `locations_city_index` (`city`),
+  ADD KEY `locations_network_id_index` (`network_id`);
+
+--
+-- Indexes for table `loop_configurations`
+--
+ALTER TABLE `loop_configurations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `markets`
+--
+ALTER TABLE `markets`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `markets_province_id_foreign` (`province_id`);
+
+--
+-- Indexes for table `migrations`
+--
+ALTER TABLE `migrations`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `networks`
+--
+ALTER TABLE `networks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `networks_uuid_index` (`uuid`),
+  ADD KEY `networks_connection_id_index` (`connection_id`);
+
+--
+-- Indexes for table `news_backgrounds`
+--
+ALTER TABLE `news_backgrounds`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `news_backgrounds_category_index` (`category`),
+  ADD KEY `news_backgrounds_locale_index` (`locale`),
+  ADD KEY `format` (`format_id`);
+
+--
+-- Indexes for table `news_records`
+--
+ALTER TABLE `news_records`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `news_records_cp_id_subject_unique` (`cp_id`, `subject`),
+  ADD KEY `fk_record_subject` (`subject`);
+
+--
+-- Indexes for table `odoo_properties`
+--
+ALTER TABLE `odoo_properties`
+  ADD PRIMARY KEY (`property_id`);
+
+--
+-- Indexes for table `opening_hours`
+--
+ALTER TABLE `opening_hours`
+  ADD PRIMARY KEY (`property_id`, `weekday`);
+
+--
+-- Indexes for table `parameters`
+--
+ALTER TABLE `parameters`
+  ADD PRIMARY KEY (`slug`);
+
+--
+-- Indexes for table `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD PRIMARY KEY (`email`);
+
+--
+-- Indexes for table `phones`
+--
+ALTER TABLE `phones`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `players`
+--
+ALTER TABLE `players`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `players_location_id_index` (`location_id`),
+  ADD KEY `players_network_id_foreign` (`network_id`);
+
+--
+-- Indexes for table `points_of_interest`
+--
+ALTER TABLE `points_of_interest`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `points_of_interest_external_id_unique` (`external_id`),
+  ADD KEY `points_of_interest_brand_id_foreign` (`brand_id`);
+
+--
+-- Indexes for table `pricelists`
+--
+ALTER TABLE `pricelists`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pricelists_products_categories`
+--
+ALTER TABLE `pricelists_products_categories`
+  ADD KEY `pricelists_products_categories_pricelist_id_foreign` (`pricelist_id`),
+  ADD KEY `pricelists_products_categories_products_category_id_foreign` (`products_category_id`);
+
+--
+-- Indexes for table `products`
+--
+ALTER TABLE `products`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `odoo_properties_products_odoo_id_unique` (`external_id`),
+  ADD UNIQUE KEY `odoo_properties_products_odoo_variant_id_unique` (`external_variant_id`),
+  ADD KEY `odoo_properties_products_categories_product_category_id_foreign` (`category_id`),
+  ADD KEY `products_property_id_foreign` (`property_id`),
+  ADD KEY `product_linked_product_id_foreign` (`linked_product_id`);
+
+--
+-- Indexes for table `products_attachments`
+--
+ALTER TABLE `products_attachments`
+  ADD KEY `products_attachments_product_id_foreign` (`product_id`),
+  ADD KEY `products_attachments_attachment_id_foreign` (`attachment_id`);
+
+--
+-- Indexes for table `products_categories`
+--
+ALTER TABLE `products_categories`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `odoo_products_categories_product_type_id_foreign` (`type_id`);
+
+--
+-- Indexes for table `products_categories_attachments`
+--
+ALTER TABLE `products_categories_attachments`
+  ADD KEY `products_categories_attachments_product_category_id_foreign` (`product_category_id`),
+  ADD KEY `products_categories_attachments_attachment_id_foreign` (`attachment_id`);
+
+--
+-- Indexes for table `products_categories_impressions_models`
+--
+ALTER TABLE `products_categories_impressions_models`
+  ADD KEY `products_categories_impressions_models_foreign` (`product_category_id`),
+  ADD KEY `impressions_models_products_categories_foreign` (`impressions_model_id`);
+
+--
+-- Indexes for table `products_categories_loop_configurations`
+--
+ALTER TABLE `products_categories_loop_configurations`
+  ADD PRIMARY KEY (`product_category_id`, `loop_configuration_id`),
+  ADD KEY `loop_configuration_loop_configuration_foreign` (`loop_configuration_id`);
+
+--
+-- Indexes for table `products_impressions_models`
+--
+ALTER TABLE `products_impressions_models`
+  ADD KEY `products_impressions_models_foreign` (`product_id`),
+  ADD KEY `impressions_models_products_foreign` (`impressions_model_id`);
+
+--
+-- Indexes for table `products_locations`
+--
+ALTER TABLE `products_locations`
+  ADD KEY `products_locations_product_id_foreign` (`product_id`),
+  ADD KEY `products_locations_location_id_foreign` (`location_id`);
+
+--
+-- Indexes for table `products_loop_configurations`
+--
+ALTER TABLE `products_loop_configurations`
+  ADD PRIMARY KEY (`product_id`, `loop_configuration_id`),
+  ADD KEY `products_loop_configurations_loop_configuration_id_foreign` (`loop_configuration_id`);
+
+--
+-- Indexes for table `products_types`
+--
+ALTER TABLE `products_types`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `properties`
+--
+ALTER TABLE `properties`
+  ADD PRIMARY KEY (`actor_id`),
+  ADD KEY `properties_address_id_foreign` (`address_id`),
+  ADD KEY `properties_network_id_foreign` (`network_id`),
+  ADD KEY `properties_pricelist_id_foreign` (`pricelist_id`);
+
+--
+-- Indexes for table `properties_contacts`
+--
+ALTER TABLE `properties_contacts`
+  ADD KEY `properties_contacts_property_id_foreign` (`property_id`),
+  ADD KEY `properties_contacts_actor_id_foreign` (`actor_id`);
+
+--
+-- Indexes for table `properties_data`
+--
+ALTER TABLE `properties_data`
+  ADD PRIMARY KEY (`property_id`);
+
+--
+-- Indexes for table `properties_fields_segments_values`
+--
+ALTER TABLE `properties_fields_segments_values`
+  ADD KEY `properties_fields_segments_values_property_id_foreign` (`property_id`),
+  ADD KEY `properties_fields_segments_values_fields_segment_id_foreign` (`fields_segment_id`);
+
+--
+-- Indexes for table `properties_pictures`
+--
+ALTER TABLE `properties_pictures`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `properties_pictures_property_id_foreign` (`property_id`);
+
+--
+-- Indexes for table `properties_tenants`
+--
+ALTER TABLE `properties_tenants`
+  ADD UNIQUE KEY `properties_tenants_property_id_brand_id_unique` (`property_id`, `brand_id`),
+  ADD KEY `properties_tenants_brand_id_foreign` (`brand_id`);
+
+--
+-- Indexes for table `properties_traffic`
+--
+ALTER TABLE `properties_traffic`
+  ADD UNIQUE KEY `property_id` (`property_id`, `year`, `week`);
+
+--
+-- Indexes for table `properties_traffic_monthly`
+--
+ALTER TABLE `properties_traffic_monthly`
+  ADD PRIMARY KEY (`property_id`, `year`, `month`);
+
+--
+-- Indexes for table `properties_traffic_snapshots`
+--
+ALTER TABLE `properties_traffic_snapshots`
+  ADD UNIQUE KEY `properties_traffic_snapshots_property_id_date_unique` (`property_id`, `date`),
+  ADD KEY `properties_traffic_snapshots_date_index` (`date`);
+
+--
+-- Indexes for table `property_traffic_settings`
+--
+ALTER TABLE `property_traffic_settings`
+  ADD KEY `property_traffic_settings_property_id_foreign` (`property_id`);
+
+--
+-- Indexes for table `property_traffic_source`
+--
+ALTER TABLE `property_traffic_source`
+  ADD KEY `property_traffic_source_property_id_foreign` (`property_id`),
+  ADD KEY `property_traffic_source_source_id_foreign` (`source_id`);
+
+--
+-- Indexes for table `provinces`
+--
+ALTER TABLE `provinces`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `slug` (`slug`),
+  ADD KEY `provinces_country_id_foreign` (`country_id`);
+
+--
+-- Indexes for table `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `reviews_reviewer_id_foreign` (`reviewer_id`),
+  ADD KEY `reviews_schedule_id_index` (`schedule_id`);
+
+--
+-- Indexes for table `review_templates`
+--
+ALTER TABLE `review_templates`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `review_templates_owner_id_index` (`owner_id`);
+
+--
+-- Indexes for table `roles`
+--
+ALTER TABLE `roles`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `roles_capabilities`
+--
+ALTER TABLE `roles_capabilities`
+  ADD PRIMARY KEY (`role_id`, `capability_id`),
+  ADD KEY `roles_capabilities_capability_id_foreign` (`capability_id`);
+
+--
+-- Indexes for table `schedules`
+--
+ALTER TABLE `schedules`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `schedules_campaign_id_index` (`campaign_id`),
+  ADD KEY `schedules_content_id_index` (`content_id`),
+  ADD KEY `schedules_owner_id_index` (`owner_id`);
+
+--
+-- Indexes for table `signup_tokens`
+--
+ALTER TABLE `signup_tokens`
+  ADD PRIMARY KEY (`actor_id`);
+
+--
+-- Indexes for table `static_creatives`
+--
+ALTER TABLE `static_creatives`
+  ADD PRIMARY KEY (`creative_id`);
+
+--
+-- Indexes for table `tags`
+--
+ALTER TABLE `tags`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `tags_name_unique` (`name`);
+
+--
+-- Indexes for table `traffic_sources`
+--
+ALTER TABLE `traffic_sources`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `traffic_source_settings_linkett`
+--
+ALTER TABLE `traffic_source_settings_linkett`
+  ADD KEY `traffic_source_settings_linkett_source_id_foreign` (`source_id`);
+
+--
+-- Indexes for table `two-factor-tokens`
+--
+ALTER TABLE `two-factor-tokens`
+  ADD PRIMARY KEY (`actor_id`);
+
+--
+-- Indexes for table `weather_backgrounds`
+--
+ALTER TABLE `weather_backgrounds`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `weather_backgrounds_weather_location_id_foreign` (`weather_location_id`),
+  ADD KEY `weather_backgrounds_format_id_foreign` (`format_id`),
+  ADD KEY `weather_backgrounds_network_id_foreign` (`network_id`);
+
+--
+-- Indexes for table `weather_locations`
+--
+ALTER TABLE `weather_locations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `weather_locations_country_province_city_unique` (`country`, `province`, `city`);
+
+--
+-- Indexes for table `weather_records`
+--
+ALTER TABLE `weather_records`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `records_endpoint_location_id_locale_unique` (`endpoint`, `location_id`, `locale`),
+  ADD KEY `weather_records_location_id_foreign` (`location_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `access_tokens`
+--
+ALTER TABLE `access_tokens`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `actors`
+--
+ALTER TABLE `actors`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `actors_logo`
+--
+ALTER TABLE `actors_logo`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `addresses`
+--
+ALTER TABLE `addresses`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `advertisers`
+--
+ALTER TABLE `advertisers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `attachments`
+--
+ALTER TABLE `attachments`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `brandings`
+--
+ALTER TABLE `brandings`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `brandings_files`
+--
+ALTER TABLE `brandings_files`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `brands`
+--
+ALTER TABLE `brands`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `broadcasters_connections`
+--
+ALTER TABLE `broadcasters_connections`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `broadsign_criteria`
+--
+ALTER TABLE `broadsign_criteria`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `broadsign_separations`
+--
+ALTER TABLE `broadsign_separations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `broadsign_triggers`
+--
+ALTER TABLE `broadsign_triggers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `campaigns`
+--
+ALTER TABLE `campaigns`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `campaign_planner_polygons`
+--
+ALTER TABLE `campaign_planner_polygons`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `campaign_planner_saves`
+--
+ALTER TABLE `campaign_planner_saves`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `capabilities`
+--
+ALTER TABLE `capabilities`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `cities`
+--
+ALTER TABLE `cities`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `clients`
+--
+ALTER TABLE `clients`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `contents`
+--
+ALTER TABLE `contents`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `contracts`
+--
+ALTER TABLE `contracts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `contracts_bursts`
+--
+ALTER TABLE `contracts_bursts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `contracts_flights`
+--
+ALTER TABLE `contracts_flights`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `contracts_reservations`
+--
+ALTER TABLE `contracts_reservations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `contracts_screenshots`
+--
+ALTER TABLE `contracts_screenshots`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `countries`
+--
+ALTER TABLE `countries`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `creatives`
+--
+ALTER TABLE `creatives`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `demographic_values`
+--
+ALTER TABLE `demographic_values`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `display_types`
+--
+ALTER TABLE `display_types`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `editor_templates`
+--
+ALTER TABLE `editor_templates`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `failed_jobs`
+--
+ALTER TABLE `failed_jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `fields`
+--
+ALTER TABLE `fields`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `fields_categories`
+--
+ALTER TABLE `fields_categories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `fields_segments`
+--
+ALTER TABLE `fields_segments`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `formats`
+--
+ALTER TABLE `formats`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `formats_layouts`
+--
+ALTER TABLE `formats_layouts`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `frames`
+--
+ALTER TABLE `frames`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `headlines`
+--
+ALTER TABLE `headlines`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `headlines_messages`
+--
+ALTER TABLE `headlines_messages`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `impressions_models`
+--
+ALTER TABLE `impressions_models`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `jobs`
+--
+ALTER TABLE `jobs`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `libraries`
+--
+ALTER TABLE `libraries`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `locations`
+--
+ALTER TABLE `locations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `loop_configurations`
+--
+ALTER TABLE `loop_configurations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `markets`
+--
+ALTER TABLE `markets`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `migrations`
+--
+ALTER TABLE `migrations`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `networks`
+--
+ALTER TABLE `networks`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `news_backgrounds`
+--
+ALTER TABLE `news_backgrounds`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `news_records`
+--
+ALTER TABLE `news_records`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `phones`
+--
+ALTER TABLE `phones`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `players`
+--
+ALTER TABLE `players`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `points_of_interest`
+--
+ALTER TABLE `points_of_interest`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pricelists`
+--
+ALTER TABLE `pricelists`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `products`
+--
+ALTER TABLE `products`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `products_categories`
+--
+ALTER TABLE `products_categories`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `products_types`
+--
+ALTER TABLE `products_types`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `properties_pictures`
+--
+ALTER TABLE `properties_pictures`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `provinces`
+--
+ALTER TABLE `provinces`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `reviews`
+--
+ALTER TABLE `reviews`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `review_templates`
+--
+ALTER TABLE `review_templates`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `roles`
+--
+ALTER TABLE `roles`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `schedules`
+--
+ALTER TABLE `schedules`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `signup_tokens`
+--
+ALTER TABLE `signup_tokens`
+  MODIFY `actor_id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `tags`
+--
+ALTER TABLE `tags`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `traffic_sources`
+--
+ALTER TABLE `traffic_sources`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `weather_backgrounds`
+--
+ALTER TABLE `weather_backgrounds`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `weather_locations`
+--
+ALTER TABLE `weather_locations`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `weather_records`
+--
+ALTER TABLE `weather_records`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `access_tokens_capabilities`
+--
+ALTER TABLE `access_tokens_capabilities`
+  ADD CONSTRAINT `access_tokens_capabilities_access_token_id_foreign` FOREIGN KEY (`access_token_id`) REFERENCES `access_tokens` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `access_tokens_capabilities_capability_id_foreign` FOREIGN KEY (`capability_id`) REFERENCES `capabilities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `actors`
+--
+ALTER TABLE `actors`
+  ADD CONSTRAINT `actors_branding_id_foreign` FOREIGN KEY (`branding_id`) REFERENCES `brandings` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `actors_locked_by_foreign` FOREIGN KEY (`locked_by`) REFERENCES `actors` (`id`),
+  ADD CONSTRAINT `actors_phone_id_foreign` FOREIGN KEY (`phone_id`) REFERENCES `phones` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `actors_capabilities`
+--
+ALTER TABLE `actors_capabilities`
+  ADD CONSTRAINT `actors_capabilities_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `actors_capabilities_capability_id_foreign` FOREIGN KEY (`capability_id`) REFERENCES `capabilities` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `actors_closures`
+--
+ALTER TABLE `actors_closures`
+  ADD CONSTRAINT `actors_closures_ancestor_id_foreign` FOREIGN KEY (`ancestor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `actors_closures_descendant_id_foreign` FOREIGN KEY (`descendant_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `actors_editors`
+--
+ALTER TABLE `actors_editors`
+  ADD CONSTRAINT `actors_editors_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `actors_editors_template_id_foreign` FOREIGN KEY (`template_id`) REFERENCES `editor_templates` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `actors_locations`
+--
+ALTER TABLE `actors_locations`
+  ADD CONSTRAINT `actors_locations_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `actors_locations_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `actors_logo`
+--
+ALTER TABLE `actors_logo`
+  ADD CONSTRAINT `actors_logo_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `actors_roles`
+--
+ALTER TABLE `actors_roles`
+  ADD CONSTRAINT `actors_roles_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `actors_roles_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `actors_shares`
+--
+ALTER TABLE `actors_shares`
+  ADD CONSTRAINT `actors_shares_shared_with_id_foreign` FOREIGN KEY (`shared_with_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `actors_shares_sharer_id_foreign` FOREIGN KEY (`sharer_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `actors_tags`
+--
+ALTER TABLE `actors_tags`
+  ADD CONSTRAINT `actors_tags_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `actors_tags_tag_id_foreign` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `addresses`
+--
+ALTER TABLE `addresses`
+  ADD CONSTRAINT `addresses_city_id_foreign` FOREIGN KEY (`city_id`) REFERENCES `cities` (`id`);
+
+--
+-- Constraints for table `brandings_files`
+--
+ALTER TABLE `brandings_files`
+  ADD CONSTRAINT `brandings_files_branding_id_foreign` FOREIGN KEY (`branding_id`) REFERENCES `brandings` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `brands`
+--
+ALTER TABLE `brands`
+  ADD CONSTRAINT `brands_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `brands` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `campaigns`
+--
+ALTER TABLE `campaigns`
+  ADD CONSTRAINT `campaigns_format_id_foreign` FOREIGN KEY (`format_id`) REFERENCES `formats` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `campaigns_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `campaigns_owner_id_foreign` FOREIGN KEY (`owner_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `campaign_locations`
+--
+ALTER TABLE `campaign_locations`
+  ADD CONSTRAINT `campaign_locations_campaign_id_foreign` FOREIGN KEY (`campaign_id`) REFERENCES `campaigns` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `campaign_locations_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `campaign_planner_polygons`
+--
+ALTER TABLE `campaign_planner_polygons`
+  ADD CONSTRAINT `campaign_planner_polygons_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `campaign_planner_saves`
+--
+ALTER TABLE `campaign_planner_saves`
+  ADD CONSTRAINT `campaign_planner_saves_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `campaign_shares`
+--
+ALTER TABLE `campaign_shares`
+  ADD CONSTRAINT `campaign_shares_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `campaign_shares_campaign_id_foreign` FOREIGN KEY (`campaign_id`) REFERENCES `campaigns` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `cities`
+--
+ALTER TABLE `cities`
+  ADD CONSTRAINT `cities_market_id_foreign` FOREIGN KEY (`market_id`) REFERENCES `markets` (`id`),
+  ADD CONSTRAINT `cities_province_id_foreign` FOREIGN KEY (`province_id`) REFERENCES `provinces` (`id`);
+
+--
+-- Constraints for table `containers`
+--
+ALTER TABLE `containers`
+  ADD CONSTRAINT `containers_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`),
+  ADD CONSTRAINT `containers_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `containers` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `contents`
+--
+ALTER TABLE `contents`
+  ADD CONSTRAINT `contents_layout_id_foreign` FOREIGN KEY (`layout_id`) REFERENCES `formats_layouts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `contents_library_id_foreign` FOREIGN KEY (`library_id`) REFERENCES `libraries` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `contents_owner_id_foreign` FOREIGN KEY (`owner_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `contracts`
+--
+ALTER TABLE `contracts`
+  ADD CONSTRAINT `contracts_advertiser_id_foreign` FOREIGN KEY (`advertiser_id`) REFERENCES `advertisers` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_client_id_foreign` FOREIGN KEY (`client_id`) REFERENCES `clients` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_owner_id_foreign` FOREIGN KEY (`salesperson_id`) REFERENCES `actors` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `contracts_bursts`
+--
+ALTER TABLE `contracts_bursts`
+  ADD CONSTRAINT `contracts_bursts_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_bursts_contract_id_foreign` FOREIGN KEY (`contract_id`) REFERENCES `contracts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_bursts_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `contracts_flights`
+--
+ALTER TABLE `contracts_flights`
+  ADD CONSTRAINT `contracts_flights_contract_id_foreign` FOREIGN KEY (`contract_id`) REFERENCES `contracts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `contracts_lines`
+--
+ALTER TABLE `contracts_lines`
+  ADD CONSTRAINT `contracts_lines_flight_id_foreign` FOREIGN KEY (`flight_id`) REFERENCES `contracts_flights` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_lines_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `contracts_reservations`
+--
+ALTER TABLE `contracts_reservations`
+  ADD CONSTRAINT `contracts_reservations_contract_id_foreign` FOREIGN KEY (`contract_id`) REFERENCES `contracts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_reservations_flight_id_foreign` FOREIGN KEY (`flight_id`) REFERENCES `contracts_flights` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `contracts_reservations_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `contracts_screenshots`
+--
+ALTER TABLE `contracts_screenshots`
+  ADD CONSTRAINT `contracts_screenshots_burst_id_foreign` FOREIGN KEY (`burst_id`) REFERENCES `contracts_bursts` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `creatives`
+--
+ALTER TABLE `creatives`
+  ADD CONSTRAINT `creatives_content_id_foreign` FOREIGN KEY (`content_id`) REFERENCES `contents` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `creatives_frame_id_foreign` FOREIGN KEY (`frame_id`) REFERENCES `frames` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `creatives_owner_id_foreign` FOREIGN KEY (`owner_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `creatives_external_ids`
+--
+ALTER TABLE `creatives_external_ids`
+  ADD CONSTRAINT `creatives_external_ids_creative_id_foreign` FOREIGN KEY (`creative_id`) REFERENCES `creatives` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `creatives_external_ids_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `demographic_values`
+--
+ALTER TABLE `demographic_values`
+  ADD CONSTRAINT `demographic_values_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`),
+  ADD CONSTRAINT `demographic_values_value_id_foreign` FOREIGN KEY (`value_id`) REFERENCES `demographic_variables` (`id`);
+
+--
+-- Constraints for table `display_types`
+--
+ALTER TABLE `display_types`
+  ADD CONSTRAINT `display_types_connection_id_foreign` FOREIGN KEY (`connection_id`) REFERENCES `broadcasters_connections` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `dynamic_creatives`
+--
+ALTER TABLE `dynamic_creatives`
+  ADD CONSTRAINT `dynamic_creatives_creative_id_foreign` FOREIGN KEY (`creative_id`) REFERENCES `creatives` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `fields`
+--
+ALTER TABLE `fields`
+  ADD CONSTRAINT `fields_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `fields_categories` (`id`);
+
+--
+-- Constraints for table `fields_networks`
+--
+ALTER TABLE `fields_networks`
+  ADD CONSTRAINT `fields_networks_field_id_foreign` FOREIGN KEY (`field_id`) REFERENCES `fields` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fields_networks_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `fields_segments`
+--
+ALTER TABLE `fields_segments`
+  ADD CONSTRAINT `fields_segments_field_id_foreign` FOREIGN KEY (`field_id`) REFERENCES `fields` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `formats_display_types`
+--
+ALTER TABLE `formats_display_types`
+  ADD CONSTRAINT `formats_display_types_display_type_id_foreign` FOREIGN KEY (`display_type_id`) REFERENCES `display_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `formats_display_types_format_id_foreign` FOREIGN KEY (`format_id`) REFERENCES `formats` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `formats_layouts`
+--
+ALTER TABLE `formats_layouts`
+  ADD CONSTRAINT `formats_layouts_format_id_foreign` FOREIGN KEY (`format_id`) REFERENCES `formats` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `formats_layouts_separation_id_foreign` FOREIGN KEY (`separation_id`) REFERENCES `broadsign_separations` (`id`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `formats_layouts_trigger_id_foreign` FOREIGN KEY (`trigger_id`) REFERENCES `broadsign_triggers` (`id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `frames`
+--
+ALTER TABLE `frames`
+  ADD CONSTRAINT `frames_layout_id_foreign` FOREIGN KEY (`layout_id`) REFERENCES `formats_layouts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `frame_settings_broadsign`
+--
+ALTER TABLE `frame_settings_broadsign`
+  ADD CONSTRAINT `frame_settings_broadsign_criteria_id_foreign` FOREIGN KEY (`criteria_id`) REFERENCES `broadsign_criteria` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `frame_settings_broadsign_frame_id_foreign` FOREIGN KEY (`frame_id`) REFERENCES `frames` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `frame_settings_pisignage`
+--
+ALTER TABLE `frame_settings_pisignage`
+  ADD CONSTRAINT `frame_settings_pisignage_frame_id_foreign` FOREIGN KEY (`frame_id`) REFERENCES `frames` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `headlines`
+--
+ALTER TABLE `headlines`
+  ADD CONSTRAINT `headlines_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `headlines_messages`
+--
+ALTER TABLE `headlines_messages`
+  ADD CONSTRAINT `headlines_messages_headline_id_foreign` FOREIGN KEY (`headline_id`) REFERENCES `headlines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `headline_capabilities`
+--
+ALTER TABLE `headline_capabilities`
+  ADD CONSTRAINT `headline_capabilities_capability_id_foreign` FOREIGN KEY (`capability_id`) REFERENCES `capabilities` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `headline_capabilities_headline_id_foreign` FOREIGN KEY (`headline_id`) REFERENCES `headlines` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `libraries`
+--
+ALTER TABLE `libraries`
+  ADD CONSTRAINT `libraries_owner_id_foreign` FOREIGN KEY (`owner_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `library_shares`
+--
+ALTER TABLE `library_shares`
+  ADD CONSTRAINT `library_shares_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `library_shares_library_id_foreign` FOREIGN KEY (`library_id`) REFERENCES `libraries` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `locations`
+--
+ALTER TABLE `locations`
+  ADD CONSTRAINT `locations_container_id_foreign` FOREIGN KEY (`container_id`) REFERENCES `containers` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `locations_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `markets`
+--
+ALTER TABLE `markets`
+  ADD CONSTRAINT `markets_province_id_foreign` FOREIGN KEY (`province_id`) REFERENCES `provinces` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `networks`
+--
+ALTER TABLE `networks`
+  ADD CONSTRAINT `networks_connection_id_foreign` FOREIGN KEY (`connection_id`) REFERENCES `broadcasters_connections` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `odoo_properties`
+--
+ALTER TABLE `odoo_properties`
+  ADD CONSTRAINT `odoo_properties_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `opening_hours`
+--
+ALTER TABLE `opening_hours`
+  ADD CONSTRAINT `opening_hours_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `password_resets`
+--
+ALTER TABLE `password_resets`
+  ADD CONSTRAINT `password_resets_ibfk_1` FOREIGN KEY (`email`) REFERENCES `actors` (`email`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `players`
+--
+ALTER TABLE `players`
+  ADD CONSTRAINT `players_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `players_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `points_of_interest`
+--
+ALTER TABLE `points_of_interest`
+  ADD CONSTRAINT `points_of_interest_brand_id_foreign` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `pricelists_products_categories`
+--
+ALTER TABLE `pricelists_products_categories`
+  ADD CONSTRAINT `pricelists_products_categories_pricelist_id_foreign` FOREIGN KEY (`pricelist_id`) REFERENCES `pricelists` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `pricelists_products_categories_products_category_id_foreign` FOREIGN KEY (`products_category_id`) REFERENCES `products_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products`
+--
+ALTER TABLE `products`
+  ADD CONSTRAINT `odoo_properties_products_categories_product_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `products_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `product_linked_product_id_foreign` FOREIGN KEY (`linked_product_id`) REFERENCES `products` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `products_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products_attachments`
+--
+ALTER TABLE `products_attachments`
+  ADD CONSTRAINT `products_attachments_attachment_id_foreign` FOREIGN KEY (`attachment_id`) REFERENCES `attachments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `products_attachments_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products_categories`
+--
+ALTER TABLE `products_categories`
+  ADD CONSTRAINT `odoo_products_categories_product_type_id_foreign` FOREIGN KEY (`type_id`) REFERENCES `products_types` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products_categories_attachments`
+--
+ALTER TABLE `products_categories_attachments`
+  ADD CONSTRAINT `products_categories_attachments_attachment_id_foreign` FOREIGN KEY (`attachment_id`) REFERENCES `attachments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `products_categories_attachments_product_category_id_foreign` FOREIGN KEY (`product_category_id`) REFERENCES `products_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products_categories_impressions_models`
+--
+ALTER TABLE `products_categories_impressions_models`
+  ADD CONSTRAINT `impressions_models_products_categories_foreign` FOREIGN KEY (`impressions_model_id`) REFERENCES `impressions_models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `products_categories_impressions_models_foreign` FOREIGN KEY (`product_category_id`) REFERENCES `products_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products_categories_loop_configurations`
+--
+ALTER TABLE `products_categories_loop_configurations`
+  ADD CONSTRAINT `loop_configuration_loop_configuration_foreign` FOREIGN KEY (`loop_configuration_id`) REFERENCES `loop_configurations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `product_category_loop_configuration_foreign` FOREIGN KEY (`product_category_id`) REFERENCES `products_categories` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products_impressions_models`
+--
+ALTER TABLE `products_impressions_models`
+  ADD CONSTRAINT `impressions_models_products_foreign` FOREIGN KEY (`impressions_model_id`) REFERENCES `impressions_models` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `products_impressions_models_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products_locations`
+--
+ALTER TABLE `products_locations`
+  ADD CONSTRAINT `products_locations_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `products_locations_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `products_loop_configurations`
+--
+ALTER TABLE `products_loop_configurations`
+  ADD CONSTRAINT `products_loop_configurations_loop_configuration_id_foreign` FOREIGN KEY (`loop_configuration_id`) REFERENCES `loop_configurations` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `products_loop_configurations_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties`
+--
+ALTER TABLE `properties`
+  ADD CONSTRAINT `properties_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`),
+  ADD CONSTRAINT `properties_address_id_foreign` FOREIGN KEY (`address_id`) REFERENCES `addresses` (`id`),
+  ADD CONSTRAINT `properties_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `properties_pricelist_id_foreign` FOREIGN KEY (`pricelist_id`) REFERENCES `pricelists` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties_contacts`
+--
+ALTER TABLE `properties_contacts`
+  ADD CONSTRAINT `properties_contacts_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `properties_contacts_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties_data`
+--
+ALTER TABLE `properties_data`
+  ADD CONSTRAINT `properties_data_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties_fields_segments_values`
+--
+ALTER TABLE `properties_fields_segments_values`
+  ADD CONSTRAINT `properties_fields_segments_values_fields_segment_id_foreign` FOREIGN KEY (`fields_segment_id`) REFERENCES `fields_segments` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `properties_fields_segments_values_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties_pictures`
+--
+ALTER TABLE `properties_pictures`
+  ADD CONSTRAINT `properties_pictures_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties_tenants`
+--
+ALTER TABLE `properties_tenants`
+  ADD CONSTRAINT `properties_tenants_brand_id_foreign` FOREIGN KEY (`brand_id`) REFERENCES `brands` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `properties_tenants_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties_traffic`
+--
+ALTER TABLE `properties_traffic`
+  ADD CONSTRAINT `properties_traffic_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties_traffic_monthly`
+--
+ALTER TABLE `properties_traffic_monthly`
+  ADD CONSTRAINT `properties_traffic_monthly_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `properties_traffic_snapshots`
+--
+ALTER TABLE `properties_traffic_snapshots`
+  ADD CONSTRAINT `properties_traffic_snapshots_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `property_traffic_settings`
+--
+ALTER TABLE `property_traffic_settings`
+  ADD CONSTRAINT `property_traffic_settings_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `properties` (`actor_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `property_traffic_source`
+--
+ALTER TABLE `property_traffic_source`
+  ADD CONSTRAINT `property_traffic_source_property_id_foreign` FOREIGN KEY (`property_id`) REFERENCES `property_traffic_settings` (`property_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `property_traffic_source_source_id_foreign` FOREIGN KEY (`source_id`) REFERENCES `traffic_sources` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `provinces`
+--
+ALTER TABLE `provinces`
+  ADD CONSTRAINT `provinces_country_id_foreign` FOREIGN KEY (`country_id`) REFERENCES `countries` (`id`);
+
+--
+-- Constraints for table `reviews`
+--
+ALTER TABLE `reviews`
+  ADD CONSTRAINT `reviews_reviewer_id_foreign` FOREIGN KEY (`reviewer_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `reviews_schedule_id_foreign` FOREIGN KEY (`schedule_id`) REFERENCES `schedules` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `review_templates`
+--
+ALTER TABLE `review_templates`
+  ADD CONSTRAINT `review_templates_owner_id_foreign` FOREIGN KEY (`owner_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `roles_capabilities`
+--
+ALTER TABLE `roles_capabilities`
+  ADD CONSTRAINT `roles_capabilities_capability_id_foreign` FOREIGN KEY (`capability_id`) REFERENCES `capabilities` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `roles_capabilities_role_id_foreign` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `schedules`
+--
+ALTER TABLE `schedules`
+  ADD CONSTRAINT `schedules_campaign_id_foreign` FOREIGN KEY (`campaign_id`) REFERENCES `campaigns` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `schedules_content_id_foreign` FOREIGN KEY (`content_id`) REFERENCES `contents` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `schedules_owner_id_foreign` FOREIGN KEY (`owner_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `signup_tokens`
+--
+ALTER TABLE `signup_tokens`
+  ADD CONSTRAINT `signup_tokens_ibfk_1` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `static_creatives`
+--
+ALTER TABLE `static_creatives`
+  ADD CONSTRAINT `static_creatives_creative_id_foreign` FOREIGN KEY (`creative_id`) REFERENCES `creatives` (`id`) ON DELETE CASCADE;
+
+/*
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - neo_ooh_dev.sql
+ */
+
+--
+-- Constraints for table `traffic_source_settings_linkett`
+--
+ALTER TABLE `traffic_source_settings_linkett`
+  ADD CONSTRAINT `traffic_source_settings_linkett_source_id_foreign` FOREIGN KEY (`source_id`) REFERENCES `traffic_sources` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `two-factor-tokens`
+--
+ALTER TABLE `two-factor-tokens`
+  ADD CONSTRAINT `two_factor_tokens_actor_id_foreign` FOREIGN KEY (`actor_id`) REFERENCES `actors` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `weather_backgrounds`
+--
+ALTER TABLE `weather_backgrounds`
+  ADD CONSTRAINT `weather_backgrounds_format_id_foreign` FOREIGN KEY (`format_id`) REFERENCES `formats` (`id`),
+  ADD CONSTRAINT `weather_backgrounds_network_id_foreign` FOREIGN KEY (`network_id`) REFERENCES `networks` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `weather_backgrounds_weather_location_id_foreign` FOREIGN KEY (`weather_location_id`) REFERENCES `weather_locations` (`id`);
+
+--
+-- Constraints for table `weather_records`
+--
+ALTER TABLE `weather_records`
+  ADD CONSTRAINT `weather_records_location_id_foreign` FOREIGN KEY (`location_id`) REFERENCES `weather_locations` (`id`);
+SET FOREIGN_KEY_CHECKS = 1;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT = @`OLD_CHARACTER_SET_CLIENT` */;
+/*!40101 SET CHARACTER_SET_RESULTS = @`OLD_CHARACTER_SET_RESULTS` */;
+/*!40101 SET COLLATION_CONNECTION = @`OLD_COLLATION_CONNECTION` */;

@@ -684,9 +684,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                 ->data
                 ->groupBy(["year", "month"])
                 ->map(fn($yearData) => $yearData->map(fn($monthData) => $monthData->map(fn($d) => $d->traffic ?? $d->temporary)
-                                                                                  ->sum()
-                )
-                );
+                                                                                  ->sum()));
         }
 
         if (!$this->is_group) {
@@ -702,7 +700,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         foreach ($childrenData as $dataset) {
             foreach ($dataset as $year => $yearValues) {
                 if (!$trafficValues->has($year)) {
-                    $trafficValues[$year] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                    $trafficValues[$year] = new Collection([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
                 }
 
                 $v = $trafficValues[$year];

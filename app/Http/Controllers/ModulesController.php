@@ -14,6 +14,6 @@ use Illuminate\Http\Response;
 
 class ModulesController extends Controller {
     public function status(): Response {
-        return new Response(collect(config('modules'))->map(fn($m) => $m["enabled"] ?? true));
+        return new Response(collect(config('modules-legacy'))->map(fn($m) => $m["enabled"] ?? true));
     }
 }

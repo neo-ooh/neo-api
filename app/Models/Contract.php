@@ -188,7 +188,7 @@ class Contract extends Model {
 
 
         if ($network->broadcaster_connection->broadcaster !== Broadcaster::BROADSIGN) {
-            throw new RuntimeException("Contracts connection MUST be aa broadsign connection");
+            throw new RuntimeException("Contracts connection MUST be a BroadSign connection");
         }
 
         return Broadcast::network($network->id)->getConfig();

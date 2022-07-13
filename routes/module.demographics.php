@@ -19,7 +19,7 @@ Route::group([
     Route::get("demographic_variables", DemographicVariablesController::class . "@index");
     Route::get("demographic_variables/_list_pipelines", DemographicValuesController::class . "@listPipelines");
 
-    if (config("modules.properties.enabled")) {
+    if (config("modules-legacy.properties.enabled")) {
         Route::post("properties/{property}/demographic_values", DemographicValuesController::class . "@store");
     }
 });

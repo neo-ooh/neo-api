@@ -21,10 +21,10 @@ class OdooConfig {
 
     public static function fromConfig(): static {
         return new static(
-            config('modules.odoo.server-url'),
-            config('modules.odoo.username'),
-            config('modules.odoo.password'),
-            config('modules.odoo.database')
+            config('modules-legacy.odoo.server-url'),
+            config('modules-legacy.odoo.username'),
+            config('modules-legacy.odoo.password'),
+            config('modules-legacy.odoo.database')
         );
     }
 

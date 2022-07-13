@@ -42,8 +42,8 @@ return new class extends Migration {
 //        });
 
         // Campaign Shares
-        Schema::drop("campaign_shares");
-        Schema::table("campaign_shares", static function (Blueprint $table) {
+//        Schema::drop("campaign_shares");
+        Schema::create("campaign_shares", static function (Blueprint $table) {
             $table->foreignId("campaign_id");
             $table->foreignId("actor_id")->constrained("actors", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();

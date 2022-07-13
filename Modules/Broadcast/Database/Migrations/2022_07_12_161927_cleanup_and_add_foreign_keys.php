@@ -43,8 +43,9 @@ return new class extends Migration {
 
         // Campaign Shares
         Schema::table("campaign_shares", static function (Blueprint $table) {
-            $table->dropPrimary("PRIMARY");
-            $table->dropConstrainedForeignId("campaign_id");
+            $table->dropPrimary();
+            $table->dropForeign("campaign_shares_campaign_id_foreign");
+            $table->dropColumn("campaign_id");
         });
 
         // Campaign Shares

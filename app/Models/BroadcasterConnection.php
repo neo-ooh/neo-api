@@ -12,7 +12,6 @@ namespace Neo\Models;
 
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -47,7 +46,6 @@ use RuntimeException;
  *
  */
 class BroadcasterConnection extends Model {
-    use HasFactory;
     use SoftDeletes;
 
     protected $table = "broadcasters_connections";
@@ -76,7 +74,7 @@ class BroadcasterConnection extends Model {
         return match ($this->broadcaster) {
             Broadcaster::BROADSIGN => new ConnectionSettingsBroadSign($settings),
             Broadcaster::PISIGNAGE => new ConnectionSettingsPiSignage($settings),
-            default => null,
+            default                => null,
         };
     }
 

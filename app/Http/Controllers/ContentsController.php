@@ -20,8 +20,8 @@ use Neo\Http\Requests\Contents\StoreContentRequest;
 use Neo\Http\Requests\Contents\SwapContentCreativesRequest;
 use Neo\Http\Requests\Contents\UpdateContentRequest;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Creative;
 
 class ContentsController extends Controller {
     /**

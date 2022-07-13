@@ -5,13 +5,12 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - BroadcastResource.php
+ * @neo/api - CreativeType.php
  */
 
-namespace Neo\Models\Broadcast;
+namespace Neo\Modules\Broadcast\Enums;
 
-use Illuminate\Database\Eloquent\Model;
-
-abstract class BroadcastResource extends Model {
-
+enum CreativeType: string {
+    case Static = 'static';
+    case Url = 'url';
 }

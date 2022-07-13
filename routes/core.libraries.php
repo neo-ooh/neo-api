@@ -14,8 +14,8 @@ use Neo\Http\Controllers\CreativesController;
 use Neo\Http\Controllers\LibrariesController;
 use Neo\Http\Controllers\LibrariesSharesController;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Creative;
 
 Route::group([
     "middleware" => "default",

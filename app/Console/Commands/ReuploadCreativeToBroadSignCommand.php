@@ -12,8 +12,8 @@ namespace Neo\Console\Commands;
 
 use Illuminate\Console\Command;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\DisableBroadSignCreative;

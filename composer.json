@@ -48,6 +48,7 @@
     "propaganistas/laravel-phone": "^4.3",
     "ramsey/uuid": "^4.1",
     "skagarwal/google-places-api": "^2.0",
+    "spatie/data-transfer-object": "^3.8",
     "spatie/image": "^2.2",
     "symfony/expression-language": "^6.0.1",
     "toin0u/geocoder-laravel": "^4.4",

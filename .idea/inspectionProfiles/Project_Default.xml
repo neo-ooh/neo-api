@@ -85,6 +85,7 @@
       <option name="EXTENSIONS" value="php,js,css,inc" />
     </inspection_tool>
     <inspection_tool class="PhpRedundantOptionalArgumentInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
+    <inspection_tool class="PhpRedundantVariableDocTypeInspection" enabled="true" level="INFORMATION" enabled_by_default="true" />
     <inspection_tool class="PhpSingleStatementWithBracesInspection" enabled="false" level="INFORMATION" enabled_by_default="false" />
     <inspection_tool class="PhpStanGlobal" enabled="true" level="WEAK WARNING" enabled_by_default="true">
       <option name="config" value="$PROJECT_DIR$/phpstan.neon" />

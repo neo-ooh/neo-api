@@ -70,7 +70,7 @@ class PropertyTrafficSettings extends Model {
         "grace_override" => "date"
     ];
 
-    protected $with;
+    protected $with = [];
 
     protected $fillable = ["is_required", "start_year", "grace_override"];
 

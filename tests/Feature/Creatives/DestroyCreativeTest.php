@@ -14,9 +14,9 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Storage;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Modules\Broadcast\Models\Content;
+use Neo\Models\Content;
+use Neo\Models\Library;
 use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Modules\Broadcast\Models\Library;
 use Tests\TestCase;
 
 class DestroyCreativeTest extends TestCase {

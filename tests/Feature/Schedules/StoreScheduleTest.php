@@ -13,11 +13,11 @@ namespace Tests\Feature\Schedules;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Modules\Broadcast\Models\Campaign;
-use Neo\Modules\Broadcast\Models\Content;
+use Neo\Models\Campaign;
+use Neo\Models\Content;
+use Neo\Models\Format;
+use Neo\Models\Library;
 use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Modules\Broadcast\Models\Format;
-use Neo\Modules\Broadcast\Models\Library;
 use Storage;
 use Tests\TestCase;
 
@@ -66,10 +66,10 @@ class StoreScheduleTest extends TestCase {
         /** @var Campaign $campaign */
         $campaign = Campaign::factory()->create(["owner_id" => $actor->id]);
 
-        /** @var \Neo\Modules\Broadcast\Models\Library $library */
+        /** @var Library $library */
         $library = Library::factory()->create(["owner_id" => $actor->id]);
 
-        /** @var \Neo\Modules\Broadcast\Models\Content $content */
+        /** @var Content $content */
         $content = Content::factory()->create(["library_id" => $library->id, "owner_id" => $actor->id]);
         $content->refresh();
 

@@ -10,47 +10,55 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use FFMpeg\Coordinate\TimeCode;
+use FFMpeg\FFMpeg;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 use Neo\Models\Actor;
-use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
+use Neo\Models\Content;
+use Neo\Models\CreativeExternalId;
+use Neo\Models\Factories\CreativeFactory;
+use Neo\Models\Frame;
 use Neo\Modules\Broadcast\Enums\CreativeType;
-use Neo\Modules\Broadcast\Exceptions\UnsupportedFileFormatException;
-use Neo\Modules\Broadcast\Jobs\Creatives\DeleteCreativeJob;
 use Neo\Modules\Broadcast\Models\StructuredColumns\CreativeProperties;
-use Neo\Modules\Broadcast\Services\Resources\Creative as CreativeResource;
-use Neo\Modules\Broadcast\Utils\ThumbnailCreator;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
-use Vinkla\Hashids\Facades\Hashids;
+use Neo\Services\Broadcast\Broadcast;
+use Ramsey\Collection\Collection;
 
 /**
  * Neo\Modules\Broadcast\Models\Creative
  *
- * @property int                $id
- * @property CreativeType       $type
- * @property int                $owner_id
- * @property int                $content_id
- * @property int                $frame_id
- * @property string             $original_name
- * @property double             $duration
- * @property CreativeProperties $properties
+ * @property int                            $id
+ * @property string                         $type
+ * @property int                            $owner_id
+ * @property int                            $content_id
+ * @property int                            $frame_id
+ * @property string                         $original_name
+ * @property string                         $status
+ * @property int                            $duration
  *
- * @property Actor              $owner
- * @property Content            $content
- * @property Frame              $frame
+ * @property Actor                          $owner
+ * @property Content                        $content
+ * @property Frame                          $frame
  *
- * @property string             $file_uid
- * @property string             $file_path
- * @property string             $file_url
- * @property string             $thumbnail_path
- * @property string             $thumbnail_url
+ * @property CreativeProperties             $properties
+ * @property Collection<CreativeExternalId> $external_ids
+ *
+ * @property string                         $file_path
+ * @property string                         $file_url
+ * @property string                         $thumbnail_path
+ * @property string                         $thumbnail_url
  *
  * @mixin Builder
  */
-class Creative extends BroadcastResourceModel {
+class Creative extends Model {
+    use HasFactory;
     use SoftDeletes;
 
     /*
@@ -59,7 +67,6 @@ class Creative extends BroadcastResourceModel {
     |--------------------------------------------------------------------------
     */
 
-    public BroadcastResourceType $resourceType = BroadcastResourceType::Creative;
 
     /**
      * The table associated with the model.
@@ -71,32 +78,27 @@ class Creative extends BroadcastResourceModel {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var array
      */
     protected $fillable = [
-        "type",
-        "owner_id",
         "content_id",
+        "owner_id",
         "frame_id",
+        "type",
         "original_name",
-        "duration",
-        "properties",
-    ];
-
-    /**
-     * @var array<string, string>
-     */
-    protected $casts = [
-        "type"       => CreativeType::class,
-        "properties" => CreativeProperties::class,
+        "duration"
     ];
 
     public static function boot(): void {
         parent::boot();
 
-        static::deleting(static function (Creative $creative) {
+        static::deleting(function (Creative $creative) {
             // Tell services to disable the creative
-            DeleteCreativeJob::dispatch($creative->getKey());
+            /** @var CreativeExternalId $externalId */
+            foreach ($creative->external_ids as $externalId) {
+                Broadcast::network($externalId->network_id)->destroyCreative($externalId->external_id);
+                $externalId->delete();
+            }
 
             // If the content has no more creatives attached to it, we reset its duration
             // We check for 1 creative and not zero has we are not deleted yet
@@ -105,12 +107,26 @@ class Creative extends BroadcastResourceModel {
                 $creative->content->save();
             }
 
-            $creative->deleteFile();
-
             if ($creative->isForceDeleting()) {
-                $creative->deleteThumbnail();
+                $creative->eraseThumbnail();
             }
         });
+    }
+
+    public function eraseFile(): void {
+        if ($this->type === CreativeType::Static) {
+            Storage::disk("public")->delete($this->file_path);
+        }
+    }
+
+    public function eraseThumbnail(): void {
+        if ($this->type === CreativeType::Static->value) {
+            Storage::disk("public")->delete($this->thumbnail_path);
+        }
+    }
+
+    protected static function newFactory(): CreativeFactory {
+        return CreativeFactory::new();
     }
 
     /*
@@ -119,25 +135,16 @@ class Creative extends BroadcastResourceModel {
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * @return BelongsTo<Actor, Creative>
-     */
     public function owner(): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
     }
 
-    /**
-     * @return BelongsTo<Content, Creative>
-     */
     public function content(): BelongsTo {
         return $this->belongsTo(Content::class, 'content_id', 'id');
     }
 
-    /**
-     * @return BelongsTo<Frame, Creative>
-     */
     public function frame(): BelongsTo {
-        return $this->belongsTo(Frame::class, 'frame_id', 'id')->withTrashed();
+        return $this->belongsTo(Frame::class, 'frame_id', 'id');
     }
 
     /*
@@ -145,19 +152,6 @@ class Creative extends BroadcastResourceModel {
     | File & thumbnail accessors
     |--------------------------------------------------------------------------
     */
-
-    public function getFileUidAttribute() {
-        return Hashids::encode($this->getKey());
-    }
-
-    /**
-     * file_path
-     *
-     * @return string|null
-     */
-    public function getFilePathAttribute(): ?string {
-        return 'creatives/' . $this->file_uid . '.' . $this->properties->extension;
-    }
 
     /**
      * file_url
@@ -169,12 +163,21 @@ class Creative extends BroadcastResourceModel {
     }
 
     /**
+     * file_path
+     *
+     * @return string|null
+     */
+    public function getFilePathAttribute(): ?string {
+        return 'creatives/creative_' . $this->getKey() . '.' . $this->extension;
+    }
+
+    /**
      * thumbnail_path
      *
      * @return string|null
      */
     public function getThumbnailPathAttribute(): ?string {
-        return 'creatives/' . $this->file_uid . "_thumb.jpeg";
+        return 'creatives/creative_' . $this->getKey() . "_thumb.jpeg";
     }
 
     /**
@@ -192,15 +195,17 @@ class Creative extends BroadcastResourceModel {
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * @throws FileNotFoundException
+     */
     public function storeFile(UploadedFile $file): void {
         if (Storage::disk("public")->exists($this->file_path)) {
             Storage::disk("public")->delete($this->file_path);
         }
 
         $this->createThumbnail($file);
-
         Storage::disk("public")
-               ->putFileAs("creatives", $file, $this->file_uid . '.' . $this->properties->extension, ["visibility" => "public"]);
+               ->putFileAs("creatives", $file, $this->creative_id . '.' . $this->extension, ["visibility" => "public"]);
     }
 
 
@@ -209,9 +214,10 @@ class Creative extends BroadcastResourceModel {
      *
      * @param UploadedFile $file
      *
-     * @return bool
+     * @return void
+     * @throws FileNotFoundException
      */
-    protected function createThumbnail(UploadedFile $file): bool {
+    public function createThumbnail(UploadedFile $file): bool {
         if ($this->type !== CreativeType::Static) {
             // Thumbnails are only supported for static creatives as for now
             // TODO: Add support for Url creatives' thumbnails
@@ -222,61 +228,66 @@ class Creative extends BroadcastResourceModel {
             Storage::disk("public")->delete($this->thumbnail_path);
         }
 
-        $creator = new ThumbnailCreator($file);
-        try {
-            Storage::disk("public")
-                   ->writeStream($this->thumbnail_path, $creator->getThumbnailAsStream(), ["visibility" => "public"]);
+        $result = false;
 
-            return true;
-        } catch (UnsupportedFileFormatException) {
-            return false;
+        switch (strtolower($file->extension())) {
+            case "jpg":
+            case "jpeg":
+            case "png":
+                $result = $this->createImageThumbnail($file);
+                break;
+            case "mp4":
+                $result = $this->createVideoThumbnail($file);
+                break;
         }
+
+        Storage::disk("public")->setVisibility($this->thumbnail_path, 'public');
+
+        return $result;
     }
 
-    public function deleteFile(): void {
-        if ($this->type === CreativeType::Static) {
-            Storage::disk("public")->delete($this->file_path);
-        }
-    }
-
-    public function deleteThumbnail(): void {
-        if ($this->type === CreativeType::Static) {
-            Storage::disk("public")->delete($this->thumbnail_path);
-        }
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Resources
-    |--------------------------------------------------------------------------
-    */
 
     /**
-     * @return CreativeResource
-     * @throws UnknownProperties
-     */
-    public function toResource(): CreativeResource {
-        return new CreativeResource([
-            "name"                 => $this->owner->name . " - " . $this->original_name . "@" . $this->content->library->name,
-            "fileName"             => $this->original_name,
-            "type"                 => $this->type,
-            "width"                => $this->frame->width,
-            "height"               => $this->frame->height,
-            "length_ms"            => $this->duration * 1000,
-            "path"                 => $this->type === CreativeType::Static ? $this->file_path : "",
-            "url"                  => $this->type === CreativeType::Static ? $this->file_url : $this->properties->url,
-            "extension"            => $this->type === CreativeType::Static ? $this->properties->extension : "",
-            "refresh_rate_minutes" => $this->type === CreativeType::Static ? 0 : $this->properties->refresh_interval_minutes,
-        ]);
-    }
-
-    /**
-     * Get the external resource matching the given parameters
+     * Create the thumbnail of image creative
      *
-     * @param int $broadcasterId
-     * @return ExternalResource|null
+     * @param UploadedFile $file
+     *
+     * @return void
      */
-    public function getExternalRepresentation(int $broadcasterId): ExternalResource|null {
-        return $this->external_representations->where("broadcaster_id", "=", $broadcasterId)->first();
+    private function createImageThumbnail(UploadedFile $file): bool {
+        $img = Image::make($file);
+        $img->resize(1280, 1280, function ($constraint) {
+            $constraint->aspectRatio();
+            $constraint->upsize();
+        });
+
+        return Storage::disk("public")->put($this->thumbnail_path, $img->encode("jpg", 75)->getEncoded());
+    }
+
+
+    /**
+     * Create the thumbnail of video creative
+     *
+     * @param UploadedFile $file
+     *
+     * @return void
+     * @throws FileNotFoundException
+     */
+    private function createVideoThumbnail(UploadedFile $file): bool {
+        $ffmpeg = FFMpeg::create(config('ffmpeg'));
+
+        $tempName = 'thumb_' . $this->checksum;
+        $tempFile = Storage::disk('local')->path($tempName);
+
+        //thumbnail
+        $video = $ffmpeg->open($file->path());
+        $frame = $video->frame(TimeCode::fromSeconds(1));
+        $frame->save($tempFile);
+        $result = Storage::disk("public")->writeStream($this->thumbnail_path, Storage::disk('local')->readStream($tempName));
+
+        // Clean temporary file
+        Storage::disk('local')->delete($tempName);
+
+        return $result;
     }
 }

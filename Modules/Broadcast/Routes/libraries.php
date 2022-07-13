@@ -5,23 +5,22 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - libraries.php
+ * @neo/api - core.libraries.php
  */
 
-
-use Neo\Modules\Broadcast\Http\Controllers\ContentsController;
-use Neo\Modules\Broadcast\Http\Controllers\CreativesController;
-use Neo\Modules\Broadcast\Http\Controllers\LibrariesContentsController;
-use Neo\Modules\Broadcast\Http\Controllers\LibrariesController;
-use Neo\Modules\Broadcast\Http\Controllers\LibrariesSharesController;
-use Neo\Modules\Broadcast\Models\Content;
+use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\ContentsController;
+use Neo\Http\Controllers\CreativesController;
+use Neo\Http\Controllers\LibrariesController;
+use Neo\Http\Controllers\LibrariesSharesController;
+use Neo\Models\Content;
+use Neo\Models\Library;
 use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Modules\Broadcast\Models\Library;
 
 Route::group([
     "middleware" => "default",
     "prefix"     => "v1"
-], static function () {
+], function () {
 
     /*
     |----------------------------------------------------------------------
@@ -39,7 +38,7 @@ Route::group([
     Route::   put("libraries/{library}", LibrariesController::class . "@update");
     Route::delete("libraries/{library}", LibrariesController::class . "@destroy");
 
-    Route::   get('libraries/{library}/contents', LibrariesContentsController::class . "@index");
+    Route::   get('libraries/{library}/contents', LibrariesController::class . "@contents");
 
     /*
     |----------------------------------------------------------------------
@@ -50,6 +49,7 @@ Route::group([
     Route::   get("libraries/{library}/shares", LibrariesSharesController::class . "@index");
     Route::  post("libraries/{library}/shares", LibrariesSharesController::class . "@store");
     Route::delete("libraries/{library}/shares", LibrariesSharesController::class . "@destroy");
+
 
     /*
     |----------------------------------------------------------------------
@@ -73,6 +73,6 @@ Route::group([
 
     Route::model("creative", Creative::class);
 
-    Route::  post("contents/{content}/creatives", CreativesController::class . "@store");
-    Route::delete("contents/{content}/creatives/{creative}", CreativesController::class . "@destroy");
+    Route::  post("creatives", CreativesController::class . "@store");
+    Route::delete("creatives/{creative}", CreativesController::class . "@destroy");
 });

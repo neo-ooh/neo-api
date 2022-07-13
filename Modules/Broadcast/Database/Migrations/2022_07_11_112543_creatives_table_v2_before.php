@@ -16,20 +16,20 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 return new class extends Migration {
     public function up(): void {
         $output = new ConsoleOutput();
-        $output->writeln("");
+
         $output->writeln("Drop auxiliary tables foreign keys");
-        /*Schema::table("static_creatives", static function (Blueprint $table) {
+        Schema::table("static_creatives", static function (Blueprint $table) {
             $table->dropForeign("static_creatives_creative_id_foreign");
-        });*/
-        /*Schema::table("dynamic_creatives", static function (Blueprint $table) {
+        });
+        Schema::table("dynamic_creatives", static function (Blueprint $table) {
             $table->dropForeign("dynamic_creatives_creative_id_foreign");
-        });*/
+        });
 
         // Update the table columns
         $output->writeln("Update creative table with new columns...");
         Schema::table('creatives', static function (Blueprint $table) {
             // Remove unused column
-            $table->dropColumn("status");
+            $table->removeColumn("status");
 
             // Add new column to hold the new ids
             $table->foreignId("id_tmp")->after("id");

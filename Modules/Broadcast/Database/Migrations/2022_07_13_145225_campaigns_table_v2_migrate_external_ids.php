@@ -9,19 +9,18 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Neo\Models\BroadcasterConnection;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Models\ExternalResource;
-use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration {
-    public function up(): void {
+    public function up() {
         // For each campaign, we insert its external ID in the `external_resources` table
         $campaigns = \Illuminate\Support\Facades\DB::table("campaigns")->orderBy("id")->lazy(500);
 
-        $output = new ConsoleOutput();
-        $output->writeln("");
+        $output   = new ConsoleOutput();
         $progress = new ProgressBar($output);
         $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
         $progress->setMessage("");
@@ -36,7 +35,7 @@ return new class extends Migration {
                 continue;
             }
 
-            /** @var object|null $broadcaster */
+            /** @var BroadcasterConnection $broadcaster */
             $broadcaster = DB::table("broadcasters_connections")
                              ->join("networks", "networks.connection_id", "=", "broadcasters_connections.id")
                              ->where("networks.id", "=", $campaign->network_id)
@@ -50,16 +49,14 @@ return new class extends Migration {
             ExternalResource::query()->create([
                 "resource_id"    => $campaign->id,
                 "broadcaster_id" => $broadcaster->id,
-                "type"           => ExternalResourceType::Campaign,
-                "data"           => new ExternalResourceData([
+                "data"           => [
+                    "type"        => ExternalResourceType::Campaign,
                     "network_id"  => $campaign->network_id,
-                    "formats_id"  => [$campaign->format_id],
                     "external_id" => $campaign->external_id
-                ])
+                ]
             ]);
         }
 
         $progress->finish();
-        $output->writeln("");
     }
 };

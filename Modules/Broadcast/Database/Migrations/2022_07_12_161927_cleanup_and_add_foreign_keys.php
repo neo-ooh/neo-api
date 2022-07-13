@@ -21,36 +21,32 @@ return new class extends Migration {
         $output->writeln("Dropping foreign keys and columns, and renaming references columns...");
 
         // Creatives
-        Schema::table("creatives", static function (Blueprint $table) {
-            $table->dropConstrainedForeignId("content_id");
-            $table->renameColumn("content_id_tmp", "content_id");
-        });
-
-        // Schedules
-        Schema::table("schedules", static function (Blueprint $table) {
-            $table->dropConstrainedForeignId("content_id");
-            $table->renameColumn("content_id_tmp", "content_id");
-            $table->dropConstrainedForeignId("campaign_id");
-            $table->renameColumn("campaign_id_tmp", "campaign_id");
-        });
-
-        // Schedule Reviews
-        Schema::table("schedule_reviews", static function (Blueprint $table) {
-            $table->dropForeign("reviews_schedule_id_foreign");
-            $table->dropColumn("schedule_id");
-            $table->renameColumn("schedule_id_tmp", "schedule_id");
-        });
-
-        // Campaign Shares
-        Schema::table("campaign_shares", static function (Blueprint $table) {
-            $table->dropPrimary();
-            $table->dropForeign("campaign_shares_campaign_id_foreign");
-            $table->dropColumn("campaign_id");
-        });
+//        Schema::table("creatives", static function (Blueprint $table) {
+//            $table->dropConstrainedForeignId("content_id");
+//            $table->renameColumn("content_id_tmp", "content_id");
+//        });
+//
+//        // Schedules
+//        Schema::table("schedules", static function (Blueprint $table) {
+//            $table->dropConstrainedForeignId("content_id");
+//            $table->renameColumn("content_id_tmp", "content_id");
+//            $table->dropConstrainedForeignId("campaign_id");
+//            $table->renameColumn("campaign_id_tmp", "campaign_id");
+//        });
+//
+//        // Schedule Reviews
+//        Schema::table("schedule_reviews", static function (Blueprint $table) {
+//            $table->dropForeign("reviews_schedule_id_foreign");
+//            $table->dropColumn("schedule_id");
+//            $table->renameColumn("schedule_id_tmp", "schedule_id");
+//        });
 
         // Campaign Shares
+        Schema::drop("campaign_shares");
         Schema::table("campaign_shares", static function (Blueprint $table) {
-            $table->renameColumn("campaign_id_tmp", "campaign_id");
+            $table->foreignId("campaign_id");
+            $table->foreignId("actor_id")->constrained("actors", "id")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->timestamps();
             $table->primary(["campaign_id", "actor_id"]);
         });
 

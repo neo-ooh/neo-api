@@ -27,7 +27,6 @@ abstract class APIModel implements JsonSerializable, Arrayable {
     protected static string $key;
     protected static string $unwrapKey;
     protected static array $updatable;
-    protected array $attributes;
 
     protected APIClientInterface $api;
 

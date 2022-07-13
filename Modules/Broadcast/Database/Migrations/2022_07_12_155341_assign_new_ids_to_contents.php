@@ -11,19 +11,25 @@
 use Illuminate\Database\Migrations\Migration;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Models\BroadcastResource;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration {
     public function up() {
         // For each of the new broadcast resources (contents, schedules, campaigns), we assign new ids in the tmp columns, and apply the same in the tables referencing them.
 
-        $output = new ConsoleOutput();
-
         // Contents
         $contents = \Illuminate\Support\Facades\DB::table("contents")->orderBy("id")->lazy(500);
 
+        $output   = new ConsoleOutput();
+        $progress = new ProgressBar($output);
+        $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
+        $progress->setMessage("");
+        $progress->start($contents->count());
+
         foreach ($contents as $content) {
-            $output->writeln("Handling Content #$content->id");
+            $progress->setMessage("Handling Content #$content->id");
+            $progress->advance();
 
             // Get a new ID for the resource
             $broadcastResource = BroadcastResource::query()->create([
@@ -44,5 +50,7 @@ return new class extends Migration {
                 "content_id_tmp" => $broadcastResource->getKey(),
             ]);
         }
+
+        $progress->finish();
     }
 };

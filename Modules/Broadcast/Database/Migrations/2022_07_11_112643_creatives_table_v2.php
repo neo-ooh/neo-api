@@ -89,7 +89,7 @@ return new class extends Migration {
             }
 
             // Rename files
-            if ($env !== 'production' && $creative->type === 'static') {
+            if ($env === 'production' && $creative->type === 'static') {
                 $output->writeln("Renaming files...");
 
                 // Move creative file

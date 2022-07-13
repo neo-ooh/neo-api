@@ -18,12 +18,12 @@ return new class extends Migration {
         $output = new ConsoleOutput();
 
         $output->writeln("Drop auxiliary tables foreign keys");
-        Schema::table("static_creatives", static function (Blueprint $table) {
+        /*Schema::table("static_creatives", static function (Blueprint $table) {
             $table->dropForeign("static_creatives_creative_id_foreign");
-        });
-        Schema::table("dynamic_creatives", static function (Blueprint $table) {
+        });*/
+        /*Schema::table("dynamic_creatives", static function (Blueprint $table) {
             $table->dropForeign("dynamic_creatives_creative_id_foreign");
-        });
+        });*/
 
         // Update the table columns
         $output->writeln("Update creative table with new columns...");

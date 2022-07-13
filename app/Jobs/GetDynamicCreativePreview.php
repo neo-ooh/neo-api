@@ -18,7 +18,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Neo\Models\Creative;
+use Neo\Modules\Broadcast\Models\Creative;
 
 class GetDynamicCreativePreview implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -43,7 +43,7 @@ class GetDynamicCreativePreview implements ShouldQueue {
      */
     public function handle() {
         // Get the creative
-        /** @var Creative $creative */
+        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
         $creative = Creative::query()->find($this->creativeId);
 
         // Make sure the creative exist and is a dynamic one

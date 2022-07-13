@@ -12,12 +12,9 @@ namespace Neo\Providers;
 
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
 use Neo\Http\Controllers\CreativesController;
-use Neo\Models\Creative;
-use Neo\Models\DynamicCreative;
-use Neo\Models\StaticCreative;
+use Neo\Modules\Broadcast\Models\Creative;
 
 class AppServiceProvider extends ServiceProvider {
     /**
@@ -34,12 +31,6 @@ class AppServiceProvider extends ServiceProvider {
         $this->app->when([Creative::class, CreativesController::class])
                   ->needs(FFProbe::class)
                   ->give(fn() => FFProbe::create(config('ffmpeg')));
-
-        // Register table morph names mapping
-        Relation::morphMap([
-            'static'  => StaticCreative::class,
-            'dynamic' => DynamicCreative::class,
-        ]);
     }
 
     /**

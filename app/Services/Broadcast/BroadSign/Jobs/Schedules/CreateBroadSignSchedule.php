@@ -17,7 +17,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Actor;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\Schedule;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
@@ -194,7 +193,7 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
         $schedule->save();
 
         // Import the content's creatives
-        /** @var Creative $creative */
+        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
         foreach ($content->creatives as $creative) {
             // If the creative has no ad_copy ID, it needs to be imported in BroadSign
             if ($creative->getExternalId($this->config->networkID) === null) {

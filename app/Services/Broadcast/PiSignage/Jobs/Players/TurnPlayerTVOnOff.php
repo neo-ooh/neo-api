@@ -11,16 +11,11 @@
 namespace Neo\Services\Broadcast\PiSignage\Jobs\Players;
 
 
-use GuzzleHttp\Psr7\Utils;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Creative;
-use Neo\Models\Schedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
-use Neo\Services\Broadcast\PiSignage\Models\Asset;
 use Neo\Services\Broadcast\PiSignage\Models\Player;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 

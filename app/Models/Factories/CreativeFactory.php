@@ -13,13 +13,12 @@ namespace Neo\Models\Factories;
 /** @var Factory $factory */
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Neo\Models\Creative;
+use Neo\Modules\Broadcast\Models\Creative;
 
 class CreativeFactory extends Factory {
     protected $model = Creative::class;
 
-    public function definition (): array
-    {
+    public function definition(): array {
         return [
             "extension" => "jpg",
             "status"    => "OK",

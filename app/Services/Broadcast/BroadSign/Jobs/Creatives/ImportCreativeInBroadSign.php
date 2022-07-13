@@ -18,7 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
-use Neo\Models\Creative;
+use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
@@ -59,7 +59,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
      * @throws Exception
      */
     public function handle(): void {
-        /** @var Creative $creative */
+        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
         $creative = Creative::query()->findOrFail($this->creativeID);
 
         if ($creative->getExternalId($this->config->networkID) !== null) {

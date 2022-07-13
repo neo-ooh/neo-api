@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Storage;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Creative;
 use Tests\TestCase;
 
 class DestroyCreativeTest extends TestCase {
@@ -25,21 +25,20 @@ class DestroyCreativeTest extends TestCase {
     /**
      * Assert guests cannot call this route
      */
-    public function testGuestsAreProhibited (): void
-    {
+    public function testGuestsAreProhibited(): void {
         /** @var Actor $actor */
-        $actor    = Actor::factory()->create();
+        $actor = Actor::factory()->create();
 
         /** @var Library $library */
-        $library  = Library::factory()->create(["owner_id" => $actor->id]);
+        $library = Library::factory()->create(["owner_id" => $actor->id]);
 
         /** @var Content $content */
-        $content  = Content::factory()->create([
+        $content = Content::factory()->create([
             "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);
 
-        /** @var Creative $creative */
+        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
         $creative = Creative::factory()->create([
             "owner_id"   => $actor->id,
             "content_id" => $content->id,
@@ -53,18 +52,17 @@ class DestroyCreativeTest extends TestCase {
     /**
      * Assert user cannot call this route without proper capability
      */
-    public function testActorCannotCallRouteWithoutProperCapability (): void
-    {
+    public function testActorCannotCallRouteWithoutProperCapability(): void {
         Storage::fake();
         /** @var Actor $actor */
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
         /** @var Library $library */
-        $library  = Library::factory()->create(["owner_id" => $actor->id]);
+        $library = Library::factory()->create(["owner_id" => $actor->id]);
 
         /** @var Content $content */
-        $content  = Content::factory()->create([
+        $content = Content::factory()->create([
             "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);
@@ -83,8 +81,7 @@ class DestroyCreativeTest extends TestCase {
     /**
      * Assert Route returns success on correct request
      */
-    public function testActorCanCallRouteWithProperCapability (): void
-    {
+    public function testActorCanCallRouteWithProperCapability(): void {
         Storage::fake('public');
 
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
@@ -93,7 +90,7 @@ class DestroyCreativeTest extends TestCase {
         $library = Library::factory()->create(["owner_id" => $actor->id]);
 
         /** @var Content $content */
-        $content = Content::factory()->create([
+        $content  = Content::factory()->create([
             "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);
@@ -110,8 +107,7 @@ class DestroyCreativeTest extends TestCase {
     /**
      * Asserts route returns correct error on bad request
      */
-    public function testCorrectResponseOnBadRequest (): void
-    {
+    public function testCorrectResponseOnBadRequest(): void {
         Storage::fake();
 
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());

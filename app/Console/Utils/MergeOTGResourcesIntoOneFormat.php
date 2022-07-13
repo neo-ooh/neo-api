@@ -13,10 +13,10 @@ namespace Neo\Console\Utils;
 use Illuminate\Console\Command;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\Format;
 use Neo\Models\FormatLayout;
 use Neo\Models\Frame;
+use Neo\Modules\Broadcast\Models\Creative;
 
 class MergeOTGResourcesIntoOneFormat extends Command {
     /**
@@ -80,7 +80,7 @@ class MergeOTGResourcesIntoOneFormat extends Command {
             $campaign->save();
         }
 
-        if($this->hasOption("delete")) {
+        if ($this->hasOption("delete")) {
             foreach ($oldFormatsIds as $formatId) {
                 Format::query()->find($formatId)->delete();
             }

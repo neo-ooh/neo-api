@@ -16,23 +16,21 @@ use Illuminate\Support\Facades\Storage;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Creative;
 use Tests\TestCase;
 
-class StoreCreativeTest extends TestCase
-{
+class StoreCreativeTest extends TestCase {
     use DatabaseTransactions;
 
     /**
      * Assert guests cannot call this route
      */
-    public function testGuestsAreProhibited(): void
-    {
+    public function testGuestsAreProhibited(): void {
         $actor    = Actor::factory()->create();
         $library  = Library::factory()->create(["owner_id" => $actor->id]);
         $content  = Content::factory()->create([
-            "owner_id" => $actor->id,
+            "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);
         $response = $this->json("POST", "/v1/contents/$content->id");
@@ -42,14 +40,13 @@ class StoreCreativeTest extends TestCase
     /**
      * Assert user cannot call this route without proper capability
      */
-    public function testActorCannotCallRouteWithoutProperCapability(): void
-    {
+    public function testActorCannotCallRouteWithoutProperCapability(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
         $library = Library::factory()->create(["owner_id" => $actor->id]);
         $content = Content::factory()->create([
-            "owner_id" => $actor->id,
+            "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);
 
@@ -95,14 +92,13 @@ class StoreCreativeTest extends TestCase
     /**
      * Asserts route returns correct error on bad request
      */
-    public function testCorrectResponseOnBadRequest(): void
-    {
+    public function testCorrectResponseOnBadRequest(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
         $library = Library::factory()->create(["owner_id" => $actor->id]);
         $content = Content::factory()->create([
-            "owner_id" => $actor->id,
+            "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);
 
@@ -117,8 +113,7 @@ class StoreCreativeTest extends TestCase
     /**
      * Asserts correct error if a creative is already present
      */
-    public function testCorrectResponseOnAlreadyExistingCreative(): void
-    {
+    public function testCorrectResponseOnAlreadyExistingCreative(): void {
         Storage::fake('public');
 
         /** @var Actor $actor */
@@ -130,21 +125,21 @@ class StoreCreativeTest extends TestCase
 
         /** @var Content $content */
         $content = Content::factory()->create([
-            "owner_id" => $actor->id,
+            "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);
 
         Creative::factory()->create([
-            "owner_id" => $actor->id,
+            "owner_id"   => $actor->id,
             "content_id" => $content->id,
-            "frame_id" => $content->layout->frames[0]->id,
+            "frame_id"   => $content->layout->frames[0]->id,
         ]);
 
         $response = $this->json("POST",
             "/v1/contents/$content->id",
             [
                 "frame_id" => $content->layout->frames[0]->id,
-                "file" => UploadedFile::fake()->image("ad-01",
+                "file"     => UploadedFile::fake()->image("ad-01",
                     $content->layout->frames[0]->width,
                     $content->layout->frames[0]->height),
             ]);
@@ -154,8 +149,7 @@ class StoreCreativeTest extends TestCase
     /**
      * Asserts correct error if creative doesn't match the frame and content criterion
      */
-    public function testCorrectResponseOnBadCreative(): void
-    {
+    public function testCorrectResponseOnBadCreative(): void {
         Storage::fake('public');
 
         /** @var Actor $actor */
@@ -167,7 +161,7 @@ class StoreCreativeTest extends TestCase
 
         /** @var Content $content */
         $content = Content::factory()->create([
-            "owner_id" => $actor->id,
+            "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);
 
@@ -175,7 +169,7 @@ class StoreCreativeTest extends TestCase
             "/v1/contents/" . $content->id,
             [
                 "frame_id" => $content->layout->frames[0]->id,
-                "file" => UploadedFile::fake()->image("ad-01.jpeg",
+                "file"     => UploadedFile::fake()->image("ad-01.jpeg",
                     $content->layout->frames[0]->width + 100,
                     $content->layout->frames[0]->height),
             ]);

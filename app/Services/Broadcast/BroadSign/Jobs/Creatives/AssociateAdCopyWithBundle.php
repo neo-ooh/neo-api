@@ -15,7 +15,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Creative;
+use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Bundle;
@@ -63,7 +63,7 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
      * @throws
      */
     public function handle(): void {
-        /** @var ?Creative $creative */
+        /** @var ?\Neo\Modules\Broadcast\Models\Creative $creative */
         $creative = Creative::query()->find($this->creativeId);
 
         if ($creative === null) {

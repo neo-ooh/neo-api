@@ -17,7 +17,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Campaign;
-use Neo\Models\Creative;
 use Neo\Models\Schedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
 use Neo\Services\Broadcast\PiSignage\Models\Asset;
@@ -60,7 +59,7 @@ class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
 
         $playlist = Playlist::get($this->getAPIClient(), $campaign->external_id);
 
-        if(!$playlist) {
+        if (!$playlist) {
             return;
         }
 
@@ -77,8 +76,8 @@ class SetCampaignSchedules extends PiSignageJob implements ShouldBeUnique {
             // As of now, we only support scheduling files one by one
             // TODO: Add support for multiple creatives/frames
 
-            /** @var Creative $creative */
-            $creative = $schedule->content->creatives()->first();
+            /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
+            $creative  = $schedule->content->creatives()->first();
             $assetName = Asset::inferNameFromCreative($creative, $schedule->id);
 
             $assetArray[] = [

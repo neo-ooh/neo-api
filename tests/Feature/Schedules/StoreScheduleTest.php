@@ -15,9 +15,9 @@ use Neo\Enums\Capability;
 use Neo\Models\Actor;
 use Neo\Models\Campaign;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\Format;
 use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Creative;
 use Storage;
 use Tests\TestCase;
 
@@ -27,10 +27,9 @@ class StoreScheduleTest extends TestCase {
     /**
      * Assert guests cannot call this route
      */
-    public function testGuestsAreProhibited (): void
-    {
-        $actor = Actor::factory()->create();
-        $campaign = Campaign::factory()->create([ "owner_id" => $actor->id ]);
+    public function testGuestsAreProhibited(): void {
+        $actor    = Actor::factory()->create();
+        $campaign = Campaign::factory()->create(["owner_id" => $actor->id]);
 
         $response = $this->json("POST", "/v1/campaigns/" . $campaign->id . "/schedules");
         $response->assertUnauthorized();
@@ -39,12 +38,11 @@ class StoreScheduleTest extends TestCase {
     /**
      * Assert proper capability is required to call this route
      */
-    public function testProperCapabilityIsRequiredToAccessThisRoute (): void
-    {
+    public function testProperCapabilityIsRequiredToAccessThisRoute(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
-        $campaign = Campaign::factory()->create([ "owner_id" => $actor->id ]);
+        $campaign = Campaign::factory()->create(["owner_id" => $actor->id]);
 
         $response = $this->json("POST", "/v1/campaigns/" . $campaign->id . "/schedules");
         $response->assertForbidden();
@@ -58,8 +56,7 @@ class StoreScheduleTest extends TestCase {
     /**
      * Assert correct response on correct request
      */
-    public function testCorrectResponseReturnedOnCorrectRequest (): void
-    {
+    public function testCorrectResponseReturnedOnCorrectRequest(): void {
         Storage::fake("public");
 
         /** @var Actor $actor */
@@ -67,26 +64,26 @@ class StoreScheduleTest extends TestCase {
         $this->actingAs($actor);
 
         /** @var Campaign $campaign */
-        $campaign = Campaign::factory()->create([ "owner_id" => $actor->id ]);
+        $campaign = Campaign::factory()->create(["owner_id" => $actor->id]);
 
         /** @var Library $library */
-        $library = Library::factory()->create([ "owner_id" => $actor->id ]);
+        $library = Library::factory()->create(["owner_id" => $actor->id]);
 
         /** @var Content $content */
-        $content = Content::factory()->create([ "library_id" => $library->id, "owner_id" => $actor->id ]);
+        $content = Content::factory()->create(["library_id" => $library->id, "owner_id" => $actor->id]);
         $content->refresh();
 
         foreach ($content->layout->frames as $frame) {
-            Creative::factory()->create([ "owner_id"   => $actor->id,
-                                          "content_id" => $content->id,
-                                          "frame_id"   => $frame->id ]);
+            Creative::factory()->create(["owner_id"   => $actor->id,
+                                         "content_id" => $content->id,
+                                         "frame_id"   => $frame->id]);
         }
 
         $response = $this->json("POST",
             "/v1/campaigns/$campaign->id/insert",
             [
                 "content_id" => $content->id,
-                "order" => 1
+                "order"      => 1
             ]);
         $response->assertCreated()
                  ->assertJsonStructure([
@@ -104,14 +101,13 @@ class StoreScheduleTest extends TestCase {
     /**
      * Assert it is not possible to schedule an incomplete content
      */
-    public function testCannotScheduleIncompleteContent (): void
-    {
+    public function testCannotScheduleIncompleteContent(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_schedule());
         $this->actingAs($actor);
 
-        $campaign = Campaign::factory()->create([ "owner_id" => $actor->id ]);
-        $library = Library::factory()->create([ "owner_id" => $actor->id ]);
-        $content = Content::factory()->create([ "library_id" => $library->id, "owner_id" => $actor->id ]);
+        $campaign = Campaign::factory()->create(["owner_id" => $actor->id]);
+        $library  = Library::factory()->create(["owner_id" => $actor->id]);
+        $content  = Content::factory()->create(["library_id" => $library->id, "owner_id" => $actor->id]);
 
         $response = $this->json("POST",
             "/v1/campaigns/" . $campaign->id . "/schedules",
@@ -124,18 +120,17 @@ class StoreScheduleTest extends TestCase {
     /**
      * Assert it is not possible to schedule a content with a different format than the campaign
      */
-    public function testCannotScheduleContentWithDifferentFormatThanCampaign (): void
-    {
+    public function testCannotScheduleContentWithDifferentFormatThanCampaign(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_schedule());
         $this->actingAs($actor);
 
-        $format = Format::query()->first();
-        $campaign = Campaign::factory()->create([ "owner_id" => $actor->id, "format_id" => $format ]);
-        $library = Library::factory()->create([ "owner_id" => $actor->id ]);
-        $format = Format::query()->has('layouts')->first();
-        $content = Content::factory()->create([ "library_id" => $library->id,
+        $format   = Format::query()->first();
+        $campaign = Campaign::factory()->create(["owner_id" => $actor->id, "format_id" => $format]);
+        $library  = Library::factory()->create(["owner_id" => $actor->id]);
+        $format   = Format::query()->has('layouts')->first();
+        $content  = Content::factory()->create(["library_id" => $library->id,
                                                 "owner_id"   => $actor->id,
-                                                "layout_id"  => $format->layouts[0]->id ]);
+                                                "layout_id"  => $format->layouts[0]->id]);
 
         $response = $this->json("POST",
             "/v1/campaigns/" . $campaign->id . "/schedules",

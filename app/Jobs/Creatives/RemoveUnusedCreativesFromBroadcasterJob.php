@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Creative;
 use Neo\Models\CreativeExternalId;
+use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Services\Broadcast\Broadcast;
 
 class RemoveUnusedCreativesFromBroadcasterJob implements ShouldQueue {

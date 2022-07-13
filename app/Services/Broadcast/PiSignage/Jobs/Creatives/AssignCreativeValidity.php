@@ -11,14 +11,13 @@
 namespace Neo\Services\Broadcast\PiSignage\Jobs\Creatives;
 
 
-use GuzzleHttp\Psr7\Utils;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Creative;
 use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
 use Neo\Services\Broadcast\PiSignage\Models\Asset;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
@@ -45,7 +44,7 @@ class AssignCreativeValidity extends PiSignageJob implements ShouldBeUnique {
     public function handle(): void {
         // In PiSignage, Schedules have equivalent representation. Scheduling dates and times are instead stored in assets, meaning assets have to be imported for each schedule that they belong to
 
-        /** @var Creative $creative */
+        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
         $creative = Creative::query()->find($this->creativeId);
 
         /** @var Schedule $schedule */
@@ -57,9 +56,9 @@ class AssignCreativeValidity extends PiSignageJob implements ShouldBeUnique {
         }
 
         $assetName = Asset::inferNameFromCreative($creative, $schedule->id);
-        $asset = Asset::get($this->getAPIClient(), ["name" => $assetName]);
+        $asset     = Asset::get($this->getAPIClient(), ["name" => $assetName]);
 
-        if(!$asset->dbdata) {
+        if (!$asset->dbdata) {
             // Asset has no dbdata, release and try again later
             $this->release(60);
             return;

@@ -11,17 +11,15 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Creatives;
 
 use Exception;
-use Facade\FlareClient\Http\Exceptions\BadResponse;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Creative;
+use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Creative as BSCreative;
-use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
  * Class ImportCreative
@@ -59,7 +57,7 @@ class TargetCreative extends BroadSignJob implements ShouldBeUniqueUntilProcessi
      * @throws Exception
      */
     public function handle(): void {
-        /** @var Creative $creative */
+        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
         $creative = Creative::query()->findOrFail($this->creativeID);
 
         $externalId = $creative->getExternalId($this->config->networkID);

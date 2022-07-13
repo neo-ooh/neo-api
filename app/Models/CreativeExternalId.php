@@ -13,20 +13,20 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Neo\Modules\Broadcast\Models\Creative;
 
 /**
  * Class CreativeExternalId
  *
  * @package Neo\Models
  *
- * @property int $creative_id
- * @property int $network_id
+ * @property int    $creative_id
+ * @property int    $network_id
  * @property string $external_id
- * @property Date $created_at
- * @property Date $updated_at
+ * @property Date   $created_at
+ * @property Date   $updated_at
  */
-class CreativeExternalId extends Model
-{
+class CreativeExternalId extends Model {
     use HasFactory;
 
     protected $table = "creatives_external_ids";

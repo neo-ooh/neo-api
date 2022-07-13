@@ -30,10 +30,10 @@ use Neo\Exceptions\InvalidVideoCodec;
 use Neo\Http\Requests\Creatives\DestroyCreativeRequest;
 use Neo\Http\Requests\Creatives\StoreCreativeRequest;
 use Neo\Models\Content;
-use Neo\Models\Creative;
 use Neo\Models\DynamicCreative;
 use Neo\Models\Frame;
 use Neo\Models\StaticCreative;
+use Neo\Modules\Broadcast\Models\Creative;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 
 class CreativesController extends Controller {

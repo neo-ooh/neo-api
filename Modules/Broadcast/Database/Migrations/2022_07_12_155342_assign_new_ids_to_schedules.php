@@ -48,5 +48,6 @@ return new class extends Migration {
         }
 
         $progress->finish();
+        $output->writeln("");
     }
 };

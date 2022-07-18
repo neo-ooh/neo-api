@@ -17,6 +17,7 @@ use Neo\Modules\Broadcast\Models\BroadcastResource;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Models\StructuredColumns\CreativeProperties;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration {
@@ -28,8 +29,13 @@ return new class extends Migration {
         $creatives = DB::table("creatives")->orderBy("id")->lazy(500);
 
         $output->writeln("Iterate over every creatives...");
+        $progress = new ProgressBar($output);
+        $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
+        $progress->setMessage("");
+
         foreach ($creatives as $creative) {
-            $output->writeln("handling Creative #$creative->id");
+            $progress->setMessage("Handling Creative #$creative->id");
+            $progress->advance();
 
             // Get a new id for the resource
             /** @var BroadcastResource $broadcastResource */
@@ -52,7 +58,6 @@ return new class extends Migration {
                 $creativeProperties->refresh_interval_minutes = $legacyProperties->refresh_interval;
             }
 
-            $output->writeln("Updating creative id and properties (#$creative->id -> #{$broadcastResource->getKey()})...");
             DB::table("creatives")
               ->where("id", "=", $creative->id)
               ->update([
@@ -69,12 +74,9 @@ return new class extends Migration {
                                  ->get();
 
                 // Migrate creative's external ids
-                $output->writeln("Migrating external Ids...");
                 foreach ($externalIds as $externalId) {
                     /** @var Network $network */
                     $network = Network::query()->where("id", "=", $externalId->network_id)->first();
-
-                    $output->writeln("Network #$network->id : $externalId->external_id");
 
                     ExternalResource::query()->create([
                         "resource_id"    => $broadcastResource->getKey(),
@@ -90,22 +92,24 @@ return new class extends Migration {
 
             // Rename files
             if ($env === 'production' && $creative->type === 'static') {
-                $output->writeln("Renaming files...");
+//                $output->writeln("Renaming files...");
 
                 // Move creative file
                 $from = "creatives/" . $creative->id . "." . $creativeProperties->extension;
                 $to   = "creatives/creative_" . $broadcastResource->getKey() . "." . $creativeProperties->extension;
 
-                $output->writeln("$from => $to");
+//                $output->writeln("$from => $to");
                 Storage::disk("public")->move($from, $to);
 
                 // Move creative's thumbnail
                 $from = "creatives/" . $creative->id . "." . $creativeProperties->extension . "_thumb.jpeg";
                 $to   = "creatives/creative_" . $broadcastResource->getKey() . "_thumb.jpeg";
 
-                $output->writeln("$from => $to");
+//                $output->writeln("$from => $to");
                 Storage::disk("public")->move($from, $to);
             }
         }
+
+        $progress->finish();
     }
 };

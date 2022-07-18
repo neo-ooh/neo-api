@@ -16,8 +16,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Actor;
-use Neo\Models\Content;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Content;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\AssociateAdCopyWithBundle;
@@ -160,9 +160,9 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
      * A BroadSign bundle is the equivalent of a content in Access. They are played by schedules. A bundle needs its
      * creative to have finished importing to be associated with it.
      *
-     * @param Content    $content
-     * @param BSSchedule $bsSchedule
-     * @param Schedule   $schedule
+     * @param \Neo\Modules\Broadcast\Models\Content $content
+     * @param BSSchedule                            $bsSchedule
+     * @param Schedule                              $schedule
      *
      * @return void
      */

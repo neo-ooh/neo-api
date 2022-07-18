@@ -9,18 +9,18 @@
  */
 
 use Illuminate\Support\Facades\Route;
-use Neo\Http\Controllers\ReviewsTemplatesController;
-use Neo\Models\ReviewTemplate;
+use Neo\Modules\Broadcast\Http\Controllers\ReviewsTemplatesController;
+use Neo\Modules\Broadcast\Models\ReviewTemplate;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
 
     Route::model("template", ReviewTemplate::class);
 
-    Route::   get("review-templates"           , ReviewsTemplatesController::class . "@index");
-    Route::  post("review-templates"           , ReviewsTemplatesController::class . "@store");
+    Route::   get("review-templates", ReviewsTemplatesController::class . "@index");
+    Route::  post("review-templates", ReviewsTemplatesController::class . "@store");
     Route::   put("review-templates/{template}", ReviewsTemplatesController::class . "@update");
     Route::delete("review-templates/{template}", ReviewsTemplatesController::class . "@destroy");
 });

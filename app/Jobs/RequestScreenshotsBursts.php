@@ -22,7 +22,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Neo\Models\Contract;
 use Neo\Models\ContractBurst;
-use Neo\Models\Player;
+use Neo\Modules\Broadcast\Models\Player;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
 

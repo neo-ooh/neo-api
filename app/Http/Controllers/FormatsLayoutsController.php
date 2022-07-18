@@ -14,7 +14,7 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\FormatsLayouts\DestroyLayoutRequest;
 use Neo\Http\Requests\FormatsLayouts\StoreLayoutRequest;
 use Neo\Http\Requests\FormatsLayouts\UpdateLayoutRequest;
-use Neo\Models\FormatLayout;
+use Neo\Modules\Broadcast\Models\FormatLayout;
 
 class FormatsLayoutsController extends Controller {
     public function store(StoreLayoutRequest $request): Response {

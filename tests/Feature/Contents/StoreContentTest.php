@@ -13,8 +13,8 @@ namespace Tests\Feature\Contents;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Models\Format;
-use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\Library;
 use Tests\TestCase;
 
 class StoreContentTest extends TestCase {

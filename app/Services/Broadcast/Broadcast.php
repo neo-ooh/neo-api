@@ -11,7 +11,7 @@
 namespace Neo\Services\Broadcast;
 
 use Neo\Exceptions\InvalidBroadcastServiceException;
-use Neo\Models\Network;
+use Neo\Modules\Broadcast\Models\Network;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\BroadSignServiceAdapter;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;

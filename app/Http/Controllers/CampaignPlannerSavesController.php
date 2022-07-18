@@ -23,9 +23,9 @@ use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Actor;
 use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
-use Neo\Models\Network;
 use Neo\Models\ProductCategory;
 use Neo\Models\Property;
+use Neo\Modules\Broadcast\Models\Network;
 
 class CampaignPlannerSavesController {
     public function index(ListSavesRequest $request, Actor $actor) {

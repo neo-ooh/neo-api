@@ -14,7 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Models\Content;
+use Neo\Modules\Broadcast\Models\Content;
 
 class StoreCreativeRequest extends FormRequest {
     /**

@@ -19,7 +19,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use Neo\Enums\Capability;
 use Neo\Mails\ReviewRequestEmail;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 
 /**
  * Class SendReviewRequestEmail

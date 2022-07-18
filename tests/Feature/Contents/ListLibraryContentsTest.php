@@ -12,8 +12,8 @@ namespace Tests\Feature\Contents;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Models\Actor;
-use Neo\Models\Content;
-use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Content;
+use Neo\Modules\Broadcast\Models\Library;
 use Tests\TestCase;
 
 class ListLibraryContentsTest extends TestCase {
@@ -22,9 +22,8 @@ class ListLibraryContentsTest extends TestCase {
     /**
      * Assert guest cannot access this route
      */
-    public function testGuestsAreForbidden (): void
-    {
-        $actor = Actor::factory()->create();
+    public function testGuestsAreForbidden(): void {
+        $actor   = Actor::factory()->create();
         $library = Library::factory()->create(["owner_id" => $actor->id]);
 
         $response = $this->json("GET", "/v1/libraries/" . $library->id . "/contents");
@@ -34,8 +33,7 @@ class ListLibraryContentsTest extends TestCase {
     /**
      * Assert all the library content are returned
      */
-    public function testCorrectResponse (): void
-    {
+    public function testCorrectResponse(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
@@ -67,13 +65,12 @@ class ListLibraryContentsTest extends TestCase {
      * Assert user cannot access content from inaccessible library
      */
 
-    public function testCannotListContentFromInaccessibleLibrary (): void
-    {
+    public function testCannotListContentFromInaccessibleLibrary(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
         $otherActor = Actor::factory()->create();
-        $library = Library::factory()->create(["owner_id" => $otherActor->id]);
+        $library    = Library::factory()->create(["owner_id" => $otherActor->id]);
 
         $contentCount = 3;
         Content::factory($contentCount)->create([

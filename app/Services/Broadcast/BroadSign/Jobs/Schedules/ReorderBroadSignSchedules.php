@@ -15,7 +15,7 @@ use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Bundle;
@@ -67,7 +67,7 @@ class ReorderBroadSignSchedules extends BroadSignJob implements ShouldBeUniqueUn
                              ->whereNotNull("external_id_2")->get();
 
         // For each schedule, we need to retrieve its bundle, and update its position.
-        /** @var Schedule $schedule */
+        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
         foreach ($schedules as $schedule) {
             $bundles = Bundle::getBySchedule($this->getAPIClient(), $schedule->external_id_2);
 

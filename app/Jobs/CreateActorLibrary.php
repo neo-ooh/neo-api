@@ -16,7 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Actor;
-use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Library;
 
 /**
  * Class CreateUserLibrary

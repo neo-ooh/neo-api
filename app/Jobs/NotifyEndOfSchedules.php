@@ -15,12 +15,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Mail;
 use Neo\Mails\EndOfScheduleNotificationEmail;
-use Neo\Models\Actor;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 
 /**
  * Class NotifyEndOfSchedules
@@ -46,7 +44,7 @@ class NotifyEndOfSchedules implements ShouldQueue {
                              ->load(["owner:id,name,email", "campaign.owner"]);
 
         // Now we go schedule by schedule, select the actors that needs to be warned and send the emails
-        /** @var Schedule $schedule */
+        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
         foreach ($schedules as $schedule) {
             $dest = collect([$schedule->owner,
                              $schedule->campaign->owner,

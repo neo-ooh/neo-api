@@ -13,8 +13,8 @@ namespace Tests\Feature\Contents;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Models\Content;
-use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Content;
+use Neo\Modules\Broadcast\Models\Library;
 use Tests\TestCase;
 
 class DestroyContentTest extends TestCase {
@@ -23,9 +23,8 @@ class DestroyContentTest extends TestCase {
     /**
      * Assert guest cannot access this route
      */
-    public function testGuestsAreForbidden (): void
-    {
-        $actor = Actor::factory()->create();
+    public function testGuestsAreForbidden(): void {
+        $actor   = Actor::factory()->create();
         $library = Library::factory()->create(["owner_id" => $actor->id]);
         $content = Content::factory()->create([
             "owner_id"   => $actor->id,
@@ -39,8 +38,7 @@ class DestroyContentTest extends TestCase {
     /**
      * Assert a user without proper capability cannot edit a content
      */
-    public function testActorWithoutProperCapabilityCannotCallThisRoute (): void
-    {
+    public function testActorWithoutProperCapabilityCannotCallThisRoute(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
         $library = Library::factory()->create(["owner_id" => $actor->id]);
@@ -56,14 +54,13 @@ class DestroyContentTest extends TestCase {
     /**
      * Assert a user cannot edit a content in an inaccessible library
      */
-    public function testActorCannotDestroyContentInInaccessibleLibrary (): void
-    {
+    public function testActorCannotDestroyContentInInaccessibleLibrary(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
         $otherActor = Actor::factory()->create();
-        $library = Library::factory()->create(["owner_id" => $otherActor->id]);
-        $content = Content::factory()->create([
+        $library    = Library::factory()->create(["owner_id" => $otherActor->id]);
+        $content    = Content::factory()->create([
             "owner_id"   => $otherActor->id,
             "library_id" => $library->id,
         ]);
@@ -75,8 +72,7 @@ class DestroyContentTest extends TestCase {
     /**
      * Assert Actor with proper capability can edit content
      */
-    public function testActorWithProperCapabilityCanCallThisRoute (): void
-    {
+    public function testActorWithProperCapabilityCanCallThisRoute(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
         $library = Library::factory()->create(["owner_id" => $actor->id]);
@@ -92,14 +88,13 @@ class DestroyContentTest extends TestCase {
     /**
      * Assert Actor with proper can edit another user content if accessible
      */
-    public function testActorWithProperCapabilityCanEditAnotherAccessibleActorContent (): void
-    {
+    public function testActorWithProperCapabilityCanEditAnotherAccessibleActorContent(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
         $otherActor = Actor::factory()->create();
-        $library = Library::factory()->create(["owner_id" => $otherActor->id]);
-        $content = Content::factory()->create([
+        $library    = Library::factory()->create(["owner_id" => $otherActor->id]);
+        $content    = Content::factory()->create([
             "owner_id"   => $actor->id,
             "library_id" => $library->id,
         ]);

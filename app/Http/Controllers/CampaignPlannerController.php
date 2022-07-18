@@ -21,11 +21,11 @@ use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
 use Neo\Models\Field;
 use Neo\Models\FieldsCategory;
-use Neo\Models\Network;
 use Neo\Models\Pricelist;
 use Neo\Models\ProductCategory;
 use Neo\Models\Property;
 use Neo\Models\PropertyTrafficSnapshot;
+use Neo\Modules\Broadcast\Models\Network;
 
 class CampaignPlannerController {
     public function dataChunk_1(GetCampaignPlannerDataRequest $request) {

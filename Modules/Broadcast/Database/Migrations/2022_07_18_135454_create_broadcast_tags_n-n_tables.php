@@ -21,8 +21,8 @@ return new class extends Migration {
         });
 
         // Layouts
-        Schema::create('layout_broadcast_tags', function (Blueprint $table) {
-            $table->foreignId("layout_id")->constrained("formats_layouts", "id")->cascadeOnUpdate()->restrictOnDelete();
+        Schema::create('format_layout_broadcast_tags', function (Blueprint $table) {
+            $table->foreignId("format_layout_id")->constrained("formats_layouts", "id")->cascadeOnUpdate()->restrictOnDelete();
             $table->foreignId("broadcast_tag_id")->constrained("broadcast_tags", "id")->cascadeOnUpdate()->cascadeOnDelete();
         });
 

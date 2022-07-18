@@ -29,7 +29,7 @@ return new class extends Migration {
         $output->writeln("Update creative table with new columns...");
         Schema::table('creatives', static function (Blueprint $table) {
             // Remove unused column
-            $table->removeColumn("status");
+            $table->dropColumn("status");
 
             // Add new column to hold the new ids
             $table->foreignId("id_tmp")->after("id");

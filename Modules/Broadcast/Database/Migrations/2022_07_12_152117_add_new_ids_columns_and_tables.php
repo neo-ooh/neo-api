@@ -13,7 +13,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up() {
+    public function up(): void {
         // Add `id_tmp` columns to the tables that are switching to `broadcast_resources` ids
         // and add additional `_tmp` columns to tables that are referencing tables who are switching to `broadcast_resources`
         Schema::table('contents', static function (Blueprint $table) {

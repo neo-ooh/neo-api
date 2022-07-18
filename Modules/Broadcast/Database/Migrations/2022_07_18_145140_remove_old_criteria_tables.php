@@ -13,12 +13,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
-        Schema::table("formats_layouts", static function (\Illuminate\Database\Schema\Blueprint $table) {
-            $table->dropConstrainedForeignId("trigger_id");
-            $table->dropConstrainedForeignId("separation_id");
-        });
+        Schema::dropColumns("formats_layouts", ["trigger_id", "separation_id"]);
         Schema::dropIfExists("frame_settings_broadsign");
-        Schema::dropIfExists("frame_settings_pisignage");
 
         Schema::dropIfExists("broadsign_triggers");
         Schema::dropIfExists("broadsign_separations");

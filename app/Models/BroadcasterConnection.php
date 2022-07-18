@@ -19,6 +19,7 @@ use JsonException;
 use Neo\Models\UnstructuredData\ConnectionSettingsBroadSign;
 use Neo\Models\UnstructuredData\ConnectionSettingsOdoo;
 use Neo\Models\UnstructuredData\ConnectionSettingsPiSignage;
+use Neo\Modules\Broadcast\Models\DisplayType;
 use Neo\Services\API\Traits\HasAttributes;
 use Neo\Services\Broadcast\Broadcaster;
 use RuntimeException;

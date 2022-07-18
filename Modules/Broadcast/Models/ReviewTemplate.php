@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ScheduleReviewTemplate.php
+ * @neo/api - ReviewTemplate.php
  */
 
 namespace Neo\Modules\Broadcast\Models;
@@ -18,15 +18,22 @@ use Neo\Models\Actor;
 /**
  * NeoModels\Branding
  *
- * @property int    $id
- * @property string $text
- * @property int    $owner_id
+ * @property int    id
+ * @property string text
+ * @property int    owner_id
  *
- * @property Actor  $owner
+ * @property Actor  owner
  *
  * @mixin Builder
  */
-class ScheduleReviewTemplate extends Model {
+class ReviewTemplate extends Model {
+    /*
+    |--------------------------------------------------------------------------
+    | Table properties
+    |--------------------------------------------------------------------------
+    */
+
+
     /**
      * The table associated with the model.
      *
@@ -37,12 +44,20 @@ class ScheduleReviewTemplate extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var array
      */
     protected $fillable = [
         "owner_id",
         "text",
     ];
+
+    /**
+     * The relationships that should always be loaded.
+     *
+     * @var array
+     */
+    protected $with = [ "owner" ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -50,7 +65,8 @@ class ScheduleReviewTemplate extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function owner(): BelongsTo {
+
+    public function owner (): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
     }
 }

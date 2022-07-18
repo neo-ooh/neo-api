@@ -8,20 +8,21 @@
  * @neo/api - ContentsController.php
  */
 
-namespace Neo\Http\Controllers;
+namespace Neo\Modules\Broadcast\Http\Controllers;
 
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Exceptions\LibraryStorageFullException;
+use Neo\Http\Controllers\Controller;
 use Neo\Http\Requests\Contents\DestroyContentRequest;
 use Neo\Http\Requests\Contents\StoreContentRequest;
 use Neo\Http\Requests\Contents\SwapContentCreativesRequest;
 use Neo\Http\Requests\Contents\UpdateContentRequest;
-use Neo\Models\Content;
-use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Creative;
+use Neo\Modules\Broadcast\Models\Library;
 
 class ContentsController extends Controller {
     /**
@@ -33,7 +34,7 @@ class ContentsController extends Controller {
     public function store(StoreContentRequest $request) {
         // We want to prevent creating new empty content in a library if an empty one is already there.
         // Check if there is already an empty content
-        /** @var Content|null $emptyContent */
+        /** @var \Neo\Modules\Broadcast\Models\Content|null $emptyContent */
         $emptyContent = Content::query()
                                ->where("library_id", "=", $request->input("library_id"))
                                ->where("layout_id", "=", $request->input("layout_id"))
@@ -49,7 +50,7 @@ class ContentsController extends Controller {
             return new Response($emptyContent->load("layout.frames"), 200);
         }
 
-        /** @var Library $library */
+        /** @var \Neo\Modules\Broadcast\Models\Library $library */
         $library = Library::query()->find($request->validated()["library_id"]);
 
         // Check if the library has enough space available
@@ -71,7 +72,7 @@ class ContentsController extends Controller {
     }
 
     /**
-     * @param Content $content
+     * @param \Neo\Modules\Broadcast\Models\Content $content
      *
      * @return Response
      */
@@ -171,8 +172,8 @@ class ContentsController extends Controller {
     }
 
     /**
-     * @param DestroyContentRequest $request
-     * @param Content               $content
+     * @param DestroyContentRequest                 $request
+     * @param \Neo\Modules\Broadcast\Models\Content $content
      *
      * @return Response
      * @throws Exception

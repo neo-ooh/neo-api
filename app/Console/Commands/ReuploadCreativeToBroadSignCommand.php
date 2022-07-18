@@ -11,8 +11,7 @@
 namespace Neo\Console\Commands;
 
 use Illuminate\Console\Command;
-use Neo\Models\Content;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
@@ -33,7 +32,7 @@ class ReuploadCreativeToBroadSignCommand extends Command {
                           ->find($contentId);
 
         // Disable the schedules
-        /** @var Schedule $schedule */
+        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
         foreach ($content->schedules as $schedule) {
             $config = Broadcast::network($schedule->campaign->network_id)->getConfig();
 
@@ -63,7 +62,7 @@ class ReuploadCreativeToBroadSignCommand extends Command {
         $content->creatives->each(fn(Creative $creative) => $creative->refresh());
 
         // Re-do the schedule, which will trigger a reupload of the creatives as well
-        /** @var Schedule $schedule */
+        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
         foreach ($content->schedules as $schedule) {
             if ($schedule->trashed()) {
                 continue;

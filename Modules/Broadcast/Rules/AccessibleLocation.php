@@ -33,11 +33,11 @@ class AccessibleLocation implements Rule, ImplicitRule {
      * @return bool
      */
     public function passes($attribute, $value): bool {
-        if (Gate::allows(Capability::locations_edit->value)) {
+        if (Gate::allows(Capability::locations_edit)) {
             return true;
         }
 
-        /** @var Location|null $location */
+        /** @var \Neo\Modules\Broadcast\Models\Location $location */
         $location = Location::query()->find($value);
 
         if (is_null($location)) {

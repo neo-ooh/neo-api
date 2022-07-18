@@ -8,13 +8,11 @@
  * @neo/api - StoreContentRequest.php
  */
 
-namespace Neo\Modules\Broadcast\Http\Requests\Contents;
+namespace Neo\Http\Requests\Contents;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
 use Neo\Rules\AccessibleActor;
 
@@ -25,7 +23,7 @@ class StoreContentRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::contents_edit->value);
+        return Gate::allows(Capability::contents_edit);
     }
 
     /**
@@ -37,7 +35,7 @@ class StoreContentRequest extends FormRequest {
         return [
             "owner_id"   => ["required", "integer", new AccessibleActor()],
             "library_id" => ["required", "integer", new AccessibleLibrary()],
-            "layout_id"  => ["required", "integer", new Exists(Layout::class, "id")]
+            "layout_id"  => ["required", "integer", "exists:formats_layouts,id"]
         ];
     }
 }

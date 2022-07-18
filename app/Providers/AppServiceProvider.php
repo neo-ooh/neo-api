@@ -13,7 +13,7 @@ namespace Neo\Providers;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use Illuminate\Support\ServiceProvider;
-use Neo\Http\Controllers\CreativesController;
+use Neo\Modules\Broadcast\Http\Controllers\CreativesController;
 use Neo\Modules\Broadcast\Models\Creative;
 
 class AppServiceProvider extends ServiceProvider {

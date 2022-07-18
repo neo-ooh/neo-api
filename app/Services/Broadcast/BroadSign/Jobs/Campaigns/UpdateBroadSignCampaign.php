@@ -18,10 +18,10 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Date;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Schedule;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Bundle as BSBundle;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Campaign as BSCampaign;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
+use Neo\Services\Broadcast\BroadSign\Models\Bundle as BSBundle;
+use Neo\Services\Broadcast\BroadSign\Models\Campaign as BSCampaign;
 
 /**
  * Class UpdateBroadSignCampaign

@@ -40,7 +40,7 @@ return new class extends Migration {
 
             // Insert the trigger in the tags table
             /** @var BroadcastResource $broadcastResource */
-            $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Creative]);
+            $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Tag]);
 
             DB::table("broadcast_tags")->insert([
                 "id"      => $broadcastResource->getKey(),
@@ -52,7 +52,7 @@ return new class extends Migration {
 
             // Insert the external_id
             ExternalResource::query()->create([
-                "resource_id"    => $broadcastResource,
+                "resource_id"    => $broadcastResource->getKey(),
                 "broadcaster_id" => $broadsignProvider->id,
                 "type"           => ExternalResourceType::Tag,
                 "data"           => [
@@ -86,7 +86,7 @@ return new class extends Migration {
 
             // Insert the trigger in the tags table
             /** @var BroadcastResource $broadcastResource */
-            $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Creative]);
+            $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Tag]);
 
             DB::table("broadcast_tags")->insert([
                 "id"      => $broadcastResource->getKey(),
@@ -98,7 +98,7 @@ return new class extends Migration {
 
             // Insert the external_id
             ExternalResource::query()->create([
-                "resource_id"    => $broadcastResource,
+                "resource_id"    => $broadcastResource->getKey(),
                 "broadcaster_id" => $broadsignProvider->id,
                 "type"           => ExternalResourceType::Tag,
                 "data"           => [
@@ -132,7 +132,7 @@ return new class extends Migration {
 
             // Insert the trigger in the tags table
             /** @var BroadcastResource $broadcastResource */
-            $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Creative]);
+            $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Tag]);
 
             DB::table("broadcast_tags")->insert([
                 "id"      => $broadcastResource->getKey(),
@@ -144,7 +144,7 @@ return new class extends Migration {
 
             // Insert the external_id
             ExternalResource::query()->create([
-                "resource_id"    => $broadcastResource,
+                "resource_id"    => $broadcastResource->getKey(),
                 "broadcaster_id" => $broadsignProvider->id,
                 "type"           => ExternalResourceType::Tag,
                 "data"           => [

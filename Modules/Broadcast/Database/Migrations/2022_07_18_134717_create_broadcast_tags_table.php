@@ -16,7 +16,10 @@ use Neo\Modules\Broadcast\Enums\BroadcastTagScope;
 return new class extends Migration {
     public function up() {
         Schema::create('broadcast_tags', function (Blueprint $table) {
-            $table->foreignId("id")->constrained("broadcast_resources", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->foreignId("id")->primary()
+                  ->constrained("broadcast_resources", "id")
+                  ->cascadeOnUpdate()
+                  ->restrictOnDelete();
 
             $table->string("type", 32)->index();
             $table->string("name_en", 64);

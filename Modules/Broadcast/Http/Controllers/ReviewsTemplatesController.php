@@ -20,7 +20,7 @@ use Neo\Http\Requests\ReviewsTemplates\ListReviewTemplatesRequest;
 use Neo\Http\Requests\ReviewsTemplates\StoreReviewTemplateRequest;
 use Neo\Http\Requests\ReviewsTemplates\UpdateReviewTemplateRequest;
 use Neo\Models\Actor;
-use Neo\Modules\Broadcast\Models\ScheduleReviewTemplate;
+use Neo\Modules\Broadcast\Models\ReviewTemplate;
 
 class ReviewsTemplatesController extends Controller {
     /**
@@ -31,11 +31,11 @@ class ReviewsTemplatesController extends Controller {
     public function index(ListReviewTemplatesRequest $request): Response {
         /** @var Actor $actor */
         $actor = Auth::user();
-        return new Response(ScheduleReviewTemplate::query()
-                                                  ->where("owner_id", "=", $actor->id)
-                                                  ->when($actor->parent->is_group ?? false,
-                                                      fn(Builder $query) => $query->orWhere("owner_id", "=", $actor->parent_id))
-                                                  ->get());
+        return new Response(ReviewTemplate::query()
+                                          ->where("owner_id", "=", $actor->id)
+                                          ->when($actor->parent->is_group ?? false,
+                                              fn(Builder $query) => $query->orWhere("owner_id", "=", $actor->parent_id))
+                                          ->get());
     }
 
     /**
@@ -44,7 +44,7 @@ class ReviewsTemplatesController extends Controller {
      * @return Response
      */
     public function store(StoreReviewTemplateRequest $request): Response {
-        $template = new ScheduleReviewTemplate([
+        $template = new ReviewTemplate([
             "text"     => $request->validated()["text"],
             "owner_id" => $request->validated()["owner_id"],
         ]);
@@ -56,11 +56,11 @@ class ReviewsTemplatesController extends Controller {
 
     /**
      * @param UpdateReviewTemplateRequest $request
-     * @param ScheduleReviewTemplate      $template
+     * @param ReviewTemplate              $template
      *
      * @return Response
      */
-    public function update(UpdateReviewTemplateRequest $request, ScheduleReviewTemplate $template) {
+    public function update(UpdateReviewTemplateRequest $request, ReviewTemplate $template) {
         $template->text     = $request->validated()["text"];
         $template->owner_id = $request->validated()["owner_id"];
         $template->save();
@@ -68,7 +68,7 @@ class ReviewsTemplatesController extends Controller {
         return new Response($template);
     }
 
-    public function destroy(DestroyReviewTemplateRequest $request, ScheduleReviewTemplate $template): void {
+    public function destroy(DestroyReviewTemplateRequest $request, ReviewTemplate $template): void {
         $template->delete();
     }
 }

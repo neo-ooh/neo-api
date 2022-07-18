@@ -8,48 +8,41 @@
  * @neo/api - Content.php
  */
 
-namespace Neo\Models;
+namespace Neo\Modules\Broadcast\Models;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
-use Neo\Models\Factories\ContentFactory;
-use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Rules\AccessibleContent;
+use Neo\Models\Actor;
+use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
+use Neo\Modules\Broadcast\Enums\ScheduleStatus;
+use Neo\Modules\Broadcast\Rules\AccessibleContent;
 
 /**
  * Neo\Models\Contents
  *
- * A Content is a resource that can be scheduled in a `Campaign` using a `Schedule`.
- *
- * A Content can be of two types: A static content holds creatives, actual image or video files, corresponding to the content'
- * format's frames. A dynamic content does not directly hold any content. Only a URL pointing to the desired resource. BroadSign
- * is then able to use this URL to automatically refresh the content. The url can point to anything the Chromium Browser is able
- * to display. For accurate support reference, please refer to the Chromium documentation using the Chromium version specified in
- * the BroadSign documentation.
+ * A Content is a resource that can be scheduled in a `Campaign` with the mean of a `Schedule`.
  *
  * @property int                       $id
- * @property string                    $type                "static" or "dynamic".
  * @property int                       $owner_id
  * @property int                       $library_id
  * @property int                       $layout_id
- * @property int                       $broadsign_content_id
  * @property string                    $name
- * @property double                    $duration            How long this content will display. Not applicable if the content
+ * @property double                    $duration              How long this content will display. Not applicable if the content
  *           only has static creatives
- * @property bool                      $is_editable         Tell if the content can be edited
- * @property bool                      $is_approved         Tell if the content has been pre-approved
- * @property int                       $scheduling_duration Maximum duration of a scheduling of this content.
- * @property int                       $scheduling_times    How many times this content can be scheduled
+ * @property bool                      $is_approved           Tell if the content has been pre-approved
+ * @property int                       $max_schedule_duration Maximum duration of a scheduling of this content.
+ * @property int                       $max_schedule_count    How many times this content can be scheduled
  *
- * @property Actor                     $owner               The actor who created this content
- * @property Library                   $library             The library where this content resides
- * @property FormatLayout              $layout              The layout of the content
+ * @property bool                      $is_editable           Tell if the content can be edited
  *
- * @property-read Collection<Creative> $creatives           The content's creatives
+ * @property Actor                     $owner                 The actor who created this content
+ * @property Library                   $library               The library where this content resides
+ * @property FormatLayout              $layout                The layout of the content
+ *
+ * @property-read Collection<Creative> $creatives             The content's creatives
  * @property-read int                  $creatives_count
  *
  * @property-read Collection<Schedule> $schedules
@@ -57,8 +50,8 @@ use Neo\Rules\AccessibleContent;
  *
  * @mixin DB
  */
-class Content extends SecuredModel {
-    use HasFactory, SoftDeletes;
+class Content extends BroadcastResourceModel {
+    use SoftDeletes;
 
     /*
     |--------------------------------------------------------------------------
@@ -66,6 +59,7 @@ class Content extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
+    public BroadcastResourceType $resourceType = BroadcastResourceType::Content;
 
     /**
      * The table associated with the model.
@@ -73,8 +67,6 @@ class Content extends SecuredModel {
      * @var string
      */
     protected $table = 'contents';
-
-    protected $primaryKey = "id";
 
     /**
      * The attributes that are mass assignable.
@@ -86,8 +78,9 @@ class Content extends SecuredModel {
         'library_id',
         'layout_id',
         'name',
-        'scheduling_duration',
-        'scheduling_times',
+        'duration',
+        'max_schedule_duration',
+        'max_schedule_count',
     ];
 
     /**
@@ -96,9 +89,9 @@ class Content extends SecuredModel {
      * @var array
      */
     protected $casts = [
-        'is_approved'         => 'boolean',
-        'scheduling_duration' => 'integer',
-        'scheduling_times'    => 'integer',
+        'is_approved'           => 'boolean',
+        'max_schedule_duration' => 'integer',
+        'max_schedule_count'    => 'integer',
     ];
 
     /**
@@ -107,16 +100,6 @@ class Content extends SecuredModel {
      * @var array
      */
     protected $with = ["creatives"];
-
-    /**
-     * The relationship counts that should always be loaded.
-     *
-     * @var array
-     */
-    protected $withCount = [
-        "schedules",
-        "creatives",
-    ];
 
     /**
      * The rule used to validate access to the model upon binding it with a route
@@ -128,7 +111,7 @@ class Content extends SecuredModel {
     public static function boot(): void {
         parent::boot();
 
-        static::deleting(function (Content $content) {
+        static::deleting(static function (Content $content) {
             /** @var Creative $creative */
             foreach ($content->creatives as $creative) {
                 if ($content->isForceDeleting()) {
@@ -148,10 +131,6 @@ class Content extends SecuredModel {
                 }
             }
         });
-    }
-
-    protected static function newFactory(): ContentFactory {
-        return ContentFactory::new();
     }
 
     /*
@@ -184,7 +163,7 @@ class Content extends SecuredModel {
      * @return HasMany
      */
     public function creatives(): HasMany {
-        return $this->hasMany(Creative::class, 'content_id', 'id')->withTrashed();
+        return $this->hasMany(Creative::class, 'content_id', 'id');
     }
 
     /**
@@ -228,13 +207,13 @@ class Content extends SecuredModel {
      *
      * @return bool True if the content can be edited
      */
-    public function getIsEditableAttribute() {
+    public function getIsEditableAttribute(): bool {
         if ($this->schedules_count === 0) {
             // No schedules, can be edited
             return true;
         }
 
         // If a content has been scheduled, it can still be edited if it has never been locked/approved, etc...
-        return $this->schedules->every("status", "===", Schedule::STATUS_DRAFT);
+        return $this->schedules->every("status", "===", ScheduleStatus::Draft);
     }
 }

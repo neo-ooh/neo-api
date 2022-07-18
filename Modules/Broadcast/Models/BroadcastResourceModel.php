@@ -11,19 +11,17 @@
 namespace Neo\Modules\Broadcast\Models;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Models\SecuredModel;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 
 /**
  * Umbrella model for resources using the `BroadcastResource` ID pool.
- * The `resourceType` property must be defined in the OdooModel implementation
+ * The `resourceType` property must be defined in the Model implementation
  *
- * @property int                          $id
+ * @property int                          $id;
  *
  * @property Collection<ExternalResource> $external_representations
- * @property Collection<BroadcastTag>     $broadcast_tags
  */
 abstract class BroadcastResourceModel extends SecuredModel {
     /**
@@ -53,17 +51,7 @@ abstract class BroadcastResourceModel extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * @return HasMany<ExternalResource>
-     */
     public function external_representations(): HasMany {
         return $this->hasMany(ExternalResource::class, "id", "id");
-    }
-
-    /**
-     * @return BelongsToMany<BroadcastTag>
-     */
-    public function broadcast_tags(): BelongsToMany {
-        return $this->belongsToMany(BroadcastTag::class, 'broadcast_resource_tags', 'resource_id', 'broadcast_tag_id');
     }
 }

@@ -18,7 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Player;
-use Neo\Modules\Broadcast\Services\PiSignage\Models\Player as PiSignagePlayer;
+use Neo\Services\Broadcast\PiSignage\Models\Player as PiSignagePlayer;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**

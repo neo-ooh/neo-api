@@ -10,8 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Services\Resources;
 
-class Campaign extends ExternalBroadcasterResource {
-    public bool $enabled;
+class Campaign extends ExternalBroadcastResource {
     public string $name;
 
     public string $start_date;

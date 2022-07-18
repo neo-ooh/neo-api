@@ -21,8 +21,8 @@ use Neo\Models\City;
 use Neo\Models\Property;
 use Neo\Models\Province;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Services\Broadcast\Broadcast;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
@@ -62,7 +62,7 @@ class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
         $address->city_id = $city->id;
 
         $networkConfig = Broadcast::network($location->network_id)->getConfig();
-        $displayUnit   = \Neo\Modules\Broadcast\Services\BroadSign\Models\Location::get(new BroadSignClient($networkConfig), $location->external_id);
+        $displayUnit   = \Neo\Services\Broadcast\BroadSign\Models\Location::get(new BroadsignClient($networkConfig), $location->external_id);
 
         // Extract additional information from the address
         // Matches:

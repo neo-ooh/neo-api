@@ -13,8 +13,8 @@ namespace Tests\Feature\Contents;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Models\Content;
-use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Content;
+use Neo\Modules\Broadcast\Models\Library;
 use Tests\TestCase;
 
 class UpdateContentTest extends TestCase {
@@ -23,9 +23,8 @@ class UpdateContentTest extends TestCase {
     /**
      * Assert guest cannot access this route
      */
-    public function testGuestsAreForbidden (): void
-    {
-        $actor = Actor::factory()->create();
+    public function testGuestsAreForbidden(): void {
+        $actor   = Actor::factory()->create();
         $library = Library::factory()->create(["owner_id" => $actor->id]);
         $content = Content::factory()->create([
             "owner_id"   => $actor->id,
@@ -39,8 +38,7 @@ class UpdateContentTest extends TestCase {
     /**
      * Assert a user without proper capability cannot edit a content
      */
-    public function testActorWithoutProperCapabilityCannotCallThisRoute (): void
-    {
+    public function testActorWithoutProperCapabilityCannotCallThisRoute(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
         $library = Library::factory()->create(["owner_id" => $actor->id]);
@@ -56,8 +54,7 @@ class UpdateContentTest extends TestCase {
     /**
      * Assert a user cannot edit a content in an inaccessible library
      */
-    public function testActorCannotEditContentInInaccessibleLibrary (): void
-    {
+    public function testActorCannotEditContentInInaccessibleLibrary(): void {
         /** @var Actor $actor */
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
@@ -65,7 +62,7 @@ class UpdateContentTest extends TestCase {
         /** @var Actor $otherActor */
         $otherActor = Actor::factory()->create();
 
-        /** @var Library $library */
+        /** @var \Neo\Modules\Broadcast\Models\Library $library */
         $library = Library::factory()->create(["owner_id" => $otherActor->id]);
 
         /** @var Content $content */
@@ -85,13 +82,12 @@ class UpdateContentTest extends TestCase {
     /**
      * Assert Actor with proper capability can edit content
      */
-    public function testActorWithProperCapabilityCanCallThisRoute (): void
-    {
+    public function testActorWithProperCapabilityCanCallThisRoute(): void {
         /** @var Actor $actor */
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
-        /** @var Library $library */
+        /** @var \Neo\Modules\Broadcast\Models\Library $library */
         $library = Library::factory()->create(["owner_id" => $actor->id]);
 
         /** @var Content $content */
@@ -122,8 +118,7 @@ class UpdateContentTest extends TestCase {
     /**
      * Assert Actor with proper can edit another user content if accessible
      */
-    public function testActorWithProperCapabilityCanEditAnotherAccessibleActorContent (): void
-    {
+    public function testActorWithProperCapabilityCanEditAnotherAccessibleActorContent(): void {
         /** @var Actor $actor */
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
@@ -131,10 +126,10 @@ class UpdateContentTest extends TestCase {
         /** @var Actor $otherActor */
         $otherActor = Actor::factory()->create();
 
-        /** @var Library $library */
+        /** @var \Neo\Modules\Broadcast\Models\Library $library */
         $library = Library::factory()->create(["owner_id" => $otherActor->id]);
 
-        /** @var Content $content */
+        /** @var \Neo\Modules\Broadcast\Models\Content $content */
         $content = Content::factory()->create([
             "owner_id"   => $otherActor->id,
             "library_id" => $library->id,

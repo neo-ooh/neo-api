@@ -16,7 +16,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
 use Neo\Services\Broadcast\PiSignage\Models\Playlist;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
@@ -43,7 +43,7 @@ class CreateCampaign extends PiSignageJob implements ShouldBeUnique {
     }
 
     public function handle(): void {
-        /** @var Campaign $campaign */
+        /** @var \Neo\Modules\Broadcast\Models\Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignId);
 
         if ($campaign === null || $campaign->external_id) {

@@ -13,7 +13,7 @@ namespace Tests\Feature\Campaigns;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Tests\TestCase;
 
 class DestroyCampaignTest extends TestCase {
@@ -42,7 +42,7 @@ class DestroyCampaignTest extends TestCase {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
-        /** @var Campaign $campaign */
+        /** @var \Neo\Modules\Broadcast\Models\Campaign $campaign */
         $campaign = Campaign::factory()->create(["owner_id" => $actor->id]);
 
         $response = $this->json("DELETE", "/v1/campaigns/" . $campaign->id);

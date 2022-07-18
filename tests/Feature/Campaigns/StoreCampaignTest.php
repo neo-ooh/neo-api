@@ -14,7 +14,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Date;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Models\Format;
+use Neo\Modules\Broadcast\Models\Format;
 use Tests\TestCase;
 
 class StoreCampaignTest extends TestCase
@@ -116,7 +116,7 @@ class StoreCampaignTest extends TestCase
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
-        /** @var Format $format */
+        /** @var \Neo\Modules\Broadcast\Models\Format $format */
         $format = Format::query()->first();
 
         $otherActor = Actor::factory()->create()->moveTo($actor);
@@ -155,7 +155,7 @@ class StoreCampaignTest extends TestCase
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
-        /** @var Format $format */
+        /** @var \Neo\Modules\Broadcast\Models\Format $format */
         $format = Format::query()->first();
 
         /** @var Actor $otherActor */

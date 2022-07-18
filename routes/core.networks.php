@@ -17,9 +17,9 @@ use Neo\Http\Controllers\LocationsController;
 use Neo\Http\Controllers\LocationsPlayersController;
 use Neo\Http\Controllers\NetworksController;
 use Neo\Models\BroadcasterConnection;
-use Neo\Models\DisplayType;
-use Neo\Models\Location;
-use Neo\Models\Network;
+use Neo\Modules\Broadcast\Models\DisplayType;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\Network;
 
 Route::group([
     "middleware" => "default",

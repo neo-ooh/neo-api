@@ -14,18 +14,18 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Models\Actor;
-use Neo\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Campaign;
 
 /**
  * Trait HasCampaigns
  *
  * @package Neo\Models\Traits
  *
- * @property Collection<Campaign> own_campaigns
- * @property Collection<Campaign> shared_campaigns
- * @property Collection<Campaign> group_campaigns
- * @property Collection<Campaign> children_campaigns
- * @property Collection<Campaign> campaigns
+ * @property Collection<Campaign>                               own_campaigns
+ * @property Collection<Campaign>                               shared_campaigns
+ * @property Collection<\Neo\Modules\Broadcast\Models\Campaign> group_campaigns
+ * @property Collection<Campaign>                               children_campaigns
+ * @property Collection<\Neo\Modules\Broadcast\Models\Campaign> campaigns
  */
 trait HasCampaigns {
 
@@ -102,11 +102,11 @@ trait HasCampaigns {
     */
 
     /**
-     * @param Campaign $campaign
+     * @param int $campaignId
      *
      * @return bool
      */
-    public function canAccessCampaign(Campaign $campaign): bool {
-        return $this->getCampaigns()->pluck('id')->contains($campaign->id);
+    public function canAccessCampaign(int $campaignId): bool {
+        return $this->getCampaigns()->pluck('id')->contains($campaignId);
     }
 }

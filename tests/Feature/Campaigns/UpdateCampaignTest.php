@@ -13,7 +13,7 @@ namespace Tests\Feature\Campaigns;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Tests\TestCase;
 
 class UpdateCampaignTest extends TestCase {

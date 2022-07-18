@@ -11,12 +11,11 @@
 namespace Neo\Console\Utils;
 
 use Illuminate\Console\Command;
-use Neo\Models\Campaign;
-use Neo\Models\Content;
-use Neo\Models\Format;
-use Neo\Models\FormatLayout;
-use Neo\Models\Frame;
+use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Creative;
+use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\FormatLayout;
 
 class MergeOTGResourcesIntoOneFormat extends Command {
     /**
@@ -43,12 +42,12 @@ class MergeOTGResourcesIntoOneFormat extends Command {
         // Our goal is to move all resources in the old format.s to the new one.
         $oldFormatsIds = $this->argument("from");
         $newFormatId   = $this->argument("to");
-        /** @var Format $newFormat */
+        /** @var \Neo\Modules\Broadcast\Models\Format $newFormat */
         $newFormat = Format::query()->find($newFormatId);
-        /** @var FormatLayout $newLayout */
+        /** @var \Neo\Modules\Broadcast\Models\FormatLayout $newLayout */
         $newLayout = $newFormat->layouts()->first();
 
-        /** @var Frame $newFrame */
+        /** @var \Neo\Modules\Broadcast\Models\Frame $newFrame */
         $newFrame = $newLayout->frames()->first();
 
         // First, move all contents and their creatives to the new format.
@@ -57,7 +56,7 @@ class MergeOTGResourcesIntoOneFormat extends Command {
 
         $this->info("Contents:" . $contents->count());
 
-        /** @var Content $content */
+        /** @var \Neo\Modules\Broadcast\Models\Content $content */
         foreach ($contents as $content) {
             /** @var Creative $creative */
             $content->layout_id = $newLayout->id;

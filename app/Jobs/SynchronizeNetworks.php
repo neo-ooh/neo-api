@@ -11,9 +11,8 @@
 namespace Neo\Jobs;
 
 use Illuminate\Console\Command;
-use Neo\Models\Network;
+use Neo\Modules\Broadcast\Models\Network;
 use Neo\Services\Broadcast\Broadcast;
-use Queue;
 
 class SynchronizeNetworks extends Command {
     /**

@@ -21,6 +21,7 @@ use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 use Neo\Models\Traits\HasLoopConfigurations;
+use Neo\Modules\Broadcast\Models\Location;
 
 /**
  * @property int                           $id

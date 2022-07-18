@@ -15,7 +15,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Neo\Models\Actor;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 
 class EndOfScheduleNotificationEmail extends Mailable
 {
@@ -27,8 +27,8 @@ class EndOfScheduleNotificationEmail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param Actor    $actor
-     * @param Schedule $schedule
+     * @param Actor                                  $actor
+     * @param \Neo\Modules\Broadcast\Models\Schedule $schedule
      */
     public function __construct(Actor $actor, Schedule $schedule)
     {

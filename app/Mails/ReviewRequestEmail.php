@@ -14,7 +14,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Neo\Models\Actor;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 
 class ReviewRequestEmail extends ReliableEmail {
     use Queueable, SerializesModels;

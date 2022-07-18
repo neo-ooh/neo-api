@@ -18,4 +18,7 @@ enum ExternalResourceType: string {
 
     // BroadSign Specific
     case Bundle = "bundle";
+
+    // Others
+    case Tag = "tag";
 }

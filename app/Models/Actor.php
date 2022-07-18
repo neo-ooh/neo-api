@@ -34,6 +34,8 @@ use Neo\Models\Traits\HasHierarchy;
 use Neo\Models\Traits\HasLocations;
 use Neo\Models\Traits\HasRoles;
 use Neo\Models\Traits\WithRelationCaching;
+use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Library;
 use Neo\Rules\AccessibleActor;
 
 /**

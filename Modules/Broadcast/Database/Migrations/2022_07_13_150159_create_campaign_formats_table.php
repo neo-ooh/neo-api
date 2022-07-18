@@ -13,8 +13,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up() {
-        Schema::create('campaign_formats', function (Blueprint $table) {
+    public function up(): void {
+        Schema::create('campaign_formats', static function (Blueprint $table) {
             $table->foreignId("campaign_id")->constrained("campaigns", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId("format_id")->constrained("formats", "id")->cascadeOnUpdate()->restrictOnDelete();
 

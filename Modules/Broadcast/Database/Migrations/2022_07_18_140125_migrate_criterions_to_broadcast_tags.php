@@ -157,7 +157,7 @@ return new class extends Migration {
 
             foreach ($frames as $frame) {
                 DB::table("frame_broadcast_tags")->insert([
-                    "frame_id"         => $frame->id,
+                    "frame_id"         => $frame->frame_id,
                     "broadcast_tag_id" => $broadcastResource->getKey(),
                 ]);
             }

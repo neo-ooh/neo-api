@@ -32,6 +32,7 @@ return new class extends Migration {
         $progress = new ProgressBar($output);
         $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
         $progress->setMessage("");
+        $progress->start($creatives->count());
 
         foreach ($creatives as $creative) {
             $progress->setMessage("Handling Creative #$creative->id");

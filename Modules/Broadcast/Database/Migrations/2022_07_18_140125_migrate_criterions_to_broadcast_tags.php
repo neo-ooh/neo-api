@@ -18,14 +18,6 @@ use Neo\Modules\Broadcast\Models\ExternalResource;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-function getProgressBar(ConsoleOutput $output) {
-    $progress = new ProgressBar($output);
-    $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
-    $progress->setMessage("");
-
-    return $progress;
-}
-
 return new class extends Migration {
     public function up() {
         $output = new ConsoleOutput();
@@ -39,7 +31,7 @@ return new class extends Migration {
         $triggers = DB::table("broadsign_triggers")->get();
 
         $output->writeln("Handling triggers");
-        $progress = getProgressBar($output);
+        $progress = $this->getProgressBar($output);
         $progress->start($triggers->count());
 
         foreach ($triggers as $trigger) {
@@ -85,7 +77,7 @@ return new class extends Migration {
         $separations = DB::table("broadsign_separations")->get();
 
         $output->writeln("Handling separations");
-        $progress = getProgressBar($output);
+        $progress = $this->getProgressBar($output);
         $progress->start($separations->count());
 
         foreach ($separations as $separation) {
@@ -131,7 +123,7 @@ return new class extends Migration {
         $criteria = DB::table("broadsign_criteria")->get();
 
         $output->writeln("Handling criteria");
-        $progress = getProgressBar($output);
+        $progress = $this->getProgressBar($output);
         $progress->start($separations->count());
 
         foreach ($criteria as $criterion) {
@@ -172,5 +164,13 @@ return new class extends Migration {
         }
 
         $progress->finish();
+    }
+
+    protected function getProgressBar(ConsoleOutput $output) {
+        $progress = new ProgressBar($output);
+        $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
+        $progress->setMessage("");
+
+        return $progress;
     }
 };

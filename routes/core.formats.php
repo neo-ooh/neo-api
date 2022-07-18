@@ -13,12 +13,13 @@ use Neo\Http\Controllers\FormatsController;
 use Neo\Http\Controllers\FormatsDisplayTypesController;
 use Neo\Http\Controllers\FormatsLayoutsController;
 use Neo\Http\Controllers\FramesController;
-use Neo\Models\Format;
-use Neo\Models\FormatLayout;
-use Neo\Models\Frame;
+use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\FormatLayout;
+use Neo\Modules\Broadcast\Models\Frame;
+
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
+    "prefix"     => "v1"
 ], function () {
 
     /*
@@ -29,10 +30,10 @@ Route::group([
 
     Route::model("format", Format::class);
 
-    Route:: get("formats"         , FormatsController::class . "@index" );
-    Route:: get("formats/_query"  , FormatsController::class . "@query" );
-    Route::post("formats"         , FormatsController::class . "@store" );
-    Route:: get("formats/{format}", FormatsController::class . "@show"  );
+    Route:: get("formats", FormatsController::class . "@index");
+    Route:: get("formats/_query", FormatsController::class . "@query");
+    Route::post("formats", FormatsController::class . "@store");
+    Route:: get("formats/{format}", FormatsController::class . "@show");
     Route:: put("formats/{format}", FormatsController::class . "@update");
 
 
@@ -53,7 +54,7 @@ Route::group([
 
     Route::model("layout", FormatLayout::class);
 
-    Route::  post("layouts"         , FormatsLayoutsController::class . "@store");
+    Route::  post("layouts", FormatsLayoutsController::class . "@store");
     Route::   put("layouts/{layout}", FormatsLayoutsController::class . "@update");
     Route::delete("layouts/{layout}", FormatsLayoutsController::class . "@destroy");
 

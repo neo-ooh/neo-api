@@ -13,7 +13,7 @@ namespace Neo\Models\Factories;
 /** @var Factory $factory */
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Library;
 
 class LibraryFactory extends Factory {
     protected $model = Library::class;

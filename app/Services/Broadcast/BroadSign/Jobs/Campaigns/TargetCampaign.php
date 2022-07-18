@@ -11,14 +11,13 @@
 namespace Neo\Services\Broadcast\BroadSign\Jobs\Campaigns;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Neo\Models\BroadSignCriteria;
-use Neo\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Campaign as BSCampaign;
@@ -75,7 +74,12 @@ class TargetCampaign extends BroadSignJob implements ShouldBeUniqueUntilProcessi
         $bsCampaign = BSCampaign::get($this->getAPIClient(), $campaign->external_id);
 
         // List the frames targeted by the campaign
-        $targetedFrames    = $campaign->targeted_frames;
+        $targetedFrames    = $campaign->format
+            ->layouts
+            ->pluck("frames")
+            ->flatten()
+            ->unique("id")
+            ->values();
         $requestedCriteria = $targetedFrames->pluck("settings_broadsign")->pluck("criteria")->unique("id")->values();
 
         // Make sure the campaign has the proper criteria applied to it

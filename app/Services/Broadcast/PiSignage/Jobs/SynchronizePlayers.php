@@ -16,8 +16,8 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Location;
-use Neo\Models\Player;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\Player;
 use Neo\Services\Broadcast\PiSignage\Models\Player as PiSignagePlayer;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -54,7 +54,7 @@ class SynchronizePlayers extends PiSignageJob implements ShouldBeUnique {
             (new ConsoleOutput())->writeLn("$distPlayer->name...\n\n");
 
             // Get the location associated with the player
-            /** @var Location $location */
+            /** @var \Neo\Modules\Broadcast\Models\Location $location */
             $location = Location::query()->where("network_id", "=", $this->config->networkID)
                                 ->where("external_id", "=", $distPlayer->group['_id'])
                                 ->first();

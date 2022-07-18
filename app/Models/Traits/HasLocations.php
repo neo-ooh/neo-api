@@ -12,32 +12,33 @@ namespace Neo\Models\Traits;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Neo\Models\Location;
+use Neo\Modules\Broadcast\Models\Location;
 
 /**
  * Trait HasCampaigns
  *
  * @package NeoModels\Traits
  *
- * @property Collection<Location> own_locations
- * @property Collection<Location> group_locations
- * @property Collection<Location> locations
+ * @property Collection<\Neo\Modules\Broadcast\Models\Location> own_locations
+ * @property Collection<\Neo\Modules\Broadcast\Models\Location> group_locations
+ * @property Collection<\Neo\Modules\Broadcast\Models\Location> locations
  */
 trait HasLocations {
     public function getLocations($own = true, $group = true, $children = true, $recurs = false): Collection {
         $locations = new Collection();
 
-        if($group && !$this->is_group && $this->details->parent_is_group) {
+        if ($group && !$this->is_group && $this->details->parent_is_group) {
             $locations = $locations->merge($this->parent->getLocations(true, false, true));
-        } else if($own) {
+        } else if ($own) {
             $locations = $locations->merge($this->own_locations);
         }
 
-        if($children && !$recurs) {
-            $locations = $locations->merge($this->direct_children->map(fn($child) => $child->getLocations(true, false, $children && $recurs, $recurs))->flatten());
+        if ($children && !$recurs) {
+            $locations = $locations->merge($this->direct_children->map(fn($child) => $child->getLocations(true, false, $children && $recurs, $recurs))
+                                                                 ->flatten());
         }
 
-        if($children && $recurs) {
+        if ($children && $recurs) {
             $allChildren = $this->children;
             $allChildren->load("own_locations");
             $locations = $locations->merge($allChildren->pluck("own_locations")->flatten());
@@ -55,7 +56,7 @@ trait HasLocations {
      *
      * @return BelongsToMany
      */
-    public function own_locations (): BelongsToMany {
+    public function own_locations(): BelongsToMany {
         return $this->belongsToMany(Location::class, "actors_locations", "actor_id", "location_id");
     }
 
@@ -63,9 +64,9 @@ trait HasLocations {
      * List all the locations of the parent group for this entity. If this entity's parent is not a group, returns an
      * empty collection
      *
-     * @return Collection<Location>
+     * @return Collection<\Neo\Modules\Broadcast\Models\Location>
      */
-    public function getGroupLocationsAttribute (): Collection {
+    public function getGroupLocationsAttribute(): Collection {
         if ($this->is_group || !$this->details->parent_is_group) {
             return new Collection();
         }
@@ -79,7 +80,7 @@ trait HasLocations {
     |--------------------------------------------------------------------------
     */
 
-    public function canAccessLocation (Location $location): bool {
+    public function canAccessLocation(Location $location): bool {
         return $this->getLocations()->contains("id", "=", $location->id);
     }
 }

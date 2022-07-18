@@ -11,7 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign;
 
 use Illuminate\Support\Collection;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Services\Broadcast\BroadcastService;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\CreateBroadSignCampaign;
@@ -138,7 +138,8 @@ class BroadSignServiceAdapter implements BroadcastService {
      * @inheritDoc
      */
     public function destroyCampaign(int $campaignId) {
-        DisableBroadSignCampaign::dispatch($this->config, (int)\Neo\Models\Campaign::query()->find($campaignId)->external_id);
+        DisableBroadSignCampaign::dispatch($this->config, (int)\Neo\Modules\Broadcast\Models\Campaign::query()
+                                                                                                     ->find($campaignId)->external_id);
     }
 
     /**

@@ -11,8 +11,8 @@
 namespace Neo\Console\Commands\Hotfixes;
 
 use Illuminate\Console\Command;
-use Neo\Models\CreativeExternalId;
 use Neo\Modules\Broadcast\Models\Creative;
+use Neo\Modules\Broadcast\Models\CreativeExternalId;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;

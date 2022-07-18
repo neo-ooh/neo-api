@@ -12,7 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\FormatsDisplayTypes\SyncFormatDisplayTypesRequest;
-use Neo\Models\Format;
+use Neo\Modules\Broadcast\Models\Format;
 
 class FormatsDisplayTypesController extends Controller {
     public function sync(SyncFormatDisplayTypesRequest $request, Format $format) {

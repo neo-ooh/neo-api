@@ -18,10 +18,10 @@ use Neo\Enums\Capability;
 use Neo\Http\Requests\ActorsLocations\ListActorLocationsRequest;
 use Neo\Http\Requests\ActorsLocations\SyncActorLocationsRequest;
 use Neo\Models\Actor;
-use Neo\Models\Location;
+use Neo\Modules\Broadcast\Models\Location;
 
 class ActorsLocationsController extends Controller {
-    public function index (ListActorLocationsRequest $request, Actor $actor): Response {
+    public function index(ListActorLocationsRequest $request, Actor $actor): Response {
         if ($actor->is(Auth::user()) && Auth::user()->hasCapability(Capability::locations_edit())) {
             return new Response(Location::all());
         }
@@ -29,7 +29,7 @@ class ActorsLocationsController extends Controller {
         return new Response($actor->getLocations(true, true, true));
     }
 
-    public function sync (SyncActorLocationsRequest $request, Actor $actor): Response {
+    public function sync(SyncActorLocationsRequest $request, Actor $actor): Response {
         $locations = $request->validated()['locations'];
 
         // All good, add the capabilities

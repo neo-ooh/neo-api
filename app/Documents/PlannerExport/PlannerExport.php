@@ -17,7 +17,7 @@ use JetBrains\PhpStorm\ArrayShape;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
-use Neo\Models\Network;
+use Neo\Modules\Broadcast\Models\Network;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;

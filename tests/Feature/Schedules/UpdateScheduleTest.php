@@ -14,29 +14,29 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Date;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Models\Campaign;
-use Neo\Models\Content;
-use Neo\Models\Library;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Content;
+use Neo\Modules\Broadcast\Models\Library;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Tests\TestCase;
 
 class UpdateScheduleTest extends TestCase {
     use DatabaseTransactions;
 
-    protected Actor     $actor;
-    protected Library  $library;
-    protected Content  $content;
+    protected Actor $actor;
+    protected Library $library;
+    protected Content $content;
     protected Campaign $campaign;
     protected Schedule $schedule;
 
-    public function setUp (): void {
+    public function setUp(): void {
         parent::setUp();
 
-        $this->actor = Actor::factory()->create();
-        $this->library = Library::factory()->create([ "owner_id" => $this->actor->id ]);
-        $this->content = Content::factory()->create([ "owner_id"   => $this->actor->id,
-                                                      "library_id" => $this->library->id ]);
-        $this->campaign = Campaign::factory()->create([ "owner_id" => $this->actor->id ]);
+        $this->actor    = Actor::factory()->create();
+        $this->library  = Library::factory()->create(["owner_id" => $this->actor->id]);
+        $this->content  = Content::factory()->create(["owner_id"   => $this->actor->id,
+                                                      "library_id" => $this->library->id]);
+        $this->campaign = Campaign::factory()->create(["owner_id" => $this->actor->id]);
         $this->schedule = Schedule::query()->create([
             "owner_id"    => $this->actor->id,
             "campaign_id" => $this->campaign->id,
@@ -50,8 +50,7 @@ class UpdateScheduleTest extends TestCase {
     /**
      * Assert guests cannot call this route
      */
-    public function testGuestsAreForbidden (): void
-    {
+    public function testGuestsAreForbidden(): void {
         $response = $this->json("PUT", "/v1/schedules/" . $this->schedule->id);
         $response->assertUnauthorized();
     }
@@ -59,8 +58,7 @@ class UpdateScheduleTest extends TestCase {
     /**
      * Assert only users with the proper capability can call this route
      */
-    public function testOnlyActorsWithProperCapabilityCanCallThisRoute (): void
-    {
+    public function testOnlyActorsWithProperCapabilityCanCallThisRoute(): void {
         $this->actingAs($this->actor);
         $response = $this->json("PUT", "/v1/schedules/" . $this->schedule->id);
         $response->assertForbidden();
@@ -73,8 +71,7 @@ class UpdateScheduleTest extends TestCase {
     /**
      * Assert correct response on correct request
      */
-    public function testCorrectResponseOnCorrectRequest (): void
-    {
+    public function testCorrectResponseOnCorrectRequest(): void {
         $this->actor->addCapability(Capability::contents_schedule());
         $this->actingAs($this->actor);
         $response = $this->json("PUT",

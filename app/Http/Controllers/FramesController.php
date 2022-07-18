@@ -11,15 +11,13 @@
 namespace Neo\Http\Controllers;
 
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Frames\DestroyFrameRequest;
 use Neo\Http\Requests\Frames\StoreFrameRequest;
 use Neo\Http\Requests\Frames\UpdateFrameRequest;
-use Neo\Models\Frame;
-use Neo\Models\FrameSettingsBroadSign;
-use Neo\Models\FrameSettingsPiSignage;
-use Neo\Services\Broadcast\Broadcaster;
+use Neo\Modules\Broadcast\Models\Frame;
+use Neo\Modules\Broadcast\Models\FrameSettingsBroadSign;
+use Neo\Modules\Broadcast\Models\FrameSettingsPiSignage;
 
 class FramesController extends Controller {
     /**

@@ -36,9 +36,9 @@ use Neo\Jobs\PullPropertyAddressFromBroadSignJob;
 use Neo\Models\Actor;
 use Neo\Models\Address;
 use Neo\Models\City;
-use Neo\Models\Network;
 use Neo\Models\Property;
 use Neo\Models\Province;
+use Neo\Modules\Broadcast\Models\Network;
 
 class PropertiesController extends Controller {
     public function index(ListPropertiesRequest $request) {

@@ -13,7 +13,7 @@ namespace Neo\Http\Requests\Contents;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Rules\AccessibleLibrary;
+use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
 
 class UpdateContentRequest extends FormRequest {
     /**

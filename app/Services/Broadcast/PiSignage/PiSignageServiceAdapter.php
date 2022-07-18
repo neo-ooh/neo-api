@@ -10,7 +10,7 @@
 
 namespace Neo\Services\Broadcast\PiSignage;
 
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Services\Broadcast\BroadcastService;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\CreateCampaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\DestroyCampaign;

@@ -12,7 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\LocationsPlayers\ListLocationPlayersRequest;
-use Neo\Models\Location;
+use Neo\Modules\Broadcast\Models\Location;
 
 class LocationsPlayersController {
     public function index(ListLocationPlayersRequest $request, Location $location) {

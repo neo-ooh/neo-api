@@ -14,7 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Rules\AccessibleContent;
+use Neo\Modules\Broadcast\Rules\AccessibleContent;
 
 class StoreScheduleRequest extends FormRequest {
     /**
@@ -22,8 +22,8 @@ class StoreScheduleRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        $allowed = Gate::allows(Capability::contents_schedule);
+    public function authorize(): bool {
+        $allowed  = Gate::allows(Capability::contents_schedule);
         $campaign = Auth::user()->canAccessCampaign($this->route("campaign"));
         return $allowed && $campaign;
     }
@@ -33,12 +33,12 @@ class StoreScheduleRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "content_id"      => [ "required", "integer", new AccessibleContent ],
-            "schedule_start"  => [ "required", "date" ],
-            "schedule_end"    => [ "required", "date" ],
-            "send_for_review" => [ "required", "boolean" ],
+            "content_id"      => ["required", "integer", new AccessibleContent()],
+            "schedule_start"  => ["required", "date"],
+            "schedule_end"    => ["required", "date"],
+            "send_for_review" => ["required", "boolean"],
         ];
     }
 }

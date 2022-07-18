@@ -12,17 +12,16 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Date;
-use Neo\Models\Campaign;
-use Neo\Models\Player;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Player;
+use Neo\Modules\Broadcast\Models\Schedule;
 
-class StatsController extends Controller
-{
+class StatsController extends Controller {
     public function index() {
         $stats = [
             "campaigns" => [],
             "schedules" => [],
-            "players" => [],
+            "players"   => [],
         ];
 
         // Active Campaigns

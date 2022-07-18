@@ -24,9 +24,9 @@ use Neo\Http\Requests\Locations\SearchLocationsRequest;
 use Neo\Http\Requests\Locations\ShowLocationRequest;
 use Neo\Http\Requests\Locations\UpdateLocationRequest;
 use Neo\Models\Actor;
-use Neo\Models\Format;
-use Neo\Models\Location;
-use Neo\Models\Player;
+use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\Player;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
@@ -106,8 +106,8 @@ class LocationsController extends Controller {
     }
 
     /**
-     * @param ShowLocationRequest $request
-     * @param Location            $location
+     * @param ShowLocationRequest                    $request
+     * @param \Neo\Modules\Broadcast\Models\Location $location
      * @return Response
      */
     public function show(ShowLocationRequest $request, Location $location): Response {
@@ -171,7 +171,7 @@ class LocationsController extends Controller {
         $state = $request->input("state");
 
         // Send the updated screen state to each location
-        /** @var Player $player */
+        /** @var \Neo\Modules\Broadcast\Models\Player $player */
         foreach ($location->players as $player) {
             $broadcaster->setScreenState($player->external_id, $state);
         }
@@ -186,7 +186,7 @@ class LocationsController extends Controller {
 
         $client = new BroadsignClient($config);
 
-        /** @var Player $player */
+        /** @var \Neo\Modules\Broadcast\Models\Player $player */
         foreach ($location->players as $player) {
             (new \Neo\Services\Broadcast\BroadSign\Models\Player($client, ["id" => $player->external_id]))->forceUpdatePlaylist();
         }

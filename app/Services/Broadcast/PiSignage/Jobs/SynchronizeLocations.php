@@ -13,15 +13,11 @@ namespace Neo\Services\Broadcast\PiSignage\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
-use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\DisplayType;
-use Neo\Models\Location;
-use Neo\Services\Broadcast\BroadSign\Models\Container;
-use Neo\Services\Broadcast\BroadSign\Models\Format;
-use Neo\Services\Broadcast\BroadSign\Models\Location as BSLocation;
+use Neo\Modules\Broadcast\Models\DisplayType;
+use Neo\Modules\Broadcast\Models\Location;
 use Neo\Services\Broadcast\PiSignage\Models\Group;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -48,16 +44,16 @@ class SynchronizeLocations extends PiSignageJob implements ShouldBeUnique {
 
         $displayType = DisplayType::query()->firstOrCreate([
             "connection_id" => $this->config->connectionID,
-            "external_id" => 0
+            "external_id"   => 0
         ], [
-            "name" => "default",
+            "name"          => "default",
             "internal_name" => "default",
         ]);
 
         // Now, all we need is to map all groups on the PiSignage server to locations on Connect
         $groups = Group::all($this->getAPIClient());
 
-        if($groups->count() === 0) {
+        if ($groups->count() === 0) {
             return;
         }
 
@@ -68,16 +64,16 @@ class SynchronizeLocations extends PiSignageJob implements ShouldBeUnique {
         foreach ($groups as $group) {
             /** @var Location $location */
             $location = Location::query()->firstOrCreate([
-                "network_id" => $this->config->networkID,
+                "network_id"  => $this->config->networkID,
                 "external_id" => $group->_id,
             ], [
                 "name"          => $group->name,
                 "internal_name" => $group->name,
-                "province"        => "-",
-                "city"        => "-",
+                "province"      => "-",
+                "city"          => "-",
             ]);
 
-            $location->internal_name = $group->name;
+            $location->internal_name   = $group->name;
             $location->display_type_id = $displayType->id;
             $location->save();
 

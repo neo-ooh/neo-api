@@ -15,9 +15,8 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\DisplayTypes\ListDisplayTypesPerNetworkRequest;
 use Neo\Http\Requests\DisplayTypes\ListDisplayTypesRequest;
 use Neo\Http\Requests\DisplayTypes\UpdateDisplayTypeRequest;
-use Neo\Models\DisplayType;
-use Neo\Models\Location;
-use Neo\Models\Network;
+use Neo\Modules\Broadcast\Models\DisplayType;
+use Neo\Modules\Broadcast\Models\Network;
 
 class DisplayTypesController extends Controller {
     public function index(ListDisplayTypesRequest $request) {

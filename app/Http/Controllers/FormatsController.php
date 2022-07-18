@@ -18,8 +18,8 @@ use Neo\Http\Requests\Formats\ShowFormatRequest;
 use Neo\Http\Requests\Formats\StoreFormatRequest;
 use Neo\Http\Requests\Formats\UpdateFormatRequest;
 use Neo\Models\Actor;
-use Neo\Models\Format;
-use Neo\Models\Network;
+use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\Network;
 
 class FormatsController extends Controller {
     /**
@@ -95,8 +95,8 @@ class FormatsController extends Controller {
     }
 
     /**
-     * @param ShowFormatRequest $request
-     * @param Format            $format
+     * @param ShowFormatRequest                    $request
+     * @param \Neo\Modules\Broadcast\Models\Format $format
      *
      * @return Response
      * @noinspection PhpUnusedParameterInspection
@@ -106,8 +106,8 @@ class FormatsController extends Controller {
     }
 
     /**
-     * @param UpdateFormatRequest $request
-     * @param Format              $format
+     * @param UpdateFormatRequest                  $request
+     * @param \Neo\Modules\Broadcast\Models\Format $format
      *
      * @return Response
      */

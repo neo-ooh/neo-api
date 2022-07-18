@@ -16,7 +16,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration {
-    public function up() {
+    public function up(): void {
         // For each campaign, we insert its external ID in the `external_resources` table
         $campaigns = \Illuminate\Support\Facades\DB::table("campaigns")->orderBy("id")->lazy(500);
 
@@ -49,9 +49,10 @@ return new class extends Migration {
             ExternalResource::query()->create([
                 "resource_id"    => $campaign->id,
                 "broadcaster_id" => $broadcaster->id,
+                "type"           => ExternalResourceType::Campaign,
                 "data"           => [
-                    "type"        => ExternalResourceType::Campaign,
                     "network_id"  => $campaign->network_id,
+                    "formats_id"  => [$campaign->format_id],
                     "external_id" => $campaign->external_id
                 ]
             ]);

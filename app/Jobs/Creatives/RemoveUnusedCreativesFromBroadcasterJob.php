@@ -17,8 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\CreativeExternalId;
 use Neo\Modules\Broadcast\Models\Creative;
+use Neo\Modules\Broadcast\Models\CreativeExternalId;
 use Neo\Services\Broadcast\Broadcast;
 
 class RemoveUnusedCreativesFromBroadcasterJob implements ShouldQueue {
@@ -37,7 +37,7 @@ class RemoveUnusedCreativesFromBroadcasterJob implements ShouldQueue {
 
         /** @var Creative $creative */
         foreach ($creatives as $creative) {
-            /** @var CreativeExternalId $external_id */
+            /** @var \Neo\Modules\Broadcast\Models\CreativeExternalId $external_id */
             foreach ($creative->external_ids as $external_id) {
                 Broadcast::network($external_id->network_id)->destroyCreative($external_id);
                 $external_id->delete();

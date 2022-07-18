@@ -12,7 +12,7 @@ namespace Neo\Console\Commands\Hotfixes;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 
 class ReuploadManyCreativesCommand extends Command {
     protected $signature = 'hotfix:2021-12-03';

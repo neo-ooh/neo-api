@@ -15,7 +15,7 @@ use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Schedule as BSSchedule;
@@ -61,7 +61,7 @@ class UpdateBroadSignSchedule extends BroadSignJob implements ShouldBeUniqueUnti
      * @return void
      */
     public function handle(): void {
-        /** @var Schedule $schedule */
+        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 
         if (!$schedule) {

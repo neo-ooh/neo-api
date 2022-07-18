@@ -16,7 +16,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
 use Neo\Services\Broadcast\PiSignage\Models\Group;
 use Neo\Services\Broadcast\PiSignage\Models\Playlist;
@@ -78,7 +78,6 @@ class TargetCampaign extends PiSignageJob implements ShouldBeUnique {
 
         // Assigned the playlist to all desired locations and remove it from other
         $groups = Group::all($this->getAPIClient());
-
 
         /** @var Group $group */
         foreach ($groups as $group) {

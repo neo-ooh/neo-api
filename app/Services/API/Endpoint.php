@@ -49,7 +49,7 @@ class Endpoint {
      * @var array Options to pass along when querying the endpoint, a defined by GuzzleHTTP
      */
     public array $options = [
-        "verify" => false,
+        "verify"      => false,
         "http_errors" => false
     ];
 

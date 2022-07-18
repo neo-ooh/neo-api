@@ -13,8 +13,8 @@ namespace Neo\Http\Requests\Contents;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
 use Neo\Rules\AccessibleActor;
-use Neo\Rules\AccessibleLibrary;
 
 class StoreContentRequest extends FormRequest {
     /**
@@ -22,7 +22,7 @@ class StoreContentRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         return Gate::allows(Capability::contents_edit);
     }
 
@@ -31,7 +31,7 @@ class StoreContentRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
             "owner_id"   => ["required", "integer", new AccessibleActor()],
             "library_id" => ["required", "integer", new AccessibleLibrary()],

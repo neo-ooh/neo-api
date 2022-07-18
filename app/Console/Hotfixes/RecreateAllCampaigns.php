@@ -16,8 +16,8 @@ use Neo\BroadSign\Jobs\Campaigns\DisableBroadSignCampaign;
 use Neo\BroadSign\Jobs\Schedules\CreateBroadSignSchedule;
 use Neo\BroadSign\Jobs\Schedules\DisableBroadSignSchedule;
 use Neo\BroadSign\Jobs\Schedules\UpdateBroadSignScheduleStatus;
-use Neo\Models\Campaign;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -55,7 +55,7 @@ class RecreateAllCampaigns extends Command {
             $progressBar->setMessage("$campaign->name (#$campaign->id) Removing Schedules...");
 
             // Start by disabling all the campaigns schedules in BroadSign
-            /** @var Schedule $schedule */
+            /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
             foreach ($campaign->schedules as $schedule) {
                 if ($schedule->broadsign_schedule_id === null) {
                     continue;

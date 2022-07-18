@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Odoo\Property as OdooProperty;
+use Neo\Modules\Broadcast\Models\Network;
 use Neo\Rules\AccessibleProperty;
 
 /**

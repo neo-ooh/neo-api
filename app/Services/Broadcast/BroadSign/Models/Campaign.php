@@ -11,6 +11,7 @@
 namespace Neo\Services\Broadcast\BroadSign\Models;
 
 use Illuminate\Support\Collection;
+use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
@@ -22,48 +23,48 @@ use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
  *
  * @package Neo\BroadSign\Models
  *
- * @property bool   active
- * @property bool   auto_synchronize_bundles
- * @property int    bmb_host_id
- * @property int    booking_state
- * @property string booking_state_calculated_on
- * @property int    container_id
- * @property string creation_tm
- * @property int    creation_user_id
- * @property int    day_of_week_mask
- * @property string default_attributes
- * @property int    default_bundle_weight
- * @property int    default_category_id
- * @property bool   default_fullscreen
- * @property int    default_interactivity_timeout
- * @property string default_interactivity_trigger_id
- * @property int    default_schedule_id
- * @property int    default_secondary_sep_category_ids
- * @property int    default_segment_category_id
- * @property int    default_trigger_category_id
- * @property int    domain_id
- * @property int    duration_msec
- * @property string end_date
- * @property string end_time
- * @property int    estimated_reps
- * @property int    goal_amount
- * @property string goal_reached_on_tm
- * @property int    goal_unit
- * @property bool   has_goal
- * @property int    id
- * @property int    media_package_id
- * @property int    name
- * @property int    pacing_period
- * @property int    pacing_target
- * @property int    parent_id ID of the customer owning this campaign
- * @property int    priority
- * @property int    promoter_user_id
- * @property string promotion_time
- * @property string reps_calculated_on
- * @property int    saturation
- * @property string start_date
- * @property string start_time
- * @property int    state
+ * @property bool   $active
+ * @property bool   $auto_synchronize_bundles
+ * @property int    $bmb_host_id
+ * @property int    $booking_state
+ * @property string $booking_state_calculated_on
+ * @property int    $container_id
+ * @property string $creation_tm
+ * @property int    $creation_user_id
+ * @property int    $day_of_week_mask
+ * @property string $default_attributes
+ * @property int    $default_bundle_weight
+ * @property int    $default_category_id
+ * @property bool   $default_fullscreen
+ * @property int    $default_interactivity_timeout
+ * @property string $default_interactivity_trigger_id
+ * @property int    $default_schedule_id
+ * @property int    $default_secondary_sep_category_ids
+ * @property int    $default_segment_category_id
+ * @property int    $default_trigger_category_id
+ * @property int    $domain_id
+ * @property int    $duration_msec
+ * @property string $end_date
+ * @property string $end_time
+ * @property int    $estimated_reps
+ * @property int    $goal_amount
+ * @property string $goal_reached_on_tm
+ * @property int    $goal_unit
+ * @property bool   $has_goal
+ * @property int    $id
+ * @property int    $media_package_id
+ * @property string $name
+ * @property int    $pacing_period
+ * @property int    $pacing_target
+ * @property int    $parent_id ID of the customer owning this campaign
+ * @property int    $priority
+ * @property int    $promoter_user_id
+ * @property string $promotion_time
+ * @property string $reps_calculated_on
+ * @property float  $saturation
+ * @property string $start_date
+ * @property string $start_time
+ * @property int    $state
  *
  * @method static Collection all(BroadsignClient $client)
  * @method static Campaign get(BroadsignClient $client, int $external_id)
@@ -125,12 +126,6 @@ class Campaign extends BroadSignModel {
             "update"              => Endpoint::put("/reservation/v21")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new ResourceIDParser()),
-            "rebook"              => Endpoint::post("/reservation/v21/rebook")
-                                             ->unwrap(static::$unwrapKey)
-                                             ->parser(new ResourceIDParser()),
-            "confirm_rebook"      => Endpoint::post("/reservation/v21/rebook_confirm")
-                                             ->unwrap(static::$unwrapKey)
-                                             ->parser(new ResourceIDParser()),
             "addSkinSlots"        => Endpoint::post("/reservation/v21/add_skin_slots")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new ResourceIDParser()),
@@ -162,7 +157,7 @@ class Campaign extends BroadSignModel {
         ]);
     }
 
-    public function addLocations(Collection $display_units_ids, Collection $frames): void {
+    public function addLocations(Collection $display_units_ids, Collection $criterions): void {
         $request = [
             "id"           => $this->id,
             "sub_elements" => [
@@ -170,8 +165,8 @@ class Campaign extends BroadSignModel {
             ],
         ];
 
-        if ($frames->count() > 0) {
-            $request["sub_elements"]["frame_or_criteria"] = $frames->map(fn($frame) => ["id" => $frame])->values()->toArray();
+        if ($criterions->count() > 0) {
+            $request["sub_elements"]["frame_or_criteria"] = $criterions->map(fn($frame) => ["id" => $frame])->values()->toArray();
         }
 
         $this->addSkinSlots($request);
@@ -207,31 +202,6 @@ class Campaign extends BroadSignModel {
     |--------------------------------------------------------------------------
     */
 
-
-    public function rebook(): void {
-        $rebookableProperties = [
-            "day_of_week_mask",
-            "domain_id",
-            "duration_msec",
-            "end_date",
-            "end_time",
-            "id",
-            "start_date",
-            "start_time",
-        ];
-
-        $properties = array_filter($this->attributes,
-            static fn($key) => in_array($key, $rebookableProperties, true),
-            ARRAY_FILTER_USE_KEY);
-
-        $transactionID = $this->callAction("rebook", $properties);
-        $this->id      = $this->callAction("confirm_rebook",
-            [
-                "id"                  => $this->id,
-                "slot_transaction_id" => $transactionID,
-            ]);
-    }
-
     public static function search(BroadsignClient $client, array $query) {
         $results = ResourceQuery::byName($client, $query["name"], "reservation");
 
@@ -244,5 +214,21 @@ class Campaign extends BroadSignModel {
 
     public static function inContainer(BroadsignClient $client, int $containerId) {
         return static::by_container($client, ["container_id" => $containerId]);
+    }
+
+    /**
+     * @throws \Spatie\DataTransferObject\Exceptions\UnknownProperties
+     */
+    public function toResource(): CampaignResource {
+        return new CampaignResource([
+            "name"                         => $this->name,
+            "start_date"                   => $this->start_date,
+            "start_time"                   => $this->start_time,
+            "end_date"                     => $this->end_date,
+            "broadcast_days"               => $this->day_of_week_mask,
+            "priority"                     => $this->priority,
+            "occurrences_id_loop"          => $this->saturation,
+            "default_schedule_length_msec" => $this->duration_msec,
+        ]);
     }
 }

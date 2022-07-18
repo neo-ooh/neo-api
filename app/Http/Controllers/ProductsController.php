@@ -14,8 +14,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Products\ImportMappingsRequest;
 use Neo\Http\Requests\Products\ShowProductRequest;
-use Neo\Models\Location;
 use Neo\Models\Product;
+use Neo\Modules\Broadcast\Models\Location;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 class ProductsController {

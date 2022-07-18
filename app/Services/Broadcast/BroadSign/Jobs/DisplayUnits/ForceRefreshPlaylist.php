@@ -16,8 +16,8 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Location;
-use Neo\Models\Player;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\Player;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
@@ -43,7 +43,7 @@ class ForceRefreshPlaylist extends BroadSignJob implements ShouldBeUnique {
     public function handle(): void {
         $location = Location::query()->with("players")->find($this->propertyId);
 
-        /** @var Player $player */
+        /** @var \Neo\Modules\Broadcast\Models\Player $player */
         foreach ($location->players as $player) {
             $bsPlayer = new BSPlayer($this->getAPIClient(), ["id" => $player->id]);
             $bsPlayer->forceUpdatePlaylist();

@@ -40,9 +40,13 @@ abstract class APIModel implements JsonSerializable, Arrayable {
         $this->attributes = $attributes;
     }
 
+    /**
+     * @return void
+     * @throws ClientException
+     */
     public function create(): void {
-        $this->id    = $this->callAction("create", $this->attributes);
-        $this->dirty = false;
+        $this->{static::$key} = $this->callAction("create", $this->attributes);
+        $this->dirty          = false;
     }
 
     /**
@@ -52,7 +56,7 @@ abstract class APIModel implements JsonSerializable, Arrayable {
      * @return array|mixed
      * @throws ClientException
      */
-    public function callAction(string $action, $payload = [], $headers = []) {
+    public function callAction(string $action, array $payload = [], array $headers = []): mixed {
         if (!array_key_exists($action, static::actions())) {
             $className = static::class;
             throw new BadMethodCallException("Static method $action does not exist on model $className.");

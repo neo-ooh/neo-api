@@ -16,7 +16,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Schedule;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Services\Broadcast\Broadcast;
 
 /**

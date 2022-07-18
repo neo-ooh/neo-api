@@ -17,8 +17,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
-use Neo\Models\Location;
+use Neo\Modules\Broadcast\Models\Location;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
 use Neo\Services\Broadcast\PiSignage\Models\Group;
 use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
@@ -50,17 +49,17 @@ class UpdateGroup extends PiSignageJob implements ShouldBeUnique {
 
         if ($location->scheduled_sleep) {
             $group->sleep = [
-                "enable"  => true,
-                "ontime"  => $location->sleep_end->toTimeString('minute'),
-                "offtime" => $location->sleep_start->toTimeString('minute'),
+                "enable"     => true,
+                "ontime"     => $location->sleep_end->toTimeString('minute'),
+                "offtime"    => $location->sleep_start->toTimeString('minute'),
                 "ontimeObj"  => $location->sleep_end->shiftTimezone(new DateTimeZone("America/Toronto"))->toISOString(true),
-                "offtimeObj"  => $location->sleep_start->shiftTimezone(new DateTimeZone("America/Toronto"))->toISOString(true),
+                "offtimeObj" => $location->sleep_start->shiftTimezone(new DateTimeZone("America/Toronto"))->toISOString(true),
             ];
         } else {
             $group->sleep = ["enable" => false];
         }
 
-        $group->deploy                   = true;
+        $group->deploy = true;
         $group->save();
     }
 }

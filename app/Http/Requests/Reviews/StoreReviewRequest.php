@@ -14,6 +14,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\User;
+use Neo\Modules\Broadcast\Models\Schedule;
 
 class StoreReviewRequest extends FormRequest {
     /**
@@ -21,9 +23,26 @@ class StoreReviewRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        $gate = Gate::allows(Capability::contents_review);
-        $access = Auth::user()->canAccessCampaign($this->route("schedule")->campaign);
+    public function authorize(): bool {
+        $gate  = Gate::allows(Capability::contents_review);
+        $route = $this->route();
+
+        if (!$route) {
+            return false;
+        }
+
+
+        /** @var Schedule|null $schedule */
+        $schedule = $route->parameter("schedule");
+
+        /** @var User|null $user */
+        $user = Auth::user();
+
+        if (!$user || !$schedule) {
+            return false;
+        }
+
+        $access = $user->canAccessCampaign($schedule->campaign_id);
         return $gate && $access;
     }
 
@@ -32,10 +51,10 @@ class StoreReviewRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "approved" => [ "required", "boolean" ],
-            "message"  => [ "nullable", "string" ],
+            "approved" => ["required", "boolean"],
+            "message"  => ["nullable", "string"],
         ];
     }
 }

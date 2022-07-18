@@ -13,7 +13,7 @@ namespace Neo\Console\Hotfixes;
 use Illuminate\Console\Command;
 use Neo\BroadSign\Jobs\Campaigns\TargetCampaign;
 use Neo\BroadSign\Models\Location;
-use Neo\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 

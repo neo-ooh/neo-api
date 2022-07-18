@@ -16,8 +16,8 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\DisplayType;
-use Neo\Models\Location;
+use Neo\Modules\Broadcast\Models\DisplayType;
+use Neo\Modules\Broadcast\Models\Location;
 use Neo\Services\Broadcast\BroadSign\Models\Container;
 use Neo\Services\Broadcast\BroadSign\Models\Format;
 use Neo\Services\Broadcast\BroadSign\Models\Location as BSLocation;
@@ -117,7 +117,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
             $displayType = $this->getDisplayType($bslocation->display_unit_type_id);
 
             // for now, we only identify locations by their externa ID and not their network to prevent erasing the currently stored locations and f***ing up the campaigns.
-            /** @var Location $location */
+            /** @var \Neo\Modules\Broadcast\Models\Location $location */
             $location = Location::query()->firstOrCreate([
                 "external_id" => $bslocation->id,
                 "network_id"  => $this->config->networkID,
@@ -148,7 +148,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
      * @return DisplayType
      */
     protected function getDisplayType($displayTypeId) {
-        /** @var DisplayType $displayType */
+        /** @var \Neo\Modules\Broadcast\Models\DisplayType $displayType */
         $displayType = DisplayType::query()->firstOrNew([
             "connection_id" => $this->config->connectionID,
             "external_id"   => $displayTypeId

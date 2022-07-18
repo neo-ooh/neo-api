@@ -12,7 +12,7 @@ namespace Tests\Feature\Campaigns;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Models\Actor;
-use Neo\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Tests\TestCase;
 
 

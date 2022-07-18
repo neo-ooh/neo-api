@@ -12,8 +12,8 @@ namespace Neo\Console\Hotfixes;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
-use Neo\Models\Network;
 use Neo\Modules\Broadcast\Models\Creative;
+use Neo\Modules\Broadcast\Models\Network;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\TargetCreative;

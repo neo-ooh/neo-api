@@ -15,8 +15,8 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Location;
-use Neo\Models\Player;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\Player;
 use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -53,7 +53,7 @@ class SynchronizePlayers extends BroadSignJob implements ShouldBeUnique {
                 // TODO: Add the network identification back.
                 Player::query()->where('external_id', '=', $bsPlayer->id)
 //                               ->where("network_id", "=", $this->config->networkID)
-                               ->delete();
+                      ->delete();
                 continue;
             }
 
@@ -68,7 +68,7 @@ class SynchronizePlayers extends BroadSignJob implements ShouldBeUnique {
                 continue;
             }
 
-            /** @var Player $player */
+            /** @var \Neo\Modules\Broadcast\Models\Player $player */
             $player = Player::query()->firstOrCreate([
                 "external_id" => $bsPlayer->id,
             ], [

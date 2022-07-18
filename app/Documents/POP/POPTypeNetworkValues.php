@@ -12,7 +12,7 @@ namespace Neo\Documents\POP;
 
 use Carbon\Carbon;
 use JetBrains\PhpStorm\ArrayShape;
-use Neo\Models\Network;
+use Neo\Modules\Broadcast\Models\Network;
 
 class POPTypeNetworkValues {
     public Network $network;

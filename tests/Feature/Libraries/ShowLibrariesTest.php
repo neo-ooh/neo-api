@@ -12,7 +12,7 @@ namespace Tests\Feature\Libraries;
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Neo\Models\Actor;
-use Neo\Models\Library;
+use Neo\Modules\Broadcast\Models\Library;
 use Tests\TestCase;
 
 class ShowLibrariesTest extends TestCase {

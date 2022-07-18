@@ -36,6 +36,7 @@ class ExternalResource extends Model {
     protected $fillable = [
         "resource_id",
         "broadcaster_id",
+        "type",
         "data",
         "created_at",
         "updated_at",

@@ -11,7 +11,7 @@
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
-    public function up() {
+    public function up(): void {
         \Illuminate\Support\Facades\DB::statement(/** @lang SQL */ <<<EOF
             CREATE VIEW `schedules_details` AS
             SELECT

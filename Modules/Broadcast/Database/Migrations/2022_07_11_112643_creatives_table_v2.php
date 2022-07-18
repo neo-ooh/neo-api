@@ -10,12 +10,12 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use Neo\Models\Network;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CreativeType;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Models\BroadcastResource;
 use Neo\Modules\Broadcast\Models\ExternalResource;
+use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Models\StructuredColumns\CreativeProperties;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -79,8 +79,8 @@ return new class extends Migration {
                     ExternalResource::query()->create([
                         "resource_id"    => $broadcastResource->getKey(),
                         "broadcaster_id" => $network->connection_id,
+                        "type"           => ExternalResourceType::Creative,
                         "data"           => [
-                            "type"        => ExternalResourceType::Creative,
                             "network_id"  => $externalId->network_id,
                             "external_id" => $externalId->external_id,
                         ],

@@ -11,8 +11,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Neo\Models\BroadcasterConnection;
-use Neo\Models\Campaign;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Services\Broadcast\Broadcaster;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -54,8 +54,9 @@ return new class extends Migration {
                 ExternalResource::query()->create([
                     "resource_id"    => $schedule->id,
                     "broadcaster_id" => $broadcaster->id,
+                    "type"           => ExternalResourceType::Bundle,
                     "data"           => [
-                        "type"        => ExternalResourceType::Bundle,
+                        "formats_id"  => [$campaign->format_id],
                         "network_id"  => $campaign->network_id,
                         "external_id" => $schedule->external_id_1,
                     ],
@@ -65,8 +66,9 @@ return new class extends Migration {
             ExternalResource::query()->create([
                 "resource_id"    => $schedule->id,
                 "broadcaster_id" => $broadcaster->id,
+                "type"           => ExternalResourceType::Schedule,
                 "data"           => [
-                    "type"        => ExternalResourceType::Schedule,
+                    "formats_id"  => [$campaign->format_id],
                     "network_id"  => $campaign->network_id,
                     "external_id" => $schedule->external_id_2,
                 ],

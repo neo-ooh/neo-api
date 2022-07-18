@@ -14,7 +14,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void {
+        Schema::table("campaigns", static function (Blueprint $table) {
+            $table->renameColumn("owner_id", "parent_id");
+        });
+
         Schema::table('campaigns', static function (Blueprint $table) {
+            $table->foreignId("creator_id")->nullable()->constrained("actors", "id")->cascadeOnUpdate()->nullOnDelete();
+
             $table->time("start_time")->after("start_date")->default("00:00:00");
             $table->time("end_time")->after("end_date")->default("23:59:00");
 
@@ -24,6 +30,7 @@ return new class extends Migration {
 
             $table->dropConstrainedForeignId("format_id");
             $table->dropColumn("external_id");
+            $table->dropColumn("network_id");
         });
 
         Schema::table('campaigns', static function (Blueprint $table) {

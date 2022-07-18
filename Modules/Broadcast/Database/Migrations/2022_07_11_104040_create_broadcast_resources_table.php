@@ -14,8 +14,8 @@ use Illuminate\Support\Facades\Schema;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 
 return new class extends Migration {
-    public function up() {
-        Schema::create('broadcast_resources', function (Blueprint $table) {
+    public function up(): void {
+        Schema::create('broadcast_resources', static function (Blueprint $table) {
             $table->id();
             $table->enum("type", array_map(static fn(BroadcastResourceType $type) => $type->value, BroadcastResourceType::cases()));
         });

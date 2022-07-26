@@ -64,27 +64,39 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
          */
         foreach ($weeks as $week) {
             $weekNumber = strftime("%W", $week->timestamp) + 1;
-            $output->writeln("Week #$weekNumber...");
+            $output->writeln("[Week #$weekNumber] {$week->toFormattedDateString()} -> {$week->clone()->endOfWeek()->toFormattedDateString()}");
 
-            $trafficCount = 0;
-            for ($i = 0; $i < 7; $i++) {
+            $trafficCount     = 0;
+            $foundDaysTraffic = 0;
+
+            for ($i = 0; $i < 7; ++$i) {
                 $day       = $week->clone()->addDays($i);
                 $monthData = $monthTraffic->get("$day->year-$day->month");
-
-                $output->writeln("[$day->year-$day->month-$day->day] => " . ($monthData ? $monthData->final_traffic : "Not found!"));
 
                 // We are missing month data for this week, use the default month instead
                 if (!$monthData && ($day->month !== $this->month || $day->year !== $this->year)) {
                     $monthData = $monthTraffic->get("$this->year-$this->month");
-
-                    $output->writeln("[$this->year-$this->month-$day->day] => " . ($monthData ? $monthData->final_traffic : "Not found!"));
                 }
 
                 if (!$monthData) {
+                    $output->writeln("[$this->year-$this->month-$day->day] => " . ($monthData ? $monthData->final_traffic : "No data!"));
                     continue;
                 }
 
                 $trafficCount += $monthData->final_traffic / $day->daysInMonth;
+                $foundDaysTraffic++;
+            }
+
+            $output->writeln("[Week #$weekNumber] $foundDaysTraffic days of traffic found");
+
+            if ($foundDaysTraffic < 7) {
+                $output->writeln("[Week #$weekNumber] Incomplete week of data, leave empty");
+                // Not enough information for this week, remove any records
+                PropertyTraffic::query()->where("property_id", "=", $this->propertyId)
+                               ->where("year", "=", $week->weekYear)
+                               ->where("week", "=", $weekNumber)
+                               ->delete();
+                continue;
             }
 
             $weeklyTraffic[$weekNumber] = $trafficCount;
@@ -98,6 +110,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                 "is_estimate" => true
             ]);
         }
+
         if ($this->month === 12 && Carbon::create($this->year, $this->month)
                                          ->endOfMonth()
                                          ->startOfWeek(CarbonInterface::MONDAY)

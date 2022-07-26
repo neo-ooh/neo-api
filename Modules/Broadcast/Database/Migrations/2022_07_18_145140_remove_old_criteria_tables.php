@@ -9,11 +9,12 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
-        Schema::table("formats_layouts", static function (\Illuminate\Database\Schema\Blueprint $table) {
+        Schema::table("formats_layouts", static function (Blueprint $table) {
             $table->dropConstrainedForeignId("trigger_id");
             $table->dropConstrainedForeignId("separation_id");
         });

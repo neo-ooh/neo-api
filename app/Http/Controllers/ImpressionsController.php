@@ -197,15 +197,20 @@ class ImpressionsController {
                      * @var LoopPolicy $loopPolicy
                      */
                     $loopPolicy = $frame->loop_policy;
+                    $duration   = $loopPolicy->max_duration_msec;
 
-                    $duration = $loopPolicy->max_duration_msec > 0 ? $loopPolicy->max_duration_msec : $loopPolicy->default_slot_duration;
+                    // If a loop policy has a max_duration_msec set to 0, we treat it as a screen no provinding impressions,
+                    // Such as a slave player.
+                    if ($duration > 0) {
+                        $playPerDay         = $openLengths[$weekday] * 60_000 / $duration;
+                        $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 
-                    $playPerDay         = $openLengths[$weekday] * 60_000 / $duration;
-                    $impressionsPerPlay = $impressionsPerDay / $playPerDay;
+                        $playsPerHour       = 3_600_000 /* 3600 * 1000 (ms) */ / $loopPolicy->primary_inventory_share_msec;
+                        $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
+                    } else {
+                        $impressionsPerHour = 0;
+                    }
 
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopPolicy->primary_inventory_share_msec;
-
-                    $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
 
                     $sheet->printRow([
                         $location->external_id,

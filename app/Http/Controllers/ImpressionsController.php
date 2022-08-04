@@ -181,7 +181,7 @@ class ImpressionsController {
 
                 // Because the impression for the product is spread on all the display unit attached to it,
                 // we divide the number of impressions by the number of display unit for the product
-                $impressionsPerDay = $impressionsPerDay / $product->locations_count;
+                $impressionsPerDay = $impressionsPerDay / $product->locations()->count();
 
                 /** @var OpeningHours $hours */
                 $hours = $property->opening_hours->firstWhere("weekday", "=", $weekday);

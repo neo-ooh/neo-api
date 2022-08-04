@@ -181,10 +181,15 @@ class ImpressionsController {
 
                 /** @var Skin $frame */
                 foreach ($frames as $frame) {
-                    $playPerDay         = $openLengths[$weekday] * 60_000 / ($frame->loop_policy->max_duration_msec);
+                    /**
+                     * @var LoopPolicy $loopPolicy
+                     */
+                    $loopPolicy = $frame->loop_policy;
+
+                    $playPerDay         = $openLengths[$weekday] * 60_000 / ($loopPolicy->max_duration_msec ?? $loopPolicy->default_slot_duration);
                     $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $frame->loop_policy->primary_inventory_share_msec;
+                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopPolicy->primary_inventory_share_msec;
 
                     $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
 

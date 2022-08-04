@@ -198,6 +198,10 @@ class ImpressionsController {
                      */
                     $loopPolicy = $frame->loop_policy;
 
+                    if (($loopPolicy->max_duration_msec ?? $loopPolicy->default_slot_duration) == 0) {
+                        Log::error("[ImpressionsController] Unusable LoopPolicy: " . json_encode($loopPolicy, JSON_THROW_ON_ERROR));
+                    }
+
                     $playPerDay         = $openLengths[$weekday] * 60_000 / ($loopPolicy->max_duration_msec ?? $loopPolicy->default_slot_duration);
                     $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 

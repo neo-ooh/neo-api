@@ -11,7 +11,9 @@
 namespace Neo\Http\Controllers;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Http\Requests\Impressions\ExportBroadsignImpressionsRequest;
 use Neo\Models\OpeningHours;
@@ -29,16 +31,14 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsController {
     public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, int $displayUnitId) {
-        if (!is_int($displayUnitId)) {
-            return new Response(["Invalid display unit id: $displayUnitId"], 400);
-        }
-
         $displayUnitId = (int)$displayUnitId;
 
         /** @var Location|null $location */
         $location = Location::query()->where("external_id", "=", $displayUnitId)->first();
 
+
         if (!$location) {
+            Log::warning("[ImpressionsController] Unknown display Unit ID: $displayUnitId");
             return new Response([
                 "error"   => true,
                 "type"    => "unknown-value",
@@ -49,6 +49,7 @@ class ImpressionsController {
         $config = Broadcast::network($location->network_id)->getConfig();
 
         if (!($config instanceof BroadSignConfig)) {
+            Log::warning("[ImpressionsController] Location #{$location->getKey()} ($location->name) is not a BroadSign display unit.");
             return new Response([
                 "error"   => true,
                 "type"    => "invalid-value",
@@ -67,12 +68,23 @@ class ImpressionsController {
                             ->first();
 
         if (!$product) {
+            Log::warning("[ImpressionsController] Location #{$location->getKey()} ($location->name) is not associated with any product");
             return new Response([
                 "error"   => true,
                 "type"    => "invalid-value",
                 "message" => "The Display Unit is not associated with a product.",
             ], 400);
         }
+
+        try {
+            $this->buildBroadSignAudienceFile($client, $location, $product);
+        } catch (Exception $e) {
+            Log::error($e->__toString());
+        }
+        exit;
+    }
+
+    protected function buildBroadSignAudienceFile(BroadsignClient $client, Location $location, Product $product): void {
 
         /** @var Property $property */
         $property                         = Property::query()
@@ -169,7 +181,7 @@ class ImpressionsController {
 
                 // Because the impression for the product is spread on all the display unit attached to it,
                 // we divide the number of impressions by the number of display unit for the product
-                $impressionsPerDay = $impressionsPerDay / $product->locations_count;
+                $impressionsPerDay = $impressionsPerDay / $product->locations()->count();
 
                 /** @var OpeningHours $hours */
                 $hours = $property->opening_hours->firstWhere("weekday", "=", $weekday);
@@ -181,12 +193,24 @@ class ImpressionsController {
 
                 /** @var Skin $frame */
                 foreach ($frames as $frame) {
-                    $playPerDay         = $openLengths[$weekday] * 60_000 / ($frame->loop_policy->max_duration_msec);
-                    $impressionsPerPlay = $impressionsPerDay / $playPerDay;
+                    /**
+                     * @var LoopPolicy $loopPolicy
+                     */
+                    $loopPolicy = $frame->loop_policy;
+                    $duration   = $loopPolicy->max_duration_msec;
 
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $frame->loop_policy->primary_inventory_share_msec;
+                    // If a loop policy has a max_duration_msec set to 0, we treat it as a screen no provinding impressions,
+                    // Such as a slave player.
+                    if ($duration > 0) {
+                        $playPerDay         = $openLengths[$weekday] * 60_000 / $duration;
+                        $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 
-                    $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
+                        $playsPerHour       = 3_600_000 /* 3600 * 1000 (ms) */ / $loopPolicy->primary_inventory_share_msec;
+                        $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
+                    } else {
+                        $impressionsPerHour = 0;
+                    }
+
 
                     $sheet->printRow([
                         $location->external_id,
@@ -218,6 +242,5 @@ class ImpressionsController {
         header("content-type: text/csv");
 
         $writer->save("php://output");
-        exit;
     }
 }

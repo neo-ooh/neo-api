@@ -79,7 +79,7 @@ class ImpressionsController {
         try {
             $this->buildBroadSignAudienceFile($client, $location, $product);
         } catch (Exception $e) {
-            Log::error("[ImpressionsController] {$e->__toString()}");
+            Log::error($e->__toString());
         }
         exit;
     }
@@ -198,11 +198,9 @@ class ImpressionsController {
                      */
                     $loopPolicy = $frame->loop_policy;
 
-                    if (($loopPolicy->max_duration_msec ?? $loopPolicy->default_slot_duration) == 0) {
-                        Log::error("[ImpressionsController] Unusable LoopPolicy: " . json_encode($loopPolicy, JSON_THROW_ON_ERROR));
-                    }
+                    $duration = $loopPolicy->max_duration_msec > 0 ? $loopPolicy->max_duration_msec : $loopPolicy->default_slot_duration;
 
-                    $playPerDay         = $openLengths[$weekday] * 60_000 / ($loopPolicy->max_duration_msec ?? $loopPolicy->default_slot_duration);
+                    $playPerDay         = $openLengths[$weekday] * 60_000 / $duration;
                     $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 
                     $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopPolicy->primary_inventory_share_msec;

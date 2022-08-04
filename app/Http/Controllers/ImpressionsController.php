@@ -11,7 +11,9 @@
 namespace Neo\Http\Controllers;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Http\Requests\Impressions\ExportBroadsignImpressionsRequest;
 use Neo\Models\Location;
@@ -29,16 +31,14 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsController {
     public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, int $displayUnitId) {
-        if (!is_int($displayUnitId)) {
-            return new Response(["Invalid display unit id: $displayUnitId"], 400);
-        }
-
         $displayUnitId = (int)$displayUnitId;
 
         /** @var Location|null $location */
         $location = Location::query()->where("external_id", "=", $displayUnitId)->first();
 
+
         if (!$location) {
+            Log::warning("[ImpressionsController] Unknown display Unit ID: $displayUnitId");
             return new Response([
                 "error"   => true,
                 "type"    => "unknown-value",
@@ -49,6 +49,7 @@ class ImpressionsController {
         $config = Broadcast::network($location->network_id)->getConfig();
 
         if (!($config instanceof BroadSignConfig)) {
+            Log::warning("[ImpressionsController] Location #{$location->getKey()} ($location->name) is not a BroadSign display unit.");
             return new Response([
                 "error"   => true,
                 "type"    => "invalid-value",
@@ -67,12 +68,23 @@ class ImpressionsController {
                             ->first();
 
         if (!$product) {
+            Log::warning("[ImpressionsController] Location #{$location->getKey()} ($location->name) is not associated with any product");
             return new Response([
                 "error"   => true,
                 "type"    => "invalid-value",
                 "message" => "The Display Unit is not associated with a product.",
             ], 400);
         }
+
+        try {
+            $this->buildBroadSignAudienceFile($client, $location, $product);
+        } catch (Exception $e) {
+            Log::error("[ImpressionsController] {$e->__toString()}");
+        }
+        exit;
+    }
+
+    protected function buildBroadSignAudienceFile(BroadsignClient $client, Location $location, Product $product): void {
 
         /** @var Property $property */
         $property                         = Property::query()
@@ -223,6 +235,5 @@ class ImpressionsController {
         header("content-type: text/csv");
 
         $writer->save("php://output");
-        exit;
     }
 }

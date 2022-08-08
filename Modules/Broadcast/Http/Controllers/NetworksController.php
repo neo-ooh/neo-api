@@ -90,7 +90,7 @@ class NetworksController extends Controller {
         return new Response(["result" => "ok"], 200);
     }
 
-    public function synchronize(SynchronizeNetworkRequest $request, Network $network): Response {
+    public function refresh(SynchronizeNetworkRequest $request, Network $network): Response {
         SynchronizeNetworkJob::dispatch($network->getKey());
 
         return new Response(["status" => "ok"]);

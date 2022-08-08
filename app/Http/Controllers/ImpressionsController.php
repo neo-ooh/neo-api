@@ -20,11 +20,11 @@ use Neo\Models\OpeningHours;
 use Neo\Models\Product;
 use Neo\Models\Property;
 use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopPolicy;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Skin;
 use Neo\Services\Broadcast\Broadcast;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
-use Neo\Services\Broadcast\BroadSign\Models\LoopPolicy;
-use Neo\Services\Broadcast\BroadSign\Models\Skin;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -57,7 +57,7 @@ class ImpressionsController {
             ], 400);
         }
 
-        $client = new BroadsignClient($config);
+        $client = new BroadSignClient($config);
 
         // We need to generate a file for each week of the year, for each frame of the display unit
         // Load the property, impressions data and traffic data attached with this location

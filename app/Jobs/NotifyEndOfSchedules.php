@@ -44,7 +44,7 @@ class NotifyEndOfSchedules implements ShouldQueue {
                              ->load(["owner:id,name,email", "campaign.owner"]);
 
         // Now we go schedule by schedule, select the actors that needs to be warned and send the emails
-        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         foreach ($schedules as $schedule) {
             $dest = collect([$schedule->owner,
                              $schedule->campaign->owner,

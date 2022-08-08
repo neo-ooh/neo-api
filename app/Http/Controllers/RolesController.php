@@ -19,7 +19,7 @@ use Neo\Models\Role;
 
 class RolesController extends Controller {
     public function index(): Response {
-        Gate::authorize(Capability::roles_edit->value);
+        Gate::authorize(Capability::roles_edit->value->value);
 
         return new Response(Role::all());
     }
@@ -44,8 +44,10 @@ class RolesController extends Controller {
     }
 
     public function update(UpdateRoleRequest $request, Role $role): Response {
-        $role->name = $request->input("name");
-        $role->desc = $request->input("desc");
+        $values = $request->validated();
+
+        $role->name = $values["name"];
+        $role->desc = $values["desc"];
         $role->save();
 
         return new Response($role->loadMissing(["capabilities", "actors"]));

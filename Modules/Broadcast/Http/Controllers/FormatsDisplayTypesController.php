@@ -8,15 +8,16 @@
  * @neo/api - FormatsDisplayTypesController.php
  */
 
-namespace Neo\Http\Controllers;
+namespace Neo\Modules\Broadcast\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Neo\Http\Requests\FormatsDisplayTypes\SyncFormatDisplayTypesRequest;
+use Neo\Http\Controllers\Controller;
+use Neo\Modules\Broadcast\Http\Requests\FormatsLayouts\SyncFormatLayoutsRequest;
 use Neo\Modules\Broadcast\Models\Format;
 
 class FormatsDisplayTypesController extends Controller {
-    public function sync(SyncFormatDisplayTypesRequest $request, Format $format) {
-        $format->display_types()->sync($request->validated()["display_types"]);
+    public function sync(SyncFormatLayoutsRequest $request, Format $format): Response {
+        $format->display_types()->sync($request->input("display_types"));
 
         return new Response($format->display_types);
     }

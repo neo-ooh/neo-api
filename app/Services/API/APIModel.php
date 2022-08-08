@@ -19,7 +19,9 @@ use Neo\Services\API\Traits\HasAttributes;
 /**
  * Class APIModel
  *
- * @package Neo\BroadSign\Models
+ * @template TClient of APIClientInterface
+ *
+ * @package  Neo\BroadSign\Models
  */
 abstract class APIModel implements JsonSerializable, Arrayable {
     use HasAttributes;
@@ -28,6 +30,9 @@ abstract class APIModel implements JsonSerializable, Arrayable {
     protected static string $unwrapKey;
     protected static array $updatable;
 
+    /**
+     * @var TClient
+     */
     protected APIClientInterface $api;
 
     public function getKey() {
@@ -50,13 +55,13 @@ abstract class APIModel implements JsonSerializable, Arrayable {
     }
 
     /**
-     * @param string $action
-     * @param array  $payload
-     * @param array  $headers
+     * @param string                $action
+     * @param int|string|array|null $payload
+     * @param array                 $headers
      * @return array|mixed
      * @throws ClientException
      */
-    public function callAction(string $action, array $payload = [], array $headers = []): mixed {
+    public function callAction(string $action, mixed $payload = null, array $headers = []): mixed {
         if (!array_key_exists($action, static::actions())) {
             $className = static::class;
             throw new BadMethodCallException("Static method $action does not exist on model $className.");
@@ -77,8 +82,11 @@ abstract class APIModel implements JsonSerializable, Arrayable {
      * @return mixed
      */
     public static function __callStatic(string $methodName, array $args) {
-        $client = array_shift($args);
-        return (new static($client))->callAction($methodName, ...$args);
+        $client  = array_shift($args);
+        $payload = array_shift($args);
+        $headers = array_shift($args) ?? [];
+//        dump(static::class, $methodName, $payload, $headers);
+        return (new static($client))->callAction($methodName, $payload, $headers);
     }
 
     abstract protected static function actions(): array;

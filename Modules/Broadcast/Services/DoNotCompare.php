@@ -5,13 +5,13 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ExternalBroadcastResource.php
+ * @neo/api - DoNotCompare.php
  */
 
-namespace Neo\Modules\Broadcast\Services\Resources;
+namespace Neo\Modules\Broadcast\Services;
 
-use Spatie\DataTransferObject\DataTransferObject;
+use Attribute;
 
-abstract class ExternalBroadcastResource extends DataTransferObject {
-
+#[Attribute(Attribute::TARGET_PROPERTY)]
+class DoNotCompare {
 }

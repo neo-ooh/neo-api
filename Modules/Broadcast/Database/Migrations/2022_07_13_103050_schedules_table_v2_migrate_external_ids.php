@@ -10,11 +10,11 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
-use Neo\Models\BroadcasterConnection;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
-use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\ExternalResource;
-use Neo\Services\Broadcast\Broadcaster;
+use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
+use Neo\Modules\Broadcast\Services\BroadcasterType;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration {
@@ -22,8 +22,9 @@ return new class extends Migration {
         // For all schedules, we move its external_ids to the external_resources table
         $schedules = DB::table("schedules")->orderBy("id")->lazy(500);
 
-        $output   = new ConsoleOutput();
-        $progress = new \Symfony\Component\Console\Helper\ProgressBar($output);
+        $output = new ConsoleOutput();
+        $output->writeln("");
+        $progress = new ProgressBar($output);
         $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
         $progress->start($schedules->count());
 
@@ -37,9 +38,9 @@ return new class extends Migration {
             }
 
             // We need to know the broadcaster this schedule is scheduled on
-            /** @var Campaign $campaign */
+            /** @var object $campaign */
             $campaign = DB::table("campaigns")->where("id", "=", $schedule->campaign_id)->first();
-            /** @var BroadcasterConnection|null $broadcaster */
+            /** @var object|null $broadcaster */
             $broadcaster = DB::table("broadcasters_connections")
                              ->join("networks", "networks.connection_id", "=", "broadcasters_connections.id")
                              ->where("networks.id", "=", $campaign->network_id)
@@ -50,16 +51,16 @@ return new class extends Migration {
                 continue;
             }
 
-            if ($broadcaster->broadcaster === Broadcaster::BROADSIGN) {
+            if ($broadcaster->broadcaster === BroadcasterType::BroadSign->value) {
                 ExternalResource::query()->create([
                     "resource_id"    => $schedule->id,
                     "broadcaster_id" => $broadcaster->id,
                     "type"           => ExternalResourceType::Bundle,
-                    "data"           => [
+                    "data"           => new ExternalResourceData([
                         "formats_id"  => [$campaign->format_id],
                         "network_id"  => $campaign->network_id,
                         "external_id" => $schedule->external_id_1,
-                    ],
+                    ]),
                 ]);
             }
 
@@ -67,11 +68,11 @@ return new class extends Migration {
                 "resource_id"    => $schedule->id,
                 "broadcaster_id" => $broadcaster->id,
                 "type"           => ExternalResourceType::Schedule,
-                "data"           => [
+                "data"           => new ExternalResourceData([
                     "formats_id"  => [$campaign->format_id],
                     "network_id"  => $campaign->network_id,
                     "external_id" => $schedule->external_id_2,
-                ],
+                ]),
             ]);
         }
 

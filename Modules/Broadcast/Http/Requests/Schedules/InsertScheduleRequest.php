@@ -8,7 +8,7 @@
  * @neo/api - InsertScheduleRequest.php
  */
 
-namespace Neo\Http\Requests\Schedules;
+namespace Neo\Modules\Broadcast\Http\Requests\Schedules;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;

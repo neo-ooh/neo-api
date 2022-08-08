@@ -18,13 +18,13 @@ use Illuminate\Queue\SerializesModels;
 use Neo\Models\Actor;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Schedule;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Bundle as BSBundle;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopSlot;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\AssociateAdCopyWithBundle;
 use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\ImportCreativeInBroadSign;
-use Neo\Services\Broadcast\BroadSign\Models\Bundle as BSBundle;
-use Neo\Services\Broadcast\BroadSign\Models\LoopSlot;
-use Neo\Services\Broadcast\BroadSign\Models\Schedule as BSSchedule;
 use Symfony\Component\Translation\Exception\InvalidResourceException;
 
 /**
@@ -105,7 +105,7 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
         $actor = Actor::query()->findOrFail($this->actorID);
 
         // Load the broadsign loop slot for the campaign
-        $loopSlot = LoopSlot::forCampaign($this->getAPIClient(), ["reservable_id" => $schedule->campaign->external_id])[0];
+        $loopSlot = LoopSlot::forCampaign($this->getAPIClient(), $schedule->campaign->external_id)[0];
 
         if ($loopSlot === null) {
             throw new InvalidResourceException("Could not retrieve the loop slot for the reservation " . $schedule->campaign->external_id . ". ");

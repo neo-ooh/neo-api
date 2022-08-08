@@ -13,24 +13,24 @@ namespace Neo\Providers;
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use Illuminate\Support\ServiceProvider;
-use Neo\Modules\Broadcast\Http\Controllers\CreativesController;
-use Neo\Modules\Broadcast\Models\Creative;
 
 class AppServiceProvider extends ServiceProvider {
+    public array $helpers = [
+        "Helpers/models.php",
+        "Helpers/array.php",
+    ];
+
     /**
      * Register any application services.
      *
      * @return void
      */
     public function register(): void {
-        // Register convenient FFMpeg initializer
-        $this->app->when([Creative::class, CreativesController::class])
-                  ->needs(FFMpeg::class)
-                  ->give(fn() => FFMpeg::create(config('ffmpeg')));
+        // Register convenient FFMpeg/FFProbe initializer
+        $this->app->bind(FFMpeg::class, fn() => FFMpeg::create(config('ffmpeg')));
+        $this->app->bind(FFProbe::class, fn() => FFProbe::create(config('ffmpeg')));
 
-        $this->app->when([Creative::class, CreativesController::class])
-                  ->needs(FFProbe::class)
-                  ->give(fn() => FFProbe::create(config('ffmpeg')));
+        $this->registerHelpers();
     }
 
     /**
@@ -40,5 +40,11 @@ class AppServiceProvider extends ServiceProvider {
      */
     public function boot(): void {
         //
+    }
+
+    protected function registerHelpers(): void {
+        foreach ($this->helpers as $helperFile) {
+            require_once app_path($helperFile);
+        }
     }
 }

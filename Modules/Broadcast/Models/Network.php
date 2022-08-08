@@ -18,43 +18,35 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use JsonException;
-use Neo\Models\BroadcasterConnection;
 use Neo\Models\Field;
 use Neo\Models\Property;
-use Neo\Models\UnstructuredData\NetworkSettingsBroadSign;
-use Neo\Models\UnstructuredData\NetworkSettingsPiSignage;
-use Neo\Services\API\Traits\HasAttributes;
-use Neo\Services\Broadcast\Broadcaster;
-use RuntimeException;
+use Neo\Models\Traits\WithPublicRelations;
+use Neo\Modules\Broadcast\Models\StructuredColumns\NetworkSettings;
 
 /**
- * @property int                                               $id
- * @property string                                            $uuid
- * @property int                                               $connection_id
- * @property string                                            $name
- * @property string                                            $color
- * @property Date                                              $created_at
- * @property Date                                              $updated_at
- * @property Date                                              $deleted_at
+ * @property int                          $id
+ * @property string                       $uuid
+ * @property int                          $connection_id
+ * @property string                       $name
+ * @property string                       $color
+ * @property NetworkSettings              $settings
+ * @property Date|null                    $last_sync_at
+ * @property Date                         $created_at
+ * @property Date                         $updated_at
+ * @property Date                         $deleted_at
  *
- * @property NetworkSettingsBroadSign|NetworkSettingsPiSignage $settings
- * @property BroadcasterConnection                             $broadcaster_connection
- * @property Collection<Location>                              $locations
- * @property Collection<Campaign>                              $campaigns
- * @property Collection<Field>                                 $properties_fields
+ * @property BroadcasterConnection        $broadcaster_connection
+ * @property Collection<NetworkContainer> $containers
+ * @property Collection<Location>         $locations
+ * @property Collection<Campaign>         $campaigns
+ * @property Collection<Property>         $properties
+ * @property Collection<Field>            $properties_fields
  *
  * @mixin Builder
  */
 class Network extends Model {
     use SoftDeletes;
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table properties
-    |--------------------------------------------------------------------------
-    */
-
+    use WithPublicRelations;
 
     /**
      * The table associated with the model.
@@ -63,12 +55,20 @@ class Network extends Model {
      */
     protected $table = 'networks';
 
+    /**
+     * @var array<string, string>
+     */
     protected $casts = [
-        "settings" => "array",
+        "settings"     => NetworkSettings::class,
+        "last_sync_at" => "date",
     ];
 
-    protected $hidden = [
-        "settings",
+    /**
+     * @var array<string, string|callable>
+     */
+    protected array $publicRelations = [
+        "connection" => "broadcaster_connection",
+        "fields"     => "properties_fields",
     ];
 
     /*
@@ -77,50 +77,54 @@ class Network extends Model {
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * @return BelongsTo<BroadcasterConnection, Network>
+     */
     public function broadcaster_connection(): BelongsTo {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
     }
 
     /**
-     * @throws JsonException
+     * @return HasMany<NetworkContainer>
      */
-    public function getSettingsAttribute(): NetworkSettingsBroadSign|NetworkSettingsPiSignage|null {
-        $settings = $this->attributes["settings"] !== null ? json_decode($this->attributes["settings"], true, 512, JSON_THROW_ON_ERROR) : [];
-
-        return match ($this->broadcaster_connection->broadcaster) {
-            Broadcaster::BROADSIGN => new NetworkSettingsBroadSign($settings),
-            Broadcaster::PISIGNAGE => new NetworkSettingsPiSignage($settings),
-            default                => null,
-        };
+    public function containers(): HasMany {
+        return $this->hasMany(NetworkContainer::class, "network_id", "id");
     }
 
-    public function setSettingsAttribute($value): void {
-        if (!in_array(HasAttributes::class, class_uses($value), true)) {
-            throw new RuntimeException("Bad format");
-        }
-
-        $this->attributes["settings"] = $value->toJson();
-    }
-
-
+    /**
+     * @return HasMany<Location>
+     */
     public function locations(): HasMany {
         return $this->hasMany(Location::class, 'network_id', 'id')->orderBy("name");
     }
 
+    /**
+     * @return HasMany<Campaign>
+     */
     public function campaigns(): HasMany {
         return $this->hasMany(Campaign::class, 'network_id', 'id')->orderBy("name");
     }
 
+    /**
+     * @return HasMany<Property>
+     */
+    public function properties(): HasMany {
+        return $this->hasMany(Property::class, "network_id", "id")->orderBy("name");
+    }
+
+    /**
+     * @return BelongsToMany<Field>
+     */
     public function properties_fields(): BelongsToMany {
         return $this->belongsToMany(Field::class, "fields_networks", "network_id", "field_id")
                     ->withPivot(["order"])
                     ->orderByPivot("order");
     }
 
-    public function getPropertiesAttribute() {
-        $networkId = $this->id;
-        return Property::query()->whereHas("actor.own_locations", function (Builder $query) use ($networkId) {
-            $query->where("network_id", "=", $networkId);
-        })->get()->sortBy("actor.name");
+    /**
+     * @return HasMany<Format>
+     */
+    public function formats() {
+        return $this->hasMany(Format::class, "network_id", "id");
     }
 }

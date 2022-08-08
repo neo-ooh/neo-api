@@ -20,11 +20,14 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
-use Neo\Models\Contract;
 use Neo\Models\ContractBurst;
+use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Models\Player;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
+use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
+use Neo\Modules\Broadcast\Services\BroadcasterCapability;
+use Neo\Modules\Broadcast\Services\BroadcasterOperator;
+use Neo\Modules\Broadcast\Services\BroadcasterScreenshotsBurst;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 
 /**
  * Class RequestScreenshotsBursts
@@ -57,6 +60,7 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
 
     /**
      * @param ContractBurst $burst
+     * @throws \Spatie\DataTransferObject\Exceptions\UnknownProperties
      */
     protected function sendRequest(ContractBurst $burst): void {
         // Get one random player for the location of the burst
@@ -69,11 +73,25 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
             return;
         }
 
-        $config          = Contract::getConnectionConfig();
-        $broadsignClient = new BroadsignClient($config);
+        /** @var BroadcasterOperator&BroadcasterScreenshotsBurst $broadcaster */
+        $broadcaster = BroadcasterAdapterFactory::makeForNetwork($burst->location->network_id);
 
-        $bsPlayer = new BSPlayer($broadsignClient, ["id" => $player->external_id]);
-        $bsPlayer->requestScreenshotsBurst($burst->id, $burst->scale_percent, $burst->duration_ms, $burst->frequency_ms);
+        // Make sure the broadcaster support Screenshots burst, otherwise ignore location and delete burst
+        if (!$broadcaster->hasCapability(BroadcasterCapability::ScreenshotsBurst)) {
+            $burst->delete();
+            return;
+        }
+
+        $broadcaster->requestScreenshotsBurst(
+            players: [new ExternalBroadcasterResourceId([
+                "type"        => ExternalResourceType::Player,
+                "external_id" => $player->external_id,
+            ])],
+            responseUri: config("app.url") . "/v1/broadsign/burst_callback/" . $burst->getKey(),
+            scale: $burst->scale_percent,
+            duration_ms: $burst->duration_ms,
+            frequency_ms: $burst->frequency_ms,
+        );
 
         // Update the start date to reflect the effective start date.
         $burst->start_at = Carbon::now()->setTimezone("America/Toronto")->shiftTimezone('UTC');

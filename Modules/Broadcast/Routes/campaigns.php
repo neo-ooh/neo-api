@@ -2,6 +2,8 @@
 
 use Neo\Http\Controllers\ActorsCampaignsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsController;
+use Neo\Modules\Broadcast\Http\Controllers\CampaignsLocationsController;
+use Neo\Modules\Broadcast\Http\Controllers\CampaignsSchedulesController;
 use Neo\Modules\Broadcast\Http\Controllers\SchedulesController;
 use Neo\Modules\Broadcast\Http\Controllers\SchedulesReviewsController;
 use Neo\Modules\Broadcast\Models\Campaign;
@@ -44,8 +46,9 @@ Route::group([
    |----------------------------------------------------------------------
    */
 
-    Route::   put("campaigns/{campaign}/locations", CampaignsController::class . "@syncLocations");
-    Route::delete("campaigns/{campaign}/locations/{location}", CampaignsController::class . "@removeLocation");
+    Route::   get("campaigns/{campaign}/locations", CampaignsLocationsController::class . "@index");
+    Route::   put("campaigns/{campaign}/locations", CampaignsLocationsController::class . "@sync");
+    Route::delete("campaigns/{campaign}/locations/{location}", CampaignsLocationsController::class . "@remove");
 
     /*
    |----------------------------------------------------------------------
@@ -55,14 +58,13 @@ Route::group([
 
     Route::model("schedule", Schedule::class);
 
-    Route::   get("schedules/pending", SchedulesController::class . "@pending");
-    Route::   put("schedules/{schedule}", SchedulesController::class . "@update");
-    Route::delete("schedules/{schedule}", SchedulesController::class . "@destroy");
+    Route::   get("schedules/_pending", SchedulesController::class . "@pending");
 
-    Route::  post("campaigns/{campaign}/reorder", SchedulesController::class . "@reorder");
-    Route::  post("campaigns/{campaign}/schedules", SchedulesController::class . "@store");
-    Route::  post("campaigns/{campaign}/insert", SchedulesController::class . "@insert");
-
+    Route::   get("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@list");
+    Route::  post("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@store");
+    Route::   put("campaigns/{campaign}/schedules/{schedule}", CampaignsSchedulesController::class . "@update");
+    Route::delete("campaigns/{campaign}/schedules/{schedule}", CampaignsSchedulesController::class . "@destroy");
+    Route::  post("campaigns/{campaign}/schedules/_reorder", CampaignsSchedulesController::class . "@reorder");
 
     /*
     |----------------------------------------------------------------------

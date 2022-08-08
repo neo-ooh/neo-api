@@ -13,6 +13,7 @@ namespace Neo\Http\Requests\Contracts;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
+use Neo\Models\Contract;
 
 class StoreContractRequest extends FormRequest {
     /**
@@ -21,6 +22,7 @@ class StoreContractRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
+        /** @var Contract $contract */
         return Gate::allows(Capability::contracts_edit->value);
     }
 

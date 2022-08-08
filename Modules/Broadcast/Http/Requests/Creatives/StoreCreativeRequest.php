@@ -8,13 +8,13 @@
  * @neo/api - StoreCreativeRequest.php
  */
 
-namespace Neo\Http\Requests\Creatives;
+namespace Neo\Modules\Broadcast\Http\Requests\Creatives;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
-use Neo\Modules\Broadcast\Models\Content;
+use Neo\Modules\Broadcast\Enums\CreativeType;
 
 class StoreCreativeRequest extends FormRequest {
     /**
@@ -23,9 +23,8 @@ class StoreCreativeRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        $gate   = Gate::allows(Capability::contents_edit);
-        $access = Content::findOrFail($this->input("content_id"))->library->isAccessibleBy(Auth::user());
-        return $gate && $access;
+        // Check capability
+        return Gate::allows(Capability::contents_edit->value);
     }
 
     /**
@@ -35,17 +34,16 @@ class StoreCreativeRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "content_id"       => ["required", "integer", "exists:contents,id"],
             "frame_id"         => ["required", "integer", "exists:frames,id"],
-            "type"             => ["required", "string"],
+            "type"             => ["required", new Enum(CreativeType::class)],
 
             // Static Creative
-            "file"             => ["required_if:type,static", "file"],
+            "file"             => ["required_if:type," . CreativeType::Static->value, "file"],
 
             // Dynamic Creative
-            "name"             => ["required_if:type,dynamic", "string", "min:2"],
-            "url"              => ["required_if:type,dynamic", "url"],
-            "refresh_interval" => ["required_if:type,dynamic", "integer", "min:5"],
+            "name"             => ["required_if:type," . CreativeType::Url->value, "string", "min:2"],
+            "url"              => ["required_if:type," . CreativeType::Url->value, "url"],
+            "refresh_interval" => ["required_if:type," . CreativeType::Url->value, "integer", "min:5"],
         ];
     }
 }

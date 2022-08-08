@@ -15,9 +15,9 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\Modules\Broadcast\Services\PiSignage\Models\Player;
+use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
-use Neo\Services\Broadcast\PiSignage\Models\Player;
-use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 /**
  * @package Neo\Jobs

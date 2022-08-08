@@ -54,12 +54,13 @@ Route::group([
     */
 
     Route::model("network", Network::class);
+
     Route::   get("networks", NetworksController::class . "@index");
     Route::  post("networks", NetworksController::class . "@store");
     Route::   get("networks/{network}", NetworksController::class . "@show");
     Route::   put("networks/{network}", NetworksController::class . "@update");
     Route::delete("networks/{network}", NetworksController::class . "@destroy");
-    Route::  post("networks/{network}/_synchronize", NetworksController::class . "@synchronize");
+    Route::  post("networks/{network}/_refresh", NetworksController::class . "@refresh");
 
     Route::get("networks/{network}/containers", NetworkContainersController::class . "@index");
 

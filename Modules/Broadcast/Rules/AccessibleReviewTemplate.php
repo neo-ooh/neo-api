@@ -12,7 +12,7 @@ namespace Neo\Modules\Broadcast\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
-use Neo\Modules\Broadcast\Models\ReviewTemplate;
+use Neo\Modules\Broadcast\Models\ScheduleReviewTemplate;
 
 class AccessibleReviewTemplate implements Rule {
     /**
@@ -33,7 +33,7 @@ class AccessibleReviewTemplate implements Rule {
      * @return bool
      */
     public function passes($attribute, $value): bool {
-        $template = ReviewTemplate::query()->findOrFail($value);
+        $template = ScheduleReviewTemplate::query()->findOrFail($value);
         return Auth::user()->hasAccessTo($template->owner);
     }
 

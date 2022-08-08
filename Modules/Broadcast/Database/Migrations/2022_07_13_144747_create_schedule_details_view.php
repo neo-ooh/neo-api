@@ -13,10 +13,10 @@ use Illuminate\Database\Migrations\Migration;
 return new class extends Migration {
     public function up(): void {
         \Illuminate\Support\Facades\DB::statement(/** @lang SQL */ <<<EOF
-            CREATE VIEW `schedules_details` AS
+            CREATE VIEW `schedule_details` AS
             SELECT
-                `s`.`id` AS `id`,
-                `r`.`approved` AS `approved`
+                `s`.`id` AS `schedule_id`,
+                `r`.`approved` AS `is_approved`
             FROM `schedules` `s`
                  LEFT JOIN `schedule_reviews` `r`
                  ON `r`.`schedule_id` = `s`.`id`

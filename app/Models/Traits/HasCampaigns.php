@@ -21,11 +21,11 @@ use Neo\Modules\Broadcast\Models\Campaign;
  *
  * @package Neo\Models\Traits
  *
- * @property Collection<Campaign>                               own_campaigns
- * @property Collection<Campaign>                               shared_campaigns
- * @property Collection<\Neo\Modules\Broadcast\Models\Campaign> group_campaigns
- * @property Collection<Campaign>                               children_campaigns
- * @property Collection<\Neo\Modules\Broadcast\Models\Campaign> campaigns
+ * @property Collection<Campaign> $own_campaigns
+ * @property Collection<Campaign> $shared_campaigns
+ * @property Collection<Campaign> $group_campaigns
+ * @property Collection<Campaign> $children_campaigns
+ * @property Collection<Campaign> $campaigns
  */
 trait HasCampaigns {
 

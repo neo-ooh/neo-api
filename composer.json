@@ -38,6 +38,8 @@
     "league/csv": "^9.6",
     "league/flysystem-aws-s3-v3": "^3.0",
     "league/flysystem-ftp": "^3.0",
+    "league/uri": "^6.7",
+    "league/uri-components": "^2.4",
     "loilo/fuse": "^6.0",
     "mpdf/mpdf": "^8.1.1",
     "nwidart/laravel-modules": "^9.0",
@@ -50,6 +52,7 @@
     "skagarwal/google-places-api": "^2.0",
     "spatie/data-transfer-object": "^3.8",
     "spatie/image": "^2.2",
+    "staudenmeir/eloquent-has-many-deep": "^1.15",
     "symfony/expression-language": "^6.0.1",
     "toin0u/geocoder-laravel": "^4.4",
     "vinkla/hashids": "^10.0"

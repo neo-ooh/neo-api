@@ -51,7 +51,7 @@ class ImpressionsModelsController {
 
         $this->validateFormula($formula, array_keys($variables));
 
-        // Store the new Model
+        // Store the new OdooModel
         $model = $modelsHolder->impressions_models()->create([
             "start_month" => $request->input("start_month"),
             "end_month"   => $request->input("end_month"),
@@ -77,7 +77,7 @@ class ImpressionsModelsController {
 
         $this->validateFormula($formula, array_keys($variables));
 
-        // Store the new Model
+        // Store the new OdooModel
         $impressionsModel->start_month = $request->input("start_month");
         $impressionsModel->end_month   = $request->input("end_month");
         $impressionsModel->formula     = $request->input("formula");

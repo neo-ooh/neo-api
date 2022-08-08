@@ -18,12 +18,12 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Cache;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Network;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Location as BSLocation;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\ReservablePerformance;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
-use Neo\Services\Broadcast\BroadSign\Models\Location as BSLocation;
-use Neo\Services\Broadcast\BroadSign\Models\ReservablePerformance;
 use RuntimeException;
 
 /**
@@ -136,7 +136,7 @@ class Contract extends Model {
     public function getPerformancesAttribute() {
         return Cache::tags(["contract-performances"])->remember($this->getContractPerformancesCacheKey(), 3600 * 3, function () {
             $config          = static::getConnectionConfig();
-            $broadsignClient = new BroadsignClient($config);
+            $broadsignClient = new BroadSignClient($config);
 
             $reservations = $this->reservations;
 
@@ -163,7 +163,7 @@ class Contract extends Model {
 
     public function loadReservationsLocations(): void {
         $config          = static::getConnectionConfig();
-        $broadsignClient = new BroadsignClient($config);
+        $broadsignClient = new BroadSignClient($config);
 
         foreach ($this->reservations as $reservation) {
             $bsLocations            = BSLocation::byReservable($broadsignClient, ["reservable_id" => $reservation->external_id])

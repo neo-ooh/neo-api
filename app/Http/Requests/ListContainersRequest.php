@@ -11,17 +11,17 @@
 namespace Neo\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 
-class ListContainersRequest extends FormRequest
-{
+class ListContainersRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return true;
+    public function authorize(): bool {
+        return Gate::allows(Capability::networks_edit->value);
     }
 
     /**
@@ -29,10 +29,7 @@ class ListContainersRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
-        return [
-            "network_id" => ["sometimes", "exists:networks,id"]
-        ];
+    public function rules(): array {
+        return [];
     }
 }

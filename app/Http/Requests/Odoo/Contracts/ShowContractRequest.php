@@ -22,6 +22,6 @@ class ShowContractRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::odoo_contracts);
+        return Gate::allows(Capability::odoo_contracts->value);
     }
 }

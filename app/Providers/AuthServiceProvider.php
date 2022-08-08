@@ -20,6 +20,7 @@ use Neo\Auth\FourthLoAGuard;
 use Neo\Auth\SecondLoAGuard;
 use Neo\Auth\ThirdLoAGuard;
 use Neo\Enums\Capability;
+use Neo\Models\Actor;
 
 class AuthServiceProvider extends ServiceProvider {
     /**
@@ -38,22 +39,34 @@ class AuthServiceProvider extends ServiceProvider {
      */
     public function boot(): void {
         // Register our JWT Authentication providers
-        Auth::extend('neo-loa-4', fn($app, $name, array $config) => new FourthLoAGuard(Auth::createUserProvider($config['provider'])));
+        Auth::extend('neo-loa-4',
+            static fn($app, $name, array $config) => new FourthLoAGuard(Auth::createUserProvider($config['provider']))
+        );
 
-        Auth::extend('neo-loa-3', fn($app, $name, array $config) => new ThirdLoAGuard(Auth::createUserProvider($config['provider'])));
+        Auth::extend('neo-loa-3',
+            static fn($app, $name, array $config) => new ThirdLoAGuard(Auth::createUserProvider($config['provider']))
+        );
 
-        Auth::extend('neo-loa-2', fn($app, $name, array $config) => new SecondLoAGuard(Auth::createUserProvider($config['provider'])));
+        Auth::extend('neo-loa-2',
+            static fn($app, $name, array $config) => new SecondLoAGuard(Auth::createUserProvider($config['provider'])));
 
-        Auth::extend('neo-loa-1', fn($app, $name, array $config) => new FirstLoAGuard(Auth::createUserProvider($config['provider'])));
+
+        Auth::extend('neo-loa-1',
+            static fn($app, $name, array $config) => new FirstLoAGuard(Auth::createUserProvider($config['provider']))
+        );
 
 
         // Register the AccessToken Authentication provider
-        Auth::extend("access-tokens", fn($app, $name, array $config) => new AccessTokenGuard());
+        Auth::extend("access-tokens",
+            static fn($app, $name, array $config) => new AccessTokenGuard()
+        );
 
 
         // Register our gate authorization provider
         Gate::before(
-            fn($model, string $capability) => $model->hasCapability(Capability::coerce($capability))
+            static function (Actor $model, string $capability) {
+                return $model->hasCapability(Capability::tryFrom($capability));
+            }
         );
     }
 }

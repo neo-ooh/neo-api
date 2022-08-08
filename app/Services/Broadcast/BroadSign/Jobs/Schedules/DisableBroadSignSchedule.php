@@ -15,10 +15,10 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Bundle as BSBundle;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Schedule as BSSchedule;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
-use Neo\Services\Broadcast\BroadSign\Models\Bundle as BSBundle;
-use Neo\Services\Broadcast\BroadSign\Models\Schedule as BSSchedule;
 
 /**
  * Class DisableBroadSignSchedule

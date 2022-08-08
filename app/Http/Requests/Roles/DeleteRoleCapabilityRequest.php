@@ -14,11 +14,11 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class DeleteRoleCapabilityRequest extends FormRequest
-{
+class DeleteRoleCapabilityRequest extends FormRequest {
     public function authorize(): bool {
-        return Gate::allows(Capability::roles_edit);
+        return Gate::allows(Capability::roles_edit->value);
     }
+
     /**
      * Get the validation rules that apply to the request.
      *

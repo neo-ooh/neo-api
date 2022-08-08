@@ -14,16 +14,16 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class UpdateRoleCapabilityRequest extends FormRequest
-{
+class UpdateRoleCapabilityRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::roles_edit);
+        return Gate::allows(Capability::roles_edit->value);
     }
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -31,7 +31,7 @@ class UpdateRoleCapabilityRequest extends FormRequest
      */
     public function rules(): array {
         return [
-            "capabilities" => ["required", "array"],
+            "capabilities"   => ["required", "array"],
             "capabilities.*" => ["integer", "exists:capabilities,id", "distinct"],
         ];
     }

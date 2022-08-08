@@ -23,6 +23,6 @@ class UpdateTagRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::tags_edit);
+        return Gate::allows(Capability::tags_edit->value);
     }
 }

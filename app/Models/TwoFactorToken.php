@@ -21,11 +21,11 @@ use Neo\Jobs\Actors\SendTwoFactorTokenJob;
  *
  * @package App
  *
- * @property int     actor_id
- * @property int     token
- * @property boolean validated
- * @property Date    created_at
- * @property Date    validated_at
+ * @property int     $actor_id
+ * @property string  $token
+ * @property boolean $validated
+ * @property Date    $created_at
+ * @property Date    $validated_at
  *
  *
  * @mixin Builder
@@ -61,7 +61,7 @@ class TwoFactorToken extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'actor_id',
@@ -71,31 +71,23 @@ class TwoFactorToken extends Model {
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $hidden = [
         'token',
     ];
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = [
-        'validated_at',
-        'updated_at',
-        'created_at',
-    ];
-
-    /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
-        'token'     => 'integer',
-        'validated' => 'boolean',
+        'token'        => 'integer',
+        'validated'    => 'boolean',
+        'validated_at' => 'date',
+        'updated_at'   => 'date',
+        'created_at'   => 'date',
     ];
 
     /**
@@ -106,12 +98,12 @@ class TwoFactorToken extends Model {
     public static function boot() {
         parent::boot();
 
-        static::creating(function (TwoFactorToken $model) {
+        static::creating(static function (TwoFactorToken $model) {
             $model->token      = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
             $model->created_at = $model->freshTimestamp();
         });
 
-        static::created(function (TwoFactorToken $model) {
+        static::created(static function (TwoFactorToken $model) {
             SendTwoFactorTokenJob::dispatch($model->actor_id);
         });
     }
@@ -141,7 +133,7 @@ class TwoFactorToken extends Model {
      * @return bool
      */
     public function validate(string $token): bool {
-        if ($this->token !== (int)$token) {
+        if (strcmp($this->token, $token) !== 0) {
             // Bad token
             return false;
         }

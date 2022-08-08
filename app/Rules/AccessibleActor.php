@@ -43,19 +43,22 @@ class AccessibleActor implements Rule, ImplicitRule {
         }
 
         // Load the actor and see if it exists
-        /** @var Actor $item */
+        /** @var Actor|null $item */
         $item = Actor::query()->find($value);
 
         if (is_null($item)) {
             return false;
         }
 
+        /** @var AccessToken|Actor $user */
+        $user = Auth::user();
+
         if (Auth::user() instanceof AccessToken) {
             return true;
         }
 
         // Finally, check if the current user can access it
-        return Auth::user()->hasAccessTo($item);
+        return $user->hasAccessTo($item);
     }
 
     /**

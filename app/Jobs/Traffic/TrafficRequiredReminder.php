@@ -51,7 +51,7 @@ class TrafficRequiredReminder implements ShouldQueue {
             })->get();
 
         // For each properties, we need the list of actors responsible for it
-        $actors = $properties->map(fn(Property $property) => $property->actor->getActorsInHierarchyWithCapability(Capability::properties_traffic()))
+        $actors = $properties->map(fn(Property $property) => $property->actor->getActorsInHierarchyWithCapability(Capability::properties_traffic))
                              ->flatten(1)
                              ->unique("id");
 

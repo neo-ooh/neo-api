@@ -10,33 +10,33 @@
 
 namespace Neo\Services\Odoo\Models;
 
-use Neo\Services\API\Odoo\Model;
+use Neo\Services\Odoo\OdooModel;
 
 /**
- * @property int $id
- * @property string $name
- * @property string $display_name
- * @property bool $date
- * @property bool $title
- * @property bool $parent_id
- * @property bool $parent_name
- * @property string $lang
- * @property string $street
- * @property string $street2
- * @property string $zip
- * @property array $city
- * @property array $state_id
- * @property string $country_id
- * @property double $partner_latitude
- * @property double $partner_longitude
- * @property string $email
- * @property string $phone
+ * @property int        $id
+ * @property string     $name
+ * @property string     $display_name
+ * @property bool       $date
+ * @property bool       $title
+ * @property bool       $parent_id
+ * @property bool       $parent_name
+ * @property string     $lang
+ * @property string     $street
+ * @property string     $street2
+ * @property string     $zip
+ * @property array      $city
+ * @property array      $state_id
+ * @property string     $country_id
+ * @property double     $partner_latitude
+ * @property double     $partner_longitude
+ * @property string     $email
+ * @property string     $phone
  *
  * @property array<int> $rental_product_ids
  *
- * @property Province $province
+ * @property Province   $province
  */
-class Property extends Model {
+class Property extends OdooModel {
     public static string $slug = "res.partner";
 
     protected static array $filters = [

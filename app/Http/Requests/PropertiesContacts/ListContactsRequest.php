@@ -20,6 +20,6 @@ class ListContactsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_contacts);
+        return Gate::allows(Capability::properties_contacts->value);
     }
 }

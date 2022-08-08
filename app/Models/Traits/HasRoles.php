@@ -52,7 +52,7 @@ trait HasRoles {
     public function addCapability(CapabilityEnum $capability): self {
         $cap = new ActorCapability([
             "actor_id"      => $this->getKey(),
-            "capability_id" => Capability::bySlug($capability)->id,
+            "capability_id" => Capability::bySlug($capability)->getKey(),
         ]);
 
         $cap->save();
@@ -328,7 +328,7 @@ trait HasRoles {
                 if ($reviewers->count() > 0) {
                     return $reviewers;
                 }
-            } else if ($actor->hasCapability(CapabilityEnum::contents_review())) {
+            } else if ($actor->hasCapability(CapabilityEnum::contents_review)) {
                 // This actor has the proper capability, use it
                 return collect([$actor]);
             }

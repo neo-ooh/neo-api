@@ -18,14 +18,14 @@ use Neo\Models\Actor;
 /**
  * Neo\Models\Branding
  *
- * @property int      id
- * @property int      schedule_id
- * @property int      reviewer_id
- * @property bool     approved
- * @property string   message
+ * @property int      $id
+ * @property int      $schedule_id
+ * @property int      $reviewer_id
+ * @property bool     $approved
+ * @property string   $message
  *
- * @property Schedule schedule
- * @property Actor    reviewer
+ * @property Schedule $schedule
+ * @property Actor    $reviewer
  *
  * @mixin Builder
  */
@@ -47,7 +47,7 @@ class ScheduleReview extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'schedule_id',
@@ -59,7 +59,7 @@ class ScheduleReview extends Model {
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'approved' => 'boolean',
@@ -68,9 +68,16 @@ class ScheduleReview extends Model {
     /**
      * The relationships that should always be loaded.
      *
-     * @var array
+     * @var array<string>
      */
     protected $with = ["reviewer:id,name"];
+
+    /**
+     * @var array<string>
+     */
+    protected $touches = [
+        "schedule"
+    ];
 
 
     /*
@@ -79,10 +86,16 @@ class ScheduleReview extends Model {
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * @return BelongsTo<Schedule, ScheduleReview>
+     */
     public function schedule(): BelongsTo {
         return $this->belongsTo(Schedule::class, 'schedule_id', 'id');
     }
 
+    /**
+     * @return BelongsTo<Actor, ScheduleReview>
+     */
     public function reviewer(): BelongsTo {
         return $this->belongsTo(Actor::class, 'reviewer_id', 'id');
     }

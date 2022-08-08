@@ -11,8 +11,8 @@
 namespace Neo\Services\Broadcast\PiSignage\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
-use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
+use Neo\Modules\Broadcast\Services\PiSignage\API\PiSignageClient;
+use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 

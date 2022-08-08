@@ -10,8 +10,8 @@
 
 namespace Neo\Services\Odoo\Models;
 
-use Neo\Services\API\Odoo\Client;
-use Neo\Services\API\Odoo\Model;
+use Neo\Services\Odoo\OdooClient;
+use Neo\Services\Odoo\OdooModel;
 
 /**
  * @property int        $id
@@ -29,12 +29,12 @@ use Neo\Services\API\Odoo\Model;
  * @property string     $access_url
  * @property string     $state
  */
-class Contract extends Model {
+class Contract extends OdooModel {
     public static string $slug = "sale.order";
 
     protected static array $filters = [];
 
-    public static function findByName(Client $client, string $contractName): static|null {
+    public static function findByName(OdooClient $client, string $contractName): static|null {
         return static::findBy($client, "name", $contractName)->first();
     }
 

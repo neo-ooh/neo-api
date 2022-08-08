@@ -30,6 +30,8 @@ use Illuminate\Queue\SerializesModels;
  * > Job::onSuccess(mixed $result); // Called if `run()` finished without throwing, The `run()` return value is passed as argument
  * > Job::onSuccess(Exception $exception); // Called if `run()` has thrown. The thrown exception is passed as argument
  * > Job::finally(); // Called no matter the result of `run()`
+ *
+ * @template TRunReturn Run method return value, passed to the success callback
  */
 abstract class Job implements ShouldQueue {
     use Dispatchable;
@@ -37,7 +39,7 @@ abstract class Job implements ShouldQueue {
     use Queueable;
     use SerializesModels;
 
-    public function handle() {
+    final public function handle(): void {
         $this->beforeRun();
 
         try {
@@ -54,9 +56,9 @@ abstract class Job implements ShouldQueue {
     /**
      * The logic of the job
      *
-     * @return mixed
+     * @return TRunReturn
      */
-    abstract public function run();
+    abstract protected function run(): mixed;
 
     /**
      * Lifecycle method called before `run()`
@@ -69,7 +71,7 @@ abstract class Job implements ShouldQueue {
     /**
      * Lifecycle method called after `run()` finished without throwing
      *
-     * @param mixed $result `run()` return value
+     * @param TRunReturn $result `run()` return value
      * @return void
      */
     protected function onSuccess(mixed $result): void {
@@ -81,7 +83,7 @@ abstract class Job implements ShouldQueue {
      * @param Exception $exception Exception thrown in `run()`
      * @return void
      */
-    protected function onFailure(Exception $exception) {
+    protected function onFailure(Exception $exception): void {
     }
 
     /**
@@ -89,6 +91,6 @@ abstract class Job implements ShouldQueue {
      *
      * @return void
      */
-    protected function finally() {
+    protected function finally(): void {
     }
 }

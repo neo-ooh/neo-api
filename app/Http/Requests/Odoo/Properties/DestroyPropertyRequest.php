@@ -21,6 +21,6 @@ class DestroyPropertyRequest extends FormRequest {
     }
 
     public function authorize() {
-        return Gate::allows(Capability::odoo_properties);
+        return Gate::allows(Capability::odoo_properties->value);
     }
 }

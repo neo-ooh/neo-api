@@ -19,7 +19,12 @@ return new class extends Migration {
         });
 
         Schema::table('campaigns', static function (Blueprint $table) {
-            $table->foreignId("creator_id")->nullable()->constrained("actors", "id")->cascadeOnUpdate()->nullOnDelete();
+            $table->foreignId("creator_id")
+                  ->after("parent_id")
+                  ->nullable()
+                  ->constrained("actors", "id")
+                  ->cascadeOnUpdate()
+                  ->nullOnDelete();
 
             $table->time("start_time")->after("start_date")->default("00:00:00");
             $table->time("end_time")->after("end_date")->default("23:59:00");

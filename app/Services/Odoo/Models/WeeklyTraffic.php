@@ -11,8 +11,8 @@
 namespace Neo\Services\Odoo\Models;
 
 use Illuminate\Support\Collection;
-use Neo\Services\API\Odoo\Client;
-use Neo\Services\API\Odoo\Model;
+use Neo\Services\Odoo\OdooClient;
+use Neo\Services\Odoo\OdooModel;
 
 /**
  * @property int    $id
@@ -21,17 +21,17 @@ use Neo\Services\API\Odoo\Model;
  * @property array  $partner_id
  * @property string $display_name
  */
-class WeeklyTraffic extends Model {
+class WeeklyTraffic extends OdooModel {
     public static string $slug = "weekly.traffic";
 
     protected static array $filters = [];
 
     /**
-     * @param Client $client
-     * @param int    $propertyId
+     * @param OdooClient $client
+     * @param int        $propertyId
      * @return Collection<static>
      */
-    public static function forProperty(Client $client, int $propertyId): Collection {
+    public static function forProperty(OdooClient $client, int $propertyId): Collection {
         return static::findBy($client, "partner_id", $propertyId);
     }
 }

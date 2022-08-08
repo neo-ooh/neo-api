@@ -11,7 +11,7 @@
 namespace Neo\Services\Traffic;
 
 use Illuminate\Support\Facades\Log;
-use Neo\Exceptions\BadAPIPResponseException;
+use Neo\Exceptions\ThirdPartyAPIException;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
 
@@ -27,12 +27,18 @@ class LinkettAPIClient implements APIClientInterface {
 
     /**
      * @inheritDoc
-     * @throws BadAPIPResponseException
+     * @param \Neo\Services\API\Endpoint $endpoint
+     * @param int|string|array|null      $payload
+     * @param array                      $headers
+     * @return array|mixed
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws \JsonException
+     * @throws \Neo\Exceptions\ThirdPartyAPIException
      */
     public function call($endpoint, $payload, array $headers = []) {
         $payload["key"] = $this->apiKey;
 
-        // The linkett API tends to return 503 errors oonce n a while (more often than not). So we allow for a few tries before actually failing
+        // The Linkett API tends to return 503 errors once in a while (more often than not). So we allow for a few tries before actually failing
         $tries = 0;
 
         do {
@@ -46,11 +52,11 @@ class LinkettAPIClient implements APIClientInterface {
 
         if (!$response->successful()) {
             $jsonPayload = json_encode($payload, JSON_THROW_ON_ERROR);
-            Log::channel("broadsign")->debug("pisignage request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload");
+            Log::channel("broadsign")->debug("linkett request:$endpoint->method [{$endpoint->getPath()}] $jsonPayload");
             Log::channel("broadsign")
-               ->error("pisignage response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
+               ->error("linkett response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 
-            throw new BadAPIPResponseException($response->body(), $response->status());
+            throw new ThirdPartyAPIException($response->body(), $response->status());
         }
 
         $responseBody = $response->json();

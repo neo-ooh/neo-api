@@ -8,8 +8,6 @@
  * @neo/api - GeoJsonRule.php
  */
 
-declare(strict_types=1);
-
 namespace Neo\Rules;
 
 use GeoJson\GeoJson;
@@ -21,13 +19,11 @@ use Throwable;
  *
  * @see https://github.com/yucadoo/laravel-geojson-rule/blob/master/src/GeoJsonRule.php
  *
- * RFC 7946 GeoJSON Format specification.
+ * RFC 7946 GeoJSON DisplayType specification.
  */
 class GeoJsonRule implements Rule {
-    /** @var string */
-    private $geometryClass;
-    /** @var Throwable */
-    private $exception;
+    private string|null $geometryClass;
+    private Throwable $exception;
 
     /**
      * Constructor.
@@ -45,11 +41,11 @@ class GeoJsonRule implements Rule {
      * @param mixed  $value
      * @return bool
      */
-    public function passes($attribute, $value) {
+    public function passes($attribute, $value): bool {
         try {
             if (is_string($value)) {
                 // Handle undecoded JSON
-                $value = json_decode($value);
+                $value = json_decode($value, false, 512, JSON_THROW_ON_ERROR);
                 if (is_null($value)) {
                     throw new InvalidArgumentException('JSON is invalid');
                 }
@@ -72,8 +68,8 @@ class GeoJsonRule implements Rule {
      *
      * @return string|array
      */
-    public function message() {
-        $message = 'The :attribute does not satisfy the RFC 7946 GeoJSON Format specification';
+    public function message(): array|string {
+        $message = 'The :attribute does not satisfy the RFC 7946 GeoJSON DisplayType specification';
         if (!empty($this->exception)) {
             $message .= ' because ' . $this->exception->getMessage();
         } elseif (!empty($this->geometryClass)) {

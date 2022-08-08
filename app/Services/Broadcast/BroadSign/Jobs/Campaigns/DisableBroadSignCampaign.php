@@ -15,9 +15,9 @@ use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Campaign as BSCampaign;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
-use Neo\Services\Broadcast\BroadSign\Models\Campaign as BSCampaign;
 
 /**
  * Class DisableBroadSignCampaign

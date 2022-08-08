@@ -95,7 +95,7 @@ class AvailabilitiesController {
             /** @var Product|null $product */
             $product = $products->firstWhere("id", "=", $productId);
 
-            // Ignore if product Model is missing
+            // Ignore if product OdooModel is missing
             if (!$product) {
                 continue;
             }

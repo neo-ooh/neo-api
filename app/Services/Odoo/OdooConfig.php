@@ -10,8 +10,6 @@
 
 namespace Neo\Services\Odoo;
 
-use Neo\Services\API\Odoo\Client;
-
 class OdooConfig {
     public function __construct(protected string $serverUrl,
                                 protected string $username,
@@ -29,6 +27,6 @@ class OdooConfig {
     }
 
     public function getClient() {
-        return new Client($this->serverUrl, $this->database, $this->username, $this->password);
+        return new OdooClient($this->serverUrl, $this->database, $this->username, $this->password);
     }
 }

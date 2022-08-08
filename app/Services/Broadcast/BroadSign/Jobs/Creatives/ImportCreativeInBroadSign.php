@@ -19,9 +19,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Storage;
 use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
-use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\ResourceIDParser;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 
 /**

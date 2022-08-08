@@ -18,9 +18,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Creative as BSCreative;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
-use Neo\Services\Broadcast\BroadSign\Models\Creative as BSCreative;
 
 /**
  * Class DisableBroadSignCreative

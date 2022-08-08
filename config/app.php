@@ -177,9 +177,7 @@ return [
         Neo\Providers\EventServiceProvider::class,
         Neo\Providers\RouteServiceProvider::class,
 
-        Neo\Providers\DBServiceProvider::class,
         Neo\Providers\ThirdPartiesServicesProvider::class,
-
     ],
 
     /*

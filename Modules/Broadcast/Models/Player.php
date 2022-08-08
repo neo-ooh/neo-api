@@ -15,32 +15,29 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Player
  *
  * @package Neo\Models
  *
- * @property int      $id
- * @property int      $network_id
- * @property string   $external_id
- * @property int      $location_id
- * @property string   $name
- * @property Date     $created_at
- * @property Date     $updated_at
+ * @property int       $id
+ * @property int       $network_id
+ * @property string    $external_id
+ * @property int       $location_id
+ * @property string    $name
+ * @property Date      $created_at
+ * @property Date      $updated_at
+ * @property Date|null $deleted_at
  *
- * @property Network  $network
- * @property Location $location
+ * @property Network   $network
+ * @property Location  $location
  *
  * @mixin Builder
  */
 class Player extends Model {
-    /*
-    |--------------------------------------------------------------------------
-    | Table properties
-    |--------------------------------------------------------------------------
-    */
-
+    use SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -52,7 +49,7 @@ class Player extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'network_id',

@@ -13,9 +13,11 @@ namespace Neo\Models\Traits;
 use Illuminate\Database\Eloquent\Builder;
 
 trait HasCompositePrimaryKey {
-    public function getKey()
-    {
+    public function getKey() {
         $attributes = [];
+        /** @var array $keys */
+        $keys = $this->getKeyName();
+
         foreach ($this->getKeyName() as $key) {
             $attributes[$key] = $this->getAttribute($key);
         }
@@ -29,14 +31,14 @@ trait HasCompositePrimaryKey {
      * @param Builder $query
      * @return Builder
      */
-    protected function setKeysForSaveQuery($query)
-    {
+    protected function setKeysForSaveQuery($query) {
+        /** @var string|array $keys */
         $keys = $this->getKeyName();
-        if(!is_array($keys)){
+        if (!is_array($keys)) {
             return parent::setKeysForSaveQuery($query);
         }
 
-        foreach($keys as $keyName){
+        foreach ($keys as $keyName) {
             $query->where($keyName, '=', $this->getKeyForSaveQuery($keyName));
         }
 
@@ -49,9 +51,8 @@ trait HasCompositePrimaryKey {
      * @param mixed $keyName
      * @return mixed
      */
-    protected function getKeyForSaveQuery($keyName = null)
-    {
-        if(is_null($keyName)){
+    protected function getKeyForSaveQuery($keyName = null) {
+        if (is_null($keyName)) {
             $keyName = $this->getKeyName();
         }
 

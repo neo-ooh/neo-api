@@ -16,7 +16,7 @@ use Neo\Http\Requests\LoopConfigurations\DeleteLoopConfigurationRequest;
 use Neo\Http\Requests\LoopConfigurations\ShowLoopConfigurationRequest;
 use Neo\Http\Requests\LoopConfigurations\StoreLoopConfigurationRequest;
 use Neo\Http\Requests\LoopConfigurations\UpdateLoopConfigurationRequest;
-use Neo\Models\LoopConfiguration;
+use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
 class LoopConfigurationsController {
     public function index() {
@@ -34,7 +34,6 @@ class LoopConfigurationsController {
             "start_date"     => Carbon::parse($request->input("start_date"))->setYear(2000),
             "end_date"       => Carbon::parse($request->input("end_date"))->setYear(2000),
         ]);
-        $loopConfiguration->save();
 
         $loopConfiguration->save();
 

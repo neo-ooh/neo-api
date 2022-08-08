@@ -13,18 +13,14 @@ namespace Neo\Console;
 use DateTimeZone;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\Contracts\RefreshContracts;
-use Neo\Jobs\Creatives\RemoveUnusedCreativesFromBroadcasterJob;
-use Neo\Jobs\Maintenance\RetrySchedulesJob;
 use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\Properties\CreateTrafficSnapshotJob;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\Schedules\DisableExpiredSchedulesJob;
-use Neo\Jobs\SynchronizeNetworks;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
 use Neo\Jobs\Traffic\PullLatestTrafficData;
 use Neo\Jobs\Traffic\TrafficRequiredReminder;
@@ -36,14 +32,8 @@ class Kernel extends ConsoleKernel {
      * @var array
      */
     protected $commands = [
-        // network:sync
-        SynchronizeNetworks::class,
-
         // properties:sync
         SynchronizeProperties::class,
-
-        // properties:push-traffic
-        PushAllPropertiesTrafficCommand::class,
 
         // contracts:update
         RefreshContracts::class,
@@ -51,13 +41,7 @@ class Kernel extends ConsoleKernel {
         // contracts:clear-screenshots
         ClearOldScreenshots::class,
 
-        // hotfix:...
-        Hotfixes\RetargetAllCampaigns::class,
-        Hotfixes\RetargetAllCreatives::class,
-        Hotfixes\RecreateAllCampaigns::class,
-
-        Utils\MergeOTGResourcesIntoOneFormat::class,
-
+        // property:pull-traffic {property}
         PullPropertyTraffic::class
     ];
 
@@ -67,7 +51,7 @@ class Kernel extends ConsoleKernel {
      * @param Schedule $schedule
      * @return void
      */
-    protected function schedule(Schedule $schedule) {
+    protected function schedule(Schedule $schedule): void {
         /* -----------------
          * Every-minute tasks
          */
@@ -99,17 +83,11 @@ class Kernel extends ConsoleKernel {
         // Take a snapshot of properties' traffic
         $schedule->job(CreateTrafficSnapshotJob::class)->dailyAt("01:00");
 
-        // Update network from broadsign & others
-        $schedule->command('network:sync')->daily();
         $schedule->command('properties:sync')->daily();
         $schedule->command('contracts:clear-screenshots')->daily();
 
-        // Remove unused creatives from external broadcasters
-        $schedule->job(DisableExpiredSchedulesJob::class)->daily();
-        $schedule->job(RemoveUnusedCreativesFromBroadcasterJob::class)->daily();
-
         // Try scheduling jobs that have not been scheduled properly
-        $schedule->job(RetrySchedulesJob::class)->daily();
+//        $schedule->job(RetrySchedulesJob::class)->daily();
 
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()
@@ -136,7 +114,7 @@ class Kernel extends ConsoleKernel {
      *
      * @return DateTimeZone|string|null
      */
-    protected function scheduleTimezone() {
+    protected function scheduleTimezone(): DateTimeZone|string|null {
         return 'America/Toronto';
     }
 
@@ -145,7 +123,7 @@ class Kernel extends ConsoleKernel {
      *
      * @return void
      */
-    protected function commands() {
+    protected function commands(): void {
         $this->load(__DIR__ . '/Commands');
     }
 }

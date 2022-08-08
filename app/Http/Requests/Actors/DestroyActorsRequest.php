@@ -21,8 +21,8 @@ class DestroyActorsRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        return Gate::allows(Capability::actors_edit);
+    public function authorize(): bool {
+        return Gate::allows(Capability::actors_edit->value);
     }
 
     /**
@@ -30,9 +30,9 @@ class DestroyActorsRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "behaviour" => [ "required", "string", Rule::in([ 'to-self', 'to-parent', 'to-trash' ]) ],
+            "behaviour" => ["required", "string", Rule::in(['to-self', 'to-parent', 'to-trash'])],
         ];
     }
 }

@@ -16,14 +16,14 @@ use RuntimeException;
 
 /**
  * This trait performs access validation at the route-model-binding step.
- * The property `$accessRule` from the model is used to validate that the current user can effectively access the specified resource.
- * The `$accessRule` property MUST contains the name of a Validation Rule class.
+ * The property `$accessRule` from the model is used to validate that the current user can effectively access the specified
+ * resource. The `$accessRule` property MUST contains the name of a Validation Rule class.
  *
  * Trait AccessValidation
  *
- * @property string accessRule The rule used to validate access to the model upon binding it with a route
- *
  * @package Neo\Models\Traits
+ * @property string $accessRule The rule used to validate access to the model upon binding it with a route
+ *
  */
 trait AccessValidation {
     /**
@@ -34,13 +34,13 @@ trait AccessValidation {
      * @return boolean
      * @throws Exception If the accessRule is not defined
      */
-    public function validateAccess($value): bool {
+    public function validateAccess(mixed $value): bool {
         // Check an access validation method has been defined
-        if(empty($this->accessRule)) {
+        if (empty($this->accessRule)) {
             throw new RuntimeException('$accessRule must be defined when using the AccessValidation trait.');
         }
 
         // Check access
-        return !Validator::make(["model" => $value], ["model" => ["required", new $this->accessRule]])->fails();
+        return !Validator::make(["model" => $value], ["model" => ["required", new $this->accessRule()]])->fails();
     }
 }

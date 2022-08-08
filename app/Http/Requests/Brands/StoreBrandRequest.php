@@ -23,6 +23,6 @@ class StoreBrandRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_tenants);
+        return Gate::allows(Capability::properties_tenants->value);
     }
 }

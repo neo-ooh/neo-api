@@ -16,12 +16,12 @@ use Neo\Enums\Capability;
 
 class UpdateCityRequest extends FormRequest {
     public function authorize() {
-        return Gate::allows(Capability::properties_markets);
+        return Gate::allows(Capability::properties_markets->value);
     }
 
     public function rules() {
         return [
-            "name" => ["required", "string"],
+            "name"      => ["required", "string"],
             "market_id" => ["integer", "exists:markets,id"]
         ];
     }

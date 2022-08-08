@@ -10,6 +10,7 @@
 
 namespace Neo\Console\Commands\Migrations;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Bus;
 use Neo\Jobs\Traffic\EstimateWeeklyTrafficFromMonthJob;
@@ -27,7 +28,7 @@ class ForceCalculateAllPropertiesWeeklyTrafficCommand extends Command {
             $this->info("Dispatching for property #$propertyId");
 
             $jobs = [];
-            foreach ([2019, 2021] as $year) {
+            foreach ([2019, Carbon::now()->year] as $year) {
                 for ($i = 1; $i <= 12; $i++) {
                     $jobs[] = new EstimateWeeklyTrafficFromMonthJob($propertyId, $year, $i);
                 }

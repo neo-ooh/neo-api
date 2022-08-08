@@ -21,15 +21,16 @@ class CapabilitiesSeeder extends Seeder {
      * @return void
      */
     public static function run(): void {
-        $allCapabilities = \Neo\Enums\Capability::asArray();
+        $allCapabilities = \Neo\Enums\Capability::cases();
 
         /** @var Role $role */
         $role = Role::query()->firstOrCreate(["name" => "Admin"]);
 
         $caps = [];
 
-        foreach ($allCapabilities as $value) {
-            $cap = Capability::query()->firstOrCreate(["slug" => $value], ["service" => "", "standalone" => true]);
+        foreach ($allCapabilities as $capabilityEnum) {
+            $cap = Capability::query()
+                             ->firstOrCreate(["slug" => $capabilityEnum->value], ["service" => "", "standalone" => true]);
 
             $caps[] = $cap->id;
         }
@@ -38,92 +39,62 @@ class CapabilitiesSeeder extends Seeder {
         $role->capabilities()->sync($caps);
 
         // Define the capabilities groups
-        $capGroups = [
+        $prefixGroups = [
             "ACTORS"     => [
-                \Neo\Enums\Capability::actors_create,
-                \Neo\Enums\Capability::actors_delete,
-                \Neo\Enums\Capability::actors_edit,
-                \Neo\Enums\Capability::actors_auth,
-                \Neo\Enums\Capability::actors_impersonate,
-
-                \Neo\Enums\Capability::roles_edit,
-                \Neo\Enums\Capability::brandings_edit,
+                "actors",
+                "roles",
+                "brandings",
             ],
             "DIRECT"     => [
-                \Neo\Enums\Capability::libraries_edit,
-                \Neo\Enums\Capability::libraries_create,
-                \Neo\Enums\Capability::libraries_destroy,
-
-                \Neo\Enums\Capability::formats_edit,
-
-                \Neo\Enums\Capability::campaigns_edit,
-
-                \Neo\Enums\Capability::contents_edit,
-                \Neo\Enums\Capability::contents_dynamic,
-                \Neo\Enums\Capability::contents_schedule,
-                \Neo\Enums\Capability::contents_review,
+                "campaigns",
+                "libraries",
+                "contents",
+            ],
+            "SALES"      => [
+                "contracts",
+                "bursts",
+                "tools",
+                "planning",
             ],
             "PROPERTIES" => [
-                \Neo\Enums\Capability::properties_edit,
-
-                \Neo\Enums\Capability::properties_contacts,
-                \Neo\Enums\Capability::properties_export,
-                \Neo\Enums\Capability::properties_fields,
-                \Neo\Enums\Capability::properties_markets,
-                \Neo\Enums\Capability::properties_products,
-                \Neo\Enums\Capability::properties_tenants,
-                \Neo\Enums\Capability::properties_traffic,
-                \Neo\Enums\Capability::properties_view,
-
-                \Neo\Enums\Capability::odoo_properties,
-
-                \Neo\Enums\Capability::products_impressions,
-                \Neo\Enums\Capability::pricelists_edit,
-                \Neo\Enums\Capability::loops_edit,
+                "properties",
+                "odoo",
+                "products",
+                "pricelists",
+                "loops",
+                "tags",
+                "traffic",
+                "impressions",
             ],
             "NETWORK"    => [
-                \Neo\Enums\Capability::bursts_request,
-                \Neo\Enums\Capability::bursts_quality,
-
-                \Neo\Enums\Capability::contracts_edit,
-                \Neo\Enums\Capability::contracts_manage,
-
-                \Neo\Enums\Capability::documents_generation,
-
-                \Neo\Enums\Capability::tools_planning,
-                \Neo\Enums\Capability::planning_fullaccess,
-                \Neo\Enums\Capability::odoo_contracts,
+                "networks",
+                "formats",
+                "broadcast",
             ],
             "DYNAMICS"   => [
-                \Neo\Enums\Capability::dynamics_news,
-                \Neo\Enums\Capability::dynamics_weather,
+                "dynamics",
             ],
             "INTERNAL"   => [
-                \Neo\Enums\Capability::networks_admin,
-                \Neo\Enums\Capability::networks_edit,
-                \Neo\Enums\Capability::networks_connections,
-
-                \Neo\Enums\Capability::tos_update,
-                \Neo\Enums\Capability::headlines_edit,
-                \Neo\Enums\Capability::chores_broadsign,
-                \Neo\Enums\Capability::access_token_edit,
-
-                \Neo\Enums\Capability::traffic_sources,
-                \Neo\Enums\Capability::traffic_refresh,
-                \Neo\Enums\Capability::impressions_export,
-
-                \Neo\Enums\Capability::tags_edit,
-
-                \Neo\Enums\Capability::tests,
+                "tos",
+                "headlines",
+                "access",
+                "documents",
+                "chores",
+                "tests",
             ],
         ];
 
-        foreach ($capGroups as $key => $caps) {
-            Capability::query()->whereIn("slug", $caps)
-                      ->update(["service" => $key]);
+        foreach ($prefixGroups as $group => $prefixes) {
+            $q = Capability::query();
+
+            foreach ($prefixes as $prefix) {
+                $q->where("slug", "like", $prefix . "_%");
+            }
+
+            $q->update(["service" => $group]);
         }
 
         // Delete missing capabilities
-        Capability::query()->whereNotIn("slug", $allCapabilities)->delete();
+        Capability::query()->whereNotIn("id", $caps)->delete();
     }
 }

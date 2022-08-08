@@ -16,11 +16,10 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Modules\Broadcast\Models\DisplayType;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Services\Broadcast\BroadSign\Models\Container;
-use Neo\Services\Broadcast\BroadSign\Models\Format;
-use Neo\Services\Broadcast\BroadSign\Models\Location as BSLocation;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Container;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\DisplayType;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Location as BSLocation;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
@@ -154,7 +153,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
             "external_id"   => $displayTypeId
         ]);
 
-        $bsDisplayType = Format::get($this->getAPIClient(), $displayTypeId);
+        $bsDisplayType = DisplayType::get($this->getAPIClient(), $displayTypeId);
 
         $displayType->internal_name = $bsDisplayType->name;
 

@@ -12,16 +12,35 @@ namespace Neo\Exceptions;
 
 use Exception;
 use Illuminate\Http\Response;
+use JsonException;
 
-abstract class BaseException extends Exception
-{
-    protected int $status = 422;
+abstract class BaseException extends Exception {
+    public function __construct(string $message = "", protected string $errorCode = "error.unknown", protected int $status = 422) {
+        parent::__construct($message, $this->errorCode);
+    }
 
-    public function asResponse(): ?Response
-    {
-        return new Response([
-            "code" => $this->code,
+    public function toArray(): array {
+        return [
+            "code"    => $this->errorCode,
             "message" => $this->message,
-        ], $this->status);
+        ];
+    }
+
+    public function asResponse(): ?Response {
+        return new Response($this->toArray(), $this->status);
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus(): int {
+        return $this->status;
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function __toString(): string {
+        return json_encode($this->toArray(), JSON_THROW_ON_ERROR);
     }
 }

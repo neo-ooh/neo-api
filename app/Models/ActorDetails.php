@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
@@ -27,14 +26,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  *
  * @mixin Builder
  */
-class ActorDetails extends Model {
-    /*
-    |--------------------------------------------------------------------------
-    | Table properties
-    |--------------------------------------------------------------------------
-    */
-
-
+class ActorDetails extends DBView {
     /**
      * The table associated with the model.
      *
@@ -45,7 +37,7 @@ class ActorDetails extends Model {
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'parent_is_group' => 'boolean',

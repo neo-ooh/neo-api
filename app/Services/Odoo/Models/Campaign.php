@@ -10,28 +10,28 @@
 
 namespace Neo\Services\Odoo\Models;
 
-use Neo\Services\API\Odoo\Client;
-use Neo\Services\API\Odoo\Model;
+use Neo\Services\Odoo\OdooClient;
+use Neo\Services\Odoo\OdooModel;
 
 /**
- * @property int $id
- * @property array $order_id
+ * @property int    $id
+ * @property array  $order_id
  * @property string $state
  * @property string $date_start
  * @property string $date_end
- * @property int $sequence
- * @property array $display_name
- * @property array $create_uid
+ * @property int    $sequence
+ * @property array  $display_name
+ * @property array  $create_uid
  * @property string $create_date
- * @property array $write_uid
- * @property array $write_date
+ * @property array  $write_uid
+ * @property array  $write_date
  */
-class Campaign extends Model {
+class Campaign extends OdooModel {
     public static string $slug = "sale.campaign";
 
     protected static array $filters = [];
 
-    public static function findByName(Client $client, string $contractName): static {
+    public static function findByName(OdooClient $client, string $contractName): static {
         return static::findBy($client, "name", $contractName)->first();
     }
 }

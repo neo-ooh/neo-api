@@ -81,7 +81,7 @@ class PropertyTrafficMonthly extends Model {
         parent::boot();
 
         static::retrieved(function (PropertyTrafficMonthly $traffic) {
-            $traffic->makeHiddenIf(!Gate::allows(\Neo\Enums\Capability::properties_edit), ["temporary"]);
+            $traffic->makeHiddenIf(!Gate::allows(\Neo\Enums\Capability::properties_edit->value), ["temporary"]);
         });
     }
 

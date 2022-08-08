@@ -16,13 +16,13 @@ use Neo\Enums\Capability;
 
 class StoreCityRequest extends FormRequest {
     public function authorize() {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 
     public function rules() {
         return [
-            "name"        => ["required", "string"],
-            "market_id"   => ["integer", "exists:markets,id"],
+            "name"      => ["required", "string"],
+            "market_id" => ["integer", "exists:markets,id"],
         ];
     }
 }

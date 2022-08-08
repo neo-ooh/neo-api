@@ -10,9 +10,14 @@
 
 namespace Neo\Modules\Broadcast\Services\Resources;
 
-class Content extends ExternalBroadcastResource {
+class Content extends ExternalBroadcasterResource {
     public string $name;
 
-    public int $length;
+    public int $duration_msec;
     public bool $fullscreen;
+
+    /**
+     * @var array<Tag>
+     */
+    public array $tags;
 }

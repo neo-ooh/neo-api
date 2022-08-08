@@ -12,45 +12,56 @@ namespace Neo\Modules\Broadcast\Models;
 
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Neo\Models\Actor;
-use Neo\Models\Container;
 use Neo\Models\ContractBurst;
 use Neo\Models\Product;
 use Neo\Models\SecuredModel;
+use Neo\Models\Traits\WithPublicRelations;
+use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Rules\AccessibleLocation;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Neo\Models\ActorsLocations
  *
- * @property int                 $id
- * @property int                 $network_id
- * @property string              $external_id
- * @property int                 $display_type_id
- * @property string              $name
- * @property string              $internal_name
- * @property int                 $container_id
- * @property string              $province [QC, ON, ...]
- * @property string              $city
- * @property boolean             $scheduled_sleep
- * @property Date                $sleep_end
- * @property Date                $sleep_start
- * @property Date                $created_at
- * @property Date                $updated_at
+ * @property int                              $id
+ * @property int                              $network_id
+ * @property string                           $external_id
+ * @property int                              $display_type_id
+ * @property string                           $name
+ * @property string                           $internal_name
+ * @property int                              $container_id
+ * @property string                           $province [QC, ON, ...]
+ * @property string                           $city
+ * @property boolean                          $scheduled_sleep
+ * @property Date                             $sleep_end
+ * @property Date                             $sleep_start
+ * @property Date                             $created_at
+ * @property Date                             $updated_at
+ * @property Date|null                        $deleted_at
  *
- * @property ?Container          $container
- * @property Network             $network
- * @property Collection<Product> $locations
- * @property Collection<Player>  $players
- * @property DisplayType         $display_type
- * @property Collection<Product> $products
+ * @property ?NetworkContainer                $container
+ * @property Network                          $network
+ * @property EloquentCollection<Product>      $locations
+ * @property EloquentCollection<Player>       $players
+ * @property DisplayType                      $display_type
+ *
+ * @property-read Collection<int>             $product_ids
+ * @property-read EloquentCollection<Product> $products
  *
  * @mixin Builder
  */
 class Location extends SecuredModel {
+    use SoftDeletes;
+    use WithPublicRelations;
+
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -68,44 +79,43 @@ class Location extends SecuredModel {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
-        "external_id",
         "network_id",
-        "format_id",
+        "external_id",
+        "display_type_id",
         "name",
         "internal_name",
         "container_id",
-        "province",
-        "city",
-    ];
-
-    protected $casts = [
-        "scheduled_sleep" => "boolean"
-    ];
-
-    protected $dates = [
-        "sleep_end",
-        "sleep_start",
     ];
 
     /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
+     * @var array<string, string>
      */
-    protected $with = [
-        "display_type",
-        "network:id,name"
+    protected $casts = [
+        "scheduled_sleep" => "boolean",
+        "sleep_end"       => "date",
+        "sleep_start"     => "date",
     ];
 
     /**
      * The rule used to validate access to the model upon binding it with a route
      *
-     * @var string
+     * @var class-string
      */
     protected string $accessRule = AccessibleLocation::class;
+
+    /**
+     * @var array<string, string|callable>
+     */
+    protected array $publicRelations = [
+        "network"     => "network",
+        "broadcaster" => "network.broadcaster_connection",
+        "players"     => "players",
+        "actors"      => "actors",
+        "products"    => "append:product_ids",
+    ];
 
 
     /*
@@ -114,32 +124,60 @@ class Location extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * @return BelongsTo<Network, Location>
+     */
     public function network(): BelongsTo {
         return $this->belongsTo(Network::class, "network_id");
     }
 
+    /**
+     * @return HasMany<Player>
+     */
     public function players(): HasMany {
         return $this->hasMany(Player::class, "location_id");
     }
 
+    /**
+     * @return BelongsTo<DisplayType, Location>
+     */
     public function display_type(): BelongsTo {
         return $this->belongsTo(DisplayType::class, "display_type_id");
     }
 
+    /**
+     * @return BelongsTo<NetworkContainer, Location>
+     */
     public function container(): BelongsTo {
-        return $this->belongsTo(Container::class, "container_id");
+        return $this->belongsTo(NetworkContainer::class, "container_id", "id");
     }
 
+    /**
+     * @return BelongsToMany<Actor>
+     */
     public function actors(): BelongsToMany {
         return $this->belongsToMany(Actor::class, "actors_locations", "location_id", "actor_id");
     }
 
+    /**
+     * @return BelongsToMany<Product>
+     */
     public function products(): BelongsToMany {
         return $this->belongsToMany(Product::class, "products_locations", "location_id", "product_id");
     }
 
+    /**
+     * @return Collection<int>
+     */
+    public function getProductIdsAttribute(): Collection {
+        return $this->products()->allRelatedIds();
+    }
+
     /* Reports */
 
+    /**
+     * @return HasMany<ContractBurst>
+     */
     public function bursts(): HasMany {
         return $this->hasMany(ContractBurst::class, "location_id");
     }
@@ -155,5 +193,16 @@ class Location extends SecuredModel {
         $this->container?->append('parents_list');
 
         return $this;
+    }
+
+    /**
+     * @return ExternalBroadcasterResourceId
+     * @throws UnknownProperties
+     */
+    public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
+        return new ExternalBroadcasterResourceId([
+            "type"        => ExternalResourceType::Location,
+            "external_id" => $this->external_id,
+        ]);
     }
 }

@@ -14,16 +14,14 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 
-class ValidateTwoFaRequest extends FormRequest
-{
+class ValidateTwoFaRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::actors_auth);
+    public function authorize() {
+        return Gate::allows(Capability::actors_auth->value);
     }
 
     /**
@@ -31,8 +29,7 @@ class ValidateTwoFaRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             //
         ];

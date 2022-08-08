@@ -22,6 +22,6 @@ class ShowProductRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit) && Gate::allows(Capability::properties_products);
+        return Gate::allows(Capability::properties_edit->value) && Gate::allows(Capability::properties_products->value);
     }
 }

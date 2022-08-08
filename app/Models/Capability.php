@@ -58,6 +58,7 @@ class Capability extends Model {
      */
     protected $casts = [
         'standalone' => 'boolean',
+        'slug'       => CapabilityEnum::class,
     ];
 
     /*
@@ -66,10 +67,11 @@ class Capability extends Model {
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * @param CapabilityEnum $capability
+     * @return Capability
+     */
     public static function bySlug(CapabilityEnum $capability): Capability {
-        /**
-         * @var Capability
-         */
         return static::query()->where("slug", "=", $capability->value)->first();
     }
 }

@@ -12,15 +12,18 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\BroadcastTagScope;
+use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Models\BroadcastResource;
 use Neo\Modules\Broadcast\Models\ExternalResource;
+use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration {
     public function up() {
         $output = new ConsoleOutput();
+        $output->writeln("");
 
         /** @var object $broadsignProvider */
         $broadsignProvider = DB::table("broadcasters_connections")
@@ -44,7 +47,7 @@ return new class extends Migration {
 
             DB::table("broadcast_tags")->insert([
                 "id"      => $broadcastResource->getKey(),
-                "type"    => "trigger",
+                "type"    => BroadcastTagType::Trigger,
                 "name_en" => $trigger->name,
                 "name_fr" => $trigger->name,
                 "scope"   => BroadcastTagScope::Layout->value,
@@ -55,17 +58,17 @@ return new class extends Migration {
                 "resource_id"    => $broadcastResource->getKey(),
                 "broadcaster_id" => $broadsignProvider->id,
                 "type"           => ExternalResourceType::Tag,
-                "data"           => [
+                "data"           => new ExternalResourceData([
                     "external_id" => $trigger->broadsign_trigger_id
-                ]
+                ])
             ]);
 
             // List all the layout using the trigger, and add a reference to the newly created tag
             $layouts = DB::table("formats_layouts")->where("trigger_id", "=", $trigger->id)->get();
 
             foreach ($layouts as $layout) {
-                DB::table("format_layout_broadcast_tags")->insert([
-                    "format_layout_id" => $layout->id,
+                DB::table("layout_broadcast_tags")->insert([
+                    "layout_id"        => $layout->id,
                     "broadcast_tag_id" => $broadcastResource->getKey(),
                 ]);
             }
@@ -90,7 +93,7 @@ return new class extends Migration {
 
             DB::table("broadcast_tags")->insert([
                 "id"      => $broadcastResource->getKey(),
-                "type"    => "separation",
+                "type"    => BroadcastTagType::Category,
                 "name_en" => $separation->name,
                 "name_fr" => $separation->name,
                 "scope"   => BroadcastTagScope::Layout->value,
@@ -101,17 +104,17 @@ return new class extends Migration {
                 "resource_id"    => $broadcastResource->getKey(),
                 "broadcaster_id" => $broadsignProvider->id,
                 "type"           => ExternalResourceType::Tag,
-                "data"           => [
+                "data"           => new ExternalResourceData([
                     "external_id" => $separation->broadsign_separation_id
-                ]
+                ])
             ]);
 
             // List all the layout using the trigger, and add a reference to the newly created tag
             $layouts = DB::table("formats_layouts")->where("separation_id", "=", $separation->id)->get();
 
             foreach ($layouts as $layout) {
-                DB::table("format_layout_broadcast_tags")->insert([
-                    "format_layout_id" => $layout->id,
+                DB::table("layout_broadcast_tags")->insert([
+                    "layout_id"        => $layout->id,
                     "broadcast_tag_id" => $broadcastResource->getKey(),
                 ]);
             }
@@ -136,7 +139,7 @@ return new class extends Migration {
 
             DB::table("broadcast_tags")->insert([
                 "id"      => $broadcastResource->getKey(),
-                "type"    => "criteria",
+                "type"    => BroadcastTagType::Targeting,
                 "name_en" => $criterion->name,
                 "name_fr" => $criterion->name,
                 "scope"   => BroadcastTagScope::Frame->value,
@@ -147,9 +150,9 @@ return new class extends Migration {
                 "resource_id"    => $broadcastResource->getKey(),
                 "broadcaster_id" => $broadsignProvider->id,
                 "type"           => ExternalResourceType::Tag,
-                "data"           => [
+                "data"           => new ExternalResourceData([
                     "external_id" => $criterion->broadsign_criteria_id
-                ]
+                ])
             ]);
 
             // List all the layout using the trigger, and add a reference to the newly created tag

@@ -16,10 +16,11 @@ use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\Exceptions\ThirdPartyAPIException;
 use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Creative as BSCreative;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
-use Neo\Services\Broadcast\BroadSign\Models\Creative as BSCreative;
 
 /**
  * Class ImportCreative
@@ -81,7 +82,7 @@ class TargetCreative extends BroadSignJob implements ShouldBeUniqueUntilProcessi
         // Add the frame criteria
         try {
             $bsCreative->addCriteria($criteria_id, 0);
-        } catch (BadResponse $exception) {
+        } catch (ThirdPartyAPIException $exception) {
             // Creative could not be targeted. It is most probably still uploading
             $this->release(60);
         }

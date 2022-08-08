@@ -11,7 +11,6 @@
 namespace Neo\Modules\Broadcast\Jobs\Creatives;
 
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
-use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Models\Creative;
@@ -22,7 +21,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\Resources\CreativeStorageType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
@@ -76,11 +74,7 @@ class ImportCreativeJob extends BroadcastJobBase {
             return [];
         }
 
-        $tags = new BroadcastTagsCollector();
-        $tags->collect($creative->frame->broadcast_tags);
-        $creativeTags = $tags->get($broadcaster->getBroadcasterId(), [BroadcastTagType::Targeting]);
-
-        $creativeExternalId = $broadcaster->importCreative($creative->toResource(), CreativeStorageType::Link, $creativeTags);
+        $creativeExternalId = $broadcaster->importCreative($creative->toResource($broadcaster->getBroadcasterId()), CreativeStorageType::Link);
 
         return [$creativeExternalId];
     }

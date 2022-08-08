@@ -18,6 +18,7 @@ return new class extends Migration {
         // For each of the new broadcast resources (contents, schedules, campaigns), we remove foreign keys on old id columns, old id columns, and add new FK with the new id columns
 
         $output = new ConsoleOutput();
+        $output->writeln("");
         $output->writeln("Dropping foreign keys and columns, and renaming references columns...");
 
         // Creatives

@@ -14,14 +14,15 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class DestroyBrandingRequest extends FormRequest {
+class DestroyBrandingRequest extends FormRequest
+{
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::brandings_edit->value);
+        return Gate::allows(Capability::$1->valuebrandings_edit);
     }
 
     /**

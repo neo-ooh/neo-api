@@ -21,7 +21,7 @@ class DestroyLibraryRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::libraries_destroy->value);
+        return Gate::allows(Capability::libraries_destroy);
     }
 
     /**

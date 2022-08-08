@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property int                      $id
  * @property string                   $name
+ * @property boolean                  $is_fullscreen
  * @property Date                     $created_at
  * @property Date                     $updated_at
  * @property Date                     $deleted_at
@@ -59,6 +60,16 @@ class Layout extends Model {
         "name",
         "is_fullscreen",
     ];
+
+    /**
+     * The attributes that should be casted
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        "is_fullscreen" => "boolean",
+    ];
+
 
     /*
     |--------------------------------------------------------------------------

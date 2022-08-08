@@ -16,9 +16,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Broadcast\Models\Schedule;
-use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Bundle;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
-use Neo\Services\Broadcast\BroadSign\Models\Bundle;
 
 /**
  * Class UpdateBroadSignSchedule
@@ -45,8 +45,8 @@ class ReorderBroadSignSchedules extends BroadSignJob implements ShouldBeUniqueUn
     /**
      * Create a new job instance.
      *
-     * @param BroadSignConfig $config
-     * @param int             $campaignId
+     * @param \Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig $config
+     * @param int                                                       $campaignId
      *
      */
     public function __construct(BroadSignConfig $config, int $campaignId) {

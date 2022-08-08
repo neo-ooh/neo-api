@@ -8,20 +8,22 @@
  * @neo/api - Campaign.php
  */
 
-namespace Neo\Services\Broadcast\BroadSign\Models;
+namespace Neo\Modules\Broadcast\Services\BroadSign\Models;
 
 use Illuminate\Support\Collection;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\ResourceIDParser;
+use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
+use Neo\Modules\Broadcast\Services\ResourceCastable;
 use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
-use Neo\Services\Broadcast\BroadSign\API\Parsers\ResourceIDParser;
-use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Campaigns
  *
- * @package Neo\BroadSign\Models
+ * @implements ResourceCastable<CampaignResource>
  *
  * @property bool   $active
  * @property bool   $auto_synchronize_bundles
@@ -66,11 +68,17 @@ use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
  * @property string $start_time
  * @property int    $state
  *
- * @method static Collection all(BroadsignClient $client)
- * @method static Campaign get(BroadsignClient $client, int $external_id)
- * @method static Collection currents(BroadsignClient $client)
+ * @method static Collection<static> all(BroadSignClient $client)
+ * @method static Collection<static> currents(BroadSignClient $client)
+ * @method static static|null get(BroadSignClient $client, int $external_id)
+ * @method static Collection<static> byId(BroadSignClient $client, array $external_ids)
+ *
+ * @method void addSkinSlots(array $properties)
+ * @method void promoteSkinSlots(array $properties)
+ * @method void dropSkinSlots(array $properties)
+ * @method void addResourceCriteria(array $properties)
  */
-class Campaign extends BroadSignModel {
+class Campaign extends BroadSignModel implements ResourceCastable {
 
     protected static string $unwrapKey = "reservation";
 
@@ -142,10 +150,17 @@ class Campaign extends BroadSignModel {
     /**
      * Get all locations (display_unit) associated with this campaign
      *
-     * @return Collection
+     * @return Collection<Location>
      */
     public function locations(): Collection {
         return Location::byReservable($this->api, ["reservable_id" => $this->id]);
+    }
+
+    /**
+     * @return Collection<ResourceCriteria>
+     */
+    public function criteria(): Collection {
+        return ResourceCriteria::for($this->api, $this->getKey());
     }
 
     public function addCriteria(int $criteriaID, int $type): void {
@@ -157,16 +172,21 @@ class Campaign extends BroadSignModel {
         ]);
     }
 
-    public function addLocations(Collection $display_units_ids, Collection $criterions): void {
+    /**
+     * @param array<int> $display_units_ids
+     * @param array<int> $criteria
+     * @return void
+     */
+    public function addLocations(array $display_units_ids, array $criteria): void {
         $request = [
             "id"           => $this->id,
             "sub_elements" => [
-                "display_unit" => $display_units_ids->map(fn($du) => ["id" => $du])->values()->toArray(),
+                "display_unit" => array_map(static fn($du) => ["id" => $du], $display_units_ids),
             ],
         ];
 
-        if ($criterions->count() > 0) {
-            $request["sub_elements"]["frame_or_criteria"] = $criterions->map(fn($frame) => ["id" => $frame])->values()->toArray();
+        if (count($criteria) > 0) {
+            $request["sub_elements"]["frame_or_criteria"] = array_map(static fn($frame) => ["id" => $frame], $criteria);
         }
 
         $this->addSkinSlots($request);
@@ -187,6 +207,10 @@ class Campaign extends BroadSignModel {
         ]);
     }
 
+    /**
+     * @param Collection<int> $display_units_ids
+     * @return void
+     */
     public function removeLocations(Collection $display_units_ids): void {
         $this->dropSkinSlots([
             "id"           => $this->id,
@@ -202,22 +226,8 @@ class Campaign extends BroadSignModel {
     |--------------------------------------------------------------------------
     */
 
-    public static function search(BroadsignClient $client, array $query) {
-        $results = ResourceQuery::byName($client, $query["name"], "reservation");
-
-        if (count($results) === 0) {
-            return new Collection();
-        }
-
-        return static::byId($client, ["ids" => $results->pluck("id")->values()->join(",")]);
-    }
-
-    public static function inContainer(BroadsignClient $client, int $containerId) {
-        return static::by_container($client, ["container_id" => $containerId]);
-    }
-
     /**
-     * @throws \Spatie\DataTransferObject\Exceptions\UnknownProperties
+     * @throws UnknownProperties
      */
     public function toResource(): CampaignResource {
         return new CampaignResource([

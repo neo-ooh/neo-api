@@ -24,14 +24,14 @@ use Neo\Models\Product;
 use Neo\Models\Property;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Player;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\DisplayType;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopPolicy;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Player as BSPlayer;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Skin;
 use Neo\Services\Broadcast\Broadcast;
 use Neo\Services\Broadcast\Broadcaster;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\Models\DayPart;
-use Neo\Services\Broadcast\BroadSign\Models\Format;
-use Neo\Services\Broadcast\BroadSign\Models\LoopPolicy;
-use Neo\Services\Broadcast\BroadSign\Models\Player as BSPlayer;
-use Neo\Services\Broadcast\BroadSign\Models\Skin;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class PropertyDump extends XLSXDocument {
@@ -120,9 +120,9 @@ class PropertyDump extends XLSXDocument {
             throw new Exception("Only Broadsign properties are supported");
         }
 
-        $client = new BroadsignClient($config);
+        $client = new BroadSignClient($config);
 
-        $this->displayTypes = Format::getMultiple($client, $this->properties
+        $this->displayTypes = DisplayType::getMultiple($client, $this->properties
             ->flatMap(fn($property) => $property->actor
                 ->own_locations
                 ->pluck("display_type.external_id")
@@ -152,7 +152,7 @@ class PropertyDump extends XLSXDocument {
         return true;
     }
 
-    protected function buildPropertyRows(Property $property, BroadsignClient $client): array {
+    protected function buildPropertyRows(Property $property, BroadSignClient $client): array {
         $displayUnitsRows = collect();
         $playersRows      = collect();
 
@@ -293,7 +293,7 @@ class PropertyDump extends XLSXDocument {
             "spots"   => 1
         ], $model->variables));
 
-        /** @var LoopPolicy $loopPolicy */
+        /** @var \Neo\Modules\Broadcast\Services\BroadSign\Models\LoopPolicy $loopPolicy */
         $loopPolicy = $this->loopPolicies->firstWhere("id", "=", $skin->loop_policy_id);
         $adsPerLoop = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
 

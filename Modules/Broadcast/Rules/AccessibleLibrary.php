@@ -37,7 +37,7 @@ class AccessibleLibrary implements Rule {
             return false;
         }
 
-        /** @var \Neo\Modules\Broadcast\Models\Library $library */
+        /** @var Library $library */
         $library = Library::query()->findOrFail($value);
         return $library->isAccessibleBy(Auth::user());
     }

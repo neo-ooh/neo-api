@@ -82,7 +82,7 @@ enum Capability: string {
     /**
      * Allows to force refresh networks
      */
-    case networks_refresh = "networks.refresh";
+    case networks_refresh = "networks_refresh";
 
     // Dymamics
     case dynamics_weather = "dynamics.weather";

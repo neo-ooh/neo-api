@@ -10,20 +10,17 @@
 
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
+use Auth;
+use Exception;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Neo\Exceptions\InvalidBroadcastServiceException;
+use Illuminate\Support\Facades\DB;
 use Neo\Http\Controllers\Controller;
-use Neo\Http\Requests\Campaigns\DestroyCampaignRequest;
-use Neo\Http\Requests\Campaigns\ListCampaignsRequest;
-use Neo\Http\Requests\Campaigns\StoreCampaignRequest;
-use Neo\Http\Requests\Campaigns\UpdateCampaignRequest;
-use Neo\Http\Requests\CampaignsLocations\RemoveCampaignLocationRequest;
-use Neo\Http\Requests\CampaignsLocations\SyncCampaignLocationsRequest;
+use Neo\Modules\Broadcast\Http\Requests\Campaigns\DestroyCampaignRequest;
+use Neo\Modules\Broadcast\Http\Requests\Campaigns\ListCampaignsRequest;
+use Neo\Modules\Broadcast\Http\Requests\Campaigns\ShowCampaignRequest;
+use Neo\Modules\Broadcast\Http\Requests\Campaigns\StoreCampaignRequest;
+use Neo\Modules\Broadcast\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Modules\Broadcast\Models\Campaign;
-use Neo\Modules\Broadcast\Models\Format;
-use Neo\Modules\Broadcast\Models\Location;
-use Neo\Services\Broadcast\Broadcast;
 
 class CampaignsController extends Controller {
     /**
@@ -33,78 +30,61 @@ class CampaignsController extends Controller {
      * @noinspection PhpUnusedParameterInspection
      */
     public function index(ListCampaignsRequest $request): Response {
-        return new Response(Auth::user()->getCampaigns()->load("format:id,name",
-            "owner"));
+        return new Response($request->user()->getCampaigns()->each->withPublicRelations());
     }
 
     /**
      * @param StoreCampaignRequest $request
      *
      * @return Response
-     * @throws InvalidBroadcastServiceException
+     * @throws Exception
      */
     public function store(StoreCampaignRequest $request): Response {
         $campaign = new Campaign();
-        [
-            "network_id"           => $campaign->network_id,
-            "owner_id"             => $campaign->owner_id,
-            "format_id"            => $campaign->format_id,
-            "name"                 => $campaign->name,
-            "schedules_max_length" => $campaign->schedules_default_length,
-            "start_date"           => $campaign->start_date,
-            "end_date"             => $campaign->end_date,
-            "loop_saturation"      => $campaign->loop_saturation,
-            "priority"             => $campaign->priority,
-        ] = $request->validated();
 
-        $campaign->schedules_max_length = $campaign->schedules_default_length;
+        $campaign->creator_id     = Auth::id();
+        $campaign->parent_id      = $request->input("parent_id");
+        $campaign->name           = $request->input("name");
+        $campaign->start_date     = $request->input("start_date");
+        $campaign->start_time     = $request->input("start_time");
+        $campaign->end_date       = $request->input("end_date");
+        $campaign->end_time       = $request->input("end_time");
+        $campaign->broadcast_days = $request->input("weekdays");
 
-        // If no name was specified for the campaign, we generate one
-        if ($campaign->name === null) {
-            $campaign->name = Format::query()->find($campaign->format_id)->name;
-        }
+        $campaign->occurrences_in_loop = $request->input("occurrences_in_loop");
+        $campaign->priority            = $request->input("priority");
 
-        $campaign->save();
+        // We create the campaign and attach its location in a transaction as we want to prevent the campaign creation if there is a problem with the locations
+        try {
+            DB::beginTransaction();
+            $campaign->save();
 
-        // Get the display types associated with the format that matches the campaign's network's connection.
-        $displayTypes = $campaign->format->display_types()
-                                         ->join("broadcasters_connections", "display_types.connection_id", "=", "broadcasters_connections.id")
-                                         ->where("broadcasters_connections.id", "=", $campaign->network->connection_id)->get();
+            // Set the campaign locations
+            $locations = collect($request->input("locations"));
+            $campaign->locations()
+                     ->sync($locations->mapWithKeys(fn(array $locationDefinition) => [$locationDefinition["location_id"], ["format_id" => $locationDefinition["format_id"]]]));
 
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
 
-        $locations = $campaign->owner->locations->whereIn("display_type_id", $displayTypes->pluck('id'));
-
-        // Copy over the locations of the campaign owner to the campaign itself
-        if (count($locations) > 0) {
-            $campaign->locations()->attach($locations);
-            $campaign->refresh();
+            throw $e;
         }
 
         // Replicate the campaign in the appropriate broadcaster
-        Broadcast::network($campaign->network_id)->createCampaign($campaign->id);
+        $campaign->promote();
 
-        return new Response($campaign->loadMissing(["format", "owner", "schedules"]), 201);
+        return new Response($campaign->withPublicRelations(), 201);
     }
 
     /**
-     * @param \Neo\Modules\Broadcast\Models\Campaign $campaign
+     * @param ShowCampaignRequest $request
+     * @param Campaign            $campaign
      *
      * @return Response
      */
-    public function show(Campaign $campaign): Response {
-        return new Response($campaign->loadMissing([
-            "format",
-            "format.layouts",
-            "format.display_types",
-            "locations",
-            "network",
-            "owner",
-            "shares",
-            "schedules",
-            "schedules.content",
-            "schedules.owner:id,name",
-            "trashedSchedules",
-            "trashedSchedules.content"])->append("related_libraries"));
+    public function show(ShowCampaignRequest $request, Campaign $campaign): Response {
+        return new Response($campaign->withPublicRelations());
     }
 
     /**
@@ -112,62 +92,27 @@ class CampaignsController extends Controller {
      * @param Campaign              $campaign
      *
      * @return Response
-     * @throws InvalidBroadcastServiceException
      */
     public function update(UpdateCampaignRequest $request, Campaign $campaign): Response {
-        [
-            "owner_id"                 => $campaign->owner_id,
-            "name"                     => $campaign->name,
-            "schedules_default_length" => $campaign->schedules_default_length,
-            "schedules_max_length"     => $campaign->schedules_max_length,
-            "start_date"               => $campaign->start_date,
-            "end_date"                 => $campaign->end_date,
-            "loop_saturation"          => $campaign->loop_saturation,
-        ] = $request->validated();
+        $campaign->parent_id      = $request->input("parent_id");
+        $campaign->name           = $request->input("name");
+        $campaign->start_date     = $request->input("start_date");
+        $campaign->start_time     = $request->input("start_time");
+        $campaign->end_date       = $request->input("end_date");
+        $campaign->end_time       = $request->input("end_time");
+        $campaign->broadcast_days = $request->input("weekdays");
+
+        $campaign->occurrences_in_loop = $request->input("occurrences_in_loop");
+        $campaign->priority            = $request->input("priority");
 
         $campaign->save();
         $campaign->refresh();
 
-        // Propagate the changes in BroadSign
-        Broadcast::network($campaign->network_id)->updateCampaign($campaign->id);
+        $campaign->promote();
 
-        return $this->show($campaign);
+        return new Response($campaign->withPublicRelations());
     }
 
-    /**
-     * @param SyncCampaignLocationsRequest $request
-     * @param Campaign                     $campaign
-     *
-     * @return Response
-     * @throws InvalidBroadcastServiceException
-     */
-    public function syncLocations(SyncCampaignLocationsRequest $request, Campaign $campaign): Response {
-        $locations = $request->validated()['locations'];
-
-        // All good, sync the locations
-        $campaign->locations()->sync($locations);
-        $campaign->refresh();
-
-        // Propagate the changes in BroadSign
-        Broadcast::network($campaign->network_id)->targetCampaign($campaign->id);
-
-        return new Response($campaign->locations);
-    }
-
-    /**
-     * @throws InvalidBroadcastServiceException
-     */
-    public function removeLocation(RemoveCampaignLocationRequest $request, Campaign $campaign, Location $location): Response {
-        $campaign->locations()->detach($location);
-        $campaign->refresh();
-
-        // Propagate the changes in BroadSign
-        Broadcast::network($campaign->network_id)->targetCampaign($campaign->id);
-
-        return new Response($campaign->locations);
-    }
-
-    /** @noinspection PhpUnusedParameterInspection */
     public function destroy(DestroyCampaignRequest $request, Campaign $campaign): Response {
         $campaign->delete();
 

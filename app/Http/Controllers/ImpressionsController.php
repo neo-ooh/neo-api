@@ -64,7 +64,6 @@ class ImpressionsController {
         /** @var Product|null $product */
         $product = $location->products()
                             ->with(["impressions_models", "category.impressions_models"])
-                            ->withCount("locations")
                             ->first();
 
         if (!$product) {
@@ -181,7 +180,12 @@ class ImpressionsController {
 
                 // Because the impression for the product is spread on all the display unit attached to it,
                 // we divide the number of impressions by the number of display unit for the product
-                $impressionsPerDay = $impressionsPerDay / $product->locations()->count();
+                $locationsCount = $product->locations()->count();
+                if ($locationsCount > 0) {
+                    $impressionsPerDay /= $locationsCount;
+                } else {
+                    Log::warning("[ImpressionsController] No location attached to product $product->name_en ({$property->actor->name})");
+                }
 
                 /** @var OpeningHours $hours */
                 $hours = $property->opening_hours->firstWhere("weekday", "=", $weekday);

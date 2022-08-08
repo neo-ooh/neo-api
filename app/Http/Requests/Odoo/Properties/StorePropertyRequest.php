@@ -16,13 +16,13 @@ use Neo\Enums\Capability;
 
 class StorePropertyRequest extends FormRequest {
     public function authorize() {
-        return Gate::allows(Capability::odoo_properties);
+        return Gate::allows(Capability::odoo_properties->value);
     }
 
     public function rules() {
         return [
             "property_id" => ["required", "integer", "exists:properties,actor_id"],
-            "odoo_id" => ["required", "integer"]
+            "odoo_id"     => ["required", "integer"]
         ];
     }
 }

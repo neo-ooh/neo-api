@@ -16,7 +16,7 @@ use Neo\Enums\Capability;
 
 class DestroyMarketRequest extends FormRequest {
     public function authorize() {
-        return Gate::allows(Capability::properties_markets);
+        return Gate::allows(Capability::properties_markets->value);
     }
 
     public function rules() {

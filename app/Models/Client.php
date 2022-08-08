@@ -22,9 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @package Neo\Models
  *
  * @property integer    $id
- * @property integer    $external_id
- * @property integer    $broadsign_customer_id
- * @property string     name
+ * @property string     $name
  * @property Date       $created_at
  * @property Date       $updated_at
  *
@@ -36,8 +34,6 @@ class Client extends Model {
     protected $table = "clients";
 
     protected $fillable = [
-        "broadsign_customer_id",
-        "external_id",
         "name",
     ];
 

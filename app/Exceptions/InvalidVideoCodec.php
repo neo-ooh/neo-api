@@ -11,8 +11,7 @@
 namespace Neo\Exceptions;
 
 class InvalidVideoCodec extends BaseException {
-    protected $code = "creative.bad-video-codec";
-    protected $message = "Creative video codec is not supported";
-
-//    protected int $status = 422;
+    public function __construct(string $codec) {
+        parent::__construct("Unsupported video codec `$codec`", "creative.bad-video-codec");
+    }
 }

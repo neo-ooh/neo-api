@@ -10,16 +10,16 @@
 
 namespace Neo\Services\Odoo\Models;
 
-use Neo\Services\API\Odoo\Model;
+use Neo\Services\Odoo\OdooModel;
 
 /**
- * @property int $id
- * @property array $country_id
+ * @property int    $id
+ * @property array  $country_id
  * @property string $code
  * @property string $name
  * @property string $display_name
  */
-class Province extends Model {
+class Province extends OdooModel {
     public static string $slug = "res.country.state";
 
     protected static array $filters = [];

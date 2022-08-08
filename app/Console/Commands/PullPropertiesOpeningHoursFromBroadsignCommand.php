@@ -13,10 +13,10 @@ namespace Neo\Console\Commands;
 use Illuminate\Console\Command;
 use Neo\Models\OpeningHours;
 use Neo\Models\Property;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
+use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
 use Neo\Services\Broadcast\Broadcast;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\Models\DayPart;
-use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 class PullPropertiesOpeningHoursFromBroadsignCommand extends Command {
     protected $signature = 'one-off:pull-properties-opening-hours';
@@ -42,7 +42,7 @@ class PullPropertiesOpeningHoursFromBroadsignCommand extends Command {
                 continue;
             }
 
-            $dayPart = DayPart::getByDisplayUnit(new BroadsignClient($config), $location->external_id)
+            $dayPart = DayPart::getByDisplayUnit(new BroadSignClient($config), $location->external_id)
                               ->firstWhere("minute_mask", "!==", "");
 
             if (!$dayPart) {

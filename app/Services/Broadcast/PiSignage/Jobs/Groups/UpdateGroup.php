@@ -18,9 +18,9 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Services\PiSignage\Models\Group;
+use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
-use Neo\Services\Broadcast\PiSignage\Models\Group;
-use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 /**
  * @package Neo\Jobs
@@ -44,7 +44,7 @@ class UpdateGroup extends PiSignageJob implements ShouldBeUnique {
             return;
         }
 
-        /** @var Group $group */
+        /** @var \Neo\Modules\Broadcast\Services\PiSignage\Models\Group $group */
         $group = Group::get($this->getAPIClient(), $location->external_id);
 
         if ($location->scheduled_sleep) {

@@ -18,7 +18,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Broadcast\Models\DisplayType;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Services\Broadcast\PiSignage\Models\Group;
+use Neo\Modules\Broadcast\Services\PiSignage\Models\Group;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
@@ -60,7 +60,7 @@ class SynchronizeLocations extends PiSignageJob implements ShouldBeUnique {
         $progressBar = $this->makeProgressBar(count($groups));
         $progressBar->start();
 
-        /** @var Group $group */
+        /** @var \Neo\Modules\Broadcast\Services\PiSignage\Models\Group $group */
         foreach ($groups as $group) {
             /** @var Location $location */
             $location = Location::query()->firstOrCreate([

@@ -18,16 +18,16 @@ use Neo\Http\Requests\Roles\UpdateRoleRequest;
 use Neo\Models\Role;
 
 class RolesController extends Controller {
-    public function index (): Response {
-        Gate::authorize(Capability::roles_edit);
+    public function index(): Response {
+        Gate::authorize(Capability::roles_edit->value->value);
 
         return new Response(Role::all());
     }
 
-    public function store (StoreRoleRequest $request): Response {
+    public function store(StoreRoleRequest $request): Response {
         $values = $request->validated();
 
-        $role = new Role();
+        $role       = new Role();
         $role->name = $values["name"];
         $role->desc = $values["desc"];
         $role->save();
@@ -37,24 +37,24 @@ class RolesController extends Controller {
         return new Response($role, 201);
     }
 
-    public function show (Role $role): Response {
-        Gate::authorize(Capability::roles_edit());
+    public function show(Role $role): Response {
+        Gate::authorize(Capability::roles_edit->value);
 
-        return new Response($role->loadMissing([ "capabilities", "actors" ]));
+        return new Response($role->loadMissing(["capabilities", "actors"]));
     }
 
-    public function update (UpdateRoleRequest $request, Role $role): Response {
+    public function update(UpdateRoleRequest $request, Role $role): Response {
         $values = $request->validated();
 
         $role->name = $values["name"];
         $role->desc = $values["desc"];
         $role->save();
 
-        return new Response($role->loadMissing([ "capabilities", "actors" ]));
+        return new Response($role->loadMissing(["capabilities", "actors"]));
     }
 
-    public function destroy (Role $role): Response {
-        Gate::authorize(Capability::roles_edit());
+    public function destroy(Role $role): Response {
+        Gate::authorize(Capability::roles_edit->value);
 
         $role->delete();
 

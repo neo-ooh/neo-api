@@ -10,14 +10,14 @@
 
 namespace Neo\Services\Odoo\Models;
 
-use Neo\Services\API\Odoo\Model;
+use Neo\Services\Odoo\OdooModel;
 
 /**
- * @property int $id
+ * @property int    $id
  * @property string $name
  * @property string $display_name
  */
-class ProductType extends Model {
+class ProductType extends OdooModel {
     public static string $slug = "product.type";
 
     protected static array $filters = [];

@@ -16,6 +16,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 return new class extends Migration {
     public function up(): void {
         $output = new ConsoleOutput();
+        $output->writeln("");
 
         $output->writeln("Drop deprecated tables...");
         // Remove the now deprecated `static_creatives` and `dynamic_creatives` tables

@@ -11,11 +11,14 @@
 namespace Neo\Modules\Broadcast\Models\StructuredColumns;
 
 use Neo\Models\Utils\JSONDBColumn;
-use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 
 class ExternalResourceData extends JSONDBColumn {
-    public ExternalResourceType $type;
     public int|null $network_id;
+
+    /**
+     * @var array<int>|null
+     */
+    public array|null $formats_id;
 
     public string $external_id;
 }

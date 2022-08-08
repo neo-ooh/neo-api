@@ -19,10 +19,10 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\OpeningHours;
 use Neo\Models\Property;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
+use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
 use Neo\Services\Broadcast\Broadcast;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\Models\DayPart;
-use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -58,7 +58,7 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
             return false;
         }
 
-        $dayPart = DayPart::getByDisplayUnit(new BroadsignClient($config), $location->external_id)
+        $dayPart = DayPart::getByDisplayUnit(new BroadSignClient($config), $location->external_id)
                           ->firstWhere("minute_mask", "!==", "");
 
         if (!$dayPart) {

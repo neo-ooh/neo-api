@@ -10,18 +10,16 @@
 
 namespace Neo\Modules\Broadcast\Services\Resources;
 
-class Schedule extends ExternalBroadcastResource {
+class Schedule extends ExternalBroadcasterResource {
+    public bool $enabled;
     public string $name;
 
     public string $start_date;
     public string $start_time;
-
     public string $end_date;
     public string $end_time;
 
     public int $broadcast_days;
 
     public int $order;
-
-    public bool $active;
 }

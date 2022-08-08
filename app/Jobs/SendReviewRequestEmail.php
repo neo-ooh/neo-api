@@ -63,7 +63,7 @@ class SendReviewRequestEmail implements ShouldQueue {
         }
 
         // We need to determine who is responsible for reviewing this schedule
-        $reviewers = $schedule->campaign->owner->getActorsInHierarchyWithCapability(Capability::contents_review());
+        $reviewers = $schedule->campaign->parent->getActorsInHierarchyWithCapability(Capability::contents_review);
 
         $reviewers->each(fn($reviewer) => Mail::to($reviewer)->send(new ReviewRequestEmail($reviewer, $schedule))
         );
@@ -78,7 +78,7 @@ class SendReviewRequestEmail implements ShouldQueue {
             if ($actor->is_group) {
                 // Does this group has actor with the proper capability ?
                 $reviewers = $actor->getAccessibleActors(true, true, false, false)
-                                   ->filter(fn($child) => !$child->is_group && $child->hasCapability(Capability::contents_review()))
+                                   ->filter(fn($child) => !$child->is_group && $child->hasCapability(Capability::contents_review))
                                    ->each(fn($actor) => $actor->unsetRelations());
 
                 if ($reviewers->count() > 0) {
@@ -86,7 +86,7 @@ class SendReviewRequestEmail implements ShouldQueue {
                 }
             }
 
-            if ($actor->hasCapability(Capability::contents_review())) {
+            if ($actor->hasCapability(Capability::contents_review)) {
                 // This actor has the proper capability, use it
                 return (new Collection())->push($actor);
             }

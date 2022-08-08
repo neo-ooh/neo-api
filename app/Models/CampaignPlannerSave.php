@@ -17,12 +17,13 @@ use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * @property integer $id
- * @property string  $uid
  * @property string  $name
  * @property integer $actor_id
  * @property array   $data
  * @property Carbon  $created_at
  * @property Carbon  $updated_at
+ *
+ * @property string  $uid
  */
 class CampaignPlannerSave extends Model {
     protected $table = "campaign_planner_saves";
@@ -49,7 +50,7 @@ class CampaignPlannerSave extends Model {
         return $this->belongsTo(Actor::class, "actor_id", "id");
     }
 
-    public function getUidAttribute() {
+    public function getUidAttribute(): string {
         return Hashids::encode($this->id);
     }
 }

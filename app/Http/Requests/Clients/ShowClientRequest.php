@@ -16,16 +16,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ShowClientRequest extends FormRequest
-{
+class ShowClientRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        if(Gate::allows(Capability::contracts_manage)) {
+    public function authorize() {
+        if (Gate::allows(Capability::contracts_manage->value)) {
             return true;
         }
 
@@ -40,8 +38,7 @@ class ShowClientRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             //
         ];

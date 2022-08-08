@@ -10,12 +10,12 @@
 
 namespace Neo\Services\Odoo\Models;
 
-use Neo\Services\API\Odoo\Model;
+use Neo\Services\Odoo\OdooModel;
 
 /**
  * @property int $id
  */
-class Message extends Model {
+class Message extends OdooModel {
     public static string $slug = "mail.message";
 
     protected static array $filters = [];

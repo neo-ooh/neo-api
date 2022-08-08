@@ -188,7 +188,7 @@ abstract class JwtGuard implements Guard {
         $impersonator = Actor::findOrFail($impersonatorData["uid"]);
 
         // Validate the impersonator and make sure it has the capability to impersonate
-        if (!$this->checkActorMeetsCriteria($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate())) {
+        if (!$this->checkActorMeetsCriteria($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate->value)) {
             return false;
         }
 

@@ -24,7 +24,10 @@ abstract class SecuredModel extends Model {
      */
     protected string $accessRule;
 
-    public function resolveRouteBinding ($value, $field = null): ?Model {
+    /**
+     * @throws AuthorizationException
+     */
+    public function resolveRouteBinding($value, $field = null): ?Model {
         // Validate user access to this model
         $accessible = $this->validateAccess($value);
 
@@ -40,12 +43,13 @@ abstract class SecuredModel extends Model {
     /**
      * Perform late access checking.
      *
-     * This method is useful when you want to validate that the current user can access this resource, but cannot handle this using RouteModelBinding
+     * This method is useful when you want to validate that the current user can access this resource, but cannot handle this
+     * using RouteModelBinding
+     *
      * @throws AuthorizationException
      * @throws Exception
      */
-    public function authorizeAccess(): bool
-    {
+    public function authorizeAccess(): bool {
         if (!$this->validateAccess($this->getKey())) {
             $this->onUnauthorized();
         }
@@ -54,11 +58,11 @@ abstract class SecuredModel extends Model {
     }
 
     /**
-     * @param null $key
+     * @param mixed $key
      * @throws AuthorizationException
      */
-    private function onUnauthorized($key = null) {
-        if(!$key) {
+    private function onUnauthorized(mixed $key = null): never {
+        if (!$key) {
             $key = $this->getKey();
         }
 

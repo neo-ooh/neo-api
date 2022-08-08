@@ -15,5 +15,5 @@ enum CampaignStatus: string {
     case Pending = "pending";
     case Live = "live";
     case Offline = "offline";
-    case expired = "expired";
+    case Expired = "expired";
 }

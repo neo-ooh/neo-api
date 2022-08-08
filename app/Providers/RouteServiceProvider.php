@@ -37,7 +37,6 @@ class RouteServiceProvider extends ServiceProvider {
 
             // Core modules
             Route::group([], base_path('routes/core.actors.php'));
-            Route::group([], base_path('routes/core.formats.php'));
             Route::group([], base_path('routes/core.networks.php'));
             Route::group([], base_path('routes/core.parameters.php'));
             Route::group([], base_path('routes/core.roles.php'));

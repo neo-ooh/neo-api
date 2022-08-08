@@ -25,7 +25,7 @@ class RefreshContractRequest extends FormRequest {
     public function authorize() {
         /** @var Contract $contract */
         $contract = $this->route("contract");
-        return $contract->salesperson_id === Auth::id() || Gate::allows(Capability::contracts_manage);
+        return $contract->salesperson_id === Auth::id() || Gate::allows(Capability::contracts_manage->value);
     }
 
     /**

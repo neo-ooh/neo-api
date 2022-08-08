@@ -16,7 +16,6 @@ use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * @property int      $id
- * @property string   $extension
  * @property string   $name
  * @property int      $property_id
  * @property int      $width
@@ -36,7 +35,6 @@ class PropertyPicture extends Model {
     protected $primaryKey = "id";
 
     protected $fillable = [
-        "extension",
         "name",
         "property_id",
         "width",

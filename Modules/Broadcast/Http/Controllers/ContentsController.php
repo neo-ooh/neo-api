@@ -13,13 +13,15 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Gate;
+use InvalidArgumentException;
 use Neo\Enums\Capability;
-use Neo\Exceptions\LibraryStorageFullException;
 use Neo\Http\Controllers\Controller;
-use Neo\Http\Requests\Contents\DestroyContentRequest;
-use Neo\Http\Requests\Contents\StoreContentRequest;
-use Neo\Http\Requests\Contents\SwapContentCreativesRequest;
-use Neo\Http\Requests\Contents\UpdateContentRequest;
+use Neo\Modules\Broadcast\Exceptions\LibraryStorageFullException;
+use Neo\Modules\Broadcast\Http\Requests\Contents\DestroyContentRequest;
+use Neo\Modules\Broadcast\Http\Requests\Contents\ShowContentRequest;
+use Neo\Modules\Broadcast\Http\Requests\Contents\StoreContentRequest;
+use Neo\Modules\Broadcast\Http\Requests\Contents\SwapContentCreativesRequest;
+use Neo\Modules\Broadcast\Http\Requests\Contents\UpdateContentRequest;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\Library;
@@ -31,10 +33,10 @@ class ContentsController extends Controller {
      * @return Response
      * @throws LibraryStorageFullException
      */
-    public function store(StoreContentRequest $request) {
+    public function store(StoreContentRequest $request): Response {
         // We want to prevent creating new empty content in a library if an empty one is already there.
         // Check if there is already an empty content
-        /** @var \Neo\Modules\Broadcast\Models\Content|null $emptyContent */
+        /** @var Content|null $emptyContent */
         $emptyContent = Content::query()
                                ->where("library_id", "=", $request->input("library_id"))
                                ->where("layout_id", "=", $request->input("layout_id"))
@@ -50,21 +52,24 @@ class ContentsController extends Controller {
             return new Response($emptyContent->load("layout.frames"), 200);
         }
 
-        /** @var \Neo\Modules\Broadcast\Models\Library $library */
-        $library = Library::query()->find($request->validated()["library_id"]);
+        /** @var Library $library */
+        $library = Library::query()->find($request->input("library_id"));
 
         // Check if the library has enough space available
         if ($library->content_limit !== 0 && $library->contents_count > $library->content_limit) {
             throw new LibraryStorageFullException();
         }
 
-        $content = new Content();
-        [
-            "owner_id"   => $content->owner_id,
-            "library_id" => $content->library_id,
-            "layout_id"  => $content->layout_id,
-        ] = $request->validated();
+        // Validate that the layout requested for the content is allowed in this library
+        $layoutId = $request->input("layout_id");
+        if (!$library->layouts->contains($layoutId)) {
+            throw new InvalidArgumentException("Layout #$layoutId is not allowed in this library");
+        }
 
+        $content             = new Content();
+        $content->owner_id   = $request->input("owner_id");
+        $content->layout_id  = $request->input("layout_id");
+        $content->library_id = $library->getKey();
         $content->save();
         $content->refresh();
 
@@ -72,19 +77,13 @@ class ContentsController extends Controller {
     }
 
     /**
-     * @param \Neo\Modules\Broadcast\Models\Content $content
+     * @param ShowContentRequest $request
+     * @param Content            $content
      *
      * @return Response
      */
-    public function show(Content $content) {
-        return new Response($content->load([
-            "creatives",
-            "creatives.external_ids",
-            "schedules",
-            "schedules.campaign",
-            "layout",
-            "layout.format",
-            "library:id,name"]));
+    public function show(ShowContentRequest $request, Content $content): Response {
+        return new Response($content->withPublicRelations());
     }
 
     /**
@@ -94,7 +93,7 @@ class ContentsController extends Controller {
      * @return Response
      * @throws LibraryStorageFullException
      */
-    public function update(UpdateContentRequest $request, Content $content) {
+    public function update(UpdateContentRequest $request, Content $content): Response {
         if ($content->library_id !== $request->validated()["library_id"]) {
             /** @var Library $library */
             $library = Library::query()->find($request->validated()["library_id"]);
@@ -112,22 +111,17 @@ class ContentsController extends Controller {
         ] = $request->validated();
 
         // If the user is a reviewer, it can fill additional fields
-        if (Gate::allows(Capability::contents_review)) {
-            $content->is_approved         = $request->get("is_approved", $content->is_approved);
-            $content->scheduling_duration = $request->get("scheduling_duration", $content->scheduling_duration);
-            $content->scheduling_times    = $request->get("scheduling_times", $content->scheduling_times);
+        if (Gate::allows(Capability::contents_review->value)) {
+            $content->is_approved           = $request->get("is_approved", $content->is_approved);
+            $content->max_schedule_duration = $request->input("max_schedule_duration", $content->max_schedule_duration);
+            $content->max_schedule_count    = $request->input("max_schedule_count", $content->max_schedule_count);
         }
 
         $content->save();
-        return new Response($content->load(["owner",
-                                            "creatives",
-                                            "schedules",
-                                            "schedules.campaign",
-                                            "layout",
-                                            "library"]));
+        return new Response($content);
     }
 
-    public function swap(SwapContentCreativesRequest $request, Content $content) {
+    public function swap(SwapContentCreativesRequest $request, Content $content): Response {
         // make sure the Content can be edited
         if (!$content->is_editable) {
             return new Response([
@@ -138,7 +132,9 @@ class ContentsController extends Controller {
 
         // Creatives are named left and right for ease of comprehension. Actual swaping could happen between any two frames as long as they have the same dimensions.
         [$leftId, $rightId] = $request->validated()["creatives"];
-        $left  = Creative::query()->findOrFail($leftId);
+        /** @var Creative $left */
+        $left = Creative::query()->findOrFail($leftId);
+        /** @var Creative $right */
         $right = Creative::query()->findOrFail($rightId);
 
         // Make sure the two creatives are part of the same content
@@ -168,18 +164,18 @@ class ContentsController extends Controller {
         // Reload the content and return it
         $content->refresh();
 
-        return new Response($this->show($content)->getOriginalContent());
+        return new Response($content->withPublicRelations());
     }
 
     /**
-     * @param DestroyContentRequest                 $request
-     * @param \Neo\Modules\Broadcast\Models\Content $content
+     * @param DestroyContentRequest $request
+     * @param Content               $content
      *
      * @return Response
      * @throws Exception
      * @noinspection PhpUnusedParameterInspection
      */
-    public function destroy(DestroyContentRequest $request, Content $content) {
+    public function destroy(DestroyContentRequest $request, Content $content): Response {
         $content->authorizeAccess();
 
         if ($content->schedules_count > 0 && $content->schedules->some(fn($schedule) => $schedule->status === 'broadcasting' || $schedule->status === 'expired')) {

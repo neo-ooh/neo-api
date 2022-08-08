@@ -45,13 +45,13 @@ use Neo\Models\Brand;
 use Neo\Models\Field;
 use Neo\Models\FieldsCategory;
 use Neo\Models\FieldSegment;
-use Neo\Models\LoopConfiguration;
 use Neo\Models\Pricelist;
 use Neo\Models\PricelistProductsCategory;
 use Neo\Models\Product;
 use Neo\Models\ProductCategory;
 use Neo\Models\ProductType;
 use Neo\Models\TrafficSource;
+use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
 Route::group([
     "middleware" => "default",

@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\Cache;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\ContractReservation;
-use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
-use Neo\Services\Broadcast\BroadSign\Models\Campaign;
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\Campaign;
 
 /**
  * Class CreateSignupToken
@@ -58,7 +58,7 @@ class ImportContractReservations implements ShouldQueue {
         $contract->load("flights");
 
         $config          = Contract::getConnectionConfig();
-        $broadsignClient = new BroadsignClient($config);
+        $broadsignClient = new BroadSignClient($config);
 
 
         // Because there is always problems witht he dashes in the name of reservations,

@@ -11,6 +11,7 @@
 
 use Neo\Modules\Broadcast\Http\Controllers\ContentsController;
 use Neo\Modules\Broadcast\Http\Controllers\CreativesController;
+use Neo\Modules\Broadcast\Http\Controllers\LibrariesContentsController;
 use Neo\Modules\Broadcast\Http\Controllers\LibrariesController;
 use Neo\Modules\Broadcast\Http\Controllers\LibrariesSharesController;
 use Neo\Modules\Broadcast\Models\Content;
@@ -38,7 +39,7 @@ Route::group([
     Route::   put("libraries/{library}", LibrariesController::class . "@update");
     Route::delete("libraries/{library}", LibrariesController::class . "@destroy");
 
-    Route::   get('libraries/{library}/contents', LibrariesController::class . "@contents");
+    Route::   get('libraries/{library}/contents', LibrariesContentsController::class . "@index");
 
     /*
     |----------------------------------------------------------------------
@@ -49,7 +50,6 @@ Route::group([
     Route::   get("libraries/{library}/shares", LibrariesSharesController::class . "@index");
     Route::  post("libraries/{library}/shares", LibrariesSharesController::class . "@store");
     Route::delete("libraries/{library}/shares", LibrariesSharesController::class . "@destroy");
-
 
     /*
     |----------------------------------------------------------------------
@@ -73,6 +73,6 @@ Route::group([
 
     Route::model("creative", Creative::class);
 
-    Route::  post("creatives", CreativesController::class . "@store");
-    Route::delete("creatives/{creative}", CreativesController::class . "@destroy");
+    Route::  post("contents/{creative}/creatives", CreativesController::class . "@store");
+    Route::delete("contents/{creative}/creatives/{creative}", CreativesController::class . "@destroy");
 });

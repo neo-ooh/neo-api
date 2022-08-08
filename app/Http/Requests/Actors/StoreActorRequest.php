@@ -21,7 +21,7 @@ class StoreActorRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::actors_create);
+        return Gate::allows(Capability::actors_create->value);
     }
 
     /**

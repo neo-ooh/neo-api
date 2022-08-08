@@ -31,7 +31,7 @@ class RecycleTwoFARequest extends FormRequest {
         }
 
         // Otherwise, the `actors_auth` capability is required
-        return Gate::allows(Capability::actors_auth);
+        return Gate::allows(Capability::actors_auth->value);
     }
 
     /**

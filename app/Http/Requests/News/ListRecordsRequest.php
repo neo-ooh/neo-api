@@ -23,7 +23,7 @@ class ListRecordsRequest extends FormRequest
      */
     public function authorize()
     {
-        return Gate::allows(Capability::dynamics_news);
+        return Gate::allows(Capability::$1->valuedynamics_news);
     }
 
     /**

@@ -16,9 +16,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
+use Neo\Models\Traits\WithPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Rules\AccessibleContent;
+use Neo\Modules\Broadcast\Services\Resources\Content as ContentResource;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Neo\Models\Contents
@@ -40,7 +43,7 @@ use Neo\Modules\Broadcast\Rules\AccessibleContent;
  *
  * @property Actor                     $owner                 The actor who created this content
  * @property Library                   $library               The library where this content resides
- * @property FormatLayout              $layout                The layout of the content
+ * @property Layout                    $layout                The layout of the content
  *
  * @property-read Collection<Creative> $creatives             The content's creatives
  * @property-read int                  $creatives_count
@@ -52,10 +55,11 @@ use Neo\Modules\Broadcast\Rules\AccessibleContent;
  */
 class Content extends BroadcastResourceModel {
     use SoftDeletes;
+    use WithPublicRelations;
 
     /*
     |--------------------------------------------------------------------------
-    | Model properties
+    | OdooModel properties
     |--------------------------------------------------------------------------
     */
 
@@ -86,7 +90,7 @@ class Content extends BroadcastResourceModel {
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'is_approved'           => 'boolean',
@@ -97,7 +101,7 @@ class Content extends BroadcastResourceModel {
     /**
      * The relationships that should always be loaded.
      *
-     * @var array
+     * @var array<string>
      */
     protected $with = ["creatives"];
 
@@ -107,6 +111,14 @@ class Content extends BroadcastResourceModel {
      * @var string
      */
     protected string $accessRule = AccessibleContent::class;
+
+    protected array $publicRelations = [
+        "creatives"    => "creatives",
+        "external_ids" => "creatives.external_representations",
+        "schedules"    => ["schedules", "schedules.campaign"],
+        "layout"       => ["layout", "layout.format"],
+        "library"      => "library"
+    ];
 
     public static function boot(): void {
         parent::boot();
@@ -124,7 +136,7 @@ class Content extends BroadcastResourceModel {
             /** @var Schedule $schedule */
             foreach ($content->schedules as $schedule) {
                 // If a schedule has not be reviewed, we want to completely remove it
-                if ($schedule->status === 'draft' || $schedule->status === 'pending') {
+                if ($schedule->status === ScheduleStatus::Draft || $schedule->status === ScheduleStatus::Pending) {
                     $schedule->forceDelete();
                 } else {
                     $schedule->delete();
@@ -176,22 +188,12 @@ class Content extends BroadcastResourceModel {
     }
 
     /**
-     * The format of the content
-     *
-     * @return BelongsTo
-     * @deprecated
-     */
-    public function format(): BelongsTo {
-        return $this->belongsTo(Format::class, 'format_id', 'id');
-    }
-
-    /**
      * The Content's Layout
      *
      * @return BelongsTo
      */
     public function layout(): BelongsTo {
-        return $this->belongsTo(FormatLayout::class, "layout_id", "id");
+        return $this->belongsTo(Layout::class, "layout_id", "id")->withTrashed();
     }
 
     /*
@@ -215,5 +217,20 @@ class Content extends BroadcastResourceModel {
 
         // If a content has been scheduled, it can still be edited if it has never been locked/approved, etc...
         return $this->schedules->every("status", "===", ScheduleStatus::Draft);
+    }
+
+
+    /**
+     * @throws UnknownProperties
+     */
+    public function toResource(int $broadcasterId): ContentResource {
+        return new ContentResource([
+            "name"          => $this->name,
+            "duration_msec" => $this->duration,
+            "fullscreen"    => $this->layout->is_fullscreen,
+            "tags"          => $this->layout->broadcast_tags
+                ->map(fn(BroadcastTag $tag) => $tag->toResource($broadcasterId))
+                ->where("external_id", "!==", "-1"),
+        ]);
     }
 }

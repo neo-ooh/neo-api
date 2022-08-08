@@ -16,7 +16,7 @@ use Neo\Enums\Capability;
 
 class DestroyBrandRequest extends FormRequest {
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 
     public function rules(): array {

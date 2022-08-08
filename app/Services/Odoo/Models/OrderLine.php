@@ -10,7 +10,7 @@
 
 namespace Neo\Services\Odoo\Models;
 
-use Neo\Services\API\Odoo\Model;
+use Neo\Services\Odoo\OdooModel;
 
 /**
  * @property int    $id
@@ -35,7 +35,7 @@ use Neo\Services\API\Odoo\Model;
  * @property int    $discount
  * ...
  */
-class OrderLine extends Model {
+class OrderLine extends OdooModel {
     public static string $slug = "sale.order.line";
 
     protected static array $filters = [];

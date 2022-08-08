@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 return new class extends Migration {
     public function up(): void {
         $output = new ConsoleOutput();
-
+        $output->writeln("");
         $output->writeln("Drop auxiliary tables foreign keys");
         /*Schema::table("static_creatives", static function (Blueprint $table) {
             $table->dropForeign("static_creatives_creative_id_foreign");

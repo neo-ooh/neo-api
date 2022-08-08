@@ -22,7 +22,7 @@ class ListClientsRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        return Gate::allows(Capability::contracts_edit) || Gate::allows(Capability::contracts_manage);
+        return Gate::allows(Capability::contracts_edit->value) || Gate::allows(Capability::contracts_manage->value);
     }
 
     /**
@@ -34,7 +34,6 @@ class ListClientsRequest extends FormRequest {
         return [
             "with"   => ["sometimes", "present", "nullable", "array"],
             "with.*" => ["string", Rule::in(["contracts"])],
-            "distant"=> ["sometimes", "boolean"]
         ];
     }
 }

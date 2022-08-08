@@ -14,11 +14,11 @@ use GuzzleHttp\Exception\ClientException;
 
 interface APIClientInterface {
     /**
-     * @param       $endpoint
-     * @param       $payload
-     * @param array $headers
-     * @throws ClientException
+     * @param                       $endpoint
+     * @param int|string|array|null $payload
+     * @param array                 $headers
      * @return mixed
+     * @throws ClientException
      */
-    public function call($endpoint, $payload, array $headers = []);
+    public function call($endpoint, mixed $payload, array $headers = []);
 }

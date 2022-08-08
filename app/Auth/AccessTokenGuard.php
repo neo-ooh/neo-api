@@ -133,7 +133,6 @@ class AccessTokenGuard implements Guard {
      * @noinspection PhpParameterNameChangedDuringInheritanceInspection
      */
     public function setUser(?Authenticatable $token): void {
-        /* Authenticatable => AccessToken */
         $this->token = $token;
 
         if ($this->token) {

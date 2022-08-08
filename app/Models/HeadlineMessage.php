@@ -27,7 +27,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property Date   $updated_at
  */
 class HeadlineMessage extends Model {
-    protected $table = "headlines_messages";
+    protected $table = "headline_messages";
 
     protected $fillable = [
         "headline_id",

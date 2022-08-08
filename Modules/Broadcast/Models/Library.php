@@ -22,7 +22,10 @@ use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
 use Neo\Models\Factories\LibraryFactory;
 use Neo\Models\SecuredModel;
+use Neo\Models\Traits\WithPublicRelations;
 use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * Neo\Models\Branding
@@ -38,12 +41,16 @@ use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
  * @property int                 $contents_count
  * @property Collection<Content> $contents
  * @property Collection<Actor>   $shares
+ * @property Collection<Format>  $formats
+ * @property Collection<Layout>  $layouts
  *
  * @mixin Builder
  */
 class Library extends SecuredModel {
     use HasFactory;
     use Notifiable;
+    use WithPublicRelations;
+    use HasRelationships;
 
     /*
     |--------------------------------------------------------------------------
@@ -62,7 +69,7 @@ class Library extends SecuredModel {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'owner_id',
@@ -73,7 +80,7 @@ class Library extends SecuredModel {
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         'content_limit'  => 'integer',
@@ -81,27 +88,18 @@ class Library extends SecuredModel {
     ];
 
     /**
-     * The relationships that should always be loaded.
-     *
-     * @var array
-     */
-    protected $with = ["owner"];
-
-    /**
-     * The relationship counts that should always be loaded.
-     *
-     * @var array
-     */
-    protected $withCount = [
-        "contents",
-    ];
-
-    /**
      * The rule used to validate access to the model upon binding it with a route
      *
-     * @var string
+     * @var class-string
      */
     protected string $accessRule = AccessibleLibrary::class;
+
+    protected array $publicRelations = [
+        "contents" => "contents",
+        "formats"  => "formats",
+        "layouts"  => "layouts",
+        "shares"   => "shares",
+    ];
 
     protected static function boot(): void {
         parent::boot();
@@ -109,7 +107,7 @@ class Library extends SecuredModel {
         /**
          * On library deletion, also deletes all its contents
          */
-        static::deleting(function (Library $library) {
+        static::deleting(static function (Library $library) {
             /** @var Content $content */
             foreach ($library->contents as $content) {
                 $content->delete();
@@ -189,12 +187,44 @@ class Library extends SecuredModel {
 
     /*
     |--------------------------------------------------------------------------
-    | Attributes
+    | Relations
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * @return BelongsTo<Actor, Library>
+     */
     public function owner(): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
+    }
+
+    /**
+     * @return BelongsToMany<Actor>
+     */
+    public function shares(): BelongsToMany {
+        return $this->belongsToMany(Actor::class, 'library_shares', 'library_id', 'actor_id')
+                    ->withTimestamps();
+    }
+
+    /**
+     * @return HasMany<Content>
+     */
+    public function contents(): HasMany {
+        return $this->hasMany(Content::class, 'library_id', 'id');
+    }
+
+    /**
+     * @return BelongsToMany<Format>
+     */
+    public function formats() {
+        return $this->belongsToMany(Format::class, "library_formats", "library_id", "format_id");
+    }
+
+    /**
+     * @return HasManyDeep<Layout>
+     */
+    public function layouts(): HasManyDeep {
+        return $this->hasManyDeepFromRelations($this->formats(), (new Format())->layouts());
     }
 
 
@@ -203,28 +233,6 @@ class Library extends SecuredModel {
     | Getters
     |--------------------------------------------------------------------------
     */
-
-    public function shares(): BelongsToMany {
-        return $this->belongsToMany(Actor::class, 'library_shares', 'library_id', 'actor_id')
-                    ->withTimestamps();
-    }
-
-    public function contents(): HasMany {
-        return $this->hasMany(Content::class, 'library_id', 'id');
-    }
-
-    public function campaigns(): BelongsToMany {
-        return $this->belongsToMany(Campaign::class, 'campaigns_locations', 'location_id', 'campaign_id');
-    }
-
-    public function getAvailableFormatsAttribute() {
-        return $this->owner->getLocations(recurs: true)
-                           ->pluck("display_type.formats")
-                           ->flatten()
-                           ->unique("id")
-                           ->filter(fn($format) => $format->is_enabled)
-                           ->values();
-    }
 
     public function isAccessibleBy(Actor $actor): bool {
         // Is the actor the owner ?

@@ -18,10 +18,10 @@ use Neo\Services\API\Parsers\ResponseParser;
  *
  * @package Neo\BroadSign
  *
- * @method static Endpoint get(string $path)
- * @method static Endpoint post(string $path)
- * @method static Endpoint put(string $path)
- * @method static Endpoint delete(string $path)
+ * @method static static get(string $path)
+ * @method static static post(string $path)
+ * @method static static put(string $path)
+ * @method static static delete(string $path)
  * @see     ResponseParser
  *
  */
@@ -63,7 +63,7 @@ class Endpoint {
      *
      * @var ResponseParser|Callable|null
      */
-    public $parse;
+    public mixed $parse;
 
     /**
      * Tell if the value should be cached, and for how long.
@@ -85,7 +85,7 @@ class Endpoint {
         $this->path   = $path;
     }
 
-    public static function __callStatic($verb, $args): Endpoint {
+    public static function __callStatic($verb, $args): static {
         return new static($verb, ...$args);
     }
 
@@ -99,7 +99,7 @@ class Endpoint {
     |--------------------------------------------------------------------------
     */
 
-    public function multipart(): Endpoint {
+    public function multipart(): static {
         $this->format = "multipart";
         return $this;
     }
@@ -110,7 +110,7 @@ class Endpoint {
      * @param $parser
      * @return $this
      */
-    public function parser($parser): Endpoint {
+    public function parser($parser): static {
         $this->parse = $parser;
         return $this;
     }
@@ -119,9 +119,9 @@ class Endpoint {
      * Enable caching by setting the cache duration in seconds
      *
      * @param int $duration
-     * @return Endpoint
+     * @return static
      */
-    public function cache(int $duration): Endpoint {
+    public function cache(int $duration): static {
         $this->cache = $duration;
         return $this;
     }
@@ -139,6 +139,27 @@ class Endpoint {
 
     public function setParam(string $parameter, $value): void {
         $this->urlParameters[$parameter] = $value;
+    }
+
+    /**
+     * Fill in the endpoint uri parameter using a given payload
+     * If the URI has a `id` parameter and the payload is a int or string, it will be replaced with it
+     * If the payload is an array, an associative match is done
+     *
+     * @param int|string|array|null $payload
+     * @return void
+     */
+    public function setParams(mixed $payload): void {
+        $uriParams = $this->getParamsList();
+        if (count($uriParams) > 0) {
+            if ($uriParams[0] === "id" && (is_numeric($payload) || is_string($payload))) {
+                $this->setParam("id", $payload);
+            } else if (is_array($payload)) {
+                foreach ($uriParams as $param) {
+                    $this->setParam($param, $payload[$param]);
+                }
+            }
+        }
     }
 
     /*

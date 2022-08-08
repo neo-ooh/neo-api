@@ -23,7 +23,7 @@ class StoreContractRequest extends FormRequest {
      */
     public function authorize() {
         /** @var Contract $contract */
-        return Gate::allows(Capability::contracts_edit);
+        return Gate::allows(Capability::contracts_edit->value);
     }
 
     /**

@@ -20,6 +20,6 @@ class DeleteContactRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_contacts) && Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_contacts->value) && Gate::allows(Capability::properties_edit->value);
     }
 }

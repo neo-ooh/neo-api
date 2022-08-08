@@ -11,7 +11,7 @@
 namespace Neo\Models\Traits;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Neo\Models\LoopConfiguration;
+use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
 /**
  * Defines a `loop_configurations` eloquent relation for the current model.

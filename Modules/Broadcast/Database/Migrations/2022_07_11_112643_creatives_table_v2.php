@@ -17,13 +17,16 @@ use Neo\Modules\Broadcast\Models\BroadcastResource;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Models\StructuredColumns\CreativeProperties;
+use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Vinkla\Hashids\Facades\Hashids;
 
 return new class extends Migration {
     public function up(): void {
         $env    = config("app.env");
         $output = new ConsoleOutput();
+        $output->writeln("");
 
         // For each creative, repatriate its settings, either from the `dynamic_creatives` or `static_creatives` table into the new `properties` JSON field
         $creatives = DB::table("creatives")->orderBy("id")->lazy(500);
@@ -83,30 +86,27 @@ return new class extends Migration {
                         "resource_id"    => $broadcastResource->getKey(),
                         "broadcaster_id" => $network->connection_id,
                         "type"           => ExternalResourceType::Creative,
-                        "data"           => [
+                        "data"           => new ExternalResourceData([
                             "network_id"  => $externalId->network_id,
                             "external_id" => $externalId->external_id,
-                        ],
+                        ]),
                     ]);
                 }
             }
 
             // Rename files
-            if ($env === 'production' && $creative->type === 'static') {
-//                $output->writeln("Renaming files...");
+            if ($env !== 'local' && $creative->type === 'static') {
 
                 // Move creative file
                 $from = "creatives/" . $creative->id . "." . $creativeProperties->extension;
-                $to   = "creatives/creative_" . $broadcastResource->getKey() . "." . $creativeProperties->extension;
+                $to   = "creatives/" . Hashids::encode($broadcastResource->getKey()) . "." . $creativeProperties->extension;
 
-//                $output->writeln("$from => $to");
                 Storage::disk("public")->move($from, $to);
 
                 // Move creative's thumbnail
                 $from = "creatives/" . $creative->id . "." . $creativeProperties->extension . "_thumb.jpeg";
-                $to   = "creatives/creative_" . $broadcastResource->getKey() . "_thumb.jpeg";
+                $to   = "creatives/" . Hashids::encode($broadcastResource->getKey()) . "_thumb.jpeg";
 
-//                $output->writeln("$from => $to");
                 Storage::disk("public")->move($from, $to);
             }
         }

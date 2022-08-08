@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->dropConstrainedForeignId("separation_id");
         });
         Schema::dropIfExists("frame_settings_broadsign");
+        Schema::dropIfExists("frame_settings_pisignage");
 
         Schema::dropIfExists("broadsign_triggers");
         Schema::dropIfExists("broadsign_separations");

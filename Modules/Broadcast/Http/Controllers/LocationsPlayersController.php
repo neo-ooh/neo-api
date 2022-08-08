@@ -8,14 +8,14 @@
  * @neo/api - LocationsPlayersController.php
  */
 
-namespace Neo\Http\Controllers;
+namespace Neo\Modules\Broadcast\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Neo\Http\Requests\LocationsPlayers\ListLocationPlayersRequest;
+use Neo\Modules\Broadcast\Http\Requests\LocationsPlayers\ListLocationPlayersRequest;
 use Neo\Modules\Broadcast\Models\Location;
 
 class LocationsPlayersController {
-    public function index(ListLocationPlayersRequest $request, Location $location) {
+    public function index(ListLocationPlayersRequest $request, Location $location): Response {
         return new Response($location->players);
     }
 }

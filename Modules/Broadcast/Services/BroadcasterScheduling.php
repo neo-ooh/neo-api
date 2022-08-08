@@ -19,7 +19,6 @@ use Neo\Modules\Broadcast\Services\Resources\Creative;
 use Neo\Modules\Broadcast\Services\Resources\CreativeStorageType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Schedule;
-use Neo\Modules\Broadcast\Services\Resources\Tag;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
@@ -93,19 +92,17 @@ interface BroadcasterScheduling {
      * @param ExternalBroadcasterResourceId        $campaign
      * @param Content                              $content
      * @param array<ExternalBroadcasterResourceId> $creatives
-     * @param array<Tag>                           $tags
      * @return array<ExternalBroadcasterResourceId>
      */
-    public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, Content $content, array $creatives, array $tags): array;
+    public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, Content $content, array $creatives): array;
 
     /**
      * @param array<ExternalBroadcasterResourceId> $externalResources
      * @param Schedule                             $schedule
-     * @param array<Tag>                           $tags
      * @return array<ExternalBroadcasterResourceId>
      * @throws CannotUpdateExternalResourceException
      */
-    public function updateSchedule(array $externalResources, Schedule $schedule, array $tags): array;
+    public function updateSchedule(array $externalResources, Schedule $schedule): array;
 
     /**
      * @param array<ExternalBroadcasterResourceId> $externalResources
@@ -123,10 +120,9 @@ interface BroadcasterScheduling {
     /**
      * @param Creative            $creative
      * @param CreativeStorageType $storageType How the creative should be stored.
-     * @param array<Tag>          $tags
      * @return ExternalBroadcasterResourceId
      */
-    public function importCreative(Creative $creative, CreativeStorageType $storageType, array $tags): ExternalBroadcasterResourceId;
+    public function importCreative(Creative $creative, CreativeStorageType $storageType): ExternalBroadcasterResourceId;
 
     /**
      * @param ExternalBroadcasterResourceId $externalCreative

@@ -1,5 +1,9 @@
 <?php
 
 return [
-    'name' => 'Broadcast'
+    'name' => 'Broadcast',
+
+    'adapters' => [
+        'broadsign' => \Neo\Modules\Broadcast\Services\BroadSign\BroadSignAdapter::class,
+    ]
 ];

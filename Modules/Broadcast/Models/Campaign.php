@@ -15,21 +15,29 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Carbon as Date;
 use Illuminate\Support\Collection;
 use Neo\Models\Actor;
+use Neo\Models\Traits\WithPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CampaignStatus;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
+use Neo\Modules\Broadcast\Jobs\Campaigns\DeleteCampaignJob;
+use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
+use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 use Neo\Modules\Broadcast\Rules\AccessibleCampaign;
-use Neo\Services\Broadcast\Broadcast;
-use Neo\Services\Broadcast\Broadcaster;
+use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
+use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * Neo\Models\Campaigns
  *
  * @property int                  $id
- * @property int                  $owner_id
+ * @property int                  $parent_id
  * @property int                  $creator_id
  * @property string               $name
  * @property double               $schedules_default_length Content without a defined duration/length will use this length when
@@ -41,7 +49,7 @@ use Neo\Services\Broadcast\Broadcaster;
  * @property Date                 $start_time               H:m:s
  * @property Date                 $end_date                 Y-m-d
  * @property Date                 $end_time                 H:m:s
- * @property Date                 $broadcast_days           Bit mask of the days of the week the campaign should run: 127 =>
+ * @property int                  $broadcast_days           Bit mask of the days of the week the campaign should run: 127 =>
  *           01111111 - all week
  *
  * @property Date                 $created_at
@@ -62,8 +70,6 @@ use Neo\Services\Broadcast\Broadcaster;
  *
  *
  * @property Collection<Location> $related_campaigns
- * @property array                $available_options
- *
  * @property Collection<integer>  $targeted_frames          Frame targeting criteria required by the campaign
  *           schedule
  *
@@ -71,10 +77,12 @@ use Neo\Services\Broadcast\Broadcaster;
  */
 class Campaign extends BroadcastResourceModel {
     use SoftDeletes;
+    use WithPublicRelations;
+    use HasRelationships;
 
     /*
     |--------------------------------------------------------------------------
-    | Model properties
+    | OdooModel properties
     |--------------------------------------------------------------------------
     */
 
@@ -93,7 +101,7 @@ class Campaign extends BroadcastResourceModel {
      * @var array<string>
      */
     protected $fillable = [
-        "owner_id",
+        "parent_id",
         "creator_id",
         "name",
         "schedules_default_length",
@@ -114,14 +122,13 @@ class Campaign extends BroadcastResourceModel {
     protected $casts = [
         "display_duration" => "integer",
         "start_date"       => "date:Y-m-d",
-        "end_date"         => "date:Y-m-d",
         "start_time"       => "date:H:i:s",
+        "end_date"         => "date:Y-m-d",
         "end_time"         => "date:H:i:s",
     ];
 
     protected $appends = [
         "status",
-        "available_options"
     ];
 
     /**
@@ -131,14 +138,23 @@ class Campaign extends BroadcastResourceModel {
      */
     protected string $accessRule = AccessibleCampaign::class;
 
+    protected array $publicRelations = [
+        "external_representations" => "external_representations",
+        "parent"                   => "parent",
+        "creator"                  => "creator",
+        "shares"                   => "shares",
+        "schedules"                => ["schedules", "content", "schedules.owner:id,name"],
+        "expired_schedules"        => ["expired_schedules", "expired_schedules.content"],
+        "locations"                => "locations",
+        "formats"                  => "formats",
+    ];
+
     public static function boot(): void {
         parent::boot();
 
         static::deleting(static function (Campaign $campaign) {
-            // Disable the campaign in BroadSign
-            if ($campaign->external_id !== null) {
-                Broadcast::network($campaign->network_id)->destroyCampaign($campaign->id);
-            }
+            // Dispatch job to delete campaign in broadcasters
+            DeleteCampaignJob::dispatch($campaign->getKey());
 
             // Delete all schedules in the campaign
             /** @var Schedule $schedule */
@@ -158,17 +174,15 @@ class Campaign extends BroadcastResourceModel {
     |--------------------------------------------------------------------------
     */
 
-    /* Actors */
-
     /**
-     * @return BelongsTo<Actor>
+     * @return BelongsTo<Actor, Campaign>
      */
     public function parent(): BelongsTo {
         return $this->belongsTo(Actor::class, 'parent_id', 'id');
     }
 
     /**
-     * @return BelongsTo<Actor>
+     * @return BelongsTo<Actor, Campaign>
      */
     public function creator(): BelongsTo {
         return $this->belongsTo(Actor::class, 'creator_id', 'id');
@@ -182,27 +196,51 @@ class Campaign extends BroadcastResourceModel {
         return $this->belongsToMany(Actor::class, "campaign_shares", "campaign_id", "actor_id");
     }
 
-    /* Broadcast */
-
     /**
      * @return HasMany<Schedule>
      */
     public function schedules(): HasMany {
-        return $this->hasMany(Schedule::class, "campaign_id", "id")->orderBy("order");
+        return $this->hasMany(Schedule::class, "campaign_id", "id")
+                    ->where("end_date", "<", Carbon::now())
+                    ->orderBy("order");
     }
 
     /**
-     * @return BelongsToMany<Format>
+     * @return HasMany<Schedule>
      */
-    public function formats(): BelongsToMany {
-        return $this->belongsToMany(Format::class, "campaign_formats", "campaign_id", "format_id");
+    public function expired_schedules(): HasMany {
+        return $this->hasMany(Schedule::class, "campaign_id", "id")
+                    ->withTrashed()
+                    ->where("end_date", ">", Carbon::now())
+                    ->orderBy("end_date");
     }
 
     /**
      * @return BelongsToMany<Location>
      */
     public function locations(): BelongsToMany {
-        return $this->belongsToMany(Location::class, "campaign_locations", "campaign_id", "location_id");
+        return $this->belongsToMany(Location::class, "campaign_locations", "campaign_id", "location_id")
+                    ->withPivot(["format_id"])
+                    ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsToMany<Format>
+     */
+    public function formats(): BelongsToMany {
+        return $this->belongsToMany(Format::class, "campaign_locations", "campaign_id", "format_id")
+                    ->distinct();
+    }
+
+    /**
+     * @return HasManyDeep<Layout>
+     */
+    public function layouts(): HasManyDeep {
+        /**
+         * @var HasManyDeep<Layout>
+         */
+        return $this->hasManyDeepFromRelations([$this->formats(), (new Format())->layouts()])
+                    ->distinct();
     }
 
 
@@ -211,17 +249,6 @@ class Campaign extends BroadcastResourceModel {
     | Attributes
     |--------------------------------------------------------------------------
     */
-
-    /**
-     * List the libraries ID determined to be relevant for the campaign
-     *
-     * @return Collection
-     */
-    public function getRelatedLibrariesAttribute(): Collection {
-        // I. Select campaigns owned by the same user
-        // II. Filter out the current one
-        return $this->parent->getLibraries(true, false, false)->pluck('id');
-    }
 
     public function getStatusAttribute(): CampaignStatus {
         // Is the campaign expired ?
@@ -247,21 +274,99 @@ class Campaign extends BroadcastResourceModel {
 
     }
 
-    public function getAvailableOptionsAttribute(): array {
-        $options = [];
 
-        $service = $this->network ? $this->network->broadcaster_connection->broadcaster : Broadcaster::BROADSIGN;
+    /*
+    |--------------------------------------------------------------------------
+    | Actions
+    |--------------------------------------------------------------------------
+    */
 
-        switch ($service) {
-            case Broadcaster::BROADSIGN:
-                $options[] = "loop_saturation";
-                break;
-            case Broadcaster::PISIGNAGE:
-                $options[] = "screens_controls";
-                break;
-        }
-
-        return $options;
+    /**
+     * Dispatch the appropriate job to replicate the campaign on broadcaster and keep it up to date
+     *
+     * @return void
+     */
+    public function promote(): void {
+        PromoteCampaignJob::dispatch($this->getKey())->chain(
+            $this->schedules->map(fn(Schedule $schedule) => new PromoteScheduleJob($schedule->getKey()))
+        );
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Resources
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @throws UnknownProperties
+     */
+    public function toResource(): CampaignResource {
+        $this->loadMissing("parent");
+
+        return new CampaignResource([
+            "enabled"                      => $this->status === CampaignStatus::Live,
+            "name"                         => $this->parent->name . " - " . $this->name,
+            "start_date"                   => $this->start_date->toDateString(),
+            "start_time"                   => $this->start_time->toTimeString(),
+            "end_date"                     => $this->end_date->toDateString(),
+            "end_time"                     => $this->end_date->toTimeString(),
+            "broadcast_days"               => $this->broadcast_days,
+            "priority"                     => $this->priority,
+            "occurrences_in_loop"          => $this->occurrences_in_loop,
+            "default_schedule_length_msec" => $this->schedules_default_length * 1000,
+        ]);
+    }
+
+    /**
+     * List all the different representations necessary for this campaign to run
+     *
+     * @return array<ExternalCampaignDefinition>
+     */
+    public function getExternalBreakdown(): array {
+        // A campaign in Connect may be represented by multiple external campaign, across several broadcasters.
+        // A campaign is broken down into multiple campaigns with the following criteria:
+        //  1. Broadcaster/Network
+        //  2. DisplayType
+
+        // This is done using the list of locations and formats associated with a campaign
+        $breakdown = [];
+
+        /** @var Collection<int, Collection<Location>> $locationsByNetworkId */
+        $locationsByNetworkId = $this->locations->mapToDictionary(fn(Location $location) => [$location->network_id => $location]);
+
+        /** @var Collection<Location> $networkLocations */
+        foreach ($locationsByNetworkId as $networkId => $networkLocations) {
+            /** @var Collection<int, Location> $locationsByFormatId */
+            $locationsByFormatId = $networkLocations->mapToDictionary(fn(Location $location) => [$location->getRelationValue("pivot")->format_id, $location]);
+
+            foreach ($locationsByFormatId as $formatId => $formatLocations) {
+                $breakdown[] = new ExternalCampaignDefinition(
+                    campaign_id: $this->getKey(),
+                    network_id: $networkId,
+                    format_id: $formatId,
+                    locations: $formatLocations,
+                );
+            }
+        }
+
+        return $breakdown;
+    }
+
+    /**
+     * Get the external resource matching the given parameters
+     *
+     * @param int $broadcasterId
+     * @param int $networkId
+     * @param int $formatId
+     * @return ExternalResource|null
+     */
+    public function getExternalRepresentation(int $broadcasterId, int $networkId, int $formatId): ExternalResource|null {
+        return $this->external_representations->filter(function (ExternalResource $resource) use ($formatId, $networkId, $broadcasterId) {
+            return $resource->broadcaster_id === $broadcasterId &&
+                $resource->data->network_id === $networkId &&
+                in_array($formatId, $resource->data->formats_id, true);
+        })->first();
+    }
 }

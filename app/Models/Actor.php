@@ -34,7 +34,7 @@ use Neo\Models\Traits\HasHierarchy;
 use Neo\Models\Traits\HasLocations;
 use Neo\Models\Traits\HasRoles;
 use Neo\Models\Traits\WithRelationCaching;
-use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Enums\CampaignStatus;
 use Neo\Modules\Broadcast\Models\Library;
 use Neo\Rules\AccessibleActor;
 
@@ -99,7 +99,7 @@ use Neo\Rules\AccessibleActor;
  * @property ?ActorLogo          $logo
  *
  * @property string              $campaigns_status
- * @property Collection     $$tags
+ * @property Collection<Tag>     $tags
  *
  * @method Builder    accessibleActors()
  * @method Builder      SharedActors()
@@ -117,12 +117,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     use HasCapabilities;
     use WithRelationCaching;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Table properties
-    |--------------------------------------------------------------------------
-    */
-
 
     /**
      * The table associated with the model.
@@ -132,18 +126,9 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     protected $table = "actors";
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = [
-        "last_login_at",
-    ];
-
-    /**
      * The attributes that should not be included in serialization
      *
-     * @var array
+     * @var array<int, string>
      */
     protected $hidden = [
         "password",
@@ -152,7 +137,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         "is_group"       => "boolean",
@@ -160,12 +145,13 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         "is_locked"      => "boolean",
         "tos_accepted"   => "boolean",
         "limited_access" => "boolean",
+        "last_login_at"  => "date"
     ];
 
     /**
      * The accessors to append to the model"s array form.
      *
-     * @var array
+     * @var array<string>
      */
     protected $with = [
         "details",
@@ -174,7 +160,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     /**
      * The accessors to append to the model"s array form.
      *
-     * @var array
+     * @var array<string>
      */
     protected $appends = [
         "parent_id",
@@ -204,29 +190,37 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * Gets the list of all users who have access to this user"s descendants
+     *
+     * @return BelongsToMany<static>
      */
     public function sharings(): BelongsToMany {
-        return $this->belongsToMany(__CLASS__, "actors_shares", "sharer_id", "shared_with_id")
+        return $this->belongsToMany(static::class, "actors_shares", "sharer_id", "shared_with_id")
                     ->withTimestamps();
     }
 
     /**
      * Gets the list of all users sharing their descendants with the current one
+     *
+     * @return BelongsToMany<static>
      */
     public function sharers(): BelongsToMany {
-        return $this->belongsToMany(__CLASS__, "actors_shares", "shared_with_id", "sharer_id")
+        return $this->belongsToMany(static::class, "actors_shares", "shared_with_id", "sharer_id")
                     ->withTimestamps();
     }
 
     /**
      * Give the user who locked this user, if applicable
+     *
+     * @return BelongsTo<static, static>
      */
     public function lockedBy(): BelongsTo {
-        return $this->belongsTo(__CLASS__, "locked_by");
+        return $this->belongsTo(static::class, "locked_by");
     }
 
     /**
      * Give the user who locked this user, if applicable
+     *
+     * @return HasOne<TwoFactorToken>
      */
     public function twoFactorToken(): HasOne {
         return $this->hasOne(TwoFactorToken::class);
@@ -234,6 +228,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * Give the user who locked this user, if applicable
+     *
+     * @return HasOne<SignupToken>
      */
     public function signupToken(): HasOne {
         return $this->hasOne(SignupToken::class);
@@ -241,6 +237,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * Give the user who locked this user, if applicable
+     *
+     * @return HasOne<RecoveryToken>
      */
     public function recoveryToken(): HasOne {
         return $this->hasOne(RecoveryToken::class, "email", "email");
@@ -249,7 +247,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     /**
      * Load details about the actor hierarchy
      *
-     * @return HasOne
+     * @return HasOne<ActorDetails>
      */
     public function details(): HasOne {
         return $this->hasOne(ActorDetails::class, 'id', 'id');
@@ -258,30 +256,59 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     /**
      * The actor's logo
      *
-     * @return HasOne
+     * @return HasOne<ActorLogo>
      */
     public function logo(): HasOne {
         return $this->hasOne(ActorLogo::class, 'actor_id', 'id');
     }
 
+    /**
+     * @return HasOne<Property>
+     */
     public function property(): HasOne {
         return $this->hasOne(Property::class, 'actor_id', 'id');
     }
 
+    /**
+     * @return BelongsTo<Phone, Actor>
+     */
     public function phone(): BelongsTo {
         return $this->belongsTo(Phone::class, 'phone_id', 'id');
     }
 
+    /**
+     * @return HasMany<CampaignPlannerSave>
+     */
     public function campaign_planner_saves(): HasMany {
         return $this->hasMany(CampaignPlannerSave::class, 'actor_id', 'id');
     }
 
+    /**
+     * @return HasMany<CampaignPlannerPolygon>
+     */
     public function campaign_planner_polygons(): HasMany {
         return $this->hasMany(CampaignPlannerPolygon::class, 'actor_id', 'id');
     }
 
+    /**
+     * @return BelongsToMany<Tag>
+     */
     public function tags(): BelongsToMany {
         return $this->belongsToMany(Tag::class, "actors_tags", "actor_id", "tag_id");
+    }
+
+    /**
+     * @return BelongsTo<Actor, Actor>
+     */
+    public function parent(): BelongsTo {
+        return $this->belongsTo(static::class, "parent_id", "id");
+    }
+
+    /**
+     * @return BelongsToMany<Library>
+     */
+    public function shared_libraries(): BelongsToMany {
+        return $this->belongsToMany(Library::class, "library_shares", "actor_id", "library_id");
     }
 
 
@@ -293,6 +320,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     /**
      * Gets the user"s applied branding
+     *
+     * @return BelongsTo<Branding, Actor>
      */
     public function branding(): BelongsTo {
         return $this->belongsTo(Branding::class);
@@ -303,7 +332,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             return $this->branding;
         }
 
-        /** @var Actor $parent */
+        /** @var Actor|null $parent */
         $parent = $this->Parents()->whereHas("branding")->first();
 
         if (is_null($parent)) {
@@ -320,7 +349,14 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     |--------------------------------------------------------------------------
     */
 
-    public function getAccessibleActors($children = true, $shallow = false, $shared = true, $parent = true) {
+    /**
+     * @param bool $children
+     * @param bool $shallow
+     * @param bool $shared
+     * @param bool $parent
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAccessibleActors(bool $children = true, bool $shallow = false, bool $shared = true, bool $parent = true): \Illuminate\Support\Collection {
         /** @var Collection<Actor> $actors */
         $actors = new Collection();
 
@@ -364,21 +400,20 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     /**
      * Gives all actors this actor is allowed to interact with
      *
-     * @return Collection
+     * @return Collection<Actor>
      */
     public function getAccessibleActorsAttribute(): Collection {
         // We have access to all our children and the descendants of all the items who shared their pool with us as well as all descendants and accessible actors of our parent if it is a group. We do not use the parent `accessible users` property as we don't want to get recursive.
-        /** @var Collection $accessible */
+        /** @var Collection<Actor> $accessible */
         $accessible = $this->newQuery()->AccessibleActors()->get();
 
         // A user can access its group actors, but a group cannot access its parent actors, even if it is a group.
         if (($this->parent->is_group ?? false) && !$this->is_group) {
-            /** @var Collection $accessible */
             $accessible = $accessible->merge($this->parent->children);
             $accessible = $accessible->merge($this->parent->shared_actors);
         }
 
-        return $accessible->unique();
+        return $accessible->unique("id");
     }
 
     public function scopeSharedActors(Builder $query): Builder {
@@ -397,7 +432,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                      ->where("s.shared_with_id", "=", $this->getKey());
     }
 
-    public function getSharedActorsAttribute() {
+    /**
+     * @return Collection<Actor>
+     */
+    public function getSharedActorsAttribute(): Collection {
         return $this->selectActors()->SharedActors()->select($this->qualifyColumn("*"))->get();
     }
 
@@ -436,10 +474,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     public function getPathIdsAttribute(): string {
         return $this->details->path_ids;
-    }
-
-    public function parent(): BelongsTo {
-        return $this->belongsTo(__CLASS__, "parent_id", "id");
     }
 
     /*
@@ -504,7 +538,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         // Libraries of the parent of the user
 //        if ($parent && ($this->details->parent_is_group ?? false)) {  --  WTF is this not working ?????
         if ($parent && ($this->parent->is_group ?? false)) {
-            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && Gate::allows(\Neo\Enums\Capability::libraries_edit) && !$this->limited_access));
+            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && Gate::allows(\Neo\Enums\Capability::libraries_edit->value) && !$this->limited_access));
         }
 
         return $libraries->unique("id")->sortBy("name")->values();
@@ -513,18 +547,17 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     /**
      * Give libraries directly owned by this actor
      *
-     * @return Collection
+     * @return Collection<Library>
      */
     protected function getOwnLibrariesAttribute(): Collection {
         return $this->getCachedRelation("own_libraries", fn() => Library::of($this)->get());
     }
 
+    /**
+     * @return Collection<Library>
+     */
     protected function getChildrenLibrariesAttribute(): Collection {
         return $this->getCachedRelation("children_libraries", fn() => Library::ofChildrenOf($this)->get());
-    }
-
-    public function shared_libraries(): ?BelongsToMany {
-        return $this->belongsToMany(Library::class, "library_shares", "actor_id", "library_id");
     }
 
     /*
@@ -561,7 +594,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @param bool $updateIfNecessary
      * @return bool
      */
-    public function is2FAValid($updateIfNecessary = true): bool {
+    public function is2FAValid(bool $updateIfNecessary = true): bool {
         $token = $this->twoFactorToken;
 
         // Is there a token ?
@@ -649,36 +682,42 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return JWT::encode($payload, config("auth.jwt_private_key"), "RS256");
     }
 
-    public function getCampaignsStatusAttribute(): string {
+    public function getCampaignsStatusAttribute(): CampaignStatus|null {
+        /** @var Collection<CampaignStatus> $campaignsStatus */
         $campaignsStatus = $this->getCampaigns(true, false, false, false)
                                 ->load("schedules")
                                 ->pluck("status")
                                 ->values();
 
         if ($campaignsStatus->count() === 0) {
-            return "no-campaigns";
+            return null;
         }
 
-        if ($campaignsStatus->contains(Campaign::STATUS_PENDING)) {
-            return Campaign::STATUS_PENDING;
+        if ($campaignsStatus->contains(CampaignStatus::Pending)) {
+            return CampaignStatus::Pending;
         }
 
-        if ($campaignsStatus->contains(Campaign::STATUS_OFFLINE) || $campaignsStatus->contains(Campaign::STATUS_EMPTY)) {
-            return Campaign::STATUS_OFFLINE;
+        if ($campaignsStatus->contains(CampaignStatus::Offline) || $campaignsStatus->contains(CampaignStatus::Empty)) {
+            return CampaignStatus::Offline;
         }
 
-        if ($campaignsStatus->contains(Campaign::STATUS_LIVE)) {
-            return Campaign::STATUS_LIVE;
+        if ($campaignsStatus->contains(CampaignStatus::Live)) {
+            return CampaignStatus::Live;
         }
 
-        if ($campaignsStatus->contains(Campaign::STATUS_EXPIRED)) {
-            return Campaign::STATUS_EXPIRED;
+        if ($campaignsStatus->contains(CampaignStatus::Expired)) {
+            return CampaignStatus::Expired;
         }
 
-        return Campaign::STATUS_OFFLINE;
+        return CampaignStatus::Offline;
     }
 
-    public function getCompoundTrafficAttribute() {
+    /**
+     * [year => [month => traffic]]
+     *
+     * @return array<int, array<int>>|null
+     */
+    public function getCompoundTrafficAttribute(): array|null {
         if ($this->is_property) {
             return $this
                 ->property
@@ -686,7 +725,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                 ->data
                 ->groupBy(["year", "month"])
                 ->map(fn($yearData) => $yearData->map(fn($monthData) => $monthData->map(fn($d) => $d->traffic ?? $d->temporary)
-                                                                                  ->sum()));
+                                                                                  ->sum()))
+                ->toArray();
         }
 
         if (!$this->is_group) {
@@ -713,6 +753,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
             }
         }
 
-        return $trafficValues;
+        return $trafficValues->toArray();
     }
 }

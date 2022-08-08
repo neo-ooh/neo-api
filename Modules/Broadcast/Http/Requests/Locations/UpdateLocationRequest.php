@@ -12,7 +12,6 @@ namespace Neo\Modules\Broadcast\Http\Requests\Locations;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Rules\PublicRelations;
 
@@ -23,7 +22,7 @@ class UpdateLocationRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::locations_edit->value);
+        return Gate::allows('locations.edit');
     }
 
     /**

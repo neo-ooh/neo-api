@@ -26,8 +26,8 @@ class AccessLogsMiddleware {
             "headers" => $request->headers->all(),
             "client"  => [
                 "ip"         => $request->getClientIp(),
-                "id"         => $request->user()?->id ?? 0,
-                "name"       => $request->user()?->name ?? '-',
+                "id"         => $request->user()->id ?? 0,
+                "name"       => $request->user()->name ?? '-',
                 "user-agent" => $request->userAgent(),
             ]
         ];

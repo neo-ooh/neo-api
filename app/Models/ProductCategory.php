@@ -54,6 +54,10 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
         "external_id",
     ];
 
+    protected $casts = [
+        "fill_strategy" => ProductsFillStrategy::class
+    ];
+
     public string $impressions_models_pivot_table = "products_categories_impressions_models";
     public string $loop_configurations_pivot_table = "products_categories_loop_configurations";
 

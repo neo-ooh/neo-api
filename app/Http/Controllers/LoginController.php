@@ -32,7 +32,7 @@ class LoginController extends Controller {
         $credentials = $request->validated();
 
         // Check if a user with the provided email exist in the database
-        /** @var Actor $actor */
+        /** @var Actor|null $actor */
         $actor = Actor::query()->where('email', $credentials['email'])->first();
 
         if (!$actor) {

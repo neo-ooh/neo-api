@@ -121,7 +121,7 @@ class SendContractFlightJob implements ShouldQueue {
 
         $orderLines->push([
             "order_id"           => $this->contract->id,
-            "name"               => $product->name,
+            "name"               => $product->name_en,
             "price_unit"         => $compiledProduct["unit_price"],
             "product_uom_qty"    => $compiledProduct["spots"],
             "customer_lead"      => 0.0,
@@ -140,7 +140,7 @@ class SendContractFlightJob implements ShouldQueue {
             return $orderLines;
         }
 
-        /** @var Product|null $product */
+        /** @var Product|null $linkedProduct */
         $linkedProduct = $this->products->firstWhere("id", "=", $product->linked_product_id);
 
         if (!$linkedProduct) {
@@ -149,7 +149,7 @@ class SendContractFlightJob implements ShouldQueue {
 
         $orderLines->push([
             "order_id"        => $this->contract->id,
-            "name"            => $linkedProduct->name,
+            "name"            => $linkedProduct->name_en,
             "price_unit"      => 0,
             "product_uom_qty" => $compiledProduct["spots"],
             "customer_lead"   => 0.0,

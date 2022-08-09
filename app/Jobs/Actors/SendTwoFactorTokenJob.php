@@ -23,15 +23,16 @@ use Neo\Models\Actor;
 class SendTwoFactorTokenJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $tries = 1;
+    public int $tries = 1;
 
     public function __construct(protected int $actorId) {
     }
 
     public function handle() {
+        /** @var Actor $actor */
         $actor = Actor::findOrFail($this->actorId);
 
-        if ($actor->two_fa_method === 'phone' && $actor->has('phone')) {
+        if ($actor->two_fa_method === 'phone' && $actor->phone !== null) {
             Twilio::message($actor->phone->number, __("auth.two-factor-text", ["token" => $actor->twoFactorToken->token]));
             return;
         }

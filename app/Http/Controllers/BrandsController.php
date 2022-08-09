@@ -24,7 +24,8 @@ use Neo\Models\Property;
 /**
  * Remove the first and last quote from a quoted string of text
  *
- * @param mixed $text
+ * @param string $text
+ * @return string
  * @link https://stackoverflow.com/a/25353877
  */
 function stripQuotes(string $text) {

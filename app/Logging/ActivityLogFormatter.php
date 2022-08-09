@@ -20,7 +20,7 @@ class ActivityLogFormatter {
      * @param Logger $logger
      * @return void
      */
-    public function __invoke(Logger $logger) {
+    public function __invoke(Logger $logger): void {
         foreach ($logger->getHandlers() as $handler) {
             $lineFormatter = new LineFormatter(
                 '[%datetime%] %channel%.%level_name%: %message% context:%context%' . PHP_EOL,

@@ -1,6 +1,5 @@
 <?php
 
-use Neo\Http\Controllers\ActorsCampaignsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsLocationsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsSchedulesController;
@@ -73,12 +72,4 @@ Route::group([
     */
 
     Route::post("schedules/{schedule}/reviews", SchedulesReviewsController::class . "@store");
-
-    /*
-    |----------------------------------------------------------------------
-    | Actors' Campaigns
-    |----------------------------------------------------------------------
-    */
-
-    Route::get("actors/{actor}/campaigns", ActorsCampaignsController::class . "@index");
 });

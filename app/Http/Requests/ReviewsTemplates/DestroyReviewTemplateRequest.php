@@ -21,10 +21,10 @@ class DestroyReviewTemplateRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        return Gate::allows(Capability::contents_review) && (
+    public function authorize(): bool {
+        return Gate::allows(Capability::contents_review->value) && (
                 Auth::id() === $this->route("template")->owner_id ||
-                Auth::user()->hasAccessTo($this->route("template")->owner)
+                Auth::user()?->hasAccessTo($this->route("template")->owner)
             );
     }
 
@@ -33,7 +33,7 @@ class DestroyReviewTemplateRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
             //
         ];

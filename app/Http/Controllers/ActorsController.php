@@ -43,7 +43,7 @@ class ActorsController extends Controller {
         $params = $request->validated();
 
         /** @var Collection $actors */
-        $actors = Auth::user()->getAccessibleActors();
+        $actors = Auth::user()?->getAccessibleActors() ?? new Collection();
 
         // We return all actors by default. If a groups query parameter is specified, let it decide
         if ($request->has("groups")) {
@@ -70,11 +70,11 @@ class ActorsController extends Controller {
         }
 
         if ($request->has("property")) {
-            $actors->load(Gate::allows(Capability::odoo_properties) ? "property.odoo" : "property");
+            $actors->load(Gate::allows(Capability::odoo_properties->value) ? "property.odoo" : "property");
         }
 
         if ($request->has("capability")) {
-            $actors = $actors->filter(fn(Actor $actor) => $actor->hasCapability(Capability::fromValue($request->input("capability"))));
+            $actors = $actors->filter(fn(Actor $actor) => $actor->hasCapability(Capability::from($request->input("capability"))));
         }
 
         if (in_array("logo", $request->input("with", []), true)) {
@@ -107,7 +107,7 @@ class ActorsController extends Controller {
             $actor->append("standalone_capabilities");
         }
 
-        if (in_array("branding", $with, true) && !is_null($actor->branding_id)) {
+        if (!is_null($actor->branding_id) && in_array("branding", $with, true)) {
             $actor->load("branding");
         }
 
@@ -140,7 +140,7 @@ class ActorsController extends Controller {
             $actor->load("logo");
         }
 
-        if (in_array("phone", $with, true) || Auth::user()->is($actor)) {
+        if (in_array("phone", $with, true) || Auth::user()?->is($actor)) {
             $actor->load("phone");
         }
 
@@ -284,7 +284,7 @@ class ActorsController extends Controller {
                 // Otherwise, simply resend the email
                 Mail::to($actor)->send(new ActorWelcomeEmail($actor->signupToken));
             }
-        } catch (TransportException $e) {
+        } catch (TransportException) {
             // Email could not be delivered because recipient does not exist.
             // Not my problem
         }
@@ -299,7 +299,7 @@ class ActorsController extends Controller {
      * @return Response
      */
     public function getToken(RequestActorTokenRequest $request): Response {
-        return new Response(["token" => Auth::user()->getJWT()]);
+        return new Response(["token" => Auth::user()?->getJWT()]);
     }
 
     public function impersonate(ImpersonateActorRequest $request, Actor $actor) {

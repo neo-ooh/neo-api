@@ -74,8 +74,9 @@ class NewsBackgroundsController extends Controller {
         $background->network   = $network;
         $background->format_id = $formatId;
         $background->locale    = $locale;
-        $background->path      =
-            $background->save();
+        $background->path      = $path;
+
+        $background->save();
 
         return new Response($background, 201);
     }

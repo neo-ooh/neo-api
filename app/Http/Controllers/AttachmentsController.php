@@ -41,6 +41,7 @@ class AttachmentsController {
         }
 
         // Store file
+        /** @var Attachment $attachment */
         $attachment = $productLike->attachments()->create([
             "name"     => Str::replace("_", " ", $file->getClientOriginalName()),
             "filename" => $file->getClientOriginalName(),

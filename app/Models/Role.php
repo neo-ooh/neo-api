@@ -20,16 +20,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * Neo\Models\Role
  *
- * @property int                    id
- * @property string                 name
- * @property string                 desc
- * @property Date                   created_at
- * @property Date                   updated_at
+ * @property int                    $id
+ * @property string                 $name
+ * @property string                 $desc
+ * @property Date                   $created_at
+ * @property Date                   $updated_at
  *
- * @property Collection<Capability> capabilities
- * @property Collection<Actor>      actors
+ * @property Collection<Capability> $capabilities
+ * @property Collection<Actor>      $actors
  *
- * @mixin Builder
+ * @mixin Builder<Role>
  */
 class Role extends Model {
     use HasFactory;
@@ -58,7 +58,7 @@ class Role extends Model {
         'desc',
     ];
 
-    protected static function newFactory (): Factories\RoleFactory {
+    protected static function newFactory(): Factories\RoleFactory {
         return Factories\RoleFactory::new();
     }
 
@@ -72,7 +72,7 @@ class Role extends Model {
     /**
      * All capabilities in the role
      */
-    public function capabilities (): BelongsToMany {
+    public function capabilities(): BelongsToMany {
         return $this->belongsToMany(
             Capability::class,
             'roles_capabilities',
@@ -85,7 +85,7 @@ class Role extends Model {
     /**
      * All users with this role
      */
-    public function actors (): BelongsToMany {
+    public function actors(): BelongsToMany {
         return $this->belongsToMany(
             Actor::class,
             'actors_roles',

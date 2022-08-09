@@ -34,10 +34,10 @@ class ImportContractDataJob implements ShouldQueue {
                                 protected OdooContract|null $odooContract = null) {
     }
 
-    public function handle() {
+    public function handle(): void {
         $output = new ConsoleOutput();
 
-        /** @var Contract $contract */
+        /** @var Contract|null $contract */
         $contract = Contract::query()->find($this->contractId);
 
         if (!$contract) {
@@ -129,7 +129,7 @@ class ImportContractDataJob implements ShouldQueue {
             // Infer order line type
             $type = 'guaranteed';
 
-            if ($product && $product->is_bonus) {
+            if ($product->is_bonus) {
                 $type = 'bua';
             } else if ($orderLine->discount > 99.9) {
                 $type = 'bonus';

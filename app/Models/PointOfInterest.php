@@ -13,6 +13,7 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**\
@@ -25,6 +26,8 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property Date   $created_at
  * @property Date   $updated_at
+ *
+ * @mixin Builder<PointOfInterest>
  */
 class PointOfInterest extends Model {
     use SpatialTrait;

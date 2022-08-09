@@ -11,6 +11,8 @@
 namespace Neo\Http\Requests\Actors;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
+use Neo\Enums\Capability;
 
 /**
  * Class ListActorsRequest
@@ -42,7 +44,7 @@ class ListActorsRequest extends FormRequest {
             "campaigns_status" => ["sometimes", "boolean"],
             "property"         => ["sometimes", "boolean"],
             "with"             => ["sometimes", "array"],
-            "capability"       => ["sometimes", "string", "exists:capabilities,slug"]
+            "capability"       => ["sometimes", "string", new Enum(Capability::class)]
         ];
     }
 }

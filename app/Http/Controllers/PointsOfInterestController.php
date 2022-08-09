@@ -30,6 +30,7 @@ class PointsOfInterestController {
     public function store(StorePointOfInterestRequest $request, Brand $brand) {
         // We need a POI model. If an external ID is provided. we check against stored pois.
         if ($request->has("external_id")) {
+            /** @var PointOfInterest $poi */
             $poi = PointOfInterest::query()->where("external_id", "=", $request->input("external_id"))->firstOrNew();
         } else {
             $poi = new PointOfInterest();
@@ -49,7 +50,9 @@ class PointsOfInterestController {
     public function storeBatch(StoreBatchPointOfInterestRequest $request, Brand $brand) {
         $inputs = collect($request->input("pois"));
 
-        $existingPois = PointOfInterest::query()->whereIn("external_id", $inputs->pluck("external_id")->whereNotNull())
+        /** @var PointOfInterest $existingPois */
+        $existingPois = PointOfInterest::query()
+                                       ->whereIn("external_id", $inputs->pluck("external_id")->whereNotNull())
                                        ->get();
         $pois         = [];
 
@@ -62,6 +65,7 @@ class PointsOfInterestController {
             }
 
             if (!$poi) {
+                /** @var PointOfInterest $poi */
                 $poi = new PointOfInterest();
             }
 

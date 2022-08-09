@@ -29,7 +29,7 @@ class SendContractJob implements ShouldQueue {
     public function __construct(protected Contract $contract, protected array $flights, protected bool $clearOnSend) {
     }
 
-    public function handle() {
+    public function handle(): void {
         $client = OdooConfig::fromConfig()->getClient();
 
         // Clean up contract before insert if requested
@@ -39,7 +39,7 @@ class SendContractJob implements ShouldQueue {
 
         $flightsDescriptions = [];
 
-        // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required orderlines
+        // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required order lines
         foreach ($this->flights as $flightIndex => $flight) {
             SendContractFlightJob::dispatchSync($this->contract, $flight, $flightIndex);
 
@@ -60,7 +60,7 @@ class SendContractJob implements ShouldQueue {
         ]);
     }
 
-    protected function cleanupContract($client) {
+    protected function cleanupContract($client): void {
         // Remove all order lines from the contract
         $response = OrderLine::delete($client, [
             ["order_id", "=", $this->contract->id],
@@ -80,11 +80,11 @@ class SendContractJob implements ShouldQueue {
         }
     }
 
-    protected function getFlightDescription(array $flight, int $flightIndex) {
+    protected function getFlightDescription(array $flight, int $flightIndex): string {
         $flightStart = Carbon::parse($flight['start'])->toDateString();
         $flightEnd   = Carbon::parse($flight['end'])->toDateString();
         $flightType  = ucFirst($flight["type"]);
 
-        return "Flight #" . $flightIndex + 1 . " ($flightType) [$flightStart -> $flightEnd]";
+        return "Flight #" . ($flightIndex + 1) . " ($flightType) [$flightStart -> $flightEnd]";
     }
 }

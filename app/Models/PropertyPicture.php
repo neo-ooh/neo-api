@@ -21,6 +21,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property int      $width
  * @property int      $height
  * @property int      $order
+ * @property string   $extension
  *
  * @property Property $property
  *

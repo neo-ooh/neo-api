@@ -104,7 +104,7 @@ class CanadianPressInterface implements NewsService {
                         continue;
                     }
 
-                    if(!$xmlRecord) {
+                    if (!$xmlRecord) {
                         // Ignore record on parse error
                         continue;
                     }
@@ -182,7 +182,7 @@ class CanadianPressInterface implements NewsService {
                 $mediaPath,
                 $cpDisk->readStream($record->media)
             );
-        } catch (Exception $e) {
+        } catch (Exception) {
             // Could not get media, ignore
             $record->media = null;
             $record->save();

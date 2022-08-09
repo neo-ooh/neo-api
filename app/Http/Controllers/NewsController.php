@@ -15,7 +15,7 @@ use Neo\Http\Requests\News\ListRecordsRequest;
 use Neo\Services\News\NewsService;
 
 class NewsController extends Controller {
-    public function index(ListRecordsRequest $request, NewsService $news)  {
+    public function index(ListRecordsRequest $request, NewsService $news): Response {
         $categoryId = $request->input("category");
 
         return new Response($news->getRecords($categoryId));

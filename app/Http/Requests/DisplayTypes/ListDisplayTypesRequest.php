@@ -20,8 +20,8 @@ class ListDisplayTypesRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        return Gate::allows(Capability::formats_edit) || Gate::allows(Capability::networks_edit()) ;
+    public function authorize(): bool {
+        return Gate::allows(Capability::formats_edit->value) || Gate::allows(Capability::networks_edit->value);
     }
 
     /**
@@ -29,7 +29,7 @@ class ListDisplayTypesRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [];
     }
 }

@@ -14,16 +14,16 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\PasswordRecoveries\CheckRecoveryTokenRequest;
 use Neo\Http\Requests\PasswordRecoveries\PasswordForgotRequest;
 use Neo\Http\Requests\PasswordRecoveries\PasswordRecoveryRequest;
-use Neo\Models\RecoveryToken;
 use Neo\Models\Actor;
+use Neo\Models\RecoveryToken;
 use Neo\Models\TwoFactorToken;
 
 class PasswordRecoveryController extends Controller {
-    public function makeToken (PasswordForgotRequest $request): Response {
+    public function makeToken(PasswordForgotRequest $request): Response {
         $email = $request->validated()["email"];
 
         // Check if a user match this email
-        /** @var Actor $actor */
+        /** @var Actor|null $actor */
         $actor = Actor::query()->where('email', $email)->first();
 
         if (is_null($actor)) {
@@ -45,17 +45,17 @@ class PasswordRecoveryController extends Controller {
         RecoveryToken::destroy($actor->email);
 
         // Create a new recovery token
-        $recoveryToken = new RecoveryToken([ "email" => $actor->email ]);
+        $recoveryToken = new RecoveryToken(["email" => $actor->email]);
         $recoveryToken->save(); // The email is sent to the user on token creation
 
         return new Response([]);
     }
 
-    public function validateToken (CheckRecoveryTokenRequest $request): Response {
+    public function validateToken(CheckRecoveryTokenRequest $request): Response {
         $token = $request->input('token');
 
         // Check the token is valid
-        /** @var RecoveryToken $recoveryToken */
+        /** @var RecoveryToken|null $recoveryToken */
         $recoveryToken = RecoveryToken::query()->where("token", $token)->first();
 
         if (is_null($recoveryToken)) {
@@ -72,12 +72,12 @@ class PasswordRecoveryController extends Controller {
     }
 
 
-    public function resetPassword (PasswordRecoveryRequest $request): Response {
-        $token = $request->input('token');
+    public function resetPassword(PasswordRecoveryRequest $request): Response {
+        $token    = $request->input('token');
         $password = $request->input('password');
 
         // Check the token is valid
-        /** @var RecoveryToken $recoveryToken */
+        /** @var RecoveryToken|null $recoveryToken */
         $recoveryToken = RecoveryToken::query()->where("token", $token)->first();
 
         if (is_null($recoveryToken)) {
@@ -88,7 +88,7 @@ class PasswordRecoveryController extends Controller {
         }
 
         // Token is correct, update password
-        $actor = $recoveryToken->actor;
+        $actor           = $recoveryToken->actor;
         $actor->password = $password;
         $actor->save();
 

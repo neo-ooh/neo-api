@@ -10,6 +10,7 @@
 
 namespace Neo\Services\Odoo;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Edujugon\Laradoo\Odoo;
 
 /**
@@ -19,10 +20,11 @@ class OdooClient {
     public Odoo $client;
 
     /**
-     * @param string $basepath URL to the Odoo server
-     * @param string $db       The odoo database to use
+     * @param string $url
+     * @param string $db The odoo database to use
      * @param string $userLogin
      * @param string $userPassword
+     * @throws OdooException
      */
     public function __construct(string $url, protected string $db, string $userLogin, string $userPassword) {
         $this->client = \Edujugon\Laradoo\Facades\Odoo::host($url)

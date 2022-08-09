@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\ProductCategories;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
 use Neo\Enums\ProductsFillStrategy;
 
@@ -20,11 +21,11 @@ class UpdateProductCategoryRequest extends FormRequest {
         return [
             "name_en"       => ["required", "string"],
             "name_fr"       => ["required", "string"],
-            "fill_strategy" => ["required", "in:" . implode(",", ProductsFillStrategy::getValues())],
+            "fill_strategy" => ["required", new Enum(ProductsFillStrategy::class)],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_products) && Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_products->value) && Gate::allows(Capability::properties_edit->value);
     }
 }

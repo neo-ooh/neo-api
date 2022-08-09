@@ -21,13 +21,13 @@ use Neo\Mails\RecoverPasswordEmail;
 /**
  * Class RecoveryToken
  *
- * @package App
- * @mixin Builder
- * @property string token
- * @property Date   created_at
+ * @property string $token
+ * @property Date   $created_at
  *
- * @property string email
- * @property Actor actor
+ * @property string $email
+ * @property Actor  $actor
+ *
+ * @mixin Builder<RecoveryToken>
  */
 class RecoveryToken extends Model {
     /*

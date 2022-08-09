@@ -79,11 +79,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                 }
 
                 if (!$monthData) {
-<<<<<<< HEAD
                     $output->writeln("[$this->year-$this->month-$day->day] => " . "No data!");
-=======
-                    $output->writeln("[$this->year-$this->month-$day->day] => " . ($monthData ? $monthData->final_traffic : "No data!"));
->>>>>>> 318f02d3 (traffic: Prevent creation of weekly traffic entry if some days of traffic are missing)
                     continue;
                 }
 

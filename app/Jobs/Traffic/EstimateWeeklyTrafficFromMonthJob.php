@@ -79,7 +79,7 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
                 }
 
                 if (!$monthData) {
-                    $output->writeln("[$this->year-$this->month-$day->day] => " . ($monthData ? $monthData->final_traffic : "No data!"));
+                    $output->writeln("[$this->year-$this->month-$day->day] => " . "No data!");
                     continue;
                 }
 

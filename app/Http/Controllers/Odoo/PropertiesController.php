@@ -36,7 +36,7 @@ class PropertiesController extends Controller {
         }
 
 // Check the odoo property is not already associated with a Connect property
-        /** @var Property|null $existing */
+        /** @var OdooProperty|null $existing */
         $existing = OdooProperty::query()
                                 ->with(["property", "property.actor"])
                                 ->where("odoo_id", "=", $odooId)->first();

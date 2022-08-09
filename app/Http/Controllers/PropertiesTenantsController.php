@@ -10,8 +10,8 @@
 
 namespace Neo\Http\Controllers;
 
+use Carbon\Carbon;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Date;
 use Neo\Http\Requests\PropertiesTenants\ListTenantsRequest;
 use Neo\Http\Requests\PropertiesTenants\RemoveTenantRequest;
 use Neo\Http\Requests\PropertiesTenants\SyncTenantsRequest;
@@ -26,7 +26,7 @@ class PropertiesTenantsController {
     public function sync(SyncTenantsRequest $request, Property $property): Response {
         $property->tenants()->sync($request->input("tenants", []));
 
-        $property->last_review_at = Date::now();
+        $property->last_review_at = Carbon::now();
         $property->save();
 
         return new Response($property->tenants);

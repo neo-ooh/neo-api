@@ -44,10 +44,8 @@ class RolesController extends Controller {
     }
 
     public function update(UpdateRoleRequest $request, Role $role): Response {
-        $values = $request->validated();
-
-        $role->name = $values["name"];
-        $role->desc = $values["desc"];
+        $role->name = $request->input("name");
+        $role->desc = $request->input("desc");
         $role->save();
 
         return new Response($role->loadMissing(["capabilities", "actors"]));

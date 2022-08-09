@@ -33,7 +33,7 @@ class DocumentsGenerationController extends Controller {
      */
     public function make(MakeDocumentRequest $request): Response {
         // Input can either be done using a file or a json object named data
-        /** @var UploadedFile $file */
+        /** @var UploadedFile|null $file */
         $file = $request->file("file");
         $data = $request->input("data");
 

@@ -28,7 +28,7 @@ class ShowClientRequest extends FormRequest {
         }
 
         // Get the request client
-        return $this->route("client")->has("contracts", function (Builder $query) {
+        return $this->route("client")?->has("contracts", function (Builder $query) {
             $query->where("owner_id", "=", Auth::id());
         })->get();
     }

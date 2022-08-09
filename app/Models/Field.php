@@ -34,6 +34,8 @@ use Neo\Modules\Broadcast\Models\Network;
  *
  * @property Collection<FieldSegment> $segments
  * @property Collection<Network>      $networks
+ *
+ * @property Collection<int>          $network_ids
  */
 class Field extends Model {
     protected $primaryKey = "id";

@@ -33,6 +33,10 @@ use Neo\Services\Odoo\OdooModel;
  * @property int    $is_rental_line
  * @property int    $is_linked_line
  * @property int    $discount
+ * @property int    $nb_weeks
+ * @property int    $nb_screen
+ * @property int    $connect_impression
+ * @property int    $impression
  * ...
  */
 class OrderLine extends OdooModel {

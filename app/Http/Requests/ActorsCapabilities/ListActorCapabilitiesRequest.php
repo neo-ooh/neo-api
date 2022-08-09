@@ -15,16 +15,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ListActorCapabilitiesRequest extends FormRequest
-{
+class ListActorCapabilitiesRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * A user can query this route for itself OR, for accessible users if it has the proper capability
+     *
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::actors_edit) || $this->route("actor")->id === Auth::id();
+        return Gate::allows(Capability::actors_edit->value) || $this->route("actor")?->id === Auth::id();
     }
 
     /**

@@ -73,7 +73,7 @@ use Neo\Rules\AccessibleActor;
  * @property string              $two_fa_method
  * @property TwoFactorToken|null $twoFactorToken
  * @property RecoveryToken       $recoveryToken
- * @property SignupToken         $signupToken
+ * @property SignupToken|null    $signupToken
  *
  *
  * @property Property            $property

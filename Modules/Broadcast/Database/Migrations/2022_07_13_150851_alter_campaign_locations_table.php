@@ -40,14 +40,11 @@ return new class extends Migration {
             $progress->setMessage("Handling Campaign #$campaign->id");
             $progress->advance();
 
-            // Get the format of the campaign
-            $format = $campaign->format_id;
-
             // List the locations of the campaign
             DB::table("campaign_locations")
               ->where("campaign_id", "=", $campaign->id)
               ->update([
-                  "format_id"  => $format->format_id,
+                  "format_id"  => $campaign->format_id,
                   "created_at" => Carbon::now(),
                   "updated_at" => Carbon::now(),
               ]);

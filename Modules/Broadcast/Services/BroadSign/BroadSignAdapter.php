@@ -363,14 +363,10 @@ class BroadSignAdapter extends BroadcasterOperator implements
     }
 
     /**
-     * @param Schedule                             $schedule
-     * @param ExternalBroadcasterResourceId        $campaign
-     * @param Content                              $content
-     * @param array<ExternalBroadcasterResourceId> $creatives
-     * @return array<ExternalBroadcasterResourceId>
+     * @inheritDoc
      * @throws UnknownProperties
      */
-    public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, Content $content, array $creatives): array {
+    public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, Content $content, array $creatives, array $tags): array {
         // First get the loop slot for the campaign
         $loopSlots = LoopSlot::forCampaign($this->getAPIClient(), $campaign->external_id);
 
@@ -411,13 +407,13 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
         $bsBundle->parent_id = $bsSchedule->id;
 
-        $triggerTag = array_filter($content->tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Trigger);
+        $triggerTag = array_filter($tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Trigger);
         if (count($triggerTag) > 0) {
             $bsBundle->auto_synchronized   = false;
             $bsBundle->trigger_category_id = (int)$triggerTag[0]->external_id;
         }
 
-        $separationTags = array_filter($content->tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Category);
+        $separationTags = array_filter($tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Category);
         if (count($separationTags) > 0) {
             $bsBundle->category_id = (int)array_shift($separationTags)->external_id;
         }
@@ -445,7 +441,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
      * @throws ExternalBroadcastResourceNotFoundException
      * @throws UnknownProperties
      */
-    public function updateSchedule(array $externalResources, Schedule $schedule): array {
+    public function updateSchedule(array $externalResources, Schedule $schedule, array $tags): array {
         $externalSchedule = $this->getResourceByType($externalResources, ExternalResourceType::Schedule);
 
         $bsSchedule = BroadSignSchedule::get($this->getAPIClient(), $externalSchedule->external_id);
@@ -475,8 +471,23 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         // Only update bundle if necessary
-        if ($schedule->order !== $bsBundle->position) {
-            $bsBundle->position = $schedule->order;
+        $triggerTags = array_filter($tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Trigger);
+        $triggerTag  = (int)array_shift($triggerTags)->external_id;
+
+        $separationTags          = array_filter($tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Category);
+        $primarySeparationTag    = (int)array_shift($separationTags)?->external_id;
+        $secondarySeparationTags = implode(",", array_map(static fn(Tag $tag) => (int)$tag->external_id, $separationTags));
+
+        if ($schedule->order !== $bsBundle->position ||
+            $triggerTag !== $bsBundle->trigger_category_id ||
+            $primarySeparationTag !== $bsBundle->category_id ||
+            $secondarySeparationTags !== $bsBundle->secondary_sep_category_ids
+        ) {
+            $bsBundle->auto_synchronized          = $triggerTag !== 0;
+            $bsBundle->trigger_category_id        = $triggerTag;
+            $bsBundle->category_id                = $primarySeparationTag;
+            $bsBundle->secondary_sep_category_ids = $secondarySeparationTags;
+            $bsBundle->position                   = $schedule->order;
             $bsBundle->save();
         }
 
@@ -519,14 +530,14 @@ class BroadSignAdapter extends BroadcasterOperator implements
      * @inheritDoc
      * @throws UnknownProperties
      */
-    public function importCreative(Creative $creative, CreativeStorageType $storageType): ExternalBroadcasterResourceId {
+    public function importCreative(Creative $creative, CreativeStorageType $storageType, array $tags): ExternalBroadcasterResourceId {
         // First, import the creative
         $creativeId = BroadSignCreative::import($this->getAPIClient(), $creative, $storageType);
 
         $bsCreative = new BroadSignCreative($this->getAPIClient(), ["id" => $creativeId]);
 
         // Then, target it, only consider targeting tags
-        foreach ($creative->tags as $tag) {
+        foreach ($tags as $tag) {
             if ($tag->tag_type !== BroadcastTagType::Targeting) {
                 continue;
             }

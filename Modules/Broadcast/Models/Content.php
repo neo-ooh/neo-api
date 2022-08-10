@@ -223,14 +223,11 @@ class Content extends BroadcastResourceModel {
     /**
      * @throws UnknownProperties
      */
-    public function toResource(int $broadcasterId): ContentResource {
+    public function toResource(): ContentResource {
         return new ContentResource([
             "name"          => $this->name,
             "duration_msec" => $this->duration,
             "fullscreen"    => $this->layout->is_fullscreen,
-            "tags"          => $this->layout->broadcast_tags
-                ->map(fn(BroadcastTag $tag) => $tag->toResource($broadcasterId))
-                ->where("external_id", "!==", "-1"),
         ]);
     }
 }

@@ -19,18 +19,20 @@ return new class extends Migration {
         Schema::create("format_layouts", static function (Blueprint $table) {
             $table->foreignId("format_id")->constrained("formats", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId("layout_id")->constrained("layouts", "id")->cascadeOnUpdate()->restrictOnDelete();
+            $table->boolean("is_fullscreen");
         });
 
         $layouts = DB::table("layouts")->get();
 
         foreach ($layouts as $layout) {
             DB::table("format_layouts")->insert([
-                "format_id" => $layout->format_id,
-                "layout_id" => $layout->id,
+                "format_id"     => $layout->format_id,
+                "layout_id"     => $layout->id,
+                "is_fullscreen" => $layout->is_fullscreen,
             ]);
         }
 
-        Schema::table("layouts", function (Blueprint $table) {
+        Schema::table("layouts", static function (Blueprint $table) {
             $table->dropForeign("formats_layouts_format_id_foreign");
             $table->dropColumn("format_id");
         });

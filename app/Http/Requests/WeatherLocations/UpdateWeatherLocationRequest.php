@@ -15,16 +15,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Neo\Enums\Capability;
 
-class UpdateWeatherLocationRequest extends FormRequest
-{
+class UpdateWeatherLocationRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::dynamics_weather);
+    public function authorize() {
+        return Gate::allows(Capability::dynamics_weather->value);
     }
 
     /**
@@ -32,10 +30,9 @@ class UpdateWeatherLocationRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "background_selection" => ["required", "string", Rule::in(["WEATHER", "RANDOM"])],
+            "background_selection"  => ["required", "string", Rule::in(["WEATHER", "RANDOM"])],
             "selection_revert_date" => ["required_if:background_selection,RANDOM", "nullable", "date"]
         ];
     }

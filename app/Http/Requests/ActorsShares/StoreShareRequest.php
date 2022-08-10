@@ -21,9 +21,9 @@ class StoreShareRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         // Actor needs to be connected , have the `actors_edit` capability and has access to the sharing user
-        $gate = Gate::allows(Capability::actors_edit);
+        $gate   = Gate::allows(Capability::actors_edit->value);
         $access = Auth::user()->is($this->route('actor')) || Auth::user()->hasAccessTo($this->route('actor'));
         return $gate && $access;
     }
@@ -33,9 +33,9 @@ class StoreShareRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "actor" => [ "required", "integer", "exists:actors,id" ],
+            "actor" => ["required", "integer", "exists:actors,id"],
         ];
     }
 }

@@ -22,6 +22,6 @@ class UpdatePointOfInterestRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::planning_fullaccess) || Gate::allows(Capability::properties_tenants);
+        return Gate::allows(Capability::planning_fullaccess->value) || Gate::allows(Capability::properties_tenants->value);
     }
 }

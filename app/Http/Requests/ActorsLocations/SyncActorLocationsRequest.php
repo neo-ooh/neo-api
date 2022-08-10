@@ -15,8 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class SyncActorLocationsRequest extends FormRequest
-{
+class SyncActorLocationsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,7 +23,7 @@ class SyncActorLocationsRequest extends FormRequest
      */
     public function authorize(): bool {
         // User needs to be connected , have the `edit_user` capability and has access to the referenced user
-        $gate = Gate::allows(Capability::actors_edit);
+        $gate   = Gate::allows(Capability::actors_edit->value);
         $access = Auth::user()->hasAccessTo($this->route('actor'));
         return $gate && $access;
     }
@@ -36,7 +35,7 @@ class SyncActorLocationsRequest extends FormRequest
      */
     public function rules(): array {
         return [
-            "locations" => ["nullable", "array"],
+            "locations"   => ["nullable", "array"],
             "locations.*" => ["integer", "exists:locations,id", "distinct"],
         ];
     }

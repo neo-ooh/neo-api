@@ -45,9 +45,9 @@ class StoreConnectionRequest extends FormRequest {
 
         return match ($broadcasterType) {
             BroadcasterType::BroadSign => [
-                "certificate"      => ["required", "file"],
-                "domain_id"        => ["required", "int"],
-                "customer_id|null" => ["required", "int"],
+                "certificate" => ["required", "file"],
+                "domain_id"   => ["required", "int"],
+                "customer_id" => ["nullable", "int"],
             ],
             BroadcasterType::PiSignage => [
                 "server_url" => ["required", "url"],

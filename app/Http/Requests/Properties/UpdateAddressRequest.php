@@ -16,16 +16,16 @@ use Neo\Enums\Capability;
 
 class UpdateAddressRequest extends FormRequest {
     public function authorize() {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 
     public function rules() {
         return [
-            "line_1" => ["required", "string"],
-            "line_2" => ["nullable", "string"],
+            "line_1"   => ["required", "string"],
+            "line_2"   => ["nullable", "string"],
             "province" => ["required", "string", "exists:provinces,slug"],
-            "city" => ["required", "string"],
-            "zipcode" => ["required", "string"],
+            "city"     => ["required", "string"],
+            "zipcode"  => ["required", "string"],
         ];
     }
 }

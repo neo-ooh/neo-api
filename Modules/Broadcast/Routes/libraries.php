@@ -73,6 +73,6 @@ Route::group([
 
     Route::model("creative", Creative::class);
 
-    Route::  post("contents/{creative}/creatives", CreativesController::class . "@store");
-    Route::delete("contents/{creative}/creatives/{creative}", CreativesController::class . "@destroy");
+    Route::  post("contents/{content}/creatives", CreativesController::class . "@store");
+    Route::delete("contents/{content}/creatives/{creative}", CreativesController::class . "@destroy");
 });

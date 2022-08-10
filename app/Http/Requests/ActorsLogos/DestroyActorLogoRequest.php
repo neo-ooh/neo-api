@@ -19,11 +19,12 @@ use Neo\Models\Actor;
 class DestroyActorLogoRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
-     * A User can update a user only if the user is a child, and the user has the proper capability. A user cannot update its own logo
+     * A User can update a user only if the user is a child, and the user has the proper capability. A user cannot update its own
+     * logo
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         // This is the ID of the actor targeted by the route
         /** @var Actor $actor */
         $actor = $this->route('actor');
@@ -32,7 +33,7 @@ class DestroyActorLogoRequest extends FormRequest {
             return false; // The actor cannot update its own logo itself
         }
 
-        if (!Gate::allows(Capability::actors_edit)) {
+        if (!Gate::allows(Capability::actors_edit->value)) {
             return false; // The actor doesn't have the proper capability
         }
 
@@ -45,7 +46,7 @@ class DestroyActorLogoRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [];
     }
 }

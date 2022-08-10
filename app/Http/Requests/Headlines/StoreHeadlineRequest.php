@@ -14,16 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class StoreHeadlineRequest extends FormRequest
-{
+class StoreHeadlineRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::headlines_edit);
+    public function authorize() {
+        return Gate::allows(Capability::headlines_edit->value);
     }
 
     /**
@@ -31,16 +29,15 @@ class StoreHeadlineRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "style" => ["required", "string"],
-            "end_date" => ["required", "nullable", "date"],
-            "messages" => ["required", "array"],
-            "messages.*.locale" => ["required", "string"],
+            "style"              => ["required", "string"],
+            "end_date"           => ["required", "nullable", "date"],
+            "messages"           => ["required", "array"],
+            "messages.*.locale"  => ["required", "string"],
             "messages.*.message" => ["required", "string"],
-            "capabilities" => ["sometimes", "array"],
-            "capabilities.*" => ["integer", "exists:capabilities,id"],
+            "capabilities"       => ["sometimes", "array"],
+            "capabilities.*"     => ["integer", "exists:capabilities,id"],
         ];
     }
 }

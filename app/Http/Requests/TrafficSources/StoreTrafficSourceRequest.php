@@ -15,16 +15,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Neo\Enums\Capability;
 
-class StoreTrafficSourceRequest extends FormRequest
-{
+class StoreTrafficSourceRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::traffic_sources);
+    public function authorize() {
+        return Gate::allows(Capability::traffic_sources->value);
     }
 
     /**
@@ -32,8 +30,7 @@ class StoreTrafficSourceRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             "type" => ["required", "string", Rule::in(["linkett"])],
             "name" => ["required", "string"],

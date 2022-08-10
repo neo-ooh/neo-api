@@ -22,6 +22,6 @@ class DumpPropertyRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_export);
+        return Gate::allows(Capability::properties_export->value);
     }
 }

@@ -23,7 +23,7 @@ class SyncActorAccessesRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
+    public function authorize(): bool {
         // Current user cannot edit its own access
         // Current user must have the actors.edit capabilities
         // Current user must have access to the actor it is editing (Checked through controller's method's binding)
@@ -31,7 +31,7 @@ class SyncActorAccessesRequest extends FormRequest {
         /** @var Actor $actor */
         $actor = $this->route('actor');
 
-        return !$actor->is(Auth::user()) && Gate::allows(Capability::actors_edit);
+        return !$actor->is(Auth::user()) && Gate::allows(Capability::actors_edit->value);
     }
 
     /**
@@ -39,9 +39,9 @@ class SyncActorAccessesRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "actors" => ["nullable", "array"],
+            "actors"   => ["nullable", "array"],
             "actors.*" => ["integer", "exists:actors,id"]
         ];
     }

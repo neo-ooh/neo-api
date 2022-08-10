@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\Properties;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 
 class ListPropertiesPendingReviewRequest extends FormRequest {
     public function rules(): array {
@@ -21,6 +22,6 @@ class ListPropertiesPendingReviewRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows('properties.view');
+        return Gate::allows(Capability::properties_view->value);
     }
 }

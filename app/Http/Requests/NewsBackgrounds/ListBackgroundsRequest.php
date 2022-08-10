@@ -14,16 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ListBackgroundsRequest extends FormRequest
-{
+class ListBackgroundsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::dynamics_news);
+    public function authorize() {
+        return Gate::allows(Capability::dynamics_news->value);
     }
 
     /**
@@ -31,12 +29,11 @@ class ListBackgroundsRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "network" => ["required", "string"],
-            "format_id" => ["sometimes", "nullable", "integer", "exists:formats,id"],
-            "categories" => ["sometimes", "array"],
+            "network"      => ["required", "string"],
+            "format_id"    => ["sometimes", "nullable", "integer", "exists:formats,id"],
+            "categories"   => ["sometimes", "array"],
             "categories.*" => ["integer"]
         ];
     }

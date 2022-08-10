@@ -33,7 +33,7 @@ class StoreActorLogoRequest extends FormRequest {
             return true; // The actor can update its own logo
         }
 
-        if (!Gate::allows(Capability::actors_edit)) {
+        if (!Gate::allows(Capability::actors_edit->value)) {
             return false; // The actor doesn't have the proper capability
         }
 

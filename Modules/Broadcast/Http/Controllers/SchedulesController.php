@@ -70,7 +70,8 @@ class SchedulesController extends Controller {
         $schedule->broadcast_days = $broadcastDays;
         $schedule->is_locked      = $request->input('send_for_review');
 
-        $schedulesIds = [];
+        /** @var array<Schedule> $schedules */
+        $schedules = [];
 
         // Validate the content and scheduling fit all the selected campaigns
         /** @var Collection<Campaign> $campaigns */
@@ -98,9 +99,10 @@ class SchedulesController extends Controller {
                 $campaignSchedule->order       = $campaign->schedules()->count();
                 $campaignSchedule->save();
 
-                $campaignSchedule->promote();
+                // Copy tags from content to the schedule
+                $campaignSchedule->broadcast_tags()->sync($content->broadcast_tags()->allRelatedIds());
 
-                $schedulesIds[] = $campaignSchedule->getKey();
+                $schedules[] = $campaignSchedule;
             }
 
             DB::commit();
@@ -110,8 +112,12 @@ class SchedulesController extends Controller {
             throw $e;
         }
 
-        // Return a response
-        return new Response($schedulesIds, 201);
+        // All schedules where created successfully, promote them
+        foreach ($schedules as $schedule) {
+            $schedule->promote();
+        }
+
+        return new Response(array_map(static fn(Schedule $schedule) => $schedule->getKey(), $schedules), 201);
     }
 
     /**
@@ -129,14 +135,14 @@ class SchedulesController extends Controller {
         $campaigns = $user->getCampaigns()->pluck('id');
         $schedules = Schedule::query()
                              ->join('contents', 'contents.id', '=', "schedules.content_id")
-                             ->join('schedule_details', 'schedule.id', '=', "schedules.id")
+                             ->join('schedule_details', 'schedule_id', '=', "schedules.id")
                              ->whereIn("schedules.campaign_id", $campaigns)
                              ->where("schedules.is_locked", "=", 1)
                              ->where("schedule_details.is_approved", "<>", 1)
                              ->where('contents.is_approved', '=', false)
                              ->whereNotExists(fn($query) => $query->select(DB::raw(1))
-                                                                  ->from('reviews')
-                                                                  ->whereRaw('reviews.schedule_id = schedules.id'))
+                                                                  ->from('schedule_reviews')
+                                                                  ->whereRaw('schedule_reviews.schedule_id = schedules.id'))
                              ->with([
                                  "campaign",
                                  "campaign.parent:id,name",

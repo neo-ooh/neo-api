@@ -12,6 +12,7 @@ use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
     public function up(): void {
+        DB::statement("DROP VIEW IF EXISTS schedule_details");
         \Illuminate\Support\Facades\DB::statement(/** @lang SQL */ <<<EOF
             CREATE VIEW `schedule_details` AS
             SELECT

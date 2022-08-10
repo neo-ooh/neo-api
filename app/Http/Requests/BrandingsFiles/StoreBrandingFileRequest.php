@@ -20,8 +20,8 @@ class StoreBrandingFileRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        return Gate::allows(Capability::brandings_edit);
+    public function authorize(): bool {
+        return Gate::allows(Capability::brandings_edit->value);
     }
 
     /**
@@ -29,10 +29,10 @@ class StoreBrandingFileRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "type" => [ "required", "string" ],
-            "file" => [ "required", "image" ],
+            "type" => ["required", "string"],
+            "file" => ["required", "image"],
         ];
     }
 }

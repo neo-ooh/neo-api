@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\Contracts;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 
 class ListContractsRequest extends FormRequest {
     public function rules(): array {
@@ -21,6 +22,6 @@ class ListContractsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows('contracts.edit');
+        return Gate::allows(Capability::contracts_edit->value);
     }
 }

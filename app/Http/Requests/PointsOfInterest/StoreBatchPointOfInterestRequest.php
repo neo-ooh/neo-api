@@ -28,6 +28,6 @@ class StoreBatchPointOfInterestRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::tools_planning) || Gate::allows(Capability::properties_tenants);
+        return Gate::allows(Capability::tools_planning->value) || Gate::allows(Capability::properties_tenants->value);
     }
 }

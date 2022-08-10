@@ -21,7 +21,7 @@ class ListPendingSchedulesRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::contents_review);
+        return Gate::allows(Capability::contents_review->value);
     }
 
     /**

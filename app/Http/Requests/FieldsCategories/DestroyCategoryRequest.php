@@ -21,6 +21,6 @@ class DestroyCategoryRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit) && Gate::allows(Capability::properties_fields);
+        return Gate::allows(Capability::properties_edit->value) && Gate::allows(Capability::properties_fields->value);
     }
 }

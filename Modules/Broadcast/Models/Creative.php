@@ -252,11 +252,10 @@ class Creative extends BroadcastResourceModel {
     */
 
     /**
-     * @param int $broadcasterId
      * @return CreativeResource
      * @throws UnknownProperties
      */
-    public function toResource(int $broadcasterId): CreativeResource {
+    public function toResource(): CreativeResource {
         return new CreativeResource([
             "name"                 => $this->owner->name . " - " . $this->original_name . "@" . $this->content->library->name,
             "fileName"             => $this->original_name,
@@ -268,8 +267,6 @@ class Creative extends BroadcastResourceModel {
             "url"                  => $this->type === CreativeType::Static ? $this->file_url : $this->properties->url,
             "extension"            => $this->type === CreativeType::Static ? $this->properties->extension : "",
             "refresh_rate_minutes" => $this->type === CreativeType::Static ? 0 : $this->properties->refresh_interval_minutes,
-            "tags"                 => $this->frame->broadcast_tags->map(fn(BroadcastTag $tag) => $tag->toResource($broadcasterId))
-                                                                  ->where("external_id", "!==", "-1"),
         ]);
     }
 

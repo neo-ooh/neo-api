@@ -25,14 +25,14 @@ use Vinkla\Hashids\Facades\Hashids;
 return new class extends Migration {
     public function up(): void {
         $env    = config("app.env");
-        $output = new ConsoleOutput();
-        $output->writeln("");
+        $output = (new ConsoleOutput());
 
         // For each creative, repatriate its settings, either from the `dynamic_creatives` or `static_creatives` table into the new `properties` JSON field
-        $creatives = DB::table("creatives")->where("id_tmp", "=", 0)->orderBy("id")->lazy(500);
+        $creatives = DB::table("creatives")->where("id_tmp", "=", 0)->orderBy("id")->get();
 
         $output->writeln("Iterate over every creatives...");
-        $progress = new ProgressBar($output->section());
+        $progressSection = $output->section();
+        $progress        = new ProgressBar($progressSection);
         $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
         $progress->setMessage("");
         $progress->start($creatives->count());
@@ -73,7 +73,6 @@ return new class extends Migration {
               ]);
 
             // If the creative has not been deleted, we migrate its external ids
-
             if (is_null($creative->deleted_at)) {
                 $externalIds = DB::table("creatives_external_ids")
                                  ->where("creative_id", "=", $creative->id)
@@ -97,7 +96,7 @@ return new class extends Migration {
             }
 
             // Rename files
-            if ($env !== 'local' && $creative->type === 'static') {
+            if ($env === 'production' && $creative->type === 'static') {
                 // Move creative file
                 $from = "creatives/" . $creative->id . "." . $creativeProperties->extension;
                 $to   = "creatives/" . Hashids::encode($broadcastResource->getKey()) . "." . $creativeProperties->extension;
@@ -114,5 +113,7 @@ return new class extends Migration {
         }
 
         $progress->finish();
+        $progressSection->clear();
+        $info->clear();
     }
 };

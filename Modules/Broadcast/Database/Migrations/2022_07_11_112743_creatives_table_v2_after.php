@@ -24,17 +24,23 @@ return new class extends Migration {
         Schema::dropIfExists("dynamic_creatives");
         Schema::dropIfExists("creatives_external_ids");
 
-
         $output->writeln("Finalize Creatives table...");
         Schema::table("creatives", static function (Blueprint $table) {
             // Make the newly created `properties_tmp` column permanent by renaming it
             $table->renameColumn("properties_tmp", "properties");
+        });
 
+        Schema::table("creatives", static function (Blueprint $table) {
             // Get rid of the ID column in favor of the tmp one.
             $table->dropColumn("id");
             $table->renameColumn("id_tmp", "id");
-            $table->primary(["id"]);
+        });
 
+        Schema::table("creatives", static function (Blueprint $table) {
+            $table->primary(["id"]);
+        });
+
+        Schema::table("creatives", static function (Blueprint $table) {
             // Add constraint on ID column
             $table->foreign("id")->references("id")
                   ->on("broadcast_resources")
@@ -42,7 +48,7 @@ return new class extends Migration {
                   ->cascadeOnDelete();
 
             // Update the type of the `type` column to be more strict
-            $table->enum("type", ["static", "dynamic"])->after("frame_id")->change();
+            $table->enum("type", ["static", "url"])->after("frame_id")->change();
         });
         $output->writeln("Done.");
     }

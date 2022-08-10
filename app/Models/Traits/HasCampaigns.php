@@ -41,7 +41,7 @@ trait HasCampaigns {
      * @return HasMany
      */
     public function own_campaigns(): HasMany {
-        return $this->hasMany(Campaign::class, "owner_id");
+        return $this->hasMany(Campaign::class, "parent_id");
     }
 
     /**
@@ -92,7 +92,7 @@ trait HasCampaigns {
      */
     public function getChildrenCampaignsAttribute(): \Illuminate\Support\Collection {
         $descendants = $this->getAccessibleActors(true, false, false, false)->pluck('id');
-        return Campaign::query()->whereIn("owner_id", $descendants)->get();
+        return Campaign::query()->whereIn("parent_id", $descendants)->get();
     }
 
     /*

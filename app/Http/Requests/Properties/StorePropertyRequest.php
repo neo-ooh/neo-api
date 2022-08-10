@@ -22,7 +22,7 @@ class StorePropertyRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 
     /**

@@ -21,7 +21,7 @@ return new class extends Migration {
         // Contents
         $contents = \Illuminate\Support\Facades\DB::table("contents")->orderBy("id")->lazy(500);
 
-        $output = new ConsoleOutput();
+        $output = (new ConsoleOutput())->section();
         $output->writeln("");
         $progress = new ProgressBar($output);
         $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
@@ -53,6 +53,6 @@ return new class extends Migration {
         }
 
         $progress->finish();
-        $output->writeln("");
+        $output->clear();
     }
 };

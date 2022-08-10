@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\Bursts;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 
 class StoreBurstRequest extends FormRequest {
     /**
@@ -20,7 +21,7 @@ class StoreBurstRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows("bursts.request");
+        return Gate::allows(Capability::bursts_request->value);
     }
 
     /**
@@ -30,13 +31,13 @@ class StoreBurstRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "contract_id"    => ["required", "integer", "exists:contracts,id"],
-            "locations"    => ["required", "array"],
-            "locations.*"  => ["integer", "exists:locations,id"],
-            "start_at"     => ["required", "date"],
+            "contract_id"   => ["required", "integer", "exists:contracts,id"],
+            "locations"     => ["required", "array"],
+            "locations.*"   => ["integer", "exists:locations,id"],
+            "start_at"      => ["required", "date"],
             "scale_percent" => ["required", "integer", "min:1", "max:100"],
-            "duration_ms"  => ["required", "integer"],
-            "frequency_ms" => ["required", "integer"],
+            "duration_ms"   => ["required", "integer"],
+            "frequency_ms"  => ["required", "integer"],
         ];
     }
 }

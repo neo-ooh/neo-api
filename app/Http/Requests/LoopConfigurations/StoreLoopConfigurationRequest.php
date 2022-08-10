@@ -17,16 +17,16 @@ use Neo\Enums\Capability;
 class StoreLoopConfigurationRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name" => ["required", "string"],
+            "name"           => ["required", "string"],
             "loop_length_ms" => ["required", "integer"],
             "spot_length_ms" => ["required", "integer", "lte:loop_length_ms"],
             "reserved_spots" => ["required", "integer"],
-            "start_date" => ["required", "date"],
-            "end_date" => ["required", "date"],
+            "start_date"     => ["required", "date"],
+            "end_date"       => ["required", "date"],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::loops_edit);
+        return Gate::allows(Capability::loops_edit->value);
     }
 }

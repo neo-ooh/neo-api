@@ -14,15 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class DestroyActorRoleRequest extends FormRequest
-{
+class DestroyActorRoleRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::actors_edit);
+        return Gate::allows(Capability::actors_edit->value);
     }
 
     /**

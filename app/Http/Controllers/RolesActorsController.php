@@ -19,13 +19,13 @@ use Neo\Models\Actor;
 use Neo\Models\Role;
 
 class RolesActorsController extends Controller {
-    public function index (Role $role): Response {
-        Gate::authorize(Capability::roles_edit);
+    public function index(Role $role): Response {
+        Gate::authorize(Capability::roles_edit->value);
 
         return new Response($role->actors);
     }
 
-    public function store (StoreRoleActorRequest $request, Role $role): Response {
+    public function store(StoreRoleActorRequest $request, Role $role): Response {
         /** @var Actor $actor */
         $actor = Actor::query()->find($request->validated()["actor_id"]);
 
@@ -43,7 +43,7 @@ class RolesActorsController extends Controller {
         return new Response($role->actors);
     }
 
-    public function destroy (DestroyRoleActorRequest $request, Role $role): Response {
+    public function destroy(DestroyRoleActorRequest $request, Role $role): Response {
         $actor = Actor::query()->find($request->validated()["actor_id"]);
 
         if (!$role->actors->pluck('id')->contains($actor->id)) {

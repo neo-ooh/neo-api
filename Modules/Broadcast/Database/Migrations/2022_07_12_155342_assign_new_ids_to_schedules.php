@@ -21,7 +21,7 @@ return new class extends Migration {
         // Schedules
         $schedules = \Illuminate\Support\Facades\DB::table("schedules")->orderBy("id")->lazy(500);
 
-        $output = new ConsoleOutput();
+        $output = (new ConsoleOutput())->section();
         $output->writeln("");
         $progress = new ProgressBar($output);
         $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
@@ -49,6 +49,6 @@ return new class extends Migration {
         }
 
         $progress->finish();
-        $output->writeln("");
+        $output->clear();
     }
 };

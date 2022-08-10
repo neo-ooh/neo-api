@@ -15,8 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class DestroyShareRequest extends FormRequest
-{
+class DestroyShareRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -24,7 +23,7 @@ class DestroyShareRequest extends FormRequest
      */
     public function authorize(): bool {
         // User needs to be connected , have the `edit_user` capability and has access to the sharing user
-        $gate = Gate::allows(Capability::actors_edit);
+        $gate   = Gate::allows(Capability::actors_edit->value);
         $access = Auth::user()->is($this->route('actor')) || Auth::user()->hasAccessTo($this->route('actor'));
         return $gate && $access;
     }

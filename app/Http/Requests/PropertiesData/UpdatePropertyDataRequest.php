@@ -16,21 +16,21 @@ use Neo\Enums\Capability;
 
 class UpdatePropertyDataRequest extends FormRequest {
     public function authorize() {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 
     public function rules() {
         return [
-            "website" => ["nullable", "url"],
-            "description_fr" => ["nullable", "string"],
-            "description_en" => ["nullable", "string"],
-            "stores_count"   => ["nullable", "integer"],
-            "visit_length"   => ["nullable", "numeric"],
-            "average_income" => ["nullable", "numeric"],
-            "is_downtown"    => ["nullable", "boolean"],
-            "data_source"    => ["nullable", "string"],
-            "market_population" => ["nullable", "integer"],
-            "gross_area" => ["nullable", "integer"],
+            "website"            => ["nullable", "url"],
+            "description_fr"     => ["nullable", "string"],
+            "description_en"     => ["nullable", "string"],
+            "stores_count"       => ["nullable", "integer"],
+            "visit_length"       => ["nullable", "numeric"],
+            "average_income"     => ["nullable", "numeric"],
+            "is_downtown"        => ["nullable", "boolean"],
+            "data_source"        => ["nullable", "string"],
+            "market_population"  => ["nullable", "integer"],
+            "gross_area"         => ["nullable", "integer"],
             "spending_per_visit" => ["nullable", "numeric"],
         ];
     }

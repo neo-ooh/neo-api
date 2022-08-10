@@ -23,6 +23,6 @@ class ReorderFieldsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_fields) && Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_fields->value) && Gate::allows(Capability::properties_edit->value);
     }
 }

@@ -22,6 +22,6 @@ class ListLoopConfigurationsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::loops_edit);
+        return Gate::allows(Capability::loops_edit->value);
     }
 }

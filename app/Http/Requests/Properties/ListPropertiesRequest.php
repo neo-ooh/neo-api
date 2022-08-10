@@ -22,6 +22,6 @@ class ListPropertiesRequest extends FormRequest {
     }
 
     public function authorize() {
-        return Gate::allows(Capability::tools_planning);
+        return Gate::allows(Capability::tools_planning->value);
     }
 }

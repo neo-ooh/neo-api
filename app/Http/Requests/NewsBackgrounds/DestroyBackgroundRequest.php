@@ -14,16 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class DestroyBackgroundRequest extends FormRequest
-{
+class DestroyBackgroundRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::dynamics_news);
+    public function authorize() {
+        return Gate::allows(Capability::dynamics_news->value);
     }
 
     /**
@@ -31,8 +29,7 @@ class DestroyBackgroundRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [];
     }
 }

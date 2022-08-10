@@ -15,15 +15,14 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ListActorLocationsRequest extends FormRequest
-{
+class ListActorLocationsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
     public function authorize(): bool {
-        $gate = Gate::allows(Capability::actors_edit) && Auth::user()->hasAccessTo($this->route("actor"));
+        $gate   = Gate::allows(Capability::actors_edit->value) && Auth::user()->hasAccessTo($this->route("actor"));
         $itself = Auth::user()->is($this->route("actor"));
         return $gate || $itself;
     }

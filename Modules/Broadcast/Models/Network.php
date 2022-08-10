@@ -38,7 +38,6 @@ use Neo\Modules\Broadcast\Models\StructuredColumns\NetworkSettings;
  * @property BroadcasterConnection        $broadcaster_connection
  * @property Collection<NetworkContainer> $containers
  * @property Collection<Location>         $locations
- * @property Collection<Campaign>         $campaigns
  * @property Collection<Property>         $properties
  * @property Collection<Field>            $properties_fields
  *
@@ -96,13 +95,6 @@ class Network extends Model {
      */
     public function locations(): HasMany {
         return $this->hasMany(Location::class, 'network_id', 'id')->orderBy("name");
-    }
-
-    /**
-     * @return HasMany<Campaign>
-     */
-    public function campaigns(): HasMany {
-        return $this->hasMany(Campaign::class, 'network_id', 'id')->orderBy("name");
     }
 
     /**

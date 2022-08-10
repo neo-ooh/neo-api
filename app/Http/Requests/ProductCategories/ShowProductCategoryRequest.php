@@ -22,6 +22,6 @@ class ShowProductCategoryRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_products);
+        return Gate::allows(Capability::properties_products->value);
     }
 }

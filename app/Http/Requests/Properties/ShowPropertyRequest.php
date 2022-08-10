@@ -21,7 +21,7 @@ class ShowPropertyRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        return Gate::allows(Capability::properties_view);
+        return Gate::allows(Capability::properties_view->value);
     }
 
     /**

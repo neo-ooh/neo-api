@@ -21,7 +21,7 @@ class DestroyBrandingFileRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::brandings_edit);
+        return Gate::allows(Capability::brandings_edit->value);
     }
 
     /**

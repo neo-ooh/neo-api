@@ -17,14 +17,14 @@ use Neo\Enums\Capability;
 class ShowMultiplePropertiesRequest extends FormRequest {
     public function rules(): array {
         return [
-            "properties" => ["required", "array"],
+            "properties"   => ["required", "array"],
             "properties.*" => ["integer", "exists:properties,actor_id"],
-            "years" => ["required", "array"],
-            "years.*" => ["integer"],
+            "years"        => ["required", "array"],
+            "years.*"      => ["integer"],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 }

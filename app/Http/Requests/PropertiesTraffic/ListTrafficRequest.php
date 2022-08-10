@@ -14,16 +14,14 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 
-class ListTrafficRequest extends FormRequest
-{
+class ListTrafficRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::properties_view) || Gate::allows(Capability::properties_edit);
+    public function authorize() {
+        return Gate::allows(Capability::properties_view->value) || Gate::allows(Capability::properties_edit->value);
     }
 
     /**
@@ -31,8 +29,7 @@ class ListTrafficRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [];
     }
 }

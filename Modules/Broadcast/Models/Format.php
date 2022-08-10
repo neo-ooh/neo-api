@@ -95,7 +95,9 @@ class Format extends Model {
      * @return BelongsToMany<Layout>
      */
     public function layouts(): BelongsToMany {
-        return $this->belongsToMany(Layout::class, 'format_layouts', 'format_id', 'layout_id');
+        return $this->belongsToMany(Layout::class, 'format_layouts', 'format_id', 'layout_id')
+                    ->withPivot(["is_fullscreen"])
+                    ->as("settings");
     }
 
     /**

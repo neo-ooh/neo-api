@@ -22,6 +22,6 @@ class ExportBroadsignImpressionsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::impressions_export);
+        return Gate::allows(Capability::impressions_export->value);
     }
 }

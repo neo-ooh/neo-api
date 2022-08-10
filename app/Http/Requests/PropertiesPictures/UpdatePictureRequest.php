@@ -17,12 +17,12 @@ use Neo\Enums\Capability;
 class UpdatePictureRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name" => ["string"],
+            "name"  => ["string"],
             "order" => ["numeric"]
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 }

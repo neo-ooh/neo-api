@@ -14,16 +14,14 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 
-class DestroyTrafficSourceRequest extends FormRequest
-{
+class DestroyTrafficSourceRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::traffic_sources);
+    public function authorize() {
+        return Gate::allows(Capability::traffic_sources->value);
     }
 
     /**
@@ -31,8 +29,7 @@ class DestroyTrafficSourceRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             //
         ];

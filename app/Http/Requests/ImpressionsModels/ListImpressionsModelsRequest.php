@@ -22,6 +22,6 @@ class ListImpressionsModelsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::products_impressions);
+        return Gate::allows(Capability::products_impressions->value);
     }
 }

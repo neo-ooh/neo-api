@@ -17,14 +17,14 @@ use Neo\Enums\Capability;
 class GetPropertyStatisticsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "years" => ["required", "array"],
-            "years.*" => ["integer"],
-            "breakdown" => ["required", "string", "in:default,market,product,network"],
+            "years"      => ["required", "array"],
+            "years.*"    => ["integer"],
+            "breakdown"  => ["required", "string", "in:default,market,product,network"],
             "product_id" => ["required_if:breakdown,product", "integer"]
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 }

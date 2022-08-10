@@ -38,9 +38,4 @@ class Creative extends ExternalBroadcasterResource {
     public string $url;
 
     public int $refresh_rate_minutes;
-
-    /**
-     * @var array<Tag>
-     */
-    public array $tags;
 }

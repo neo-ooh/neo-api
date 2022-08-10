@@ -21,7 +21,7 @@ class ListDisplayTypesPerNetworkRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        return Gate::allows(Capability::networks_edit);
+        return Gate::allows(Capability::networks_edit->value);
     }
 
     /**

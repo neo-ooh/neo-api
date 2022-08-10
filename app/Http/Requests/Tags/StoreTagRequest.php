@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\Tags;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 
 class StoreTagRequest extends FormRequest {
     public function rules(): array {
@@ -21,6 +22,6 @@ class StoreTagRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows('actors.edit');
+        return Gate::allows(Capability::actors_edit->value);
     }
 }

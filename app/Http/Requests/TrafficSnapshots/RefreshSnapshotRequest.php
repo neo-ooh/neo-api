@@ -22,6 +22,6 @@ class RefreshSnapshotRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::traffic_refresh);
+        return Gate::allows(Capability::traffic_refresh->value);
     }
 }

@@ -33,7 +33,7 @@ class StorePhoneRequest extends FormRequest {
             return true; // The actor can update itself
         }
 
-        if (!Gate::allows(Capability::actors_edit)) {
+        if (!Gate::allows(Capability::actors_edit->value)) {
             return false; // The actor doesn't have the proper capability
         }
 

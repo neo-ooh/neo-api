@@ -10,6 +10,8 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Casts\EnumSetCast;
 use Neo\Models\Traits\WithPublicRelations;
@@ -24,6 +26,10 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property string                   $name_en
  * @property string                   $name_fr
  * @property array<BroadcastTagScope> $scope
+ *
+ * @property Carbon                   $created_at
+ * @property Carbon                   $updated_at
+ * @property Carbon|null              $deleted_at
  */
 class BroadcastTag extends BroadcastResourceModel {
     use SoftDeletes;
@@ -60,5 +66,18 @@ class BroadcastTag extends BroadcastResourceModel {
             "external_id" => $externalRepresentation?->data->external_id ?? "-1",
             "tag_type"    => $this->type,
         ]);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relations
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return BelongsToMany<Format>
+     */
+    public function formats(): BelongsToMany {
+        return $this->belongsToMany(Format::class, "format_broadcast_tags", "broadcast_tag_id", "format_id");
     }
 }

@@ -19,14 +19,14 @@ use Neo\Http\Requests\Roles\UpdateRoleCapabilityRequest;
 use Neo\Models\Role;
 
 class RolesCapabilitiesController extends Controller {
-    public function index (Role $role): Response {
-        Gate::authorize(Capability::roles_edit);
+    public function index(Role $role): Response {
+        Gate::authorize(Capability::roles_edit->value);
 
         return new Response($role->capabilities);
     }
 
-    public function store (StoreRoleCapabilityRequest $request, Role $role): Response {
-        Gate::authorize(Capability::roles_edit);
+    public function store(StoreRoleCapabilityRequest $request, Role $role): Response {
+        Gate::authorize(Capability::roles_edit->value);
 
         if ($role->capabilities->pluck('id')->contains($request->validated()["capability"])) {
             return new Response([
@@ -41,15 +41,15 @@ class RolesCapabilitiesController extends Controller {
         return new Response($role->capabilities);
     }
 
-    public function update (UpdateRoleCapabilityRequest $request, Role $role): Response {
+    public function update(UpdateRoleCapabilityRequest $request, Role $role): Response {
         $role->capabilities()->sync($request->validated()['capabilities']);
         $role->refresh();
 
         return new Response($role->capabilities);
     }
 
-    public function destroy (DeleteRoleCapabilityRequest $request, Role $role): Response {
-        Gate::authorize(Capability::roles_edit);
+    public function destroy(DeleteRoleCapabilityRequest $request, Role $role): Response {
+        Gate::authorize(Capability::roles_edit->value);
 
         if (!$role->capabilities->pluck('id')->contains($request->validated()["capability"])) {
             return new Response([

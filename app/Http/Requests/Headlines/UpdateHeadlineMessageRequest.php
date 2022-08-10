@@ -14,16 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class UpdateHeadlineMessageRequest extends FormRequest
-{
+class UpdateHeadlineMessageRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::headlines_edit);
+    public function authorize() {
+        return Gate::allows(Capability::headlines_edit->value);
     }
 
     /**
@@ -31,8 +29,7 @@ class UpdateHeadlineMessageRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             "message" => ["required", "string"],
         ];

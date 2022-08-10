@@ -22,6 +22,6 @@ class ListLocationPlayersRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::locations_edit);
+        return Gate::allows(Capability::locations_edit->value);
     }
 }

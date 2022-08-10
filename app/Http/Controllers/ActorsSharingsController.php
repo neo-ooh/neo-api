@@ -19,15 +19,15 @@ use Neo\Http\Requests\ActorsShares\StoreShareRequest;
 use Neo\Models\Actor;
 
 class ActorsSharingsController extends Controller {
-    public function index (Actor $actor): Response {
-        Gate::authorize(Capability::actors_edit);
+    public function index(Actor $actor): Response {
+        Gate::authorize(Capability::actors_edit->value);
 
         // Validate authenticated user has access to specified user
         if ($actor->isNot(Auth::user()) && !Auth::user()->hasAccessTo($actor)) {
-            return new Response([ [
-                "code"    => "shares.forbidden",
-                "message" => "User cannot access shares of this actor",
-            ] ],
+            return new Response([[
+                                     "code"    => "shares.forbidden",
+                                     "message" => "User cannot access shares of this actor",
+                                 ]],
                 403);
         }
 
@@ -38,16 +38,16 @@ class ActorsSharingsController extends Controller {
         ]);
     }
 
-    public function store (StoreShareRequest $request, Actor $actor): Response {
+    public function store(StoreShareRequest $request, Actor $actor): Response {
         // We know the user has the proper capability and the request user property match a valid user.
         $share_with = $request->validated()["actor"];
 
         // A user cannot share with itself
         if ($share_with === $actor->id) {
-            return new Response([ [
-                "code"    => "shares.not-allowed",
-                "message" => "User cannot share with itself",
-            ] ],
+            return new Response([[
+                                     "code"    => "shares.not-allowed",
+                                     "message" => "User cannot share with itself",
+                                 ]],
                 403);
         }
 
@@ -55,10 +55,10 @@ class ActorsSharingsController extends Controller {
         // Make sure the user is not already sharing with the specified one
         if ($actor->sharings->contains($share_with)) {
             // Cannot share again
-            return new Response([ [
-                "code"    => "shares.already-shared",
-                "message" => "Already sharing with this actor",
-            ] ],
+            return new Response([[
+                                     "code"    => "shares.already-shared",
+                                     "message" => "Already sharing with this actor",
+                                 ]],
                 403);
         }
 
@@ -68,7 +68,7 @@ class ActorsSharingsController extends Controller {
         return new Response(Actor::query()->find($share_with), 201);
     }
 
-    public function destroy (DestroyShareRequest $request, Actor $actor): Response {
+    public function destroy(DestroyShareRequest $request, Actor $actor): Response {
         $shared_with = $request->validated()["actor"];
 
         // Does a sharing from user to shared_with exists ?

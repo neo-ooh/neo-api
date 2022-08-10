@@ -20,8 +20,8 @@ class ListReviewTemplatesRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        return Gate::allows(Capability::contents_review);
+    public function authorize(): bool {
+        return Gate::allows(Capability::contents_review->value);
     }
 
     /**
@@ -29,7 +29,7 @@ class ListReviewTemplatesRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
             //
         ];

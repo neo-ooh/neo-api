@@ -37,7 +37,7 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property int                              $display_type_id
  * @property string                           $name
  * @property string                           $internal_name
- * @property int                              $container_id
+ * @property int|null                         $container_id
  * @property string                           $province [QC, ON, ...]
  * @property string                           $city
  * @property boolean                          $scheduled_sleep
@@ -49,12 +49,12 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  *
  * @property ?NetworkContainer                $container
  * @property Network                          $network
- * @property EloquentCollection<Product>      $locations
  * @property EloquentCollection<Player>       $players
  * @property DisplayType                      $display_type
  *
  * @property-read Collection<int>             $product_ids
  * @property-read EloquentCollection<Product> $products
+ * @property-read EloquentCollection<Actor>   $actors
  *
  * @mixin Builder
  */

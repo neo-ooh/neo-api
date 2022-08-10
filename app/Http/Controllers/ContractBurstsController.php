@@ -34,7 +34,7 @@ class ContractBurstsController extends Controller {
         ] = $request->validated();
 
         // If the user is not allowed to select the burst quality, we make it is set to the default value
-        if (!Gate::allows(Capability::bursts_quality)) {
+        if (!Gate::allows(Capability::bursts_quality->value)) {
             $scalePercent = config("modules-legacy.broadsign.bursts.default-quality");
         }
 

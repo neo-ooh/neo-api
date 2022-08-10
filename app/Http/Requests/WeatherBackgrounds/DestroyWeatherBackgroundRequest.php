@@ -14,16 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class DestroyWeatherBackgroundRequest extends FormRequest
-{
+class DestroyWeatherBackgroundRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::dynamics_weather);
+    public function authorize() {
+        return Gate::allows(Capability::dynamics_weather->value);
     }
 
     /**
@@ -31,8 +29,7 @@ class DestroyWeatherBackgroundRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             //
         ];

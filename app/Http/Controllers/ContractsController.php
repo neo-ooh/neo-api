@@ -39,7 +39,7 @@ class ContractsController extends Controller {
     public function index(ListContractsRequest $request) {
         $salespersonId = $request->input("actor_id", null);
 
-        if (!$salespersonId && !Gate::allows(Capability::contracts_manage)) {
+        if (!$salespersonId && !Gate::allows(Capability::contracts_manage->value)) {
             $salespersonId = Auth::id();
         }
 

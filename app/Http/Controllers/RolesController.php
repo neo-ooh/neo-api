@@ -19,7 +19,7 @@ use Neo\Models\Role;
 
 class RolesController extends Controller {
     public function index(): Response {
-        Gate::authorize(Capability::roles_edit->value->value);
+        Gate::authorize(Capability::roles_edit->value);
 
         return new Response(Role::all());
     }

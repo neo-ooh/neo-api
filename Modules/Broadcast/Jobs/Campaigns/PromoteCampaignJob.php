@@ -17,7 +17,6 @@ use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
-use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Format;
@@ -34,6 +33,7 @@ use Neo\Modules\Broadcast\Services\Exceptions\CannotUpdateExternalResourceExcept
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\CampaignTargeting;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
@@ -172,22 +172,22 @@ class PromoteCampaignJob extends BroadcastJobBase {
 
             // Now that the campaign exist, we need to target it
             // List all tags relevant to the campaign, and dispatch the action
-            // DisplayType tags
-            $tags = $format->broadcast_tags;
+            $tags = new BroadcastTagsCollector();
+            // Format tags
+            $tags->collect($format->broadcast_tags, [BroadcastTagType::Targeting, BroadcastTagType::Category]);
             // Layout tags
-            $tags = $tags->merge($format->layouts->flatMap(fn(Layout $layout) => $layout->broadcast_tags));
+            $tags->collect($format->layouts->flatMap(fn(Layout $layout) => $layout->broadcast_tags), [BroadcastTagType::Targeting, BroadcastTagType::Category]);
             // Frames tags
-            $tags = $tags->merge($format->layouts->flatMap(fn(Layout $layout) => $layout->frames->pluck("broadcast_tags")));
+            $tags->collect($format->layouts->flatMap(fn(Layout $layout) => $layout->frames->pluck("broadcast_tags")), [BroadcastTagType::Targeting, BroadcastTagType::Category]);
+            // Campaign
+            $tags->collect($campaign->broadcast_tags, [BroadcastTagType::Category]);
 
             // Deduplicate and cast tags to resource
-            $tags = $tags->unique("id")
-                         ->whereIn("type", [BroadcastTagType::Targeting, BroadcastTagType::Category])
-                         ->map(fn(BroadcastTag $tag) => $tag->toResource($broadcaster->getBroadcasterId()))
-                         ->where("external_id", "!==", "-1");
+            $campaignTags = $tags->get($broadcaster->getBroadcasterId());
 
             // Target the campaign
             $targeting = new CampaignTargeting([
-                "tags"          => $tags,
+                "tags"          => $campaignTags,
                 "locations"     => $representation->locations->map(fn(Location $location) => $location->toExternalBroadcastIdResource()),
                 "locationsTags" => $tags
             ]);

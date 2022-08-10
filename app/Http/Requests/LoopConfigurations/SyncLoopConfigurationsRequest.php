@@ -23,6 +23,6 @@ class SyncLoopConfigurationsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_products) && Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_products->value) && Gate::allows(Capability::properties_edit->value);
     }
 }

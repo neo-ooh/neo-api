@@ -21,7 +21,7 @@ class DestroyScreenshotsRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::bursts_request);
+        return Gate::allows(Capability::bursts_request->value);
     }
 
     /**

@@ -36,7 +36,7 @@ class PropertiesTrafficController extends Controller {
     public function store(StoreTrafficRequest $request, Property $property): Response {
         $values = ["traffic" => $request->input("traffic")];
 
-        if (Gate::allows(Capability::properties_edit) && $request->has("temporary")) {
+        if (Gate::allows(Capability::properties_edit->value) && $request->has("temporary")) {
             $values["temporary"] = $request->input("temporary");
 
             if ($values["traffic"] === null && $values["temporary"] === null) {

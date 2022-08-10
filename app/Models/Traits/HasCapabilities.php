@@ -31,6 +31,6 @@ trait HasCapabilities {
      * @return bool
      */
     public function hasCapability(CapabilityEnum $capability): bool {
-        return $this->capabilities->pluck("slug")->contains($capability->value);
+        return $this->capabilities->pluck("slug")->contains($capability);
     }
 }

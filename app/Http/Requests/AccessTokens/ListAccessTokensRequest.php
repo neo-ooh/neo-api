@@ -14,16 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ListAccessTokensRequest extends FormRequest
-{
+class ListAccessTokensRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::access_token_edit);
+    public function authorize() {
+        return Gate::allows(Capability::access_token_edit->value);
     }
 
     /**
@@ -31,8 +29,7 @@ class ListAccessTokensRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
             //
         ];

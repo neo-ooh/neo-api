@@ -21,8 +21,8 @@ class StoreRoleActorRequest extends FormRequest {
      *
      * @return bool
      */
-    public function authorize (): bool {
-        return Gate::allows(Capability::actors_edit);
+    public function authorize(): bool {
+        return Gate::allows(Capability::actors_edit->value);
     }
 
     /**
@@ -30,9 +30,9 @@ class StoreRoleActorRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules (): array {
+    public function rules(): array {
         return [
-            "actor_id" => [ "required", "integer", new AccessibleActor(false) ],
+            "actor_id" => ["required", "integer", new AccessibleActor(false)],
         ];
     }
 }

@@ -209,11 +209,11 @@ class PropertiesController extends Controller {
 
         $property->load(["actor", "traffic", "traffic.data", "address"]);
 
-        if (Gate::allows(Capability::properties_edit)) {
+        if (Gate::allows(Capability::properties_edit->value)) {
             $property->load(["data", "opening_hours"]);
         }
 
-        if (Gate::allows(Capability::odoo_properties)) {
+        if (Gate::allows(Capability::odoo_properties->value)) {
             $property->load(["odoo", "products", "products.product_type"]);
         }
 
@@ -227,11 +227,11 @@ class PropertiesController extends Controller {
         $relations = $request->input("with", []);
         $property->load(["actor", "actor.tags", "traffic", "traffic.data", "address"]);
 
-        if (Gate::allows(Capability::odoo_properties)) {
+        if (Gate::allows(Capability::odoo_properties->value)) {
             $property->loadMissing(["odoo"]);
         }
 
-        if (Gate::allows(Capability::properties_edit)) {
+        if (Gate::allows(Capability::properties_edit->value)) {
             $property->loadMissing([
                 "data",
                 "network",

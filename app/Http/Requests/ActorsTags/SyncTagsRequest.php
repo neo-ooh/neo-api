@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\ActorsTags;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 
 class SyncTagsRequest extends FormRequest {
     public function rules() {
@@ -21,6 +22,6 @@ class SyncTagsRequest extends FormRequest {
     }
 
     public function authorize() {
-        return Gate::allows("actors.edit") || Gate::allows("properties.edit");
+        return Gate::allows(Capability::actors_edit->value) || Gate::allows(Capability::properties_edit->value);
     }
 }

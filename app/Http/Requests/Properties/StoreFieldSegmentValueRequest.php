@@ -18,11 +18,11 @@ class StoreFieldSegmentValueRequest extends FormRequest {
     public function rules(): array {
         return [
             "segment_id" => ["required", "exists:fields_segments,id"],
-            "value" => ["required", "numeric"],
+            "value"      => ["required", "numeric"],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 }

@@ -22,7 +22,7 @@ class UpdatePropertyTrafficSettingsRequest extends FormRequest {
      * @return bool
      */
     public function authorize() {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 
     /**
@@ -32,13 +32,13 @@ class UpdatePropertyTrafficSettingsRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "is_required"            => ["required", "boolean"],
-            "start_year"             => ["required", "integer"],
-            "grace_override"         => ["present", "nullable", "date"],
-            "input_method"           => ["required", "string", Rule::in(["MANUAL", "LINKETT"])],
+            "is_required"    => ["required", "boolean"],
+            "start_year"     => ["required", "integer"],
+            "grace_override" => ["present", "nullable", "date"],
+            "input_method"   => ["required", "string", Rule::in(["MANUAL", "LINKETT"])],
 
             "source_id" => ["required_if:input_method,LINKETT", "exists:traffic_sources,id"],
-            "venue_id" => ["required_if:input_method,LINKETT", "string"],
+            "venue_id"  => ["required_if:input_method,LINKETT", "string"],
 
             "missing_value_strategy" => ["required", "string", Rule::in(["USE_LAST", "USE_PLACEHOLDER"])],
             "placeholder_value"      => ["required", "integer"],

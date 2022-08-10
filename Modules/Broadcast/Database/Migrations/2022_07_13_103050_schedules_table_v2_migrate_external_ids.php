@@ -51,7 +51,7 @@ return new class extends Migration {
                 continue;
             }
 
-            if ($broadcaster->broadcaster === BroadcasterType::BroadSign->value) {
+            if ($broadcaster->broadcaster === BroadcasterType::BroadSign->value && $schedule->external_id_1 !== null) {
                 ExternalResource::query()->create([
                     "resource_id"    => $schedule->id,
                     "broadcaster_id" => $broadcaster->id,
@@ -64,16 +64,18 @@ return new class extends Migration {
                 ]);
             }
 
-            ExternalResource::query()->create([
-                "resource_id"    => $schedule->id,
-                "broadcaster_id" => $broadcaster->id,
-                "type"           => ExternalResourceType::Schedule,
-                "data"           => new ExternalResourceData([
-                    "formats_id"  => [$campaign->format_id],
-                    "network_id"  => $campaign->network_id,
-                    "external_id" => $schedule->external_id_2,
-                ]),
-            ]);
+            if ($schedule->external_id_2 !== null) {
+                ExternalResource::query()->create([
+                    "resource_id"    => $schedule->id,
+                    "broadcaster_id" => $broadcaster->id,
+                    "type"           => ExternalResourceType::Schedule,
+                    "data"           => new ExternalResourceData([
+                        "formats_id"  => [$campaign->format_id],
+                        "network_id"  => $campaign->network_id,
+                        "external_id" => $schedule->external_id_2,
+                    ]),
+                ]);
+            }
         }
 
         $progress->finish();

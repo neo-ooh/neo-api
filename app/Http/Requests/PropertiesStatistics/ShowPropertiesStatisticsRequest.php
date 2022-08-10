@@ -20,6 +20,6 @@ class ShowPropertiesStatisticsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_edit);
+        return Gate::allows(Capability::properties_edit->value);
     }
 }

@@ -14,16 +14,14 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ListWeatherBackgroundsRequest extends FormRequest
-{
+class ListWeatherBackgroundsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Gate::allows(Capability::dynamics_weather);
+    public function authorize() {
+        return Gate::allows(Capability::dynamics_weather->value);
     }
 
     /**
@@ -31,15 +29,14 @@ class ListWeatherBackgroundsRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "period" => ["required", "string"],
+            "period"     => ["required", "string"],
             "network_id" => ["nullable"],
-            "country" => ["required", "string", "size:2"],
-            "province" => ["required", "string", "max:2"],
-            "city" => ["required", "string"],
-            "format_id" => ["required", "exists:formats,id"]
+            "country"    => ["required", "string", "size:2"],
+            "province"   => ["required", "string", "max:2"],
+            "city"       => ["required", "string"],
+            "format_id"  => ["required", "exists:formats,id"]
         ];
     }
 }

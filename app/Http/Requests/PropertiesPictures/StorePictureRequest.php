@@ -22,6 +22,6 @@ class StorePictureRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return \Illuminate\Support\Facades\Gate::allows(Capability::properties_edit);
+        return \Illuminate\Support\Facades\Gate::allows(Capability::properties_edit->value);
     }
 }

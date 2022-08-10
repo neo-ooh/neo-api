@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\Properties;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 
 class MarkPropertyReviewedRequest extends FormRequest {
     public function rules(): array {
@@ -21,6 +22,6 @@ class MarkPropertyReviewedRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows("properties.traffic") || Gate::allows("properties_tenants");
+        return Gate::allows(Capability::properties_traffic->value) || Gate::allows(Capability::properties_tenants->value);
     }
 }

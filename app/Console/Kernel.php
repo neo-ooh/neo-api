@@ -44,8 +44,7 @@ class Kernel extends ConsoleKernel {
 
         // property:pull-traffic {property}
         PullPropertyTraffic::class,
-
-        DedupProductsLocationsCommand::class,
+        DedupProductsLocationsCommand::class
     ];
 
     /**

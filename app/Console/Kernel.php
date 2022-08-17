@@ -14,6 +14,7 @@ use DateTimeZone;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\Properties\PushAllPropertiesTrafficCommand;
+use Neo\Console\Commands\DedupProductsLocationsCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\Contracts\RefreshContracts;
@@ -58,7 +59,9 @@ class Kernel extends ConsoleKernel {
 
         Utils\MergeOTGResourcesIntoOneFormat::class,
 
-        PullPropertyTraffic::class
+        // property:pull-traffic {property}
+        PullPropertyTraffic::class,
+        DedupProductsLocationsCommand::class
     ];
 
     /**

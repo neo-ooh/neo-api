@@ -96,11 +96,11 @@ class Asset extends PiSignageModel {
         return $asset;
     }
 
-    public static function inferNameFromCreative(\Neo\Modules\Broadcast\Models\Creative $creative, int $scheduleId): ?string {
+    public static function inferNameFromCreative(Creative $creative, int $scheduleId): ?string {
         return match ($creative->type) {
-            \Neo\Modules\Broadcast\Models\Creative::TYPE_STATIC => $creative->id . "@" . $scheduleId . "." . $creative->properties->extension,
-            Creative::TYPE_DYNAMIC                              => $creative->id . "@" . $scheduleId . ".link",
-            default                                             => null,
+            Creative::TYPE_STATIC  => $creative->id . "@" . $scheduleId . "." . $creative->properties->extension,
+            Creative::TYPE_DYNAMIC => $creative->id . "@" . $scheduleId . ".link",
+            default                => null,
         };
 
     }

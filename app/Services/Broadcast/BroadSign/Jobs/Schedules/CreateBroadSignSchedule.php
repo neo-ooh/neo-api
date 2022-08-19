@@ -17,6 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Actor;
 use Neo\Modules\Broadcast\Models\Content;
+use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Bundle as BSBundle;
@@ -160,9 +161,9 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
      * A BroadSign bundle is the equivalent of a content in Access. They are played by schedules. A bundle needs its
      * creative to have finished importing to be associated with it.
      *
-     * @param \Neo\Modules\Broadcast\Models\Content $content
-     * @param BSSchedule                            $bsSchedule
-     * @param Schedule                              $schedule
+     * @param Content    $content
+     * @param BSSchedule $bsSchedule
+     * @param Schedule   $schedule
      *
      * @return void
      */
@@ -193,7 +194,7 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
         $schedule->save();
 
         // Import the content's creatives
-        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
+        /** @var Creative $creative */
         foreach ($content->creatives as $creative) {
             // If the creative has no ad_copy ID, it needs to be imported in BroadSign
             if ($creative->getExternalId($this->config->networkID) === null) {

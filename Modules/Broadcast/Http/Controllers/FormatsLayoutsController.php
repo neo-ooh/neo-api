@@ -17,8 +17,10 @@ use Neo\Modules\Broadcast\Models\Format;
 
 class FormatsLayoutsController extends Controller {
     public function sync(SyncFormatLayoutsRequest $request, Format $format): Response {
-        $format->layouts()->sync($request->input("layouts"));
+        $format->layouts()->sync(collect($request->input("layouts"))
+            ->mapWithKeys(fn(array $layout) => [$layout["layout_id"] => ["is_fullscreen" => $layout["is_fullscreen"]]])
+        );
 
-        return new Response($format->display_types);
+        return new Response($format->layouts);
     }
 }

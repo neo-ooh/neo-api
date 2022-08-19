@@ -51,10 +51,6 @@ class BroadcasterConnection extends Model {
         "settings"    => BroadcasterSettings::class,
     ];
 
-    protected $hidden = [
-        "settings"
-    ];
-
     /**
      * @return HasMany<Network>
      */

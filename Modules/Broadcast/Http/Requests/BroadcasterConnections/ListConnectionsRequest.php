@@ -21,7 +21,7 @@ class ListConnectionsRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::networks_connections->value);
+        return Gate::allows(Capability::networks_connections->value) || Gate::allows(Capability::networks_edit->value);
     }
 
     /**

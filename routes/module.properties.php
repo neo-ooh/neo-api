@@ -75,7 +75,6 @@ Route::group([
     Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 
     Route::get("properties/{property}/_dump", PropertiesController::class . "@dump");
-    Route::get("networks/{network}/_dump_properties", PropertiesController::class . "@dumpNetwork");
 
     Route::   get("properties-statistics/{actor}", PropertiesStatsController::class . "@show");
 
@@ -227,6 +226,7 @@ Route::group([
     Route:: put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 
     Route::post("products/_import-mappings", ProductsController::class . "@_importMappings");
+    Route::get("products/_by_id", ProductsController::class . "@byIds");
     Route::get("products/{product}", ProductsController::class . "@show");
 
     Route:: put("products/{product}/locations", ProductsLocationsController::class . "@sync");

@@ -33,8 +33,8 @@ abstract class BroadcasterOperator {
     }
 
     /**
-     * @param \Neo\Modules\Broadcast\Models\BroadcasterConnection $connection
-     * @param Network                                             $network
+     * @param BroadcasterConnection $connection
+     * @param Network               $network
      * @return TConfig
      */
     abstract public static function buildConfig(BroadcasterConnection $connection, Network $network): BroadcasterConfig;

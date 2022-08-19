@@ -63,7 +63,7 @@ class AssociateAdCopyWithBundle extends BroadSignJob {
      * @throws
      */
     public function handle(): void {
-        /** @var ?\Neo\Modules\Broadcast\Models\Creative $creative */
+        /** @var ?Creative $creative */
         $creative = Creative::query()->find($this->creativeId);
 
         if ($creative === null) {

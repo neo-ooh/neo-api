@@ -109,6 +109,7 @@ trait WithPublicRelations {
 
         if (is_callable($relation)) {
             $relation($this);
+            return;
         }
 
         // Relation is string

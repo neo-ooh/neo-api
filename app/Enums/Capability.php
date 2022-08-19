@@ -46,6 +46,16 @@ enum Capability: string {
     case contents_schedule = "contents.schedule";
     case contents_review = "contents.review";
 
+    /**
+     * Allow assigning tags to contents
+     */
+    case contents_tags = "contents.tags";
+
+    /**
+     * Allow assigning tags to contents
+     */
+    case schedules_tags = "schedules.tags";
+
     // Formats
     case formats_edit = "formats.edit";
 

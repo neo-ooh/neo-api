@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
-  <component name="dataSourceStorageLocal" created-in="PS-222.3345.135">
+  <component name="dataSourceStorageLocal" created-in="PS-222.3739.61">
     <data-source name="MariaDB - neo_ooh@localhost" uuid="261f9cdb-15e2-452a-adb0-a9fbfb30403f">
       <database-info product="" version="" jdbc-version="" driver-name="" driver-version="" dbms="MARIADB" exact-version="0" />
       <schema-mapping />
     </data-source>
     <data-source name="@neo-db" uuid="722b66e2-b592-479e-93f1-568633a32a7e">
-      <database-info product="MariaDB" version="10.4.25-MariaDB-1:10.4.25+maria~bionic-log" jdbc-version="4.2" driver-name="MariaDB Connector/J" driver-version="2.7.3" dbms="MARIADB" exact-version="10.4.25" exact-driver-version="2.7">
+      <database-info product="MariaDB" version="10.4.26-MariaDB-1:10.4.26+maria~ubu1804-log" jdbc-version="4.2" driver-name="MariaDB Connector/J" driver-version="2.7.3" dbms="MARIADB" exact-version="10.4.26" exact-driver-version="2.7">
         <extra-name-characters>#@</extra-name-characters>
         <identifier-quote-string>`</identifier-quote-string>
       </database-info>

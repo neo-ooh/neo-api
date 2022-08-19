@@ -40,7 +40,7 @@ class PricelistProductsCategory extends Pivot {
         "max"
     ];
 
-    function getRouteKeyName() {
+    public function getRouteKeyName() {
         return "products_category_id";
     }
 }

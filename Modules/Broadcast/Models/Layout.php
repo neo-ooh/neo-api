@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Neo\Models\Traits\WithPublicRelations;
 
 /**
  * Neo\Modules\Broadcast\Models\Layout
@@ -31,10 +32,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Collection<Frame>        $frames
  * @property Collection<BroadcastTag> $broadcast_tags
  *
+ * @property FormatLayoutPivot        $settings
+ *
  * @mixin Builder
  */
 class Layout extends Model {
     use SoftDeletes;
+    use WithPublicRelations;
 
     /*
     |--------------------------------------------------------------------------
@@ -58,6 +62,12 @@ class Layout extends Model {
     protected $fillable = [
         "name",
         "is_fullscreen",
+    ];
+
+    protected array $publicRelations = [
+        "formats" => "formats",
+        "frames"  => "frames",
+        "tags"    => ["broadcast_tags", "frames.broadcast_tags"],
     ];
 
     /*

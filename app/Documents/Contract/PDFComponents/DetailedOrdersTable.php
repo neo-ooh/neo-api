@@ -25,7 +25,7 @@ class DetailedOrdersTable extends Component {
     protected string $network;
     protected Collection $purchases;
 
-    const NETWORK_SUBSECTIONS = [
+    public const NETWORK_SUBSECTIONS = [
         Network::NEO_SHOPPING => [null],
         Network::NEO_OTG      => ["outdoor", "indoor"],
         Network::NEO_FITNESS  => [null],

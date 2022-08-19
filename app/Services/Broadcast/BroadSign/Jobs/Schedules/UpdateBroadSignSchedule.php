@@ -61,7 +61,7 @@ class UpdateBroadSignSchedule extends BroadSignJob implements ShouldBeUniqueUnti
      * @return void
      */
     public function handle(): void {
-        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleID);
 
         if (!$schedule) {

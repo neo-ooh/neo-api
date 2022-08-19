@@ -45,8 +45,8 @@ class ReorderBroadSignSchedules extends BroadSignJob implements ShouldBeUniqueUn
     /**
      * Create a new job instance.
      *
-     * @param \Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig $config
-     * @param int                                                       $campaignId
+     * @param BroadSignConfig $config
+     * @param int             $campaignId
      *
      */
     public function __construct(BroadSignConfig $config, int $campaignId) {
@@ -67,7 +67,7 @@ class ReorderBroadSignSchedules extends BroadSignJob implements ShouldBeUniqueUn
                              ->whereNotNull("external_id_2")->get();
 
         // For each schedule, we need to retrieve its bundle, and update its position.
-        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         foreach ($schedules as $schedule) {
             $bundles = Bundle::getBySchedule($this->getAPIClient(), $schedule->external_id_2);
 

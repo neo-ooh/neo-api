@@ -44,7 +44,7 @@ class UpdateGroup extends PiSignageJob implements ShouldBeUnique {
             return;
         }
 
-        /** @var \Neo\Modules\Broadcast\Services\PiSignage\Models\Group $group */
+        /** @var Group $group */
         $group = Group::get($this->getAPIClient(), $location->external_id);
 
         if ($location->scheduled_sleep) {

@@ -19,9 +19,9 @@ use Neo\Modules\Broadcast\Models\Location;
  *
  * @package NeoModels\Traits
  *
- * @property Collection<\Neo\Modules\Broadcast\Models\Location> own_locations
- * @property Collection<\Neo\Modules\Broadcast\Models\Location> group_locations
- * @property Collection<\Neo\Modules\Broadcast\Models\Location> locations
+ * @property Collection<Location> own_locations
+ * @property Collection<Location> group_locations
+ * @property Collection<Location> locations
  */
 trait HasLocations {
     public function getLocations($own = true, $group = true, $children = true, $recurs = false): Collection {
@@ -64,7 +64,7 @@ trait HasLocations {
      * List all the locations of the parent group for this entity. If this entity's parent is not a group, returns an
      * empty collection
      *
-     * @return Collection<\Neo\Modules\Broadcast\Models\Location>
+     * @return Collection<Location>
      */
     public function getGroupLocationsAttribute(): Collection {
         if ($this->is_group || !$this->details->parent_is_group) {

@@ -14,5 +14,5 @@ class Content extends ExternalBroadcasterResource {
     public string $name;
 
     public int $duration_msec;
-    public bool $fullscreen;
+    public bool $is_fullscreen;
 }

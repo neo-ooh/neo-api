@@ -10,12 +10,14 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Neo\Models\Traits\WithPublicRelations;
 
 /**
  * Neo\Models\Formats
@@ -26,6 +28,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string                        $name
  * @property boolean                       $is_enabled
  *
+ * @property Carbon                        $created_at
+ * @property Carbon                        $updated_at
+ * @property Carbon|null                   $deleted_at
+ *
  * @property Collection<Layout>            $layouts
  * @property Collection<DisplayType>       $display_types
  * @property Collection<BroadcastTag>      $broadcast_tags
@@ -35,6 +41,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Format extends Model {
     use SoftDeletes;
+    use WithPublicRelations;
 
     /*
     |--------------------------------------------------------------------------
@@ -70,6 +77,14 @@ class Format extends Model {
         "is_enabled" => "boolean",
     ];
 
+    protected array $publicRelations = [
+        "display_types"       => "display_types",
+        "layouts"             => "layouts",
+        "tags"                => "broadcast_tags",
+        "loop_configurations" => "loop_configurations",
+        "network"             => "network",
+    ];
+
 
     /*
     |--------------------------------------------------------------------------
@@ -78,17 +93,18 @@ class Format extends Model {
     */
 
     /**
-     * @return HasOne<Network>
+     * @return BelongsTo<Network, Format>
      */
-    public function network(): HasOne {
-        return $this->hasOne(Network::class, "network_id");
+    public function network(): BelongsTo {
+        return $this->belongsTo(Network::class, "network_id");
     }
 
     /**
      * @return BelongsToMany<DisplayType>
      */
     public function display_types(): BelongsToMany {
-        return $this->belongsToMany(DisplayType::class, 'format_display_types', 'format_id', "display_type_id");
+        return $this->belongsToMany(DisplayType::class, 'format_display_types', 'format_id', "display_type_id")
+                    ->orderBy("name");
     }
 
     /**
@@ -97,14 +113,17 @@ class Format extends Model {
     public function layouts(): BelongsToMany {
         return $this->belongsToMany(Layout::class, 'format_layouts', 'format_id', 'layout_id')
                     ->withPivot(["is_fullscreen"])
-                    ->as("settings");
+                    ->as("settings")->using(FormatLayoutPivot::class)
+                    ->orderBy("name");
     }
 
     /**
      * @return BelongsToMany<BroadcastTag>
      */
     public function broadcast_tags(): BelongsToMany {
-        return $this->belongsToMany(BroadcastTag::class, 'format_broadcast_tags', 'format_id', 'broadcast_tag_id');
+        return $this->belongsToMany(BroadcastTag::class, 'format_broadcast_tags', 'format_id', 'broadcast_tag_id')
+                    ->orderBy("name_en")
+                    ->orderBy("name_fr");
     }
 
     /**

@@ -35,7 +35,7 @@ class BroadcasterAdapterFactory {
     }
 
     /**
-     * @throws \Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException
+     * @throws InvalidBroadcasterAdapterException
      */
     public static function makeForNetwork(int $networkId) {
         /** @var Network $network */

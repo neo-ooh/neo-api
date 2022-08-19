@@ -30,9 +30,9 @@ use Neo\Enums\ProductsFillStrategy;
  * @property Collection<ContractLine> $lines
  */
 class ContractFlight extends Model {
-    const GUARANTEED = "guaranteed";
-    const BONUS = "bonus";
-    const BUA = "bua";
+    public const GUARANTEED = "guaranteed";
+    public const BONUS = "bonus";
+    public const BUA = "bua";
 
     protected $table = "contracts_flights";
 

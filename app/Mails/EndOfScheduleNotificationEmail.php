@@ -17,8 +17,7 @@ use Illuminate\Support\Facades\App;
 use Neo\Models\Actor;
 use Neo\Modules\Broadcast\Models\Schedule;
 
-class EndOfScheduleNotificationEmail extends Mailable
-{
+class EndOfScheduleNotificationEmail extends Mailable {
     use Queueable, SerializesModels;
 
     public Actor $actor;
@@ -27,12 +26,11 @@ class EndOfScheduleNotificationEmail extends Mailable
     /**
      * Create a new message instance.
      *
-     * @param Actor                                  $actor
-     * @param \Neo\Modules\Broadcast\Models\Schedule $schedule
+     * @param Actor    $actor
+     * @param Schedule $schedule
      */
-    public function __construct(Actor $actor, Schedule $schedule)
-    {
-        $this->actor = $actor;
+    public function __construct(Actor $actor, Schedule $schedule) {
+        $this->actor    = $actor;
         $this->schedule = $schedule;
     }
 
@@ -41,8 +39,7 @@ class EndOfScheduleNotificationEmail extends Mailable
      *
      * @return $this
      */
-    public function build()
-    {
+    public function build() {
         App::setLocale($this->actor->locale);
 
         return $this->subject("Fin de diffusion - End of broadcast")

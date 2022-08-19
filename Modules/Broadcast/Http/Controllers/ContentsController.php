@@ -10,8 +10,9 @@
 
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
-use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
 use Neo\Enums\Capability;
@@ -29,11 +30,11 @@ use Neo\Modules\Broadcast\Models\Library;
 class ContentsController extends Controller {
     /**
      * @param StoreContentRequest $request
-     *
+     * @param Library             $library
      * @return Response
      * @throws LibraryStorageFullException
      */
-    public function store(StoreContentRequest $request): Response {
+    public function store(StoreContentRequest $request, Library $library): Response {
         // We want to prevent creating new empty content in a library if an empty one is already there.
         // Check if there is already an empty content
         /** @var Content|null $emptyContent */
@@ -45,15 +46,12 @@ class ContentsController extends Controller {
 
         if ($emptyContent) {
             // We have an already existing empty content, reassign it to the proper user, and return that
-            $emptyContent->owner_id = $request->input("owner_id");
+            $emptyContent->owner_id = Auth::id();
             $emptyContent->save();
 
             // Since the content already exist in the library, we don't have to check the library's content limit.
             return new Response($emptyContent->load("layout.frames"), 200);
         }
-
-        /** @var Library $library */
-        $library = Library::query()->find($request->input("library_id"));
 
         // Check if the library has enough space available
         if ($library->content_limit !== 0 && $library->contents_count > $library->content_limit) {
@@ -67,8 +65,8 @@ class ContentsController extends Controller {
         }
 
         $content             = new Content();
-        $content->owner_id   = $request->input("owner_id");
-        $content->layout_id  = $request->input("layout_id");
+        $content->owner_id   = Auth::id();
+        $content->layout_id  = $library->getKey();
         $content->library_id = $library->getKey();
         $content->save();
         $content->refresh();
@@ -78,37 +76,35 @@ class ContentsController extends Controller {
 
     /**
      * @param ShowContentRequest $request
+     * @param Library            $library
      * @param Content            $content
      *
      * @return Response
      */
-    public function show(ShowContentRequest $request, Content $content): Response {
+    public function show(ShowContentRequest $request, Library $library, Content $content): Response {
         return new Response($content->withPublicRelations());
     }
 
     /**
      * @param UpdateContentRequest $request
+     * @param Library              $library
      * @param Content              $content
      *
      * @return Response
      * @throws LibraryStorageFullException
      */
-    public function update(UpdateContentRequest $request, Content $content): Response {
-        if ($content->library_id !== $request->validated()["library_id"]) {
-            /** @var Library $library */
-            $library = Library::query()->find($request->validated()["library_id"]);
-
+    public function update(UpdateContentRequest $request, Library $library, Content $content): Response {
+        if ($library->getKey() !== $request->validated()["library_id"]) {
             // Check if the new library has enough space available
             if ($library->content_limit > 0 && $library->content_limit <= $library->contents_count) {
                 throw new LibraryStorageFullException();
             }
+
+            $content->library_id = $request->input("library_id");
         }
 
-        [
-            "owner_id"   => $content->owner_id,
-            "library_id" => $content->library_id,
-            "name"       => $content->name,
-        ] = $request->validated();
+        $content->owner_id = $request->input("owner_id");
+        $content->name     = $request->input("name");
 
         // If the user is a reviewer, it can fill additional fields
         if (Gate::allows(Capability::contents_review->value)) {
@@ -117,11 +113,15 @@ class ContentsController extends Controller {
             $content->max_schedule_count    = $request->input("max_schedule_count", $content->max_schedule_count);
         }
 
+        if (Gate::allows(Capability::contents_tags->value)) {
+            $content->broadcast_tags()->sync($request->input("tags"));
+        }
+
         $content->save();
         return new Response($content);
     }
 
-    public function swap(SwapContentCreativesRequest $request, Content $content): Response {
+    public function swap(SwapContentCreativesRequest $request, Library $library, Content $content): Response {
         // make sure the Content can be edited
         if (!$content->is_editable) {
             return new Response([
@@ -169,13 +169,14 @@ class ContentsController extends Controller {
 
     /**
      * @param DestroyContentRequest $request
+     * @param Library               $library
      * @param Content               $content
      *
      * @return Response
-     * @throws Exception
+     * @throws AuthorizationException
      * @noinspection PhpUnusedParameterInspection
      */
-    public function destroy(DestroyContentRequest $request, Content $content): Response {
+    public function destroy(DestroyContentRequest $request, Library $library, Content $content): Response {
         $content->authorizeAccess();
 
         if ($content->schedules_count > 0 && $content->schedules->some(fn($schedule) => $schedule->status === 'broadcasting' || $schedule->status === 'expired')) {

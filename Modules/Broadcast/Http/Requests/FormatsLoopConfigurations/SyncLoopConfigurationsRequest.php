@@ -23,7 +23,7 @@ class SyncLoopConfigurationsRequest extends FormRequest {
 
     public function rules(): array {
         return [
-            "loop_configurations"   => ["required", "array"],
+            "loop_configurations"   => ["array"],
             "loop_configurations.*" => ["int", new Exists(LoopConfiguration::class, "id")],
         ];
     }

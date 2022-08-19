@@ -133,8 +133,12 @@ class CampaignsSchedulesController extends Controller {
                 SendReviewRequestEmail::dispatch($schedule->id);
             }
         }
-
         $schedule->save();
+
+        if (Gate::allows(Capability::schedules_tags->value)) {
+            $schedule->broadcast_tags()->sync($request->input("tags"));
+        }
+
         $schedule->refresh();
 
         // Propagate the update to the associated BroadSign Schedule

@@ -44,7 +44,7 @@ class AssignCreativeValidity extends PiSignageJob implements ShouldBeUnique {
     public function handle(): void {
         // In PiSignage, Schedules have equivalent representation. Scheduling dates and times are instead stored in assets, meaning assets have to be imported for each schedule that they belong to
 
-        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
+        /** @var Creative $creative */
         $creative = Creative::query()->find($this->creativeId);
 
         /** @var Schedule $schedule */

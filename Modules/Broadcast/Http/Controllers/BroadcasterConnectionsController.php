@@ -13,7 +13,7 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Http\Requests\BroadcasterConnections\DestroyConnectionRequest;
-use Neo\Modules\Broadcast\Http\Requests\BroadcasterConnections\ListConnectionRequest;
+use Neo\Modules\Broadcast\Http\Requests\BroadcasterConnections\ListConnectionsByIdRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcasterConnections\ListConnectionsRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcasterConnections\ShowConnectionRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcasterConnections\StoreConnectionRequest;
@@ -29,6 +29,15 @@ class BroadcasterConnectionsController extends Controller {
         return new Response(BroadcasterConnection::query()
                                                  ->orderBy("name")
                                                  ->get());
+    }
+
+    public function byId(ListConnectionsByIdRequest $request): Response {
+        $connections = BroadcasterConnection::query()
+                                            ->whereIn("id", $request->input("ids"))
+                                            ->orderBy("name")
+                                            ->get();
+
+        return new Response($connections);
     }
 
     public function store(StoreConnectionRequest $request): Response {

@@ -17,7 +17,7 @@ use Neo\Modules\Broadcast\Models\Format;
 
 class FormatsDisplayTypesController extends Controller {
     public function sync(SyncFormatLayoutsRequest $request, Format $format): Response {
-        $format->display_types()->sync($request->input("display_types"));
+        $format->display_types()->sync($request->input("display_types", []));
 
         return new Response($format->display_types);
     }

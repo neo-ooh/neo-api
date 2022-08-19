@@ -12,7 +12,9 @@ namespace Neo\Modules\Broadcast\Http\Requests\Campaigns;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Rules\AccessibleActor;
 use Neo\Rules\PublicRelations;
@@ -42,7 +44,7 @@ class StoreCampaignRequest extends FormRequest {
             "start_time"              => ["required", "date_format:H:i:s"],
             "end_date"                => ["required", "date_format:Y-m-d"],
             "end_time"                => ["required", "date_format:H:i:s"],
-            "weekdays"                => ["required", "integer", "max:127"],
+            "broadcast_days"          => ["required", "integer", "max:127"],
 
             // Loop fit
             "occurrences_in_loop"     => ["required", "integer", "min:0"],
@@ -52,6 +54,9 @@ class StoreCampaignRequest extends FormRequest {
             "locations"               => ["required", "array"],
             "locations.*.location_id" => ["required", "int"],
             "locations.*.format_id"   => ["required", "int"],
+
+            "tags"   => ["array"],
+            "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],
 
             "with" => ["array", new PublicRelations(Campaign::class)],
         ];

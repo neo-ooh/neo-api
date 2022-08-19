@@ -19,7 +19,9 @@
 |
 */
 
+use Neo\Http\Controllers\PropertiesController;
 use Neo\Modules\Broadcast\Http\Controllers\BroadcasterConnectionsController;
+use Neo\Modules\Broadcast\Http\Controllers\DisplayTypesController;
 use Neo\Modules\Broadcast\Http\Controllers\LocationsController;
 use Neo\Modules\Broadcast\Http\Controllers\LocationsPlayersController;
 use Neo\Modules\Broadcast\Http\Controllers\NetworkContainersController;
@@ -30,7 +32,7 @@ use Neo\Modules\Broadcast\Models\Network;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v1"
+    "prefix"     => "v2"
 ], static function () {
     /*
     |----------------------------------------------------------------------
@@ -41,9 +43,10 @@ Route::group([
     Route::model("connection", BroadcasterConnection::class);
 
     Route::   get("broadcasters/", BroadcasterConnectionsController::class . "@index");
+    Route::   get("broadcasters/_by_id", BroadcasterConnectionsController::class . "@byId");
     Route::  post("broadcasters/", BroadcasterConnectionsController::class . "@store");
     Route::   get("broadcasters/{connection}", BroadcasterConnectionsController::class . "@show");
-    Route::  post("broadcasters/{connection}", BroadcasterConnectionsController::class . "@update");
+    Route::   put("broadcasters/{connection}", BroadcasterConnectionsController::class . "@update");
     Route::delete("broadcasters/{connection}", BroadcasterConnectionsController::class . "@destroy");
 
 
@@ -61,8 +64,18 @@ Route::group([
     Route::delete("networks/{network}", NetworksController::class . "@destroy");
     Route::  post("networks/{network}/_synchronize", NetworksController::class . "@synchronize");
 
+    Route::get("networks/{network}/_dump_properties", PropertiesController::class . "@dumpNetwork");
+
     Route::get("networks/{network}/containers", NetworkContainersController::class . "@index");
 
+
+    /*
+    |----------------------------------------------------------------------
+    | Display Types
+    |----------------------------------------------------------------------
+    */
+
+    Route::    get("display-types", DisplayTypesController::class . "@index");
 
     /*
     |----------------------------------------------------------------------

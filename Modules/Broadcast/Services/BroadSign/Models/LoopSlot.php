@@ -46,8 +46,8 @@ class LoopSlot extends BroadSignModel {
     }
 
     /**
-     * @param \Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient $client
-     * @param int                                                           $campaignId
+     * @param BroadSignClient $client
+     * @param int             $campaignId
      * @return array<LoopSlot>
      */
     public static function forCampaign(BroadSignClient $client, int $campaignId): array {

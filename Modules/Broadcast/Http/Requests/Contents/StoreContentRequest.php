@@ -15,8 +15,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Layout;
-use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
-use Neo\Rules\AccessibleActor;
 
 class StoreContentRequest extends FormRequest {
     /**
@@ -35,9 +33,7 @@ class StoreContentRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "owner_id"   => ["required", "integer", new AccessibleActor()],
-            "library_id" => ["required", "integer", new AccessibleLibrary()],
-            "layout_id"  => ["required", "integer", new Exists(Layout::class, "id")]
+            "layout_id" => ["required", "integer", new Exists(Layout::class, "id")]
         ];
     }
 }

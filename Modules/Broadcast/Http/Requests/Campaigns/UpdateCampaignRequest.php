@@ -12,7 +12,9 @@ namespace Neo\Modules\Broadcast\Http\Requests\Campaigns;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Rules\AccessibleActor;
 use Neo\Rules\PublicRelations;
@@ -43,6 +45,9 @@ class UpdateCampaignRequest extends FormRequest {
 
             "occurrences_in_loop" => ["required", "integer", "min:0"],
             "priority"            => ["required", "integer", "min:0"],
+
+            "tags"   => ["array"],
+            "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],
 
             "with" => ["array", new PublicRelations(Campaign::class)],
         ];

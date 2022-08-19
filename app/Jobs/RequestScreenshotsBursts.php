@@ -28,6 +28,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScreenshotsBurst;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class RequestScreenshotsBursts
@@ -60,7 +61,7 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
 
     /**
      * @param ContractBurst $burst
-     * @throws \Spatie\DataTransferObject\Exceptions\UnknownProperties
+     * @throws UnknownProperties
      */
     protected function sendRequest(ContractBurst $burst): void {
         // Get one random player for the location of the burst

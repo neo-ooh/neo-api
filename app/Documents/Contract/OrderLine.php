@@ -76,8 +76,8 @@ class OrderLine {
 
     protected int $type;
 
-    const PERIOD_FORMAT_FR = 'j F';
-    const PERIOD_FORMAT_EN = 'F jS';
+    public const PERIOD_FORMAT_FR = 'j F';
+    public const PERIOD_FORMAT_EN = 'F jS';
 
 
     public function __construct(array $record) {

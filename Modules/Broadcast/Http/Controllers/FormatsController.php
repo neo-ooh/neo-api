@@ -33,18 +33,20 @@ class FormatsController extends Controller {
     public function index(ListFormatsRequest $request): Response {
         if (!Gate::allows(Capability::formats_edit->value)) {
             // The current actor doesn't have the capability to access format, we will only return formats he has access to from its hierarchy
-            $formats = Format::query()->whereHas("display_types", function (Builder $query) {
-                $query->whereHas("locations", function (Builder $query) {
-                    $query->whereHas("actors", function (Builder $query) {
-                        $query->where("id", "=", Auth::id());
-                    });
-                });
-            });
+            $formats = Format::query()
+                             ->orderBy("name")
+                             ->whereHas("display_types", function (Builder $query) {
+                                 $query->whereHas("locations", function (Builder $query) {
+                                     $query->whereHas("actors", function (Builder $query) {
+                                         $query->where("id", "=", Auth::id());
+                                     });
+                                 });
+                             });
 
             return new Response($formats);
         }
 
-        return new Response(Format::query()->get());
+        return new Response(Format::query()->orderBy("name")->get());
     }
 
     public function store(StoreFormatRequest $request): Response {
@@ -65,7 +67,7 @@ class FormatsController extends Controller {
      * @return Response
      */
     public function show(ShowFormatRequest $request, Format $format): Response {
-        return new Response($format->load(["display_types", "layouts", "tags"]));
+        return new Response($format->withPublicRelations());
     }
 
     /**

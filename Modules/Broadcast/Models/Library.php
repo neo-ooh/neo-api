@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,15 +35,17 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int                 $owner_id
  * @property string              $name
  * @property int                 $content_limit
- * @property array               $hidden_formats
- *
- * @property Actor               $owner
  *
  * @property int                 $contents_count
+ *
+ * @property Actor               $owner
  * @property Collection<Content> $contents
  * @property Collection<Actor>   $shares
  * @property Collection<Format>  $formats
  * @property Collection<Layout>  $layouts
+ *
+ * @property Carbon              $created_at
+ * @property Carbon              $updated_at
  *
  * @mixin Builder
  */

@@ -63,12 +63,17 @@ class Network extends Model {
     ];
 
     /**
-     * @var array<string, string|callable>
+     * @returns array<string, string|callable>
      */
-    protected array $publicRelations = [
-        "connection" => "broadcaster_connection",
-        "fields"     => "properties_fields",
-    ];
+    protected function getPublicRelations() {
+        return [
+            "connection" => "broadcaster_connection",
+            "fields"     => "properties_fields",
+            "locations"  => "locations",
+            "containers" => "containers",
+            "products"   => fn(Network $n) => $n->locations->append("product_ids"),
+        ];
+    }
 
     /*
     |--------------------------------------------------------------------------

@@ -21,6 +21,7 @@ use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
@@ -160,6 +161,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                         scheduleResource: $scheduleResource,
                         externalCampaignResource: $externalCampaignResource,
                         content: $schedule->content,
+                        format: $representationFormat,
                         tags: $scheduleTags,
                     );
                 } else {
@@ -178,6 +180,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                             scheduleResource: $scheduleResource,
                             externalCampaignResource: $externalCampaignResource,
                             content: $schedule->content,
+                            format: $representationFormat,
                             tags: $scheduleTags,
                         );
                     }
@@ -232,12 +235,18 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @param ScheduleResource                          $scheduleResource
      * @param ExternalResource                          $externalCampaignResource
      * @param Content                                   $content
+     * @param Format                                    $format
      * @param array<Tag>                                $tags
      * @return array<ExternalBroadcasterResourceId>
      * @throws MissingExternalCreativeException
      * @throws UnknownProperties
      */
-    protected function createSchedule(BroadcasterOperator&BroadcasterScheduling $broadcaster, ScheduleResource $scheduleResource, ExternalResource $externalCampaignResource, Content $content, array $tags): array {
+    protected function createSchedule(BroadcasterOperator&BroadcasterScheduling $broadcaster,
+                                      ScheduleResource                          $scheduleResource,
+                                      ExternalResource                          $externalCampaignResource,
+                                      Content                                   $content,
+                                      Format                                    $format,
+                                      array                                     $tags): array {
         // To create a schedule, we need to make sure all the creative attached to its content have been imported in the broadcaster
         // For each creative, we need to check if it exist in the current broadcaster, and if not, import it
         $creatives            = $content->creatives;
@@ -254,11 +263,18 @@ class PromoteScheduleJob extends BroadcastJobBase {
             $creativesExternalIds[] = $creativesExternalId;
         }
 
+        // Also, we need to get the `is_fullscreen` attribute for the layout in the format
+        /** @var Layout $layout */
+        $layout = $format->layouts()->where("layout_id", "=", $content->layout_id)->first();
+
+        $contentResource                = $content->toResource();
+        $contentResource->is_fullscreen = $layout->settings->is_fullscreen;
+
         // Now that we have all the creatives Ids, create the schedule
         return $broadcaster->createSchedule(
             schedule: $scheduleResource,
             campaign: $externalCampaignResource->toResource(),
-            content: $content->toResource($broadcaster->getBroadcasterId()),
+            content: $contentResource,
             creatives: $creativesExternalIds,
             tags: $tags);
     }

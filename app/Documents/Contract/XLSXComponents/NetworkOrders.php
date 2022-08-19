@@ -22,7 +22,7 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class NetworkOrders extends Component {
 
-    const NETWORK_SUBSECTIONS = [
+    public const NETWORK_SUBSECTIONS = [
         Network::NEO_SHOPPING => [null],
         Network::NEO_OTG      => ["outdoor", "indoor"],
         Network::NEO_FITNESS  => [null],

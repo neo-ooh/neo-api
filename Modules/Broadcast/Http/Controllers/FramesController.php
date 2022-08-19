@@ -45,7 +45,7 @@ class FramesController extends Controller {
 
         $frame->broadcast_tags()->sync($request->input("tags"));
 
-        return new Response($frame->load("broadcast_tags")->refresh(), 201);
+        return new Response($frame->load("tags")->refresh(), 201);
     }
 
     /**
@@ -54,7 +54,7 @@ class FramesController extends Controller {
      *
      * @return Response
      */
-    public function update(UpdateFrameRequest $request, Frame $frame): Response {
+    public function update(UpdateFrameRequest $request, Layout $layout, Frame $frame): Response {
         [
             "name"   => $frame->name,
             "width"  => $frame->width,
@@ -62,7 +62,7 @@ class FramesController extends Controller {
         ] = $request->validated();
         $frame->save();
 
-        $frame->broadcast_tags()->sync($request->input("tags"));
+        $frame->broadcast_tags()->sync($request->input("broadcast_tags"));
 
         return new Response($frame->load("broadcast_tags")->refresh());
     }

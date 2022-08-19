@@ -116,7 +116,7 @@ class SynchronizeLocations extends BroadSignJob implements ShouldBeUnique {
             $displayType = $this->getDisplayType($bslocation->display_unit_type_id);
 
             // for now, we only identify locations by their externa ID and not their network to prevent erasing the currently stored locations and f***ing up the campaigns.
-            /** @var \Neo\Modules\Broadcast\Models\Location $location */
+            /** @var Location $location */
             $location = Location::query()->firstOrCreate([
                 "external_id" => $bslocation->id,
                 "network_id"  => $this->config->networkID,

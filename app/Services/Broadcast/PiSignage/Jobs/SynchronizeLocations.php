@@ -60,7 +60,7 @@ class SynchronizeLocations extends PiSignageJob implements ShouldBeUnique {
         $progressBar = $this->makeProgressBar(count($groups));
         $progressBar->start();
 
-        /** @var \Neo\Modules\Broadcast\Services\PiSignage\Models\Group $group */
+        /** @var Group $group */
         foreach ($groups as $group) {
             /** @var Location $location */
             $location = Location::query()->firstOrCreate([

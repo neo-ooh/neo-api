@@ -10,10 +10,13 @@
 
 namespace Neo\Services\Traffic;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
+use JsonException;
 use Neo\Exceptions\ThirdPartyAPIException;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
+use Neo\Services\API\Endpoint;
 
 class LinkettAPIClient implements APIClientInterface {
 
@@ -27,13 +30,13 @@ class LinkettAPIClient implements APIClientInterface {
 
     /**
      * @inheritDoc
-     * @param \Neo\Services\API\Endpoint $endpoint
-     * @param int|string|array|null      $payload
-     * @param array                      $headers
+     * @param Endpoint              $endpoint
+     * @param int|string|array|null $payload
+     * @param array                 $headers
      * @return array|mixed
-     * @throws \GuzzleHttp\Exception\GuzzleException
-     * @throws \JsonException
-     * @throws \Neo\Exceptions\ThirdPartyAPIException
+     * @throws GuzzleException
+     * @throws JsonException
+     * @throws ThirdPartyAPIException
      */
     public function call($endpoint, $payload, array $headers = []) {
         $payload["key"] = $this->apiKey;

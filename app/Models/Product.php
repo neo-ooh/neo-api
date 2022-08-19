@@ -21,6 +21,7 @@ use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 use Neo\Models\Traits\HasLoopConfigurations;
+use Neo\Models\Traits\WithPublicRelations;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
@@ -53,6 +54,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     use SoftDeletes;
     use HasImpressionsModels;
     use HasLoopConfigurations;
+    use WithPublicRelations;
 
     protected $table = "products";
 
@@ -83,6 +85,13 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     public string $impressions_models_pivot_table = "products_impressions_models";
     public string $loop_configurations_pivot_table = "products_loop_configurations";
 
+    protected array $publicRelations = [
+        "property"          => "property",
+        "category"          => "category",
+        "locations"         => "locations",
+        "attachments"       => "attachments",
+        "impressions_model" => "impressions_models",
+    ];
 
     /*
     |--------------------------------------------------------------------------

@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Services\BroadSign\Models;
 
+use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Services\API\APIModel;
 
 /**
@@ -17,7 +18,7 @@ use Neo\Services\API\APIModel;
  *
  * @package Neo\BroadSign\Models
  *
- * @extends APIModel<\Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient>
+ * @extends APIModel<BroadSignClient>
  */
 abstract class BroadSignModel extends APIModel {
     protected static string $unwrapKey;

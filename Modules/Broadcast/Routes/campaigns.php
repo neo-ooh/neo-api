@@ -21,7 +21,7 @@ use Neo\Modules\Broadcast\Models\Schedule;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v1"
+    "prefix"     => "v2"
 ], static function () {
 
     /*

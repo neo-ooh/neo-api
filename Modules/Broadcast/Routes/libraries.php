@@ -9,6 +9,7 @@
  */
 
 
+use Neo\Modules\Broadcast\Http\Controllers\ContentsBroadcastTagsController;
 use Neo\Modules\Broadcast\Http\Controllers\ContentsController;
 use Neo\Modules\Broadcast\Http\Controllers\CreativesController;
 use Neo\Modules\Broadcast\Http\Controllers\LibrariesContentsController;
@@ -20,7 +21,7 @@ use Neo\Modules\Broadcast\Models\Library;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v1"
+    "prefix"     => "v2"
 ], static function () {
 
     /*
@@ -59,11 +60,11 @@ Route::group([
 
     Route::bind("content", fn($id) => Content::withTrashed()->find($id));
 
-    Route::  post("contents", ContentsController::class . "@store");
-    Route::   get("contents/{content}", ContentsController::class . "@show");
-    Route::   put("contents/{content}", ContentsController::class . "@update");
-    Route::   put("contents/{content}/swap", ContentsController::class . "@swap");
-    Route::delete("contents/{content}", ContentsController::class . "@destroy");
+    Route::  post("/libraries/{library}/contents", ContentsController::class . "@store");
+    Route::   get("/libraries/{library}/contents/{content}", ContentsController::class . "@show");
+    Route::   put("/libraries/{library}/contents/{content}", ContentsController::class . "@update");
+    Route::   put("/libraries/{library}/contents/{content}/_swap", ContentsController::class . "@swap");
+    Route::delete("/libraries/{library}/contents/{content}", ContentsController::class . "@destroy");
 
     /*
     |----------------------------------------------------------------------

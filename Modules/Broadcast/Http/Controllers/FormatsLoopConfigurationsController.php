@@ -17,7 +17,7 @@ use Neo\Modules\Broadcast\Models\Format;
 
 class FormatsLoopConfigurationsController extends Controller {
     public function sync(SyncLoopConfigurationsRequest $request, Format $format): Response {
-        $format->loop_configurations()->sync($request->input("loop_configurations"));
+        $format->loop_configurations()->sync($request->input("loop_configurations", []));
 
         return new Response($format->loop_configurations);
     }

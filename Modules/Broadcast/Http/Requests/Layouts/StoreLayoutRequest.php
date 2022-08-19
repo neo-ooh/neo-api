@@ -33,10 +33,9 @@ class StoreLayoutRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "name"          => ["required", "string"],
-            "is_fullscreen" => ["required", "boolean"],
-            "tags"          => ["present", "array"],
-            "tags.*"        => ["integer", new Exists(BroadcastTag::class, "id")]
+            "name"   => ["required", "string"],
+            "tags"   => ["present", "array"],
+            "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")]
         ];
     }
 }

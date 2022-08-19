@@ -38,4 +38,6 @@ class OpeningHours extends Model {
         "open_at"  => "datetime:H:i",
         "close_at" => "datetime:H:i",
     ];
+
+
 }

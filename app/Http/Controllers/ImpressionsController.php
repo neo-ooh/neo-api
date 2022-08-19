@@ -78,13 +78,13 @@ class ImpressionsController {
         try {
             $this->buildBroadSignAudienceFile($client, $location, $product);
         } catch (Exception $e) {
+            dump($e);
             Log::error($e->__toString());
         }
         exit;
     }
 
     protected function buildBroadSignAudienceFile(BroadsignClient $client, Location $location, Product $product): void {
-
         /** @var Property $property */
         $property                         = Property::query()
                                                     ->with(["opening_hours", "traffic.weekly_data"])
@@ -93,9 +93,7 @@ class ImpressionsController {
 
         // Load all the frames, of the display unit, and load their loop policies as well
         $frames = Skin::byDisplayUnit($client, ["display_unit_id" => $location->external_id]);
-        $frames->each(/**
-         * @param Skin $frame
-         */ function (Skin $frame) use ($client) {
+        $frames->each(function (Skin $frame) use ($client) {
             $frame->loop_policy = LoopPolicy::get($client, $frame->loop_policy_id);
         });
 
@@ -147,12 +145,25 @@ class ImpressionsController {
             ]);
         }
 
-        $openLengths = $property->opening_hours->mapWithKeys(/**
-         * @param OpeningHours $hours
-         * @return array
-         */ function (OpeningHours $hours) {
+        $openingHours = collect();
+        for ($i = 0; $i < 7; ++$i) {
+            /** @var OpeningHours|null $hours */
+            $hours = $property->opening_hours->firstWhere("weekday", "=", $i);
+
+            // If no hours, assume all day
+            if (!$hours) {
+                $hours           = new OpeningHours();
+                $hours->weekday  = $i;
+                $hours->open_at  = Carbon::now()->startOfDay();
+                $hours->close_at = Carbon::now()->endOfDay();
+            }
+
+            $openingHours->push($hours);
+        }
+
+        $openLengths = $openingHours->mapWithKeys(function (OpeningHours $hours) {
             $endHour = $hours->close_at->isStartOfDay() ? $hours->close_at->clone()->endOfDay() : $hours->close_at;
-            return [$hours->weekday => $hours->open_at->diffInMinutes($endHour, true)];
+            return [$hours->weekday => $hours->open_at->diffInMinutes($endHour->ceilMinute(), true)];
         });
 
         // For each week
@@ -162,12 +173,12 @@ class ImpressionsController {
 
             // For each day of the week
             for ($i = 0; $i < 7; $i++) {
-                $weekday = $i + 1;
-                $date    = $datePointer->clone()->addDays($i);
+                $date = $datePointer->clone()->addDays($i);
                 // Get the appropriate impressions model
                 $model = $product->getImpressionModel($date);
 
                 if (!$model) {
+                    Log::warning("[ImpressionsController] Missing impressions model for $product->name_en (#{$product->id} - {$property->actor->name}) for date {$date->toDateString()}");
                     // No model, no impressions
                     continue;
                 }
@@ -190,13 +201,7 @@ class ImpressionsController {
                     Log::warning("[ImpressionsController] No location attached to product $product->name_en ({$property->actor->name})");
                 }
 
-                /** @var OpeningHours $hours */
-                $hours = $property->opening_hours->firstWhere("weekday", "=", $weekday);
-
-                // If no hours, no calculations
-                if (!$hours) {
-                    continue;
-                }
+                $hours = $openingHours[$i];
 
                 /** @var Skin $frame */
                 foreach ($frames as $frame) {
@@ -206,10 +211,10 @@ class ImpressionsController {
                     $loopPolicy = $frame->loop_policy;
                     $duration   = $loopPolicy->max_duration_msec;
 
-                    // If a loop policy has a max_duration_msec set to 0, we treat it as a screen no provinding impressions,
+                    // If a loop policy has a max_duration_msec set to 0, we treat it as a screen not providing impressions,
                     // Such as a slave player.
                     if ($duration > 0) {
-                        $playPerDay         = $openLengths[$weekday] * 60_000 / $duration;
+                        $playPerDay         = $openLengths[$i] * 60_000 / $duration;
                         $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 
                         $playsPerHour       = 3_600_000 /* 3600 * 1000 (ms) */ / $loopPolicy->primary_inventory_share_msec;

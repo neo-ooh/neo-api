@@ -78,7 +78,6 @@ class ImpressionsController {
         try {
             $this->buildBroadSignAudienceFile($client, $location, $product);
         } catch (Exception $e) {
-            dump($e);
             Log::error($e->__toString());
         }
         exit;

@@ -150,7 +150,10 @@ class ImpressionsController {
         $openLengths = $property->opening_hours->mapWithKeys(/**
          * @param OpeningHours $hours
          * @return array
-         */ fn(OpeningHours $hours) => [$hours->weekday => $hours->open_at->diffInMinutes($hours->close_at, true)]);
+         */ function (OpeningHours $hours) {
+            $endHour = $hours->close_at->isStartOfDay() ? $hours->close_at->clone()->endOfDay() : $hours->close_at;
+            return [$hours->weekday => $hours->open_at->diffInMinutes($endHour, true)];
+        });
 
         // For each week
         do {

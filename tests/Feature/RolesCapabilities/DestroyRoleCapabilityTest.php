@@ -21,7 +21,7 @@ use Tests\TestCase;
 class DestroyRoleCapabilityTest extends TestCase {
     use DatabaseTransactions;
 
-    public function setUp (): void {
+    public function setUp(): void {
         parent::setUp();
 
         Mail::Fake();
@@ -32,7 +32,7 @@ class DestroyRoleCapabilityTest extends TestCase {
      *
      * @return void
      */
-    public function testGuestsAreProhibited (): void {
+    public function testGuestsAreProhibited(): void {
         $response = $this->json('DELETE', '/v1/roles/1/capabilities');
         $response->assertUnauthorized();
     }
@@ -42,7 +42,7 @@ class DestroyRoleCapabilityTest extends TestCase {
      *
      * @return void
      */
-    public function testRouteIsSecured (): void {
+    public function testRouteIsSecured(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
@@ -57,12 +57,12 @@ class DestroyRoleCapabilityTest extends TestCase {
      *
      * @return void
      */
-    public function testActorCanRemoveCapabilityFromRole (): void {
+    public function testActorCanRemoveCapabilityFromRole(): void {
         $actor = Actor::factory()->create()->addCapability(CapabilitiesEnum::roles_edit());
         $this->actingAs($actor);
 
-        $role = Role::factory()->create();
-        $capability = (new Capability)->where("slug", "=", CapabilitiesEnum::tests)->first();
+        $role       = Role::factory()->create();
+        $capability = (new Capability())->where("slug", "=", CapabilitiesEnum::tests)->first();
 
         $role->capabilities()->attach($capability);
 
@@ -79,11 +79,11 @@ class DestroyRoleCapabilityTest extends TestCase {
      *
      * @return void
      */
-    public function testCorrectResponseOnNotAssociatedCapability (): void {
+    public function testCorrectResponseOnNotAssociatedCapability(): void {
         $actor = Actor::factory()->create()->addCapability(CapabilitiesEnum::roles_edit());
         $this->actingAs($actor);
 
-        $role = Role::factory()->create();
+        $role       = Role::factory()->create();
         $capability = Capability::query()->where("slug", "=", CapabilitiesEnum::tests)->first();
 
         $response = $this->json('DELETE',
@@ -99,7 +99,7 @@ class DestroyRoleCapabilityTest extends TestCase {
      *
      * @return void
      */
-    public function testCorrectResponseOnBadCapabilityID (): void {
+    public function testCorrectResponseOnBadCapabilityID(): void {
         $actor = Actor::factory()->create()->addCapability(CapabilitiesEnum::roles_edit());
         $this->actingAs($actor);
 
@@ -118,7 +118,7 @@ class DestroyRoleCapabilityTest extends TestCase {
      *
      * @return void
      */
-    public function testCorrectResponseOnBadRequest (): void {
+    public function testCorrectResponseOnBadRequest(): void {
         $actor = Actor::factory()->create()->addCapability(CapabilitiesEnum::roles_edit());
         $this->actingAs($actor);
 

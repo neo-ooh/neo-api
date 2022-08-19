@@ -58,7 +58,7 @@ class TargetCreative extends BroadSignJob implements ShouldBeUniqueUntilProcessi
      * @throws Exception
      */
     public function handle(): void {
-        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
+        /** @var Creative $creative */
         $creative = Creative::query()->findOrFail($this->creativeID);
 
         $externalId = $creative->getExternalId($this->config->networkID);

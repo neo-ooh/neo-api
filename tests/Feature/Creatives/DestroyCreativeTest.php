@@ -38,7 +38,7 @@ class DestroyCreativeTest extends TestCase {
             "library_id" => $library->id,
         ]);
 
-        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
+        /** @var Creative $creative */
         $creative = Creative::factory()->create([
             "owner_id"   => $actor->id,
             "content_id" => $content->id,

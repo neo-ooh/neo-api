@@ -44,9 +44,10 @@ class StoreNetworkRequest extends FormRequest {
     }
 
     protected function getNetworkOptions(): array {
-        $broadcasterType = BroadcasterType::from($this->input("connection_id"));
+        /** @var BroadcasterConnection $broadcaster */
+        $broadcaster = BroadcasterConnection::query()->findOrFail($this->input("connection_id"));
 
-        return match ($broadcasterType) {
+        return match ($broadcaster->broadcaster) {
             BroadcasterType::BroadSign => [
                 "customer_id"            => ["nullable", "int"],
                 "root_container_id"      => ["required", "int"],

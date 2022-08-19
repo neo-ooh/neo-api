@@ -12,7 +12,9 @@ namespace Neo\Modules\Broadcast\Http\Requests\Contents;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
 
 class UpdateContentRequest extends FormRequest {
@@ -33,12 +35,16 @@ class UpdateContentRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "owner_id"              => ["required", "integer"],
-            "library_id"            => ["required", "integer", new AccessibleLibrary()],
-            "name"                  => ["nullable", "string"],
+            "owner_id"   => ["required", "integer"],
+            "library_id" => ["required", "integer", new AccessibleLibrary()],
+            "name"       => ["nullable", "string"],
+
             "is_approved"           => ["sometimes", "boolean"],
             "max_schedule_duration" => ["sometimes", "integer"],
             "max_schedule_count"    => ["sometimes", "integer"],
+
+            "tags"   => ["array"],
+            "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],
         ];
     }
 }

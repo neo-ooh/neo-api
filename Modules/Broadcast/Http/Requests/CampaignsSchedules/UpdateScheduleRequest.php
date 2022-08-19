@@ -12,7 +12,9 @@ namespace Neo\Modules\Broadcast\Http\Requests\CampaignsSchedules;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\BroadcastTag;
 
 class UpdateScheduleRequest extends FormRequest {
     /**
@@ -37,6 +39,8 @@ class UpdateScheduleRequest extends FormRequest {
             "end_time"       => ["required", "date:H:m:s"],
             "broadcast_days" => ["required", "int", "max:127"],
             "is_locked"      => ["required", "boolean"],
+            "tags"           => ["array"],
+            "tags.*"         => ["integer", new Exists(BroadcastTag::class)]
         ];
     }
 }

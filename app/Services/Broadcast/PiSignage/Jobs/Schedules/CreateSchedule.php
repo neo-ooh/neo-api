@@ -45,7 +45,7 @@ class CreateSchedule extends PiSignageJob implements ShouldBeUnique {
     public function handle(): void {
         // in PiSignage, since Schedule do not exist there, we place the creatives in the playlist only if the schedule is approved.
 
-        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
+        /** @var Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleId);
 
         if (!$schedule) {

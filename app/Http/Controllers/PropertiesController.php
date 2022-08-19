@@ -125,7 +125,7 @@ class PropertiesController extends Controller {
 
     public function search(SearchPropertiesRequest $request) {
         /** @var Collection<Actor> $accessibleActors */
-        $accessibleActors = Auth::user()->getAccessibleActors();
+        $accessibleActors = Auth::user()?->getAccessibleActors();
         $accessibleActors->load("parent");
 
         $searchEngine = new Fuse($accessibleActors->map(fn(Actor $actor) => [

@@ -68,11 +68,6 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int                  $locations_count
  * @property Collection<Location> $locations
  *
- *
- * @property Collection<Location> $related_campaigns
- * @property Collection<integer>  $targeted_frames          Frame targeting criteria required by the campaign
- *           schedule
- *
  * @mixin Builder<Campaign>
  */
 class Campaign extends BroadcastResourceModel {

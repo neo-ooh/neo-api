@@ -5,21 +5,22 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ScheduleDetails.php
+ * @neo/api - FormatLayoutPivot.php
  */
 
 namespace Neo\Modules\Broadcast\Models;
 
-use Neo\Models\DBView;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @property-read int  $schedule_id
- * @property-read bool $is_approved
+ * @property int  $format_id
+ * @property int  $layout_id
+ * @property bool $is_fullscreen
  */
-class ScheduleDetails extends DBView {
-    protected $table = "schedule_details";
+class FormatLayoutPivot extends Pivot {
+    protected $table = "format_layouts";
 
     protected $casts = [
-        "is_approved" => "boolean"
+        "is_fullscreen" => "bool"
     ];
 }

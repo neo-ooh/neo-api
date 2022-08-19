@@ -23,14 +23,15 @@ use Neo\Models\Property;
 use Neo\Services\Odoo\Models\Product;
 use Neo\Services\Odoo\Models\ProductType as OdooProductType;
 use Neo\Services\Odoo\Models\Property as OdooProperty;
+use Neo\Services\Odoo\OdooClient;
 
 class SynchronizePropertyData implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected int                           $propertyId,
-                                protected \Neo\Services\Odoo\OdooClient $client,
-                                protected ?OdooProperty                 $odooProperty = null,
-                                protected ?Collection                   $odooProducts = null) {
+    public function __construct(protected int           $propertyId,
+                                protected OdooClient    $client,
+                                protected ?OdooProperty $odooProperty = null,
+                                protected ?Collection   $odooProducts = null) {
     }
 
     public function handle() {

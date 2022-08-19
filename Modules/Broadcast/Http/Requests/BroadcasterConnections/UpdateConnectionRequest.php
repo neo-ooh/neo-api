@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Http\Requests\BroadcasterConnections;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\BroadcasterConnection;
 use Neo\Modules\Broadcast\Services\BroadcasterType;
 
 class UpdateConnectionRequest extends FormRequest {
@@ -39,9 +40,10 @@ class UpdateConnectionRequest extends FormRequest {
     }
 
     protected function getBroadcasterOptions(): array {
-        $broadcasterType = BroadcasterType::from($this->input("type"));
+        /** @var BroadcasterConnection $broadcaster */
+        $broadcaster = BroadcasterConnection::query()->findOrFail($this->route()?->originalParameter("connection"));
 
-        return match ($broadcasterType) {
+        return match ($broadcaster->broadcaster) {
             BroadcasterType::BroadSign => [
                 "certificate" => ["sometimes", "file"],
                 "domain_id"   => ["required", "int"],

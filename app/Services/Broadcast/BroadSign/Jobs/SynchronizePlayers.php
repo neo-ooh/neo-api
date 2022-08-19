@@ -68,7 +68,7 @@ class SynchronizePlayers extends BroadSignJob implements ShouldBeUnique {
                 continue;
             }
 
-            /** @var \Neo\Modules\Broadcast\Models\Player $player */
+            /** @var Player $player */
             $player = Player::query()->firstOrCreate([
                 "external_id" => $bsPlayer->id,
             ], [

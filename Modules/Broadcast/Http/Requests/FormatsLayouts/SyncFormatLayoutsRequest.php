@@ -14,7 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Modules\Broadcast\Models\Layout;
+use Neo\Modules\Broadcast\Models\DisplayType;
 
 class SyncFormatLayoutsRequest extends FormRequest {
     /**
@@ -33,8 +33,8 @@ class SyncFormatLayoutsRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "layouts"   => ["required", "array"],
-            "layouts.*" => ["integer", new Exists(Layout::class, "id")],
+            "display_types"   => ["array"],
+            "display_types.*" => ["required", "integer", new Exists(DisplayType::class, "id")],
         ];
     }
 }

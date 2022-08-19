@@ -31,7 +31,7 @@ use Neo\Modules\Broadcast\Models\Layout;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v1"
+    "prefix"     => "v2"
 ], static function () {
     /*
     |----------------------------------------------------------------------
@@ -41,7 +41,9 @@ Route::group([
 
     Route::model("layout", Layout::class);
 
+    Route::   get("layouts", LayoutsController::class . "@index");
     Route::  post("layouts", LayoutsController::class . "@store");
+    Route::   get("layouts/{layout}", LayoutsController::class . "@show");
     Route::   put("layouts/{layout}", LayoutsController::class . "@update");
     Route::delete("layouts/{layout}", LayoutsController::class . "@destroy");
 
@@ -75,6 +77,6 @@ Route::group([
 
     Route::put("formats/{format}/layouts/_sync", FormatsLayoutsController::class . "@sync");
     Route::put("formats/{format}/display-types/_sync", FormatsDisplayTypesController::class . "@sync");
-    Route::put("formats/{format}/loop_configurations/_sync", FormatsLoopConfigurationsController::class . "@sync");
+    Route::put("formats/{format}/loop-configurations/_sync", FormatsLoopConfigurationsController::class . "@sync");
 
 });

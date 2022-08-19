@@ -89,7 +89,7 @@ class Playlist extends PiSignageModel {
     }
 
     /**
-     * @param \Neo\Modules\Broadcast\Services\PiSignage\API\PiSignageClient           $client
+     * @param PiSignageClient                                                         $client
      * @param                                                                         $name
      * @return mixed
      */

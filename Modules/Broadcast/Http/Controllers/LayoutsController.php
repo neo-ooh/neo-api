@@ -13,15 +13,24 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Http\Requests\Layouts\DestroyLayoutRequest;
+use Neo\Modules\Broadcast\Http\Requests\Layouts\ListLayoutsRequest;
+use Neo\Modules\Broadcast\Http\Requests\Layouts\ShowLayoutRequest;
 use Neo\Modules\Broadcast\Http\Requests\Layouts\StoreLayoutRequest;
 use Neo\Modules\Broadcast\Http\Requests\Layouts\UpdateLayoutRequest;
 use Neo\Modules\Broadcast\Models\Layout;
 
 class LayoutsController extends Controller {
+    public function index(ListLayoutsRequest $request): Response {
+        $layouts = Layout::query()->orderBy("name")->get();
+
+        $layouts->each(fn(Layout $layout) => $layout->withPublicRelations());
+
+        return new Response($layouts);
+    }
+
     public function store(StoreLayoutRequest $request): Response {
-        $layout                = new Layout();
-        $layout->name          = $request->get("name");
-        $layout->is_fullscreen = $request->get("is_fullscreen");
+        $layout       = new Layout();
+        $layout->name = $request->input("name");
         $layout->save();
 
         $layout->broadcast_tags()->sync($request->input("tags"));
@@ -29,14 +38,19 @@ class LayoutsController extends Controller {
         return new Response($layout->load("frames"), 201);
     }
 
+    public function show(ShowLayoutRequest $request, Layout $layout): Response {
+        $layout->withPublicRelations();
+
+        return new Response($layout);
+    }
+
     public function update(UpdateLayoutRequest $request, Layout $layout): Response {
-        $layout->name          = $request->get("name");
-        $layout->is_fullscreen = $request->get("is_fullscreen");
+        $layout->name = $request->input("name");
         $layout->save();
 
         $layout->broadcast_tags()->sync($request->input("tags"));
 
-        return new Response($layout);
+        return new Response($layout->load("broadcast_tags"));
     }
 
     public function destroy(DestroyLayoutRequest $request, Layout $layout): Response {

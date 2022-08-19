@@ -49,7 +49,7 @@ class CampaignsController extends Controller {
         $campaign->start_time     = $request->input("start_time");
         $campaign->end_date       = $request->input("end_date");
         $campaign->end_time       = $request->input("end_time");
-        $campaign->broadcast_days = $request->input("weekdays");
+        $campaign->broadcast_days = $request->input("broadcast_days");
 
         $campaign->occurrences_in_loop = $request->input("occurrences_in_loop");
         $campaign->priority            = $request->input("priority");
@@ -70,6 +70,8 @@ class CampaignsController extends Controller {
 
             throw $e;
         }
+
+        $campaign->broadcast_tags()->sync($request->input("tags"));
 
         // Replicate the campaign in the appropriate broadcaster
         $campaign->promote();
@@ -104,8 +106,10 @@ class CampaignsController extends Controller {
 
         $campaign->occurrences_in_loop = $request->input("occurrences_in_loop");
         $campaign->priority            = $request->input("priority");
-
         $campaign->save();
+
+        $campaign->broadcast_tags()->sync($request->input("tags"));
+
         $campaign->refresh();
 
         $campaign->promote();

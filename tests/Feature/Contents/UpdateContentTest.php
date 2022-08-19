@@ -62,7 +62,7 @@ class UpdateContentTest extends TestCase {
         /** @var Actor $otherActor */
         $otherActor = Actor::factory()->create();
 
-        /** @var \Neo\Modules\Broadcast\Models\Library $library */
+        /** @var Library $library */
         $library = Library::factory()->create(["owner_id" => $otherActor->id]);
 
         /** @var Content $content */
@@ -87,7 +87,7 @@ class UpdateContentTest extends TestCase {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
-        /** @var \Neo\Modules\Broadcast\Models\Library $library */
+        /** @var Library $library */
         $library = Library::factory()->create(["owner_id" => $actor->id]);
 
         /** @var Content $content */
@@ -126,10 +126,10 @@ class UpdateContentTest extends TestCase {
         /** @var Actor $otherActor */
         $otherActor = Actor::factory()->create();
 
-        /** @var \Neo\Modules\Broadcast\Models\Library $library */
+        /** @var Library $library */
         $library = Library::factory()->create(["owner_id" => $otherActor->id]);
 
-        /** @var \Neo\Modules\Broadcast\Models\Content $content */
+        /** @var Content $content */
         $content = Content::factory()->create([
             "owner_id"   => $otherActor->id,
             "library_id" => $library->id,

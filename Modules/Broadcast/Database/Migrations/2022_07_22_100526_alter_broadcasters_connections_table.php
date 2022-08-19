@@ -20,10 +20,7 @@ return new class extends Migration {
             $settings = json_decode($broadcaster->settings, true, 512, JSON_THROW_ON_ERROR);
             unset($settings["default_tracking_id"]);
 
-            $network         = DB::table("networks")->where("connection_id", "=", $broadcaster->id)->first();
-            $networkSettings = json_decode($network->settings, true, 512, JSON_THROW_ON_ERROR);
-
-            $settings["ad_copies_container_id"] = $networkSettings["ad_copies_container_id"];
+            $settings["customer_id"] = $settings["default_customer_id"];
 
             DB::table("broadcasters_connections")->where("id", "=", $broadcaster->id)->update([
                 "settings" => json_encode($settings, JSON_THROW_ON_ERROR),

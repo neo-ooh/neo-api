@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Http\Requests\Networks;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Services\BroadcasterType;
 
 class UpdateNetworkRequest extends FormRequest {
@@ -41,9 +42,10 @@ class UpdateNetworkRequest extends FormRequest {
     }
 
     protected function getBroadcasterOptions(): array {
-        $broadcasterType = BroadcasterType::from($this->input("connection_id"));
+        /** @var Network $network */
+        $network = Network::query()->findOrFail($this->route()?->originalParameter("network"));
 
-        return match ($broadcasterType) {
+        return match ($network->broadcaster_connection->broadcaster) {
             BroadcasterType::BroadSign => [
                 "customer_id"            => ["nullable", "int"],
                 "root_container_id"      => ["required", "int"],

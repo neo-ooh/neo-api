@@ -41,11 +41,6 @@ class LoopConfiguration extends Model {
 
     protected $primaryKey = "id";
 
-    protected $dates = [
-        "start_date",
-        "end_date"
-    ];
-
     protected $casts = [
         "start_date" => "date:Y-m-d",
         "end_date"   => "date:Y-m-d",
@@ -57,7 +52,7 @@ class LoopConfiguration extends Model {
         "spot_length_ms",
         "reserved_spots",
         "start_date",
-        "end_date"
+        "end_date",
     ];
 
     public function product_categories(): BelongsToMany {

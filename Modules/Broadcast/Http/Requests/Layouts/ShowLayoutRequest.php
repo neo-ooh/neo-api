@@ -5,23 +5,25 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdateDisplayTypeRequest.php
+ * @neo/api - ShowLayoutRequest.php
  */
 
-namespace Neo\Http\Requests\DisplayTypes;
+namespace Neo\Modules\Broadcast\Http\Requests\Layouts;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Layout;
+use Neo\Rules\PublicRelations;
 
-class UpdateDisplayTypeRequest extends FormRequest {
+class ShowLayoutRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize() {
-        return Gate::allows(Capability::networks_edit->value);
+    public function authorize(): bool {
+        return Gate::allows(Capability::formats_edit->value);
     }
 
     /**
@@ -29,9 +31,9 @@ class UpdateDisplayTypeRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules() {
+    public function rules(): array {
         return [
-            "name" => ["required", "string"]
+            "with" => ["array", new PublicRelations(Layout::class)],
         ];
     }
 }

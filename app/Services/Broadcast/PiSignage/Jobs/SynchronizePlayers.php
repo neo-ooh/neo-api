@@ -54,7 +54,7 @@ class SynchronizePlayers extends PiSignageJob implements ShouldBeUnique {
             (new ConsoleOutput())->writeLn("$distPlayer->name...\n\n");
 
             // Get the location associated with the player
-            /** @var \Neo\Modules\Broadcast\Models\Location $location */
+            /** @var Location $location */
             $location = Location::query()->where("network_id", "=", $this->config->networkID)
                                 ->where("external_id", "=", $distPlayer->group['_id'])
                                 ->first();

@@ -5,23 +5,25 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListDisplayTypesPerNetworkRequest.php
+ * @neo/api - ListLayoutsRequest.php
  */
 
-namespace Neo\Http\Requests\DisplayTypes;
+namespace Neo\Modules\Broadcast\Http\Requests\Layouts;
 
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Layout;
+use Neo\Rules\PublicRelations;
 
-class ListDisplayTypesPerNetworkRequest extends FormRequest {
+class ListLayoutsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize() {
-        return Gate::allows(Capability::networks_edit->value);
+    public function authorize(): bool {
+        return Gate::allows(Capability::formats_edit->value);
     }
 
     /**
@@ -29,9 +31,9 @@ class ListDisplayTypesPerNetworkRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules() {
+    public function rules(): array {
         return [
-            //
+            "with" => ["array", new PublicRelations(Layout::class)],
         ];
     }
 }

@@ -55,8 +55,8 @@ class ResourceCriteria extends BroadSignModel {
     }
 
     /**
-     * @param \Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient $client
-     * @param int                                                           $resourceId
+     * @param BroadSignClient $client
+     * @param int             $resourceId
      * @return Collection<static>
      */
     public static function for(BroadSignClient $client, int $resourceId): Collection {

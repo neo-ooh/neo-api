@@ -35,6 +35,7 @@ return new class extends Migration {
         Schema::table("layouts", static function (Blueprint $table) {
             $table->dropForeign("formats_layouts_format_id_foreign");
             $table->dropColumn("format_id");
+            $table->dropColumn("is_fullscreen");
         });
     }
 };

@@ -51,7 +51,6 @@ class LoopConfigurationsController {
         $loopConfiguration->reserved_spots = $request->input("reserved_spots");
         $loopConfiguration->start_date     = Carbon::parse($request->input("start_date"))->setYear(2000);
         $loopConfiguration->end_date       = Carbon::parse($request->input("end_date"))->setYear(2000);
-
         $loopConfiguration->save();
         $loopConfiguration->refresh();
 

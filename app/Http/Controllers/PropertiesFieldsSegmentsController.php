@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Error;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Properties\DestroyFieldSegmentValueRequest;
 use Neo\Http\Requests\Properties\StoreFieldSegmentValueRequest;
@@ -21,7 +22,7 @@ class PropertiesFieldsSegmentsController {
     public function store(StoreFieldSegmentValueRequest $request, Property $property, Field $field) {
         // Prevent manually updating a demographic-filled field.
         if ($field->demographic_filled) {
-            throw new \Error("Cannot update the value of a field marked as being filled with demographic data.");
+            throw new Error("Cannot update the value of a field marked as being filled with demographic data.");
         }
 
         $segmentId = $request->input("segment_id");

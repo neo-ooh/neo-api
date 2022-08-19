@@ -17,15 +17,13 @@ use Neo\Models\Actor;
 use Neo\Modules\Broadcast\Models\Format;
 use Tests\TestCase;
 
-class StoreCampaignTest extends TestCase
-{
+class StoreCampaignTest extends TestCase {
     use DatabaseTransactions;
 
     /**
      * Assert Guests cannot call this route
      */
-    public function testGuestsAreProhibited(): void
-    {
+    public function testGuestsAreProhibited(): void {
         $response = $this->json("POST", "/v1/campaigns");
         $response->assertUnauthorized();
     }
@@ -33,8 +31,7 @@ class StoreCampaignTest extends TestCase
     /**
      * Assert user without proper capability cannot call this route
      */
-    public function testActorCannotCallRouteWithoutProperCapability(): void
-    {
+    public function testActorCannotCallRouteWithoutProperCapability(): void {
         $actor = Actor::factory()->create();
         $this->actingAs($actor);
 
@@ -45,8 +42,7 @@ class StoreCampaignTest extends TestCase
     /**
      * Assert user with correct capability can call this route
      */
-    public function testActorWithProperCapabilityCanCallThisRoute(): void
-    {
+    public function testActorWithProperCapabilityCanCallThisRoute(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
@@ -57,8 +53,7 @@ class StoreCampaignTest extends TestCase
     /**
      * Assert correct response on correct request
      */
-    public function testCorrectResponseOnValidRequest(): void
-    {
+    public function testCorrectResponseOnValidRequest(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
@@ -68,13 +63,13 @@ class StoreCampaignTest extends TestCase
         $response = $this->json("POST",
             "/v1/campaigns",
             [
-                "owner_id" => $actor->id,
-                "format_id" => $format->id,
-                "name" => "campaign-name",
+                "owner_id"         => $actor->id,
+                "format_id"        => $format->id,
+                "name"             => "campaign-name",
                 "display_duration" => 15,
-                "start_date" => Date::now()->toIso8601String(),
-                "end_date" => Date::now()->addDays(14)->toIso8601String(),
-                "loop_saturation" => 1
+                "start_date"       => Date::now()->toIso8601String(),
+                "end_date"         => Date::now()->addDays(14)->toIso8601String(),
+                "loop_saturation"  => 1
             ]);
         $response->assertCreated()
                  ->assertJsonStructure([
@@ -92,8 +87,7 @@ class StoreCampaignTest extends TestCase
     /**
      * Assert correct errors on bad request
      */
-    public function testCorrectErrorOnBadRequest(): void
-    {
+    public function testCorrectErrorOnBadRequest(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
@@ -111,12 +105,11 @@ class StoreCampaignTest extends TestCase
     /**
      * Assert Actor can create a campaign with accessible owner
      */
-    public function testActorCanCreateCampaignWithAccessibleOwner(): void
-    {
+    public function testActorCanCreateCampaignWithAccessibleOwner(): void {
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
-        /** @var \Neo\Modules\Broadcast\Models\Format $format */
+        /** @var Format $format */
         $format = Format::query()->first();
 
         $otherActor = Actor::factory()->create()->moveTo($actor);
@@ -124,13 +117,13 @@ class StoreCampaignTest extends TestCase
         $response = $this->json("POST",
             "/v1/campaigns",
             [
-                "owner_id" => $otherActor->id,
-                "format_id" => $format->id,
-                "name" => "campaign-name",
+                "owner_id"         => $otherActor->id,
+                "format_id"        => $format->id,
+                "name"             => "campaign-name",
                 "display_duration" => 15,
-                "start_date" => Date::now()->toIso8601String(),
-                "end_date" => Date::now()->addDays(14)->toIso8601String(),
-                "loop_saturation" => 1
+                "start_date"       => Date::now()->toIso8601String(),
+                "end_date"         => Date::now()->addDays(14)->toIso8601String(),
+                "loop_saturation"  => 1
             ]);
         $response->assertCreated()
                  ->assertJsonStructure([
@@ -149,13 +142,12 @@ class StoreCampaignTest extends TestCase
      * Assert Actor cannot create a campaign with inaccessible owner
      */
 
-    public function testCannotCreateCampaignWithInaccessibleOwner(): void
-    {
+    public function testCannotCreateCampaignWithInaccessibleOwner(): void {
         /** @var Actor $actor */
         $actor = Actor::factory()->create()->addCapability(Capability::campaigns_edit());
         $this->actingAs($actor);
 
-        /** @var \Neo\Modules\Broadcast\Models\Format $format */
+        /** @var Format $format */
         $format = Format::query()->first();
 
         /** @var Actor $otherActor */
@@ -164,12 +156,12 @@ class StoreCampaignTest extends TestCase
         $response = $this->json("POST",
             "/v1/campaigns",
             [
-                "owner_id" => $otherActor->id,
-                "format_id" => $format->id,
-                "name" => "campaign-name",
+                "owner_id"         => $otherActor->id,
+                "format_id"        => $format->id,
+                "name"             => "campaign-name",
                 "display_duration" => 15,
-                "start_date" => Date::now()->toIso8601String(),
-                "end_date" => Date::now()->addDays(14)->toIso8601String(),
+                "start_date"       => Date::now()->toIso8601String(),
+                "end_date"         => Date::now()->addDays(14)->toIso8601String(),
             ]);
         $response->assertStatus(422)
                  ->assertJsonValidationErrors([

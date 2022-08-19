@@ -10,9 +10,9 @@
 
 namespace Neo\Modules\Broadcast\Http\Requests\BroadcastTags;
 
-use BenSampo\Enum\Rules\Enum;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Enums\BroadcastTagScope;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
@@ -29,8 +29,9 @@ class ListBroadcastTagsRequest extends FormRequest {
 
     public function rules() {
         return [
-            "scope" => ["sometimes", new Enum(BroadcastTagScope::class)],
-            "type"  => ["sometimes", new Enum(BroadcastTagType::class)],
+            "scope"   => ["sometimes", new Enum(BroadcastTagScope::class)],
+            "types"   => ["sometimes", "array"],
+            "types.*" => ["string", new Enum(BroadcastTagType::class)],
 
             "with" => ["array", new PublicRelations(BroadcastTag::class)],
         ];

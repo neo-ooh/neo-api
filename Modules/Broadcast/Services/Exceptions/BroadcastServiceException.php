@@ -11,9 +11,10 @@
 namespace Neo\Modules\Broadcast\Services\Exceptions;
 
 use Neo\Modules\Broadcast\Services\BroadcasterType;
+use RuntimeException;
 use Throwable;
 
-class BroadcastServiceException extends \RuntimeException {
+class BroadcastServiceException extends RuntimeException {
     public function __construct(BroadcasterType $service, string $message, ?Throwable $previous = null) {
         parent::__construct("[$service->value] $message", -1, $previous);
     }

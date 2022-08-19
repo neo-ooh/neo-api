@@ -59,7 +59,7 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
      * @throws Exception
      */
     public function handle(): void {
-        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
+        /** @var Creative $creative */
         $creative = Creative::query()->findOrFail($this->creativeID);
 
         if ($creative->getExternalId($this->config->networkID) !== null) {

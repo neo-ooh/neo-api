@@ -227,7 +227,7 @@ class Content extends BroadcastResourceModel {
         return new ContentResource([
             "name"          => $this->name,
             "duration_msec" => $this->duration,
-            "fullscreen"    => $this->layout->is_fullscreen,
+            "is_fullscreen" => $this->layout->is_fullscreen,
         ]);
     }
 }

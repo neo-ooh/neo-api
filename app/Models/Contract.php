@@ -10,6 +10,7 @@
 
 namespace Neo\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -38,8 +39,8 @@ use RuntimeException;
  * @property integer                           $client_id
  * @property integer                           $salesperson_id
  * @property integer                           $advertiser_id
- * @property \Carbon\Carbon                    $start_date
- * @property \Carbon\Carbon                    $end_date
+ * @property Carbon                            $start_date
+ * @property Carbon                            $end_date
  * @property integer                           $expected_impressions
  * @property integer                           $received_impressions
  * @property integer                           $created_at

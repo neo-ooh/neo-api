@@ -8,11 +8,13 @@
  * @neo/api - ListDisplayTypesRequest.php
  */
 
-namespace Neo\Http\Requests\DisplayTypes;
+namespace Neo\Modules\Broadcast\Http\Requests\DisplayTypes;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Network;
 
 class ListDisplayTypesRequest extends FormRequest {
     /**
@@ -21,7 +23,8 @@ class ListDisplayTypesRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::formats_edit->value) || Gate::allows(Capability::networks_edit->value);
+        return Gate::allows(Capability::formats_edit->value) ||
+            Gate::allows(Capability::networks_edit->value);
     }
 
     /**
@@ -30,6 +33,8 @@ class ListDisplayTypesRequest extends FormRequest {
      * @return array
      */
     public function rules(): array {
-        return [];
+        return [
+            "network_id" => ["required", "int", new Exists(Network::class, "id")]
+        ];
     }
 }

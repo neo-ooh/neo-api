@@ -113,7 +113,7 @@ class TargetCampaign extends BroadSignJob implements ShouldBeUniqueUntilProcessi
         // Enumerate over the criteria already applied to the campaign
         $campaignCriteria = ResourceCriteria::for($this->getAPIClient(), $campaign->external_id);
 
-        /** @var \Neo\Modules\Broadcast\Services\BroadSign\Models\ResourceCriteria $criterion */
+        /** @var ResourceCriteria $criterion */
         foreach ($campaignCriteria as $criterion) {
             // Is this criterion in our requirements ?
             if (in_array($criterion->id, $requestedCriteria->pluck("broadsign_criteria_id")->toArray(), true)) {

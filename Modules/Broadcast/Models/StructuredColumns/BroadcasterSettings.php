@@ -11,14 +11,12 @@
 namespace Neo\Modules\Broadcast\Models\StructuredColumns;
 
 use Neo\Models\Utils\JSONDBColumn;
-use Spatie\DataTransferObject\Attributes\MapFrom;
 
 class BroadcasterSettings extends JSONDBColumn {
     // BroadSign domain ID
     public int|null $domain_id;
 
     // BroadSign customer to use for created resources
-    #[MapFrom("default_customer_id")]
     public int|null $customer_id;
 
     // PiSignage Server URL

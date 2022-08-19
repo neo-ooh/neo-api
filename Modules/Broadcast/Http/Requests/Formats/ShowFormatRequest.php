@@ -13,6 +13,8 @@ namespace Neo\Modules\Broadcast\Http\Requests\Formats;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Format;
+use Neo\Rules\PublicRelations;
 
 class ShowFormatRequest extends FormRequest {
     /**
@@ -30,6 +32,8 @@ class ShowFormatRequest extends FormRequest {
      * @return array
      */
     public function rules(): array {
-        return [];
+        return [
+            "with" => ["array", new PublicRelations(Format::class)]
+        ];
     }
 }

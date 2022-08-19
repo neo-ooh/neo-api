@@ -17,6 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Services\PiSignage\Models\Group;
 use Neo\Modules\Broadcast\Services\PiSignage\Models\Playlist;
 use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
@@ -40,7 +41,7 @@ class DestroyCampaign extends PiSignageJob implements ShouldBeUnique {
     }
 
     public function handle(): void {
-        /** @var \Neo\Modules\Broadcast\Models\Campaign $campaign */
+        /** @var Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignId);
 
         if ($campaign === null || !$campaign->external_id) {
@@ -51,7 +52,7 @@ class DestroyCampaign extends PiSignageJob implements ShouldBeUnique {
         // We want to delete the playlist AND deploy all the configuration of all associated players so they are up to date.
         Playlist::delete($this->getAPIClient(), ["name" => $campaign->external_id]);
 
-        /** @var \Neo\Modules\Broadcast\Models\Location $location */
+        /** @var Location $location */
         foreach ($campaign->locations as $location) {
             $group            = Group::get($this->getAPIClient(), $location->external_id);
             $group->playlists = collect($group->playlists)->filter(fn($playlist) => $playlist["name"] !== $campaign->external_id);

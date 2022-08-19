@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Enums\BroadcastTagScope;
-use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\DeleteBroadcastTagRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\ListBroadcastTagsByIdRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\ListBroadcastTagsRequest;
@@ -30,8 +29,8 @@ class BroadcastTagsController extends Controller {
         $broadcastTags = BroadcastTag::query()
                                      ->when($request->filled("scope"), function (Builder $query) use ($request) {
                                          $query->whereRaw('FIND_IN_SET(?, scope)', [$request->enum("scope", BroadcastTagScope::class)->value]);
-                                     })->when($request->filled("type"), function (Builder $query) use ($request) {
-                $query->where("type", "=", $request->enum("type", BroadcastTagType::class)->value);
+                                     })->when($request->filled("types"), function (Builder $query) use ($request) {
+                $query->whereIn("type", $request->input("types"));
             })->get();
 
         return new Response($broadcastTags->each->withPublicRelations());

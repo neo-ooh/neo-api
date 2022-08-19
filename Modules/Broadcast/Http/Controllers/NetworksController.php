@@ -27,9 +27,10 @@ use function Ramsey\Uuid\v4;
 
 class NetworksController extends Controller {
     public function index(ListNetworksRequest $request): Response {
-        $networks = Network::query()->get();
+        $networks = Network::query()->orderBy("name")->get();
 
         $networks->each(fn(Network $network) => $network->withPublicRelations($request->input("with", [])));
+        $networks->makeHidden(["settings"]);
 
         return new Response($networks);
     }
@@ -72,7 +73,7 @@ class NetworksController extends Controller {
         switch ($network->broadcaster_connection->broadcaster) {
             case BroadcasterType::BroadSign:
                 $settings->customer_id            = $request->input("customer_id");
-                $settings->root_container_id      = $request->input("customer_id");
+                $settings->root_container_id      = $request->input("root_container_id");
                 $settings->campaigns_container_id = $request->input("campaigns_container_id");
                 $settings->creatives_container_id = $request->input("creatives_container_id");
                 break;

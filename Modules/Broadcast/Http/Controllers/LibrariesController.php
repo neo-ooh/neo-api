@@ -88,10 +88,9 @@ class LibrariesController extends Controller {
      * @return Response
      */
     public function update(UpdateLibraryRequest $request, Library $library): Response {
-        $library->name           = $request->input("name");
-        $library->owner_id       = $request->input("owner_id");
-        $library->content_limit  = $request->input("content_limit");
-        $library->hidden_formats = $request->input("hidden_formats", []);
+        $library->name          = $request->input("name");
+        $library->owner_id      = $request->input("owner_id");
+        $library->content_limit = $request->input("content_limit");
 
         $library->save();
 

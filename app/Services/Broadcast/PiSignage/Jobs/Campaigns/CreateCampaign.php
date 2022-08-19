@@ -43,7 +43,7 @@ class CreateCampaign extends PiSignageJob implements ShouldBeUnique {
     }
 
     public function handle(): void {
-        /** @var \Neo\Modules\Broadcast\Models\Campaign $campaign */
+        /** @var Campaign $campaign */
         $campaign = Campaign::query()->find($this->campaignId);
 
         if ($campaign === null || $campaign->external_id) {

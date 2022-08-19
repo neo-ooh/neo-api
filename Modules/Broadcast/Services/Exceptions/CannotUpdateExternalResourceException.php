@@ -11,13 +11,14 @@
 namespace Neo\Modules\Broadcast\Services\Exceptions;
 
 use Neo\Modules\Broadcast\Services\BroadcasterType;
+use RuntimeException;
 use Throwable;
 
 /**
  * Thrown when an external resource cannot be updated.
  * Some broadcaster does not allow updating some properties of a resource once it's been created
  */
-class CannotUpdateExternalResourceException extends \RuntimeException {
+class CannotUpdateExternalResourceException extends RuntimeException {
     public function __construct(BroadcasterType $service, string $message, ?Throwable $previous = null) {
         parent::__construct("[$service->value] $message", -1, $previous);
     }

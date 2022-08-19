@@ -8,14 +8,11 @@
  * @neo/api - StoreReviewRequest.php
  */
 
-namespace Neo\Http\Requests\Reviews;
+namespace Neo\Modules\Broadcast\Http\Requests\Reviews;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Models\User;
-use Neo\Modules\Broadcast\Models\Schedule;
 
 class StoreReviewRequest extends FormRequest {
     /**
@@ -24,15 +21,7 @@ class StoreReviewRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        $gate = Gate::allows(Capability::contents_review->value);
-
-        /** @var Schedule $schedule */
-        $schedule = Schedule::query()->findOrFail($this->route()?->originalParameter("schedule"));
-
-        /** @var User $user */
-        $user = Auth::user();
-
-        return $gate && $user->canAccessCampaign($schedule->campaign_id);
+        return Gate::allows(Capability::contents_review->value);
     }
 
     /**

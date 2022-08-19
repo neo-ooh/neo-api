@@ -16,6 +16,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Services\PiSignage\Models\Asset;
 use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
@@ -52,7 +53,7 @@ class DestroySchedule extends PiSignageJob implements ShouldBeUnique {
 
         $creatives = $schedule->content->creatives;
 
-        /** @var \Neo\Modules\Broadcast\Models\Creative $creative */
+        /** @var Creative $creative */
         foreach ($creatives as $creative) {
             $assetName = Asset::inferNameFromCreative($creative, $schedule->id);
             Asset::delete($this->getAPIClient(), ["name" => $assetName]);

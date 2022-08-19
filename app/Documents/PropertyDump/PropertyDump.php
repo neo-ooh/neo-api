@@ -30,8 +30,6 @@ use Neo\Modules\Broadcast\Services\BroadSign\Models\DisplayType;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopPolicy;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Player as BSPlayer;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Skin;
-use Neo\Services\Broadcast\Broadcast;
-use Neo\Services\Broadcast\Broadcaster;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class PropertyDump extends XLSXDocument {
@@ -293,7 +291,7 @@ class PropertyDump extends XLSXDocument {
             "spots"   => 1
         ], $model->variables));
 
-        /** @var \Neo\Modules\Broadcast\Services\BroadSign\Models\LoopPolicy $loopPolicy */
+        /** @var LoopPolicy $loopPolicy */
         $loopPolicy = $this->loopPolicies->firstWhere("id", "=", $skin->loop_policy_id);
         $adsPerLoop = $loopPolicy->max_duration_msec / $loopPolicy->default_slot_duration;
 

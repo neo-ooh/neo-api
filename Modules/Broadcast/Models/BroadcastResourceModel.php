@@ -57,7 +57,7 @@ abstract class BroadcastResourceModel extends SecuredModel {
      * @return HasMany<ExternalResource>
      */
     public function external_representations(): HasMany {
-        return $this->hasMany(ExternalResource::class, "id", "id");
+        return $this->hasMany(ExternalResource::class, "resource_id", "id");
     }
 
     /**

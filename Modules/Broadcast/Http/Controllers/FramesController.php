@@ -43,9 +43,9 @@ class FramesController extends Controller {
         $frame->height    = $request->input("height");
         $frame->save();
 
-        $frame->broadcast_tags()->sync($request->input("tags"));
+        $frame->broadcast_tags()->sync($request->input("tags", []));
 
-        return new Response($frame->load("tags")->refresh(), 201);
+        return new Response($frame->load("broadcast_tags")->refresh(), 201);
     }
 
     /**
@@ -62,7 +62,7 @@ class FramesController extends Controller {
         ] = $request->validated();
         $frame->save();
 
-        $frame->broadcast_tags()->sync($request->input("broadcast_tags"));
+        $frame->broadcast_tags()->sync($request->input("tags", []));
 
         return new Response($frame->load("broadcast_tags")->refresh());
     }
@@ -74,7 +74,7 @@ class FramesController extends Controller {
      * @return Response
      * @throws Exception
      */
-    public function destroy(DestroyFrameRequest $request, Frame $frame): Response {
+    public function destroy(DestroyFrameRequest $request, Layout $layout, Frame $frame): Response {
         $frame->delete();
 
         return new Response([]);

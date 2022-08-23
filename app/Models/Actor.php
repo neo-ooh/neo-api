@@ -460,7 +460,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->details->parent_is_group;
     }
 
-    public function getIsPropertyAttribute(): ?int {
+    public function getIsPropertyAttribute(): ?bool {
         return $this->details->is_property;
     }
 

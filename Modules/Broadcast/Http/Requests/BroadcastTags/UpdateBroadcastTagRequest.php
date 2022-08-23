@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Enums\BroadcastTagScope;
-use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Rules\PublicRelations;
 
@@ -26,7 +25,6 @@ class UpdateBroadcastTagRequest extends FormRequest {
 
     public function rules() {
         return [
-            "type"    => ["required", new Enum(BroadcastTagType::class)],
             "name_en" => ["required", "string"],
             "name_fr" => ["required", "string"],
             "scope"   => ["nullable", "array"],

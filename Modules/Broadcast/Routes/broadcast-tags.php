@@ -50,5 +50,5 @@ Route::group([
     */
 
     Route::get("broadcast-tags/{broadcastTag}/representations", BroadcastTagsExternalRepresentationsController::class . "@index");
-    Route::put("broadcast-tags/{broadcastTag}/representations", BroadcastTagsExternalRepresentationsController::class . "@update");
+    Route::put("broadcast-tags/{broadcastTag}/representations/_sync", BroadcastTagsExternalRepresentationsController::class . "@update");
 });

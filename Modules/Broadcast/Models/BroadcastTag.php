@@ -15,8 +15,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Casts\EnumSetCast;
 use Neo\Models\Traits\WithPublicRelations;
+use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\BroadcastTagScope;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
+use Neo\Modules\Broadcast\Rules\AccessibleBroadcastTag;
 use Neo\Modules\Broadcast\Services\Resources\Tag as TagResource;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
@@ -35,7 +37,10 @@ class BroadcastTag extends BroadcastResourceModel {
     use SoftDeletes;
     use WithPublicRelations;
 
+    public BroadcastResourceType $resourceType = BroadcastResourceType::Tag;
+
     protected $table = "broadcast_tags";
+
 
     protected $fillable = [
         "id",
@@ -49,6 +54,8 @@ class BroadcastTag extends BroadcastResourceModel {
         "type"  => BroadcastTagType::class,
         "scope" => EnumSetCast::class . ":" . BroadcastTagScope::class
     ];
+
+    protected string $accessRule = AccessibleBroadcastTag::class;
 
     protected array $publicRelations = [
         "representations" => "external_representations"

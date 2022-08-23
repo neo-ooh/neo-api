@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
+use Neo\Modules\Broadcast\Http\Requests\Formats\DestroyFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\ShowFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\StoreFormatRequest;
@@ -81,6 +82,18 @@ class FormatsController extends Controller {
         $format->save();
 
         $format->broadcast_tags()->sync($request->input("tags"));
+
+        return new Response($format);
+    }
+
+    /**
+     * @param DestroyFormatRequest $request
+     * @param Format               $format
+     *
+     * @return Response
+     */
+    public function destroy(DestroyFormatRequest $request, Format $format): Response {
+        $format->delete();
 
         return new Response($format);
     }

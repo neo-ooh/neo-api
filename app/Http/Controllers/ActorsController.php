@@ -56,12 +56,8 @@ class ActorsController extends Controller {
         }
 
         // If the user
-        if ($params['withself'] ?? false) {
+        if ($request->input("withself", false)) {
             $actors = $actors->push(Auth::user());
-        }
-
-        if ($request->has("details")) {
-            $actors->load("details");
         }
 
         if ($request->has("campaigns_status")) {

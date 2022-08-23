@@ -5,18 +5,16 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - StoreFrameRequest.php
+ * @neo/api - DestroyFormatRequest.php
  */
 
-namespace Neo\Modules\Broadcast\Http\Requests\Frames;
+namespace Neo\Modules\Broadcast\Http\Requests\Formats;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Modules\Broadcast\Models\BroadcastTag;
 
-class StoreFrameRequest extends FormRequest {
+class DestroyFormatRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -32,12 +30,6 @@ class StoreFrameRequest extends FormRequest {
      * @return array
      */
     public function rules(): array {
-        return [
-            "name"   => ["required", "string"],
-            "width"  => ["required", "integer", "min:1"],
-            "height" => ["required", "integer", "min:1"],
-            "tags"   => ["array"],
-            "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")],
-        ];
+        return [];
     }
 }

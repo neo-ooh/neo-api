@@ -91,6 +91,11 @@ class Creative extends BroadcastResourceModel {
         "properties" => CreativeProperties::class,
     ];
 
+    protected $appends = [
+        "thumbnail_url",
+        "file_url",
+    ];
+
     public static function boot(): void {
         parent::boot();
 
@@ -156,7 +161,11 @@ class Creative extends BroadcastResourceModel {
      * @return string|null
      */
     public function getFilePathAttribute(): ?string {
-        return 'creatives/' . $this->file_uid . '.' . $this->properties->extension;
+        if ($this->type === CreativeType::Static) {
+            return 'creatives/' . $this->file_uid . '.' . $this->properties->extension;
+        }
+
+        return null;
     }
 
     /**
@@ -165,7 +174,11 @@ class Creative extends BroadcastResourceModel {
      * @return string|null
      */
     public function getFileUrlAttribute(): ?string {
-        return Storage::disk("public")->url($this->file_path);
+        if ($this->type === CreativeType::Static) {
+            return Storage::disk("public")->url($this->file_path);
+        }
+
+        return $this->properties->url;
     }
 
     /**

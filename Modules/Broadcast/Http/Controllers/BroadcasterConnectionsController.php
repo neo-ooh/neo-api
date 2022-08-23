@@ -84,7 +84,7 @@ class BroadcasterConnectionsController extends Controller {
     }
 
     public function show(ShowConnectionRequest $request, BroadcasterConnection $connection): Response {
-        return new Response($connection->load(["settings"]));
+        return new Response($connection->makeVisible(["settings"]));
     }
 
     public function update(UpdateConnectionRequest $request, BroadcasterConnection $connection): Response {

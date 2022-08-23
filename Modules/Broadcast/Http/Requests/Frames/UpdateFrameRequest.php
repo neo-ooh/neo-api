@@ -33,11 +33,11 @@ class UpdateFrameRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "name"             => ["required", "string"],
-            "width"            => ["required", "integer", "min:1"],
-            "height"           => ["required", "integer", "min:1"],
-            "broadcast_tags"   => ["present", "array"],
-            "broadcast_tags.*" => ["integer", new Exists(BroadcastTag::class, "id")],
+            "name"   => ["required", "string"],
+            "width"  => ["required", "integer", "min:1"],
+            "height" => ["required", "integer", "min:1"],
+            "tags"   => ["array"],
+            "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")],
         ];
     }
 }

@@ -31,7 +31,7 @@ class EnumSetCast implements CastsAttributes {
 
     public function set($model, $key, $value, $attributes) {
         if (is_array($value)) {
-            return implode(",", $value);
+            return implode(",", array_map(static fn($value) => $value->value, $value));
         }
 
         if (!is_string($value)) {

@@ -69,11 +69,11 @@ Route::group([
 
     Route::model("format", Format::class);
 
-    Route:: get("formats", FormatsController::class . "@index");
-    Route::post("formats", FormatsController::class . "@store");
-    Route:: get("formats/{format}", FormatsController::class . "@show");
-    Route:: put("formats/{format}", FormatsController::class . "@update");
-    Route:: put("formats/{format}", FormatsController::class . "@update");
+    Route::   get("formats", FormatsController::class . "@index");
+    Route::  post("formats", FormatsController::class . "@store");
+    Route::   get("formats/{format}", FormatsController::class . "@show");
+    Route::   put("formats/{format}", FormatsController::class . "@update");
+    Route::delete("formats/{format}", FormatsController::class . "@destroy");
 
     Route::put("formats/{format}/layouts/_sync", FormatsLayoutsController::class . "@sync");
     Route::put("formats/{format}/display-types/_sync", FormatsDisplayTypesController::class . "@sync");

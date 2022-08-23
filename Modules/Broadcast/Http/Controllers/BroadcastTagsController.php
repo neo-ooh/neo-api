@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Enums\BroadcastTagScope;
+use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\DeleteBroadcastTagRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\ListBroadcastTagsByIdRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\ListBroadcastTagsRequest;
@@ -33,12 +34,12 @@ class BroadcastTagsController extends Controller {
                 $query->whereIn("type", $request->input("types"));
             })->get();
 
-        return new Response($broadcastTags->each->withPublicRelations());
+        return new Response($broadcastTags->each(fn(BroadcastTag $tag) => $tag->withPublicRelations()));
     }
 
     public function store(StoreBroadcastTagRequest $request): Response {
         $broadcastTag          = new BroadcastTag();
-        $broadcastTag->type    = $request->enum("type", BroadcastTag::class);
+        $broadcastTag->type    = $request->enum("type", BroadcastTagType::class);
         $broadcastTag->name_en = $request->input("name_en");
         $broadcastTag->name_fr = $request->input("name_fr");
         $broadcastTag->scope   = array_map(static fn(string $scope) => BroadcastTagScope::from($scope), $request->input("scope", []));
@@ -55,11 +56,10 @@ class BroadcastTagsController extends Controller {
         /** @var Collection<BroadcastTag> $broadcastTags */
         $broadcastTags = BroadcastTag::withTrashed()->whereIn("id", $request->input("ids", []))->get();
 
-        return new Response($broadcastTags->each->withPublicRelations());
+        return new Response($broadcastTags->each(fn(BroadcastTag $tag) => $tag->withPublicRelations()));
     }
 
     public function update(UpdateBroadcastTagRequest $request, BroadcastTag $broadcastTag): Response {
-        $broadcastTag->type    = $request->enum("type", BroadcastTag::class);
         $broadcastTag->name_en = $request->input("name_en");
         $broadcastTag->name_fr = $request->input("name_fr");
         $broadcastTag->scope   = array_map(static fn(string $scope) => BroadcastTagScope::from($scope), $request->input("scope", []));
@@ -68,7 +68,7 @@ class BroadcastTagsController extends Controller {
         return new Response($broadcastTag->withPublicRelations());
     }
 
-    public function delete(DeleteBroadcastTagRequest $request, BroadcastTag $broadcastTag): Response {
+    public function destroy(DeleteBroadcastTagRequest $request, BroadcastTag $broadcastTag): Response {
         $broadcastTag->delete();
 
         return new Response(["status" => "ok"]);

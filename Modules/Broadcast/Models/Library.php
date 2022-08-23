@@ -98,9 +98,9 @@ class Library extends SecuredModel {
     protected string $accessRule = AccessibleLibrary::class;
 
     protected array $publicRelations = [
-        "contents" => "contents",
+        "contents" => ["contents", "contents.creatives"],
         "formats"  => "formats",
-        "layouts"  => "layouts",
+        "layouts"  => ["layouts", "layouts.frames"],
         "shares"   => "shares",
     ];
 
@@ -227,7 +227,7 @@ class Library extends SecuredModel {
      * @return HasManyDeep<Layout>
      */
     public function layouts(): HasManyDeep {
-        return $this->hasManyDeepFromRelations($this->formats(), (new Format())->layouts());
+        return $this->hasManyDeepFromRelations($this->formats(), (new Format())->layouts())->distinct();
     }
 
 

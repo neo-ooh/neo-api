@@ -23,7 +23,7 @@ class AccessLogsMiddleware {
             "path"    => $request->getPathInfo(),
             "query"   => $request->query->all(),
             "payload" => $request->json(),
-            "headers" => $request->headers->all(),
+            "headers" => array_filter($request->headers->all(), static fn($k) => $k !== "authorization"),
             "client"  => [
                 "ip"         => $request->getClientIp(),
                 "id"         => $request->user()->id ?? 0,

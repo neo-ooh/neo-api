@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class InvalidScheduleDatesException extends BaseException {
     public function __construct() {
-        parent::__construct("Invalid schedule broadcast dates, make sure they fit in the schedule's campaign.", "schedule.invalid-dates");
+        parent::__construct("Invalid schedule broadcast dates, make sure they fit in the schedule's campaign.", "schedules.invalid-dates");
     }
 }

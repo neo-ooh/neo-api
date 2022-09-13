@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Utils;
 use FFMpeg\FFProbe;
 use Neo\Exceptions\InvalidVideoCodec;
 use Neo\Exceptions\UnreadableCreativeException;
+use Neo\Modules\Broadcast\Enums\BroadcastParameters;
 use Neo\Modules\Broadcast\Exceptions\InvalidCreativeDimensions;
 use Neo\Modules\Broadcast\Exceptions\InvalidCreativeDuration;
 use Neo\Modules\Broadcast\Exceptions\InvalidCreativeFrameRate;
@@ -77,19 +78,15 @@ class CreativeValidator {
     protected function validateImage(): bool {
         [$this->creativeWidth, $this->creativeHeight] = getimagesize($this->file);
 
-        if ($this->creativeWidth !== $this->frame->width || $this->creativeHeight !== $this->frame->height) {
-            throw new InvalidCreativeDimensions(
-                expectedWidth: $this->frame->width,
-                expectedHeight: $this->frame->height,
-                foundWidth: $this->creativeWidth,
-                foundHeight: $this->creativeHeight,
-            );
-        }
+        $this->validateAspectRatio();
 
         // Weight
-        if ($this->file->getSize() > 1.049e+7) { //10 Mib
+        $maxSize = param(BroadcastParameters::CreativeImageMaxSizeMiB) * 1.049e+6; // MiB to Byte
+        if ($this->file->getSize() > $maxSize) { //10 Mib
             throw new InvalidCreativeSize();
         }
+
+        $this->validationPerformed = true;
 
         return true;
     }
@@ -101,6 +98,7 @@ class CreativeValidator {
      * @throws InvalidCreativeFrameRate
      * @throws InvalidVideoCodec
      * @throws UnreadableCreativeException
+     * @throws InvalidCreativeSize
      */
     protected function validateVideo(): bool {
         /** @noinspection SpellCheckingInspection */
@@ -125,14 +123,7 @@ class CreativeValidator {
         //Check video dimensions
         $this->creativeWidth  = (int)$videoStream->get("width");
         $this->creativeHeight = (int)$videoStream->get("height");
-        if ($this->creativeWidth !== $this->frame->width || $this->creativeHeight !== $this->frame->height) {
-            throw new InvalidCreativeDimensions(
-                expectedWidth: $this->frame->width,
-                expectedHeight: $this->frame->height,
-                foundWidth: $this->creativeWidth,
-                foundHeight: $this->creativeHeight
-            );
-        }
+        $this->validateAspectRatio();
 
         //Check framerate
         $framerate = $this->fracToFloat($videoStream->get("r_frame_rate"));
@@ -147,8 +138,30 @@ class CreativeValidator {
             throw new InvalidCreativeDuration(expectedLength: $this->content->duration, foundLength: $this->creativeLength);
         }
 
+        // Weight
+        $maxSize = param(BroadcastParameters::CreativeVideoMaxSizeMiB) * 1.049e+6;       // MiB to Byte
+        if ($this->file->getSize() > $maxSize) {
+            throw new InvalidCreativeSize();
+        }
+
+        $this->validationPerformed = true;
         return true;
     }
+
+    protected function validateAspectRatio() {
+        $creativeAspectRatio = aspect_ratio($this->creativeWidth / $this->creativeHeight);
+        $frameAspectRatio    = aspect_ratio($this->frame->width / $this->frame->height);
+
+        if ($creativeAspectRatio[0] !== $frameAspectRatio[0] || $creativeAspectRatio[1] !== $frameAspectRatio[1]) {
+            throw new InvalidCreativeDimensions(
+                expectedWidth: $this->frame->width,
+                expectedHeight: $this->frame->height,
+                foundWidth: $this->creativeWidth,
+                foundHeight: $this->creativeHeight,
+            );
+        }
+    }
+
 
     private function fracToFloat($frac): float {
         $numbers = explode("/", $frac);

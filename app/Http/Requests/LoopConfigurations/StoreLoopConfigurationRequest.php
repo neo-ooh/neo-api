@@ -18,9 +18,9 @@ class StoreLoopConfigurationRequest extends FormRequest {
     public function rules(): array {
         return [
             "name"           => ["required", "string"],
-            "loop_length_ms" => ["required", "integer"],
+            "loop_length_ms" => ["required", "integer", "min:1"],
             "spot_length_ms" => ["required", "integer", "lte:loop_length_ms"],
-            "reserved_spots" => ["required", "integer"],
+            "reserved_spots" => ["required", "integer", "min:0"],
             "start_date"     => ["required", "date"],
             "end_date"       => ["required", "date"],
         ];

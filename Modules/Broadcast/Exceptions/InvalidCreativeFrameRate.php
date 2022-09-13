@@ -13,6 +13,6 @@ namespace Neo\Modules\Broadcast\Exceptions;
 use Neo\Exceptions\BaseException;
 
 class InvalidCreativeFrameRate extends BaseException {
-    protected $code = "creative.bad-framerate";
+    protected $code = "creatives.bad-framerate";
     protected $message = "Creative framerate is not allowed";
 }

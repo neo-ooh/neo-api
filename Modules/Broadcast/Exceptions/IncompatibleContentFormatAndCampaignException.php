@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class IncompatibleContentFormatAndCampaignException extends BaseException {
     public function __construct() {
-        parent::__construct("Content layout does not fit in this campaign", "schedule.incompatible-layout");
+        parent::__construct("Content layout does not fit in this campaign", "schedules.incompatible-layout");
     }
 }

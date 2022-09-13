@@ -116,7 +116,6 @@ class Schedule extends BroadcastResourceModel {
      * @var array<string>
      */
     protected $appends = [
-        "details",
         "status",
     ];
 
@@ -208,7 +207,7 @@ class Schedule extends BroadcastResourceModel {
         if (!$this->details->is_approved) {
             // Schedule's content is not pre-approved,
             // Is their a review for it ?
-            if ($this->reviews_count === 0) {
+            if ($this->reviews()->count() === 0) {
                 return ScheduleStatus::Pending;
             }
 

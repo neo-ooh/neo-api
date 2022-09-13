@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class InvalidCreativeDimensions extends BaseException {
     public function __construct(int $expectedWidth, int $expectedHeight, int $foundWidth, int $foundHeight) {
-        parent::__construct("Invalid creative dimensions. Found {$foundWidth}x$foundHeight, expected {$expectedWidth}x$expectedHeight", "creative.bad-dimensions");
+        parent::__construct("Invalid creative dimensions. Found {$foundWidth}x$foundHeight, expected {$expectedWidth}x$expectedHeight", "creatives.bad-dimensions");
     }
 }

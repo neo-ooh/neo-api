@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
 use Neo\Enums\Capability;
@@ -46,7 +47,9 @@ class ContentsController extends Controller {
 
         if ($emptyContent) {
             // We have an already existing empty content, reassign it to the proper user, and return that
-            $emptyContent->owner_id = Auth::id();
+            $emptyContent->name       = "";
+            $emptyContent->owner_id   = Auth::id();
+            $emptyContent->created_at = Date::now();
             $emptyContent->save();
 
             // Since the content already exist in the library, we don't have to check the library's content limit.
@@ -66,7 +69,7 @@ class ContentsController extends Controller {
 
         $content             = new Content();
         $content->owner_id   = Auth::id();
-        $content->layout_id  = $library->getKey();
+        $content->layout_id  = $layoutId;
         $content->library_id = $library->getKey();
         $content->save();
         $content->refresh();

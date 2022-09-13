@@ -16,7 +16,7 @@ use JsonException;
 
 abstract class BaseException extends Exception {
     public function __construct(string $message = "", protected string $errorCode = "error.unknown", protected int $status = 422) {
-        parent::__construct($message, $this->errorCode);
+        parent::__construct($message, $this->status);
     }
 
     public function toArray(): array {

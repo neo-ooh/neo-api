@@ -30,7 +30,7 @@ class CampaignsController extends Controller {
      * @noinspection PhpUnusedParameterInspection
      */
     public function index(ListCampaignsRequest $request): Response {
-        return new Response($request->user()->getCampaigns()->each->withPublicRelations());
+        return new Response($request->user()->getCampaigns()->loadPublicRelations());
     }
 
     /**
@@ -102,7 +102,7 @@ class CampaignsController extends Controller {
         $campaign->start_time     = $request->input("start_time");
         $campaign->end_date       = $request->input("end_date");
         $campaign->end_time       = $request->input("end_time");
-        $campaign->broadcast_days = $request->input("weekdays");
+        $campaign->broadcast_days = $request->input("broadcast_days");
 
         $campaign->occurrences_in_loop = $request->input("occurrences_in_loop");
         $campaign->priority            = $request->input("priority");

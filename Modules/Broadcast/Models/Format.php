@@ -26,7 +26,7 @@ use Neo\Models\Traits\WithPublicRelations;
  * @property string                        $slug
  * @property int                           $network_id
  * @property string                        $name
- * @property boolean                       $is_enabled
+ * @property int                           $content_length
  *
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
@@ -65,16 +65,7 @@ class Format extends Model {
     protected $fillable = [
         "network_id",
         "name",
-        "is_enabled",
-    ];
-
-    /**
-     * The attributes that should be casted to other types
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        "is_enabled" => "boolean",
+        "content_length",
     ];
 
     protected array $publicRelations = [
@@ -114,7 +105,8 @@ class Format extends Model {
         return $this->belongsToMany(Layout::class, 'format_layouts', 'format_id', 'layout_id')
                     ->withPivot(["is_fullscreen"])
                     ->as("settings")->using(FormatLayoutPivot::class)
-                    ->orderBy("name");
+                    ->orderBy("name_en")
+                    ->orderBy("name_fr");
     }
 
     /**

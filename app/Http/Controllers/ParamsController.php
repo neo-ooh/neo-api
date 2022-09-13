@@ -78,7 +78,7 @@ class ParamsController extends Controller {
 
         // File is OK, store it properly
         if ($parameter->slug === "tos") {
-            $fileName = "terms-of-service.pdf";
+            $fileName = "$parameter->slug.$fileType";
             if (Storage::disk("public")->exists($fileName)) {
                 Storage::disk("public")->delete($fileName);
             }

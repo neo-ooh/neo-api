@@ -40,8 +40,8 @@ class UpdateLibraryRequest extends FormRequest {
             "owner_id"      => ["required", "integer", new AccessibleActor()],
             "content_limit" => ["required", "integer", "min:0"],
 
-            "formats"   => ["required", "array"],
-            "formats.*" => ["integer", new Exists(Format::class)],
+            "formats"   => ["array"],
+            "formats.*" => ["integer", new Exists(Format::class, 'id')],
 
             "with" => ["array", new PublicRelations(Library::class)],
         ];

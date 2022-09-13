@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Exceptions;
 use Neo\Exceptions\BaseException;
 
 class InvalidCreativeSize extends BaseException {
-    protected $code = "creative.too-heavy";
-    protected $message = "Creative size is too high.";
+    public function __construct() {
+        parent::__construct("Creative size is too big.", "creatives.too-heavy");
+    }
 }

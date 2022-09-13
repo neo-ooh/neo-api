@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class ContentIsNotEditableException extends BaseException {
     public function __construct() {
-        parent::__construct("Content is locked and cannot be changed. This also applies to the content's creatives.", "content.locked");
+        parent::__construct("Content is locked and cannot be changed. This also applies to the content's creatives.", "contents.locked");
     }
 }

@@ -14,6 +14,6 @@ use Exception;
 
 class InvalidScheduleTimesException extends Exception {
     public function __construct() {
-        parent::__construct("Invalid schedule broadcast times, make sure they fit in the schedule's campaign.", "schedule.invalid-times");
+        parent::__construct("Invalid schedule broadcast times, make sure they fit in the schedule's campaign.", "schedules.invalid-times");
     }
 }

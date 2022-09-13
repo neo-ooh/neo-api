@@ -33,9 +33,10 @@ class UpdateLayoutRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "name"   => ["required", "string"],
-            "tags"   => ["present", "array"],
-            "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")]
+            "name_en" => ["required", "string"],
+            "name_fr" => ["required", "string"],
+            "tags"    => ["present", "array"],
+            "tags.*"  => ["integer", new Exists(BroadcastTag::class, "id")]
         ];
     }
 }

@@ -9,5 +9,10 @@
   ],
   "aliases": {},
   "files": [],
-  "requires": []
+  "requires": [],
+  "migration": {
+    "seeds": [
+      "Neo\\Modules\\Broadcast\\Database\\Seeders\\DatabaseSeeder"
+    ]
+  }
 }

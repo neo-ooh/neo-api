@@ -12,12 +12,17 @@ namespace Neo\Providers;
 
 use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\ServiceProvider;
+use Neo\Helpers\CollectionHelpers;
+
 
 class AppServiceProvider extends ServiceProvider {
     public array $helpers = [
         "Helpers/models.php",
         "Helpers/array.php",
+        "Helpers/aspectRatio.php",
+        "Helpers/param.php",
     ];
 
     /**
@@ -39,7 +44,10 @@ class AppServiceProvider extends ServiceProvider {
      * @return void
      */
     public function boot(): void {
-        //
+        Collection::macro("loadPublicRelations", function () {
+            CollectionHelpers::loadPublicRelations($this);
+            return $this;
+        });
     }
 
     protected function registerHelpers(): void {

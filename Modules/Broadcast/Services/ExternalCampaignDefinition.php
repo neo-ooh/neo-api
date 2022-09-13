@@ -10,7 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Services;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Neo\Modules\Broadcast\Models\Location;
 
 class ExternalCampaignDefinition {

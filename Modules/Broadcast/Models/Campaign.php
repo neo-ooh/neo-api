@@ -122,9 +122,7 @@ class Campaign extends BroadcastResourceModel {
         "end_time"         => "date:H:i:s",
     ];
 
-    protected $appends = [
-        "status",
-    ];
+    protected $appends = [];
 
     /**
      * The rule used to validate access to the model upon binding it with a route
@@ -138,10 +136,11 @@ class Campaign extends BroadcastResourceModel {
         "parent"                   => "parent",
         "creator"                  => "creator",
         "shares"                   => "shares",
-        "schedules"                => ["schedules", "content", "schedules.owner:id,name"],
-        "expired_schedules"        => ["expired_schedules", "expired_schedules.content"],
+        "schedules"                => ["schedules.owner:id,name", "schedules.content.creatives"],
+        "expired_schedules"        => ["expired_schedules.content"],
         "locations"                => "locations",
-        "formats"                  => "formats",
+        "formats"                  => ["formats.layouts.frames"],
+        "tags"                     => "broadcast_tags",
     ];
 
     public static function boot(): void {
@@ -334,14 +333,14 @@ class Campaign extends BroadcastResourceModel {
         /** @var Collection<Location> $networkLocations */
         foreach ($locationsByNetworkId as $networkId => $networkLocations) {
             /** @var Collection<int, Location> $locationsByFormatId */
-            $locationsByFormatId = $networkLocations->mapToDictionary(fn(Location $location) => [$location->getRelationValue("pivot")->format_id, $location]);
+            $locationsByFormatId = collect($networkLocations)->mapToDictionary(fn(Location $location) => [$location->getRelationValue("pivot")->format_id, $location]);
 
             foreach ($locationsByFormatId as $formatId => $formatLocations) {
                 $breakdown[] = new ExternalCampaignDefinition(
                     campaign_id: $this->getKey(),
                     network_id: $networkId,
                     format_id: $formatId,
-                    locations: $formatLocations,
+                    locations: collect($formatLocations),
                 );
             }
         }

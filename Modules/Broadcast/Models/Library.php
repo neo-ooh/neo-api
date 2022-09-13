@@ -31,21 +31,23 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 /**
  * Neo\Models\Branding
  *
- * @property int                 $id
- * @property int                 $owner_id
- * @property string              $name
- * @property int                 $content_limit
+ * @property int                     $id
+ * @property int                     $owner_id
+ * @property string                  $name
+ * @property int                     $content_limit
  *
- * @property int                 $contents_count
+ * @property int                     $contents_count
  *
- * @property Actor               $owner
- * @property Collection<Content> $contents
- * @property Collection<Actor>   $shares
- * @property Collection<Format>  $formats
- * @property Collection<Layout>  $layouts
+ * @property Actor                   $owner
+ * @property Collection<Content>     $contents
+ * @property Collection<Actor>       $shares
+ * @property Collection<Format>      $formats
+ * @property Collection<Layout>      $layouts
  *
- * @property Carbon              $created_at
- * @property Carbon              $updated_at
+ * @property-read Collection<Layout> $content_layouts
+ *
+ * @property Carbon                  $created_at
+ * @property Carbon                  $updated_at
  *
  * @mixin Builder
  */
@@ -97,12 +99,15 @@ class Library extends SecuredModel {
      */
     protected string $accessRule = AccessibleLibrary::class;
 
-    protected array $publicRelations = [
-        "contents" => ["contents", "contents.creatives"],
-        "formats"  => "formats",
-        "layouts"  => ["layouts", "layouts.frames"],
-        "shares"   => "shares",
-    ];
+    protected function getPublicRelations() {
+        return [
+            "parent"   => ["owner"],
+            "contents" => ["contents", "contents.creatives", fn(Library $library) => $library->contents->loadCount("schedules")],
+            "formats"  => "formats",
+            "layouts"  => ["layouts", "layouts.frames", "append:content_layouts"],
+            "shares"   => "shares",
+        ];
+    }
 
     protected static function boot(): void {
         parent::boot();
@@ -227,7 +232,24 @@ class Library extends SecuredModel {
      * @return HasManyDeep<Layout>
      */
     public function layouts(): HasManyDeep {
-        return $this->hasManyDeepFromRelations($this->formats(), (new Format())->layouts())->distinct();
+        return $this->hasManyDeepFromRelations($this->formats(), (new Format())->layouts())
+                    ->distinct();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attributes
+    |--------------------------------------------------------------------------
+    */
+
+    public function getContentLayoutsAttribute(): Collection {
+        return $this->layouts()
+                    ->get()
+                    ->merge($this->hasManyDeepFromRelations($this->contents(), (new Content())->layout())
+                                 ->get())
+                    ->unique()
+                    ->load("frames");
     }
 
 

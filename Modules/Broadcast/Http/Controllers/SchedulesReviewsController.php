@@ -13,11 +13,16 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Controllers\Controller;
+use Neo\Modules\Broadcast\Http\Requests\Reviews\ListReviewRequest;
 use Neo\Modules\Broadcast\Http\Requests\Reviews\StoreReviewRequest;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Models\ScheduleReview;
 
 class SchedulesReviewsController extends Controller {
+    public function index(ListReviewRequest $request, Schedule $schedule) {
+        return new Response($schedule->reviews);
+    }
+
     /**
      * @param StoreReviewRequest $request
      * @param Schedule           $schedule

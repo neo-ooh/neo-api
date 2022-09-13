@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class CannotScheduleIncompleteContentException extends BaseException {
     public function __construct() {
-        parent::__construct("Cannot schedule an incomplete content.", "content.incomplete");
+        parent::__construct("Cannot schedule an incomplete content.", "contents.incomplete");
     }
 }

@@ -34,10 +34,11 @@ class StoreFormatRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "network_id" => ["required", "int", new Exists(Network::class, "id")],
-            "name"       => ["required", "string"],
-            "tags"       => ["present", "array"],
-            "tags.*"     => ["integer", new Exists(BroadcastTag::class, "id")],
+            "network_id"     => ["required", "int", new Exists(Network::class, "id")],
+            "name"           => ["required", "string"],
+            "tags"           => ["present", "array"],
+            "tags.*"         => ["integer", new Exists(BroadcastTag::class, "id")],
+            "content_length" => ["required", "integer", "min:0"]
         ];
     }
 }

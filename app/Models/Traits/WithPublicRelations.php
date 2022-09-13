@@ -78,10 +78,15 @@ trait WithPublicRelations {
 
         // The public relations list can have a mix of simple value and associative values.
         // We need to normalize the array to an associative list
+        /** @var mixed $value */
         foreach ($providedRelations as $key => $value) {
             if (is_string($key)) {
                 $publicRelations[$key] = $value;
                 continue;
+            }
+
+            if (is_callable($value)) {
+                throw new RuntimeException("Public relations with callable must use explicit keys");
             }
 
             $publicRelations[$value] = $value;
@@ -90,7 +95,7 @@ trait WithPublicRelations {
         return $publicRelations;
     }
 
-    protected function prepareRelationsList($relations) {
+    public function prepareRelationsList(string|array|null $relations = null) {
         if ($relations) {
             return is_array($relations) ? $relations : [$relations];
         }
@@ -137,7 +142,8 @@ trait WithPublicRelations {
                 $this->append($request);
                 break;
             case 'load':
-                $this->load($request);
+                clock("load:$request");
+                $this->loadMissing($request);
                 break;
         }
     }

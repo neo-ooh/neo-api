@@ -27,7 +27,7 @@ return new class extends Migration {
                            ->join("format_layouts", "format_layouts.format_id", "=", "formats.id")
                            ->join("layouts", "layouts.id", "=", "format_layouts.layout_id")
                            ->join("contents", "contents.layout_id", "=", "layouts.id")
-                           ->where("contents.library_id", "=", 54)
+                           ->where("contents.library_id", "=", $library->id)
                            ->distinct()
                            ->pluck("formats.id")
                            ->toArray();

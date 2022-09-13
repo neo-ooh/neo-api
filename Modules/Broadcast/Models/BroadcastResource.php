@@ -11,6 +11,7 @@
 namespace Neo\Modules\Broadcast\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 
 /**
@@ -29,4 +30,24 @@ class BroadcastResource extends Model {
     ];
 
     public $timestamps = false;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Relations
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return HasMany<BroadcastJob>
+     */
+    public function jobs(): HasMany {
+        return $this->hasMany(BroadcastJob::class, "resource_id", "id");
+    }
+
+    /**
+     * @return HasMany<ExternalResource>
+     */
+    public function external_representations(): HasMany {
+        return $this->hasMany(ExternalResource::class, "resource_id", "id")->withTrashed();
+    }
 }

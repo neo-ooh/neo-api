@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class IncompatibleFrameAndLayout extends BaseException {
     public function __construct() {
-        parent::__construct("Frame and format are not compatible", "format.incompatible-frame");
+        parent::__construct("Frame and format are not compatible", "formats.incompatible-frame");
     }
 }

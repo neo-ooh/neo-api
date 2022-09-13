@@ -51,9 +51,10 @@ class FormatsController extends Controller {
     }
 
     public function store(StoreFormatRequest $request): Response {
-        $format             = new Format();
-        $format->network_id = $request->input("network_id");
-        $format->name       = $request->input("name");
+        $format                 = new Format();
+        $format->network_id     = $request->input("network_id");
+        $format->name           = $request->input("name");
+        $format->content_length = $request->input("content_length");
         $format->save();
 
         $format->broadcast_tags()->sync($request->input("tags"));
@@ -78,7 +79,8 @@ class FormatsController extends Controller {
      * @return Response
      */
     public function update(UpdateFormatRequest $request, Format $format): Response {
-        $format->name = $request->input("name");
+        $format->name           = $request->input("name");
+        $format->content_length = $request->input("content_length");
         $format->save();
 
         $format->broadcast_tags()->sync($request->input("tags"));

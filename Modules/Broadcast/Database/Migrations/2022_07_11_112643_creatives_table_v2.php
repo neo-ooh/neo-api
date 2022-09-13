@@ -96,7 +96,7 @@ return new class extends Migration {
             }
 
             // Rename files
-            if ($env === 'production' && $creative->type === 'static') {
+            if (($env === 'production' || $env === 'development') && $creative->type === 'static') {
                 // Move creative file
                 $from = "creatives/" . $creative->id . "." . $creativeProperties->extension;
                 $to   = "creatives/" . Hashids::encode($broadcastResource->getKey()) . "." . $creativeProperties->extension;
@@ -105,7 +105,7 @@ return new class extends Migration {
                 Storage::disk("public")->move($from, $to);
 
                 // Move creative's thumbnail
-                $from = "creatives/" . $creative->id . "." . $creativeProperties->extension . "_thumb.jpeg";
+                $from = "creatives/" . $creative->id . "_thumb.jpeg";
                 $to   = "creatives/" . Hashids::encode($broadcastResource->getKey()) . "_thumb.jpeg";
 
                 Storage::disk("public")->move($from, $to);

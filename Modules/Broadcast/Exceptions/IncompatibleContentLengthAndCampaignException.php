@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class IncompatibleContentLengthAndCampaignException extends BaseException {
     public function __construct() {
-        parent::__construct("Content duration does not fit the campaign", "schedule.incompatible-duration");
+        parent::__construct("Content duration does not fit the campaign", "schedules.incompatible-duration");
     }
 }

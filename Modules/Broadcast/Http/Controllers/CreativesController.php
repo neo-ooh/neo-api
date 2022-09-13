@@ -102,6 +102,7 @@ class CreativesController extends Controller {
         // File the creative properties
         $creativeProperties            = new CreativeProperties();
         $creativeProperties->extension = $file->extension();
+        $creativeProperties->mime      = $file->getMimeType();
         $creativeProperties->checksum  = hash_file('sha256', $file->path());
 
         $creative->properties = $creativeProperties;
@@ -118,15 +119,15 @@ class CreativesController extends Controller {
         }
 
         // Properly rename the content if applicable
-        if ($content->name === '' && $content->creatives()->count() === 1) {
+        if (!$content->name) {
             // This creative is alone in the content, use its name as the name content
-            $content->name = $file->getClientOriginalName();
+            $content->name = str_replace("_", " ", pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME));
             $content->save();
         }
 
         $content->refresh();
 
-        return new Response($creative->load(["properties", "external_ids"]), 201);
+        return new Response($creative, 201);
     }
 
     protected function handleDynamicCreative($name, $url, $refreshInterval, Creative $creative, Content $content): Response {
@@ -151,7 +152,7 @@ class CreativesController extends Controller {
             $content->save();
         }
 
-        return new Response($creative->load(["properties", "external_ids"]), 201);
+        return new Response($creative, 201);
     }
 
     /**
@@ -174,6 +175,11 @@ class CreativesController extends Controller {
             $creative->forceDelete();
         } else {
             $creative->delete();
+        }
+
+        if ($content->creatives()->count() === 0) {
+            $content->duration = 0;
+            $content->save();
         }
 
         return new Response(["status" => "ok"]);

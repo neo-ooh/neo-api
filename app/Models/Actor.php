@@ -132,6 +132,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      */
     protected $hidden = [
         "password",
+        "details"
     ];
 
     /**

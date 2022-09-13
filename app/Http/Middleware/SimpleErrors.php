@@ -14,6 +14,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Neo\Exceptions\BaseException;
 
 class SimpleErrors {
     /**
@@ -26,6 +27,10 @@ class SimpleErrors {
     public function handle(Request $request, Closure $next) {
         /** @var Response $response */
         $response = $next($request);
+
+        if (($exception = $response->exception) && $exception instanceof BaseException) {
+            return $exception->asResponse();
+        }
 
         if (($exception = $response->exception) && (config('app.env') === 'production')) {
             if ($exception instanceof ValidationException) {

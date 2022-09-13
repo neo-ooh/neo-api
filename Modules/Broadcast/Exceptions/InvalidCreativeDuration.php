@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class InvalidCreativeDuration extends BaseException {
     public function __construct(float $expectedLength, float $foundLength) {
-        parent::__construct("Invalid creative duration. Found {$foundLength}s, expected {$expectedLength}s.", "creative.bad-duration");
+        parent::__construct("Invalid creative duration. Found {$foundLength}s, expected {$expectedLength}s.", "creatives.bad-duration");
     }
 }

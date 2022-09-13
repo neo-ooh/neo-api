@@ -38,10 +38,12 @@ class UpdateCampaignRequest extends FormRequest {
         return [
             "parent_id"  => ["required", "integer", new AccessibleActor()],
             "name"       => ["required", "string"],
-            "start_date" => ["required", "date:Y-m-d"],
-            "start_time" => ["required", "date:H:m:s"],
-            "end_date"   => ["required", "date:Y-m-d"],
-            "end_time"   => ["required", "date:H:m:s"],
+            "start_date" => ["required", "date_format:Y-m-d"],
+            "start_time" => ["required", "date_format:H:i:s"],
+            "end_date"   => ["required", "date_format:Y-m-d"],
+            "end_time"   => ["required", "date_format:H:i:s"],
+
+            "broadcast_days" => ["required", "integer", "max:127"],
 
             "occurrences_in_loop" => ["required", "integer", "min:0"],
             "priority"            => ["required", "integer", "min:0"],

@@ -34,7 +34,7 @@ class BroadcastTagsController extends Controller {
                 $query->whereIn("type", $request->input("types"));
             })->get();
 
-        return new Response($broadcastTags->each(fn(BroadcastTag $tag) => $tag->withPublicRelations()));
+        return new Response($broadcastTags->loadPublicRelations());
     }
 
     public function store(StoreBroadcastTagRequest $request): Response {

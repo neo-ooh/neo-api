@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -44,6 +45,10 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property Actor                     $owner                 The actor who created this content
  * @property Library                   $library               The library where this content resides
  * @property Layout                    $layout                The layout of the content
+ *
+ * @property Carbon                    $created_at
+ * @property Carbon                    $updated_at
+ * @property Carbon|null               $deleted_at
  *
  * @property-read Collection<Creative> $creatives             The content's creatives
  * @property-read int                  $creatives_count
@@ -99,33 +104,35 @@ class Content extends BroadcastResourceModel {
     ];
 
     /**
-     * The relationships that should always be loaded.
-     *
-     * @var array<string>
-     */
-    protected $with = ["creatives"];
-
-    /**
      * The rule used to validate access to the model upon binding it with a route
      *
      * @var string
      */
     protected string $accessRule = AccessibleContent::class;
 
-    protected array $publicRelations = [
-        "creatives"    => "creatives",
-        "external_ids" => "creatives.external_representations",
-        "schedules"    => ["schedules", "schedules.campaign"],
-        "layout"       => ["layout", "layout.format"],
-        "library"      => "library"
-    ];
+    protected function getPublicRelations() {
+        return [
+            "creatives"       => "creatives",
+            "external_ids"    => "creatives.external_representations",
+            "layout"          => ["layout", "layout.frames"],
+            "library"         => "library",
+            "owner"           => "owner",
+            "schedules"       => [
+                "schedules.broadcast_tags",
+                "schedules.campaign.parent:id,name"
+            ],
+            "schedules_count" => fn(Content $content) => $content->loadCount("schedules"),
+        ];
+    }
 
     public static function boot(): void {
         parent::boot();
 
         static::deleting(static function (Content $content) {
-            /** @var Creative $creative */
-            foreach ($content->creatives as $creative) {
+            /** @var Collection<Creative> $creatives */
+            $creatives = $content->creatives()->withTrashed()->get();
+
+            foreach ($creatives as $creative) {
                 if ($content->isForceDeleting()) {
                     $creative->forceDelete();
                 } else {
@@ -133,10 +140,12 @@ class Content extends BroadcastResourceModel {
                 }
             }
 
-            /** @var Schedule $schedule */
-            foreach ($content->schedules as $schedule) {
+            /** @var Collection<Schedule> $schedules */
+            $schedules = $content->schedules()->withTrashed()->get();
+
+            foreach ($schedules as $schedule) {
                 // If a schedule has not be reviewed, we want to completely remove it
-                if ($schedule->status === ScheduleStatus::Draft || $schedule->status === ScheduleStatus::Pending) {
+                if (($schedule->status === ScheduleStatus::Draft || $schedule->status === ScheduleStatus::Pending) || $schedule->isForceDeleting()) {
                     $schedule->forceDelete();
                 } else {
                     $schedule->delete();

@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class CannotScheduleContentAnymoreException extends BaseException {
     public function __construct() {
-        parent::__construct("Scheduling this content would exceed its scheduling limit.", "content.schedule-limit-reached");
+        parent::__construct("Scheduling this content would exceed its scheduling limit.", "contents.schedule-limit-reached");
     }
 }

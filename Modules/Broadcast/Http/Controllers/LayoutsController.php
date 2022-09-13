@@ -21,16 +21,15 @@ use Neo\Modules\Broadcast\Models\Layout;
 
 class LayoutsController extends Controller {
     public function index(ListLayoutsRequest $request): Response {
-        $layouts = Layout::query()->orderBy("name")->get();
+        $layouts = Layout::query()->orderBy("name_en")->orderBy("name_fr")->get();
 
-        $layouts->each(fn(Layout $layout) => $layout->withPublicRelations());
-
-        return new Response($layouts);
+        return new Response($layouts->loadPublicRelations());
     }
 
     public function store(StoreLayoutRequest $request): Response {
-        $layout       = new Layout();
-        $layout->name = $request->input("name");
+        $layout          = new Layout();
+        $layout->name_en = $request->input("name_en");
+        $layout->name_fr = $request->input("name_fr");
         $layout->save();
 
         $layout->broadcast_tags()->sync($request->input("tags"));
@@ -45,7 +44,8 @@ class LayoutsController extends Controller {
     }
 
     public function update(UpdateLayoutRequest $request, Layout $layout): Response {
-        $layout->name = $request->input("name");
+        $layout->name_en = $request->input("name_en");
+        $layout->name_fr = $request->input("name_fr");
         $layout->save();
 
         $layout->broadcast_tags()->sync($request->input("tags"));

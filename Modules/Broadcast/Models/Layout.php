@@ -23,7 +23,8 @@ use Neo\Models\Traits\WithPublicRelations;
  * Neo\Modules\Broadcast\Models\Layout
  *
  * @property int                      $id
- * @property string                   $name
+ * @property string                   $name_en
+ * @property string                   $name_fr
  * @property Date                     $created_at
  * @property Date                     $updated_at
  * @property Date                     $deleted_at
@@ -60,7 +61,8 @@ class Layout extends Model {
      * @var array<string>
      */
     protected $fillable = [
-        "name",
+        "name_en",
+        "name_fr",
         "is_fullscreen",
     ];
 

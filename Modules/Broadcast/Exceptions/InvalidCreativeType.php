@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class InvalidCreativeType extends BaseException {
     public function __construct() {
-        parent::__construct("Creative type must be either `static` or `dynamic`", "creative.invalid-type");
+        parent::__construct("Creative type must be either `static` or `dynamic`", "creatives.invalid-type");
     }
 }

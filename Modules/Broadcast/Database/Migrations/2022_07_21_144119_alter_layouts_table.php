@@ -22,9 +22,18 @@ return new class extends Migration {
             $table->boolean("is_fullscreen");
         });
 
+        Schema::table("layouts", static function (Blueprint $table) {
+            $table->string("name_fr")->after("name");
+        });
+
         $layouts = DB::table("layouts")->get();
 
         foreach ($layouts as $layout) {
+            DB::table("layouts")->where("id", "=", $layout->id)
+              ->update([
+                  "name_fr" => $layout->name,
+              ]);
+
             DB::table("format_layouts")->insert([
                 "format_id"     => $layout->format_id,
                 "layout_id"     => $layout->id,
@@ -33,6 +42,7 @@ return new class extends Migration {
         }
 
         Schema::table("layouts", static function (Blueprint $table) {
+            $table->renameColumn("name", "name_en");
             $table->dropForeign("formats_layouts_format_id_foreign");
             $table->dropColumn("format_id");
             $table->dropColumn("is_fullscreen");

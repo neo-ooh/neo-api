@@ -12,6 +12,7 @@ namespace Neo\Modules\Broadcast\Utils;
 
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
+use FFMpeg\FFProbe;
 use FFMpeg\Media\Video;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
@@ -47,25 +48,6 @@ class ThumbnailCreator {
      * @return resource|null
      */
     protected function makeThumbnailForImage(File $file) {
-        $ffmpeg = FFMpeg::create(config('ffmpeg'));
-
-        $tempName       = uniqid("thumb_", true);
-        $this->tempFile = Storage::disk('local')->path($tempName);
-
-        //thumbnail
-        /** @var Video $video */
-        $video = $ffmpeg->open($file->getRealPath());
-        $frame = $video->frame(TimeCode::fromSeconds(2));
-        $frame->save($this->tempFile);
-
-        return Storage::disk("local")->readStream($this->tempFile);
-    }
-
-    /**
-     * @param File $file
-     * @return resource|null
-     */
-    protected function makeThumbnailForVideo(File $file) {
         $img = Image::make($file);
         $img->resize(1280, 1280, function ($constraint) {
             $constraint->aspectRatio();
@@ -75,8 +57,32 @@ class ThumbnailCreator {
         return $img->stream("jpg", 75)->detach();
     }
 
+    /**
+     * @param File $file
+     * @return resource|null
+     */
+    protected function makeThumbnailForVideo(File $file) {
+        $ffmpeg  = FFMpeg::create(config('ffmpeg'));
+        $ffprobe = FFProbe::create(config('ffmpeg'));
+
+        $tempName       = uniqid("thumb_", true);
+        $this->tempFile = Storage::disk('local')->path($tempName);
+
+
+        //thumbnail
+        /** @var TimeCode $duration */
+        $duration = $ffprobe->format($file->getRealPath())->get("duration");
+
+        /** @var Video $video */
+        $video = $ffmpeg->open($file->getRealPath());
+        $frame = $video->frame(TimeCode::fromSeconds((double)$duration / 5));
+        $frame->save($this->tempFile);
+
+        return Storage::disk("local")->readStream($tempName);
+    }
+
     public function __destruct() {
-        if ($this->tempFile) {
+        if (isset($this->tempFile)) {
             // Clean temporary file
             Storage::disk('local')->delete($this->tempFile);
         }

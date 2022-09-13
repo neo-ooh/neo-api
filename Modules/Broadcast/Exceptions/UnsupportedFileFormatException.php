@@ -14,6 +14,6 @@ use Neo\Exceptions\BaseException;
 
 class UnsupportedFileFormatException extends BaseException {
     public function __construct() {
-        parent::__construct("Creative file format is not support", "creative.unsupported-file-format");
+        parent::__construct("Creative file format is not support", "creatives.bad-file-format");
     }
 }

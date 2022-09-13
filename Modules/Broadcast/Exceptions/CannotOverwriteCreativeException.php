@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Exceptions;
 use Neo\Exceptions\BaseException;
 
 class CannotOverwriteCreativeException extends BaseException {
-    protected $code = "creative.already-exist";
-    protected $message = "A creative is already present";
+    public function __construct() {
+        parent::__construct("A creative is already present", "creatives.already-exist");
+    }
 }

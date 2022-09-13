@@ -55,7 +55,7 @@ Route::group([
    |----------------------------------------------------------------------
    */
 
-    Route::model("schedule", Schedule::class);
+    Route::bind("schedule", fn($id) => Schedule::withTrashed()->find($id));
 
     Route::   get("schedules/_pending", SchedulesController::class . "@pending");
 
@@ -71,5 +71,6 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
+    Route::get("schedules/{schedule}/reviews", SchedulesReviewsController::class . "@index");
     Route::post("schedules/{schedule}/reviews", SchedulesReviewsController::class . "@store");
 });

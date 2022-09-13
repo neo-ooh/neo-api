@@ -16,11 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Neo\Models\Actor;
+use Neo\Models\Traits\WithPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CreativeType;
 use Neo\Modules\Broadcast\Exceptions\UnsupportedFileFormatException;
 use Neo\Modules\Broadcast\Jobs\Creatives\DeleteCreativeJob;
 use Neo\Modules\Broadcast\Models\StructuredColumns\CreativeProperties;
+use Neo\Modules\Broadcast\Rules\AccessibleCreative;
 use Neo\Modules\Broadcast\Services\Resources\Creative as CreativeResource;
 use Neo\Modules\Broadcast\Utils\ThumbnailCreator;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
@@ -52,6 +54,7 @@ use Vinkla\Hashids\Facades\Hashids;
  */
 class Creative extends BroadcastResourceModel {
     use SoftDeletes;
+    use WithPublicRelations;
 
     /*
     |--------------------------------------------------------------------------
@@ -95,6 +98,15 @@ class Creative extends BroadcastResourceModel {
         "thumbnail_url",
         "file_url",
     ];
+
+    protected array $publicRelations = [];
+
+    /**
+     * The rule used to validate access to the model upon binding it with a route
+     *
+     * @var string
+     */
+    protected string $accessRule = AccessibleCreative::class;
 
     public static function boot(): void {
         parent::boot();

@@ -40,7 +40,7 @@ class UpdateScheduleRequest extends FormRequest {
             "broadcast_days" => ["required", "int", "max:127"],
             "is_locked"      => ["required", "boolean"],
             "tags"           => ["array"],
-            "tags.*"         => ["integer", new Exists(BroadcastTag::class)]
+            "tags.*"         => ["integer", new Exists(BroadcastTag::class, "id")]
         ];
     }
 }

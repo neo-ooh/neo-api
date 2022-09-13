@@ -11,53 +11,24 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Neo\Enums\Parameters;
 use Neo\Models\Param;
 
 class ParamsSeeder extends Seeder {
-    public static function run (): void {
-        // Terms of service
-        Param::query()->insertOrIgnore([
-            "slug" => "tos",
-            "format" => "file:pdf",
-            "value" => ""
-        ]);
+    public static function run(): void {
+        foreach (Parameters::cases() as $paramCase) {
+            /** @var Param $param */
+            $param = Param::query()->firstOrCreate([
+                "slug" => $paramCase->value
+            ], [
+                "format" => $paramCase->format(),
+                "value"  => $paramCase->defaultValue(),
+            ]);
 
-        // English welcome text
-        Param::query()->insertOrIgnore([
-            "slug" => "WELCOME_TEXT_EN",
-            "format" => "text",
-            "value" => "..."
-        ]);
-
-        // French welcome text
-        Param::query()->insertOrIgnore([
-            "slug" => "WELCOME_TEXT_FR",
-            "format" => "text",
-            "value" => "..."
-        ]);
-
-        // Network actors references
-        Param::query()->insertOrIgnore([
-            "slug" => "NETWORK_SHOPPING",
-            "format" => "actor",
-            "value" => null
-        ]);
-        Param::query()->insertOrIgnore([
-            "slug" => "NETWORK_FITNESS",
-            "format" => "actor",
-            "value" => null
-        ]);
-
-        Param::query()->insertOrIgnore([
-            "slug" => "NETWORK_OTG",
-            "format" => "actor",
-            "value" => null
-        ]);
-
-        Param::query()->insertOrIgnore([
-            "slug" => "CONTRACTS_CONNECTION",
-            "format" => "broadcaster_connection",
-            "value" => 1
-        ]);
+            if ($param->format !== $paramCase->format()) {
+                $param->format = $paramCase->format();
+                $param->save();
+            }
+        }
     }
 }

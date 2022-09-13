@@ -15,29 +15,17 @@ return new class extends Migration {
         DB::statement("DROP VIEW IF EXISTS schedule_details");
 
         DB::statement(/** @lang SQL */ <<<EOF
-            CREATE VIEW `schedule_details` AS SELECT
-                `s`.`id` AS `schedule_id`,
-                `r`.`approved`,
-                (`c`.`is_approved` || `r`.`approved`) AS `is_approved`
-            FROM
-                (
-                    `neo_ooh_dev`.`schedules` `s`
-                LEFT JOIN `neo_ooh_dev`.`schedule_reviews` `r`
-                ON
-                    (`r`.`schedule_id` = `s`.`id`)
-                )
-                JOIN `contents` `c` ON `c`.`id` = `s`.`content_id`
-            WHERE
-                `r`.`id` =(
-                SELECT
-                    MAX(
-                        `neo_ooh_dev`.`schedule_reviews`.`id`
-                    )
-                FROM
-                    `neo_ooh_dev`.`schedule_reviews`
-                WHERE
-                    `neo_ooh_dev`.`schedule_reviews`.`schedule_id` = `s`.`id`
-            );
+            CREATE VIEW `schedule_details` AS 
+              SELECT `s`.`id`                              AS `schedule_id`,
+                     `c`.`is_approved` || COALESCE(`r`.`approved`, 0) AS `is_approved`
+              FROM
+                `neo_ooh_dev`.`schedules` `s`
+                  JOIN `contents` `c` ON `c`.`id` = `s`.`content_id`
+                  LEFT JOIN `neo_ooh_dev`.`schedule_reviews` `r`
+                    ON `r`.`id` = (
+                    SELECT MAX(`neo_ooh_dev`.`schedule_reviews`.`id`)
+                    FROM `neo_ooh_dev`.`schedule_reviews`
+                    WHERE `neo_ooh_dev`.`schedule_reviews`.`schedule_id` = `s`.`id`)
             EOF
         );
     }

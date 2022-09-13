@@ -36,7 +36,7 @@ class LibrariesController extends Controller {
         /** @var Collection<Library> $libraries */
         $libraries = Auth::user()->getLibraries();
 
-        return new Response($libraries->each->withPublicRelations());
+        return new Response($libraries->loadPublicRelations());
     }
 
     public function query(SearchLibrariesRequest $request): Response {
@@ -66,7 +66,7 @@ class LibrariesController extends Controller {
         $library->content_limit = $request->input("content_limit", 0);
         $library->save();
 
-        $library->formats()->sync($request->input("formats"));
+        $library->formats()->sync($request->input("formats", []));
 
         return new Response($library->withPublicRelations(), 201);
     }
@@ -94,11 +94,11 @@ class LibrariesController extends Controller {
 
         $library->save();
 
-        $library->formats()->sync($request->input("formats"));
+        $library->formats()->sync($request->input("formats", []));
 
         $library->refresh();
 
-        return new Response($library->withPublicRelations());
+        return new Response($library->load("layouts", "layouts.frames"));
     }
 
     /**

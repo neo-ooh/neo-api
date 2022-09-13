@@ -26,7 +26,7 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property ExternalResourceData $data
  * @property Carbon               $created_at
  * @property Carbon               $updated_at
- * @property Carbon               $deleted_at
+ * @property Carbon|null          $deleted_at
  */
 class ExternalResource extends Model {
     use SoftDeletes;

@@ -8,14 +8,14 @@
  * @neo/api - Asset.php
  */
 
-namespace Neo\Modules\Broadcast\Services\PiSignage\Models;
+namespace Neo\Services\Broadcast\PiSignage\Models;
 
 use Illuminate\Support\Str;
 use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Modules\Broadcast\Services\PiSignage\API\PiSignageClient;
 use Neo\Services\API\Endpoint;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\API\Parsers\SingleResourcesParser;
+use Neo\Services\Broadcast\PiSignage\API\PiSignageClient;
 
 /**
  * Class Group

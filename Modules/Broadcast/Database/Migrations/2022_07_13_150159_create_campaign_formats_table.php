@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - 2022_07_13_102548_contents_table_v2.php
+ * @neo/api - 2022_07_13_150159_create_campaign_formats_table.php
  */
 
 use Illuminate\Database\Migrations\Migration;
@@ -14,12 +14,11 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
-        Schema::table('contents', function (Blueprint $table) {
-            $table->dropColumn("broadsign_content_id");
-            $table->dropColumn("broadsign_bundle_id");
+        Schema::create('campaign_formats', function (Blueprint $table) {
+            $table->foreignId("campaign_id")->constrained("campaigns", "id")->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId("format_id")->constrained("formats", "id")->cascadeOnUpdate()->restrictOnDelete();
 
-            $table->renameColumn("scheduling_duration", "max_schedule_duration");
-            $table->renameColumn("scheduling_times", "max_schedule_count");
+            $table->unique(["campaign_id", "format_id"]);
         });
     }
 };

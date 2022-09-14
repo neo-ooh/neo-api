@@ -15,15 +15,7 @@ enum ExternalResourceType: string {
     case Creative = "creative";
     case Schedule = "schedule";
     case Campaign = "campaign";
-    case Location = "location";
-    case Player = "player";
-
 
     // BroadSign Specific
     case Bundle = "bundle";
-    case Container = "container";
-    case DisplayType = "display-type";
-
-    // Others
-    case Tag = "tag";
 }

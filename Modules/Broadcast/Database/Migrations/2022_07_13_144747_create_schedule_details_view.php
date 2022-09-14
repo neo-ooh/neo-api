@@ -11,13 +11,12 @@
 use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration {
-    public function up(): void {
-        DB::statement("DROP VIEW IF EXISTS schedule_details");
+    public function up() {
         \Illuminate\Support\Facades\DB::statement(/** @lang SQL */ <<<EOF
-            CREATE VIEW `schedule_details` AS
+            CREATE VIEW `schedules_details` AS
             SELECT
-                `s`.`id` AS `schedule_id`,
-                `r`.`approved` AS `is_approved`
+                `s`.`id` AS `id`,
+                `r`.`approved` AS `approved`
             FROM `schedules` `s`
                  LEFT JOIN `schedule_reviews` `r`
                  ON `r`.`schedule_id` = `s`.`id`

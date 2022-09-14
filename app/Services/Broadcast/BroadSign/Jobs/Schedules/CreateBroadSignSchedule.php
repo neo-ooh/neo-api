@@ -16,15 +16,15 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Actor;
-use Neo\Modules\Broadcast\Models\Content;
-use Neo\Modules\Broadcast\Models\Schedule;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Bundle as BSBundle;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopSlot;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Schedule as BSSchedule;
+use Neo\Models\Content;
+use Neo\Models\Schedule;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\AssociateAdCopyWithBundle;
 use Neo\Services\Broadcast\BroadSign\Jobs\Creatives\ImportCreativeInBroadSign;
+use Neo\Services\Broadcast\BroadSign\Models\Bundle as BSBundle;
+use Neo\Services\Broadcast\BroadSign\Models\LoopSlot;
+use Neo\Services\Broadcast\BroadSign\Models\Schedule as BSSchedule;
 use Symfony\Component\Translation\Exception\InvalidResourceException;
 
 /**
@@ -105,7 +105,7 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
         $actor = Actor::query()->findOrFail($this->actorID);
 
         // Load the broadsign loop slot for the campaign
-        $loopSlot = LoopSlot::forCampaign($this->getAPIClient(), $schedule->campaign->external_id)[0];
+        $loopSlot = LoopSlot::forCampaign($this->getAPIClient(), ["reservable_id" => $schedule->campaign->external_id])[0];
 
         if ($loopSlot === null) {
             throw new InvalidResourceException("Could not retrieve the loop slot for the reservation " . $schedule->campaign->external_id . ". ");
@@ -160,9 +160,9 @@ class CreateBroadSignSchedule extends BroadSignJob implements ShouldBeUnique {
      * A BroadSign bundle is the equivalent of a content in Access. They are played by schedules. A bundle needs its
      * creative to have finished importing to be associated with it.
      *
-     * @param \Neo\Modules\Broadcast\Models\Content $content
-     * @param BSSchedule                            $bsSchedule
-     * @param Schedule                              $schedule
+     * @param Content    $content
+     * @param BSSchedule $bsSchedule
+     * @param Schedule   $schedule
      *
      * @return void
      */

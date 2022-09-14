@@ -11,7 +11,7 @@ class RouteServiceProvider extends ServiceProvider {
      *
      * @var string
      */
-    protected string $moduleNamespace = 'Neo\Modules\Broadcast\Http\Controllers';
+    protected $moduleNamespace = 'Neo\Modules\Broadcast\Http\Controllers';
 
     /**
      * Called before routes are registered.
@@ -20,7 +20,7 @@ class RouteServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function boot(): void {
+    public function boot() {
         parent::boot();
     }
 
@@ -29,8 +29,23 @@ class RouteServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    public function map(): void {
+    public function map() {
         $this->mapApiRoutes();
+
+        $this->mapWebRoutes();
+    }
+
+    /**
+     * Define the "web" routes for the application.
+     *
+     * These routes all receive session state, CSRF protection, etc.
+     *
+     * @return void
+     */
+    protected function mapWebRoutes() {
+        Route::middleware('web')
+             ->namespace($this->moduleNamespace)
+             ->group(module_path('Broadcast', '/Routes/web.php'));
     }
 
     /**
@@ -40,11 +55,10 @@ class RouteServiceProvider extends ServiceProvider {
      *
      * @return void
      */
-    protected function mapApiRoutes(): void {
-        Route::group([], module_path('Broadcast', '/Routes/broadcast-tags.php'));
-        Route::group([], module_path('Broadcast', '/Routes/campaigns.php'));
-        Route::group([], module_path('Broadcast', '/Routes/formats.php'));
-        Route::group([], module_path('Broadcast', '/Routes/libraries.php'));
-        Route::group([], module_path('Broadcast', '/Routes/networks.php'));
+    protected function mapApiRoutes() {
+        Route::prefix('api')
+             ->middleware('api')
+             ->namespace($this->moduleNamespace)
+             ->group(module_path('Broadcast', '/Routes/api.php'));
     }
 }

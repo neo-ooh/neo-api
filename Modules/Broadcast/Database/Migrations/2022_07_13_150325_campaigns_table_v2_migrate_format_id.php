@@ -13,12 +13,11 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 return new class extends Migration {
-    public function up(): void {
+    public function up() {
         // For each campaign, we insert its external ID in the `external_resources` table
         $campaigns = \Illuminate\Support\Facades\DB::table("campaigns")->orderBy("id")->lazy(500);
 
-        $output = new ConsoleOutput();
-        $output->writeln("");
+        $output   = new ConsoleOutput();
         $progress = new ProgressBar($output);
         $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
         $progress->setMessage("");
@@ -27,9 +26,13 @@ return new class extends Migration {
         foreach ($campaigns as $campaign) {
             $progress->setMessage("Handling Campaign #$campaign->id");
             $progress->advance();
+
+            \Illuminate\Support\Facades\DB::table("campaign_formats")->insert([
+                "campaign_id" => $campaign->id,
+                "format_id"   => $campaign->format_id,
+            ]);
         }
 
         $progress->finish();
-        $output->writeln("");
     }
 };

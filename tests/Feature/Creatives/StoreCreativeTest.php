@@ -15,9 +15,9 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Modules\Broadcast\Models\Content;
+use Neo\Models\Content;
+use Neo\Models\Library;
 use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Modules\Broadcast\Models\Library;
 use Tests\TestCase;
 
 class StoreCreativeTest extends TestCase {
@@ -123,7 +123,7 @@ class StoreCreativeTest extends TestCase {
         /** @var Library $library */
         $library = Library::factory()->create(["owner_id" => $actor->id]);
 
-        /** @var \Neo\Modules\Broadcast\Models\Content $content */
+        /** @var Content $content */
         $content = Content::factory()->create([
             "owner_id"   => $actor->id,
             "library_id" => $library->id,
@@ -156,10 +156,10 @@ class StoreCreativeTest extends TestCase {
         $actor = Actor::factory()->create()->addCapability(Capability::contents_edit());
         $this->actingAs($actor);
 
-        /** @var \Neo\Modules\Broadcast\Models\Library $library */
+        /** @var Library $library */
         $library = Library::factory()->create(["owner_id" => $actor->id]);
 
-        /** @var \Neo\Modules\Broadcast\Models\Content $content */
+        /** @var Content $content */
         $content = Content::factory()->create([
             "owner_id"   => $actor->id,
             "library_id" => $library->id,

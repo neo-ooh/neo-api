@@ -18,7 +18,6 @@ return new class extends Migration {
         // For each of the new broadcast resources (contents, schedules, campaigns), we remove foreign keys on old id columns, old id columns, and add new FK with the new id columns
 
         $output = new ConsoleOutput();
-        $output->writeln("");
         $output->writeln("Dropping foreign keys and columns, and renaming references columns...");
 
         // Creatives
@@ -43,11 +42,10 @@ return new class extends Migration {
         });
 
         // Campaign Shares
-        Schema::drop("campaign_shares");
-        Schema::create("campaign_shares", static function (Blueprint $table) {
-            $table->foreignId("campaign_id");
-            $table->foreignId("actor_id")->constrained("actors", "id")->cascadeOnUpdate()->cascadeOnDelete();
-            $table->timestamps();
+        Schema::table("campaign_shares", static function (Blueprint $table) {
+            $table->dropPrimary("PRIMARY");
+            $table->dropConstrainedForeignId("campaign_id");
+            $table->renameColumn("campaign_id_tmp", "campaign_id");
             $table->primary(["campaign_id", "actor_id"]);
         });
 

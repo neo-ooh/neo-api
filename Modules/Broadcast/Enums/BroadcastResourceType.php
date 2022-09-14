@@ -16,6 +16,4 @@ enum BroadcastResourceType: string {
     case Content = 'content';
     case Schedule = 'schedule';
     case Campaign = 'campaign';
-
-    case Tag = 'tag';
 }

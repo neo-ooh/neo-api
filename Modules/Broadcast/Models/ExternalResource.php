@@ -13,14 +13,10 @@ namespace Neo\Modules\Broadcast\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
-use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @property int                  $id
- * @property ExternalResourceType $type
  * @property int                  $resource_id
  * @property int                  $broadcaster_id
  * @property ExternalResourceData $data
@@ -34,26 +30,14 @@ class ExternalResource extends Model {
     protected $table = "external_resources";
 
     protected $casts = [
-        "data" => ExternalResourceData::class,
+        "data" => "array",
     ];
 
     protected $fillable = [
         "resource_id",
         "broadcaster_id",
-        "type",
         "data",
         "created_at",
         "updated_at",
     ];
-
-    /**
-     * @return ExternalBroadcasterResourceId
-     * @throws UnknownProperties
-     */
-    public function toResource(): ExternalBroadcasterResourceId {
-        return new ExternalBroadcasterResourceId([
-            "type"        => $this->type,
-            "external_id" => $this->data->external_id,
-        ]);
-    }
 }

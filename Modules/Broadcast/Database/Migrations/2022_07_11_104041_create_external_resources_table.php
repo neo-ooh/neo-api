@@ -13,15 +13,14 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
-    public function up(): void {
-        Schema::create('external_resources', static function (Blueprint $table) {
+    public function up() {
+        Schema::create('external_resources', function (Blueprint $table) {
             $table->id();
             $table->foreignId("resource_id")->constrained("broadcast_resources", "id")->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId("broadcaster_id")
                   ->constrained("broadcasters_connections", "id")
                   ->cascadeOnUpdate()
                   ->cascadeOnDelete();
-            $table->string("type", 16)->index();
             $table->json("data");
 
             $table->timestamps();

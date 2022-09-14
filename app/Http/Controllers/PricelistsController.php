@@ -46,7 +46,7 @@ class PricelistsController {
     }
 
     public function show(ShowPricelistRequest $request, Pricelist $pricelist): Response {
-        return new Response($pricelist->load(["categories"]));
+        return new Response($pricelist->load(["categories", "products.property"]));
     }
 
     public function update(UpdatePricelistRequest $request, Pricelist $pricelist): Response {

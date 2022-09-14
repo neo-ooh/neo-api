@@ -13,12 +13,27 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Products\ImportMappingsRequest;
+use Neo\Http\Requests\Products\ListProductsRequest;
 use Neo\Http\Requests\Products\ShowProductRequest;
 use Neo\Models\Location;
 use Neo\Models\Product;
 use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 class ProductsController {
+    public function index(ListProductsRequest $request) {
+        if ($request->has("property_id")) {
+            $products = Product::query()->where("property_id", "=", $request->input("property_id"))->get();
+        } else {
+            $products = Product::query()->get();
+        }
+
+        if (in_array("category", $request->input("with", []))) {
+            $products->load("category");
+        }
+
+        return new Response($products);
+    }
+
     public function show(ShowProductRequest $request, Product $product) {
         $product->load([
             "attachments",

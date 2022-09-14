@@ -20,6 +20,7 @@ use Neo\Http\Controllers\LoopConfigurationsController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\OpeningHoursController;
 use Neo\Http\Controllers\PricelistProductsCategoriesController;
+use Neo\Http\Controllers\PricelistProductsController;
 use Neo\Http\Controllers\PricelistsController;
 use Neo\Http\Controllers\PricelistsPropertiesController;
 use Neo\Http\Controllers\ProductCategoriesController;
@@ -47,6 +48,7 @@ use Neo\Models\FieldsCategory;
 use Neo\Models\FieldSegment;
 use Neo\Models\LoopConfiguration;
 use Neo\Models\Pricelist;
+use Neo\Models\PricelistProduct;
 use Neo\Models\PricelistProductsCategory;
 use Neo\Models\Product;
 use Neo\Models\ProductCategory;
@@ -227,8 +229,9 @@ Route::group([
     Route:: put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 
     Route::post("products/_import-mappings", ProductsController::class . "@_importMappings");
-    Route::get("products/{product}", ProductsController::class . "@show");
 
+    Route::get("products", ProductsController::class . "@index");
+    Route::get("products/{product}", ProductsController::class . "@show");
     Route:: put("products/{product}/locations", ProductsLocationsController::class . "@sync");
 
     /*
@@ -293,12 +296,6 @@ Route::group([
     */
 
     Route::model("pricelist", Pricelist::class);
-    Route::model("pricelistProductsCategory", Neo\Models\PricelistProductsCategory::class, function ($value) {
-        return PricelistProductsCategory::query()
-                                        ->where("products_category_id", "=", $value)
-                                        ->where("pricelist_id", "=", Request::route()->parameter("pricelist"))
-                                        ->first();
-    });
 
     Route::   get("pricelists", PricelistsController::class . "@index");
     Route::  post("pricelists", PricelistsController::class . "@store");
@@ -307,12 +304,44 @@ Route::group([
     Route::   put("pricelists/{pricelist}", PricelistsController::class . "@update");
     Route::delete("pricelists/{pricelist}", PricelistsController::class . "@destroy");
 
+    Route::   get("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@index");
+    Route::   put("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@sync");
+
+    /*
+    |----------------------------------------------------------------------
+    | Price lists - Product categories
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("pricelistProductsCategory", Neo\Models\PricelistProductsCategory::class, function ($value) {
+        return PricelistProductsCategory::query()
+                                        ->where("products_category_id", "=", $value)
+                                        ->where("pricelist_id", "=", Request::route()->parameter("pricelist"))
+                                        ->first();
+    });
+
     Route::   get("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@index");
     Route::  post("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@store");
     Route::   get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@show");
     Route::   put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@update");
     Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@destroy");
 
-    Route::   get("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@index");
-    Route::   put("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@sync");
+    /*
+    |----------------------------------------------------------------------
+    | Price lists - Products
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("pricelistProduct", Neo\Models\PricelistProduct::class, function ($value) {
+        return PricelistProduct::query()
+                               ->where("product_id", "=", $value)
+                               ->where("pricelist_id", "=", Request::route()->parameter("pricelist"))
+                               ->first();
+    });
+
+    Route::   get("pricelists/{pricelist}/products", PricelistProductsController::class . "@index");
+    Route::  post("pricelists/{pricelist}/products", PricelistProductsController::class . "@store");
+    Route::   get("pricelists/{pricelist}/products/{pricelistProduct}", PricelistProductsController::class . "@show");
+    Route::   put("pricelists/{pricelist}/products/{pricelistProduct}", PricelistProductsController::class . "@update");
+    Route::delete("pricelists/{pricelist}/products/{pricelistProduct}", PricelistProductsController::class . "@destroy");
 });

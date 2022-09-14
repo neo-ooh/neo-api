@@ -13,9 +13,9 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\PricelistProductsCategories\DestroyPricelistProductsCategoryRequest;
 use Neo\Http\Requests\PricelistProductsCategories\ListPricelistProductsCategoriesRequest;
+use Neo\Http\Requests\PricelistProductsCategories\ShowPricelistProductsCategoryRequest;
 use Neo\Http\Requests\PricelistProductsCategories\StorePricelistProductCategoryRequest;
 use Neo\Http\Requests\PricelistProductsCategories\UpdatePricelistProductCategoryRequest;
-use Neo\Http\Requests\PropertiesStatistics\ShowPropertiesStatisticsRequest;
 use Neo\Models\Pricelist;
 use Neo\Models\PricelistProductsCategory;
 
@@ -42,7 +42,7 @@ class PricelistProductsCategoriesController {
         return new Response($categoryPricelist, 201);
     }
 
-    public function show(ShowPropertiesStatisticsRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
+    public function show(ShowPricelistProductsCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
         return new Response($pricelistProductsCategory);
     }
 

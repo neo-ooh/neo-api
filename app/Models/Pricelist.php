@@ -23,7 +23,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Carbon                                $created_at
  * @property Carbon                                $updated_at
  *
- * @property Collection<PricelistProductsCategory> $categories
+ * @property Collection<ProductCategory>           $categories
+ * @property Collection<Product>                   $products
+ *
+ * @property Collection<PricelistProductsCategory> $categories_pricings
+ * @property Collection<PricelistProduct>          $products_pricings
  */
 class Pricelist extends Model {
     protected $table = "pricelists";
@@ -49,8 +53,26 @@ class Pricelist extends Model {
                     ]);
     }
 
-    public function pricings(): HasMany {
+    public function products(): BelongsToMany {
+        return $this->belongsToMany(Product::class, "pricelists_products", "pricelist_id", "product_id")
+                    ->using(PricelistProduct::class)
+                    ->as("pricing")
+                    ->withPivot([
+                        "pricelist_id",
+                        "product_id",
+                        "pricing",
+                        "value",
+                        "min",
+                        "max"
+                    ]);
+    }
+
+    public function categories_pricings(): HasMany {
         return $this->hasMany(PricelistProductsCategory::class, "pricelist_id", "id");
+    }
+
+    public function products_pricings(): HasMany {
+        return $this->hasMany(PricelistProduct::class, "pricelist_id", "id");
     }
 
     public function properties(): HasMany {

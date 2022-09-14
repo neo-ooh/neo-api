@@ -106,7 +106,7 @@ class CampaignPlannerController {
         $networks        = Network::query()->get();
         $brands          = Brand::query()->with("child_brands:id,parent_id")->get();
         $pricelists      = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
-                                    ->with("pricings")
+                                    ->with(["categories_pricings", "products_pricings"])
                                     ->get();
 
         return [

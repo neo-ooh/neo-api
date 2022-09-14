@@ -18,10 +18,10 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Neo\Models\BroadSignCriteria;
 use Neo\Modules\Broadcast\Models\Campaign;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Campaign as BSCampaign;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\ResourceCriteria;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
+use Neo\Services\Broadcast\BroadSign\Models\Campaign as BSCampaign;
+use Neo\Services\Broadcast\BroadSign\Models\ResourceCriteria;
 
 /**
  * Class TargetCampaign
@@ -113,7 +113,7 @@ class TargetCampaign extends BroadSignJob implements ShouldBeUniqueUntilProcessi
         // Enumerate over the criteria already applied to the campaign
         $campaignCriteria = ResourceCriteria::for($this->getAPIClient(), $campaign->external_id);
 
-        /** @var \Neo\Modules\Broadcast\Services\BroadSign\Models\ResourceCriteria $criterion */
+        /** @var ResourceCriteria $criterion */
         foreach ($campaignCriteria as $criterion) {
             // Is this criterion in our requirements ?
             if (in_array($criterion->id, $requestedCriteria->pluck("broadsign_criteria_id")->toArray(), true)) {

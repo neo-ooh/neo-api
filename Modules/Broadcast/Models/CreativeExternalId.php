@@ -8,12 +8,11 @@
  * @neo/api - CreativeExternalId.php
  */
 
-namespace Neo\Models;
+namespace Neo\Modules\Broadcast\Models;
 
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Neo\Modules\Broadcast\Models\Creative;
 
 /**
  * Class CreativeExternalId

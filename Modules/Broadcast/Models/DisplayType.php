@@ -11,12 +11,12 @@
 namespace Neo\Modules\Broadcast\Models;
 
 use Carbon\Traits\Date;
-use Geocoder\Collection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Models\BroadcasterConnection;
 
 /**
  * Neo\Modules\Broadcast\Models\DisplayType
@@ -30,7 +30,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Date                  $updated_at
  *
  * @property BroadcasterConnection $broadcaster_connection
- * @property Collection<Location>  $locations
  *
  * @mixin Builder
  */
@@ -51,13 +50,13 @@ class DisplayType extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var array
      */
     protected $fillable = [
         "external_id",
         "connection_id",
         "name",
-        "internal_name",
+        "interna_name",
     ];
 
 
@@ -67,24 +66,17 @@ class DisplayType extends Model {
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * @return BelongsTo<BroadcasterConnection, DisplayType>
-     */
+    /* Network */
+
     public function broadcaster_connection(): BelongsTo {
         return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
     }
 
-    /**
-     * @return HasMany<Location>
-     */
     public function locations(): HasMany {
         return $this->hasMany(Location::class, "display_type_id", "id");
     }
 
-    /**
-     * @return BelongsToMany<Format>
-     */
     public function formats(): BelongsToMany {
-        return $this->belongsToMany(Format::class, "format_display_types", "display_type_id", "format_id");
+        return $this->belongsToMany(Format::class, "formats_display_types", "display_type_id", "format_id");
     }
 }

@@ -8,7 +8,7 @@
  * @neo/api - InsertScheduleRequest.php
  */
 
-namespace Neo\Modules\Broadcast\Http\Requests\Schedules;
+namespace Neo\Http\Requests\Schedules;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +23,7 @@ class InsertScheduleRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        $allowed  = Gate::allows(Capability::contents_schedule->value);
+        $allowed  = Gate::allows(Capability::contents_schedule);
         $campaign = Auth::user()->canAccessCampaign($this->route("campaign"));
         return $allowed && $campaign;
     }

@@ -22,7 +22,7 @@ use Neo\Modules\Broadcast\Models\Location;
 
 class ActorsLocationsController extends Controller {
     public function index(ListActorLocationsRequest $request, Actor $actor): Response {
-        if ($actor->is(Auth::user()) && Auth::user()?->hasCapability(Capability::locations_edit)) {
+        if ($actor->is(Auth::user()) && Auth::user()->hasCapability(Capability::locations_edit())) {
             return new Response(Location::all());
         }
 

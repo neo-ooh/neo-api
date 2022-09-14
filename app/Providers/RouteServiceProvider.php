@@ -37,6 +37,7 @@ class RouteServiceProvider extends ServiceProvider {
 
             // Core modules
             Route::group([], base_path('routes/core.actors.php'));
+            Route::group([], base_path('routes/core.formats.php'));
             Route::group([], base_path('routes/core.networks.php'));
             Route::group([], base_path('routes/core.parameters.php'));
             Route::group([], base_path('routes/core.roles.php'));
@@ -75,9 +76,9 @@ class RouteServiceProvider extends ServiceProvider {
      */
     protected function configureRateLimiting(): void {
         RateLimiter::for('api',
-            static function (Request $request) {
+            function (Request $request) {
                 $user       = $request->user();
-                $identifier = $user->id ?? $request->ip();
+                $identifier = $user?->id ?? $request->ip();
 
                 return Limit::perMinute($user ? 256 : 60)->by($identifier);
             });

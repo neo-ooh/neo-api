@@ -11,34 +11,34 @@
 namespace Neo\Http\Controllers;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Http\Requests\Impressions\ExportBroadsignImpressionsRequest;
 use Neo\Models\OpeningHours;
 use Neo\Models\Product;
 use Neo\Models\Property;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopPolicy;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Skin;
 use Neo\Services\Broadcast\Broadcast;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Services\Broadcast\BroadSign\Models\LoopPolicy;
+use Neo\Services\Broadcast\BroadSign\Models\Skin;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsController {
     public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, int $displayUnitId) {
-        if (!is_int($displayUnitId)) {
-            return new Response(["Invalid display unit id: $displayUnitId"], 400);
-        }
-
         $displayUnitId = (int)$displayUnitId;
 
         /** @var Location|null $location */
         $location = Location::query()->where("external_id", "=", $displayUnitId)->first();
 
+
         if (!$location) {
+            Log::warning("[ImpressionsController] Unknown display Unit ID: $displayUnitId");
             return new Response([
                 "error"   => true,
                 "type"    => "unknown-value",
@@ -49,6 +49,7 @@ class ImpressionsController {
         $config = Broadcast::network($location->network_id)->getConfig();
 
         if (!($config instanceof BroadSignConfig)) {
+            Log::warning("[ImpressionsController] Location #{$location->getKey()} ($location->name) is not a BroadSign display unit.");
             return new Response([
                 "error"   => true,
                 "type"    => "invalid-value",
@@ -56,23 +57,33 @@ class ImpressionsController {
             ], 400);
         }
 
-        $client = new BroadSignClient($config);
+        $client = new BroadsignClient($config);
 
         // We need to generate a file for each week of the year, for each frame of the display unit
         // Load the property, impressions data and traffic data attached with this location
         /** @var Product|null $product */
         $product = $location->products()
                             ->with(["impressions_models", "category.impressions_models"])
-                            ->withCount("locations")
                             ->first();
 
         if (!$product) {
+            Log::warning("[ImpressionsController] Location #{$location->getKey()} ($location->name) is not associated with any product");
             return new Response([
                 "error"   => true,
                 "type"    => "invalid-value",
                 "message" => "The Display Unit is not associated with a product.",
             ], 400);
         }
+
+        try {
+            $this->buildBroadSignAudienceFile($client, $location, $product);
+        } catch (Exception $e) {
+            Log::error($e->__toString());
+        }
+        exit;
+    }
+
+    protected function buildBroadSignAudienceFile(BroadsignClient $client, Location $location, Product $product): void {
 
         /** @var Property $property */
         $property                         = Property::query()
@@ -169,7 +180,12 @@ class ImpressionsController {
 
                 // Because the impression for the product is spread on all the display unit attached to it,
                 // we divide the number of impressions by the number of display unit for the product
-                $impressionsPerDay = $impressionsPerDay / $product->locations_count;
+                $locationsCount = $product->locations()->count();
+                if ($locationsCount > 0) {
+                    $impressionsPerDay /= $locationsCount;
+                } else {
+                    Log::warning("[ImpressionsController] No location attached to product $product->name_en ({$property->actor->name})");
+                }
 
                 /** @var OpeningHours $hours */
                 $hours = $property->opening_hours->firstWhere("weekday", "=", $weekday);
@@ -181,12 +197,24 @@ class ImpressionsController {
 
                 /** @var Skin $frame */
                 foreach ($frames as $frame) {
-                    $playPerDay         = $openLengths[$weekday] * 60_000 / ($frame->loop_policy->max_duration_msec);
-                    $impressionsPerPlay = $impressionsPerDay / $playPerDay;
+                    /**
+                     * @var LoopPolicy $loopPolicy
+                     */
+                    $loopPolicy = $frame->loop_policy;
+                    $duration   = $loopPolicy->max_duration_msec;
 
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $frame->loop_policy->primary_inventory_share_msec;
+                    // If a loop policy has a max_duration_msec set to 0, we treat it as a screen no provinding impressions,
+                    // Such as a slave player.
+                    if ($duration > 0) {
+                        $playPerDay         = $openLengths[$weekday] * 60_000 / $duration;
+                        $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 
-                    $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
+                        $playsPerHour       = 3_600_000 /* 3600 * 1000 (ms) */ / $loopPolicy->primary_inventory_share_msec;
+                        $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
+                    } else {
+                        $impressionsPerHour = 0;
+                    }
+
 
                     $sheet->printRow([
                         $location->external_id,
@@ -218,6 +246,5 @@ class ImpressionsController {
         header("content-type: text/csv");
 
         $writer->save("php://output");
-        exit;
     }
 }

@@ -17,10 +17,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Broadcast\Models\Campaign;
-use Neo\Modules\Broadcast\Services\PiSignage\Models\Group;
-use Neo\Modules\Broadcast\Services\PiSignage\Models\Playlist;
-use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
+use Neo\Modules\Broadcast\Models\Location;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
+use Neo\Services\Broadcast\PiSignage\Models\Group;
+use Neo\Services\Broadcast\PiSignage\Models\Playlist;
+use Neo\Services\Broadcast\PiSignage\PiSignageConfig;
 
 /**
  * @package Neo\Jobs

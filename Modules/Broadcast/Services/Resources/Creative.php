@@ -12,30 +12,15 @@ namespace Neo\Modules\Broadcast\Services\Resources;
 
 use Neo\Modules\Broadcast\Enums\CreativeType;
 
-class Creative extends ExternalBroadcasterResource {
+class Creative extends ExternalBroadcastResource {
     public string $name;
-    public string $fileName;
     public CreativeType $type;
 
     public int $width;
     public int $height;
 
-    public int $length_ms;
+    public int $length;
 
-    /**
-     * @var string file path to the creative file, will not be set for Url creatives
-     */
-    public string $path;
-
-    /**
-     * @var string file extension of the creative file, will not be set for Url creatives
-     */
+    public int $url;
     public string|null $extension;
-
-    /**
-     * @var string Url to the creative
-     */
-    public string $url;
-
-    public int $refresh_rate_minutes;
 }

@@ -24,15 +24,26 @@ class StoreReviewRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        $gate = Gate::allows(Capability::contents_review->value);
+        $gate  = Gate::allows(Capability::contents_review);
+        $route = $this->route();
 
-        /** @var Schedule $schedule */
-        $schedule = Schedule::query()->findOrFail($this->route()?->originalParameter("schedule"));
+        if (!$route) {
+            return false;
+        }
 
-        /** @var User $user */
+
+        /** @var Schedule|null $schedule */
+        $schedule = $route->parameter("schedule");
+
+        /** @var User|null $user */
         $user = Auth::user();
 
-        return $gate && $user->canAccessCampaign($schedule->campaign_id);
+        if (!$user || !$schedule) {
+            return false;
+        }
+
+        $access = $user->canAccessCampaign($schedule->campaign_id);
+        return $gate && $access;
     }
 
     /**

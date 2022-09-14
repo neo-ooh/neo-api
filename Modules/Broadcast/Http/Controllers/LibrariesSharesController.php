@@ -11,36 +11,31 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
-use Neo\Modules\Broadcast\Http\Requests\LibrariesShares\DestroyLibraryShareRequest;
-use Neo\Modules\Broadcast\Http\Requests\LibrariesShares\ListLibrarySharesRequest;
-use Neo\Modules\Broadcast\Http\Requests\LibrariesShares\StoreLibraryShareRequest;
+use Neo\Http\Requests\LibrariesShares\DestroyLibraryShareRequest;
+use Neo\Http\Requests\LibrariesShares\StoreLibraryShareRequest;
 use Neo\Modules\Broadcast\Models\Library;
 
 class LibrariesSharesController extends Controller {
-    public function index(ListLibrarySharesRequest $request, Library $library): Response {
+    /**
+     * @param StoreLibraryShareRequest              $request
+     * @param \Neo\Modules\Broadcast\Models\Library $library
+     *
+     * @return Response
+     */
+    public function store(StoreLibraryShareRequest $request, Library $library) {
+        $library->shares()->attach($request->validated()["actor_id"]);
+
         return new Response($library->shares);
     }
 
     /**
-     * @param StoreLibraryShareRequest $request
-     * @param Library                  $library
+     * @param DestroyLibraryShareRequest            $request
+     * @param \Neo\Modules\Broadcast\Models\Library $library
      *
      * @return Response
      */
-    public function store(StoreLibraryShareRequest $request, Library $library): Response {
-        $library->shares()->attach($request->input("actor_id"));
-
-        return new Response($library->shares);
-    }
-
-    /**
-     * @param DestroyLibraryShareRequest $request
-     * @param Library                    $library
-     *
-     * @return Response
-     */
-    public function destroy(DestroyLibraryShareRequest $request, Library $library): Response {
-        $library->shares()->detach($request->validated("actor_id"));
+    public function destroy(DestroyLibraryShareRequest $request, Library $library) {
+        $library->shares()->detach($request->validated()["actor_id"]);
 
         return new Response($library->shares);
     }

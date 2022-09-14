@@ -5,22 +5,22 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - core.libraries.php
+ * @neo/api - libraries.php
  */
 
-use Illuminate\Support\Facades\Route;
-use Neo\Http\Controllers\ContentsController;
-use Neo\Http\Controllers\CreativesController;
-use Neo\Http\Controllers\LibrariesController;
-use Neo\Http\Controllers\LibrariesSharesController;
-use Neo\Models\Content;
-use Neo\Models\Library;
+
+use Neo\Modules\Broadcast\Http\Controllers\ContentsController;
+use Neo\Modules\Broadcast\Http\Controllers\CreativesController;
+use Neo\Modules\Broadcast\Http\Controllers\LibrariesController;
+use Neo\Modules\Broadcast\Http\Controllers\LibrariesSharesController;
+use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Creative;
+use Neo\Modules\Broadcast\Models\Library;
 
 Route::group([
     "middleware" => "default",
     "prefix"     => "v1"
-], function () {
+], static function () {
 
     /*
     |----------------------------------------------------------------------

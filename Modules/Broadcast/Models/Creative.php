@@ -12,20 +12,16 @@ namespace Neo\Modules\Broadcast\Models;
 
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\FFMpeg;
+use FFMpeg\Media\Video;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Facades\Image;
 use Neo\Models\Actor;
-use Neo\Models\Content;
-use Neo\Models\CreativeExternalId;
-use Neo\Models\Factories\CreativeFactory;
-use Neo\Models\Frame;
+use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CreativeType;
 use Neo\Modules\Broadcast\Models\StructuredColumns\CreativeProperties;
 use Neo\Services\Broadcast\Broadcast;
@@ -35,19 +31,18 @@ use Ramsey\Collection\Collection;
  * Neo\Modules\Broadcast\Models\Creative
  *
  * @property int                            $id
- * @property string                         $type
+ * @property CreativeType                   $type
  * @property int                            $owner_id
  * @property int                            $content_id
  * @property int                            $frame_id
  * @property string                         $original_name
- * @property string                         $status
  * @property int                            $duration
+ * @property CreativeProperties             $properties
  *
  * @property Actor                          $owner
  * @property Content                        $content
  * @property Frame                          $frame
  *
- * @property CreativeProperties             $properties
  * @property Collection<CreativeExternalId> $external_ids
  *
  * @property string                         $file_path
@@ -57,8 +52,7 @@ use Ramsey\Collection\Collection;
  *
  * @mixin Builder
  */
-class Creative extends Model {
-    use HasFactory;
+class Creative extends BroadcastResourceModel {
     use SoftDeletes;
 
     /*
@@ -67,6 +61,7 @@ class Creative extends Model {
     |--------------------------------------------------------------------------
     */
 
+    public BroadcastResourceType $resourceType = BroadcastResourceType::Creative;
 
     /**
      * The table associated with the model.
@@ -81,18 +76,24 @@ class Creative extends Model {
      * @var array
      */
     protected $fillable = [
-        "content_id",
-        "owner_id",
-        "frame_id",
         "type",
+        "owner_id",
+        "content_id",
+        "frame_id",
         "original_name",
-        "duration"
+        "duration",
+        "properties",
+    ];
+
+    protected $casts = [
+        "type"       => CreativeType::class,
+        "properties" => CreativeProperties::class,
     ];
 
     public static function boot(): void {
         parent::boot();
 
-        static::deleting(function (Creative $creative) {
+        static::deleting(static function (Creative $creative) {
             // Tell services to disable the creative
             /** @var CreativeExternalId $externalId */
             foreach ($creative->external_ids as $externalId) {
@@ -107,26 +108,12 @@ class Creative extends Model {
                 $creative->content->save();
             }
 
+            $creative->deleteFile();
+
             if ($creative->isForceDeleting()) {
-                $creative->eraseThumbnail();
+                $creative->deleteThumbnail();
             }
         });
-    }
-
-    public function eraseFile(): void {
-        if ($this->type === CreativeType::Static) {
-            Storage::disk("public")->delete($this->file_path);
-        }
-    }
-
-    public function eraseThumbnail(): void {
-        if ($this->type === CreativeType::Static->value) {
-            Storage::disk("public")->delete($this->thumbnail_path);
-        }
-    }
-
-    protected static function newFactory(): CreativeFactory {
-        return CreativeFactory::new();
     }
 
     /*
@@ -168,7 +155,7 @@ class Creative extends Model {
      * @return string|null
      */
     public function getFilePathAttribute(): ?string {
-        return 'creatives/creative_' . $this->getKey() . '.' . $this->extension;
+        return 'creatives/creative_' . $this->getKey() . '.' . $this->properties->extension;
     }
 
     /**
@@ -205,7 +192,7 @@ class Creative extends Model {
 
         $this->createThumbnail($file);
         Storage::disk("public")
-               ->putFileAs("creatives", $file, $this->creative_id . '.' . $this->extension, ["visibility" => "public"]);
+               ->putFileAs("creatives", $file, $this->id . '.' . $this->properties->extension, ["visibility" => "public"]);
     }
 
 
@@ -214,8 +201,7 @@ class Creative extends Model {
      *
      * @param UploadedFile $file
      *
-     * @return void
-     * @throws FileNotFoundException
+     * @return bool
      */
     public function createThumbnail(UploadedFile $file): bool {
         if ($this->type !== CreativeType::Static) {
@@ -252,7 +238,7 @@ class Creative extends Model {
      *
      * @param UploadedFile $file
      *
-     * @return void
+     * @return bool
      */
     private function createImageThumbnail(UploadedFile $file): bool {
         $img = Image::make($file);
@@ -270,16 +256,16 @@ class Creative extends Model {
      *
      * @param UploadedFile $file
      *
-     * @return void
-     * @throws FileNotFoundException
+     * @return bool
      */
     private function createVideoThumbnail(UploadedFile $file): bool {
         $ffmpeg = FFMpeg::create(config('ffmpeg'));
 
-        $tempName = 'thumb_' . $this->checksum;
+        $tempName = 'thumb_' . $this->properties->checksum;
         $tempFile = Storage::disk('local')->path($tempName);
 
         //thumbnail
+        /** @var Video $video */
         $video = $ffmpeg->open($file->path());
         $frame = $video->frame(TimeCode::fromSeconds(1));
         $frame->save($tempFile);
@@ -289,5 +275,17 @@ class Creative extends Model {
         Storage::disk('local')->delete($tempName);
 
         return $result;
+    }
+
+    public function deleteFile(): void {
+        if ($this->type === CreativeType::Static) {
+            Storage::disk("public")->delete($this->file_path);
+        }
+    }
+
+    public function deleteThumbnail(): void {
+        if ($this->type === CreativeType::Static) {
+            Storage::disk("public")->delete($this->thumbnail_path);
+        }
     }
 }

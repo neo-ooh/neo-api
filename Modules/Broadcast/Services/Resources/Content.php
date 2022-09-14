@@ -10,9 +10,9 @@
 
 namespace Neo\Modules\Broadcast\Services\Resources;
 
-class Content extends ExternalBroadcasterResource {
+class Content extends ExternalBroadcastResource {
     public string $name;
 
-    public int $duration_msec;
+    public int $length;
     public bool $fullscreen;
 }

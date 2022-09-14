@@ -22,7 +22,6 @@ use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 use Neo\Models\Traits\HasLoopConfigurations;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
 /**
  * @property int                           $id
@@ -99,7 +98,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     }
 
     public function locations(): BelongsToMany {
-        return $this->belongsToMany(Location::class, "products_locations", "product_id", "location_id")->withPivot(["format_id"]);
+        return $this->belongsToMany(Location::class, "products_locations", "product_id", "location_id");
     }
 
     public function attachments(): BelongsToMany {
@@ -152,8 +151,19 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     }
 
     public function getLoopConfiguration(Carbon $date): LoopConfiguration|null {
-        $configurationValidator = function (LoopConfiguration $loopConfiguration) use ($date) {
-            return $loopConfiguration->dateIsInPeriod($date);
+        $normalizedDate = $date->clone()->setYear(2000);
+
+        $configurationValidator = function (LoopConfiguration $loopConfiguration) use ($normalizedDate) {
+            $crossesNewYear = $loopConfiguration->start_date->isAfter($loopConfiguration->end_date);
+
+            // If the period crosses the new year, we have to change our comparison
+            if ($crossesNewYear) {
+                // ----x----|start|----✓----|NY|----✓----|end|----x----
+                return $normalizedDate >= $loopConfiguration->start_date || $normalizedDate <= $loopConfiguration->end_date;
+            }
+
+            // ----x----|start|----✓----|end|----x----|NY|
+            return $loopConfiguration->start_date <= $normalizedDate && $normalizedDate <= $loopConfiguration->end_date;
         };
 
         $loopConfiguration = $this->loop_configurations->first($configurationValidator);

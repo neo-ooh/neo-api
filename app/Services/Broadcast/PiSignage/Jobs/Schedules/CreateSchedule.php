@@ -17,8 +17,8 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\Schedule;
 use Neo\Modules\Broadcast\Models\Creative;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Services\Broadcast\PiSignage\Jobs\Campaigns\SetCampaignSchedules;
 use Neo\Services\Broadcast\PiSignage\Jobs\Creatives\AssignCreativeValidity;
 use Neo\Services\Broadcast\PiSignage\Jobs\PiSignageJob;
@@ -45,7 +45,7 @@ class CreateSchedule extends PiSignageJob implements ShouldBeUnique {
     public function handle(): void {
         // in PiSignage, since Schedule do not exist there, we place the creatives in the playlist only if the schedule is approved.
 
-        /** @var Schedule $schedule */
+        /** @var \Neo\Modules\Broadcast\Models\Schedule $schedule */
         $schedule = Schedule::query()->find($this->scheduleId);
 
         if (!$schedule) {

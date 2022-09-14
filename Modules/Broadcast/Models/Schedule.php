@@ -15,22 +15,17 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Actor;
-use Neo\Models\Traits\WithPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
-use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
-use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 use Neo\Modules\Broadcast\Rules\AccessibleSchedule;
-use Neo\Modules\Broadcast\Services\Resources\Schedule as ScheduleResource;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
+use Neo\Services\Broadcast\Broadcast;
 
 /**
  * Neo\Models\Branding
  *
- * - OdooModel Attributes
+ * - Model Attributes
  *
  * @property int                        $id
  * @property int                        $campaign_id
@@ -40,15 +35,14 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property Date                       $start_time
  * @property Date                       $end_date
  * @property Date                       $end_time
- * @property int                        $broadcast_days
  * @property int                        $order
- * @property bool                       $is_locked
- *
- * @property ScheduleDetails            $details
+ * @property bool                       $locked
+ * @property bool                       $is_approved
+ * @property int                        $print_count
  *
  * - Custom Attributes
  * @property float                      $length
- * @property ScheduleStatus             $status
+ * @property string                     $status
  *
  * - Relations
  * @property Actor                      $owner
@@ -62,7 +56,12 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  */
 class Schedule extends BroadcastResourceModel {
     use SoftDeletes;
-    use WithPublicRelations;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Model properties
+    |--------------------------------------------------------------------------
+    */
 
     public BroadcastResourceType $resourceType = BroadcastResourceType::Schedule;
     /**
@@ -75,7 +74,7 @@ class Schedule extends BroadcastResourceModel {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array<string>
+     * @var array
      */
     protected $fillable = [
         "campaign_id",
@@ -92,7 +91,7 @@ class Schedule extends BroadcastResourceModel {
     /**
      * The attributes that should be cast.
      *
-     * @var array<string, string>
+     * @var array
      */
     protected $casts = [
         "is_locked" => "boolean",
@@ -106,27 +105,28 @@ class Schedule extends BroadcastResourceModel {
     /**
      * The relationships that should always be loaded.
      *
-     * @var array<string>
+     * @var array
      */
-    protected $with = ["details"];
+    protected $with = ["reviews"];
+
+    /**
+     * The relationships counts that should always be loaded.
+     *
+     * @var array
+     */
+    protected $withCount = ["reviews"];
 
     /**
      * The attributes that should always be loaded.
      *
-     * @var array<string>
+     * @var array
      */
     protected $appends = [
-        "details",
         "status",
+        "available_options"
     ];
 
     protected string $accessRule = AccessibleSchedule::class;
-
-    protected array $publicRelations = [
-        "content" => "content",
-        "reviews" => "reviews",
-        "owner"   => "owner",
-    ];
 
     /*
     |--------------------------------------------------------------------------
@@ -134,15 +134,30 @@ class Schedule extends BroadcastResourceModel {
     |--------------------------------------------------------------------------
     */
 
-    protected static function boot(): void {
+    protected static function boot() {
         parent::boot();
 
-        static::deleting(static function (Schedule $schedule) {
-            // Clean up all reviews for the schedule
-            $schedule->reviews()->delete();
+        static::deleting(function (Schedule $schedule) {
+            // Execute the deletion on broadsign side
+            if ($schedule->external_id_2 === null || $schedule->campaign->network_id === null) {
+                return;
+            }
 
-            // Dispatch job to delete schedules in broadcasters
-            DeleteScheduleJob::dispatch($schedule->getKey());
+            $network = Broadcast::network($schedule->campaign->network_id);
+
+            $network->destroySchedule($schedule->id);
+            $network->updateCampaignSchedulesOrder($schedule->campaign_id);
+
+            // Adjust order of remaining schedules in the campaign
+            foreach ($schedule->campaign->schedules as $s) {
+                if ($s->id === $schedule->id) {
+                    continue;
+                }
+
+                if ($s->order >= $schedule->order && $s->order !== 0) {
+                    $s->decrement('order', 1);
+                }
+            }
         });
     }
 
@@ -152,60 +167,34 @@ class Schedule extends BroadcastResourceModel {
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * @return HasOne<ScheduleDetails>
-     */
-    public function details(): HasOne {
-        return $this->hasOne(ScheduleDetails::class, 'schedule_id', 'id');
-    }
-
-    /**
-     * @return BelongsTo<Actor, Schedule>
-     */
     public function owner(): BelongsTo {
         return $this->belongsTo(Actor::class, 'owner_id', 'id');
     }
 
-    /**
-     * @return BelongsTo<Campaign, Schedule>
-     */
     public function campaign(): BelongsTo {
         return $this->belongsTo(Campaign::class, 'campaign_id', 'id')->withTrashed();
     }
 
-    /**
-     * @return BelongsTo<Content, Schedule>
-     */
     public function content(): BelongsTo {
         return $this->belongsTo(Content::class, 'content_id', 'id')->withTrashed();
     }
 
-    /**
-     * @return HasMany<ScheduleReview>
-     */
     public function reviews(): HasMany {
         return $this->hasMany(ScheduleReview::class, 'schedule_id', 'id')->orderByDesc("created_at");
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Attributes
-    |--------------------------------------------------------------------------
-    */
 
     public function getStatusAttribute(): ScheduleStatus {
         if ($this->trashed()) {
             return ScheduleStatus::Trashed;
         }
 
-        if (!$this->is_locked) {
+        if (!$this->locked) {
             return ScheduleStatus::Draft;
         }
 
         // Schedule is locked
         // Check reviews and its content pre-approval
-        if (!$this->details->is_approved) {
+        if (!$this->is_approved) {
             // Schedule's content is not pre-approved,
             // Is their a review for it ?
             if ($this->reviews_count === 0) {
@@ -232,62 +221,28 @@ class Schedule extends BroadcastResourceModel {
         return ScheduleStatus::Live;
     }
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attributes
+    |--------------------------------------------------------------------------
+    */
+
+    public function getAvailableOptionsAttribute(): array {
+//        $network = $this->campaign->network;
+
+        /** @noinspection PhpUnnecessaryLocalVariableInspection */
+        /** @noinspection OneTimeUseVariablesInspection */
+        $options = ["dates", "time"];
+
+//        switch ($network->broadcaster_connection->broadcaster) {
+//            case Broadcaster::BROADSIGN:
+//        }
+
+        return $options;
+    }
+
     public function getLengthAttribute(): float {
-        return $this->content->duration;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    |
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * @throws UnknownProperties
-     */
-    public function toResource(): ScheduleResource {
-        return new ScheduleResource([
-            "enabled"        => $this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live,
-            "name"           => $this->campaign->name . " - " . $this->content->name,
-            "start_date"     => $this->start_date->toDateString(),
-            "start_time"     => $this->start_time->toTimeString(),
-            "end_date"       => $this->end_date->toDateString(),
-            "end_time"       => $this->end_date->toTimeString(),
-            "broadcast_days" => $this->broadcast_days,
-            "order"          => $this->order,
-        ]);
-    }
-
-    /**
-     * Get the external resources matching the given parameters
-     *
-     * @param int $broadcasterId
-     * @param int $networkId
-     * @param int $formatId
-     * @return array<ExternalResource>
-     */
-    public function getExternalRepresentation(int $broadcasterId, int $networkId, int $formatId): array {
-        return $this->external_representations->filter(function (ExternalResource $resource) use ($formatId, $networkId, $broadcasterId) {
-            return $resource->broadcaster_id === $broadcasterId &&
-                $resource->data->network_id === $networkId &&
-                in_array($formatId, $resource->data->formats_id, true);
-        })->toArray();
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Actions
-    |--------------------------------------------------------------------------
-    */
-
-    /**
-     * Create update the schedule in broadcasters
-     *
-     * @return void
-     */
-    public function promote(): void {
-        PromoteScheduleJob::dispatch($this->getKey());
+        return round($this->content->duration) > 0 ? $this->content->duration : $this->campaign->schedules_default_length;
     }
 }

@@ -17,10 +17,10 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Broadcast\Models\Schedule;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Schedule as BSSchedule;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
 use Neo\Services\Broadcast\BroadSign\Jobs\BroadSignJob;
 use Neo\Services\Broadcast\BroadSign\Jobs\Campaigns\UpdateBroadSignCampaign;
+use Neo\Services\Broadcast\BroadSign\Models\Schedule as BSSchedule;
 
 /**
  * Class UpdateBroadSignScheduleStatus

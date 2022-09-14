@@ -34,7 +34,7 @@ class AccessibleCampaign implements Rule {
             return false;
         }
 
-        return $user->canAccessCampaign($campaign->getKey());
+        return $user->canAccessCampaign($campaign);
     }
 
     /**

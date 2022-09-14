@@ -20,10 +20,10 @@ use Illuminate\Queue\SerializesModels;
 use Neo\Models\OpeningHours;
 use Neo\Models\Property;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
 use Neo\Services\Broadcast\Broadcast;
+use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
+use Neo\Services\Broadcast\BroadSign\BroadSignConfig;
+use Neo\Services\Broadcast\BroadSign\Models\DayPart;
 
 class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -68,7 +68,7 @@ class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
                 continue;
             }
 
-            $client = new BroadSignClient($networkConfig);
+            $client = new BroadsignClient($networkConfig);
 
             // We get all the dayparts of the display unit
             $dayParts = DayPart::getByDisplayUnit($client, $location->external_id);

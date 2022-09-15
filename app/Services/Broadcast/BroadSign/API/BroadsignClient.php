@@ -14,6 +14,7 @@ use Cache;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Log;
 use JsonException;
+use Neo\Exceptions\BadAPIPResponseException;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\APIClientInterface;
 use Neo\Services\Broadcast\BroadSign\BroadSignConfig;

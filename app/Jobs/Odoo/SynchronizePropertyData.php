@@ -17,6 +17,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Neo\Models\ProductCategory;
 use Neo\Models\ProductType;
 use Neo\Models\Property;
@@ -45,6 +46,7 @@ class SynchronizePropertyData implements ShouldQueue {
 
         // Check the property is matched with an odoo property
         if (!$property->odoo) {
+            Log::warning("[SynchronizeProperty] Could not found property with ID #$this->propertyId");
             return;
         }
 
@@ -52,6 +54,7 @@ class SynchronizePropertyData implements ShouldQueue {
         $odooProperty = $this->odooProperty ?? OdooProperty::get($this->client, $property->odoo->odoo_id);
 
         if (!$odooProperty) {
+            Log::warning("[SynchronizeProperty] [#$this->propertyId {$property->actor->name}] Could not found odoo property with ID #{$property->odoo->odoo_id}");
             return;
         }
 

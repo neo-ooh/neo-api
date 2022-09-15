@@ -136,7 +136,7 @@ class Campaign extends BroadcastResourceModel {
         "parent"                   => "parent",
         "creator"                  => "creator",
         "shares"                   => "shares",
-        "schedules"                => ["schedules.owner:id,name", "schedules.content.creatives"],
+        "schedules"                => ["schedules.owner:id,name", "schedules.content.creatives", "schedules.broadcast_tags"],
         "expired_schedules"        => ["expired_schedules.content"],
         "locations"                => "locations",
         "formats"                  => ["formats.layouts.frames"],
@@ -195,7 +195,7 @@ class Campaign extends BroadcastResourceModel {
      */
     public function schedules(): HasMany {
         return $this->hasMany(Schedule::class, "campaign_id", "id")
-                    ->where("end_date", "<", Carbon::now())
+                    ->where("end_date", ">", Carbon::now()->subWeek())
                     ->orderBy("order");
     }
 
@@ -205,8 +205,8 @@ class Campaign extends BroadcastResourceModel {
     public function expired_schedules(): HasMany {
         return $this->hasMany(Schedule::class, "campaign_id", "id")
                     ->withTrashed()
-                    ->where("end_date", ">", Carbon::now())
-                    ->orderBy("end_date");
+                    ->where("end_date", "<", Carbon::now()->subWeek())
+                    ->orderByDesc("end_date");
     }
 
     /**
@@ -282,7 +282,7 @@ class Campaign extends BroadcastResourceModel {
      */
     public function promote(): void {
         PromoteCampaignJob::dispatch($this->getKey())->chain(
-            $this->schedules->map(fn(Schedule $schedule) => new PromoteScheduleJob($schedule->getKey()))
+            $this->schedules()->get()->map(fn(Schedule $schedule) => new PromoteScheduleJob($schedule->getKey()))
         );
     }
 

@@ -83,7 +83,7 @@ class ScheduleValidator {
             throw new InvalidScheduleTimesException();
         }
 
-        if ($weekdays & $campaign->broadcast_days !== $weekdays) {
+        if (($weekdays & $campaign->broadcast_days) !== $weekdays) {
             throw new InvalidScheduleBroadcastDaysException();
         }
     }

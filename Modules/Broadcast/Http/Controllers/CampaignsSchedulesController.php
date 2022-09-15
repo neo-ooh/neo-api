@@ -86,10 +86,10 @@ class CampaignsSchedulesController extends Controller {
      * @throws InvalidScheduleTimesException
      */
     public function update(UpdateScheduleRequest $request, Campaign $campaign, Schedule $schedule): Response {
-        $startDate     = Carbon::parse($request->input("start_date"), "Y-m-d");
-        $startTime     = Carbon::parse($request->input("start_time"), "H:m:s");
-        $endDate       = Carbon::parse($request->input("end_date"), "Y-m-d");
-        $endTime       = Carbon::parse($request->input("end_time"), "H:m:s");
+        $startDate     = Carbon::createFromFormat("Y-m-d", $request->input("start_date"));
+        $startTime     = Carbon::createFromFormat("H:i:s", $request->input("start_time"));
+        $endDate       = Carbon::createFromFormat("Y-m-d", $request->input("end_date"));
+        $endTime       = Carbon::createFromFormat("H:i:s", $request->input("end_time"));
         $broadcastDays = $request->input("broadcast_days");
 
         // Make sure the schedules dates can be edited
@@ -114,7 +114,7 @@ class CampaignsSchedulesController extends Controller {
         $schedule->end_time       = $endTime;
         $schedule->broadcast_days = $broadcastDays;
 
-        if ($request->input("is_locked", false)) {
+        if (!$schedule->is_locked && $request->input("is_locked", false)) {
             $schedule->is_locked = true;
 
             /** @var Actor $user */
@@ -133,6 +133,7 @@ class CampaignsSchedulesController extends Controller {
                 SendReviewRequestEmail::dispatch($schedule->id);
             }
         }
+
         $schedule->save();
 
         if (Gate::allows(Capability::schedules_tags->value)) {
@@ -144,7 +145,7 @@ class CampaignsSchedulesController extends Controller {
         // Propagate the update to the associated BroadSign Schedule
         $schedule->promote();
 
-        return new Response($schedule->load("content", "owner"));
+        return new Response($schedule);
     }
 
     /**

@@ -96,7 +96,7 @@ return new class extends Migration {
             }
 
             // Rename files
-            if (($env === 'production' || $env === 'development') && $creative->type === 'static') {
+            if (($env === 'production') && $creative->type === 'static') {
                 // Move creative file
                 $from = "creatives/" . $creative->id . "." . $creativeProperties->extension;
                 $to   = "creatives/" . Hashids::encode($broadcastResource->getKey()) . "." . $creativeProperties->extension;

@@ -33,14 +33,17 @@ class UpdateScheduleRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "start_date"     => ["required", "date:Y-m-d"],
-            "start_time"     => ["required", "date:H:m:s"],
-            "end_date"       => ["required", "date:Y-m-d"],
-            "end_time"       => ["required", "date:H:m:s"],
+            "is_locked" => ["required", "boolean"],
+
+            "start_date" => ["required", "date_format:Y-m-d"],
+            "start_time" => ["required", "date_format:H:i:s"],
+            "end_date"   => ["required", "date_format:Y-m-d"],
+            "end_time"   => ["required", "date_format:H:i:s"],
+
             "broadcast_days" => ["required", "int", "max:127"],
-            "is_locked"      => ["required", "boolean"],
-            "tags"           => ["array"],
-            "tags.*"         => ["integer", new Exists(BroadcastTag::class, "id")]
+
+            "tags"   => ["array"],
+            "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")]
         ];
     }
 }

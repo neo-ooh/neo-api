@@ -98,9 +98,9 @@ class Schedule extends BroadcastResourceModel {
         "is_locked" => "boolean",
 
         "start_date" => "date:Y-m-d",
-        "start_time" => "date:H:m:s",
+        "start_time" => "date:H:i:s",
         "end_date"   => "date:Y-m-d",
-        "end_time"   => "date:H:m:s",
+        "end_time"   => "date:H:i:s",
     ];
 
     /**
@@ -207,12 +207,15 @@ class Schedule extends BroadcastResourceModel {
         if (!$this->details->is_approved) {
             // Schedule's content is not pre-approved,
             // Is their a review for it ?
-            if ($this->reviews()->count() === 0) {
+            $mostRecentReview = $this->reviews()->first();
+
+            if (!$mostRecentReview) {
                 return ScheduleStatus::Pending;
             }
 
+
             // Is the last review valid ?
-            if (!$this->reviews->first()->approved) {
+            if (!$mostRecentReview->approved) {
                 return ScheduleStatus::Rejected;
             }
         }

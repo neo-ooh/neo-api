@@ -54,6 +54,7 @@ class SynchronizeProperties extends Command {
         }
 
         $progressBar->finish();
+        $this->output->writeln("");
 
         return 0;
     }

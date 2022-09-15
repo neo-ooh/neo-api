@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Neo\Models\Actor;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CreativeType;
 use Neo\Modules\Broadcast\Exceptions\UnsupportedFileFormatException;
@@ -54,7 +54,7 @@ use Vinkla\Hashids\Facades\Hashids;
  */
 class Creative extends BroadcastResourceModel {
     use SoftDeletes;
-    use WithPublicRelations;
+    use HasPublicRelations;
 
     /*
     |--------------------------------------------------------------------------

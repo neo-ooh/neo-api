@@ -21,7 +21,7 @@ use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 use Neo\Models\Traits\HasLoopConfigurations;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
@@ -54,7 +54,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     use SoftDeletes;
     use HasImpressionsModels;
     use HasLoopConfigurations;
-    use WithPublicRelations;
+    use HasPublicRelations;
 
     protected $table = "products";
 

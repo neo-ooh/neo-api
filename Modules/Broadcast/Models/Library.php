@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
 use Neo\Models\Factories\LibraryFactory;
 use Neo\Models\SecuredModel;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
@@ -54,7 +54,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 class Library extends SecuredModel {
     use HasFactory;
     use Notifiable;
-    use WithPublicRelations;
+    use HasPublicRelations;
     use HasRelationships;
 
     /*

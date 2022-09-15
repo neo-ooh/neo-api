@@ -4,7 +4,7 @@ namespace Neo\Helpers;
 
 use Illuminate\Database\Eloquent\Collection;
 use InvalidArgumentException;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 use RuntimeException;
 
 class CollectionHelpers {
@@ -14,10 +14,10 @@ class CollectionHelpers {
             return;
         }
 
-        /** @var WithPublicRelations $model */
+        /** @var HasPublicRelations $model */
         $model = $collection->first();
 
-        if (!in_array(WithPublicRelations::class, class_uses_recursive($model::class), true)) {
+        if (!in_array(HasPublicRelations::class, class_uses_recursive($model::class), true)) {
             throw new RuntimeException("Calling `loadPublicRelations` on a model collection without the trait");
         }
 

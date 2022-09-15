@@ -15,12 +15,14 @@ use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Controllers\Controller;
+use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\ListCampaignsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\ShowCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Schedule;
 
 class CampaignsController extends Controller {
     /**
@@ -111,6 +113,38 @@ class CampaignsController extends Controller {
         $campaign->broadcast_tags()->sync($request->input("tags"));
 
         $campaign->refresh();
+
+        // We need to validate all the campaign's schedules' dates, times and days that haven't finished playing yet.
+        $schedules = $campaign->schedules()->get();
+
+        /** @var Schedule $schedule */
+        foreach ($schedules as $schedule) {
+            // Ignore schedules that will not play
+            if ($schedule->status === ScheduleStatus::Expired || $schedule->status === ScheduleStatus::Rejected || $schedule->status === ScheduleStatus::Trashed) {
+                continue;
+            }
+
+            // Dates
+            $schedule->start_date = $schedule->start_date->isBetween($campaign->start_date, $campaign->end_date)
+                ? $schedule->start_date
+                : $campaign->start_date->copy();
+            $schedule->end_date   = $schedule->end_date->isBetween($campaign->start_date, $campaign->end_date)
+                ? $schedule->end_date
+                : $campaign->end_date->copy();
+
+            // Times
+            $schedule->start_time = $schedule->start_time->isBetween($campaign->start_time, $campaign->end_time)
+                ? $schedule->start_time
+                : $campaign->start_time->copy();
+            $schedule->end_time   = $schedule->end_time->isBetween($campaign->start_time, $campaign->end_time)
+                ? $schedule->end_time
+                : $campaign->end_time->copy();
+
+            // Weekdays
+            $schedule->broadcast_days &= $campaign->broadcast_days;
+
+            $schedule->save();
+        }
 
         $campaign->promote();
 

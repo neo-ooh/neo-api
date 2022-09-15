@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - WithPublicRelations.php
+ * @neo/api - HasPublicRelations.php
  */
 
 namespace Neo\Models\Traits;
@@ -33,7 +33,7 @@ use RuntimeException;
  * @package Neo\Models\Traits
  * @mixin Eloquent
  */
-trait WithPublicRelations {
+trait HasPublicRelations {
     /**
      * Load public relations, either using the list of relations passed as argument, or by using the current request if
      * no argument is given.
@@ -71,7 +71,7 @@ trait WithPublicRelations {
         } else if (property_exists($this, "publicRelations")) {
             $providedRelations = $this->publicRelations;
         } else {
-            throw new RuntimeException("Missing property `\$publicRelations` or method `getPublicRelations()` to use the `WithPublicRelations` trait.");
+            throw new RuntimeException("Missing property `\$publicRelations` or method `getPublicRelations()` to use the `HasPublicRelations` trait.");
         }
 
         $publicRelations = [];

@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Rules\AccessibleContent;
@@ -60,7 +60,7 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  */
 class Content extends BroadcastResourceModel {
     use SoftDeletes;
-    use WithPublicRelations;
+    use HasPublicRelations;
 
     /*
     |--------------------------------------------------------------------------

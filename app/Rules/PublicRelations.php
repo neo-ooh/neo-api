@@ -11,11 +11,11 @@
 namespace Neo\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 
 class PublicRelations implements Rule {
     /**
-     * @param class-string<WithPublicRelations> $model
+     * @param class-string<HasPublicRelations> $model
      */
     public function __construct(protected string $model) {
     }
@@ -27,7 +27,7 @@ class PublicRelations implements Rule {
             return false;
         }
 
-        /** @var WithPublicRelations $model */
+        /** @var HasPublicRelations $model */
         $model                  = new $this->model();
         $allowedPublicRelations = array_keys($model->getPublicRelationsList());
 

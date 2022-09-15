@@ -18,7 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Actor;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
@@ -62,7 +62,7 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  */
 class Schedule extends BroadcastResourceModel {
     use SoftDeletes;
-    use WithPublicRelations;
+    use HasPublicRelations;
 
     public BroadcastResourceType $resourceType = BroadcastResourceType::Schedule;
     /**

@@ -19,7 +19,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Carbon as Date;
 use Illuminate\Support\Collection;
 use Neo\Models\Actor;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CampaignStatus;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
@@ -72,7 +72,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  */
 class Campaign extends BroadcastResourceModel {
     use SoftDeletes;
-    use WithPublicRelations;
+    use HasPublicRelations;
     use HasRelationships;
 
     /*

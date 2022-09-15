@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Field;
 use Neo\Models\Property;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\StructuredColumns\NetworkSettings;
 
 /**
@@ -45,7 +45,7 @@ use Neo\Modules\Broadcast\Models\StructuredColumns\NetworkSettings;
  */
 class Network extends Model {
     use SoftDeletes;
-    use WithPublicRelations;
+    use HasPublicRelations;
 
     /**
      * The table associated with the model.

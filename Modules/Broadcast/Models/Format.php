@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 
 /**
  * Neo\Models\Formats
@@ -41,7 +41,7 @@ use Neo\Models\Traits\WithPublicRelations;
  */
 class Format extends Model {
     use SoftDeletes;
-    use WithPublicRelations;
+    use HasPublicRelations;
 
     /*
     |--------------------------------------------------------------------------

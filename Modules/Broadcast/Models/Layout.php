@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Neo\Models\Traits\WithPublicRelations;
+use Neo\Models\Traits\HasPublicRelations;
 
 /**
  * Neo\Modules\Broadcast\Models\Layout
@@ -39,7 +39,7 @@ use Neo\Models\Traits\WithPublicRelations;
  */
 class Layout extends Model {
     use SoftDeletes;
-    use WithPublicRelations;
+    use HasPublicRelations;
 
     /*
     |--------------------------------------------------------------------------

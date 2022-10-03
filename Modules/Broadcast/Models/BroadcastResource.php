@@ -12,6 +12,7 @@ namespace Neo\Modules\Broadcast\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 
 /**
@@ -19,6 +20,8 @@ use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
  * @property BroadcastResourceType $type
  */
 class BroadcastResource extends Model {
+    use HasPublicRelations;
+
     protected $table = "broadcast_resources";
 
     protected $casts = [
@@ -31,6 +34,12 @@ class BroadcastResource extends Model {
 
     public $timestamps = false;
 
+    protected array $publicRelations = [
+        "jobs"            => "jobs",
+        "representations" => "external_representations",
+        "resource"        => "append:resource",
+    ];
+
     /*
     |--------------------------------------------------------------------------
     | Relations
@@ -41,13 +50,27 @@ class BroadcastResource extends Model {
      * @return HasMany<BroadcastJob>
      */
     public function jobs(): HasMany {
-        return $this->hasMany(BroadcastJob::class, "resource_id", "id");
+        return $this->hasMany(BroadcastJob::class, "resource_id", "id")
+                    ->orderBy('last_attempt_at', 'desc')
+                    ->orderBy('created_at', 'desc');
     }
 
     /**
      * @return HasMany<ExternalResource>
      */
     public function external_representations(): HasMany {
-        return $this->hasMany(ExternalResource::class, "resource_id", "id")->withTrashed();
+        return $this->hasMany(ExternalResource::class, "resource_id", "id")
+                    ->orderBy('created_at', 'desc')
+                    ->withTrashed();
+    }
+
+    public function getResourceAttribute() {
+        return match ($this->type) {
+            BroadcastResourceType::Creative => Creative::query()->findOrFail($this->getKey())?->toResource(),
+            BroadcastResourceType::Content  => Content::query()->findOrFail($this->getKey())?->toResource(),
+            BroadcastResourceType::Schedule => Schedule::query()->findOrFail($this->getKey())?->toResource(),
+            BroadcastResourceType::Campaign => Campaign::query()->findOrFail($this->getKey())?->toResource(),
+            BroadcastResourceType::Tag      => throw new \Exception('Unsupported'),
+        };
     }
 }

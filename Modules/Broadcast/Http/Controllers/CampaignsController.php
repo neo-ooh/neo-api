@@ -61,10 +61,12 @@ class CampaignsController extends Controller {
             DB::beginTransaction();
             $campaign->save();
 
+
             // Set the campaign locations
             $locations = collect($request->input("locations"));
             $campaign->locations()
-                     ->sync($locations->mapWithKeys(fn(array $locationDefinition) => [$locationDefinition["location_id"], ["format_id" => $locationDefinition["format_id"]]]));
+                     ->sync($locations->mapWithKeys(fn(array $locationDefinition) => [$locationDefinition["location_id"] => ["format_id" => $locationDefinition["format_id"]]])
+                                      ->all());
 
             DB::commit();
         } catch (Exception $e) {

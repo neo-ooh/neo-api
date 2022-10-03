@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Odoo\Property as OdooProperty;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Rules\AccessibleProperty;
 
@@ -55,6 +56,8 @@ use Neo\Rules\AccessibleProperty;
  */
 class Property extends SecuredModel {
 //    use HasFactory;
+
+    use HasPublicRelations;
 
     /*
     |--------------------------------------------------------------------------
@@ -109,6 +112,19 @@ class Property extends SecuredModel {
     public $with = [
         "actor:id,name"
     ];
+
+    public function getPublicRelations() {
+        return [
+            "parent"             => "load:actor.parent",
+            "locations"          => "load:actor.own_locations",
+            "locations_ids"      => "actor.own_locations:id,network_id",
+            "network"            => "load:network",
+            "traffic"            => "load:traffic.data",
+            "products"           => "load:products.attachments",
+            "impressions_models" => "load:products.impressions_models",
+            "pictures"           => "pictures",
+        ];
+    }
 
     /*
     |--------------------------------------------------------------------------

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Neo\Models\Actor;
+use Neo\Models\Traits\HasPublicRelations;
 
 /**
  * NeoModels\Branding
@@ -27,6 +28,8 @@ use Neo\Models\Actor;
  * @mixin Builder
  */
 class ScheduleReviewTemplate extends Model {
+    use HasPublicRelations;
+
     /**
      * The table associated with the model.
      *
@@ -42,6 +45,10 @@ class ScheduleReviewTemplate extends Model {
     protected $fillable = [
         "owner_id",
         "text",
+    ];
+
+    protected array $publicRelations = [
+        "owner" => "owner"
     ];
 
     /*

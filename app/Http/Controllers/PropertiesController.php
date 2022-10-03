@@ -21,6 +21,7 @@ use Neo\Documents\PropertyDump\PropertyDump;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
 use Neo\Http\Requests\Properties\DumpPropertyRequest;
+use Neo\Http\Requests\Properties\ListPropertiesByIdRequest;
 use Neo\Http\Requests\Properties\ListPropertiesPendingReviewRequest;
 use Neo\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Http\Requests\Properties\MarkPropertyReviewedRequest;
@@ -42,20 +43,21 @@ use Neo\Modules\Broadcast\Models\Network;
 
 class PropertiesController extends Controller {
     public function index(ListPropertiesRequest $request) {
-        $properties = Property::all();
+        $query = Property::query();
+
+        if ($request->has("network_id")) {
+            $query->where("network_id", "=", $request->input("network_id"));
+        }
+
+        $properties = $query->get();
+
         $properties->load([
             "data",
             "address",
             "odoo",
         ]);
 
-        if (in_array("network", $request->input("with", []), true)) {
-            $properties->load("network");
-        }
-
-        if (in_array("traffic", $request->input("with", []), true)) {
-            $properties->load(["traffic.data"]);
-        }
+        $expansion = $request->input("with", []);
 
         if (in_array("rolling_monthly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
@@ -94,20 +96,6 @@ class PropertiesController extends Controller {
             $properties->makeHidden(["weekly_data", "weekly_traffic"]);
         }
 
-        if (in_array("products", $request->input("with", []), true)) {
-            $properties->loadMissing(["products",
-                                      "products.attachments",
-            ]);
-
-            if (in_array("impressions_models", $request->input("with", []), true)) {
-                $properties->loadMissing(["products.impressions_models"]);
-            }
-        }
-
-        if (in_array("pictures", $request->input("with", []), true)) {
-            $properties->load("pictures");
-        }
-
         if (in_array("fields", $request->input("with", []), true)) {
             $properties->load([
                 "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"])
@@ -120,7 +108,13 @@ class PropertiesController extends Controller {
             ]);
         }
 
-        return $properties;
+        $public = array_diff($expansion, ["rolling_monthly_traffic", "weekly_traffic", "rolling_weekly_traffic", "fields", "tenants"]);
+
+        return new Response($properties->sortBy("actor.name")->values()->loadPublicRelations($public));
+    }
+
+    public function byId(ListPropertiesByIdRequest $request) {
+        return new Response(Property::query()->findMany($request->input("ids", []))->loadPublicRelations());
     }
 
     public function search(SearchPropertiesRequest $request) {

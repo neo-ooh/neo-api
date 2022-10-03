@@ -119,7 +119,8 @@ class Content extends BroadcastResourceModel {
             "owner"           => "owner",
             "schedules"       => [
                 "schedules.broadcast_tags",
-                "schedules.campaign.parent:id,name"
+                "schedules.owner:id,name",
+                "schedules.campaign.parent:id,name",
             ],
             "schedules_count" => fn(Content $content) => $content->loadCount("schedules"),
         ];

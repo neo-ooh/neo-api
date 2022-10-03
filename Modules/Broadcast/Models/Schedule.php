@@ -43,6 +43,7 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property int                        $broadcast_days
  * @property int                        $order
  * @property bool                       $is_locked
+ * @property Date|null                  $locked_at
  *
  * @property ScheduleDetails            $details
  *
@@ -96,6 +97,7 @@ class Schedule extends BroadcastResourceModel {
      */
     protected $casts = [
         "is_locked" => "boolean",
+        "locked_at" => "date",
 
         "start_date" => "date:Y-m-d",
         "start_time" => "date:H:i:s",
@@ -122,9 +124,10 @@ class Schedule extends BroadcastResourceModel {
     protected string $accessRule = AccessibleSchedule::class;
 
     protected array $publicRelations = [
-        "content" => "content",
+        "content" => ["content.creatives"],
         "reviews" => "reviews",
         "owner"   => "owner",
+        "tags"    => "broadcast_tags",
     ];
 
     /*
@@ -255,7 +258,7 @@ class Schedule extends BroadcastResourceModel {
             "start_date"     => $this->start_date->toDateString(),
             "start_time"     => $this->start_time->toTimeString(),
             "end_date"       => $this->end_date->toDateString(),
-            "end_time"       => $this->end_date->toTimeString(),
+            "end_time"       => $this->end_time->toTimeString(),
             "broadcast_days" => $this->broadcast_days,
             "order"          => $this->order,
         ]);

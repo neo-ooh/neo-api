@@ -19,7 +19,9 @@
 |
 */
 
+use Neo\Modules\Broadcast\Http\Controllers\BroadcastJobsController;
 use Neo\Modules\Broadcast\Http\Controllers\BroadcastResourcesController;
+use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\BroadcastResource;
 
 Route::group([
@@ -28,13 +30,23 @@ Route::group([
 ], static function () {
     /*
     |----------------------------------------------------------------------
-    | Broadcast Tags
+    | Broadcast Resources
     |----------------------------------------------------------------------
     */
 
     Route::model("broadcastResource", BroadcastResource::class);
 
+    Route::   get("broadcast-resources/{broadcastResource}", BroadcastResourcesController::class . "@show");
     Route::   get("broadcast-resources/{broadcastResource}/representations", BroadcastResourcesController::class . "@representations");
     Route::   get("broadcast-resources/{broadcastResource}/jobs", BroadcastResourcesController::class . "@jobs");
+    /*
+    |----------------------------------------------------------------------
+    | Broadcast Jobs
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("broadcastJob", BroadcastJob::class);
+
+    Route::   put("broadcast-jobs/{broadcastJob}/_retry", BroadcastJobsController::class . "@retry");
 
 });

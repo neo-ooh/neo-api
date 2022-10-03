@@ -64,6 +64,7 @@ Route::group([
     */
 
     Route::   get("properties", PropertiesController::class . "@index");
+    Route::   get("properties/_by_id", PropertiesController::class . "@byId");
     Route::  post("properties", PropertiesController::class . "@store");
     Route::   get("properties/_networkDump", PropertiesController::class . "@networkDump");
     Route::   get("properties/_need_attention", PropertiesController::class . "@needAttention");
@@ -189,7 +190,7 @@ Route::group([
 
     Route::   get("fields-categories", FieldsCategoriesController::class . "@index");
     Route::  post("fields-categories", FieldsCategoriesController::class . "@store");
-    Route::   get("fields-categories/_by_id", FieldsCategoriesController::class . "@byid");
+    Route::   get("fields-categories/_by_id", FieldsCategoriesController::class . "@byId");
     Route::   put("fields-categories/{fieldsCategory}", FieldsCategoriesController::class . "@update");
     Route::put("fields-categories/{fieldsCategory}/_reorder", FieldsCategoriesController::class . "@reorder");
     Route::delete("fields-categories/{fieldsCategory}", FieldsCategoriesController::class . "@destroy");

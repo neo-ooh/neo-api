@@ -33,8 +33,8 @@ class ReorderSchedulesRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "schedule_id" => ["required", "integer"],
-            "order"       => ["required", "integer"],
+            "schedules"   => ["required", "array"],
+            "schedules.*" => ["integer"],
 
             "with" => ["array", new PublicRelations(Schedule::class)]
         ];

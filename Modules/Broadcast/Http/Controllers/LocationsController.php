@@ -51,7 +51,7 @@ class LocationsController extends Controller {
 
         $query = Location::query()->orderBy("name");
 
-        // Should we  scope by network ?
+        // Should we scope by network ?
         $query->when($request->has("network_id"), function (Builder $query) use ($request) {
             $query->where("network_id", "=", $request->input("network_id"));
         });
@@ -65,7 +65,7 @@ class LocationsController extends Controller {
         /** @var Collection<Location> $locations */
         $locations = $query->get()->values();
 
-        return new Response($locations);
+        return new Response($locations->loadPublicRelations());
     }
 
     public function search(SearchLocationsRequest $request): Response {

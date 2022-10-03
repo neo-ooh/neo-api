@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use InvalidArgumentException;
+use Neo\Enums\ActorType;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ImpersonateActorRequest;
@@ -45,6 +46,25 @@ class ActorsController extends Controller {
         /** @var Collection $actors */
         $actors = Auth::user()?->getAccessibleActors() ?? new Collection();
 
+        if ($request->input("withself", false)) {
+            $actors = $actors->push(Auth::user());
+        }
+
+        $actors->append("type");
+
+        if ($request->has("types")) {
+            $requestedTypes = collect($request->input("types", []))->map(fn($t) => ActorType::from($t));
+            $actors->filter(fn(Actor $actor) => $requestedTypes->contains($actor->getTypeAttribute()));
+        }
+
+        if ($request->has("capabilities")) {
+            $actors->append("capabilities");
+            $actors->filter(fn(Actor $actor) => $actor->capabilities->hasAny($request->input("capabilities")));
+            $actors->makeHidden("capabilities");
+        }
+
+        // Legacy filters; Deprecated
+
         // We return all actors by default. If a groups query parameter is specified, let it decide
         if ($request->has("groups")) {
             $actors = $actors->where("is_group", "=", (bool)$request->query('groups'));
@@ -53,11 +73,6 @@ class ActorsController extends Controller {
         // Exclude specific actors
         if ($request->has("exclude")) {
             $actors = $actors->whereNotIn("id", $params["exclude"]);
-        }
-
-        // If the user
-        if ($request->input("withself", false)) {
-            $actors = $actors->push(Auth::user());
         }
 
         if ($request->has("campaigns_status")) {

@@ -61,8 +61,8 @@ class POP extends PDFDocument {
         // Build the preface page
         $this->mpdf->WriteHTML(view("documents.pop.preface", [
             "data"       => $this->data,
-            "start_date" => $reservations->min("start_date")->format("Y-m-d"),
-            "end_date"   => $reservations->max("end_date")->format("Y-m-d"),
+            "start_date" => $reservations->min("start_date")?->format("Y-m-d"),
+            "end_date"   => $reservations->max("end_date")?->format("Y-m-d"),
         ])->render());
 
 

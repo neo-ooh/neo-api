@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Jobs\Campaigns;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
+use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
@@ -26,8 +27,8 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @extends BroadcastJobBase<array>
  */
 class DeleteCampaignJob extends BroadcastJobBase {
-    public function __construct(int $campaignId) {
-        parent::__construct(BroadcastJobType::DeleteCampaign, $campaignId);
+    public function __construct(int $campaignId, BroadcastJob|null $broadcastJob = null) {
+        parent::__construct(BroadcastJobType::DeleteCampaign, $campaignId, null, $broadcastJob);
     }
 
     /**

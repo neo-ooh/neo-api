@@ -14,6 +14,7 @@ use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
+use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
@@ -29,8 +30,8 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @extends BroadcastJobBase<array{broadcasterId: int}>
  */
 class ImportCreativeJob extends BroadcastJobBase {
-    public function __construct(int $creativeId, int $broadcasterId) {
-        parent::__construct(BroadcastJobType::ImportCreative, $creativeId, ["broadcasterId" => $broadcasterId]);
+    public function __construct(int $creativeId, int $broadcasterId, BroadcastJob|null $broadcastJob = null) {
+        parent::__construct(BroadcastJobType::ImportCreative, $creativeId, ["broadcasterId" => $broadcasterId], $broadcastJob);
     }
 
     /**

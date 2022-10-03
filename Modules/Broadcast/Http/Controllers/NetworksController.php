@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Http\Requests\Networks\DestroyNetworkRequest;
+use Neo\Modules\Broadcast\Http\Requests\Networks\ListNetworksByIdRequest;
 use Neo\Modules\Broadcast\Http\Requests\Networks\ListNetworksRequest;
 use Neo\Modules\Broadcast\Http\Requests\Networks\ShowNetworkRequest;
 use Neo\Modules\Broadcast\Http\Requests\Networks\StoreNetworkRequest;
@@ -32,7 +33,12 @@ class NetworksController extends Controller {
         $networks->each(fn(Network $network) => $network->withPublicRelations($request->input("with", [])));
         $networks->makeHidden(["settings"]);
 
-        return new Response($networks);
+        return new Response($networks->loadPublicRelations());
+    }
+
+    public function byId(ListNetworksByIdRequest $request): Response {
+        $networks = Network::query()->findMany($request->input("ids"));
+        return new Response($networks->loadPublicRelations());
     }
 
     public function store(StoreNetworkRequest $request): Response {

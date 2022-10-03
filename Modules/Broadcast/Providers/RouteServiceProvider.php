@@ -41,6 +41,7 @@ class RouteServiceProvider extends ServiceProvider {
      * @return void
      */
     protected function mapApiRoutes(): void {
+        Route::group([], module_path('Broadcast', '//Routes/broadcast-resources.php'));
         Route::group([], module_path('Broadcast', '/Routes/broadcast-tags.php'));
         Route::group([], module_path('Broadcast', '/Routes/campaigns.php'));
         Route::group([], module_path('Broadcast', '/Routes/formats.php'));

@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListResourceRepresentationsRequest.php
+ * @neo/api - ShowBroadcastResourceRequest.php
  */
 
 namespace Neo\Modules\Broadcast\Http\Requests\BroadcastResources;
@@ -13,11 +13,13 @@ namespace Neo\Modules\Broadcast\Http\Requests\BroadcastResources;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\BroadcastResource;
+use Neo\Rules\PublicRelations;
 
-class ListResourceJobsRequest extends FormRequest {
+class ShowBroadcastResourceRequest extends FormRequest {
     public function rules(): array {
         return [
-
+            "with" => ["array", new PublicRelations(BroadcastResource::class)]
         ];
     }
 

@@ -14,6 +14,9 @@ use Illuminate\Contracts\Validation\Rule;
 use Neo\Models\Traits\HasPublicRelations;
 
 class PublicRelations implements Rule {
+    protected string|null $error = null;
+    protected string|null $badRelation = null;
+
     /**
      * @param class-string<HasPublicRelations> $model
      */
@@ -21,9 +24,11 @@ class PublicRelations implements Rule {
     }
 
     public function passes($attribute, $value): bool {
+        clock($value);
         $requestedRelations = is_string($value) ? [$value] : $value;
 
         if (!is_array($requestedRelations) && $requestedRelations !== null) {
+            $this->error = "invalid-format";
             return false;
         }
 
@@ -33,6 +38,8 @@ class PublicRelations implements Rule {
 
         foreach ($requestedRelations as $requestedRelation) {
             if (!in_array($requestedRelation, $allowedPublicRelations)) {
+                $this->error       = "unknwon-relation";
+                $this->badRelation = $requestedRelation;
                 return false;
             }
         }
@@ -41,6 +48,10 @@ class PublicRelations implements Rule {
     }
 
     public function message(): string {
-        return 'The provided list of public relations is invalid. Only an array of strings is accepted';
+        if ($this->error === "invalid-format") {
+            return 'The provided list of public relations is invalid. Only an array of strings is accepted';
+        } else {
+            return "'$this->badRelation' is not a public relation of the model";
+        }
     }
 }

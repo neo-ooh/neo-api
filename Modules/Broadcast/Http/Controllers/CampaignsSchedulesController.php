@@ -10,11 +10,12 @@
 
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
-use Exception;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Gate;
+use InvalidArgumentException;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
 use Neo\Jobs\SendReviewRequestEmail;
@@ -60,9 +61,9 @@ class CampaignsSchedulesController extends Controller {
         $schedule->campaign_id    = $campaign->getKey();
         $schedule->content_id     = $content->id;
         $schedule->owner_id       = Auth::id();
-        $schedule->start_date     = $campaign->start_date;
+        $schedule->start_date     = Carbon::today()->max($campaign->start_date);
         $schedule->start_time     = $campaign->start_time;
-        $schedule->end_date       = $campaign->start_date->clone()
+        $schedule->end_date       = $schedule->start_date->clone()
                                                          ->addDays($content->max_schedule_duration ?: 14)
                                                          ->min($campaign->end_date);
         $schedule->end_time       = $campaign->end_time;
@@ -86,9 +87,9 @@ class CampaignsSchedulesController extends Controller {
      * @throws InvalidScheduleTimesException
      */
     public function update(UpdateScheduleRequest $request, Campaign $campaign, Schedule $schedule): Response {
-        $startDate     = Carbon::createFromFormat("Y-m-d", $request->input("start_date"));
+        $startDate     = Carbon::createFromFormat("Y-m-d", $request->input("start_date"))->startOfDay();
         $startTime     = Carbon::createFromFormat("H:i:s", $request->input("start_time"));
-        $endDate       = Carbon::createFromFormat("Y-m-d", $request->input("end_date"));
+        $endDate       = Carbon::createFromFormat("Y-m-d", $request->input("end_date"))->startOfDay();
         $endTime       = Carbon::createFromFormat("H:i:s", $request->input("end_time"));
         $broadcastDays = $request->input("broadcast_days");
 
@@ -116,6 +117,7 @@ class CampaignsSchedulesController extends Controller {
 
         if (!$schedule->is_locked && $request->input("is_locked", false)) {
             $schedule->is_locked = true;
+            $schedule->locked_at = Date::now();
 
             /** @var Actor $user */
             $user = Auth::user();
@@ -145,7 +147,7 @@ class CampaignsSchedulesController extends Controller {
         // Propagate the update to the associated BroadSign Schedule
         $schedule->promote();
 
-        return new Response($schedule);
+        return new Response($schedule->withPublicRelations());
     }
 
     /**
@@ -155,53 +157,40 @@ class CampaignsSchedulesController extends Controller {
      * @return Response
      */
     public function reorder(ReorderSchedulesRequest $request, Campaign $campaign): Response {
-        /** @var Schedule $schedule */
-        $schedule = Schedule::query()->findOrFail($request->input("schedule_id"));
-        $order    = $request->input("order");
+        $orderedIds = $request->input("schedules");
 
-        if ($schedule->order === $order) {
-            // Do nothing
-            return new Response($campaign->schedules->each(fn(Schedule $schedule) => $schedule->withPublicRelations()));
+        // First, make sure the given list of ids corresponds to all the active schedules in the campaign
+        $scheduleIds = $campaign->schedules->pluck("id")->all();
+        $badIDs      = array_diff($orderedIds, $scheduleIds);
+
+        if (count($badIDs) > 0) {
+            throw new InvalidArgumentException("Invalid list of schedules. The following IDs do not belong to this campaign or cannot be reordered:" . implode(", ", $badIDs));
         }
 
-        if ($order > $campaign->schedules_count) {
-            $order = $campaign->schedules_count;
-        }
+        // Update the order property of each schedule
+        foreach ($campaign->schedules as $schedule) {
+            $order = array_search($schedule->getKey(), $orderedIds, true);
 
-        /** @var Schedule $s */
-        foreach ($campaign->schedules as $s) {
-            if ($s->is($schedule)) {
+            if ($order === false) {
                 continue;
             }
 
-            if ($s->order >= $schedule->order) {
-                --$s->order;
-            }
-
-            if ($s->order >= $order) {
-                ++$s->order;
-            }
-
-            $s->save();
-            $s->promote();
+            $schedule->order = $order;
+            $schedule->save();
+            $schedule->promote();
         }
 
-        $schedule->order = $order;
-        $schedule->save();
-
-        $schedule->promote();
-
-        return new Response($campaign->schedules->each(fn(Schedule $schedule) => $schedule->withPublicRelations()));
+        return new Response($campaign->withPublicRelations());
     }
 
     /**
      * @param DestroyScheduleRequest $request
+     * @param Campaign               $campaign
      * @param Schedule               $schedule
      *
      * @return Response
-     * @throws Exception
      */
-    public function destroy(DestroyScheduleRequest $request, Schedule $schedule): Response {
+    public function destroy(DestroyScheduleRequest $request, Campaign $campaign, Schedule $schedule): Response {
         // If a schedule has not be reviewed, we want to completely remove it
         if ($schedule->status === ScheduleStatus::Draft || $schedule->status === ScheduleStatus::Pending) {
             $schedule->forceDelete();

@@ -17,6 +17,7 @@ use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Exceptions\MissingExternalCreativeException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Jobs\Creatives\ImportCreativeJob;
+use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\ExternalResource;
@@ -42,9 +43,10 @@ class PromoteScheduleJob extends BroadcastJobBase {
     /**
      * @param int                             $scheduleId
      * @param ExternalCampaignDefinition|null $representation Specific representation to work with
+     * @param BroadcastJob|null               $broadcastJob
      */
-    public function __construct(int $scheduleId, ExternalCampaignDefinition|null $representation = null) {
-        parent::__construct(BroadcastJobType::PromoteSchedule, $scheduleId, ["representation" => $representation]);
+    public function __construct(int $scheduleId, ExternalCampaignDefinition|null $representation = null, BroadcastJob|null $broadcastJob = null) {
+        parent::__construct(BroadcastJobType::PromoteSchedule, $scheduleId, ["representation" => $representation], $broadcastJob);
     }
 
     /**
@@ -106,6 +108,12 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
             if ($representationFormat->layouts()->allRelatedIds()->doesntContain($schedule->content->layout_id)) {
                 // The schedule's content does not fit in this campaign representation, ignore it
+                $results[] = [
+                    "error"      => false,
+                    "message"    => "Representation skipped because format does not match",
+                    "network_id" => $representation->network_id,
+                    "format_id"  => $representation->format_id,
+                ];
                 continue;
             }
 
@@ -114,6 +122,12 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
             if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
                 // This broadcaster does not handle content scheduling
+                $results[] = [
+                    "error"      => false,
+                    "message"    => "Representation skipped because broadcaster does not support direct scheduling",
+                    "network_id" => $representation->network_id,
+                    "format_id"  => $representation->format_id,
+                ];
                 continue;
             }
 

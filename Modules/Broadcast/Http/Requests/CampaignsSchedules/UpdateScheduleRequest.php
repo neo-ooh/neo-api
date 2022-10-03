@@ -15,6 +15,8 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
+use Neo\Modules\Broadcast\Models\Schedule;
+use Neo\Rules\PublicRelations;
 
 class UpdateScheduleRequest extends FormRequest {
     /**
@@ -43,7 +45,9 @@ class UpdateScheduleRequest extends FormRequest {
             "broadcast_days" => ["required", "int", "max:127"],
 
             "tags"   => ["array"],
-            "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")]
+            "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")],
+
+            "with" => ["array", new PublicRelations(Schedule::class)]
         ];
     }
 }

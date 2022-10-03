@@ -22,6 +22,7 @@ use Neo\Models\Actor;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CampaignStatus;
+use Neo\Modules\Broadcast\Enums\CampaignWarning;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Jobs\Campaigns\DeleteCampaignJob;
 use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
@@ -132,6 +133,7 @@ class Campaign extends BroadcastResourceModel {
     protected string $accessRule = AccessibleCampaign::class;
 
     protected array $publicRelations = [
+        "status"                   => "append:status",
         "external_representations" => "external_representations",
         "parent"                   => "parent",
         "creator"                  => "creator",
@@ -300,7 +302,7 @@ class Campaign extends BroadcastResourceModel {
         $this->loadMissing("parent");
 
         return new CampaignResource([
-            "enabled"                      => $this->status === CampaignStatus::Live,
+            "enabled"                      => true,
             "name"                         => $this->parent->name . " - " . $this->name,
             "start_date"                   => $this->start_date->toDateString(),
             "start_time"                   => $this->start_time->toTimeString(),
@@ -362,5 +364,21 @@ class Campaign extends BroadcastResourceModel {
                 $resource->data->network_id === $networkId &&
                 in_array($formatId, $resource->data->formats_id, true);
         })->first();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Warnings
+    |--------------------------------------------------------------------------
+    */
+
+    public function getWarningsAttribute() {
+        $warnings = [];
+
+        if ($this->locations()->count() === 0) {
+            $warnings[CampaignWarning::NoLocations->value] = [];
+        }
+
+        return $warnings;
     }
 }

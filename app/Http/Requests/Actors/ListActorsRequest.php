@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\Actors;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
+use Neo\Enums\ActorType;
 use Neo\Enums\Capability;
 
 /**
@@ -36,15 +37,24 @@ class ListActorsRequest extends FormRequest {
      */
     public function rules(): array {
         return [
+            "withself" => ["sometimes", "boolean"],
+
+            "types"   => ["array"],
+            "types.*" => [new Enum(ActorType::class)],
+
+            "capabilities"     => ["array"],
+            "capabilities.*"   => [new Enum(Capability::class)],
+
+            // Legacy
             "exclude"          => ["sometimes", "array"],
             "exclude.*"        => ["integer", "exists:actors,id"],
             "groups"           => ["sometimes", "boolean"],
-            "withself"         => ["sometimes", "boolean"],
             "details"          => ["sometimes", "boolean"],
             "campaigns_status" => ["sometimes", "boolean"],
             "property"         => ["sometimes", "boolean"],
-            "with"             => ["sometimes", "array"],
-            "capability"       => ["sometimes", "string", new Enum(Capability::class)]
+            "capability"       => ["sometimes", "string", new Enum(Capability::class)],
+
+            "with" => ["sometimes", "array"],
         ];
     }
 }

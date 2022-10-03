@@ -35,7 +35,7 @@ class ReviewsTemplatesController extends Controller {
                                                   ->where("owner_id", "=", $actor->id)
                                                   ->when($actor->parent->is_group ?? false,
                                                       fn(Builder $query) => $query->orWhere("owner_id", "=", $actor->parent_id))
-                                                  ->get());
+                                                  ->get()->loadPublicRelations());
     }
 
     /**

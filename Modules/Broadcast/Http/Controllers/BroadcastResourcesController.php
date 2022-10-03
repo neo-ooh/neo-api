@@ -14,9 +14,14 @@ use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ListResourceJobsRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ListResourceRepresentationsRequest;
+use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ShowBroadcastResourceRequest;
 use Neo\Modules\Broadcast\Models\BroadcastResource;
 
 class BroadcastResourcesController extends Controller {
+    public function show(ShowBroadcastResourceRequest $request, BroadcastResource $broadcastResource): Response {
+        return new Response($broadcastResource->withPublicRelations());
+    }
+
     public function representations(ListResourceRepresentationsRequest $request, BroadcastResource $broadcastResource): Response {
         return new Response($broadcastResource->external_representations()->get());
     }

@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Jobs;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
@@ -101,7 +102,8 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
 
     protected function beforeRun(): void {
         ++$this->broadcastJob->attempts;
-        $this->broadcastJob->status = BroadcastJobStatus::Active;
+        $this->broadcastJob->last_attempt_at = Carbon::now();
+        $this->broadcastJob->status          = BroadcastJobStatus::Active;
         $this->broadcastJob->save();
     }
 

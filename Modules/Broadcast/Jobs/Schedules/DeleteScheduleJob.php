@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Jobs\Schedules;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
+use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
@@ -29,9 +30,10 @@ class DeleteScheduleJob extends BroadcastJobBase {
     /**
      * @param int                             $scheduleId
      * @param ExternalCampaignDefinition|null $representation Specific representation to work with
+     * @param BroadcastJob|null               $broadcastJob
      */
-    public function __construct(int $scheduleId, ExternalCampaignDefinition|null $representation = null) {
-        parent::__construct(BroadcastJobType::DeleteSchedule, $scheduleId, ["representation" => $representation]);
+    public function __construct(int $scheduleId, ExternalCampaignDefinition|null $representation = null, BroadcastJob|null $broadcastJob = null) {
+        parent::__construct(BroadcastJobType::DeleteSchedule, $scheduleId, ["representation" => $representation], $broadcastJob);
     }
 
     /**

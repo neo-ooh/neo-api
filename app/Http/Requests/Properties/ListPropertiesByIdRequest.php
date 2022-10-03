@@ -12,16 +12,15 @@ namespace Neo\Http\Requests\Properties;
 
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Modules\Broadcast\Models\Network;
+use Neo\Models\Property;
+use Neo\Rules\PublicRelations;
 
-class ListPropertiesRequest extends FormRequest {
+class ListPropertiesByIdRequest extends FormRequest {
     public function rules() {
         return [
-            "network_id" => ["integer", new Exists(Network::class, "id")],
-
-            "with" => ["sometimes", "array"]
+            "ids"  => ["required", "array"],
+            "with" => ["array", new PublicRelations(Property::class)],
         ];
     }
 

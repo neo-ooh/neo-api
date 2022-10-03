@@ -28,6 +28,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
+use Neo\Enums\ActorType;
 use Neo\Models\Traits\HasCampaigns;
 use Neo\Models\Traits\HasCapabilities;
 use Neo\Models\Traits\HasHierarchy;
@@ -582,6 +583,18 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
     public function getIsRegisteredAttribute(): bool {
         return $this->password !== null && $this->signupToken === null;
+    }
+
+    public function getTypeAttribute(): ActorType {
+        if ($this->is_property) {
+            return ActorType::Property;
+        }
+
+        if ($this->is_group) {
+            return ActorType::Group;
+        }
+
+        return ActorType::User;
     }
 
 

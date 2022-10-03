@@ -13,6 +13,8 @@ namespace Neo\Modules\Broadcast\Http\Requests\Locations;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Rules\PublicRelations;
 
 class ListLocationsRequest extends FormRequest {
     /**
@@ -34,9 +36,10 @@ class ListLocationsRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "with"       => ["sometimes", "array"],
             "format_id"  => ["sometimes", "integer", "exists:formats,id"],
             "network_id" => ["sometimes", "integer", "exists:networks,id"],
+
+            "with" => ["array", new PublicRelations(Location::class)],
         ];
     }
 }

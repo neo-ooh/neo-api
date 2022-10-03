@@ -212,4 +212,9 @@ enum Capability: string {
      * Allows creating and editing broadcast tags
      */
     case broadcast_tags = "broadcast.tags";
+
+    /**
+     * Allows access to various tools/info for developers
+     */
+    case dev_tools = "dev.tools";
 }

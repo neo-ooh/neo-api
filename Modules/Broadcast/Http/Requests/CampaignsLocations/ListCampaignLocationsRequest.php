@@ -13,6 +13,8 @@ namespace Neo\Modules\Broadcast\Http\Requests\CampaignsLocations;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Rules\PublicRelations;
 
 class ListCampaignLocationsRequest extends FormRequest {
     public function authorize(): bool {
@@ -20,7 +22,9 @@ class ListCampaignLocationsRequest extends FormRequest {
     }
 
     public function rules(): array {
-        return [];
+        return [
+            "with" => ["array", new PublicRelations(Location::class)]
+        ];
     }
 
 }

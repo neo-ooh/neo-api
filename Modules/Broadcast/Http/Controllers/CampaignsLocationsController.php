@@ -20,7 +20,7 @@ use Neo\Modules\Broadcast\Models\Location;
 
 class CampaignsLocationsController extends Controller {
     public function index(ListcampaignLocationsRequest $request, Campaign $campaign): Response {
-        return new Response($campaign->locations);
+        return new Response($campaign->locations->loadPublicRelations());
     }
 
     /**
@@ -33,8 +33,8 @@ class CampaignsLocationsController extends Controller {
         $locations = collect($request->input("locations"));
         $campaign->locations()
                  ->sync($locations->mapWithKeys(fn(array $locationDefinition) => [
-                     $locationDefinition["location_id"],
-                     ["format_id" => $locationDefinition["format_id"]]
+                     $locationDefinition["location_id"] =>
+                         ["format_id" => $locationDefinition["format_id"]]
                  ]));
 
         $campaign->promote();

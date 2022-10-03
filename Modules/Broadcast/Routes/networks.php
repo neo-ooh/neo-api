@@ -58,6 +58,7 @@ Route::group([
 
     Route::model("network", Network::class);
     Route::   get("networks", NetworksController::class . "@index");
+    Route::   get("networks/_by_id", NetworksController::class . "@byId");
     Route::  post("networks", NetworksController::class . "@store");
     Route::   get("networks/{network}", NetworksController::class . "@show");
     Route::   put("networks/{network}", NetworksController::class . "@update");

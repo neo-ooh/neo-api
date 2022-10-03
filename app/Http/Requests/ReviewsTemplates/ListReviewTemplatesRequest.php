@@ -13,6 +13,8 @@ namespace Neo\Http\Requests\ReviewsTemplates;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\ScheduleReviewTemplate;
+use Neo\Rules\PublicRelations;
 
 class ListReviewTemplatesRequest extends FormRequest {
     /**
@@ -31,7 +33,7 @@ class ListReviewTemplatesRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            //
+            "with" => ["array", new PublicRelations(ScheduleReviewTemplate::class)],
         ];
     }
 }

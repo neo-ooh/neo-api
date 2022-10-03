@@ -31,6 +31,7 @@ use Neo\Modules\Broadcast\Models\LoopConfiguration;
  * @property int                           $category_id
  * @property string                        $name_en
  * @property string                        $name_fr
+ * @property int|null                      $format_id
  * @property int                           $quantity
  * @property int                           $unit_price
  * @property boolean                       $is_bonus

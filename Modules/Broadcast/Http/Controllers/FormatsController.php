@@ -34,15 +34,16 @@ class FormatsController extends Controller {
     public function index(ListFormatsRequest $request): Response {
         if (!Gate::allows(Capability::formats_edit->value)) {
             // The current actor doesn't have the capability to access format, we will only return formats he has access to from its hierarchy
-            $formats = Format::query()
-                             ->orderBy("name")
-                             ->whereHas("display_types", function (Builder $query) {
-                                 $query->whereHas("locations", function (Builder $query) {
-                                     $query->whereHas("actors", function (Builder $query) {
-                                         $query->where("id", "=", Auth::id());
-                                     });
-                                 });
-                             });
+            $accessibleActors = Auth::user()->getAccessibleActors();
+            $formats          = Format::query()
+                                      ->orderBy("name")
+                                      ->whereHas("display_types", function (Builder $query) use ($accessibleActors) {
+                                          $query->whereHas("locations", function (Builder $query) use ($accessibleActors) {
+                                              $query->whereHas("actors", function (Builder $query) use ($accessibleActors) {
+                                                  $query->where("id", "in", $accessibleActors->pluck("id"));
+                                              });
+                                          });
+                                      });
 
             return new Response($formats);
         }

@@ -5,16 +5,16 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListResourceRepresentationsRequest.php
+ * @neo/api - RetryJobRequest.php
  */
 
-namespace Neo\Modules\Broadcast\Http\Requests\BroadcastResources;
+namespace Neo\Modules\Broadcast\Http\Requests\BroadcastJobs;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class ListResourceJobsRequest extends FormRequest {
+class RetryJobRequest extends FormRequest {
     public function rules(): array {
         return [
 

@@ -14,6 +14,11 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
+use Neo\Modules\Broadcast\Jobs\Campaigns\DeleteCampaignJob;
+use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
+use Neo\Modules\Broadcast\Jobs\Creatives\ImportCreativeJob;
+use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
+use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 
 /**
  * @property int                $id
@@ -33,8 +38,8 @@ class BroadcastJob extends Model {
 
     protected $casts = [
         "type"                => BroadcastJobType::class,
-        "created_at"          => "date",
-        "last_attempt_at"     => "date",
+        "created_at"          => "datetime",
+        "last_attempt_at"     => "datetime",
         "status"              => BroadcastJobStatus::class,
         "payload"             => "array",
         "last_attempt_result" => "array",
@@ -62,5 +67,27 @@ class BroadcastJob extends Model {
         $this->status              = $status;
         $this->last_attempt_result = $result;
         $this->save();
+    }
+
+    public function retry(): void {
+        switch ($this->type) {
+            case BroadcastJobType::PromoteCampaign:
+                PromoteCampaignJob::dispatch($this->resource_id, $this);
+                break;
+            case BroadcastJobType::DeleteCampaign:
+                DeleteCampaignJob::dispatch($this->resource_id, $this);
+                break;
+            case BroadcastJobType::PromoteSchedule:
+                PromoteScheduleJob::dispatch($this->resource_id, $this->payload["representation"], $this);
+                break;
+            case BroadcastJobType::DeleteSchedule:
+                DeleteScheduleJob::dispatch($this->resource_id, $this->payload["representation"], $this);
+                break;
+            case BroadcastJobType::ImportCreative:
+                ImportCreativeJob::dispatch($this->resource_id, $this->payload["broadcasterId"], $this);
+                break;
+            case BroadcastJobType::DeleteCreative:
+                ImportCreativeJob::dispatch($this->resource_id, $this);
+        }
     }
 }

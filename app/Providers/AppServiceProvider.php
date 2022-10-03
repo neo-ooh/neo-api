@@ -44,8 +44,8 @@ class AppServiceProvider extends ServiceProvider {
      * @return void
      */
     public function boot(): void {
-        Collection::macro("loadPublicRelations", function () {
-            CollectionHelpers::loadPublicRelations($this);
+        Collection::macro("loadPublicRelations", function (array $relations = []) {
+            CollectionHelpers::loadPublicRelations($this, $relations);
             return $this;
         });
     }

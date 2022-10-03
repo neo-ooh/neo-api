@@ -1,7 +1,6 @@
 includes:
     - ./vendor/phpstan/phpstan/conf/bleedingEdge.neon
     - ./vendor/nunomaduro/larastan/extension.neon
-    - ./vendor/bensampo/laravel-enum/extension.neon
 
 parameters:
     paths:

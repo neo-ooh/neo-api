@@ -8,7 +8,7 @@ use Neo\Models\Traits\HasPublicRelations;
 use RuntimeException;
 
 class CollectionHelpers {
-    public static function loadPublicRelations(Collection $collection) {
+    public static function loadPublicRelations(Collection $collection, array $relations) {
         /** @var Collection $this */
         if ($collection->count() === 0) {
             return;
@@ -23,7 +23,7 @@ class CollectionHelpers {
 
         $publicRelations = $model->getPublicRelationsList();
 
-        foreach ($model->prepareRelationsList() as $requestedRelation) {
+        foreach ($model->prepareRelationsList($relations) as $requestedRelation) {
             clock($requestedRelation, $publicRelations);
             if (!array_key_exists($requestedRelation, $publicRelations)) {
                 // Ignore invalid relations in dev

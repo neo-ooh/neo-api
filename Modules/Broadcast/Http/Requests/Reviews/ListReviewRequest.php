@@ -21,7 +21,10 @@ class ListReviewRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::contents_review->value);
+        return Gate::allows(Capability::contents_review->value)
+            || Gate::allows(Capability::campaigns_edit->value)
+            || Gate::allows(Capability::contents_schedule->value)
+            || Gate::allows(Capability::contents_review->value);
     }
 
     /**

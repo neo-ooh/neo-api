@@ -22,6 +22,6 @@ class ListResourceRepresentationsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::networks_edit->value);
+        return Gate::allows(Capability::dev_tools->value);
     }
 }

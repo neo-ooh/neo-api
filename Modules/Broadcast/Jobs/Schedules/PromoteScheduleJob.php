@@ -100,6 +100,14 @@ class PromoteScheduleJob extends BroadcastJobBase {
         // This array will hold newly created resources, and errors
         $results = [];
 
+        if (count($scheduleRepresentations) === 0) {
+            return [
+                "error"                    => true,
+                "message"                  => "No representation of campaign matching schedule found",
+                "campaign_representations" => array_map(static fn(ExternalCampaignDefinition $definition) => $definition, $campaignRepresentations)
+            ];
+        }
+
         /** @var ExternalCampaignDefinition $representation */
         foreach ($scheduleRepresentations as $representation) {
             // Does this schedule fits in this campaign representation ?
@@ -211,6 +219,17 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 continue;
             }
 
+            if (count($updatedExternalResources) === 0) {
+                $results[] = [
+                    "error"                      => true,
+                    "message"                    => "No external ids could be obtained or created for schedule",
+                    "broadcaster_id"             => $broadcaster->getBroadcasterId(),
+                    "network_id"                 => $representation->network_id,
+                    "format_id"                  => $representation->format_id,
+                    "updated_external_resources" => $updatedExternalResources,
+                ];
+            }
+
             // We now have IDs to our resources, check if some have changed, and replace them if necessary
             /** @var ExternalBroadcasterResourceId $updatedExternalResource */
             foreach ($updatedExternalResources as $updatedExternalResource) {
@@ -240,7 +259,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 }
             }
         }
-
         return $results;
     }
 

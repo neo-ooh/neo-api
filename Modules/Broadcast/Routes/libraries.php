@@ -60,11 +60,13 @@ Route::group([
 
     Route::bind("content", fn($id) => Content::withTrashed()->find($id));
 
-    Route::  post("/libraries/{library}/contents", ContentsController::class . "@store");
-    Route::   get("/libraries/{library}/contents/{content}", ContentsController::class . "@show");
-    Route::   put("/libraries/{library}/contents/{content}", ContentsController::class . "@update");
-    Route::   put("/libraries/{library}/contents/{content}/_swap", ContentsController::class . "@swap");
-    Route::delete("/libraries/{library}/contents/{content}", ContentsController::class . "@destroy");
+    Route::   get("/contents/_by_id", ContentsController::class . "@byIds");
+    Route::  post("/contents", ContentsController::class . "@store");
+
+    Route::   get("/contents/{content}", ContentsController::class . "@show");
+    Route::   put("/contents/{content}", ContentsController::class . "@update");
+    Route::   put("/contents/{content}/_swap", ContentsController::class . "@swap");
+    Route::delete("/contents/{content}", ContentsController::class . "@destroy");
 
     /*
     |----------------------------------------------------------------------

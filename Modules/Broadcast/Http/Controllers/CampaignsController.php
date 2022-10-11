@@ -32,7 +32,22 @@ class CampaignsController extends Controller {
      * @noinspection PhpUnusedParameterInspection
      */
     public function index(ListCampaignsRequest $request): Response {
-        return new Response($request->user()->getCampaigns()->loadPublicRelations());
+        $campaigns = $request->user()->getCampaigns();
+
+        if ($request->has("layout_id")) {
+            $campaigns->load("layouts");
+            $campaigns = $campaigns->filter(fn(Campaign $campaign) => $campaign->layouts->pluck("id")
+                                                                                        ->contains($request->input("layout_id")));
+        }
+
+        $relations = $request->input("with", []);
+
+        // If users wants to load the status relation, we make sure additional relations needed to compute a campaign status are also loaded, to prevent too many queries
+        if (in_array("status", $relations, true)) {
+            $campaigns->load(["schedules", "schedules.reviews"]);
+        }
+
+        return new Response($campaigns->loadPublicRelations()->values()->all());
     }
 
     /**

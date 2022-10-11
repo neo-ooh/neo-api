@@ -57,13 +57,17 @@ Route::group([
 
     Route::bind("schedule", fn($id) => Schedule::withTrashed()->find($id));
 
+    Route::  post("schedules", SchedulesController::class . "@store");
+    Route::   get("schedules/_by_id", SchedulesController::class . "@byIds");
     Route::   get("schedules/_pending", SchedulesController::class . "@pending");
+    Route::   put("schedules/{schedule}", SchedulesController::class . "@update");
+    Route::delete("schedules/{schedule}", SchedulesController::class . "@destroy");
 
     Route::   get("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@list");
     Route::  post("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@store");
-    Route::   put("campaigns/{campaign}/schedules/{schedule}", CampaignsSchedulesController::class . "@update");
-    Route::delete("campaigns/{campaign}/schedules/{schedule}", CampaignsSchedulesController::class . "@destroy");
+    Route::   put("campaigns/{campaign}/schedules/{schedule}", SchedulesController::class . "@update");
     Route::  post("campaigns/{campaign}/schedules/_reorder", CampaignsSchedulesController::class . "@reorder");
+    Route::delete("campaigns/{campaign}/schedules/{schedule}", SchedulesController::class . "@destroy");
 
     /*
     |----------------------------------------------------------------------

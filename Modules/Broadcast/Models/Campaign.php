@@ -69,6 +69,8 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int                  $locations_count
  * @property Collection<Location> $locations
  *
+ * @property Collection<Layout>   $layouts
+ *
  * @mixin Builder<Campaign>
  */
 class Campaign extends BroadcastResourceModel {
@@ -122,8 +124,6 @@ class Campaign extends BroadcastResourceModel {
         "end_date"         => "date:Y-m-d",
         "end_time"         => "date:H:i:s",
     ];
-
-    protected $appends = [];
 
     /**
      * The rule used to validate access to the model upon binding it with a route

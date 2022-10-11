@@ -20,6 +20,7 @@ use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Exceptions\LibraryStorageFullException;
 use Neo\Modules\Broadcast\Http\Requests\Contents\DestroyContentRequest;
+use Neo\Modules\Broadcast\Http\Requests\Contents\ListContentsByIdsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Contents\ShowContentRequest;
 use Neo\Modules\Broadcast\Http\Requests\Contents\StoreContentRequest;
 use Neo\Modules\Broadcast\Http\Requests\Contents\SwapContentCreativesRequest;
@@ -29,13 +30,20 @@ use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\Library;
 
 class ContentsController extends Controller {
+    public function byIds(ListContentsByIdsRequest $request) {
+        $contents = Content::query()->findMany($request->input("ids"));
+
+        $contents->loadPublicRelations();
+
+        return new Response($contents);
+    }
+
     /**
      * @param StoreContentRequest $request
-     * @param Library             $library
      * @return Response
      * @throws LibraryStorageFullException
      */
-    public function store(StoreContentRequest $request, Library $library): Response {
+    public function store(StoreContentRequest $request): Response {
         // We want to prevent creating new empty content in a library if an empty one is already there.
         // Check if there is already an empty content
         /** @var Content|null $emptyContent */
@@ -55,6 +63,9 @@ class ContentsController extends Controller {
             // Since the content already exist in the library, we don't have to check the library's content limit.
             return new Response($emptyContent->load("layout.frames"), 200);
         }
+
+        /** @var Library $library */
+        $library = Library::query()->findOrFail($request->input("library_id"));
 
         // Check if the library has enough space available
         if ($library->content_limit !== 0 && $library->contents_count > $library->content_limit) {
@@ -79,12 +90,11 @@ class ContentsController extends Controller {
 
     /**
      * @param ShowContentRequest $request
-     * @param Library            $library
      * @param Content            $content
      *
      * @return Response
      */
-    public function show(ShowContentRequest $request, Library $library, Content $content): Response {
+    public function show(ShowContentRequest $request, Content $content): Response {
         return new Response($content->withPublicRelations());
     }
 

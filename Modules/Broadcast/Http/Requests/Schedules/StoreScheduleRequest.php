@@ -12,7 +12,9 @@ namespace Neo\Modules\Broadcast\Http\Requests\Schedules;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Rules\AccessibleCampaign;
 use Neo\Modules\Broadcast\Rules\AccessibleContent;
 
@@ -33,16 +35,23 @@ class StoreScheduleRequest extends FormRequest {
      */
     public function rules(): array {
         return [
+            "content_id" => ["required", "integer", new AccessibleContent()],
+
             "campaigns"   => ["required", "array"],
             "campaigns.*" => ["int", new AccessibleCampaign()],
 
-            "content_id"      => ["required", "integer", new AccessibleContent()],
-            "start_date"      => ["required", "date:Y-m-d"],
-            "start_time"      => ["required", "date:H:m:s"],
-            "end_date"        => ["required", "date:Y-m-d"],
-            "end_time"        => ["required", "date:H:m:s"],
-            "broadcast_days"  => ["required", "int", "max:127"],
+            "start_date"     => ["required", "date_format:Y-m-d"],
+            "start_time"     => ["required", "date_format:H:i:s"],
+            "end_date"       => ["required", "date_format:Y-m-d"],
+            "end_time"       => ["required", "date_format:H:i:s"],
+            "broadcast_days" => ["required", "int", "max:127"],
+
+            "tags"   => ["array"],
+            "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")],
+
             "send_for_review" => ["required", "boolean"],
+
+            "force" => ["boolean"]
         ];
     }
 }

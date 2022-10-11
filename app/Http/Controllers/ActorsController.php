@@ -54,12 +54,12 @@ class ActorsController extends Controller {
 
         if ($request->has("types")) {
             $requestedTypes = collect($request->input("types", []))->map(fn($t) => ActorType::from($t));
-            $actors->filter(fn(Actor $actor) => $requestedTypes->contains($actor->getTypeAttribute()));
+            $actors         = $actors->filter(fn(Actor $actor) => $requestedTypes->contains($actor->getTypeAttribute()));
         }
 
         if ($request->has("capabilities")) {
             $actors->append("capabilities");
-            $actors->filter(fn(Actor $actor) => $actor->capabilities->hasAny($request->input("capabilities")));
+            $actors = $actors->filter(fn(Actor $actor) => $actor->capabilities->hasAny($request->input("capabilities")));
             $actors->makeHidden("capabilities");
         }
 
@@ -96,7 +96,11 @@ class ActorsController extends Controller {
     }
 
     public function byId(ListActorsByIdRequest $request) {
-        return new Response(Actor::query()->whereIn("id", $request->input("ids"))->orderBy("name")->get());
+        return new Response(Actor::query()
+                                 ->whereIn("id", $request->input("ids"))
+                                 ->orderBy("name")
+                                 ->get()
+                                 ->values()->all());
     }
 
     public function show(Request $request, Actor $actor): Response {

@@ -12,8 +12,10 @@ namespace Neo\Modules\Broadcast\Http\Requests\Campaigns;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Rules\PublicRelations;
 
 class ListCampaignsRequest extends FormRequest {
@@ -35,7 +37,8 @@ class ListCampaignsRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "with" => ["array", new PublicRelations(Campaign::class)]
+            "layout_id" => ["integer", new Exists(Layout::class, "id")],
+            "with"      => ["array", new PublicRelations(Campaign::class)]
         ];
     }
 }

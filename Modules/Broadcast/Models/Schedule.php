@@ -124,10 +124,11 @@ class Schedule extends BroadcastResourceModel {
     protected string $accessRule = AccessibleSchedule::class;
 
     protected array $publicRelations = [
-        "content" => ["content.creatives"],
-        "reviews" => "reviews",
-        "owner"   => "owner",
-        "tags"    => "broadcast_tags",
+        "content"  => ["content.creatives"],
+        "reviews"  => "reviews",
+        "owner"    => "owner",
+        "tags"     => "broadcast_tags",
+        "campaign" => ["campaign", "campaign.parent:id,name"],
     ];
 
     /*
@@ -210,7 +211,7 @@ class Schedule extends BroadcastResourceModel {
         if (!$this->details->is_approved) {
             // Schedule's content is not pre-approved,
             // Is their a review for it ?
-            $mostRecentReview = $this->reviews()->first();
+            $mostRecentReview = $this->reviews->first();
 
             if (!$mostRecentReview) {
                 return ScheduleStatus::Pending;

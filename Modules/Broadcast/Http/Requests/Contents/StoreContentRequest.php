@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Layout;
+use Neo\Modules\Broadcast\Models\Library;
 
 class StoreContentRequest extends FormRequest {
     /**
@@ -33,7 +34,8 @@ class StoreContentRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "layout_id" => ["required", "integer", new Exists(Layout::class, "id")]
+            "library_id" => ["required", "integer", new Exists(Library::class, "id")],
+            "layout_id"  => ["required", "integer", new Exists(Layout::class, "id")],
         ];
     }
 }

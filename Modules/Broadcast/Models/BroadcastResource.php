@@ -66,10 +66,10 @@ class BroadcastResource extends Model {
 
     public function getResourceAttribute() {
         return match ($this->type) {
-            BroadcastResourceType::Creative => Creative::query()->findOrFail($this->getKey())?->toResource(),
-            BroadcastResourceType::Content  => Content::query()->findOrFail($this->getKey())?->toResource(),
-            BroadcastResourceType::Schedule => Schedule::query()->findOrFail($this->getKey())?->toResource(),
-            BroadcastResourceType::Campaign => Campaign::query()->findOrFail($this->getKey())?->toResource(),
+            BroadcastResourceType::Creative => Creative::withTrashed()->find($this->getKey())?->toResource(),
+            BroadcastResourceType::Content  => Content::withTrashed()->find($this->getKey())?->toResource(),
+            BroadcastResourceType::Schedule => Schedule::withTrashed()->find($this->getKey())?->toResource(),
+            BroadcastResourceType::Campaign => Campaign::withTrashed()->find($this->getKey())?->toResource(),
             BroadcastResourceType::Tag      => throw new \Exception('Unsupported'),
         };
     }

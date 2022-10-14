@@ -14,7 +14,6 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\OpeningHours\RefreshOpeningHoursRequest;
 use Neo\Http\Requests\OpeningHours\UpdateOpeningHoursRequest;
 use Neo\Jobs\Properties\PullOpeningHoursJob;
-use Neo\Jobs\Properties\PushOpeningHoursJob;
 use Neo\Models\OpeningHours;
 use Neo\Models\Property;
 
@@ -31,13 +30,13 @@ class OpeningHoursController {
     public function update(UpdateOpeningHoursRequest $request, Property $property, int $weekday) {
         OpeningHours::query()->updateOrInsert([
             "property_id" => $property->getKey(),
-            "weekday"     => $weekday
+            "weekday"     => $weekday,
         ], [
             "open_at"  => $request->input("open_at"),
             "close_at" => $request->input("close_at"),
         ]);
 
-        PushOpeningHoursJob::dispatch($property->getKey());
+//        PushOpeningHoursJob::dispatch($property->getKey());
 
         return new Response([], 202);
     }

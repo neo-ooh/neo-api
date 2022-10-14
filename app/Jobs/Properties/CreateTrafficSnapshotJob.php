@@ -27,7 +27,7 @@ class CreateTrafficSnapshotJob implements ShouldQueue {
 
     public function handle() {
         $properties = Property::query()->with(["traffic", "traffic.weekly_data"])->lazy(100);
-        $now        = Carbon::now();
+        $now        = Carbon::now()->toDateString();
 
         /** @var Property $property */
         foreach ($properties as $property) {
@@ -36,7 +36,7 @@ class CreateTrafficSnapshotJob implements ShouldQueue {
                 "property_id" => $property->getKey(),
                 "date"        => $now,
             ], [
-                "traffic" => json_encode($traffic, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT)
+                "traffic" => json_encode($traffic, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
             ]);
         }
     }

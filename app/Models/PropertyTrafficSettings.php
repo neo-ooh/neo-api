@@ -67,7 +67,7 @@ class PropertyTrafficSettings extends Model {
      */
     public $casts = [
         "is_required"    => "boolean",
-        "grace_override" => "date"
+        "grace_override" => "date",
     ];
 
     protected $with = [];
@@ -205,7 +205,7 @@ class PropertyTrafficSettings extends Model {
 
             // Loop over each week of a year
             // For each week, We try to do a median of all the entries for this week across all available years of information
-            for ($week = 1; $week <= 53; $week++) {
+            for ($week = 2; $week <= 52; $week++) {
                 $yearTrafficIt->rewind();
                 $weekTraffic    = 0;
                 $weekComponents = 0;
@@ -239,11 +239,17 @@ class PropertyTrafficSettings extends Model {
                 $rollingTraffic[$week] = round($weekTraffic);
             }
 
+            $median             = round(($rollingTraffic[2] + $rollingTraffic[52]) / 2);
+            $rollingTraffic[1]  = $median;
+            $rollingTraffic[53] = $median;
+
             return $rollingTraffic;
         });
     }
 
     public function getShoppingRollingWeeklyTraffic(): array {
+
+        /** @var int[] $rollingTraffic */
         $rollingTraffic = [];
         // We select the most recent entry with a positive traffic and who is not the 53rd week because this one is tricky
         $mostRecentDatum = $this->weekly_data->last(fn($datum) => $datum->traffic > 0 && $datum->week !== 53);
@@ -269,7 +275,7 @@ class PropertyTrafficSettings extends Model {
 
         $evolution = $mostRecentDatum->traffic / $referenceDatum->traffic;
 
-        for ($week = 1; $week <= 53; $week++) {
+        for ($week = 2; $week <= 52; $week++) {
 
             /** @var PropertyTraffic|null $mostRecentDatumForPeriod */
             $mostRecentDatumForPeriod = $this->weekly_data->where("week", "=", $week)
@@ -289,6 +295,10 @@ class PropertyTrafficSettings extends Model {
 
             $rollingTraffic[$week] = round(max(($referenceDatumForPeriod->traffic ?? 0) * $evolution, ($mostRecentDatumForPeriod->traffic ?? 0)));
         }
+
+        $median             = round(($rollingTraffic[2] + $rollingTraffic[52]) / 2);
+        $rollingTraffic[1]  = $median;
+        $rollingTraffic[53] = $median;
 
         return $rollingTraffic;
     }

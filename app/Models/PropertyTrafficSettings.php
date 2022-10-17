@@ -239,9 +239,10 @@ class PropertyTrafficSettings extends Model {
                 $rollingTraffic[$week] = round($weekTraffic);
             }
 
-            $median             = round(($rollingTraffic[2] + $rollingTraffic[52]) / 2);
-            $rollingTraffic[1]  = $median;
-            $rollingTraffic[53] = $median;
+            $firstWeekMedian    = round(($rollingTraffic[2] * 2 + $rollingTraffic[52]) / 3);
+            $lastWeekMedian     = round(($rollingTraffic[2] + $rollingTraffic[52] * 2) / 3);
+            $rollingTraffic[1]  = $firstWeekMedian;
+            $rollingTraffic[53] = $lastWeekMedian;
 
             return $rollingTraffic;
         });
@@ -296,9 +297,10 @@ class PropertyTrafficSettings extends Model {
             $rollingTraffic[$week] = round(max(($referenceDatumForPeriod->traffic ?? 0) * $evolution, ($mostRecentDatumForPeriod->traffic ?? 0)));
         }
 
-        $median             = round(($rollingTraffic[2] + $rollingTraffic[52]) / 2);
-        $rollingTraffic[1]  = $median;
-        $rollingTraffic[53] = $median;
+        $firstWeekMedian    = round(($rollingTraffic[2] * 2 + $rollingTraffic[52]) / 3);
+        $lastWeekMedian     = round(($rollingTraffic[2] + $rollingTraffic[52] * 2) / 3);
+        $rollingTraffic[1]  = $firstWeekMedian;
+        $rollingTraffic[53] = $lastWeekMedian;
 
         return $rollingTraffic;
     }

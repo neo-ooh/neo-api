@@ -19,7 +19,7 @@ use Neo\Modules\Broadcast\Models\BroadcastResource;
 
 class BroadcastResourcesController extends Controller {
     public function show(ShowBroadcastResourceRequest $request, BroadcastResource $broadcastResource): Response {
-        return new Response($broadcastResource->withPublicRelations());
+        return new Response($broadcastResource->loadPublicRelations());
     }
 
     public function representations(ListResourceRepresentationsRequest $request, BroadcastResource $broadcastResource): Response {

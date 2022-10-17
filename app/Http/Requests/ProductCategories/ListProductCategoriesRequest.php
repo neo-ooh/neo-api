@@ -13,11 +13,13 @@ namespace Neo\Http\Requests\ProductCategories;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\ProductCategory;
+use Neo\Rules\PublicRelations;
 
 class ListProductCategoriesRequest extends FormRequest {
     public function rules(): array {
         return [
-            "with" => ["sometimes", "array"]
+            "with" => ["array", new PublicRelations(ProductCategory::class)],
         ];
     }
 

@@ -20,10 +20,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
-use Neo\Models\Traits\HasLoopConfigurations;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasOneDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @property int                           $id
@@ -54,7 +57,7 @@ use Neo\Modules\Broadcast\Models\LoopConfiguration;
 class Product extends Model implements WithImpressionsModels, WithAttachments {
     use SoftDeletes;
     use HasImpressionsModels;
-    use HasLoopConfigurations;
+    use HasRelationships;
     use HasPublicRelations;
 
     protected $table = "products";
@@ -84,14 +87,16 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     ];
 
     public string $impressions_models_pivot_table = "products_impressions_models";
-    public string $loop_configurations_pivot_table = "products_loop_configurations";
 
     protected array $publicRelations = [
-        "property"          => "property",
-        "category"          => "category",
-        "locations"         => "locations",
-        "attachments"       => "attachments",
-        "impressions_model" => "impressions_models",
+        "property"            => "property",
+        "category"            => "category",
+        "locations"           => "locations",
+        "attachments"         => "attachments",
+        "impressions_models"  => "impressions_models",
+        "loop_configurations" => "loop_configurations",
+        "format"              => "format",
+        "pricelist"           => "load:pricelist:id",
     ];
 
     /*
@@ -104,6 +109,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
     }
 
+    public function format(): BelongsTo {
+        return $this->belongsTo(Format::class, "format_id", "id");
+    }
+
     public function category(): BelongsTo {
         return $this->belongsTo(ProductCategory::class, "category_id", "id");
     }
@@ -114,6 +123,14 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 
     public function attachments(): BelongsToMany {
         return $this->belongsToMany(Attachment::class, "products_attachments", "product_id", "attachment_id");
+    }
+
+    public function loop_configurations(): HasManyDeep {
+        return $this->hasManyDeepFromRelations([$this->format(), (new Format())->loop_configurations()]);
+    }
+
+    public function pricelist(): HasOneDeep {
+        return $this->hasOneDeepFromRelations([$this->property(), (new Property())->pricelist()]);
     }
 
     /*
@@ -166,12 +183,12 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             return $loopConfiguration->dateIsInPeriod($date);
         };
 
-        $loopConfiguration = $this->loop_configurations->first($configurationValidator);
-
-        if (!$loopConfiguration) {
-            $loopConfiguration = $this->category->loop_configurations->first($configurationValidator);
+        // If the product as a format specified use this one and ignore the category's one.
+        if ($this->format_id !== null) {
+            return $this->loop_configurations->first($configurationValidator);
         }
 
-        return $loopConfiguration;
+        // Default to the category's loop configurations
+        return $this->category->loop_configurations->first($configurationValidator);
     }
 }

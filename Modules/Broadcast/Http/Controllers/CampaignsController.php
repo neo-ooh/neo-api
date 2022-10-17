@@ -95,7 +95,7 @@ class CampaignsController extends Controller {
         // Replicate the campaign in the appropriate broadcaster
         $campaign->promote();
 
-        return new Response($campaign->withPublicRelations(), 201);
+        return new Response($campaign->loadPublicRelations(), 201);
     }
 
     /**
@@ -105,7 +105,7 @@ class CampaignsController extends Controller {
      * @return Response
      */
     public function show(ShowCampaignRequest $request, Campaign $campaign): Response {
-        return new Response($campaign->withPublicRelations());
+        return new Response($campaign->loadPublicRelations());
     }
 
     /**
@@ -165,7 +165,7 @@ class CampaignsController extends Controller {
 
         $campaign->promote();
 
-        return new Response($campaign->withPublicRelations());
+        return new Response($campaign->loadPublicRelations());
     }
 
     public function destroy(DestroyCampaignRequest $request, Campaign $campaign): Response {

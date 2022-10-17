@@ -30,7 +30,7 @@ class AvailabilitiesController {
             "product_ids_count"   => count($productIds),
             "product_spots_count" => count($productsSpots),
         ], [
-            "product_spots_count" => ["same:product_ids_count"]
+            "product_spots_count" => ["same:product_ids_count"],
         ]);
 
         if ($arraySizeValidator->fails()) {
@@ -40,13 +40,13 @@ class AvailabilitiesController {
         $from = Carbon::parse($request->input("from"));
         $to   = Carbon::parse($request->input("to"));
 
-        $productIdsChunk = collect($productIds)->chunk(500);
+        $productIdsChunks = collect($productIds)->chunk(500);
 
         // Pull all the products
         $products = new Collection();
 
-        foreach ($productIdsChunk as $chunk) {
-            // Pull all products as we will need informations about them
+        foreach ($productIdsChunks as $chunk) {
+            // Pull all products as we will need information about them
             $products = $products->merge(Product::query()
                                                 ->with(["loop_configurations", "category.loop_configurations"])
                                                 ->findMany($chunk));
@@ -137,7 +137,7 @@ class AvailabilitiesController {
                     "date"             => $date->toDateString(),
                     "available"        => $reservedSpots <= $productSpots - $spots,
                     "max_reservations" => $productSpots,
-                    "reserved"         => $reservedSpots
+                    "reserved"         => $reservedSpots,
                 ];
             }
 

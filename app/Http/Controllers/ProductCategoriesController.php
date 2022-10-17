@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\ProductCategories\ListProductCategoriesByIdsRequest;
 use Neo\Http\Requests\ProductCategories\ListProductCategoriesRequest;
 use Neo\Http\Requests\ProductCategories\ShowProductCategoryRequest;
 use Neo\Http\Requests\ProductCategories\UpdateProductCategoryRequest;
@@ -18,22 +19,15 @@ use Neo\Models\ProductCategory;
 
 class ProductCategoriesController {
     public function index(ListProductCategoriesRequest $request) {
-        $relations         = $request->input("with", []);
         $productCategories = ProductCategory::all();
 
-        if (in_array("impressions_models", $relations, true)) {
-            $productCategories->loadMissing("impressions_models");
-        }
+        return new Response($productCategories->loadPublicRelations());
+    }
 
-        if (in_array("product_type", $relations, true)) {
-            $productCategories->loadMissing("product_type");
-        }
+    public function byIds(ListProductCategoriesByIdsRequest $request) {
+        $productCategories = ProductCategory::query()->findMany($request->input("ids"));
 
-        if (in_array("attachments", $relations, true)) {
-            $productCategories->loadMissing("attachments");
-        }
-
-        return new Response($productCategories);
+        return new Response($productCategories->loadPublicRelations());
     }
 
     public function store() {
@@ -41,47 +35,17 @@ class ProductCategoriesController {
     }
 
     public function show(ShowProductCategoryRequest $request, ProductCategory $productCategory) {
-        $relations = $request->input("with", []);
-
-        if (in_array("impressions_models", $relations, true)) {
-            $productCategory->loadMissing("impressions_models");
-        }
-
-        if (in_array("attachments", $relations, true)) {
-            $productCategory->loadMissing("attachments");
-        }
-
-        if (in_array("loop_configurations", $relations, true)) {
-            $productCategory->loadMissing("loop_configurations");
-        }
-
-        if (in_array("products", $relations, true)) {
-            $productCategory->loadMissing(["products", "products.property", "products.locations"]);
-
-            if (in_array("impressions_models", $relations, true)) {
-                $productCategory->loadMissing("products.impressions_models");
-            }
-
-            if (in_array("attachments", $relations, true)) {
-                $productCategory->loadMissing("products.attachments");
-            }
-
-            if (in_array("loop_configurations", $relations, true)) {
-                $productCategory->loadMissing("products.loop_configurations");
-            }
-        }
-
-
-        return new Response($productCategory);
+        return new Response($productCategory->loadPublicRelations());
     }
 
     public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory) {
         $productCategory->name_en       = $request->input("name_en");
         $productCategory->name_fr       = $request->input("name_fr");
         $productCategory->fill_strategy = $request->input("fill_strategy");
+        $productCategory->format_id     = $request->input("format_id");
         $productCategory->save();
 
-        return new Response($productCategory);
+        return new Response($productCategory->loadPublicRelations());
     }
 
     public function destroy() {

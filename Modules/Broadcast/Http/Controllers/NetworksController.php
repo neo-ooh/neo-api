@@ -30,7 +30,7 @@ class NetworksController extends Controller {
     public function index(ListNetworksRequest $request): Response {
         $networks = Network::query()->orderBy("name")->get();
 
-        $networks->each(fn(Network $network) => $network->withPublicRelations($request->input("with", [])));
+        $networks->each(fn(Network $network) => $network->loadPublicRelations($request->input("with", [])));
         $networks->makeHidden(["settings"]);
 
         return new Response($networks->loadPublicRelations());
@@ -60,7 +60,7 @@ class NetworksController extends Controller {
     }
 
     public function show(ShowNetworkRequest $request, Network $network): Response {
-        return new Response($network->withPublicRelations($request->input("with", [])));
+        return new Response($network->loadPublicRelations($request->input("with", [])));
     }
 
     public function update(UpdateNetworkRequest $request, Network $network): Response {

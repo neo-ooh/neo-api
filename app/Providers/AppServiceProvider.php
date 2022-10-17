@@ -14,7 +14,7 @@ use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\ServiceProvider;
-use Neo\Helpers\CollectionHelpers;
+use Neo\Helpers\PublicRelations;
 
 
 class AppServiceProvider extends ServiceProvider {
@@ -44,8 +44,8 @@ class AppServiceProvider extends ServiceProvider {
      * @return void
      */
     public function boot(): void {
-        Collection::macro("loadPublicRelations", function (array $relations = []) {
-            CollectionHelpers::loadPublicRelations($this, $relations);
+        Collection::macro("loadPublicRelations", function (string|array|null $relations = null) {
+            PublicRelations::loadPublicRelations($this, $relations);
             return $this;
         });
     }

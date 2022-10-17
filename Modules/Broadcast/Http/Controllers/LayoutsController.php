@@ -38,7 +38,7 @@ class LayoutsController extends Controller {
     }
 
     public function show(ShowLayoutRequest $request, Layout $layout): Response {
-        $layout->withPublicRelations();
+        $layout->loadPublicRelations();
 
         return new Response($layout);
     }

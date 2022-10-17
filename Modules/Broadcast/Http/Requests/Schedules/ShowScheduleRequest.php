@@ -5,28 +5,25 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListPricelistsRequest.php
+ * @neo/api - ShowScheduleRequest.php
  */
 
-namespace Neo\Http\Requests\PriceList;
+namespace Neo\Modules\Broadcast\Http\Requests\Schedules;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Models\Pricelist;
+use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Rules\PublicRelations;
 
-class ListPricelistsByIdsRequest extends FormRequest {
+class ShowScheduleRequest extends FormRequest {
     public function rules(): array {
         return [
-            "ids"   => ["nullable", "array"],
-            "ids.*" => ["integer", "exists:pricelists,id"],
-
-            "with" => ["array", new PublicRelations(Pricelist::class)],
+            "with" => ["array", new PublicRelations(Schedule::class)],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::pricelists_edit->value);
+        return Gate::allows(Capability::contents_schedule->value);
     }
 }

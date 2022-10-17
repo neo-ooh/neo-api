@@ -23,7 +23,6 @@ use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
-use Neo\Services\Broadcast\Broadcast;
 
 class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

@@ -44,10 +44,15 @@ use Neo\Modules\Broadcast\Models\ScheduleReview;
 use Neo\Modules\Broadcast\Utils\ScheduleValidator;
 
 class SchedulesController extends Controller {
+
     public function byIds(ListSchedulesByIdsRequest $request) {
         $schedules = Schedule::query()->findMany($request->input("ids"));
 
         return new Response($schedules->loadPublicRelations());
+    }
+
+    public function show(ListSchedulesByIdsRequest $request, Schedule $schedule) {
+        return new Response($schedule->loadPublicRelations());
     }
 
     /**
@@ -64,24 +69,19 @@ class SchedulesController extends Controller {
 
         $campaigns = $user->getCampaigns()->pluck('id');
         $schedules = Schedule::query()
+                             ->select('schedules.*')
                              ->join('contents', 'contents.id', '=', "schedules.content_id")
-                             ->join('schedule_details', 'schedule_id', '=', "schedules.id")
+                             ->join('schedule_details', 'schedule_details.schedule_id', '=', "schedules.id")
                              ->whereIn("schedules.campaign_id", $campaigns)
                              ->where("schedules.is_locked", "=", 1)
-                             ->where("schedule_details.is_approved", "<>", 1)
-                             ->where('contents.is_approved', '=', false)
+                             ->where("schedule_details.is_approved", "=", 0)
+                             ->where('contents.is_approved', '=', 0)
                              ->whereNotExists(fn($query) => $query->select(DB::raw(1))
                                                                   ->from('schedule_reviews')
                                                                   ->whereRaw('schedule_reviews.schedule_id = schedules.id'))
-                             ->with([
-                                 "campaign",
-                                 "campaign.parent:id,name",
-                                 "content",
-                                 "owner",
-                             ])
                              ->get();
 
-        return new Response($schedules);
+        return new Response($schedules->loadPublicRelations());
     }
 
     /**
@@ -142,7 +142,7 @@ class SchedulesController extends Controller {
                      $schedule->start_time,
                      $schedule->end_date,
                      $schedule->end_time,
-                     $schedule->broadcast_days
+                     $schedule->broadcast_days,
                     ] = $validator->forceFitSchedulingInCampaign(
                         campaign: $campaign,
                         startDate: $startDate,
@@ -281,7 +281,7 @@ class SchedulesController extends Controller {
         // Propagate the update to the associated BroadSign Schedule
         $schedule->promote();
 
-        return new Response($schedule->withPublicRelations());
+        return new Response($schedule->loadPublicRelations());
     }
 
     /**

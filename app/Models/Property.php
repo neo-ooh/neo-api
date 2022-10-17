@@ -55,8 +55,6 @@ use Neo\Rules\AccessibleProperty;
  *
  */
 class Property extends SecuredModel {
-//    use HasFactory;
-
     use HasPublicRelations;
 
     /*
@@ -95,11 +93,11 @@ class Property extends SecuredModel {
      */
     public $casts = [
         "require_traffic"        => "boolean",
-        "traffic_grace_override" => "date"
+        "traffic_grace_override" => "date",
     ];
 
     protected $dates = [
-        "last_review_at"
+        "last_review_at",
     ];
 
     /**
@@ -110,19 +108,26 @@ class Property extends SecuredModel {
     protected string $accessRule = AccessibleProperty::class;
 
     public $with = [
-        "actor:id,name"
+        "actor:id,name",
     ];
 
     public function getPublicRelations() {
         return [
-            "parent"             => "load:actor.parent",
-            "locations"          => "load:actor.own_locations",
-            "locations_ids"      => "actor.own_locations:id,network_id",
-            "network"            => "load:network",
-            "traffic"            => "load:traffic.data",
-            "products"           => "load:products.attachments",
-            "impressions_models" => "load:products.impressions_models",
-            "pictures"           => "pictures",
+            "actor"         => "load:actor",
+            "address"       => "load:address",
+            "fields"        => ["network.properties_fields", "fields_values"],
+            "locations"     => "load:actor.own_locations",
+            "locations_ids" => "actor.own_locations:id,network_id",
+            "network"       => "load:network",
+            "opening_hours" => "opening_hours",
+            "parent"        => "load:actor.parent",
+            "pictures"      => "pictures",
+            "pricelist"     => ["pricelist.categories_pricings", "pricelist.products_pricings"],
+            "products"      => "load:products.attachments",
+            "products_ids"  => "load:products:id",
+            "tags"          => "load:actor.tags",
+            "traffic"       => "load:traffic.data",
+            "warnings"      => "append:warnings",
         ];
     }
 

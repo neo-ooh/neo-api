@@ -95,7 +95,7 @@ class ContentsController extends Controller {
      * @return Response
      */
     public function show(ShowContentRequest $request, Content $content): Response {
-        return new Response($content->withPublicRelations());
+        return new Response($content->loadPublicRelations());
     }
 
     /**
@@ -139,7 +139,7 @@ class ContentsController extends Controller {
         if (!$content->is_editable) {
             return new Response([
                 "code"    => "content.locked",
-                "message" => "This content is locekd and cannot be edited."
+                "message" => "This content is locekd and cannot be edited.",
             ], 400);
         }
 
@@ -154,7 +154,7 @@ class ContentsController extends Controller {
         if ($left->content_id !== $content->id || $right->content_id !== $content->id) {
             return new Response([
                 "code"    => "creative.unrelated",
-                "message" => "Creatives needs to be part of the same content to be swapped."
+                "message" => "Creatives needs to be part of the same content to be swapped.",
             ], 400);
         }
 
@@ -162,7 +162,7 @@ class ContentsController extends Controller {
         if ($left->frame->width !== $right->frame->width || $left->frame->height !== $right->frame->height) {
             return new Response([
                 "code"    => "creative.mismatch",
-                "message" => "Creatives needs to have the same dimensions to be swapped."
+                "message" => "Creatives needs to have the same dimensions to be swapped.",
             ], 400);
         }
 
@@ -177,7 +177,7 @@ class ContentsController extends Controller {
         // Reload the content and return it
         $content->refresh();
 
-        return new Response($content->withPublicRelations());
+        return new Response($content->loadPublicRelations());
     }
 
     /**

@@ -13,11 +13,13 @@ namespace Neo\Http\Requests\PriceList;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\Pricelist;
+use Neo\Rules\PublicRelations;
 
 class ListPricelistsRequest extends FormRequest {
     public function rules(): array {
         return [
-            //
+            "with" => ["array", new PublicRelations(Pricelist::class)],
         ];
     }
 

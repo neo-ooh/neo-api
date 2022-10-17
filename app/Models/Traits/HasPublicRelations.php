@@ -11,8 +11,7 @@
 namespace Neo\Models\Traits;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
-use Illuminate\Support\Facades\Request;
-use InvalidArgumentException;
+use Neo\Helpers\PublicRelations;
 use RuntimeException;
 
 /**
@@ -41,21 +40,8 @@ trait HasPublicRelations {
      * @param null $requestedRelations
      * @return self
      */
-    public function withPublicRelations($requestedRelations = null): self {
-        $publicRelations = $this->getPublicRelationsList();
-
-        foreach ($this->prepareRelationsList($requestedRelations) as $requestedRelation) {
-            if (!array_key_exists($requestedRelation, $publicRelations)) {
-                // Ignore invalid relations in dev
-                if (config("app.env") === 'development') {
-                    throw new InvalidARgumentException("Relation '$requestedRelation' is not marked as public for the model '" . static::class . "'");
-                }
-
-                continue;
-            }
-
-            $this->performExpansion($publicRelations[$requestedRelation]);
-        }
+    public function loadPublicRelations($requestedRelations = null): self {
+        PublicRelations::loadPublicRelations($this, $requestedRelations);
 
         return $this;
     }
@@ -93,58 +79,5 @@ trait HasPublicRelations {
         }
 
         return $publicRelations;
-    }
-
-    public function prepareRelationsList(string|array|null $relations = null) {
-        if ($relations) {
-            return is_array($relations) ? $relations : [$relations];
-        }
-
-        return Request::input("with", []);
-    }
-
-    protected function performExpansion(string|array|callable $relation) {
-        if (is_array($relation)) {
-            foreach ($relation as $value) {
-                $this->performExpansion($value);
-            }
-
-            return;
-        }
-
-        if (is_callable($relation)) {
-            $relation($this);
-            return;
-        }
-
-        // Relation is string
-        $tokens = explode(":", $relation);
-        // If only one token is found, we imply no action is given, and default to `load`
-        if (count($tokens) === 1) {
-            $action  = "load";
-            $request = $tokens[0];
-        } else {
-            // Otherwise, we validate the given action, and if it is not recognized, we default to `load` as well
-            switch ($tokens[0]) {
-                case "load":
-                case "append":
-                    $action  = array_shift($tokens);
-                    $request = implode(":", $tokens);
-                    break;
-                default:
-                    $action  = "load";
-                    $request = implode(":", $tokens);
-            }
-        }
-
-        switch ($action) {
-            case 'append':
-                $this->append($request);
-                break;
-            case 'load':
-                clock("load:$request");
-                $this->loadMissing($request);
-                break;
-        }
     }
 }

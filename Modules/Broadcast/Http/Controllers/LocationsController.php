@@ -103,7 +103,7 @@ class LocationsController extends Controller {
      * @return Response
      */
     public function show(ShowLocationRequest $request, Location $location): Response {
-        return new Response($location->withPublicRelations($request->input("with", [])));
+        return new Response($location->loadPublicRelations($request->input("with", [])));
     }
 
     /**

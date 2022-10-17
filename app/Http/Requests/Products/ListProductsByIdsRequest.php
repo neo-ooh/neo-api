@@ -22,7 +22,8 @@ class ListProductsByIdsRequest extends FormRequest {
         return [
             "ids"   => ["required", "array"],
             "ids.*" => ["integer", new Exists(Product::class, "id")],
-            "with"  => ["array", new PublicRelations(Product::class)]
+
+            "with" => ["array", new PublicRelations(Product::class)],
         ];
     }
 

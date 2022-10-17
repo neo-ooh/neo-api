@@ -87,7 +87,7 @@ class Schedule extends BroadcastResourceModel {
         "end_date",
         "end_time",
         "order",
-        "is_locked"
+        "is_locked",
     ];
 
     /**
@@ -124,7 +124,7 @@ class Schedule extends BroadcastResourceModel {
     protected string $accessRule = AccessibleSchedule::class;
 
     protected array $publicRelations = [
-        "content"  => ["content.creatives"],
+        "content"  => ["content.creatives", "content.schedules"],
         "reviews"  => "reviews",
         "owner"    => "owner",
         "tags"     => "broadcast_tags",

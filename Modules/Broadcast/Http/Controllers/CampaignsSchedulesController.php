@@ -29,7 +29,7 @@ use Neo\Modules\Broadcast\Utils\ScheduleValidator;
 
 class CampaignsSchedulesController extends Controller {
     public function index(ListSchedulesRequest $request, Campaign $campaign): Response {
-        return new Response($campaign->schedules->each(fn(Schedule $schedule) => $schedule->withPublicRelations()));
+        return new Response($campaign->schedules->each(fn(Schedule $schedule) => $schedule->loadPublicRelations()));
     }
 
     /**
@@ -94,6 +94,6 @@ class CampaignsSchedulesController extends Controller {
             $schedule->promote();
         }
 
-        return new Response($campaign->withPublicRelations());
+        return new Response($campaign->loadPublicRelations());
     }
 }

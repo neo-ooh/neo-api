@@ -21,7 +21,7 @@ use Neo\Modules\Broadcast\Models\Schedule;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v2"
+    "prefix"     => "v2",
 ], static function () {
 
     /*
@@ -60,6 +60,7 @@ Route::group([
     Route::  post("schedules", SchedulesController::class . "@store");
     Route::   get("schedules/_by_id", SchedulesController::class . "@byIds");
     Route::   get("schedules/_pending", SchedulesController::class . "@pending");
+    Route::   get("schedules/{schedule}", SchedulesController::class . "@show");
     Route::   put("schedules/{schedule}", SchedulesController::class . "@update");
     Route::delete("schedules/{schedule}", SchedulesController::class . "@destroy");
 

@@ -13,6 +13,8 @@ namespace Neo\Http\Requests\Properties;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\Property;
+use Neo\Rules\PublicRelations;
 
 class ShowPropertyRequest extends FormRequest {
     /**
@@ -31,8 +33,7 @@ class ShowPropertyRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "fallbackToGroup" => ["sometimes", "boolean"],
-            "with"            => ["array"]
+            "with" => ["array", new PublicRelations(Property::class)],
         ];
     }
 }

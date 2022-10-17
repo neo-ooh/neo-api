@@ -23,7 +23,7 @@ class PricelistsController {
     public function index(ListPricelistsRequest $request): Response {
         $priceLists = Pricelist::query()->orderBy("name")->get();
 
-        return new Response($priceLists);
+        return new Response($priceLists->loadPublicRelations());
     }
 
     public function byIds(ListPricelistsByIdsRequest $request): Response {
@@ -31,7 +31,7 @@ class PricelistsController {
                                ->orderBy("name")
                                ->with(["categories"])
                                ->get();
-        return new Response($priceLists);
+        return new Response($priceLists->loadPublicRelations());
     }
 
     public function store(StorePricelistRequest $request): Response {
@@ -46,7 +46,7 @@ class PricelistsController {
     }
 
     public function show(ShowPricelistRequest $request, Pricelist $pricelist): Response {
-        return new Response($pricelist->load(["categories", "products.property"]));
+        return new Response($pricelist->loadPublicRelations());
     }
 
     public function update(UpdatePricelistRequest $request, Pricelist $pricelist): Response {
@@ -54,7 +54,7 @@ class PricelistsController {
         $pricelist->description = $request->input("description");
         $pricelist->save();
 
-        return new Response($pricelist);
+        return new Response($pricelist->loadPublicRelations());
     }
 
     public function destroy(DestroyPricelistRequest $request, Pricelist $pricelist): Response {

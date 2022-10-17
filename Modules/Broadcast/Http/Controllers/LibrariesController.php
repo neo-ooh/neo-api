@@ -46,8 +46,8 @@ class LibrariesController extends Controller {
         $libraries    = Auth::user()->getLibraries();
         $searchEngine = new Fuse($libraries->toArray(), [
             "keys" => [
-                "name"
-            ]
+                "name",
+            ],
         ]);
         $results      = collect($searchEngine->search($q));
 
@@ -68,7 +68,7 @@ class LibrariesController extends Controller {
 
         $library->formats()->sync($request->input("formats", []));
 
-        return new Response($library->withPublicRelations(), 201);
+        return new Response($library->loadPublicRelations(), 201);
     }
 
     /**
@@ -78,7 +78,7 @@ class LibrariesController extends Controller {
      * @return Response
      */
     public function show(ShowLibraryRequest $request, Library $library): Response {
-        return new Response($library->withPublicRelations());
+        return new Response($library->loadPublicRelations());
     }
 
     /**

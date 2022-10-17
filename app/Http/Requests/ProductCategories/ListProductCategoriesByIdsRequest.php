@@ -5,31 +5,26 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListProductsRequest.php
+ * @neo/api - ListProductCategoriesByIdsRequest.php
  */
 
-namespace Neo\Http\Requests\Products;
+namespace Neo\Http\Requests\ProductCategories;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Models\Product;
 use Neo\Models\ProductCategory;
-use Neo\Models\Property;
 use Neo\Rules\PublicRelations;
 
-class ListProductsRequest extends FormRequest {
+class ListProductCategoriesByIdsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "property_id" => ["integer", new Exists(Property::class, "actor_id")],
-            "category_id" => ["integer", new Exists(ProductCategory::class, "id")],
-
-            "with" => ["array", new PublicRelations(Product::class)],
+            "ids"  => ["required", "array"],
+            "with" => ["array", new PublicRelations(ProductCategory::class)],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_products->value);
+        return Gate::allows(Capability::properties_products->value) || Gate::allows(Capability::tools_planning->value);
     }
 }

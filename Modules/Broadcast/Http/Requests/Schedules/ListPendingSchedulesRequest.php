@@ -13,6 +13,8 @@ namespace Neo\Modules\Broadcast\Http\Requests\Schedules;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Schedule;
+use Neo\Rules\PublicRelations;
 
 class ListPendingSchedulesRequest extends FormRequest {
     /**
@@ -30,6 +32,8 @@ class ListPendingSchedulesRequest extends FormRequest {
      * @return array
      */
     public function rules(): array {
-        return [];
+        return [
+            "with" => ["array", new PublicRelations(Schedule::class)],
+        ];
     }
 }

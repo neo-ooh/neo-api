@@ -3,30 +3,36 @@
 namespace Neo\Helpers;
 
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Request;
 use InvalidArgumentException;
 use Neo\Models\Traits\HasPublicRelations;
 use RuntimeException;
 
-class CollectionHelpers {
-    public static function loadPublicRelations(Collection $collection, array $relations) {
-        /** @var Collection $this */
-        if ($collection->count() === 0) {
-            return;
+class PublicRelations {
+    public static function loadPublicRelations(Model|Collection $subject, string|array|null $relations = null): void {
+        if ($subject instanceof Collection) {
+            // Short-circuit if the collection is empty
+            if ($subject->count() === 0) {
+                return;
+            }
+
+            $model = $subject->first();
+        } else {
+            $model = $subject;
         }
 
-        /** @var HasPublicRelations $model */
-        $model = $collection->first();
-
+        // Make sure the target model as the `HasPublicRelation` trait
         if (!in_array(HasPublicRelations::class, class_uses_recursive($model::class), true)) {
-            throw new RuntimeException("Calling `loadPublicRelations` on a model collection without the trait");
+            throw new RuntimeException("Calling `loadPublicRelations` on a Model/Model Collection without the `HasPublicRelation` Trait");
         }
 
         $publicRelations = $model->getPublicRelationsList();
 
-        foreach ($model->prepareRelationsList($relations) as $requestedRelation) {
+        foreach (static::prepareRelationsList($relations) as $requestedRelation) {
             clock($requestedRelation, $publicRelations);
             if (!array_key_exists($requestedRelation, $publicRelations)) {
-                // Ignore invalid relations in dev
+                // Block on invalid relations in dev
                 if (config("app.env") === 'development') {
                     throw new InvalidArgumentException("Relation '$requestedRelation' is not marked as public for the model '" . static::class . "'");
                 }
@@ -34,22 +40,34 @@ class CollectionHelpers {
                 continue;
             }
 
-            self::performExpansion($collection, $publicRelations[$requestedRelation]);
+            self::performExpansion($subject, $publicRelations[$requestedRelation]);
         }
     }
 
-    protected static function performExpansion(Collection $collection, string|array|callable $relation) {
+    protected static function prepareRelationsList(string|array|null $relations = null) {
+        if ($relations !== null) {
+            return is_array($relations) ? $relations : [$relations];
+        }
+
+        return Request::input("with", []);
+    }
+
+    protected static function performExpansion(Model|Collection $subject, string|array|callable $relation): void {
         if (is_array($relation)) {
             foreach ($relation as $value) {
-                self::performExpansion($collection, $value);
+                self::performExpansion($subject, $value);
             }
 
             return;
         }
 
         if (is_callable($relation)) {
-            foreach ($collection as $model) {
-                $relation($model);
+            if ($subject instanceof Collection) {
+                foreach ($subject as $model) {
+                    $relation($model);
+                }
+            } else {
+                $relation($subject);
             }
             return;
         }
@@ -65,6 +83,7 @@ class CollectionHelpers {
             switch ($tokens[0]) {
                 case "load":
                 case "append":
+                case "count":
                     $action  = array_shift($tokens);
                     $request = implode(":", $tokens);
                     break;
@@ -76,10 +95,13 @@ class CollectionHelpers {
 
         switch ($action) {
             case 'append':
-                $collection->append($request);
+                $subject->append($request);
                 break;
             case 'load':
-                $collection->loadMissing($request);
+                $subject->loadMissing($request);
+                break;
+            case 'count':
+                $subject->loadCount($request);
                 break;
         }
     }

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Models\Traits\HasPublicRelations;
 
 /**
  * @property int                                   $id
@@ -30,13 +31,23 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property Collection<PricelistProduct>          $products_pricings
  */
 class Pricelist extends Model {
+    use HasPublicRelations;
+
     protected $table = "pricelists";
 
     protected $primaryKey = "id";
 
     protected $fillable = [
         "name",
-        "description"
+        "description",
+    ];
+
+    protected array $publicRelations = [
+        "categories",
+        "products",
+        "properties",
+        "categories_pricings",
+        "products_pricings",
     ];
 
     public function categories(): BelongsToMany {
@@ -49,7 +60,7 @@ class Pricelist extends Model {
                         "pricing",
                         "value",
                         "min",
-                        "max"
+                        "max",
                     ]);
     }
 
@@ -63,7 +74,7 @@ class Pricelist extends Model {
                         "pricing",
                         "value",
                         "min",
-                        "max"
+                        "max",
                     ]);
     }
 

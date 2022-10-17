@@ -62,7 +62,7 @@ class PropertiesController extends Controller {
         if (in_array("rolling_monthly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
                 "traffic",
-                "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"])
+                "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"]),
             ]);
 
             $properties->each(function ($p) {
@@ -75,7 +75,7 @@ class PropertiesController extends Controller {
         if (in_array("weekly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
                 "traffic",
-                "traffic.weekly_data"
+                "traffic.weekly_data",
             ]);
 
             $properties->each(function (Property $p) {
@@ -98,13 +98,13 @@ class PropertiesController extends Controller {
 
         if (in_array("fields", $request->input("with", []), true)) {
             $properties->load([
-                "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"])
+                "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
             ]);
         }
 
         if (in_array("tenants", $request->input("with", []), true)) {
             $properties->load([
-                "tenants" => fn($q) => $q->select(["id"])
+                "tenants" => fn($q) => $q->select(["id"]),
             ]);
         }
 
@@ -217,26 +217,24 @@ class PropertiesController extends Controller {
     public function show(ShowPropertyRequest $request, int $propertyId): Response {
         // Is this group a property ?
         /** @var Property $property */
-        $property  = Property::query()->find($propertyId);
+        $property = Property::query()->find($propertyId);
+
         $relations = $request->input("with", []);
-        $property->load(["actor", "actor.tags", "traffic", "traffic.data", "address"]);
 
         if (Gate::allows(Capability::odoo_properties->value)) {
             $property->loadMissing(["odoo"]);
         }
 
-        if (Gate::allows(Capability::properties_edit->value)) {
-            $property->loadMissing([
-                "data",
+        if (!Gate::allows(Capability::properties_edit->value)) {
+            // Remove properties that cannot be accessed without the capability
+            $relations = array_diff($relations, [
                 "network",
                 "network.properties_fields",
                 "pictures",
-                "fields_values",
-                "traffic.source",
-                "opening_hours"
+                "fields",
+                "opening_hours",
+                "warnings",
             ]);
-
-            $property->append(["warnings"]);
         }
 
         if (in_array("products", $relations, true)) {
@@ -258,7 +256,7 @@ class PropertiesController extends Controller {
             $property->loadMissing(["contacts"]);
         }
 
-        return new Response($property);
+        return new Response($property->loadPublicRelations());
     }
 
     public function update(UpdatePropertyRequest $request, Property $property): Response {

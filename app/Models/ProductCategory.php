@@ -20,27 +20,32 @@ use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
-use Neo\Models\Traits\HasLoopConfigurations;
+use Neo\Models\Traits\HasPublicRelations;
+use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @property int                           $id
+ * @property int                           $external_id
  * @property int                           $type_id
  * @property string                        $name_en
  * @property string                        $name_fr
  * @property ProductsFillStrategy          $fill_strategy
- * @property int                           $external_id
+ * @property int|null                      $format_id
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  *
  * @property ProductType                   $type
- * @property Collection<Property>          $odoo_properties
+ * @property Format                        $format
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
  */
 class ProductCategory extends Model implements WithImpressionsModels, WithAttachments {
     use HasImpressionsModels;
-    use HasLoopConfigurations;
+    use HasRelationships;
+    use HasPublicRelations;
 
     protected $table = "products_categories";
 
@@ -55,11 +60,22 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
     ];
 
     protected $casts = [
-        "fill_strategy" => ProductsFillStrategy::class
+        "fill_strategy" => ProductsFillStrategy::class,
     ];
 
     public string $impressions_models_pivot_table = "products_categories_impressions_models";
-    public string $loop_configurations_pivot_table = "products_categories_loop_configurations";
+
+    public function getPublicRelations() {
+        return [
+            "type"                => "load:product_type",
+            "properties"          => "load:properties",
+            "format"              => "load:format",
+            "attachments"         => "load:attachments",
+            "products"            => "load:products",
+            "impressions_models"  => "load:impressions_models",
+            "loop_configurations" => "load:loop_configurations",
+        ];
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -69,6 +85,10 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
 
     public function properties(): BelongsToMany {
         return $this->belongsToMany(Property::class, "products", "category_id", "property_id");
+    }
+
+    public function format(): BelongsTo {
+        return $this->belongsTo(Format::class, "format_id", "id");
     }
 
     public function product_type(): BelongsTo {
@@ -81,5 +101,9 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
 
     public function attachments(): BelongsToMany {
         return $this->belongsToMany(Attachment::class, "products_categories_attachments", "product_category_id", "attachment_id");
+    }
+
+    public function loop_configurations(): HasManyDeep {
+        return $this->hasManyDeepFromRelations([$this->format(), (new Format())->loop_configurations()]);
     }
 }

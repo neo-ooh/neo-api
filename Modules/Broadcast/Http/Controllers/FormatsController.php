@@ -70,7 +70,7 @@ class FormatsController extends Controller {
      * @return Response
      */
     public function show(ShowFormatRequest $request, Format $format): Response {
-        return new Response($format->withPublicRelations());
+        return new Response($format->loadPublicRelations());
     }
 
     /**
@@ -86,7 +86,11 @@ class FormatsController extends Controller {
 
         $format->broadcast_tags()->sync($request->input("tags"));
 
-        return new Response($format);
+        $format->loop_configurations()->update([
+            "spot_length_ms" => $format->content_length * 1000,
+        ]);
+
+        return new Response($format->loadPublicRelations());
     }
 
     /**

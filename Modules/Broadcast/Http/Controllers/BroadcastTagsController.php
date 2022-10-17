@@ -49,14 +49,14 @@ class BroadcastTagsController extends Controller {
     }
 
     public function show(ShowBroadcastTagsRequest $request, BroadcastTag $broadcastTag): Response {
-        return new Response($broadcastTag->withPublicRelations());
+        return new Response($broadcastTag->loadPublicRelations());
     }
 
     public function by_id(ListBroadcastTagsByIdRequest $request): Response {
         /** @var Collection<BroadcastTag> $broadcastTags */
         $broadcastTags = BroadcastTag::withTrashed()->whereIn("id", $request->input("ids", []))->get();
 
-        return new Response($broadcastTags->each(fn(BroadcastTag $tag) => $tag->withPublicRelations()));
+        return new Response($broadcastTags->each(fn(BroadcastTag $tag) => $tag->loadPublicRelations()));
     }
 
     public function update(UpdateBroadcastTagRequest $request, BroadcastTag $broadcastTag): Response {
@@ -65,7 +65,7 @@ class BroadcastTagsController extends Controller {
         $broadcastTag->scope   = array_map(static fn(string $scope) => BroadcastTagScope::from($scope), $request->input("scope", []));
         $broadcastTag->save();
 
-        return new Response($broadcastTag->withPublicRelations());
+        return new Response($broadcastTag->loadPublicRelations());
     }
 
     public function destroy(DeleteBroadcastTagRequest $request, BroadcastTag $broadcastTag): Response {

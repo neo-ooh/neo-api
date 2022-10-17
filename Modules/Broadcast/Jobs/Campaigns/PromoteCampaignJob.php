@@ -77,6 +77,11 @@ class PromoteCampaignJob extends BroadcastJobBase {
                 continue;
             }
 
+            return [
+                "error"          => true,
+                "representation" => $representation->toArray(),
+            ];
+
             /** @var Format $format */
             $format = Format::query()
                             ->with(["broadcast_tags",

@@ -20,7 +20,6 @@ use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\Properties\CreateTrafficSnapshotJob;
 use Neo\Jobs\RequestScreenshotsBursts;
-use Neo\Jobs\Schedules\DisableExpiredSchedulesJob;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
 use Neo\Jobs\Traffic\PullLatestTrafficData;
 use Neo\Jobs\Traffic\TrafficRequiredReminder;
@@ -52,6 +51,11 @@ class Kernel extends ConsoleKernel {
      * @return void
      */
     protected function schedule(Schedule $schedule): void {
+        // Only register recurring tasks on the production environment
+        if (config('app.env') !== 'production') {
+            return;
+        }
+
         /* -----------------
          * Every-minute tasks
          */

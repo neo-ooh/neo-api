@@ -20,6 +20,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 /**
  * This base class for jobs implements hooks for some of the lifecycle events of jobs
@@ -40,13 +41,18 @@ abstract class Job implements ShouldQueue {
     use SerializesModels;
 
     final public function handle(): void {
+        $jobName = static::class;
+        Log::debug("[JOB] $jobName: Begin");
+
         $this->beforeRun();
 
         try {
             $result = $this->run();
 
+            Log::debug("[JOB] $jobName: Success", $result);
             $this->onSuccess($result);
         } catch (Exception $exception) {
+            Log::debug("[JOB] $jobName: Failure");
             $this->onFailure($exception);
         } finally {
             $this->finally();

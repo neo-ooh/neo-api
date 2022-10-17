@@ -37,16 +37,15 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
         if ($existingJob) {
             $this->broadcastJob         = $existingJob;
             $this->broadcastJob->status = $this->broadcastJob->status === BroadcastJobStatus::Failed ? BroadcastJobStatus::PendingRetry : BroadcastJobStatus::Pending;
-            $this->broadcastJob->save();
-            return;
+        } else {
+            // Register the job
+            $this->broadcastJob = new BroadcastJob([
+                "resource_id" => $this->resourceId,
+                "type"        => $this->type,
+                "payload"     => $this->payload,
+            ]);
         }
 
-        // Register the job
-        $this->broadcastJob = new BroadcastJob([
-            "resource_id" => $this->resourceId,
-            "type"        => $this->type,
-            "payload"     => $this->payload,
-        ]);
         $this->broadcastJob->save();
     }
 
@@ -68,7 +67,7 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
      *
      * @var int
      */
-    public $delay = 30;
+    public $delay = 0;
 
     /**
      * Prevent having many job for the same resource queued at the same time
@@ -121,7 +120,7 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
         $this->broadcastJob->endAttempt(BroadcastJobStatus::Failed, [
             "message"   => $exception->getMessage(),
             "locations" => $exception->getFile() . ":" . $exception->getLine(),
-            "trace"     => $exception->getTrace()
+            "trace"     => $exception->getTrace(),
         ]);
     }
 }

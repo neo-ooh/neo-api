@@ -21,6 +21,7 @@ use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\Frame;
 use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
@@ -77,11 +78,6 @@ class PromoteCampaignJob extends BroadcastJobBase {
                 continue;
             }
 
-            return [
-                "error"          => true,
-                "representation" => $representation->toArray(),
-            ];
-
             /** @var Format $format */
             $format = Format::query()
                             ->with(["broadcast_tags",
@@ -90,7 +86,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
                                     "layouts.broadcast_tags.external_representations",
                                     "layouts.frames",
                                     "layouts.frames.broadcast_tags.external_representations",
-                                    "loop_configuration"])
+                                    "loop_configurations"])
                             ->find($representation->format_id);
 
             // Get the allowed duration from the format
@@ -171,31 +167,37 @@ class PromoteCampaignJob extends BroadcastJobBase {
                         "network_id"  => $broadcaster->getNetworkId(),
                         "formats_id"  => [$format->getKey()],
                         "external_id" => $externalCampaignId->external_id,
-                    ])
+                    ]),
                 ]);
                 $externalResource->save();
             }
 
             // Now that the campaign exist, we need to target it
             // List all tags relevant to the campaign, and dispatch the action
-            $tags = new BroadcastTagsCollector();
-            // Format tags
-            $tags->collect($format->broadcast_tags, [BroadcastTagType::Targeting, BroadcastTagType::Category]);
-            // Layout tags
-            $tags->collect($format->layouts->flatMap(fn(Layout $layout) => $layout->broadcast_tags), [BroadcastTagType::Targeting, BroadcastTagType::Category]);
-            // Frames tags
-            $tags->collect($format->layouts->flatMap(fn(Layout $layout) => $layout->frames->pluck("broadcast_tags")), [BroadcastTagType::Targeting, BroadcastTagType::Category]);
-            // Campaign
-            $tags->collect($campaign->broadcast_tags, [BroadcastTagType::Category]);
+            $campaignTags  = new BroadcastTagsCollector();
+            $locationsTags = new BroadcastTagsCollector();
 
-            // Deduplicate and cast tags to resource
-            $campaignTags = $tags->get($broadcaster->getBroadcasterId());
+            // Format tags
+            $campaignTags->collect($format->broadcast_tags, [BroadcastTagType::Targeting]);
+
+            // Layout tags
+            $campaignTags->collect($format->layouts->flatMap(fn(Layout $layout) => $layout->broadcast_tags), [BroadcastTagType::Targeting]);
+
+            // Frames tags
+            $framesTags = $format->layouts->flatMap(fn(Layout $layout) => $layout->frames->flatMap(fn(Frame $frame) => $frame->broadcast_tags));
+            $campaignTags->collect($framesTags, [BroadcastTagType::Targeting]);
+            $locationsTags->collect($framesTags, [BroadcastTagType::Targeting]);
+
+            // Campaign
+            $campaignTags->collect($campaign->broadcast_tags, [BroadcastTagType::Targeting]);
 
             // Target the campaign
             $targeting = new CampaignTargeting([
-                "tags"          => $campaignTags,
-                "locations"     => $representation->locations->map(fn(Location $location) => $location->toExternalBroadcastIdResource()),
-                "locationsTags" => $tags
+                "campaignTags"  => $campaignTags->get($broadcaster->getBroadcasterId()),
+                "locations"     => $representation->locations
+                    ->map(fn(Location $location) => $location->toExternalBroadcastIdResource())
+                    ->all(),
+                "locationsTags" => $locationsTags->get($broadcaster->getBroadcasterId()),
             ]);
 
             $broadcaster->targetCampaign($externalCampaignId, $targeting);

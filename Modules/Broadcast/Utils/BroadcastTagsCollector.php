@@ -49,6 +49,7 @@ class BroadcastTagsCollector {
     public function get(int $broadcasterId): array {
         return $this->tags->unique("id")
                           ->map(fn(BroadcastTag $tag) => $tag->toResource($broadcasterId))
-                          ->where("external_id", "!==", "-1");
+                          ->where("external_id", "!==", "-1")
+                          ->all();
     }
 }

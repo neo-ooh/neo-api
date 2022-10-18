@@ -262,7 +262,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $comparator = new ResourcesComparator($campaign, $bsCampaign->toResource());
 
         // It is not possible to change some of the properties of a campaign after it has been created.
-        $readonlyProperties = ["start_date", "start_time", "end_date", "end_time", "saturation", "default_schedule_length_msec"];
+        $readonlyProperties = ["start_date", "start_time", "end_date", "end_time", "occurrences_in_loop", "default_schedule_length_msec"];
         $updatable          = true;
         $breakingProperty   = "";
 
@@ -306,17 +306,17 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $campaignCriteria = ResourceCriteria::for($this->getAPIClient(), $externalCampaign->external_id);
 
         $bsCampaign = new BroadSignCampaign($this->getAPIClient(), [
-            "id" => $externalCampaign->external_id
+            "id" => $externalCampaign->external_id,
         ]);
 
-        $campaignTags = $campaignTargeting->campaignTags;
+        $campaignTags = array_map(static fn(Tag $tag) => $tag->external_id, $campaignTargeting->campaignTags);
 
         /** @var ResourceCriteria $criterion */
         foreach ($campaignCriteria as $criterion) {
             // Is this criterion in our requirements ?
             if (in_array($criterion->id, $campaignTags, true)) {
                 // Yes, remove it from our requirements
-                $campaignTags = array_filter($campaignTags, static fn(Tag $tag) => $tag->external_id !== $criterion->id);
+                $campaignTags = array_filter($campaignTags, static fn(int $tagId) => $tagId !== $criterion->id);
                 continue;
             }
 
@@ -326,11 +326,12 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         // We are now left only with the criteria that needs to be added to the campaign.
-        foreach ($campaignTags as $tag) {
-            $bsCampaign->addCriteria($tag->external_id, 8);
+        foreach ($campaignTags as $tagId) {
+            $bsCampaign->addCriteria($tagId, 8);
         }
 
         $bsCampaignLocations = $bsCampaign->locations();
+
         $bsCampaign->removeLocations($bsCampaignLocations->map(fn(BroadSignLocation $location) => $location->getKey()));
         $bsCampaign->addLocations($campaignTargeting->getLocationsExternalIds(), $campaignTargeting->getLocationsTagsExternalIds());
 
@@ -400,7 +401,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $bsBundle->position = $schedule->order;
 
         $bsBundle->max_duration_msec = $content->duration_msec;
-        $bsBundle->fullscreen        = $content->fullscreen;
+        $bsBundle->fullscreen        = $content->is_fullscreen;
 
         $bsBundle->auto_synchronized     = true;
         $bsBundle->allow_custom_duration = true;
@@ -493,7 +494,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
         return [
             $externalSchedule,
-            $externalBundle
+            $externalBundle,
         ];
     }
 

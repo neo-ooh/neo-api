@@ -39,7 +39,7 @@ class BroadSignClient implements APIClientInterface {
      * @param array                 $headers
      * @return false|mixed|string|null
      * @throws GuzzleException
-     * @throws JsonException
+     * @throws JsonException|ThirdPartyAPIException
      */
     public function call($endpoint, mixed $payload, array $headers = []): mixed {
         // Set the base path for the request to the API.
@@ -74,12 +74,10 @@ class BroadSignClient implements APIClientInterface {
         } catch (ThirdPartyAPIException $exception) {
             Log::error($exception->getMessage(), [
                 $endpoint,
-                $payload
+                $payload,
             ]);
 
-            dump($exception, $payload, $endpoint);
-
-            return null;
+            throw $exception;
         }
     }
 
@@ -108,7 +106,7 @@ class BroadSignClient implements APIClientInterface {
             Log::channel("broadsign")
                ->error("response:{$response->status()} [{$endpoint->getPath()}] {$response->body()}");
 
-            throw new ThirdPartyAPIException($response->body(), $response->status());
+            throw new ThirdPartyAPIException($jsonPayload, $response->status(), $response->body());
         }
 
         // Unwrap response content if needed

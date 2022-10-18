@@ -51,7 +51,7 @@ class BroadcastJob extends Model {
         "resource_id",
         "type",
         "created_at",
-        "payload"
+        "payload",
     ];
 
     protected static function booted(): void {
@@ -72,22 +72,23 @@ class BroadcastJob extends Model {
     public function retry(): void {
         switch ($this->type) {
             case BroadcastJobType::PromoteCampaign:
-                PromoteCampaignJob::dispatch($this->resource_id, $this);
+                (new PromoteCampaignJob($this->resource_id, $this))->handle();
+//                PromoteCampaignJob::dispatchSync($this->resource_id, $this);
                 break;
             case BroadcastJobType::DeleteCampaign:
-                DeleteCampaignJob::dispatch($this->resource_id, $this);
+                DeleteCampaignJob::dispatchSync($this->resource_id, $this);
                 break;
             case BroadcastJobType::PromoteSchedule:
-                PromoteScheduleJob::dispatch($this->resource_id, $this->payload["representation"], $this);
+                PromoteScheduleJob::dispatchSync($this->resource_id, $this->payload["representation"], $this);
                 break;
             case BroadcastJobType::DeleteSchedule:
-                DeleteScheduleJob::dispatch($this->resource_id, $this->payload["representation"], $this);
+                DeleteScheduleJob::dispatchSync($this->resource_id, $this->payload["representation"], $this);
                 break;
             case BroadcastJobType::ImportCreative:
-                ImportCreativeJob::dispatch($this->resource_id, $this->payload["broadcasterId"], $this);
+                ImportCreativeJob::dispatchSync($this->resource_id, $this->payload["broadcasterId"], $this);
                 break;
             case BroadcastJobType::DeleteCreative:
-                ImportCreativeJob::dispatch($this->resource_id, $this);
+                ImportCreativeJob::dispatchSync($this->resource_id, $this);
         }
     }
 }

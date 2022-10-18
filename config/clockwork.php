@@ -45,7 +45,7 @@ return [
             'collect_queries' => env('CLOCKWORK_CACHE_QUERIES', true),
 
             // Collect values from cache queries (high performance impact with a very high number of queries)
-            'collect_values'  => env('CLOCKWORK_CACHE_COLLECT_VALUES', false)
+            'collect_values'  => env('CLOCKWORK_CACHE_COLLECT_VALUES', false),
         ],
 
         // Database usage stats and queries
@@ -68,7 +68,7 @@ return [
             'slow_only'                => env('CLOCKWORK_DATABASE_SLOW_ONLY', false),
 
             // Detect and report duplicate queries
-            'detect_duplicate_queries' => env('CLOCKWORK_DATABASE_DETECT_DUPLICATE_QUERIES', false)
+            'detect_duplicate_queries' => env('CLOCKWORK_DATABASE_DETECT_DUPLICATE_QUERIES', false),
         ],
 
         // Dispatched events
@@ -84,7 +84,7 @@ return [
 
         // Laravel log (you can still log directly to Clockwork with laravel log disabled)
         'log'           => [
-            'enabled' => env('CLOCKWORK_LOG_ENABLED', true)
+            'enabled' => env('CLOCKWORK_LOG_ENABLED', true),
         ],
 
         // Sent notifications
@@ -95,17 +95,17 @@ return [
         // Performance metrics
         'performance'   => [
             // Allow collecting of client metrics. Requires separate clockwork-browser npm package.
-            'client_metrics' => env('CLOCKWORK_PERFORMANCE_CLIENT_METRICS', true)
+            'client_metrics' => env('CLOCKWORK_PERFORMANCE_CLIENT_METRICS', true),
         ],
 
         // Dispatched queue jobs
         'queue'         => [
-            'enabled' => env('CLOCKWORK_QUEUE_ENABLED', true)
+            'enabled' => env('CLOCKWORK_QUEUE_ENABLED', true),
         ],
 
         // Redis commands
         'redis'         => [
-            'enabled' => env('CLOCKWORK_REDIS_ENABLED', true)
+            'enabled' => env('CLOCKWORK_REDIS_ENABLED', true),
         ],
 
         // Routes list
@@ -113,7 +113,7 @@ return [
             'enabled'         => env('CLOCKWORK_ROUTES_ENABLED', false),
 
             // Collect only routes from particular namespaces (only application routes by default)
-            'only_namespaces' => ['App']
+            'only_namespaces' => ['App'],
         ],
 
         // Rendered views
@@ -125,8 +125,8 @@ return [
 
             // Use Twig profiler instead of Laravel events for apps using laravel-twigbridge (more precise, but does
             // not support collecting view data)
-            'use_twig_profiler' => env('CLOCKWORK_VIEWS_USE_TWIG_PROFILER', false)
-        ]
+            'use_twig_profiler' => env('CLOCKWORK_VIEWS_USE_TWIG_PROFILER', false),
+        ],
 
     ],
 
@@ -195,7 +195,7 @@ return [
         ],
 
         // Don't collect OPTIONS requests, mostly used in the CSRF pre-flight requests and are rarely of interest
-        'except_preflight' => env('CLOCKWORK_REQUESTS_EXCEPT_PREFLIGHT', true)
+        'except_preflight' => env('CLOCKWORK_REQUESTS_EXCEPT_PREFLIGHT', true),
     ],
 
     /*
@@ -226,7 +226,7 @@ return [
         'collect_output'          => env('CLOCKWORK_ARTISAN_COLLECT_OUTPUT', false),
 
         // Enable or disable collection of built-in Laravel commands
-        'except_laravel_commands' => env('CLOCKWORK_ARTISAN_EXCEPT_LARAVEL_COMMANDS', true)
+        'except_laravel_commands' => env('CLOCKWORK_ARTISAN_EXCEPT_LARAVEL_COMMANDS', true),
     ],
 
     /*
@@ -241,7 +241,7 @@ return [
 
     'queue' => [
         // Enable or disable collection of executed queue jobs
-        'collect' => env('CLOCKWORK_QUEUE_COLLECT', false),
+        'collect' => env('`CLOCKWORK_QUEUE_COLLECT`', true),
 
         // List of queue jobs that should not be collected
         'except'  => [
@@ -251,7 +251,7 @@ return [
         // List of queue jobs that should be collected, any other queue job will not be collected if not empty
         'only'    => [
             // App\Jobs\BuggyJob::class
-        ]
+        ],
     ],
 
     /*
@@ -271,7 +271,7 @@ return [
         // List of tests that should not be collected
         'except'  => [
             // Tests\Unit\ExampleTest::class
-        ]
+        ],
     ],
 
     /*
@@ -360,7 +360,7 @@ return [
         // List of class names to skip when determining caller
         'skip_classes'    => [
             // App\CustomLog::class
-        ]
+        ],
 
     ],
 
@@ -421,6 +421,6 @@ return [
     |
     */
 
-    'server_timing' => env('CLOCKWORK_SERVER_TIMING', 10)
+    'server_timing' => env('CLOCKWORK_SERVER_TIMING', 10),
 
 ];

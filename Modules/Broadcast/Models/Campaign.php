@@ -319,6 +319,7 @@ class Campaign extends BroadcastResourceModel {
      * List all the different representations necessary for this campaign to run
      *
      * @return array<ExternalCampaignDefinition>
+     * @throws UnknownProperties
      */
     public function getExternalBreakdown(): array {
         // A campaign in Connect may be represented by multiple external campaign, across several broadcasters.
@@ -335,7 +336,8 @@ class Campaign extends BroadcastResourceModel {
         /** @var Collection<Location> $networkLocations */
         foreach ($locationsByNetworkId as $networkId => $networkLocations) {
             /** @var Collection<int, Location> $locationsByFormatId */
-            $locationsByFormatId = collect($networkLocations)->mapToDictionary(fn(Location $location) => [$location->getRelationValue("pivot")->format_id, $location]);
+            $locationsByFormatId = collect($networkLocations)->mapToDictionary(fn(Location $location) => [$location->getRelationValue("pivot")->format_id => $location]);
+
 
             foreach ($locationsByFormatId as $formatId => $formatLocations) {
                 $breakdown[] = new ExternalCampaignDefinition(

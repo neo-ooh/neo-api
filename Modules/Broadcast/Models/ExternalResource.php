@@ -34,6 +34,7 @@ class ExternalResource extends Model {
     protected $table = "external_resources";
 
     protected $casts = [
+        "type" => ExternalResourceType::class,
         "data" => ExternalResourceData::class,
     ];
 

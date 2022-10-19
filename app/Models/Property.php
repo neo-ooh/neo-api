@@ -117,7 +117,6 @@ class Property extends SecuredModel {
             DB::beginTransaction();
             try {
                 $address = $property->address;
-                $address?->delete();
 
                 $property->pictures->each(fn($picture) => $picture->delete());
 
@@ -130,6 +129,8 @@ class Property extends SecuredModel {
                 $property->data()->delete();
                 $property->odoo()->delete();
                 $property->contacts()->delete();
+
+//                $address?->delete();
 
                 DB::commit();
             } catch (Throwable $err) {

@@ -274,8 +274,6 @@ class ActorsController extends Controller {
                 break;
         }
 
-        $actor->property?->delete();
-
         $actor->phone?->delete();
 
         $actor->delete();

@@ -184,6 +184,17 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return Factories\ActorFactory::new();
     }
 
+
+    public static function boot(): void {
+        parent::boot();
+
+        static::deleting(static function (Actor $actor) {
+            if ($actor->is_property) {
+                $actor->property?->delete();
+            }
+        });
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relations

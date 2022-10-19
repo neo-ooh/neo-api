@@ -18,11 +18,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Odoo\Property as OdooProperty;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Rules\AccessibleProperty;
+use Throwable;
 
 /**
  * Class Property
@@ -111,6 +113,7 @@ class Property extends SecuredModel {
         "actor:id,name",
     ];
 
+
     public function getPublicRelations() {
         return [
             "actor"         => "load:actor",
@@ -129,6 +132,36 @@ class Property extends SecuredModel {
             "traffic"       => "load:traffic.data",
             "warnings"      => "append:warnings",
         ];
+    }
+
+    public static function boot(): void {
+        parent::boot();
+
+        static::deleting(static function (Property $property) {
+            DB::beginTransaction();
+            try {
+                $address = $property->address;
+
+                $property->pictures->each(fn($picture) => $picture->delete());
+
+                $property->traffic()->delete();
+                $property->fields_values()->delete();
+                $property->demographicValues()->delete();
+                $property->products()->delete();
+                $property->opening_hours()->delete();
+                $property->tenants()->detach();
+                $property->data()->delete();
+                $property->odoo()->delete();
+                $property->contacts()->delete();
+
+//                $address?->delete();
+
+                DB::commit();
+            } catch (Throwable $err) {
+                DB::rollBack();
+                throw $err;
+            }
+        });
     }
 
     /*

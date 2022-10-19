@@ -60,7 +60,7 @@ class PropertiesController extends Controller {
         if (in_array("rolling_monthly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
                 "traffic",
-                "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"])
+                "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"]),
             ]);
 
             $properties->each(function ($p) {
@@ -73,7 +73,7 @@ class PropertiesController extends Controller {
         if (in_array("weekly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
                 "traffic",
-                "traffic.weekly_data"
+                "traffic.weekly_data",
             ]);
 
             $properties->each(function (Property $p) {
@@ -110,13 +110,13 @@ class PropertiesController extends Controller {
 
         if (in_array("fields", $request->input("with", []), true)) {
             $properties->load([
-                "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"])
+                "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
             ]);
         }
 
         if (in_array("tenants", $request->input("with", []), true)) {
             $properties->load([
-                "tenants" => fn($q) => $q->select(["id"])
+                "tenants" => fn($q) => $q->select(["id"]),
             ]);
         }
 
@@ -239,7 +239,7 @@ class PropertiesController extends Controller {
                 "pictures",
                 "fields_values",
                 "traffic.source",
-                "opening_hours"
+                "opening_hours",
             ]);
 
             $property->append(["warnings"]);
@@ -308,14 +308,7 @@ class PropertiesController extends Controller {
     }
 
     public function destroy(DestroyPropertyRequest $request, Property $property): Response {
-        $address = $property->address;
-        $property->pictures->each(fn($picture) => $picture->delete());
-
-        $property->traffic()->delete();
-        $property->data()->delete();
-        $property->odoo()->delete();
         $property->delete();
-        $address?->delete();
 
         return new Response(["status" => "ok"]);
     }

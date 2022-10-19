@@ -17,9 +17,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Odoo\Property as OdooProperty;
 use Neo\Rules\AccessibleProperty;
+use Throwable;
 
 /**
  * Class Property
@@ -90,11 +92,11 @@ class Property extends SecuredModel {
      */
     public $casts = [
         "require_traffic"        => "boolean",
-        "traffic_grace_override" => "date"
+        "traffic_grace_override" => "date",
     ];
 
     protected $dates = [
-        "last_review_at"
+        "last_review_at",
     ];
 
     /**
@@ -105,8 +107,37 @@ class Property extends SecuredModel {
     protected string $accessRule = AccessibleProperty::class;
 
     public $with = [
-        "actor:id,name"
+        "actor:id,name",
     ];
+
+
+    public static function boot(): void {
+        parent::boot();
+
+        static::deleting(static function (Property $property) {
+            DB::beginTransaction();
+            try {
+                $address = $property->address;
+                $address?->delete();
+
+                $property->pictures->each(fn($picture) => $picture->delete());
+
+                $property->traffic()->delete();
+                $property->fields_values()->delete();
+                $property->demographicValues()->delete();
+                $property->products()->delete();
+                $property->opening_hours()->delete();
+                $property->tenants()->detach();
+                $property->data()->delete();
+                $property->odoo()->delete();
+                $property->contacts()->delete();
+
+                DB::commit();
+            } catch (Throwable $err) {
+                DB::rollBack();
+            }
+        });
+    }
 
     /*
     |--------------------------------------------------------------------------

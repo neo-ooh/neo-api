@@ -110,7 +110,6 @@ class Property extends SecuredModel {
         "actor:id,name",
     ];
 
-
     public static function boot(): void {
         parent::boot();
 
@@ -135,6 +134,7 @@ class Property extends SecuredModel {
                 DB::commit();
             } catch (Throwable $err) {
                 DB::rollBack();
+                throw $err;
             }
         });
     }

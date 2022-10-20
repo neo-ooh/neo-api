@@ -62,12 +62,6 @@ class ContractsFlightsBroadSignExportController {
         $doc->addSheet($sheet);
         $doc->removeSheetByIndex(0);
 
-
-        $sheet->printRow([
-            "display_unit_id",
-            "display_unit_name",
-        ]);
-
         /** @var ContractLine $line */
         foreach ($filteredLines as $line) {
             /** @var Location $location */

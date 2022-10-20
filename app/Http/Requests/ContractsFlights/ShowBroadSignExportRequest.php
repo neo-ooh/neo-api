@@ -5,24 +5,25 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListProductCategoriesByidsRequest.php
+ * @neo/api - ShowBroadSignExportRequest.php
  */
 
-namespace Neo\Http\Requests\ProductCategories;
+namespace Neo\Http\Requests\ContractsFlights;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Models\ProductCategory;
 
-class ListProductCategoriesByidsRequest extends FormRequest {
+class ShowBroadSignExportRequest extends FormRequest {
     public function rules(): array {
         return [
-            "ids"  => ["required", "array"],
-            "with" => ["sometimes", "array"],
+            "category_id" => ["required", "integer", new Exists(ProductCategory::class, "id")],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_products) || Gate::allows(Capability::tools_planning);
+        return Gate::allows(Capability::contracts_manage);
     }
 }

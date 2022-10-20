@@ -91,6 +91,14 @@ class BroadSignClient implements APIClientInterface {
      * @throws GuzzleException
      */
     protected function call_impl__(BroadSignEndpoint $endpoint, $payload, array $headers): mixed {
+        if (config('app.env') !== 'production') {
+            Log::debug("[BroadSign] $endpoint->method@{$endpoint->getPath()}", [json_encode($payload, JSON_THROW_ON_ERROR)]);
+            clock([
+                "endpoint" => "$endpoint->method@{$endpoint->getPath()}",
+                "payload"  => $payload,
+            ]);
+        }
+
         // Execute the request
         $response = $this->client->call($endpoint, $payload, $headers);
 

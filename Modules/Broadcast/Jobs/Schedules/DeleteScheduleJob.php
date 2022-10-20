@@ -91,7 +91,7 @@ class DeleteScheduleJob extends BroadcastJobBase {
 
             // Get the external ID representation for this schedule
             /** @var array<ExternalResource> $externalResources */
-            $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->format_id, $representation->format_id);
+            $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->network_id, $representation->format_id);
 
             $broadcaster->deleteSchedule(externalResources: array_map(static fn(ExternalResource $resource) => $resource->toResource(), $externalResources));
 

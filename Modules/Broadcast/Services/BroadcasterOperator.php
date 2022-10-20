@@ -77,7 +77,7 @@ abstract class BroadcasterOperator {
      * @throw MissingExternalResourceException
      */
     protected function getResourceByType(array $resources, ExternalResourceType $type): ExternalBroadcasterResourceId {
-        $matches = array_filter($resources, static fn(ExternalBroadcasterResourceId $resource) => $resource->type = $type);
+        $matches = array_values(array_filter($resources, static fn(ExternalBroadcasterResourceId $resource) => $resource->type === $type));
 
         if (count($matches) === 0) {
             throw new MissingExternalResourceException($this->broadcasterType, $type);

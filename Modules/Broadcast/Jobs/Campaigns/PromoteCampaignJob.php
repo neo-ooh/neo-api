@@ -96,7 +96,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
             })->first();
 
             $campaignResource                               = $campaign->toResource();
-            $campaignResource->name                         .= "-" . $format->slug;
+            $campaignResource->name                         .= " - " . $format->name;
             $campaignResource->default_schedule_length_msec = $loopConfiguration->spot_length_ms ?? $campaignResource->default_schedule_length_msec;
 
             // Get the external ID for this campaign representation

@@ -15,6 +15,7 @@ use Illuminate\Support\Collection;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
 use Neo\Modules\Broadcast\Models\BroadcasterConnection;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
@@ -212,6 +213,10 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
         $bsCampaign->create();
 
+        // Promote the campaign once it has been created. This cannot be done on reservation creation
+        $bsCampaign->state = BroadSignReservationState::Contracted;
+        $bsCampaign->save();
+
         return new ExternalBroadcasterResourceId(
             external_id: $bsCampaign->getKey(),
             type: ExternalResourceType::Campaign
@@ -376,9 +381,8 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         // Create the schedule
-        $bsSchedule         = new BroadSignSchedule($this->getAPIClient());
-        $bsSchedule->active = $schedule->enabled;
-        $bsSchedule->name   = $schedule->name;
+        $bsSchedule       = new BroadSignSchedule($this->getAPIClient());
+        $bsSchedule->name = $schedule->name;
 
         $bsSchedule->start_date       = $schedule->start_date;
         $bsSchedule->start_time       = $schedule->start_time;
@@ -394,6 +398,12 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $bsSchedule->parent_id     = $loopSlots[0]->id;
 
         $bsSchedule->create();
+
+        // If the schedule is not enabled, we disabled the representation in BroadSign to prevent it from playing
+        if (!$schedule->enabled) {
+            $bsSchedule->active = false;
+            $bsSchedule->save();
+        }
 
         // Create the bundle
         $bsBundle           = new BroadSignBundle($this->getAPIClient());
@@ -468,15 +478,15 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $bsBundle = BroadSignBundle::get($this->getAPIClient(), $externalBundle->external_id);
 
         if (is_null($bsBundle)) {
-            throw new ExternalBroadcastResourceNotFoundException($externalSchedule);
+            throw new ExternalBroadcastResourceNotFoundException($externalBundle);
         }
 
         // Only update bundle if necessary
         $triggerTags = array_filter($tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Trigger);
-        $triggerTag  = (int)array_shift($triggerTags)->external_id;
+        $triggerTag  = count($triggerTags) > 0 ? (int)(array_shift($triggerTags)->external_id) : 0;
 
         $separationTags          = array_filter($tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Category);
-        $primarySeparationTag    = (int)array_shift($separationTags)?->external_id;
+        $primarySeparationTag    = count($separationTags) > 0 ? (int)(array_shift($separationTags)->external_id) : 0;
         $secondarySeparationTags = implode(",", array_map(static fn(Tag $tag) => (int)$tag->external_id, $separationTags));
 
         if ($schedule->order !== $bsBundle->position ||
@@ -500,29 +510,35 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
     /**
      * @inheritDoc
+     * @throws InvalidBroadcastResource
      */
     public function deleteSchedule(array $externalResources): bool {
-        $externalSchedule = $this->getResourceByType($externalResources, ExternalResourceType::Schedule);
+        // Loop over all the provided resources. If they are schedules or bundles, deactivate them.
+        foreach ($externalResources as $externalResource) {
+            switch ($externalResource->type) {
+                case ExternalResourceType::Schedule:
+                    $bsSchedule = BroadSignSchedule::get($this->getAPIClient(), $externalResource->external_id);
 
-        $bsSchedule = BroadSignSchedule::get($this->getAPIClient(), $externalSchedule->external_id);
+                    // If the resource is not found, just ignore it
+                    if (!is_null($bsSchedule)) {
+                        $bsSchedule->active = false;
+                        $bsSchedule->weight = 0;
+                        $bsSchedule->save();
+                    }
+                    break;
+                case ExternalResourceType::Bundle:
+                    $bsBundle = BroadSignBundle::get($this->getAPIClient(), $externalResource->external_id);
 
-        // If the resource is not found, just ignore it
-        if (!is_null($bsSchedule)) {
-            $bsSchedule->active = false;
-            $bsSchedule->weight = 0;
-            $bsSchedule->save();
+                    // If the resource is not found, just ignore it
+                    if (!is_null($bsBundle)) {
+                        $bsBundle->active = false;
+                        $bsBundle->save();
+                    }
+                    break;
+                default:
+                    throw new InvalidBroadcastResource($externalResource->type, [ExternalResourceType::Schedule, ExternalResourceType::Bundle]);
+            }
         }
-
-        $externalBundle = $this->getResourceByType($externalResources, ExternalResourceType::Bundle);
-
-        $bsBundle = BroadSignBundle::get($this->getAPIClient(), $externalBundle->external_id);
-
-        // If the resource is not found, just ignore it
-        if (!is_null($bsBundle)) {
-            $bsBundle->active = false;
-            $bsBundle->save();
-        }
-
 
         return true;
     }
@@ -545,7 +561,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
             $bsCreative->addCriteria($tag->external_id, 0);
         }
 
-        return new ExternalBroadcasterResourceId(type: ExternalResourceType::Creative, id: $creativeId);
+        return new ExternalBroadcasterResourceId(type: ExternalResourceType::Creative, external_id: $creativeId);
     }
 
     /**

@@ -90,7 +90,9 @@ class Creative extends BroadSignModel {
             "update"              => Endpoint::put("/content/v11")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new SingleResourcesParser(static::class)),
-            "addResourceCriteria" => Endpoint::post("/resource_criteria/v7/add"),
+            "addResourceCriteria" => Endpoint::post("/resource_criteria/v7/add")
+                                             ->unwrap("resource_criteria")
+                                             ->parser(new ResourceIDParser()),
         ];
     }
 
@@ -151,24 +153,34 @@ class Creative extends BroadSignModel {
         $metadata = [
             "name"             => $creative->name,
             "originalfilename" => $creative->fileName,
-            "size"             => Storage::disk("public")->size($creative->path),
             "feeds"            => "",
             "attributes"       => static::getAttributesForCreative($creative, $storageType),
             "mime"             => $creative->extension,
         ];
 
+        switch ($storageType) {
+            case CreativeStorageType::File:
+                $metadata["size"] = Storage::disk("public")->size($creative->path);
 
-        // Get the creative in a temporary file for the upload
-        $tempFile = tmpfile();
-        fwrite($tempFile, file_get_contents($creative->url));
-        fseek($tempFile, 0);
-        $creativePath = stream_get_meta_data($tempFile)['uri'];
+                // Get the creative in a temporary file for the upload
+                $tempFile = tmpfile();
+                fwrite($tempFile, file_get_contents($creative->url));
+                fseek($tempFile, 0);
+                $creativePath = stream_get_meta_data($tempFile)['uri'];
 
-        $response = static::executeRequest($client, $metadata, $creativePath);
+                $response = static::executeRequest($client, $metadata, $creativePath);
 
-        fclose($tempFile);
+                fclose($tempFile);
 
-        return $response["id"];
+                return $response["id"];
+            case CreativeStorageType::Link:
+                $metadata["size"] = "-1";
+                $response         = static::executeRequest($client, $metadata);
+
+                return $response["id"];
+        }
+
+        return 0;
     }
 
     /**

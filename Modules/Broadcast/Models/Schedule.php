@@ -278,7 +278,7 @@ class Schedule extends BroadcastResourceModel {
             return $resource->broadcaster_id === $broadcasterId &&
                 $resource->data->network_id === $networkId &&
                 in_array($formatId, $resource->data->formats_id, true);
-        })->toArray();
+        })->all();
     }
 
 

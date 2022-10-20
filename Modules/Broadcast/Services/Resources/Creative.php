@@ -13,6 +13,8 @@ namespace Neo\Modules\Broadcast\Services\Resources;
 use Neo\Modules\Broadcast\Enums\CreativeType;
 
 class Creative extends ExternalBroadcasterResource {
+    public int $id;
+
     public string $name;
     public string $fileName;
     public CreativeType $type;

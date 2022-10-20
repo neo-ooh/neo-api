@@ -29,6 +29,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
+use Neo\Modules\Broadcast\Services\Exceptions\MissingExternalResourceException;
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Schedule as ScheduleResource;
@@ -77,7 +78,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
         if ($schedule->trashed()) {
             return [
                 "error"   => true,
-                "message" => "Schedule is trashed"
+                "message" => "Schedule is trashed",
             ];
         }
 
@@ -97,34 +98,19 @@ class PromoteScheduleJob extends BroadcastJobBase {
         // Filter the campaign's representations to only keep the one matching the formats with which the content's layout is associated
         $scheduleRepresentations = array_filter($campaignRepresentations, static fn(ExternalCampaignDefinition $representation) => $formatsIds->contains($representation->format_id));
 
-        // This array will hold newly created resources, and errors
-        $results = [];
-
         if (count($scheduleRepresentations) === 0) {
             return [
                 "error"                    => true,
                 "message"                  => "No representation of campaign matching schedule found",
-                "campaign_representations" => array_map(static fn(ExternalCampaignDefinition $definition) => $definition, $campaignRepresentations)
+                "campaign_representations" => array_map(static fn(ExternalCampaignDefinition $definition) => $definition, $campaignRepresentations),
             ];
         }
 
+        // This array will hold newly created resources, and errors
+        $results = [];
+
         /** @var ExternalCampaignDefinition $representation */
         foreach ($scheduleRepresentations as $representation) {
-            // Does this schedule fits in this campaign representation ?
-            /** @var Format $representationFormat */
-            $representationFormat = Format::query()->find($representation->format_id);
-
-            if ($representationFormat->layouts()->allRelatedIds()->doesntContain($schedule->content->layout_id)) {
-                // The schedule's content does not fit in this campaign representation, ignore it
-                $results[] = [
-                    "error"      => false,
-                    "message"    => "Representation skipped because format does not match",
-                    "network_id" => $representation->network_id,
-                    "format_id"  => $representation->format_id,
-                ];
-                continue;
-            }
-
             /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
             $broadcaster = BroadcasterAdapterFactory::makeForNetwork($representation->network_id);
 
@@ -138,10 +124,12 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 ];
                 continue;
             }
+            /** @var Format $representationFormat */
+            $representationFormat = Format::query()->find($representation->format_id);
 
             // Get the external ID for this campaign representation
             /** @var ExternalResource|null $externalCampaignResource */
-            $externalCampaignResource = $schedule->campaign->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->format_id, $representation->format_id);
+            $externalCampaignResource = $schedule->campaign->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->network_id, $representation->format_id);
 
             if (!$externalCampaignResource) {
                 // The campaign has no ID for this representation. This means the campaign is in an erroneous state
@@ -156,8 +144,8 @@ class PromoteScheduleJob extends BroadcastJobBase {
             }
 
             // Get the external ID representation for this schedule
-            /** @var array<ExternalResource> $externalResources */
-            $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->format_id, $representation->format_id);
+            /** @var array<ExternalResource> $externalResources Existing external representations at the start of the job */
+            $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->network_id, $representation->format_id);
 
             $scheduleResource = $schedule->toResource();
 
@@ -195,7 +183,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                             schedule: $scheduleResource,
                             tags: $scheduleTags,
                         );
-                    } catch (ExternalBroadcastResourceNotFoundException) {
+                    } catch (ExternalBroadcastResourceNotFoundException|MissingExternalResourceException $err) {
                         // The broadcaster did not find any schedule with the id provided. Try to create it instead
                         $updatedExternalResources = $this->createSchedule(
                             broadcaster: $broadcaster,
@@ -233,14 +221,27 @@ class PromoteScheduleJob extends BroadcastJobBase {
             // We now have IDs to our resources, check if some have changed, and replace them if necessary
             /** @var ExternalBroadcasterResourceId $updatedExternalResource */
             foreach ($updatedExternalResources as $updatedExternalResource) {
-                // For each created resource, find an existing id for it
-                /** @var ExternalResource|null $newExternalResource */
-                $existingExternalResource = array_filter($externalResources, static fn(ExternalResource $resource) => $resource->type = $updatedExternalResource->type)[0] ?? null;
+                /** @var ExternalResource[] $sameTypeResources */
+                $sameTypeResources = array_filter($externalResources, static function (ExternalResource $externalResource) use ($updatedExternalResource) {
+                    return $externalResource->type === $updatedExternalResource->type;
+                });
 
-                // If we have an existing resource for this external resource, check if it needs to be updated
-                if (($existingExternalResource?->data->external_id ?? null) !== $updatedExternalResource->external_id) {
-                    $existingExternalResource?->delete();
+                // Remove any resource that doesn't match the updated ID
+                /** @var ExternalResource[] $validResources */
+                $validResources = [];
 
+                foreach ($sameTypeResources as $resource) {
+                    if ($resource->data->external_id === $updatedExternalResource->external_id) {
+                        $validResources[] = $resource;
+                        continue;
+                    }
+
+                    $resource->delete();
+                }
+
+                // Is there at least one resource that matches the new one ?
+                if (count($validResources) === 0) {
+                    // No, store the new one
                     $newExternalResource = new ExternalResource([
                         "resource_id"    => $schedule->getKey(),
                         "broadcaster_id" => $broadcaster->getBroadcasterId(),
@@ -249,13 +250,14 @@ class PromoteScheduleJob extends BroadcastJobBase {
                             "network_id"  => $broadcaster->getNetworkId(),
                             "formats_id"  => [$representation->format_id],
                             "external_id" => $updatedExternalResource->external_id,
-                        ])
+                        ]),
                     ]);
                     $newExternalResource->save();
 
                     $results[] = $newExternalResource;
-                } else if ($existingExternalResource !== null) {
-                    $results[] = $existingExternalResource;
+                } else {
+                    // The updated resource is already reference, just add it to the results
+                    array_push($results, ...$validResources);
                 }
             }
         }

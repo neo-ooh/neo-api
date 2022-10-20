@@ -307,7 +307,7 @@ class Campaign extends BroadcastResourceModel {
             "start_date"                   => $this->start_date->toDateString(),
             "start_time"                   => $this->start_time->toTimeString(),
             "end_date"                     => $this->end_date->toDateString(),
-            "end_time"                     => $this->end_date->toTimeString(),
+            "end_time"                     => $this->end_time->toTimeString(),
             "broadcast_days"               => $this->broadcast_days,
             "priority"                     => $this->priority,
             "occurrences_in_loop"          => $this->occurrences_in_loop,

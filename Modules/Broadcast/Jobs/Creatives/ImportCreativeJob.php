@@ -12,11 +12,15 @@ namespace Neo\Modules\Broadcast\Jobs\Creatives;
 
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
+use Neo\Modules\Broadcast\Enums\CreativeType;
+use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\Creative;
+use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Network;
+use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
@@ -60,7 +64,7 @@ class ImportCreativeJob extends BroadcastJobBase {
         if ($creative->trashed()) {
             return [
                 "error"   => true,
-                "message" => "Creative is trashed"
+                "message" => "Creative is trashed",
             ];
         }
 
@@ -77,11 +81,33 @@ class ImportCreativeJob extends BroadcastJobBase {
             return [];
         }
 
-        $tags = new BroadcastTagsCollector();
-        $tags->collect($creative->frame->broadcast_tags);
-        $creativeTags = $tags->get($broadcaster->getBroadcasterId(), [BroadcastTagType::Targeting]);
+        // Check if the creative already has an external ID for this broadcaster
+        $externalRepresentation = $creative->getExternalRepresentation($broadcaster->getBroadcasterId());
 
-        $creativeExternalId = $broadcaster->importCreative($creative->toResource(), CreativeStorageType::Link, $creativeTags);
+        if ($externalRepresentation !== null) {
+            return [
+                "error"   => false,
+                "message" => "Creative is already represented in this broadcaster",
+            ];
+        }
+
+        $tags = new BroadcastTagsCollector();
+        $tags->collect($creative->frame->broadcast_tags, [BroadcastTagType::Targeting]);
+        $creativeTags = $tags->get($broadcaster->getBroadcasterId());
+
+        $importType = $creative->type === CreativeType::Url ? CreativeStorageType::Link : CreativeStorageType::File;
+
+        $creativeExternalId = $broadcaster->importCreative($creative->toResource(), $importType, $creativeTags);
+
+        $externalResource = new ExternalResource([
+            "resource_id"    => $creative->getKey(),
+            "broadcaster_id" => $broadcaster->getBroadcasterId(),
+            "type"           => ExternalResourceType::Creative,
+            "data"           => new ExternalResourceData([
+                "external_id" => $creativeExternalId->external_id,
+            ]),
+        ]);
+        $externalResource->save();
 
         return [$creativeExternalId];
     }

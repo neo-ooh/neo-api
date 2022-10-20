@@ -3,6 +3,7 @@
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsLocationsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsSchedulesController;
+use Neo\Modules\Broadcast\Http\Controllers\ExternalResourcesController;
 use Neo\Modules\Broadcast\Http\Controllers\SchedulesController;
 use Neo\Modules\Broadcast\Http\Controllers\SchedulesReviewsController;
 use Neo\Modules\Broadcast\Models\Campaign;
@@ -78,4 +79,14 @@ Route::group([
 
     Route::get("schedules/{schedule}/reviews", SchedulesReviewsController::class . "@index");
     Route::post("schedules/{schedule}/reviews", SchedulesReviewsController::class . "@store");
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Campaigns
+    |----------------------------------------------------------------------
+    */
+
+    Route::delete("external-resources/{externalResource}", ExternalResourcesController::class . "@destroy");
 });
+

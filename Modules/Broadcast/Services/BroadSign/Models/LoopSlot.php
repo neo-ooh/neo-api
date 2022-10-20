@@ -51,6 +51,6 @@ class LoopSlot extends BroadSignModel {
      * @return array<LoopSlot>
      */
     public static function forCampaign(BroadSignClient $client, int $campaignId): array {
-        return (new static($client))->callAction("getByReservable", ["reservable_id" => $campaignId]);
+        return [...(new static($client))->callAction("getByReservable", ["reservable_id" => $campaignId])];
     }
 }

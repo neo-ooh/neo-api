@@ -25,7 +25,7 @@ use Neo\Models\ContractScreenshot;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v1"
+    "prefix"     => "v1",
 ], function () {
     /*
     |----------------------------------------------------------------------

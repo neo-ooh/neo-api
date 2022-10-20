@@ -73,7 +73,7 @@ class Schedule extends BroadSignModel implements ResourceCastable {
                                 ->parser(new SingleResourcesParser(static::class)),
             "update" => Endpoint::put("/schedule/v8")
                                 ->unwrap(static::$unwrapKey)
-                                ->parser(new SingleResourcesParser(static::class))
+                                ->parser(new SingleResourcesParser(static::class)),
         ];
     }
 
@@ -100,6 +100,7 @@ class Schedule extends BroadSignModel implements ResourceCastable {
             "end_date"       => $this->end_date,
             "end_time"       => $this->end_time,
             "broadcast_days" => $this->day_of_week_mask,
+            "order"          => -1,
         ]);
     }
 }

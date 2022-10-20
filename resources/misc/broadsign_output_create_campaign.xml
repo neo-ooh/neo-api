@@ -1,0 +1,368 @@
+<!DOCTYPE request>
+<request version="22" requestid="1473" not_modified_since="2022-10-18T20:16:04Z" name="reservation_mgr_list" token="126313">
+    <reservation domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="9" requestid="1474" not_modified_since="2022-10-18T20:16:25Z" name="container_mgr_list" token="126313">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="7" requestid="1475" not_modified_since="2022-10-18T20:16:04Z" name="customer_mgr_list" token="126313">
+<customer domain_id="768189"/>
+</request>
+<response version="22" name="reservation_mgr_list" resource_type="reservation" op_type="list" status="complete" requestid="1473"
+          not_modified_since="2022-10-18T20:17:01Z" ns="user"/>
+<response version="9" name="container_mgr_list" resource_type="container" op_type="list" status="complete" requestid="1474"
+          not_modified_since="2022-10-18T20:17:01Z" ns="user"/>
+<response version="7" name="customer_mgr_list" resource_type="customer" op_type="list" status="complete" requestid="1475"
+          not_modified_since="2022-10-18T20:17:01Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="9" requestid="1476" not_modified_since="2022-10-18T20:16:02Z" name="container_mgr_list_many" token="126313">
+<container ids="438314345"/>
+</request>
+<response version="9" name="container_mgr_list_many" resource_type="container" op_type="list_many" status="incomplete"
+          requestid="1476" ns="user">
+<container aa="438314345" ab="Shopping" ac="1" ad="0" ae="768189" af="3" ag="421836410" ah="customer"/>
+</response>
+<response version="9" name="container_mgr_list_many" resource_type="container" op_type="list_many" status="complete"
+          requestid="1476" not_modified_since="2022-10-18T20:17:03Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="12" requestid="1477" not_modified_since="2022-10-18T20:16:25Z" name="display_unit_mgr_list" token="126313">
+<display_unit domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="9" requestid="1478" not_modified_since="2022-10-18T20:17:01Z" name="container_mgr_list" token="126313">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="5" requestid="1479" not_modified_since="2022-10-18T20:16:04Z" name="relationship_mgr_list" token="126313">
+<relationship domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="8" requestid="1480" not_modified_since="2022-10-18T20:16:04Z" name="criteria_mgr_list" token="126313">
+<criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="7" requestid="1481" not_modified_since="2022-10-18T20:17:01Z" name="customer_mgr_list" token="126313">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="11" requestid="1482" not_modified_since="2022-10-18T20:16:04Z" name="content_mgr_list" token="126313">
+<content domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="1" requestid="1483" not_modified_since="2022-10-18T20:16:04Z" name="container_scope_mgr_list" token="126313">
+<container_scope domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="1" requestid="1484" not_modified_since="2022-10-18T20:16:04Z" name="container_scope_relationship_mgr_list"
+         token="126313">
+<container_scope_relationship domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="3" requestid="1485" not_modified_since="2022-10-18T20:16:04Z" name="resource_notification_mgr_list"
+         token="126313">
+<resource_notification domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="22" requestid="1486" not_modified_since="2022-10-18T20:17:01Z" name="reservation_mgr_list" token="126313">
+<reservation domain_id="768189"/>
+</request>
+<response version="12" name="display_unit_mgr_list" resource_type="display_unit" op_type="list" status="complete" requestid="1477"
+          not_modified_since="2022-10-18T20:17:04Z" ns="user"/>
+<response version="9" name="container_mgr_list" resource_type="container" op_type="list" status="complete" requestid="1478"
+          not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+<response version="5" name="relationship_mgr_list" resource_type="relationship" op_type="list" status="complete" requestid="1479"
+          not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+<response version="8" name="criteria_mgr_list" resource_type="criteria" op_type="list" status="complete" requestid="1480"
+          not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+<response version="7" name="customer_mgr_list" resource_type="customer" op_type="list" status="complete" requestid="1481"
+          not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+<response version="11" name="content_mgr_list" resource_type="content" op_type="list" status="complete" requestid="1482"
+          not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+<response version="1" name="container_scope_mgr_list" resource_type="container_scope" op_type="list" status="complete"
+          requestid="1483" not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+<response version="1" name="container_scope_relationship_mgr_list" resource_type="container_scope_relationship" op_type="list"
+          status="complete" requestid="1484" not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+<response version="3" name="resource_notification_mgr_list" resource_type="resource_notification" op_type="list" status="complete"
+          requestid="1485" not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+<response version="22" name="reservation_mgr_list" resource_type="reservation" op_type="list" status="complete" requestid="1486"
+          not_modified_since="2022-10-18T20:17:05Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="12" requestid="1487" not_modified_since="2022-10-18T20:17:04Z" name="display_unit_mgr_list" token="126313">
+<display_unit domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="9" requestid="1488" not_modified_since="2022-10-18T20:17:05Z" name="container_mgr_list" token="126313">
+<container domain_id="768189"/>
+</request>
+<response version="12" name="display_unit_mgr_list" resource_type="display_unit" op_type="list" status="complete" requestid="1487"
+          not_modified_since="2022-10-18T20:17:17Z" ns="user"/>
+<response version="9" name="container_mgr_list" resource_type="container" op_type="list" status="complete" requestid="1488"
+          not_modified_since="2022-10-18T20:17:17Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="12" requestid="1489" not_modified_since="2022-10-18T20:17:17Z" name="display_unit_mgr_list" token="126313">
+<display_unit domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="9" requestid="1490" not_modified_since="2022-10-18T20:17:17Z" name="container_mgr_list" token="126313">
+<container domain_id="768189"/>
+</request>
+<response version="12" name="display_unit_mgr_list" resource_type="display_unit" op_type="list" status="complete" requestid="1489"
+          not_modified_since="2022-10-18T20:17:19Z" ns="user"/>
+<response version="9" name="container_mgr_list" resource_type="container" op_type="list" status="complete" requestid="1490"
+          not_modified_since="2022-10-18T20:17:19Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="12" requestid="1491" not_modified_since="2022-10-18T20:17:19Z" name="display_unit_mgr_list" token="126313">
+<display_unit domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="9" requestid="1492" not_modified_since="2022-10-18T20:17:19Z" name="container_mgr_list" token="126313">
+<container domain_id="768189"/>
+</request>
+<response version="12" name="display_unit_mgr_list" resource_type="display_unit" op_type="list" status="complete" requestid="1491"
+          not_modified_since="2022-10-18T20:17:20Z" ns="user"/>
+<response version="9" name="container_mgr_list" resource_type="container" op_type="list" status="complete" requestid="1492"
+          not_modified_since="2022-10-18T20:17:20Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="8" requestid="1493" not_modified_since="2022-10-18T20:17:05Z" name="criteria_mgr_list" token="126313">
+<criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="9" requestid="1494" not_modified_since="2022-10-18T20:17:20Z" name="container_mgr_list" token="126313">
+<container domain_id="768189"/>
+</request>
+<response version="8" name="criteria_mgr_list" resource_type="criteria" op_type="list" status="complete" requestid="1493"
+          not_modified_since="2022-10-18T20:17:28Z" ns="user"/>
+<response version="9" name="container_mgr_list" resource_type="container" op_type="list" status="complete" requestid="1494"
+          not_modified_since="2022-10-18T20:17:28Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="11" requestid="1495" not_modified_since="2022-10-18T20:17:05Z" name="content_mgr_list" token="126313">
+<content domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="9" requestid="1496" not_modified_since="2022-10-18T20:17:28Z" name="container_mgr_list" token="126313">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="7" requestid="1497" not_modified_since="2022-10-18T20:17:05Z" name="customer_mgr_list" token="126313">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="11" external_token="" requestid="1498" name="loop_policy_mgr_list_from_target" token="126313">
+<loop_policy duration_msec="0" domain_id="768189" end_date="2022-11-18" limit="4294967295" start_time="00:00:00"
+             end_time="23:59:59" exclusive_category_id="0" start_date="2022-10-18">
+    <frame_or_criteria id="1143561"/>
+    <display_unit id="413214006"/>
+</loop_policy>
+</request>
+<response version="11" name="content_mgr_list" resource_type="content" op_type="list" status="complete" requestid="1495"
+          not_modified_since="2022-10-18T20:17:46Z" ns="user"/>
+<response version="9" name="container_mgr_list" resource_type="container" op_type="list" status="complete" requestid="1496"
+          not_modified_since="2022-10-18T20:17:46Z" ns="user"/>
+<response version="7" name="customer_mgr_list" resource_type="customer" op_type="list" status="complete" requestid="1497"
+          not_modified_since="2022-10-18T20:17:46Z" ns="user"/>
+<response version="11" name="loop_policy_mgr_list_from_target" resource_type="loop_policy" op_type="list" status="incomplete"
+          requestid="1498" ns="user">
+<loop_policy ao="" ap="0" aq="" aa="272544055" ab="DCA - Tester" ac="1" ad="60469609" ae="768189" af="70000" ag="10000"
+             ah="transform_preprocess;transform_under_saturate;transform_over_saturate;transform_filler;transform_condition;transform_priority;transform_segments;transform_category_separator"
+             ai="1" aj="1" ak="" al="70000"
+             am="&lt;!DOCTYPE loop_share_configuration>&#xa;&lt;loop_share_configuration generated_on=&quot;2019-02-19T21:07:29Z&quot; version=&quot;1&quot;>&#xa; &lt;loop_share_settings default=&quot;&quot;>&#xa;  &lt;loop_shares/>&#xa; &lt;/loop_share_settings>&#xa;&lt;/loop_share_configuration>"
+             an="0"/>
+</response>
+<response version="11" name="loop_policy_mgr_list_from_target" resource_type="loop_policy" op_type="list" status="complete"
+          requestid="1498" not_modified_since="2022-10-18T20:17:46Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="22" requestid="1499" not_modified_since="2022-10-18T20:13:54Z" name="reservation_mgr_add" token="126313">
+<reservation
+        name="Shopping - Test Campaign 004"
+        duration_msec="10000"
+        start_date="2022-10-18"
+        start_time="00:00:00"
+        end_date="2022-11-18"
+        end_time="23:59:59"
+        day_of_week_mask="127"
+
+        saturation="1"
+        auto_synchronize_bundles="0"
+        container_id="438314345"
+        parent_id="421836410"
+        domain_id="768189"
+
+        proposal_line_item_id=""
+        default_bundle_weight="0"
+        default_interactivity_timeout="0"
+        pacing_target="0"
+        default_fullscreen="0"
+        note=""
+        goal_unit="0"
+        contract_id=""
+        goal_amount="0"
+        has_goal="0"
+        pacing_period="0"
+        proposal_id=""
+        default_category_id="435602603"
+/>
+</request>
+<response version="22" name="reservation_mgr_add" resource_type="reservation" op_type="add" status="normal" requestid="1499"
+          not_modified_since="2022-10-18T20:17:58Z" ns="user">
+<reservation id="691267664"/>
+</response>
+        <!DOCTYPE request>
+<request version="22" requestid="1500" not_modified_since="1970-01-02T00:00:00" name="reservation_mgr_list" token="126313">
+<reservation reservation_id="691267664" domain_id="768189"/>
+</request>
+<response version="22" name="reservation_mgr_list" resource_type="reservation" op_type="list" status="incomplete" requestid="1500"
+          ns="user">
+<reservation bn="0" bo="0" bp="" bq="" br="" bs="false" aa="691267664" ab="Shopping - Test Campaign 004" ac="1" ad="438314345"
+             ae="768189" af="0" ag="2022-10-18" ah="2022-11-18" ai="00:00:00" aj="23:59:59" ak="10000" al="448410277"
+             am="2022-10-18T20:17:59" an="0" ao="" ap="421836410" aq="0" ar="" as="1.000000" at="691267666" au="0" av="435602603"
+             aw="0" ax="0" ay="0" az="0" ba="0" bb="0" bc="127" bd="0" be="0" bf="0" bg="0" bh="" bi="" bj="" bk="0" bl="0"
+             bm=""/>
+</response>
+<response version="22" name="reservation_mgr_list" resource_type="reservation" op_type="list" status="complete" requestid="1500"
+          not_modified_since="2022-10-18T20:17:58Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="22" external_token="" requestid="1501" name="reservation_mgr_add_skin_slots" token="126313">
+<reservation id="691267664" domain_id="768189" creation_date="2022-10-18">
+    <frame_or_criteria id="1143561"/>
+    <display_unit id="413214006"/>
+</reservation>
+</request>
+<response version="22" name="reservation_mgr_add_skin_slots" resource_type="reservation" op_type="add" status="normal"
+          requestid="1501" not_modified_since="2022-10-18T20:17:59Z" ns="user">
+<reservation id="691267664"/>
+</response>
+        <!DOCTYPE request>
+<request version="22" requestid="1502" not_modified_since="2022-10-18T20:17:58Z" name="reservation_mgr_list" token="126313">
+<reservation reservation_id="691267664" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="7" requestid="1503" not_modified_since="1970-01-02T00:00:00" name="skin_slot_mgr_list_by_reservable"
+         token="126313">
+<skin_slot domain_id="768189" reservable_id="691267664"/>
+</request>
+        <!DOCTYPE request>
+<request version="10" requestid="1504" not_modified_since="1970-01-02T00:00:00" name="loop_slot_mgr_list_by_reservable"
+         token="126313">
+<loop_slot domain_id="768189" reservable_id="691267664"/>
+</request>
+        <!DOCTYPE request>
+<request version="5" requestid="1505" not_modified_since="2022-10-18T20:15:11Z" name="day_part_mgr_list" token="126313">
+<day_part domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="12" requestid="1506" not_modified_since="2022-10-18T20:17:20Z" name="display_unit_mgr_list" token="126313">
+<display_unit domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="7" requestid="1507" not_modified_since="2022-10-18T20:15:11Z" name="skin_mgr_list" token="126313">
+<skin domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="10" requestid="1508" not_modified_since="2022-10-18T20:15:14Z" name="domain_mgr_list" token="126313">
+<domain id="768189" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="1" requestid="1509" not_modified_since="1970-01-02T00:00:00" name="reservable_skins_not_booked_mgr_list"
+         token="126313">
+<reservable_skins_not_booked domain_id="768189" parent_id="691267664"/>
+</request>
+<response version="22" name="reservation_mgr_list" resource_type="reservation" op_type="list" status="incomplete" requestid="1502"
+          ns="user">
+<reservation bn="0" bo="0" bp="" bq="" br="" bs="false" aa="691267664" ab="Shopping - Test Campaign 004" ac="1" ad="438314345"
+             ae="768189" af="0" ag="2022-10-18" ah="2022-11-18" ai="00:00:00" aj="23:59:59" ak="10000" al="448410277"
+             am="2022-10-18T20:17:59" an="0" ao="" ap="421836410" aq="0" ar="" as="1.000000" at="691267666" au="0" av="435602603"
+             aw="0" ax="0" ay="0" az="0" ba="0" bb="0" bc="127" bd="0" be="0" bf="0" bg="0" bh="" bi="" bj="" bk="0" bl="0"
+             bm=""/>
+</response>
+<response version="22" name="reservation_mgr_list" resource_type="reservation" op_type="list" status="complete" requestid="1502"
+          not_modified_since="2022-10-18T20:17:59Z" ns="user"/>
+<response version="7" name="skin_slot_mgr_list_by_reservable" resource_type="skin_slot" op_type="list" status="incomplete"
+          requestid="1503" ns="user">
+<skin_slot aa="691267672" ab="1" ac="768189" ad="413214008" ae="691267665" af="" ag="2022-10-18" ah="2022-11-18" ai="false"
+           aj="127"/>
+</response>
+<response version="7" name="skin_slot_mgr_list_by_reservable" resource_type="skin_slot" op_type="list" status="complete"
+          requestid="1503" not_modified_since="2022-10-18T20:17:59Z" ns="user"/>
+<response version="10" name="loop_slot_mgr_list_by_reservable" resource_type="loop_slot" op_type="list" status="incomplete"
+          requestid="1504" ns="user">
+<loop_slot aa="691267665" ab="1" ac="768189" ad="691267664" ae="2022-10-18" af="2022-11-18" ag="10000" ah="" ai="0" aj="127"
+           ak="0" al="0.000000"/>
+</response>
+<response version="10" name="loop_slot_mgr_list_by_reservable" resource_type="loop_slot" op_type="list" status="complete"
+          requestid="1504" not_modified_since="2022-10-18T20:17:59Z" ns="user"/>
+<response version="5" name="day_part_mgr_list" resource_type="day_part" op_type="list" status="complete" requestid="1505"
+          not_modified_since="2022-10-18T20:17:59Z" ns="user"/>
+<response version="12" name="display_unit_mgr_list" resource_type="display_unit" op_type="list" status="complete" requestid="1506"
+          not_modified_since="2022-10-18T20:17:59Z" ns="user"/>
+<response version="7" name="skin_mgr_list" resource_type="skin" op_type="list" status="complete" requestid="1507"
+          not_modified_since="2022-10-18T20:17:59Z" ns="user"/>
+<response version="10" name="domain_mgr_list" resource_type="domain" op_type="list" status="complete" requestid="1508"
+          not_modified_since="2022-10-18T20:17:59Z" ns="user"/>
+<response version="1" name="reservable_skins_not_booked_mgr_list" resource_type="reservable_skins_not_booked" op_type="list"
+          status="incomplete" requestid="1509" ns="user">
+<reservable_skins_not_booked aa="691267669" ab="1" ac="768189" ad="448410277" ae="2022-10-18T20:17:59" af="691267664" ag=""/>
+</response>
+<response version="1" name="reservable_skins_not_booked_mgr_list" resource_type="reservable_skins_not_booked" op_type="list"
+          status="complete" requestid="1509" not_modified_since="2022-10-18T20:17:59Z" ns="user"/>
+        <!DOCTYPE request>
+<request version="7" requestid="1510" not_modified_since="1970-01-02T00:00:00" name="resource_criteria_mgr_add" token="126313">
+<resource_criteria criteria_id="1143561" type="8" domain_id="768189" parent_id="691267664"/>
+</request>
+        <!DOCTYPE request>
+<request version="22" external_token="" requestid="1511" name="reservation_mgr_update_booking_state" token="126313">
+<reservation booking_state="1" id="691267664" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request version="22" requestid="1512" not_modified_since="2022-10-18T20:15:18Z" name="reservation_mgr_update" token="126313">
+<reservation pacing_target="0" duration_msec="10000" proposal_line_item_id="" goal_amount="0" goal_reached_on_tm="" id="691267664"
+             default_schedule_id="691267666" creation_tm="2022-10-18T20:17:59.000Z" promotion_time="" booking_state="0"
+             default_secondary_sep_category_ids="" goal_unit="0" active="1" creation_user_id="448410277" day_of_week_mask="127"
+             saturation="1" start_time="00:00:00.000" end_time="23:59:59.000" estimated_reps="0" reps_calculated_on=""
+             end_date="2022-11-18" default_interactivity_timeout="0" state="1" default_attributes="" auto_synchronize_bundles="0"
+             start_date="2022-10-18" default_category_id="435602603" pacing_period="0" contract_fields_read_only="0"
+             proposal_id="" container_id="438314345" domain_id="768189" contract_id="" parent_id="421836410"
+             name="Shopping - Test Campaign 004" default_fullscreen="0" booking_state_calculated_on="" default_bundle_weight="0"
+             has_goal="0"/>
+</request>
+        <!DOCTYPE request>
+<request version="22" requestid="1513" not_modified_since="2022-10-18T20:14:49Z" name="reservation_mgr_list_many" token="126313">
+<reservation ids="691267664"/>
+</request>
+        <!DOCTYPE request>
+<request version="22" requestid="1514" not_modified_since="2022-10-18T20:17:05Z" name="reservation_mgr_list" token="126313">
+<reservation domain_id="768189"/>
+</request>
+<response version="7" name="resource_criteria_mgr_add" resource_type="resource_criteria" op_type="add" status="normal"
+          requestid="1510" not_modified_since="2022-10-18T20:18:01Z" ns="user">
+<resource_criteria id="691267679"/>
+</response>
+<response version="22" name="reservation_mgr_update_booking_state" resource_type="reservation" op_type="update" status="normal"
+          requestid="1511" not_modified_since="2022-10-18T20:18:01Z" ns="user">
+<reservation id="691267664"/>
+</response>
+<response version="22" name="reservation_mgr_update" resource_type="reservation" op_type="update" status="normal" requestid="1512"
+          not_modified_since="2022-10-18T20:18:01Z" ns="user">
+<reservation id="691267664"/>
+</response>
+<response version="22" name="reservation_mgr_list_many" resource_type="reservation" op_type="list_many" status="incomplete"
+          requestid="1513" ns="user">
+<reservation bn="0" bo="0" bp="" bq="" br="" bs="false" aa="691267664" ab="Shopping - Test Campaign 004" ac="1" ad="438314345"
+             ae="768189" af="1" ag="2022-10-18" ah="2022-11-18" ai="00:00:00" aj="23:59:59" ak="10000" al="448410277"
+             am="2022-10-18T20:17:59" an="448410277" ao="2022-10-18T20:18:02" ap="421836410" aq="0" ar="" as="1.000000"
+             at="691267666" au="0" av="435602603" aw="0" ax="0" ay="0" az="0" ba="0" bb="0" bc="127" bd="0" be="0" bf="0" bg="0"
+             bh="" bi="" bj="" bk="0" bl="1" bm="2022-10-18T20:18:02"/>
+</response>
+<response version="22" name="reservation_mgr_list_many" resource_type="reservation" op_type="list_many" status="complete"
+          requestid="1513" not_modified_since="2022-10-18T20:18:01Z" ns="user"/>
+<response version="22" name="reservation_mgr_list" resource_type="reservation" op_type="list" status="incomplete" requestid="1514"
+          ns="user">
+<reservation bn="0" bo="0" bp="" bq="" br="" bs="false" aa="691267664" ab="Shopping - Test Campaign 004" ac="1" ad="438314345"
+             ae="768189" af="1" ag="2022-10-18" ah="2022-11-18" ai="00:00:00" aj="23:59:59" ak="10000" al="448410277"
+             am="2022-10-18T20:17:59" an="448410277" ao="2022-10-18T20:18:02" ap="421836410" aq="0" ar="" as="1.000000"
+             at="691267666" au="0" av="435602603" aw="0" ax="0" ay="0" az="0" ba="0" bb="0" bc="127" bd="0" be="0" bf="0" bg="0"
+             bh="" bi="" bj="" bk="0" bl="1" bm="2022-10-18T20:18:02"/>
+</response>
+<response version="22" name="reservation_mgr_list" resource_type="reservation" op_type="list" status="complete" requestid="1514"
+          not_modified_since="2022-10-18T20:18:01Z" ns="user"/>

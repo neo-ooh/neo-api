@@ -42,7 +42,7 @@ class ContractsFlightsBroadSignExportController {
             $breakdown[$networkId][] = $categoryid;
         }
 
-        $breakdown = $breakdown->map(fn(Collection $categories) => $categories->unique());
+        $breakdown = $breakdown->map(fn(Collection $categories) => $categories->unique()->values());
 
         return new Response($breakdown);
     }

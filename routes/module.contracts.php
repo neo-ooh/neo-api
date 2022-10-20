@@ -14,6 +14,7 @@ use Neo\Http\Controllers\AvailabilitiesController;
 use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractsController;
+use Neo\Http\Controllers\ContractsFlightsBroadSignExportController;
 use Neo\Http\Controllers\ContractsFlightsReservationsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Models\Advertiser;
@@ -25,8 +26,8 @@ use Neo\Models\ContractScreenshot;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v1"
-], function () {
+    "prefix"     => "v1",
+], static function () {
     /*
     |----------------------------------------------------------------------
     | Advertisers
@@ -75,6 +76,8 @@ Route::group([
 
     Route::model("flight", ContractFlight::class);
 
+    Route::   get("contracts/{contract}/flights/{flight}/broadsign-exports", ContractsFlightsBroadSignExportController::class . "@index");
+    Route::   get("contracts/{contract}/flights/{flight}/broadsign-exports/{network}", ContractsFlightsBroadSignExportController::class . "@show");
     Route::   put("contracts/{contract}/flights/{flight}/reservations/_sync", ContractsFlightsReservationsController::class . "@sync");
 
 

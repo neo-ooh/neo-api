@@ -15,6 +15,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Neo\Exceptions\InvalidBroadcastServiceException;
 use Neo\Http\Requests\Networks\DestroyNetworkRequest;
+use Neo\Http\Requests\Networks\ListNetworksByIdsRequest;
 use Neo\Http\Requests\Networks\ListNetworksRequest;
 use Neo\Http\Requests\Networks\ShowNetworkRequest;
 use Neo\Http\Requests\Networks\StoreNetworkRequest;
@@ -55,6 +56,26 @@ class NetworksController extends Controller {
         return new Response($networks);
     }
 
+    public function byIds(ListNetworksByIdsRequest $request): Response {
+        $query = Network::query()->orderBy('name');
+
+        $query->when($request->has("with") && in_array("connection", $request->input("with"), true), function ($query) {
+            $query->with("broadcaster_connection");
+        });
+
+        $query->when($request->has("with") && in_array("fields", $request->input("with"), true), function ($query) {
+            $query->with("properties_fields");
+        });
+
+        $networks = $query->findMany($request->input("ids"));
+
+        if ($request->has("with") && in_array("settings", $request->input("with"), true)) {
+            $networks->makeVisible("settings");
+        }
+
+        return new Response($networks);
+    }
+
     /**
      * @throws InvalidBroadcastServiceException
      */
@@ -74,7 +95,7 @@ class NetworksController extends Controller {
                 "ad_copies_container_id"    => $request->input("ad_copies_container_id"),
             ]),
             Broadcaster::PISIGNAGE => new NetworkSettingsPiSignage([]),
-            default => null,
+            default                => null,
         };
 
         $network->settings = $settings;
@@ -89,7 +110,7 @@ class NetworksController extends Controller {
     }
 
     public function show(ShowNetworkRequest $request, Network $network): Response {
-        if(in_array("fields", $request->input("with", []))) {
+        if (in_array("fields", $request->input("with", []))) {
             $network->load("properties_fields");
         }
 
@@ -97,9 +118,9 @@ class NetworksController extends Controller {
     }
 
     public function update(UpdateNetworkRequest $request, Network $network): Response {
-        $network->name = $request->input("name");
+        $network->name  = $request->input("name");
         $network->color = $request->input("color");
-        $settings      = $network->settings;
+        $settings       = $network->settings;
 
         if ($network->broadcaster_connection->broadcaster === Broadcaster::BROADSIGN) {
             $settings->container_id              = $request->input("container_id");

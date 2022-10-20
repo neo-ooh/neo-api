@@ -57,7 +57,7 @@ use Neo\Models\TrafficSource;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v1"
+    "prefix"     => "v1",
 ], function () {
     /*
     |----------------------------------------------------------------------
@@ -225,6 +225,7 @@ Route::group([
     Route:: put("product-types/{productType}", ProductTypesController::class . "@update");
 
     Route:: get("product-categories", ProductCategoriesController::class . "@index");
+    Route:: get("product-categories/_by_id", ProductCategoriesController::class . "@byIds");
     Route:: get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
     Route:: put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 

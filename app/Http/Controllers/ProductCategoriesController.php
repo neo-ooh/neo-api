@@ -11,6 +11,7 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\ProductCategories\ListProductCategoriesByidsRequest;
 use Neo\Http\Requests\ProductCategories\ListProductCategoriesRequest;
 use Neo\Http\Requests\ProductCategories\ShowProductCategoryRequest;
 use Neo\Http\Requests\ProductCategories\UpdateProductCategoryRequest;
@@ -20,6 +21,25 @@ class ProductCategoriesController {
     public function index(ListProductCategoriesRequest $request) {
         $relations         = $request->input("with", []);
         $productCategories = ProductCategory::all();
+
+        if (in_array("impressions_models", $relations, true)) {
+            $productCategories->loadMissing("impressions_models");
+        }
+
+        if (in_array("product_type", $relations, true)) {
+            $productCategories->loadMissing("product_type");
+        }
+
+        if (in_array("attachments", $relations, true)) {
+            $productCategories->loadMissing("attachments");
+        }
+
+        return new Response($productCategories);
+    }
+
+    public function byIds(ListProductCategoriesByidsRequest $request) {
+        $relations         = $request->input("with", []);
+        $productCategories = ProductCategory::query()->findMany($request->input("ids"));
 
         if (in_array("impressions_models", $relations, true)) {
             $productCategories->loadMissing("impressions_models");

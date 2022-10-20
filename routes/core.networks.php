@@ -23,7 +23,7 @@ use Neo\Models\Network;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v1"
+    "prefix"     => "v1",
 ], function () {
     /*
     |----------------------------------------------------------------------
@@ -48,6 +48,7 @@ Route::group([
     Route::model("network", Network::class);
 
     Route::   get("networks", NetworksController::class . "@index");
+    Route::   get("networks/_by_id", NetworksController::class . "@byIds");
     Route::  post("networks", NetworksController::class . "@store");
     Route::  post("networks/_refresh", NetworksController::class . "@refresh");
     Route::   get("networks/{network}", NetworksController::class . "@show");

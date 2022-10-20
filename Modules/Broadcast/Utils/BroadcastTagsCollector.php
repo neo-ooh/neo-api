@@ -11,7 +11,6 @@
 namespace Neo\Modules\Broadcast\Utils;
 
 use Illuminate\Support\Collection;
-use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Services\Resources\Tag as TagResource;
 
@@ -42,8 +41,7 @@ class BroadcastTagsCollector {
     }
 
     /**
-     * @param int                     $broadcasterId
-     * @param array<BroadcastTagType> $types
+     * @param int $broadcasterId
      * @return array<TagResource>
      */
     public function get(int $broadcasterId): array {

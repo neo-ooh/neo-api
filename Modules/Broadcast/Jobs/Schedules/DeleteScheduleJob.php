@@ -12,6 +12,7 @@ namespace Neo\Modules\Broadcast\Jobs\Schedules;
 
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\ExternalResource;
@@ -51,7 +52,7 @@ class DeleteScheduleJob extends BroadcastJobBase {
      * @inheritDoc
      * @return array|null
      * @throws UnknownProperties
-     * @throws InvalidBroadcasterAdapterException
+     * @throws InvalidBroadcasterAdapterException|InvalidBroadcastResource
      */
     protected function run(): array|null {
         // A schedule has a content which in turn fits in a layout

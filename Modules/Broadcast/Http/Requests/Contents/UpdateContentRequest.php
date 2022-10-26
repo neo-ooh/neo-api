@@ -15,7 +15,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
+use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
+use Neo\Rules\PublicRelations;
 
 class UpdateContentRequest extends FormRequest {
     /**
@@ -45,6 +47,8 @@ class UpdateContentRequest extends FormRequest {
 
             "tags"   => ["array"],
             "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],
+
+            "with" => ["array", new PublicRelations(Content::class)],
         ];
     }
 }

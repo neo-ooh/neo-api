@@ -1,0 +1,1136 @@
+<!--
+  ~ Copyright 2020 (c) Neo-OOH - All Rights Reserved
+  ~ Unauthorized copying of this file, via any medium is strictly prohibited
+  ~ Proprietary and confidential
+  ~ Written by Valentin Dufois <vdufois@neo-ooh.com>
+  ~
+  ~ @neo/api - broadsign_output_bundles_ordering.xml
+  -->
+
+<!DOCTYPE request>
+<request name="domain_mgr_list_many" requestid="181" not_modified_since="2022-10-24T14:42:06Z" token="1642831" version="10">
+    <domain ids="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="customer_mgr_list_many" requestid="182" not_modified_since="2022-10-24T14:42:06Z" token="1642831" version="7">
+<customer ids="421836410"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list_many" requestid="183" not_modified_since="2022-10-24T14:42:06Z" token="1642831" version="9">
+<container ids="438314345"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservation_mgr_list_many" requestid="184" not_modified_since="2022-10-24T14:42:06Z" token="1642831" version="22">
+<reservation ids="693264352"/>
+</request>
+<response ns="user" name="domain_mgr_list_many" version="10" resource_type="domain" status="incomplete" requestid="181"
+          op_type="list_many">
+<domain am="" an="0" ao="8" ap="0" aq="1"
+        ar="enable_premium_addon=true&#xa;enable_serv_ssp_addon=true&#xa;https_content_hosting_enabled=true"
+        as="cluster_type=prod" aa="768189" ab="neo_traffic" ac="1" ad="0" ae="768189" af="47244640256" ag="" ah="10000" ai="0"
+        aj="4483516" ak="5" al="7478437"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:35Z" name="domain_mgr_list_many" version="10" resource_type="domain"
+          status="complete" requestid="181" op_type="list_many"/>
+<response ns="user" name="customer_mgr_list_many" version="7" resource_type="customer" status="incomplete" requestid="182"
+          op_type="list_many">
+<customer aa="421836410" ab="** Neo-Connect" ac="1" ad="768189" ae="en_CA" af="" ag="" ah="435602603" ai="0" aj="0" ak="0"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:35Z" name="customer_mgr_list_many" version="7" resource_type="customer"
+          status="complete" requestid="182" op_type="list_many"/>
+<response ns="user" name="container_mgr_list_many" version="9" resource_type="container" status="incomplete" requestid="183"
+          op_type="list_many">
+<container aa="438314345" ab="Shopping" ac="1" ad="0" ae="768189" af="3" ag="421836410" ah="customer"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:35Z" name="container_mgr_list_many" version="9" resource_type="container"
+          status="complete" requestid="183" op_type="list_many"/>
+<response ns="user" name="reservation_mgr_list_many" version="22" resource_type="reservation" status="incomplete" requestid="184"
+          op_type="list_many">
+<reservation aa="693264352" ab="Montreal Office - Test Campaign #006 - Digital Vertical" ac="1" ad="438314345" ae="768189" af="1"
+             ag="2022-10-23" ah="2022-11-12" ai="10:00:00" aj="22:00:00" ak="10000" al="415059000" am="2022-10-21T19:45:11"
+             an="415059000" ao="2022-10-21T19:45:11" ap="421836410" aq="0" ar="" as="1.000000" at="693264354" au="0" av="0" aw="0"
+             ax="0" ay="0" az="0" ba="0" bb="0" bc="127" bd="1" be="0" bf="0" bg="0" bh="" bi="" bj="" bk="0" bl="0" bm="" bn="0"
+             bo="0" bp="" bq="" br="" bs=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:35Z" name="reservation_mgr_list_many" version="22"
+          resource_type="reservation" status="complete" requestid="184" op_type="list_many"/>
+        <!DOCTYPE request>
+<request name="loop_policy_mgr_list_by_reservable" requestid="185" token="1642831" external_token="" version="11">
+<loop_policy reservable_id="693264352"/>
+</request>
+<response ns="user" name="loop_policy_mgr_list_by_reservable" version="11" resource_type="loop_policy" status="incomplete"
+          requestid="185" op_type="list">
+<loop_policy al="70000"
+             am="&lt;!DOCTYPE loop_share_configuration>&#xa;&lt;loop_share_configuration generated_on=&quot;2019-02-19T21:07:29Z&quot; version=&quot;1&quot;>&#xa; &lt;loop_share_settings default=&quot;&quot;>&#xa;  &lt;loop_shares/>&#xa; &lt;/loop_share_settings>&#xa;&lt;/loop_share_configuration>"
+             an="0" ao="" ap="0" aq="" aa="272544055" ab="DCA - Tester" ac="1" ad="60469609" ae="768189" af="70000" ag="10000"
+             ah="transform_preprocess;transform_under_saturate;transform_over_saturate;transform_filler;transform_condition;transform_priority;transform_segments;transform_category_separator"
+             ai="1" aj="1" ak=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:36Z" name="loop_policy_mgr_list_by_reservable" version="11"
+          resource_type="loop_policy" status="complete" requestid="185" op_type="list"/>
+        <!DOCTYPE request>
+<request name="customer_mgr_list" requestid="186" not_modified_since="2022-10-24T14:42:02Z" token="1642831" version="7">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="loop_slot_mgr_list_by_reservable" requestid="187" not_modified_since="2022-10-24T14:42:02Z" token="1642831"
+         version="10">
+<loop_slot reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list" requestid="188" not_modified_since="2022-10-24T14:42:02Z" token="1642831" version="9">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_notification_mgr_list" requestid="189" not_modified_since="2022-10-24T14:42:02Z" token="1642831"
+         version="3">
+<resource_notification domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="schedule_mgr_list_by_reservable" requestid="190" not_modified_since="2022-10-24T14:42:02Z" token="1642831"
+         version="8">
+<schedule id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="user_mgr_list" requestid="191" not_modified_since="2022-10-24T14:41:55Z" token="1642831" version="13">
+<user domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_note_mgr_list_by_parent_id" requestid="192" not_modified_since="2022-10-24T14:40:23Z" token="1642831"
+         version="3">
+<resource_note parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_reservable" requestid="193" not_modified_since="2022-10-24T14:40:23Z" token="1642831"
+         version="12">
+<bundle reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="criteria_mgr_list" requestid="194" not_modified_since="2022-10-24T14:42:06Z" token="1642831" version="8">
+<criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list" requestid="195" not_modified_since="2022-10-24T14:42:02Z" token="1642831" version="7">
+<resource_criteria parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="host_mgr_list" requestid="196" not_modified_since="2022-10-24T14:40:23Z" token="1642831" version="17">
+<host domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="content_mgr_list" requestid="197" not_modified_since="2022-10-24T14:42:06Z" token="1642831" version="11">
+<content domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_content_mgr_list_by_reservable" requestid="198" not_modified_since="2022-10-24T14:40:23Z" token="1642831"
+         version="5">
+<bundle_content reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="criteria_set_mgr_list" requestid="199" not_modified_since="2022-10-24T14:40:23Z" token="1642831" version="1">
+<criteria_set domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list_by_domain" requestid="200" not_modified_since="2022-10-24T14:40:23Z" token="1642831"
+         version="7">
+<resource_criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="media_package_mgr_list" requestid="201" not_modified_since="2022-10-24T14:40:23Z" token="1642831" version="10">
+<media_package domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_history_tracking_mgr_list_for_target_resource" requestid="202" not_modified_since="2022-10-24T14:40:23Z"
+         token="1642831" version="1">
+<resource_history_tracking target_resource_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="category_mgr_list" requestid="203" not_modified_since="2022-10-24T14:42:06Z" token="1642831" version="6">
+<category domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_parameter_mgr_list" requestid="204" not_modified_since="2022-10-24T14:40:23Z" token="1642831" version="1">
+<resource_parameter parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list_by_reservable_id" requestid="205" not_modified_since="2022-10-24T14:40:23Z"
+         token="1642831" version="7">
+<resource_criteria reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservable_skins_not_booked_mgr_list" requestid="206" not_modified_since="2022-10-24T14:40:23Z" token="1642831"
+         version="1">
+<reservable_skins_not_booked parent_id="693264352" domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="customer_mgr_list" version="7" resource_type="customer"
+          status="complete" requestid="186" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="loop_slot_mgr_list_by_reservable" version="10"
+          resource_type="loop_slot" status="complete" requestid="187" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="container_mgr_list" version="9" resource_type="container"
+          status="complete" requestid="188" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="resource_notification_mgr_list" version="3"
+          resource_type="resource_notification" status="complete" requestid="189" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="schedule_mgr_list_by_reservable" version="8"
+          resource_type="schedule" status="complete" requestid="190" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="user_mgr_list" version="13" resource_type="user"
+          status="complete" requestid="191" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="resource_note_mgr_list_by_parent_id" version="3"
+          resource_type="resource_note" status="complete" requestid="192" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="bundle_mgr_list_by_reservable" version="12"
+          resource_type="bundle" status="complete" requestid="193" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="criteria_mgr_list" version="8" resource_type="criteria"
+          status="complete" requestid="194" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="resource_criteria_mgr_list" version="7"
+          resource_type="resource_criteria" status="complete" requestid="195" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="host_mgr_list" version="17" resource_type="host"
+          status="complete" requestid="196" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="content_mgr_list" version="11" resource_type="content"
+          status="complete" requestid="197" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="bundle_content_mgr_list_by_reservable" version="5"
+          resource_type="bundle_content" status="complete" requestid="198" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="criteria_set_mgr_list" version="1"
+          resource_type="criteria_set" status="complete" requestid="199" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="resource_criteria_mgr_list_by_domain" version="7"
+          resource_type="resource_criteria" status="complete" requestid="200" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="media_package_mgr_list" version="10"
+          resource_type="media_package" status="complete" requestid="201" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="resource_history_tracking_mgr_list_for_target_resource"
+          version="1" resource_type="resource_history_tracking" status="complete" requestid="202" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="category_mgr_list" version="6" resource_type="category"
+          status="complete" requestid="203" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="resource_parameter_mgr_list" version="1"
+          resource_type="resource_parameter" status="complete" requestid="204" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="resource_criteria_mgr_list_by_reservable_id" version="7"
+          resource_type="resource_criteria" status="complete" requestid="205" op_type="list"/>
+<response ns="user" name="reservable_skins_not_booked_mgr_list" version="1" resource_type="reservable_skins_not_booked"
+          status="incomplete" requestid="206" op_type="list">
+<reservable_skins_not_booked aa="693264357" ab="1" ac="768189" ad="415059000" ae="2022-10-21T19:45:11" af="693264352" ag=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="reservable_skins_not_booked_mgr_list" version="1"
+          resource_type="reservable_skins_not_booked" status="complete" requestid="206" op_type="list"/>
+        <!DOCTYPE request>
+<request name="loop_slot_mgr_list_by_reservable" requestid="207" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="10">
+<loop_slot reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="skin_slot_mgr_list_by_reservable" requestid="210" not_modified_since="1970-01-02T00:00:00" token="1642831"
+         version="7">
+<skin_slot reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="day_part_mgr_list_by_reservable" requestid="211" not_modified_since="2022-10-24T14:40:23Z" token="1642831"
+         version="5">
+<day_part reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="schedule_mgr_list_by_reservable" requestid="212" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="8">
+<schedule id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_reservable" requestid="213" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="12">
+<bundle reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="skin_mgr_list_by_reservable" requestid="214" not_modified_since="2022-10-24T14:40:23Z" token="1642831" version="7">
+<skin reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="display_unit_mgr_list" requestid="215" not_modified_since="2022-10-24T14:40:23Z" token="1642831" version="12">
+<display_unit domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="loop_policy_mgr_list" requestid="216" not_modified_since="2022-10-24T14:40:23Z" token="1642831" version="11">
+<loop_policy domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="domain_mgr_list" requestid="217" not_modified_since="2022-10-24T14:40:23Z" token="1642831" version="10">
+<domain id="768189" domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="loop_slot_mgr_list_by_reservable" version="10"
+          resource_type="loop_slot" status="complete" requestid="207" op_type="list"/>
+<response ns="user" name="skin_slot_mgr_list_by_reservable" version="7" resource_type="skin_slot" status="incomplete"
+          requestid="210" op_type="list">
+<skin_slot aa="693269422" ab="1" ac="768189" ad="413214008" ae="693264353" af="" ag="2022-10-23" ah="2022-11-12" ai="false"
+           aj="127"/>
+<skin_slot aa="693264362" ab="0" ac="768189" ad="413214008" ae="693264353" af="" ag="2022-10-23" ah="2022-10-21" ai="false"
+           aj="127"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="skin_slot_mgr_list_by_reservable" version="7"
+          resource_type="skin_slot" status="complete" requestid="210" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:37Z" name="day_part_mgr_list_by_reservable" version="5"
+          resource_type="day_part" status="complete" requestid="211" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:38Z" name="schedule_mgr_list_by_reservable" version="8"
+          resource_type="schedule" status="complete" requestid="212" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:38Z" name="bundle_mgr_list_by_reservable" version="12"
+          resource_type="bundle" status="complete" requestid="213" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:38Z" name="skin_mgr_list_by_reservable" version="7" resource_type="skin"
+          status="complete" requestid="214" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:38Z" name="display_unit_mgr_list" version="12"
+          resource_type="display_unit" status="complete" requestid="215" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:38Z" name="loop_policy_mgr_list" version="11" resource_type="loop_policy"
+          status="complete" requestid="216" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:38Z" name="domain_mgr_list" version="10" resource_type="domain"
+          status="complete" requestid="217" op_type="list"/>
+        <!DOCTYPE request>
+<request name="domain_mgr_list_many" requestid="218" not_modified_since="2022-10-24T14:42:35Z" token="1642831" version="10">
+<domain ids="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="customer_mgr_list_many" requestid="219" not_modified_since="2022-10-24T14:42:35Z" token="1642831" version="7">
+<customer ids="421836410"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list_many" requestid="220" not_modified_since="2022-10-24T14:42:35Z" token="1642831" version="9">
+<container ids="438314345"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservation_mgr_list_many" requestid="221" not_modified_since="2022-10-24T14:42:35Z" token="1642831" version="22">
+<reservation ids="693264352"/>
+</request>
+        <!DOCTYPE request>
+<request name="schedule_mgr_list_many" requestid="222" not_modified_since="2022-10-24T14:42:02Z" token="1642831" version="8">
+<schedule ids="693264358"/>
+</request>
+<response ns="user" name="domain_mgr_list_many" version="10" resource_type="domain" status="incomplete" requestid="218"
+          op_type="list_many">
+<domain am="" an="0" ao="8" ap="0" aq="1"
+        ar="enable_premium_addon=true&#xa;enable_serv_ssp_addon=true&#xa;https_content_hosting_enabled=true"
+        as="cluster_type=prod" aa="768189" ab="neo_traffic" ac="1" ad="0" ae="768189" af="47244640256" ag="" ah="10000" ai="0"
+        aj="4483516" ak="5" al="7478437"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:41Z" name="domain_mgr_list_many" version="10" resource_type="domain"
+          status="complete" requestid="218" op_type="list_many"/>
+<response ns="user" name="customer_mgr_list_many" version="7" resource_type="customer" status="incomplete" requestid="219"
+          op_type="list_many">
+<customer aa="421836410" ab="** Neo-Connect" ac="1" ad="768189" ae="en_CA" af="" ag="" ah="435602603" ai="0" aj="0" ak="0"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:41Z" name="customer_mgr_list_many" version="7" resource_type="customer"
+          status="complete" requestid="219" op_type="list_many"/>
+<response ns="user" name="container_mgr_list_many" version="9" resource_type="container" status="incomplete" requestid="220"
+          op_type="list_many">
+<container aa="438314345" ab="Shopping" ac="1" ad="0" ae="768189" af="3" ag="421836410" ah="customer"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:41Z" name="container_mgr_list_many" version="9" resource_type="container"
+          status="complete" requestid="220" op_type="list_many"/>
+<response ns="user" name="reservation_mgr_list_many" version="22" resource_type="reservation" status="incomplete" requestid="221"
+          op_type="list_many">
+<reservation aa="693264352" ab="Montreal Office - Test Campaign #006 - Digital Vertical" ac="1" ad="438314345" ae="768189" af="1"
+             ag="2022-10-23" ah="2022-11-12" ai="10:00:00" aj="22:00:00" ak="10000" al="415059000" am="2022-10-21T19:45:11"
+             an="415059000" ao="2022-10-21T19:45:11" ap="421836410" aq="0" ar="" as="1.000000" at="693264354" au="0" av="0" aw="0"
+             ax="0" ay="0" az="0" ba="0" bb="0" bc="127" bd="1" be="0" bf="0" bg="0" bh="" bi="" bj="" bk="0" bl="0" bm="" bn="0"
+             bo="0" bp="" bq="" br="" bs=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:41Z" name="reservation_mgr_list_many" version="22"
+          resource_type="reservation" status="complete" requestid="221" op_type="list_many"/>
+<response ns="user" name="schedule_mgr_list_many" version="8" resource_type="schedule" status="incomplete" requestid="222"
+          op_type="list_many">
+<schedule al="693264353" am="2" an="0" aa="693264358" ab="Test Campaign #006 - COT?118?20-General-SHO-DV-E-200803" ac="1"
+          ad="768189" ae="2022-10-23" af="2022-11-04" ag="127" ah="10:00:00" ai="22:00:00" aj="693264352" ak="1"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:41Z" name="schedule_mgr_list_many" version="8" resource_type="schedule"
+          status="complete" requestid="222" op_type="list_many"/>
+        <!DOCTYPE request>
+<request name="customer_mgr_list" requestid="223" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="7">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservation_mgr_list" requestid="224" not_modified_since="2022-10-24T14:42:02Z" token="1642831" version="22">
+<reservation domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="event_mgr_list" requestid="225" not_modified_since="2022-10-24T14:42:02Z" token="1642831" version="9">
+<event domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_schedule" requestid="226" not_modified_since="2022-10-24T14:42:02Z" token="1642831"
+         version="12">
+<bundle schedule_id="693264358" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list" requestid="227" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="7">
+<resource_criteria parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list" requestid="228" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="9">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="loop_slot_mgr_list_by_reservable" requestid="229" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="10">
+<loop_slot reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_notification_mgr_list" requestid="230" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="3">
+<resource_notification domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="schedule_mgr_list_by_reservable" requestid="231" not_modified_since="2022-10-24T14:42:38Z" token="1642831"
+         version="8">
+<schedule id="693264352" domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="customer_mgr_list" version="7" resource_type="customer"
+          status="complete" requestid="223" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="reservation_mgr_list" version="22" resource_type="reservation"
+          status="complete" requestid="224" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="event_mgr_list" version="9" resource_type="event"
+          status="complete" requestid="225" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="bundle_mgr_list_by_schedule" version="12"
+          resource_type="bundle" status="complete" requestid="226" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="resource_criteria_mgr_list" version="7"
+          resource_type="resource_criteria" status="complete" requestid="227" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="container_mgr_list" version="9" resource_type="container"
+          status="complete" requestid="228" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="loop_slot_mgr_list_by_reservable" version="10"
+          resource_type="loop_slot" status="complete" requestid="229" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="resource_notification_mgr_list" version="3"
+          resource_type="resource_notification" status="complete" requestid="230" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:42:45Z" name="schedule_mgr_list_by_reservable" version="8"
+          resource_type="schedule" status="complete" requestid="231" op_type="list"/>
+        <!DOCTYPE request>
+<request name="domain_mgr_list_many" requestid="232" not_modified_since="2022-10-24T14:42:41Z" token="1642831" version="10">
+<domain ids="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="customer_mgr_list_many" requestid="233" not_modified_since="2022-10-24T14:42:41Z" token="1642831" version="7">
+<customer ids="421836410"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list_many" requestid="234" not_modified_since="2022-10-24T14:42:41Z" token="1642831" version="9">
+<container ids="438314345"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservation_mgr_list_many" requestid="235" not_modified_since="2022-10-24T14:42:41Z" token="1642831" version="22">
+<reservation ids="693264352"/>
+</request>
+        <!DOCTYPE request>
+<request name="schedule_mgr_list_many" requestid="236" not_modified_since="2022-10-24T14:42:41Z" token="1642831" version="8">
+<schedule ids="693264358"/>
+</request>
+<response ns="user" name="domain_mgr_list_many" version="10" resource_type="domain" status="incomplete" requestid="232"
+          op_type="list_many">
+<domain am="" an="0" ao="8" ap="0" aq="1"
+        ar="enable_premium_addon=true&#xa;enable_serv_ssp_addon=true&#xa;https_content_hosting_enabled=true"
+        as="cluster_type=prod" aa="768189" ab="neo_traffic" ac="1" ad="0" ae="768189" af="47244640256" ag="" ah="10000" ai="0"
+        aj="4483516" ak="5" al="7478437"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:59Z" name="domain_mgr_list_many" version="10" resource_type="domain"
+          status="complete" requestid="232" op_type="list_many"/>
+<response ns="user" name="customer_mgr_list_many" version="7" resource_type="customer" status="incomplete" requestid="233"
+          op_type="list_many">
+<customer aa="421836410" ab="** Neo-Connect" ac="1" ad="768189" ae="en_CA" af="" ag="" ah="435602603" ai="0" aj="0" ak="0"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:59Z" name="customer_mgr_list_many" version="7" resource_type="customer"
+          status="complete" requestid="233" op_type="list_many"/>
+<response ns="user" name="container_mgr_list_many" version="9" resource_type="container" status="incomplete" requestid="234"
+          op_type="list_many">
+<container aa="438314345" ab="Shopping" ac="1" ad="0" ae="768189" af="3" ag="421836410" ah="customer"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:59Z" name="container_mgr_list_many" version="9" resource_type="container"
+          status="complete" requestid="234" op_type="list_many"/>
+<response ns="user" name="reservation_mgr_list_many" version="22" resource_type="reservation" status="incomplete" requestid="235"
+          op_type="list_many">
+<reservation aa="693264352" ab="Montreal Office - Test Campaign #006 - Digital Vertical" ac="1" ad="438314345" ae="768189" af="1"
+             ag="2022-10-23" ah="2022-11-12" ai="10:00:00" aj="22:00:00" ak="10000" al="415059000" am="2022-10-21T19:45:11"
+             an="415059000" ao="2022-10-21T19:45:11" ap="421836410" aq="0" ar="" as="1.000000" at="693264354" au="0" av="0" aw="0"
+             ax="0" ay="0" az="0" ba="0" bb="0" bc="127" bd="1" be="0" bf="0" bg="0" bh="" bi="" bj="" bk="0" bl="0" bm="" bn="0"
+             bo="0" bp="" bq="" br="" bs=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:59Z" name="reservation_mgr_list_many" version="22"
+          resource_type="reservation" status="complete" requestid="235" op_type="list_many"/>
+<response ns="user" name="schedule_mgr_list_many" version="8" resource_type="schedule" status="incomplete" requestid="236"
+          op_type="list_many">
+<schedule al="693264353" am="2" an="0" aa="693264358" ab="Test Campaign #006 - COT?118?20-General-SHO-DV-E-200803" ac="1"
+          ad="768189" ae="2022-10-23" af="2022-11-04" ag="127" ah="10:00:00" ai="22:00:00" aj="693264352" ak="1"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:42:59Z" name="schedule_mgr_list_many" version="8" resource_type="schedule"
+          status="complete" requestid="236" op_type="list_many"/>
+        <!DOCTYPE request>
+<request name="customer_mgr_list" requestid="237" not_modified_since="2022-10-24T14:42:45Z" token="1642831" version="7">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="content_mgr_list" requestid="238" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="11">
+<content domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:00Z" name="customer_mgr_list" version="7" resource_type="customer"
+          status="complete" requestid="237" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:00Z" name="content_mgr_list" version="11" resource_type="content"
+          status="complete" requestid="238" op_type="list"/>
+        <!DOCTYPE request>
+<request name="content_mgr_list" requestid="239" not_modified_since="2022-10-24T14:43:00Z" token="1642831" version="11">
+<content domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list" requestid="240" not_modified_since="2022-10-24T14:42:45Z" token="1642831" version="9">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="customer_mgr_list" requestid="241" not_modified_since="2022-10-24T14:43:00Z" token="1642831" version="7">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="loop_policy_mgr_list_by_reservable" requestid="242" token="1642831" external_token="" version="11">
+<loop_policy reservable_id="693264352"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:03Z" name="content_mgr_list" version="11" resource_type="content"
+          status="complete" requestid="239" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:03Z" name="container_mgr_list" version="9" resource_type="container"
+          status="complete" requestid="240" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:03Z" name="customer_mgr_list" version="7" resource_type="customer"
+          status="complete" requestid="241" op_type="list"/>
+<response ns="user" name="loop_policy_mgr_list_by_reservable" version="11" resource_type="loop_policy" status="incomplete"
+          requestid="242" op_type="list">
+<loop_policy al="70000"
+             am="&lt;!DOCTYPE loop_share_configuration>&#xa;&lt;loop_share_configuration generated_on=&quot;2019-02-19T21:07:29Z&quot; version=&quot;1&quot;>&#xa; &lt;loop_share_settings default=&quot;&quot;>&#xa;  &lt;loop_shares/>&#xa; &lt;/loop_share_settings>&#xa;&lt;/loop_share_configuration>"
+             an="0" ao="" ap="0" aq="" aa="272544055" ab="DCA - Tester" ac="1" ad="60469609" ae="768189" af="70000" ag="10000"
+             ah="transform_preprocess;transform_under_saturate;transform_over_saturate;transform_filler;transform_condition;transform_priority;transform_segments;transform_category_separator"
+             ai="1" aj="1" ak=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:03Z" name="loop_policy_mgr_list_by_reservable" version="11"
+          resource_type="loop_policy" status="complete" requestid="242" op_type="list"/>
+        <!DOCTYPE request>
+<request name="content_mgr_list" requestid="243" not_modified_since="2022-10-24T14:43:03Z" token="1642831" version="11">
+<content domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list" requestid="244" not_modified_since="2022-10-24T14:43:03Z" token="1642831" version="9">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="customer_mgr_list" requestid="245" not_modified_since="2022-10-24T14:43:03Z" token="1642831" version="7">
+<customer domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:06Z" name="content_mgr_list" version="11" resource_type="content"
+          status="complete" requestid="243" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:06Z" name="container_mgr_list" version="9" resource_type="container"
+          status="complete" requestid="244" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:06Z" name="customer_mgr_list" version="7" resource_type="customer"
+          status="complete" requestid="245" op_type="list"/>
+        <!DOCTYPE request>
+<request name="bundle_mgr_add" requestid="246" not_modified_since="1970-01-02T00:00:00" token="1642831" version="12">
+<bundle parent_id="693264358" attributes="" name="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png"
+        active="1" position="2" auto_synchronized="1" domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="bundle_mgr_add" version="12" resource_type="bundle"
+          status="normal" requestid="246" op_type="add">
+<bundle id="694071354"/>
+</response>
+        <!DOCTYPE request>
+<request name="bundle_content_mgr_add" requestid="247" not_modified_since="1970-01-02T00:00:00" token="1642831" version="5">
+<bundle_content parent_id="694071354" content_id="686299998" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_many" requestid="248" not_modified_since="2022-10-24T14:42:06Z" token="1642831" version="12">
+<bundle ids="694071354"/>
+</request>
+        <!DOCTYPE request>
+<request name="customer_mgr_list" requestid="249" not_modified_since="2022-10-24T14:43:06Z" token="1642831" version="7">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="loop_slot_mgr_list_by_reservable" requestid="250" not_modified_since="2022-10-24T14:42:45Z" token="1642831"
+         version="10">
+<loop_slot reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list" requestid="251" not_modified_since="2022-10-24T14:43:06Z" token="1642831" version="9">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_notification_mgr_list" requestid="252" not_modified_since="2022-10-24T14:42:45Z" token="1642831"
+         version="3">
+<resource_notification domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="schedule_mgr_list_by_reservable" requestid="253" not_modified_since="2022-10-24T14:42:45Z" token="1642831"
+         version="8">
+<schedule id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="user_mgr_list" requestid="254" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="13">
+<user domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_note_mgr_list_by_parent_id" requestid="255" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="3">
+<resource_note parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_reservable" requestid="256" not_modified_since="2022-10-24T14:42:38Z" token="1642831"
+         version="12">
+<bundle reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="criteria_mgr_list" requestid="257" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="8">
+<criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list" requestid="258" not_modified_since="2022-10-24T14:42:45Z" token="1642831" version="7">
+<resource_criteria parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="host_mgr_list" requestid="259" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="17">
+<host domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="content_mgr_list" requestid="260" not_modified_since="2022-10-24T14:43:06Z" token="1642831" version="11">
+<content domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_content_mgr_list_by_reservable" requestid="261" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="5">
+<bundle_content reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="criteria_set_mgr_list" requestid="262" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="1">
+<criteria_set domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list_by_domain" requestid="263" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="7">
+<resource_criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="media_package_mgr_list" requestid="264" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="10">
+<media_package domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_history_tracking_mgr_list_for_target_resource" requestid="265" not_modified_since="2022-10-24T14:42:37Z"
+         token="1642831" version="1">
+<resource_history_tracking target_resource_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="category_mgr_list" requestid="266" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="6">
+<category domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_parameter_mgr_list" requestid="267" not_modified_since="2022-10-24T14:42:37Z" token="1642831" version="1">
+<resource_parameter parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list_by_reservable_id" requestid="268" not_modified_since="2022-10-24T14:42:37Z"
+         token="1642831" version="7">
+<resource_criteria reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservable_skins_not_booked_mgr_list" requestid="269" not_modified_since="2022-10-24T14:42:37Z" token="1642831"
+         version="1">
+<reservable_skins_not_booked parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservation_mgr_list" requestid="270" not_modified_since="2022-10-24T14:42:45Z" token="1642831" version="22">
+<reservation domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="event_mgr_list" requestid="271" not_modified_since="2022-10-24T14:42:45Z" token="1642831" version="9">
+<event domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_schedule" requestid="272" not_modified_since="2022-10-24T14:42:45Z" token="1642831"
+         version="12">
+<bundle schedule_id="693264358" domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="bundle_content_mgr_add" version="5"
+          resource_type="bundle_content" status="normal" requestid="247" op_type="add">
+<bundle_content id="694071355"/>
+</response>
+<response ns="user" name="bundle_mgr_list_many" version="12" resource_type="bundle" status="incomplete" requestid="248"
+          op_type="list_many">
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="2" at="" aa="694071354"
+        ab="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" ac="1" ad="0" ae="768189" af="0" ag="0" ah="0"
+        ai="0" aj="0" ak="0" al="693264358"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="bundle_mgr_list_many" version="12" resource_type="bundle"
+          status="complete" requestid="248" op_type="list_many"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="customer_mgr_list" version="7" resource_type="customer"
+          status="complete" requestid="249" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="loop_slot_mgr_list_by_reservable" version="10"
+          resource_type="loop_slot" status="complete" requestid="250" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="container_mgr_list" version="9" resource_type="container"
+          status="complete" requestid="251" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="resource_notification_mgr_list" version="3"
+          resource_type="resource_notification" status="complete" requestid="252" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="schedule_mgr_list_by_reservable" version="8"
+          resource_type="schedule" status="complete" requestid="253" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="user_mgr_list" version="13" resource_type="user"
+          status="complete" requestid="254" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="resource_note_mgr_list_by_parent_id" version="3"
+          resource_type="resource_note" status="complete" requestid="255" op_type="list"/>
+<response ns="user" name="bundle_mgr_list_by_reservable" version="12" resource_type="bundle" status="incomplete" requestid="256"
+          op_type="list">
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="2" at="" aa="694071354"
+        ab="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" ac="1" ad="0" ae="768189" af="0" ag="0" ah="0"
+        ai="0" aj="0" ak="0" al="693264358"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="bundle_mgr_list_by_reservable" version="12"
+          resource_type="bundle" status="complete" requestid="256" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="criteria_mgr_list" version="8" resource_type="criteria"
+          status="complete" requestid="257" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="resource_criteria_mgr_list" version="7"
+          resource_type="resource_criteria" status="complete" requestid="258" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="host_mgr_list" version="17" resource_type="host"
+          status="complete" requestid="259" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="content_mgr_list" version="11" resource_type="content"
+          status="complete" requestid="260" op_type="list"/>
+<response ns="user" name="bundle_content_mgr_list_by_reservable" version="5" resource_type="bundle_content" status="incomplete"
+          requestid="261" op_type="list">
+<bundle_content aa="694071355" ab="1" ac="768189" ad="694071354" ae="686299998"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="bundle_content_mgr_list_by_reservable" version="5"
+          resource_type="bundle_content" status="complete" requestid="261" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="criteria_set_mgr_list" version="1"
+          resource_type="criteria_set" status="complete" requestid="262" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="resource_criteria_mgr_list_by_domain" version="7"
+          resource_type="resource_criteria" status="complete" requestid="263" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="media_package_mgr_list" version="10"
+          resource_type="media_package" status="complete" requestid="264" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="resource_history_tracking_mgr_list_for_target_resource"
+          version="1" resource_type="resource_history_tracking" status="complete" requestid="265" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="category_mgr_list" version="6" resource_type="category"
+          status="complete" requestid="266" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="resource_parameter_mgr_list" version="1"
+          resource_type="resource_parameter" status="complete" requestid="267" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="resource_criteria_mgr_list_by_reservable_id" version="7"
+          resource_type="resource_criteria" status="complete" requestid="268" op_type="list"/>
+<response ns="user" name="reservable_skins_not_booked_mgr_list" version="1" resource_type="reservable_skins_not_booked"
+          status="incomplete" requestid="269" op_type="list">
+<reservable_skins_not_booked aa="693264357" ab="1" ac="768189" ad="415059000" ae="2022-10-21T19:45:11" af="693264352" ag=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="reservable_skins_not_booked_mgr_list" version="1"
+          resource_type="reservable_skins_not_booked" status="complete" requestid="269" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="reservation_mgr_list" version="22" resource_type="reservation"
+          status="complete" requestid="270" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="event_mgr_list" version="9" resource_type="event"
+          status="complete" requestid="271" op_type="list"/>
+<response ns="user" name="bundle_mgr_list_by_schedule" version="12" resource_type="bundle" status="incomplete" requestid="272"
+          op_type="list">
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="2" at="" aa="694071354"
+        ab="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" ac="1" ad="0" ae="768189" af="0" ag="0" ah="0"
+        ai="0" aj="0" ak="0" al="693264358"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:24Z" name="bundle_mgr_list_by_schedule" version="12"
+          resource_type="bundle" status="complete" requestid="272" op_type="list"/>
+        <!DOCTYPE request>
+<request name="bundle_mgr_update" requestid="273" not_modified_since="1970-01-02T00:00:00" token="1642831" version="12">
+<bundle loop_weight="0"
+        parent_id="693264358"
+        secondary_sep_category_ids=""
+        name="Test Campaign #006 - COT?118?20-General-SHO-DV-E-200803"
+        attributes=""
+        active="1"
+        category_id="435602603"
+        position="1"
+        allow_custom_duration="1"
+        loop_positions=""
+        fullscreen="0"
+        auto_synchronized="1"
+        interactivity_timeout="0"
+        id="693264359"
+        domain_id="768189"
+        max_duration_msec="10"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_update" requestid="274" not_modified_since="1970-01-02T00:00:00" token="1642831" version="12">
+<bundle loop_weight="0" parent_id="693264358" secondary_sep_category_ids=""
+        name="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" attributes="" active="1" position="0"
+        allow_custom_duration="0" loop_positions="" fullscreen="0" auto_synchronized="1" interactivity_timeout="0" id="694071354"
+        domain_id="768189" max_duration_msec="0"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:32Z" name="bundle_mgr_update" version="12" resource_type="bundle"
+          status="normal" requestid="273" op_type="update">
+<bundle id="693264359"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="bundle_mgr_update" version="12" resource_type="bundle"
+          status="normal" requestid="274" op_type="update">
+<bundle id="694071354"/>
+</response>
+        <!DOCTYPE request>
+<request name="customer_mgr_list" requestid="275" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="7">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="loop_slot_mgr_list_by_reservable" requestid="276" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="10">
+<loop_slot reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list" requestid="277" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="9">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_notification_mgr_list" requestid="278" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="3">
+<resource_notification domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="schedule_mgr_list_by_reservable" requestid="279" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="8">
+<schedule id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="user_mgr_list" requestid="280" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="13">
+<user domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_note_mgr_list_by_parent_id" requestid="281" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="3">
+<resource_note parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_reservable" requestid="282" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="12">
+<bundle reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="criteria_mgr_list" requestid="283" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="8">
+<criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list" requestid="284" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="7">
+<resource_criteria parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="host_mgr_list" requestid="285" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="17">
+<host domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="content_mgr_list" requestid="286" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="11">
+<content domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_content_mgr_list_by_reservable" requestid="287" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="5">
+<bundle_content reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="criteria_set_mgr_list" requestid="288" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="1">
+<criteria_set domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list_by_domain" requestid="289" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="7">
+<resource_criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="media_package_mgr_list" requestid="290" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="10">
+<media_package domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_history_tracking_mgr_list_for_target_resource" requestid="291" not_modified_since="2022-10-24T14:43:24Z"
+         token="1642831" version="1">
+<resource_history_tracking target_resource_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="category_mgr_list" requestid="292" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="6">
+<category domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_parameter_mgr_list" requestid="293" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="1">
+<resource_parameter parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list_by_reservable_id" requestid="294" not_modified_since="2022-10-24T14:43:24Z"
+         token="1642831" version="7">
+<resource_criteria reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservable_skins_not_booked_mgr_list" requestid="295" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="1">
+<reservable_skins_not_booked parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservation_mgr_list" requestid="296" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="22">
+<reservation domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="event_mgr_list" requestid="297" not_modified_since="2022-10-24T14:43:24Z" token="1642831" version="9">
+<event domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_schedule" requestid="298" not_modified_since="2022-10-24T14:43:24Z" token="1642831"
+         version="12">
+<bundle schedule_id="693264358" domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="customer_mgr_list" version="7" resource_type="customer"
+          status="complete" requestid="275" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="loop_slot_mgr_list_by_reservable" version="10"
+          resource_type="loop_slot" status="complete" requestid="276" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="container_mgr_list" version="9" resource_type="container"
+          status="complete" requestid="277" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="resource_notification_mgr_list" version="3"
+          resource_type="resource_notification" status="complete" requestid="278" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="schedule_mgr_list_by_reservable" version="8"
+          resource_type="schedule" status="complete" requestid="279" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="user_mgr_list" version="13" resource_type="user"
+          status="complete" requestid="280" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="resource_note_mgr_list_by_parent_id" version="3"
+          resource_type="resource_note" status="complete" requestid="281" op_type="list"/>
+<response ns="user" name="bundle_mgr_list_by_reservable" version="12" resource_type="bundle" status="incomplete" requestid="282"
+          op_type="list">
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="1" at="" aa="693264359"
+        ab="Test Campaign #006 - COT?118?20-General-SHO-DV-E-200803" ac="1" ad="0" ae="768189" af="10" ag="435602603" ah="1"
+        ai="0" aj="0" ak="0" al="693264358"/>
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="0" at="" aa="694071354"
+        ab="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" ac="1" ad="0" ae="768189" af="0" ag="0" ah="0"
+        ai="0" aj="0" ak="0" al="693264358"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="bundle_mgr_list_by_reservable" version="12"
+          resource_type="bundle" status="complete" requestid="282" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="criteria_mgr_list" version="8" resource_type="criteria"
+          status="complete" requestid="283" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="resource_criteria_mgr_list" version="7"
+          resource_type="resource_criteria" status="complete" requestid="284" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="host_mgr_list" version="17" resource_type="host"
+          status="complete" requestid="285" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="content_mgr_list" version="11" resource_type="content"
+          status="complete" requestid="286" op_type="list"/>
+<response ns="user" name="bundle_content_mgr_list_by_reservable" version="5" resource_type="bundle_content" status="incomplete"
+          requestid="287" op_type="list">
+<bundle_content aa="693264360" ab="1" ac="768189" ad="693264359" ae="692538885"/>
+<bundle_content aa="694071355" ab="1" ac="768189" ad="694071354" ae="686299998"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="bundle_content_mgr_list_by_reservable" version="5"
+          resource_type="bundle_content" status="complete" requestid="287" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="criteria_set_mgr_list" version="1"
+          resource_type="criteria_set" status="complete" requestid="288" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="resource_criteria_mgr_list_by_domain" version="7"
+          resource_type="resource_criteria" status="complete" requestid="289" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="media_package_mgr_list" version="10"
+          resource_type="media_package" status="complete" requestid="290" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="resource_history_tracking_mgr_list_for_target_resource"
+          version="1" resource_type="resource_history_tracking" status="complete" requestid="291" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="category_mgr_list" version="6" resource_type="category"
+          status="complete" requestid="292" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="resource_parameter_mgr_list" version="1"
+          resource_type="resource_parameter" status="complete" requestid="293" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="resource_criteria_mgr_list_by_reservable_id" version="7"
+          resource_type="resource_criteria" status="complete" requestid="294" op_type="list"/>
+<response ns="user" name="reservable_skins_not_booked_mgr_list" version="1" resource_type="reservable_skins_not_booked"
+          status="incomplete" requestid="295" op_type="list">
+<reservable_skins_not_booked aa="693264357" ab="1" ac="768189" ad="415059000" ae="2022-10-21T19:45:11" af="693264352" ag=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="reservable_skins_not_booked_mgr_list" version="1"
+          resource_type="reservable_skins_not_booked" status="complete" requestid="295" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="reservation_mgr_list" version="22" resource_type="reservation"
+          status="complete" requestid="296" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="event_mgr_list" version="9" resource_type="event"
+          status="complete" requestid="297" op_type="list"/>
+<response ns="user" name="bundle_mgr_list_by_schedule" version="12" resource_type="bundle" status="incomplete" requestid="298"
+          op_type="list">
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="1" at="" aa="693264359"
+        ab="Test Campaign #006 - COT?118?20-General-SHO-DV-E-200803" ac="1" ad="0" ae="768189" af="10" ag="435602603" ah="1"
+        ai="0" aj="0" ak="0" al="693264358"/>
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="0" at="" aa="694071354"
+        ab="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" ac="1" ad="0" ae="768189" af="0" ag="0" ah="0"
+        ai="0" aj="0" ak="0" al="693264358"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:33Z" name="bundle_mgr_list_by_schedule" version="12"
+          resource_type="bundle" status="complete" requestid="298" op_type="list"/>
+        <!DOCTYPE request>
+<request name="bundle_mgr_update" requestid="299" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="12">
+<bundle loop_weight="0" parent_id="693264358" secondary_sep_category_ids=""
+        name="Test Campaign #006 - COT?118?20-General-SHO-DV-E-200803" attributes="" active="1" category_id="435602603"
+        position="0" allow_custom_duration="1" loop_positions="" fullscreen="0" auto_synchronized="1" interactivity_timeout="0"
+        id="693264359" domain_id="768189" max_duration_msec="10"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_update" requestid="300" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="12">
+<bundle loop_weight="0" parent_id="693264358" secondary_sep_category_ids=""
+        name="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" attributes="" active="1" position="1"
+        allow_custom_duration="0" loop_positions="" fullscreen="0" auto_synchronized="1" interactivity_timeout="0" id="694071354"
+        domain_id="768189" max_duration_msec="0"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="bundle_mgr_update" version="12" resource_type="bundle"
+          status="normal" requestid="299" op_type="update">
+<bundle id="693264359"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="bundle_mgr_update" version="12" resource_type="bundle"
+          status="normal" requestid="300" op_type="update">
+<bundle id="694071354"/>
+</response>
+        <!DOCTYPE request>
+<request name="customer_mgr_list" requestid="301" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="7">
+<customer domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="loop_slot_mgr_list_by_reservable" requestid="302" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="10">
+<loop_slot reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="container_mgr_list" requestid="303" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="9">
+<container domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_notification_mgr_list" requestid="304" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="3">
+<resource_notification domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="schedule_mgr_list_by_reservable" requestid="305" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="8">
+<schedule id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="user_mgr_list" requestid="306" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="13">
+<user domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_note_mgr_list_by_parent_id" requestid="307" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="3">
+<resource_note parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_reservable" requestid="308" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="12">
+<bundle reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="criteria_mgr_list" requestid="309" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="8">
+<criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list" requestid="310" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="7">
+<resource_criteria parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="host_mgr_list" requestid="311" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="17">
+<host domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="content_mgr_list" requestid="312" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="11">
+<content domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_content_mgr_list_by_reservable" requestid="313" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="5">
+<bundle_content reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="criteria_set_mgr_list" requestid="314" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="1">
+<criteria_set domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list_by_domain" requestid="315" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="7">
+<resource_criteria domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="media_package_mgr_list" requestid="316" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="10">
+<media_package domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_history_tracking_mgr_list_for_target_resource" requestid="317" not_modified_since="2022-10-24T14:43:33Z"
+         token="1642831" version="1">
+<resource_history_tracking target_resource_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="category_mgr_list" requestid="318" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="6">
+<category domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_parameter_mgr_list" requestid="319" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="1">
+<resource_parameter parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="resource_criteria_mgr_list_by_reservable_id" requestid="320" not_modified_since="2022-10-24T14:43:33Z"
+         token="1642831" version="7">
+<resource_criteria reservable_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservable_skins_not_booked_mgr_list" requestid="321" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="1">
+<reservable_skins_not_booked parent_id="693264352" domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="reservation_mgr_list" requestid="322" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="22">
+<reservation domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="event_mgr_list" requestid="323" not_modified_since="2022-10-24T14:43:33Z" token="1642831" version="9">
+<event domain_id="768189"/>
+</request>
+        <!DOCTYPE request>
+<request name="bundle_mgr_list_by_schedule" requestid="324" not_modified_since="2022-10-24T14:43:33Z" token="1642831"
+         version="12">
+<bundle schedule_id="693264358" domain_id="768189"/>
+</request>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="customer_mgr_list" version="7" resource_type="customer"
+          status="complete" requestid="301" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="loop_slot_mgr_list_by_reservable" version="10"
+          resource_type="loop_slot" status="complete" requestid="302" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="container_mgr_list" version="9" resource_type="container"
+          status="complete" requestid="303" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="resource_notification_mgr_list" version="3"
+          resource_type="resource_notification" status="complete" requestid="304" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="schedule_mgr_list_by_reservable" version="8"
+          resource_type="schedule" status="complete" requestid="305" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="user_mgr_list" version="13" resource_type="user"
+          status="complete" requestid="306" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="resource_note_mgr_list_by_parent_id" version="3"
+          resource_type="resource_note" status="complete" requestid="307" op_type="list"/>
+<response ns="user" name="bundle_mgr_list_by_reservable" version="12" resource_type="bundle" status="incomplete" requestid="308"
+          op_type="list">
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="0" at="" aa="693264359"
+        ab="Test Campaign #006 - COT?118?20-General-SHO-DV-E-200803" ac="1" ad="0" ae="768189" af="10" ag="435602603" ah="1"
+        ai="0" aj="0" ak="0" al="693264358"/>
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="1" at="" aa="694071354"
+        ab="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" ac="1" ad="0" ae="768189" af="0" ag="0" ah="0"
+        ai="0" aj="0" ak="0" al="693264358"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="bundle_mgr_list_by_reservable" version="12"
+          resource_type="bundle" status="complete" requestid="308" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="criteria_mgr_list" version="8" resource_type="criteria"
+          status="complete" requestid="309" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="resource_criteria_mgr_list" version="7"
+          resource_type="resource_criteria" status="complete" requestid="310" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="host_mgr_list" version="17" resource_type="host"
+          status="complete" requestid="311" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="content_mgr_list" version="11" resource_type="content"
+          status="complete" requestid="312" op_type="list"/>
+<response ns="user" name="bundle_content_mgr_list_by_reservable" version="5" resource_type="bundle_content" status="incomplete"
+          requestid="313" op_type="list">
+<bundle_content aa="693264360" ab="1" ac="768189" ad="693264359" ae="692538885"/>
+<bundle_content aa="694071355" ab="1" ac="768189" ad="694071354" ae="686299998"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="bundle_content_mgr_list_by_reservable" version="5"
+          resource_type="bundle_content" status="complete" requestid="313" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="criteria_set_mgr_list" version="1"
+          resource_type="criteria_set" status="complete" requestid="314" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="resource_criteria_mgr_list_by_domain" version="7"
+          resource_type="resource_criteria" status="complete" requestid="315" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="media_package_mgr_list" version="10"
+          resource_type="media_package" status="complete" requestid="316" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="resource_history_tracking_mgr_list_for_target_resource"
+          version="1" resource_type="resource_history_tracking" status="complete" requestid="317" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="category_mgr_list" version="6" resource_type="category"
+          status="complete" requestid="318" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="resource_parameter_mgr_list" version="1"
+          resource_type="resource_parameter" status="complete" requestid="319" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="resource_criteria_mgr_list_by_reservable_id" version="7"
+          resource_type="resource_criteria" status="complete" requestid="320" op_type="list"/>
+<response ns="user" name="reservable_skins_not_booked_mgr_list" version="1" resource_type="reservable_skins_not_booked"
+          status="incomplete" requestid="321" op_type="list">
+<reservable_skins_not_booked aa="693264357" ab="1" ac="768189" ad="415059000" ae="2022-10-21T19:45:11" af="693264352" ag=""/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:37Z" name="reservable_skins_not_booked_mgr_list" version="1"
+          resource_type="reservable_skins_not_booked" status="complete" requestid="321" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:38Z" name="reservation_mgr_list" version="22" resource_type="reservation"
+          status="complete" requestid="322" op_type="list"/>
+<response ns="user" not_modified_since="2022-10-24T14:43:38Z" name="event_mgr_list" version="9" resource_type="event"
+          status="complete" requestid="323" op_type="list"/>
+<response ns="user" name="bundle_mgr_list_by_schedule" version="12" resource_type="bundle" status="incomplete" requestid="324"
+          op_type="list">
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="0" at="" aa="693264359"
+        ab="Test Campaign #006 - COT?118?20-General-SHO-DV-E-200803" ac="1" ad="0" ae="768189" af="10" ag="435602603" ah="1"
+        ai="0" aj="0" ak="0" al="693264358"/>
+<bundle am="0" an="" ao="0" ap="0" aq="1" ar="" as="1" at="" aa="694071354"
+        ab="abelanger@groupemach.com - CC-Carte-Cadeau-NEO-HORIZONTAL-BEIGE-D.png" ac="1" ad="0" ae="768189" af="0" ag="0" ah="0"
+        ai="0" aj="0" ak="0" al="693264358"/>
+</response>
+<response ns="user" not_modified_since="2022-10-24T14:43:38Z" name="bundle_mgr_list_by_schedule" version="12"
+          resource_type="bundle" status="complete" requestid="324" op_type="list"/>

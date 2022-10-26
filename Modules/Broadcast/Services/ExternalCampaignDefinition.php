@@ -11,15 +11,16 @@
 namespace Neo\Modules\Broadcast\Services;
 
 use Illuminate\Support\Collection;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Spatie\DataTransferObject\DataTransferObject;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class ExternalCampaignDefinition extends DataTransferObject {
     /**
-     * @param int        $campaign_id
-     * @param int        $network_id
-     * @param int        $format_id
-     * @param Collection $locations
+     * @param int                                       $campaign_id
+     * @param int                                       $network_id
+     * @param int                                       $format_id
+     * @param Collection<ExternalBroadcasterResourceId> $locations
      * @throws UnknownProperties
      */
     public function __construct(

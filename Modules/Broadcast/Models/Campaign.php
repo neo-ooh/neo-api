@@ -26,7 +26,6 @@ use Neo\Modules\Broadcast\Enums\CampaignWarning;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Jobs\Campaigns\DeleteCampaignJob;
 use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
-use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 use Neo\Modules\Broadcast\Rules\AccessibleCampaign;
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
@@ -41,16 +40,18 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int                  $parent_id
  * @property int                  $creator_id
  * @property string               $name
- * @property double               $schedules_default_length Content without a defined duration/length will use this length when
- *           being scheduled
- * @property double               $schedules_max_length     Maximum content length/duration allowed
- * @property int                  $occurrences_in_loop      Tell how many time in one loop the campaign should play, default to 1
- * @property int                  $priority                 Higher number means lower priority
- * @property Date                 $start_date               Y-m-d
- * @property Date                 $start_time               H:m:s
- * @property Date                 $end_date                 Y-m-d
- * @property Date                 $end_time                 H:m:s
- * @property int                  $broadcast_days           Bit mask of the days of the week the campaign should run: 127 =>
+ * @property double               $static_duration_override  Duration in seconds for contents without a predetermined duration
+ *           (pictures). Override the format content length if set to a value above zero
+ * @property double               $dynamic_duration_override Maximum allowed duration for contents with a predetermined duration
+ *           (videos). Override the format content length if set to a value above zero
+ * @property int                  $occurrences_in_loop       Tell how many time in one loop the campaign should play, default to
+ *           1
+ * @property int                  $priority                  Higher number means lower priority
+ * @property Date                 $start_date                Y-m-d
+ * @property Date                 $start_time                H:m:s
+ * @property Date                 $end_date                  Y-m-d
+ * @property Date                 $end_time                  H:m:s
+ * @property int                  $broadcast_days            Bit mask of the days of the week the campaign should run: 127 =>
  *           01111111 - all week
  *
  * @property Date                 $created_at
@@ -102,8 +103,8 @@ class Campaign extends BroadcastResourceModel {
         "parent_id",
         "creator_id",
         "name",
-        "schedules_default_length",
-        "schedules_max_length",
+        "static_duration_override",
+        "dynamic_duration_override",
         "priority",
         "start_date",
         "start_time",
@@ -139,7 +140,7 @@ class Campaign extends BroadcastResourceModel {
         "creator"                  => "creator",
         "shares"                   => "shares",
         "schedules"                => ["schedules.owner:id,name", "schedules.content.creatives", "schedules.broadcast_tags"],
-        "expired_schedules"        => ["expired_schedules.content"],
+        "expired_schedules"        => ["expired_schedules.owner:id,name", "expired_schedules.content.creatives", "expired_schedules.broadcast_tags"],
         "locations"                => "locations",
         "formats"                  => ["formats.layouts.frames"],
         "tags"                     => "broadcast_tags",
@@ -197,7 +198,10 @@ class Campaign extends BroadcastResourceModel {
      */
     public function schedules(): HasMany {
         return $this->hasMany(Schedule::class, "campaign_id", "id")
-                    ->where("end_date", ">", Carbon::now()->subWeek())
+                    ->where("end_date", ">", Carbon::now())
+                    ->orWhereRelation("details", function (Builder $query) {
+                        $query->where("is_approved", "=", false);
+                    })
                     ->orderBy("order");
     }
 
@@ -206,8 +210,11 @@ class Campaign extends BroadcastResourceModel {
      */
     public function expired_schedules(): HasMany {
         return $this->hasMany(Schedule::class, "campaign_id", "id")
+                    ->whereRelation("details", function (Builder $query) {
+                        $query->where("is_approved", "=", true);
+                    })
                     ->withTrashed()
-                    ->where("end_date", "<", Carbon::now()->subWeek())
+                    ->where("end_date", "<", Carbon::now())
                     ->orderByDesc("end_date");
     }
 
@@ -249,11 +256,11 @@ class Campaign extends BroadcastResourceModel {
     public function getStatusAttribute(): CampaignStatus {
         // Is the campaign expired ?
         if ($this->end_date->isBefore(Date::now())) {
-            return CampaignStatus::Empty;
+            return CampaignStatus::Expired;
         }
 
         if ($this->schedules->count() === 0) {
-            return CampaignStatus::Offline;
+            return CampaignStatus::Empty;
         }
 
         // Does it has a pending schedule in it?
@@ -283,9 +290,7 @@ class Campaign extends BroadcastResourceModel {
      * @return void
      */
     public function promote(): void {
-        PromoteCampaignJob::dispatch($this->getKey())->chain(
-            $this->schedules()->get()->map(fn(Schedule $schedule) => new PromoteScheduleJob($schedule->getKey()))
-        );
+        PromoteCampaignJob::dispatch($this->getKey());
     }
 
 
@@ -302,16 +307,15 @@ class Campaign extends BroadcastResourceModel {
         $this->loadMissing("parent");
 
         return new CampaignResource([
-            "enabled"                      => true,
-            "name"                         => $this->parent->name . " - " . $this->name,
-            "start_date"                   => $this->start_date->toDateString(),
-            "start_time"                   => $this->start_time->toTimeString(),
-            "end_date"                     => $this->end_date->toDateString(),
-            "end_time"                     => $this->end_time->toTimeString(),
-            "broadcast_days"               => $this->broadcast_days,
-            "priority"                     => $this->priority,
-            "occurrences_in_loop"          => $this->occurrences_in_loop,
-            "default_schedule_length_msec" => $this->schedules_default_length * 1000,
+            "enabled"             => true,
+            "name"                => $this->parent->name . " - " . $this->name,
+            "start_date"          => $this->start_date->toDateString(),
+            "start_time"          => $this->start_time->toTimeString(),
+            "end_date"            => $this->end_date->toDateString(),
+            "end_time"            => $this->end_time->toTimeString(),
+            "broadcast_days"      => $this->broadcast_days,
+            "priority"            => $this->priority,
+            "occurrences_in_loop" => $this->occurrences_in_loop,
         ]);
     }
 
@@ -325,7 +329,7 @@ class Campaign extends BroadcastResourceModel {
         // A campaign in Connect may be represented by multiple external campaign, across several broadcasters.
         // A campaign is broken down into multiple campaigns with the following criteria:
         //  1. Broadcaster/Network
-        //  2. DisplayType
+        //  2. Format
 
         // This is done using the list of locations and formats associated with a campaign
         $breakdown = [];
@@ -344,7 +348,7 @@ class Campaign extends BroadcastResourceModel {
                     campaign_id: $this->getKey(),
                     network_id: $networkId,
                     format_id: $formatId,
-                    locations: collect($formatLocations),
+                    locations: collect($formatLocations)->map(fn(Location $location) => $location->toExternalBroadcastIdResource()),
                 );
             }
         }

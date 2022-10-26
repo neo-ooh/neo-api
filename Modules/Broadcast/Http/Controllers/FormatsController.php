@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Http\Requests\Formats\DestroyFormatRequest;
+use Neo\Modules\Broadcast\Http\Requests\Formats\ListFormatsByIdsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\ListFormatsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\ShowFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\StoreFormatRequest;
@@ -45,10 +46,15 @@ class FormatsController extends Controller {
                                           });
                                       });
 
-            return new Response($formats);
+            return new Response($formats->loadPublicRelations());
         }
 
-        return new Response(Format::query()->orderBy("name")->get());
+        return new Response(Format::query()->orderBy("name")->get()->loadPublicRelations());
+    }
+
+    public function byIds(ListFormatsByIdsRequest $request) {
+        $formats = Format::query()->findMany($request->input("ids"));
+        return new Response($formats->loadPublicRelations());
     }
 
     public function store(StoreFormatRequest $request): Response {

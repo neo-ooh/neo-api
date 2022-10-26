@@ -50,6 +50,7 @@ class ActorsController extends Controller {
             $actors = $actors->push(Auth::user());
         }
 
+        $actors = $actors->unique("id");
         $actors->append("type");
 
         if ($request->has("types")) {
@@ -88,11 +89,7 @@ class ActorsController extends Controller {
             $actors = $actors->filter(fn(Actor $actor) => $actor->hasCapability(Capability::from($request->input("capability"))));
         }
 
-        if (in_array("logo", $request->input("with", []), true)) {
-            $actors->load("logo");
-        }
-
-        return new Response($actors->unique("id")->sortBy("name")->values());
+        return new Response($actors->loadPublicRelations()->sortBy("name")->values());
     }
 
     public function byId(ListActorsByIdRequest $request) {
@@ -211,7 +208,7 @@ class ActorsController extends Controller {
         if (count($request->all()) === 0) {
             return new Response([
                 "code"    => "empty-request",
-                "message" => "You must pass at lease 1 parameter when calling this route"
+                "message" => "You must pass at lease 1 parameter when calling this route",
             ], 422);
         }
 

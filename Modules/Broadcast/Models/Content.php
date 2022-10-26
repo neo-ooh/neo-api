@@ -122,6 +122,7 @@ class Content extends BroadcastResourceModel {
                 "schedules.owner:id,name",
                 "schedules.campaign.parent:id,name",
             ],
+            "tags"            => "broadcast_tags",
             "schedules_count" => "count:schedules",
         ];
     }
@@ -235,8 +236,8 @@ class Content extends BroadcastResourceModel {
      */
     public function toResource(): ContentResource {
         return new ContentResource([
-            "name"          => $this->name,
-            "duration_msec" => $this->duration,
+            "name"          => $this->name ?? "Content #{$this->getKey()}",
+            "duration_msec" => (int)($this->duration * 1000),
             "is_fullscreen" => false,
         ]);
     }

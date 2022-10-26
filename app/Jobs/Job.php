@@ -20,6 +20,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Throwable;
 
 /**
  * This base class for jobs implements hooks for some of the lifecycle events of jobs
@@ -46,7 +47,7 @@ abstract class Job implements ShouldQueue {
             $result = $this->run();
 
             $this->onSuccess($result);
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             $this->onFailure($exception);
         } finally {
             $this->finally();
@@ -83,7 +84,7 @@ abstract class Job implements ShouldQueue {
      * @param Exception $exception Exception thrown in `run()`
      * @return void
      */
-    protected function onFailure(Exception $exception): void {
+    protected function onFailure(Throwable $exception): void {
     }
 
     /**

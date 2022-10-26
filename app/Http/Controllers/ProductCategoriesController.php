@@ -11,8 +11,8 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Http\Requests\ProductCategories\ListProductCategoriesByIdsRequest;
 use Neo\Http\Requests\ProductCategories\ListProductCategoriesRequest;
-use Neo\Http\Requests\ProductCategories\ListProductsCategoriesByIdsRequest;
 use Neo\Http\Requests\ProductCategories\ShowProductCategoryRequest;
 use Neo\Http\Requests\ProductCategories\UpdateProductCategoryRequest;
 use Neo\Models\ProductCategory;
@@ -24,7 +24,7 @@ class ProductCategoriesController {
         return new Response($productCategories->loadPublicRelations());
     }
 
-    public function byIds(ListProductsCategoriesByIdsRequest $request) {
+    public function byIds(ListProductCategoriesByIdsRequest $request) {
         $productCategories = ProductCategory::query()->findMany($request->input("ids"));
 
         return new Response($productCategories->loadPublicRelations());

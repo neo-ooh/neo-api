@@ -45,8 +45,10 @@ class UpdateCampaignRequest extends FormRequest {
 
             "broadcast_days" => ["required", "integer", "max:127"],
 
-            "occurrences_in_loop" => ["required", "integer", "min:0"],
-            "priority"            => ["required", "integer", "min:0"],
+            "occurrences_in_loop"       => ["required", "integer", "min:0"],
+            "priority"                  => ["required", "integer", "min:0"],
+            "static_duration_override"  => ["required", "numeric", "min:0"],
+            "dynamic_duration_override" => ["required", "numeric", "min:0"],
 
             "tags"   => ["array"],
             "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],

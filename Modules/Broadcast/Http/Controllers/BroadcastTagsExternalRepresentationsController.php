@@ -12,6 +12,7 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
+use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\ListExternalRepresentationsRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\UpdateExternalRepresentationsRequest;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
@@ -32,10 +33,11 @@ class BroadcastTagsExternalRepresentationsController extends Controller {
         foreach ($request->input("representations", []) as ["broadcaster_id" => $broadcasterId, "external_id" => $externalId]) {
             $broadcastTag->external_representations()->updateOrCreate([
                 "broadcaster_id" => $broadcasterId,
+                "type"           => ExternalResourceType::Tag,
             ], [
                 "data" => new ExternalResourceData([
                     "external_id" => $externalId,
-                ])
+                ]),
             ]);
 
             $broadcasterIds[] = $broadcasterId;

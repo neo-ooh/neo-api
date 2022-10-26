@@ -14,6 +14,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\ActorType;
 use Neo\Enums\Capability;
+use Neo\Models\Actor;
+use Neo\Rules\PublicRelations;
 
 /**
  * Class ListActorsRequest
@@ -54,7 +56,7 @@ class ListActorsRequest extends FormRequest {
             "property"         => ["sometimes", "boolean"],
             "capability"       => ["sometimes", "string", new Enum(Capability::class)],
 
-            "with" => ["sometimes", "array"],
+            "with" => ["array", new PublicRelations(Actor::class)],
         ];
     }
 }

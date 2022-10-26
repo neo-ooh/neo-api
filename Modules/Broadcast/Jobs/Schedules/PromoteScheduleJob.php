@@ -32,7 +32,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\Exceptions\MissingExternalResourceException;
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Neo\Modules\Broadcast\Services\Resources\Schedule as ScheduleResource;
 use Neo\Modules\Broadcast\Services\Resources\Tag;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
@@ -147,18 +146,18 @@ class PromoteScheduleJob extends BroadcastJobBase {
             /** @var array<ExternalResource> $externalResources Existing external representations at the start of the job */
             $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->network_id, $representation->format_id);
 
-            $scheduleResource = $schedule->toResource();
-
             // Collect all tags for the schedule
             $tags = new BroadcastTagsCollector();
             // Schedule tags
             $tags->collect($schedule->broadcast_tags, [BroadcastTagType::Category]);
             // Campaign tags
             $tags->collect($schedule->campaign->broadcast_tags, [BroadcastTagType::Category]);
-            // Layout tags
-            $tags->collect($schedule->content->layout->broadcast_tags, [BroadcastTagType::Category, BroadcastTagType::Trigger]);
             // Format tags
             $tags->collect($representationFormat->broadcast_tags, [BroadcastTagType::Category]);
+            // Layout tags
+            $tags->collect($schedule->content->layout->broadcast_tags, [BroadcastTagType::Category, BroadcastTagType::Trigger]);
+            // Content tags
+            $tags->collect($schedule->content->broadcast_tags, [BroadcastTagType::Category]);
 
             $scheduleTags = $tags->get($broadcaster->getBroadcasterId());
 
@@ -168,7 +167,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                     // Create the schedule in the broadcaster
                     $updatedExternalResources = $this->createSchedule(
                         broadcaster: $broadcaster,
-                        scheduleResource: $scheduleResource,
+                        schedule: $schedule,
                         externalCampaignResource: $externalCampaignResource,
                         content: $schedule->content,
                         format: $representationFormat,
@@ -180,14 +179,14 @@ class PromoteScheduleJob extends BroadcastJobBase {
                         // There is an external schedule for this representation, update it
                         $updatedExternalResources = $broadcaster->updateSchedule(
                             externalResources: array_map(static fn(ExternalResource $r) => $r->toResource(), $externalResources),
-                            schedule: $scheduleResource,
+                            schedule: $schedule->toResource(),
                             tags: $scheduleTags,
                         );
                     } catch (ExternalBroadcastResourceNotFoundException|MissingExternalResourceException $err) {
                         // The broadcaster did not find any schedule with the id provided. Try to create it instead
                         $updatedExternalResources = $this->createSchedule(
                             broadcaster: $broadcaster,
-                            scheduleResource: $scheduleResource,
+                            schedule: $schedule,
                             externalCampaignResource: $externalCampaignResource,
                             content: $schedule->content,
                             format: $representationFormat,
@@ -266,7 +265,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
     /**
      * @param BroadcasterOperator&BroadcasterScheduling $broadcaster
-     * @param ScheduleResource                          $scheduleResource
+     * @param Schedule                                  $schedule
      * @param ExternalResource                          $externalCampaignResource
      * @param Content                                   $content
      * @param Format                                    $format
@@ -276,7 +275,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @throws UnknownProperties
      */
     protected function createSchedule(BroadcasterOperator&BroadcasterScheduling $broadcaster,
-                                      ScheduleResource                          $scheduleResource,
+                                      Schedule                                  $schedule,
                                       ExternalResource                          $externalCampaignResource,
                                       Content                                   $content,
                                       Format                                    $format,
@@ -304,9 +303,16 @@ class PromoteScheduleJob extends BroadcastJobBase {
         $contentResource                = $content->toResource();
         $contentResource->is_fullscreen = $layout->settings->is_fullscreen;
 
+        // If the schedule duration is 0, use the campaign overrides if available, otherwise, use the format's content length
+        if ($contentResource->duration_msec === 0 && $schedule->campaign->static_duration_override > 0) {
+            $contentResource->duration_msec = (int)($schedule->campaign->static_duration_override * 1000);
+        } else if ($contentResource->duration_msec === 0) {
+            $contentResource->duration_msec = $format->content_length * 1000;
+        }
+
         // Now that we have all the creatives Ids, create the schedule
         return $broadcaster->createSchedule(
-            schedule: $scheduleResource,
+            schedule: $schedule->toResource(),
             campaign: $externalCampaignResource->toResource(),
             content: $contentResource,
             creatives: $creativesExternalIds,

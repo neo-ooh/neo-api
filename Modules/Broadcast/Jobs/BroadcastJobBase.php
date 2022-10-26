@@ -11,7 +11,6 @@
 namespace Neo\Modules\Broadcast\Jobs;
 
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
@@ -19,6 +18,7 @@ use Neo\Jobs\Job;
 use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Models\BroadcastJob;
+use Throwable;
 
 /**
  * @template TPayload of array
@@ -116,7 +116,7 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
         $this->broadcastJob->save();
     }
 
-    protected function onFailure(Exception $exception): void {
+    protected function onFailure(Throwable $exception): void {
         $this->broadcastJob->endAttempt(BroadcastJobStatus::Failed, [
             "message"   => $exception->getMessage(),
             "locations" => $exception->getFile() . ":" . $exception->getLine(),

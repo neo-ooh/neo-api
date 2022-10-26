@@ -68,8 +68,10 @@ class CampaignsController extends Controller {
         $campaign->end_time       = $request->input("end_time");
         $campaign->broadcast_days = $request->input("broadcast_days");
 
-        $campaign->occurrences_in_loop = $request->input("occurrences_in_loop");
-        $campaign->priority            = $request->input("priority");
+        $campaign->occurrences_in_loop       = $request->input("occurrences_in_loop");
+        $campaign->priority                  = $request->input("priority");
+        $campaign->static_duration_override  = $request->input("static_duration_override");
+        $campaign->dynamic_duration_override = $request->input("dynamic_duration_override");
 
         // We create the campaign and attach its location in a transaction as we want to prevent the campaign creation if there is a problem with the locations
         try {
@@ -123,8 +125,11 @@ class CampaignsController extends Controller {
         $campaign->end_time       = $request->input("end_time");
         $campaign->broadcast_days = $request->input("broadcast_days");
 
-        $campaign->occurrences_in_loop = $request->input("occurrences_in_loop");
-        $campaign->priority            = $request->input("priority");
+        $campaign->occurrences_in_loop       = $request->input("occurrences_in_loop");
+        $campaign->priority                  = $request->input("priority");
+        $campaign->static_duration_override  = $request->input("static_duration_override");
+        $campaign->dynamic_duration_override = $request->input("dynamic_duration_override");
+
         $campaign->save();
 
         $campaign->broadcast_tags()->sync($request->input("tags"));

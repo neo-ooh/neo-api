@@ -195,7 +195,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $bsCampaign = new BroadSignCampaign($this->getAPIClient(), [
             "name" => $campaign->name,
 
-            "duration_msec" => $campaign->default_schedule_length_msec,
+            "duration_msec" => $campaign->duration_msec,
 
             "start_date"       => $campaign->start_date,
             "start_time"       => $campaign->start_time,
@@ -267,7 +267,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $comparator = new ResourcesComparator($campaign, $bsCampaign->toResource());
 
         // It is not possible to change some of the properties of a campaign after it has been created.
-        $readonlyProperties = ["start_date", "start_time", "end_date", "end_time", "occurrences_in_loop", "default_schedule_length_msec"];
+        $readonlyProperties = ["start_date", "start_time", "end_date", "end_time", "occurrences_in_loop", "broadcast_days", "duration_msec"];
         $updatable          = true;
         $breakingProperty   = "";
 
@@ -283,16 +283,11 @@ class BroadSignAdapter extends BroadcasterOperator implements
             throw new CannotUpdateExternalResourceException($this->getType(), "Cannot update a campaign $breakingProperty property after creation");
         }
 
-        $bsCampaign->active           = $campaign->enabled;
-        $bsCampaign->name             = $campaign->name;
-        $bsCampaign->duration_msec    = $campaign->default_schedule_length_msec;
-        $bsCampaign->start_date       = $campaign->start_date;
-        $bsCampaign->start_time       = $campaign->start_time;
-        $bsCampaign->end_date         = $campaign->end_date;
-        $bsCampaign->end_time         = $campaign->end_time;
-        $bsCampaign->day_of_week_mask = $campaign->broadcast_days;
-        $bsCampaign->priority         = $campaign->priority;
-        $bsCampaign->saturation       = $campaign->occurrences_in_loop;
+        // Update non-readonly properties
+        $bsCampaign->active     = $campaign->enabled;
+        $bsCampaign->name       = $campaign->name;
+        $bsCampaign->priority   = $campaign->priority;
+        $bsCampaign->saturation = $campaign->occurrences_in_loop;
         $bsCampaign->save();
 
         return new ExternalBroadcasterResourceId(
@@ -390,7 +385,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $bsSchedule->end_time         = $schedule->end_time;
         $bsSchedule->day_of_week_mask = $schedule->broadcast_days;
 
-        $bsSchedule->weight         = 1;
+        $bsSchedule->weight         = $schedule->order;
         $bsSchedule->rotation_mode  = ScheduleRotationMode::Ordered->value;
         $bsSchedule->schedule_group = ScheduleGroup::LoopSlot->value;
 

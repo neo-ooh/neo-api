@@ -10,68 +10,49 @@
 
 namespace Neo\Modules\Broadcast\Jobs\Chores;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Neo\Jobs\Job;
-use Neo\Modules\Broadcast\Jobs\Campaigns\DeleteCampaignJob;
 use Neo\Modules\Broadcast\Jobs\Creatives\DeleteCreativeJob;
-use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
-use Neo\Modules\Broadcast\Models\Campaign;
-use Neo\Modules\Broadcast\Models\Creative;
-use Neo\Modules\Broadcast\Models\Schedule;
 
+/**
+ * This job list all schedules and creatives that have no schedules in Draft/Approved/Live states
+ * and proceed to remove any external representation they may have
+ */
 class DeleteExpiredResourcesJob extends Job {
-    /**
-     * @param int $offset Days. The number of days in the past to look into for expired schedule.
-     *                    If the offset is 4, a campaign who expired two days ago will be processed,
-     *                    a campaign who expired 5 days ago will be ignored.
-     */
-    public function __construct(protected int $offset = 1) {
+    public function __construct() {
     }
 
     public function run(): mixed {
-        $firstBound  = Carbon::now()->subDays($this->offset)->toDateString();
-        $secondBound = Carbon::now()->toDateString();
+        // This query list all the creatives that have no active scheduling (No draft, and no approved schedules whose end date is in the future), but who have non-trashed external representations
+        $unusedCreativeIds = DB::select(<<<EOF
+        SELECT `cr`.*
+         FROM `creatives` `cr`
+         JOIN `contents` `co` ON `co`.`id` = `cr`.`content_id`
+        WHERE NOT EXISTS (
+          SELECT 1
+          FROM `schedules` `s`
+          JOIN `schedule_details` `s2` ON `s2`.`schedule_id` = `s`.`id`
+          WHERE
+            `s`.`content_id` =  `co`.`id`
+          AND `s`.`end_date` > NOW()
+          AND (
+                `s2`.`is_approved` = 1
+              OR (`s2`.`is_approved` = 0 AND `s2`.`is_rejected` = 0)
+            )
+          AND `s`.`deleted_at` IS NULL
+          )
+        AND EXISTS(
+          SELECT *
+          FROM `external_resources` `er`
+          WHERE `er`.`resource_id` = `cr`.`id`
+          AND `er`.`deleted_at` IS NULL
+          )
+        ORDER BY `created_at` DESC
+        EOF
+        );
 
-        // List campaigns that have expired
-        /** @var Collection<Campaign> $expiredCampaigns */
-        $expiredCampaigns = Campaign::withTrashed()
-                                    ->where("end_date", ">=", $firstBound)
-                                    ->where("end_date", "<=", $secondBound);
-
-        foreach ($expiredCampaigns as $expiredCampaign) {
-            $deleteCampaignJob = new DeleteCampaignJob($expiredCampaign->getKey());
-            $deleteCampaignJob->handle();
-        }
-
-        // List schedules that have expired
-        /** @var Collection<Schedule> $expiredSchedules */
-        $expiredSchedules = Schedule::withTrashed()
-                                    ->where("end_date", ">=", $firstBound)
-                                    ->where("end_date", "<=", $secondBound);
-
-        foreach ($expiredSchedules as $expiredSchedule) {
-            $deleteScheduleJob = new DeleteScheduleJob($expiredSchedule->getKey());
-            $deleteScheduleJob->handle();
-        }
-
-        // List creatives that have expired
-        // A creative is considered expired if one of its scheduled expired in the checked window, and it does not have any other schedule ending after today
-        /** @var Collection<Creative> $expiredCreatives */
-        $expiredCreatives = Creative::query()
-                                    ->with(["content.schedules", "external_ids"])
-                                    ->whereDoesntHave("content.schedules", function (Builder $query) use ($secondBound) {
-                                        $query->where("end_date", ">", $secondBound);
-                                    })
-                                    ->whereHas("content.schedules", function (Builder $query) use ($secondBound, $firstBound) {
-                                        $query->where("end_date", ">=", $firstBound);
-                                        $query->where("end_date", "<=", $secondBound);
-                                    })->lazy(100);
-
-        foreach ($expiredCreatives as $expiredCreative) {
-            $deleteCreativeJob = new DeleteCreativeJob($expiredCreative->getKey());
-            $deleteCreativeJob->handle();
+        foreach ($unusedCreativeIds as $creativeId) {
+            DeleteCreativeJob::dispatch($creativeId);
         }
 
         return null;

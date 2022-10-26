@@ -233,16 +233,16 @@ class Campaign extends BroadSignModel implements ResourceCastable {
      */
     public function toResource(): CampaignResource {
         return new CampaignResource([
-            "enabled"                      => $this->active,
-            "name"                         => $this->name,
-            "start_date"                   => $this->start_date,
-            "start_time"                   => $this->start_time,
-            "end_date"                     => $this->end_date,
-            "end_time"                     => $this->end_time,
-            "broadcast_days"               => $this->day_of_week_mask,
-            "priority"                     => 0,
-            "occurrences_in_loop"          => $this->saturation,
-            "default_schedule_length_msec" => $this->duration_msec,
+            "enabled"             => $this->active,
+            "name"                => $this->name,
+            "start_date"          => $this->start_date,
+            "start_time"          => $this->start_time,
+            "end_date"            => $this->end_date,
+            "end_time"            => $this->end_time,
+            "broadcast_days"      => $this->day_of_week_mask,
+            "priority"            => 0,
+            "occurrences_in_loop" => $this->saturation,
+            "duration_msec"       => $this->duration_msec,
         ]);
     }
 }

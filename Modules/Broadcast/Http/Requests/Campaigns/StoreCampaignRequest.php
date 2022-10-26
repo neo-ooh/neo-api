@@ -36,24 +36,26 @@ class StoreCampaignRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "parent_id"               => ["required", "integer", new AccessibleActor()],
-            "name"                    => ["nullable", "string"],
+            "parent_id"                 => ["required", "integer", new AccessibleActor()],
+            "name"                      => ["nullable", "string"],
 
             // Scheduling
-            "start_date"              => ["required", "date_format:Y-m-d"],
-            "start_time"              => ["required", "date_format:H:i:s"],
-            "end_date"                => ["required", "date_format:Y-m-d"],
-            "end_time"                => ["required", "date_format:H:i:s"],
-            "broadcast_days"          => ["required", "integer", "max:127"],
+            "start_date"                => ["required", "date_format:Y-m-d"],
+            "start_time"                => ["required", "date_format:H:i:s"],
+            "end_date"                  => ["required", "date_format:Y-m-d"],
+            "end_time"                  => ["required", "date_format:H:i:s"],
+            "broadcast_days"            => ["required", "integer", "max:127"],
 
             // Loop fit
-            "occurrences_in_loop"     => ["required", "integer", "min:0"],
-            "priority"                => ["required", "integer", "min:0"],
+            "occurrences_in_loop"       => ["required", "integer", "min:0"],
+            "priority"                  => ["required", "integer", "min:0"],
+            "static_duration_override"  => ["required", "numeric", "min:0"],
+            "dynamic_duration_override" => ["required", "numeric", "min:0"],
 
             // Locations
-            "locations"               => ["required", "array"],
-            "locations.*.location_id" => ["required", "int"],
-            "locations.*.format_id"   => ["required", "int"],
+            "locations"                 => ["required", "array"],
+            "locations.*.location_id"   => ["required", "int"],
+            "locations.*.format_id"     => ["required", "int"],
 
             "tags"   => ["array"],
             "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],

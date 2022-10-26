@@ -27,12 +27,13 @@ class ScheduleValidator {
      * @throws CannotScheduleContentAnymoreException
      */
     public function validateContentFitCampaign(Content $content, Campaign $campaign): void {
-        // Is the filled ?
+        // Is the content filled ?
         if ($content->layout->frames->count() !== $content->creatives()->count()) {
             throw new CannotScheduleIncompleteContentException();
         }
 
         // List campaign formats that support the content's layout
+        /** @var Collection<Format> $campaignFormats */
         $campaignFormats = $campaign->formats()
                                     ->with("loop_configurations")
                                     ->whereHas("layouts", function (Builder $query) use ($content) {
@@ -51,12 +52,18 @@ class ScheduleValidator {
             throw new CannotScheduleContentAnymoreException();
         }
 
-        // make sure the content length match all the fitting formats
-        /** @var Collection $formatLengths */
-        $formatLengths = $campaignFormats->flatMap(fn(Format $format) => $format->loop_configurations->pluck("spot_length_ms"))
-                                         ->unique();
-        if ($content->duration > 0 && array_any($formatLengths->all(), static fn(int $length) => ($content->duration * 1000) > $length)) {
-            throw new IncompatibleContentLengthAndCampaignException();
+        // If the content length is not zero, we make sure its length match at least one of the format
+        if ($content->duration > 0) {
+            // If the campaign has a dynamic override, this takes priority over the formats, check that first
+            if ($campaign->dynamic_duration_override > 0 && $content->duration > ($campaign->dynamic_duration_override + .1)) {
+                throw new IncompatibleContentLengthAndCampaignException();
+            }
+
+            $validFormats = $campaignFormats->filter(fn(Format $format) => $content->duration < ($format->content_length + .1));
+
+            if ($validFormats->isEmpty()) {
+                throw new IncompatibleContentLengthAndCampaignException();
+            }
         }
     }
 

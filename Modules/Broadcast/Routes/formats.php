@@ -31,7 +31,7 @@ use Neo\Modules\Broadcast\Models\Layout;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v2"
+    "prefix"     => "v2",
 ], static function () {
     /*
     |----------------------------------------------------------------------
@@ -70,6 +70,7 @@ Route::group([
     Route::model("format", Format::class);
 
     Route::   get("formats", FormatsController::class . "@index");
+    Route::   get("formats/_by_id", FormatsController::class . "@byIds");
     Route::  post("formats", FormatsController::class . "@store");
     Route::   get("formats/{format}", FormatsController::class . "@show");
     Route::   put("formats/{format}", FormatsController::class . "@update");

@@ -40,12 +40,19 @@ class ImportCreativeJob extends BroadcastJobBase {
 
     /**
      * @return ExternalBroadcasterResourceId|null
+     * @throws UnknownProperties
      */
     public function getLastAttemptResult(): ExternalBroadcasterResourceId|null {
-        $result = $this->broadcastJob->last_attempt_result;
+        $results = $this->broadcastJob->last_attempt_result;
 
-        if (count($result) === 1) {
-            return $result[0];
+        if (count($results) > 1) {
+            return null;
+        }
+
+        $result = $results[0];
+
+        if (isset($result["type"], $result["external_id"])) {
+            return new ExternalBroadcasterResourceId(type: ExternalResourceType::from($result["type"]), external_id: $result["external_id"]);
         }
 
         return null;
@@ -78,7 +85,10 @@ class ImportCreativeJob extends BroadcastJobBase {
 
         if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
             // Broadcaster does not support scheduling, do nothing
-            return [];
+            return [
+                "error"   => false,
+                "message" => "Broadcaster does not support scheduling",
+            ];
         }
 
         // Check if the creative already has an external ID for this broadcaster
@@ -91,12 +101,17 @@ class ImportCreativeJob extends BroadcastJobBase {
             ];
         }
 
-        $tags = new BroadcastTagsCollector();
-        $tags->collect($creative->frame->broadcast_tags, [BroadcastTagType::Targeting]);
-        $creativeTags = $tags->get($broadcaster->getBroadcasterId());
-
         $importType = $creative->type === CreativeType::Url ? CreativeStorageType::Link : CreativeStorageType::File;
 
+        // Collect all tags applying to creative
+        $tags = new BroadcastTagsCollector();
+        $tags->collect($creative->content->broadcast_tags, [BroadcastTagType::Targeting]);
+        $tags->collect($creative->frame->broadcast_tags, [BroadcastTagType::Targeting]);
+        $tags->collect($creative->broadcast_tags, [BroadcastTagType::Targeting]);
+
+        $creativeTags = $tags->get($broadcaster->getBroadcasterId());
+
+        // Perform the creation
         $creativeExternalId = $broadcaster->importCreative($creative->toResource(), $importType, $creativeTags);
 
         $externalResource = new ExternalResource([

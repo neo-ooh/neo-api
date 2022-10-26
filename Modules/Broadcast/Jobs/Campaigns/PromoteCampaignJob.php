@@ -17,14 +17,13 @@ use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
+use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Frame;
 use Neo\Modules\Broadcast\Models\Layout;
-use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Models\LoopConfiguration;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
@@ -89,15 +88,10 @@ class PromoteCampaignJob extends BroadcastJobBase {
                                     "loop_configurations"])
                             ->find($representation->format_id);
 
-            // Get the allowed duration from the format
-            /** @var LoopConfiguration|null $loopConfiguration */
-            $loopConfiguration = $format->loop_configurations->filter(function (LoopConfiguration $loopConfiguration) use ($campaign) {
-                return $loopConfiguration->dateIsInPeriod($campaign->start_date);
-            })->first();
-
-            $campaignResource                               = $campaign->toResource();
-            $campaignResource->name                         .= " - " . $format->name;
-            $campaignResource->default_schedule_length_msec = $loopConfiguration->spot_length_ms ?? $campaignResource->default_schedule_length_msec;
+            // Get the campaign resource and complete it
+            $campaignResource                = $campaign->toResource();
+            $campaignResource->name          .= " - " . $format->name;
+            $campaignResource->duration_msec = $format->content_length * 1000;
 
             // Get the external ID for this campaign representation
             $externalResource = $campaign->getExternalRepresentation($broadcaster->getBroadcasterId(), $broadcaster->getNetworkId(), $format->getKey());
@@ -106,7 +100,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
 
             /** @var ExternalBroadcasterResourceId|null $externalCampaignId */
             $externalCampaignId = null;
-            $createCampaign     = false;
+            $createCampaign     = !$externalResource;
 
             if ($externalResource) {
                 // This flag will let us know if the campaign schedules needs to be rescheduled
@@ -137,7 +131,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
                 }
             }
 
-            if (!$externalResource || $createCampaign) {
+            if ($createCampaign) {
                 // No external ID found for this representation, create it
                 $externalCampaignId = $broadcaster->createCampaign($campaignResource);
             }
@@ -172,6 +166,19 @@ class PromoteCampaignJob extends BroadcastJobBase {
                 $externalResource->save();
             }
 
+            // If we just created a campaign, trigger a promotion for the schedules in the campaign
+            // for the current representation. If we just recreated the campaign, the schedules have been deleted and need
+            // to be recreated.
+            if ($createCampaign) {
+                $schedules = $campaign->schedules;
+
+                /** @var Schedule $schedule */
+                foreach ($schedules as $schedule) {
+                    $deleteScheduleJob = new PromoteScheduleJob($schedule->getKey(), $representation);
+                    $deleteScheduleJob->handle();
+                }
+            }
+
             // Now that the campaign exist, we need to target it
             // List all tags relevant to the campaign, and dispatch the action
             $campaignTags  = new BroadcastTagsCollector();
@@ -194,9 +201,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
             // Target the campaign
             $targeting = new CampaignTargeting([
                 "campaignTags"  => $campaignTags->get($broadcaster->getBroadcasterId()),
-                "locations"     => $representation->locations
-                    ->map(fn(Location $location) => $location->toExternalBroadcastIdResource())
-                    ->all(),
+                "locations"     => $representation->locations->all(),
                 "locationsTags" => $locationsTags->get($broadcaster->getBroadcasterId()),
             ]);
 

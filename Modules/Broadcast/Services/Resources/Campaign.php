@@ -25,5 +25,5 @@ class Campaign extends ExternalBroadcasterResource {
     public int $priority;
     public float $occurrences_in_loop;
 
-    public int $default_schedule_length_msec;
+    public int $duration_msec = 0;
 }

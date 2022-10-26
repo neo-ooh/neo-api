@@ -33,6 +33,7 @@ use Neo\Models\Traits\HasCampaigns;
 use Neo\Models\Traits\HasCapabilities;
 use Neo\Models\Traits\HasHierarchy;
 use Neo\Models\Traits\HasLocations;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Models\Traits\HasRoles;
 use Neo\Models\Traits\WithRelationCaching;
 use Neo\Modules\Broadcast\Enums\CampaignStatus;
@@ -117,6 +118,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     use HasCampaigns;
     use HasCapabilities;
     use WithRelationCaching;
+    use HasPublicRelations;
 
 
     /**
@@ -133,7 +135,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      */
     protected $hidden = [
         "password",
-        "details"
+        "details",
     ];
 
     /**
@@ -147,7 +149,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         "is_locked"      => "boolean",
         "tos_accepted"   => "boolean",
         "limited_access" => "boolean",
-        "last_login_at"  => "date"
+        "last_login_at"  => "date",
     ];
 
     /**
@@ -184,6 +186,12 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return Factories\ActorFactory::new();
     }
 
+    protected function getPublicRelations() {
+        return [
+            "logo"          => "load:logo",
+            "locations_ids" => "load:own_locations:id",
+        ];
+    }
 
     public static function boot(): void {
         parent::boot();

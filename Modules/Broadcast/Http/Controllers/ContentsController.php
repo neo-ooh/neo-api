@@ -131,7 +131,7 @@ class ContentsController extends Controller {
         }
 
         $content->save();
-        return new Response($content);
+        return new Response($content->loadPublicRelations());
     }
 
     public function swap(SwapContentCreativesRequest $request, Library $library, Content $content): Response {

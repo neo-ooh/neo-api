@@ -26,7 +26,7 @@ use Neo\Models\Traits\HasPublicRelations;
  * @property string                        $slug
  * @property int                           $network_id
  * @property string                        $name
- * @property int                           $content_length
+ * @property int                           $content_length seconds
  *
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
@@ -70,6 +70,7 @@ class Format extends Model {
 
     protected array $publicRelations = [
         "display_types"       => "display_types",
+        "display_types_ids"   => "display_types:id",
         "layouts"             => "layouts",
         "tags"                => "broadcast_tags",
         "loop_configurations" => "loop_configurations",

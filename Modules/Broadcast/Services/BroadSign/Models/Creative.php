@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Services\BroadSign\Models;
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use JsonException;
 use Neo\Modules\Broadcast\Enums\CreativeType;
@@ -233,6 +234,15 @@ class Creative extends BroadSignModel {
         // Execute the request
         $output    = [];
         $exit_code = 0;
+
+
+        if (config('app.env') !== 'production') {
+            Log::debug("[BroadSign] $endpoint->method@{$endpoint->getPath()}", [json_encode($payload, JSON_THROW_ON_ERROR)]);
+            clock([
+                "endpoint" => "$endpoint->method@{$endpoint->getPath()}",
+                "payload"  => $payload,
+            ]);
+        }
 
         exec($curl_command, $output, $exit_code);
 

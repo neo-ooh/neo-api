@@ -5,28 +5,25 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListActorLocationsRequest.php
+ * @neo/api - ListFormatsByIdsRequest.php
  */
 
-namespace Neo\Http\Requests\ActorsLocations;
+namespace Neo\Modules\Broadcast\Http\Requests\Formats;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\Format;
 use Neo\Rules\PublicRelations;
 
-class ListActorLocationsRequest extends FormRequest {
+class ListFormatsByIdsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
     public function authorize(): bool {
-        $gate   = Gate::allows(Capability::actors_edit->value) && Auth::user()->hasAccessTo($this->route("actor"));
-        $itself = Auth::user()->is($this->route("actor"));
-        return $gate || $itself;
+        return Gate::allows(Capability::formats_edit->value) || Gate::allows(Capability::campaigns_edit->value);
     }
 
     /**
@@ -36,10 +33,8 @@ class ListActorLocationsRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "format_id"  => ["sometimes", "integer", "exists:formats,id"],
-            "network_id" => ["sometimes", "integer", "exists:networks,id"],
-
-            "with" => ["array", new PublicRelations(Location::class)],
+            "ids"  => ["array"],
+            "with" => ["array", new PublicRelations(Format::class)],
         ];
     }
 }

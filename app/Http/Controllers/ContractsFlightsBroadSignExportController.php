@@ -22,6 +22,7 @@ use Neo\Models\Location;
 use Neo\Models\Network;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContractsFlightsBroadSignExportController {
     public function index(ListBroadSignExportsRequest $request, Contract $contract, ContractFlight $flight) {
@@ -76,9 +77,12 @@ class ContractsFlightsBroadSignExportController {
         $writer = new Csv($doc);
         $writer->setEnclosure('"');
 
-        header("content-type: text/csv");
+        $response = new StreamedResponse(
+            fn() => $writer->save("php://output"),
+            200
+        );
 
-        $writer->save("php://output");
+        return $response;
     }
 
 

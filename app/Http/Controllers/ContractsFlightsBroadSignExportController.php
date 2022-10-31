@@ -77,12 +77,10 @@ class ContractsFlightsBroadSignExportController {
         $writer = new Csv($doc);
         $writer->setEnclosure('"');
 
-        $response = new StreamedResponse(
+        return new StreamedResponse(
             fn() => $writer->save("php://output"),
             200
         );
-
-        return $response;
     }
 
 

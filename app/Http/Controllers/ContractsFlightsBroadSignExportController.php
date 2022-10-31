@@ -76,7 +76,7 @@ class ContractsFlightsBroadSignExportController {
         $writer = new Csv($doc);
         $writer->setEnclosure('"');
 
-//        header("access-control-allow-origin: *");
+        header("access-control-allow-origin: *");
         header("content-type: text/csv");
 
         $writer->save("php://output");

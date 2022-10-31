@@ -25,22 +25,24 @@ class SimpleErrors {
      * @return mixed
      */
     public function handle(Request $request, Closure $next) {
-        /** @var Response $response */
+        /** @var \Symfony\Component\HttpFoundation\Response $response */
         $response = $next($request);
 
-        if (($exception = $response->exception) && $exception instanceof BaseException) {
-            return $exception->asResponse();
-        }
-
-        if (($exception = $response->exception) && (config('app.env') === 'production')) {
-            if ($exception instanceof ValidationException) {
-                return $response;
+        if($response instanceof Response) {
+            if (($exception = $response->exception) && $exception instanceof BaseException) {
+                return $exception->asResponse();
             }
 
-            return new Response([
-                "code"    => $response->getStatusCode(),
-                "message" => $exception->getMessage(),
-            ], 500);
+            if (($exception = $response->exception) && (config('app.env') === 'production')) {
+                if ($exception instanceof ValidationException) {
+                    return $response;
+                }
+
+                return new Response([
+                    "code"    => $response->getStatusCode(),
+                    "message" => $exception->getMessage(),
+                ], 500);
+            }
         }
 
         return $response;

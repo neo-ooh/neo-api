@@ -24,10 +24,10 @@ class SimpleErrors {
      * @return mixed
      */
     public function handle(Request $request, Closure $next) {
-        /** @var Response $response */
+        /** @var \Symfony\Component\HttpFoundation\Response $response */
         $response = $next($request);
 
-        if (($exception = $response->exception) && (config('app.env') === 'production')) {
+        if ($response instanceof Response && ($exception = $response->exception) && (config('app.env') === 'production')) {
             if ($exception instanceof ValidationException) {
                 return $response;
             }

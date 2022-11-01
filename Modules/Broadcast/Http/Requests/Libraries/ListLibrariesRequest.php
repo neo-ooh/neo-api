@@ -35,7 +35,11 @@ class ListLibrariesRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "with" => ["array", new PublicRelations(Library::class)],
+            "formats"   => ["array"],
+            "formats.*" => ["integer"],
+            "layouts"   => ["array"],
+            "layouts.*" => ["integer"],
+            "with"      => ["array", new PublicRelations(Library::class)],
         ];
     }
 }

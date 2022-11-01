@@ -50,6 +50,7 @@ use Neo\Rules\AccessibleActor;
  * @property string              $email
  * @property string              $password
  * @property string              $locale
+ * @property ActorType           $type
  * @property bool                $is_group              Tell if the current actor is a group
  * @property bool                $is_property           Tell if the current actor is a property. A property is always  group,
  *           never a user.
@@ -173,6 +174,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         "direct_children_count",
         "path_names",
         "path_ids",
+        "type",
     ];
 
     /**
@@ -751,7 +753,11 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @return array<int, array<int>>|null
      */
     public function getCompoundTrafficAttribute(): array|null {
-        if ($this->is_property) {
+        if (!in_array($this->type, [ActorType::Group, ActorType::Property], true)) {
+            return null;
+        }
+
+        if ($this->type === ActorType::Property) {
             return $this
                 ->property
                 ->traffic
@@ -760,10 +766,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                 ->map(fn($yearData) => $yearData->map(fn($monthData) => $monthData->map(fn($d) => $d->traffic ?? $d->temporary)
                                                                                   ->sum()))
                 ->toArray();
-        }
-
-        if (!$this->is_group) {
-            return null;
         }
 
         $children = $this->selectActors()->directChildren()->where("is_group", "=", true)->get();

@@ -84,7 +84,7 @@ class Player extends BroadSignModel implements ResourceCastable {
      * @param array           $playersIds
      * @return Collection<static>
      */
-    public static function getMultiple(BroadSignClient $client, array $playersIds) {
+    public static function getMultiple(BroadSignClient $client, array $playersIds): Collection {
         return static::get_multiple($client, ["ids" => implode(",", $playersIds)]);
     }
 
@@ -108,7 +108,7 @@ class Player extends BroadSignModel implements ResourceCastable {
                 "id"                 => $burstID,
                 "action"             => "screenshot_request",
                 //                "dest_url"           => config("app.url") . "/v1/broadsign/burst_callback/" . $burstID . "?player_id=" . $this->id,
-                "dest_url"           => $uri,
+                "dest_url"           => (string)$uri,
                 "scale_factor"       => $scale,
                 "burst_duration_ms"  => $duration_ms,
                 "burst_frequency_ms" => $frequency_ms,
@@ -149,7 +149,7 @@ class Player extends BroadSignModel implements ResourceCastable {
         return $this->callAction("request",
             [
                 "player_id"    => $this->id,
-                "request_json" => $payload
+                "request_json" => $payload,
             ]);
     }
 
@@ -165,7 +165,7 @@ class Player extends BroadSignModel implements ResourceCastable {
             "location_id" => [
                 "type"        => ExternalResourceType::Location,
                 "external_id" => $this->display_unit_id,
-            ]
+            ],
         ]);
     }
 }

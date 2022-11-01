@@ -19,10 +19,14 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\OpeningHours;
 use Neo\Models\Property;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
+use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
+use Neo\Modules\Broadcast\Services\BroadcasterCapability;
+use Neo\Modules\Broadcast\Services\BroadcasterLocations;
+use Neo\Modules\Broadcast\Services\BroadcasterOperator;
+use Neo\Modules\Broadcast\Services\Resources\OpeningHours as OpeningHoursResource;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -37,7 +41,11 @@ class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
         return $this->propertyId;
     }
 
-    public function handle() {
+    /**
+     * @throws UnknownProperties
+     * @throws InvalidBroadcasterAdapterException
+     */
+    public function handle(): void {
         /** @var Property|null $property */
         $property = Property::query()
                             ->with(["actor:id,name", "actor.own_locations:id,network_id,external_id", "opening_hours"])
@@ -47,36 +55,25 @@ class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
             return;
         }
 
-        // Build the minutes mask from the opening hours as expected by BroadSign
-        $mask = $property->opening_hours->map(/**
-         * @param OpeningHours $openingHours
-         * @param int          $index
-         */ function ($openingHours, $i) {
-            $startMask = (24 * 60 * $i) + $openingHours->open_at->hour * 60 + $openingHours->open_at->minute;
-            $endMask   = (24 * 60 * $i) + $openingHours->close_at->hour * 60 + $openingHours->close_at->minute;
-
-            return $startMask . "-" . $endMask;
-        })->join(";");
+        // Map the property's opening hours to the intermediary format
+        // While doing so, advance opening hours by 15 minutes and delay closing hours by 15 minutes
+        // This delay leaves time for the screen to boot up, etc.
+        $openingHours = new OpeningHoursResource(days: $property->opening_hours->map(function (OpeningHours $hours) {
+            $openAt  = $hours->open_at->clone()->subMinutes(15)->max($hours->open_at->clone()->startOfDay());
+            $closeAt = $hours->close_at->clone()->addMinutes(15)->min($hours->close_at->clone()->endOfDay());
+            return [$openAt->format("H:i"), $closeAt->format("H:i")];
+        }));
 
         /** @var Location $location */
         foreach ($property->actor->own_locations as $location) {
-            $networkConfig = Broadcast::network($location->network_id)->getConfig();
+            /** @var BroadcasterOperator & BroadcasterLocations $broadaster */
+            $broadcaster = BroadcasterAdapterFactory::makeForNetwork($location->network_id);
 
-            if (!($networkConfig instanceof BroadSignConfig)) {
-                // ignore locations that are not on a BroadSign network
+            if (!$broadcaster->hasCapability(BroadcasterCapability::Locations)) {
                 continue;
             }
 
-            $client = new BroadSignClient($networkConfig);
-
-            // We get all the dayparts of the display unit
-            $dayParts = DayPart::getByDisplayUnit($client, $location->external_id);
-
-            /** @var DayPart $dayPart */
-            foreach ($dayParts as $dayPart) {
-                $dayPart->minute_mask = $mask;
-                $dayPart->save();
-            }
+            $broadcaster->setLocationOpeningHours($location->toExternalBroadcastIdResource(), $openingHours);
         }
     }
 }

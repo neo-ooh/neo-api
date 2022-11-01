@@ -54,9 +54,9 @@ class ImportContractDataJob implements ShouldQueue {
 
         /** @var Client $client */
         $client = Client::query()->firstOrCreate([
-            "external_id" => $this->odooContract->partner_id[0]
+            "odoo_id" => $this->odooContract->partner_id[0],
         ], [
-            "name" => $this->odooContract->partner_id[1]
+            "name" => $this->odooContract->partner_id[1],
         ]);
 
         $output->writeln($contract->contract_id . ": Set client to $client->name (#$client->id))");
@@ -66,9 +66,9 @@ class ImportContractDataJob implements ShouldQueue {
         if ($this->odooContract->analytic_account_id) {
             /** @var Advertiser $advertiser */
             $advertiser = Advertiser::query()->firstOrCreate([
-                "external_id" => $this->odooContract->analytic_account_id[0]
+                "odoo_id" => $this->odooContract->analytic_account_id[0],
             ], [
-                "name" => $this->odooContract->analytic_account_id[1]
+                "name" => $this->odooContract->analytic_account_id[1],
             ]);
 
             $output->writeln($contract->contract_id . ": Set advertiser to $advertiser->name (#$advertiser->id))");
@@ -89,7 +89,7 @@ class ImportContractDataJob implements ShouldQueue {
 
             $lines = OrderLine::all($odooClient, [
                 ["order_id", '=', $this->odooContract->id],
-                ["is_linked_line", '!=', 1]
+                ["is_linked_line", '!=', 1],
             ], $chunkSize, $orderLines->count());
 
             if ($lines->count() === $chunkSize) {
@@ -162,7 +162,7 @@ class ImportContractDataJob implements ShouldQueue {
                 "discount_type" => "relative",
                 "price"         => $orderLine->price_subtotal,
                 "traffic"       => 0,
-                "impressions"   => $orderLine->connect_impression ?: $orderLine->impression
+                "impressions"   => $orderLine->connect_impression ?: $orderLine->impression,
             ];
 
             $contractLines[] = $line;

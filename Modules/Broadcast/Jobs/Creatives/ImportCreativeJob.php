@@ -19,7 +19,6 @@ use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\ExternalResource;
-use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
@@ -52,7 +51,11 @@ class ImportCreativeJob extends BroadcastJobBase {
         $result = $results[0];
 
         if (isset($result["type"], $result["external_id"])) {
-            return new ExternalBroadcasterResourceId(type: ExternalResourceType::from($result["type"]), external_id: $result["external_id"]);
+            return new ExternalBroadcasterResourceId(
+                type: ExternalResourceType::from($result["type"]),
+                broadcaster_id: $this->broadcastJob->payload["broadcasterId"],
+                external_id: $result["external_id"]
+            );
         }
 
         return null;
@@ -75,13 +78,8 @@ class ImportCreativeJob extends BroadcastJobBase {
             ];
         }
 
-        /** @var Network $network */
-        $network = Network::query()->with(["broadcaster_connection"])
-                          ->where("connection_id", "=", $this->payload["broadcasterId"])
-                          ->first();
-
         /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-        $broadcaster = BroadcasterAdapterFactory::make($network->broadcaster_connection, $network);
+        $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($this->payload["broadcasterId"]);
 
         if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
             // Broadcaster does not support scheduling, do nothing

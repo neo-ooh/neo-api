@@ -23,6 +23,8 @@ use Neo\Modules\Broadcast\Http\Requests\Libraries\SearchLibrariesRequest;
 use Neo\Modules\Broadcast\Http\Requests\Libraries\ShowLibraryRequest;
 use Neo\Modules\Broadcast\Http\Requests\Libraries\StoreLibraryRequest;
 use Neo\Modules\Broadcast\Http\Requests\Libraries\UpdateLibraryRequest;
+use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\Library;
 
 class LibrariesController extends Controller {
@@ -36,7 +38,20 @@ class LibrariesController extends Controller {
         /** @var Collection<Library> $libraries */
         $libraries = Auth::user()->getLibraries();
 
-        return new Response($libraries->loadPublicRelations());
+        if ($request->has("formats")) {
+            $libraries->load("formats");
+
+            $libraries = $libraries->filter(fn(Library $library) => $library->formats->contains(fn(Format $format) => in_array($format->getKey(), array_map('intval', $request->input('formats', [])), true)));
+        }
+
+        if ($request->has("layouts")) {
+            $libraries->load("layouts");
+
+            clock($request->input("layouts"));
+            $libraries = $libraries->filter(fn(Library $library) => $library->layouts->contains(fn(Layout $layout) => in_array($layout->getKey(), array_map('intval', $request->input('layouts', [])), true)));
+        }
+
+        return new Response($libraries->values()->loadPublicRelations());
     }
 
     public function query(SearchLibrariesRequest $request): Response {

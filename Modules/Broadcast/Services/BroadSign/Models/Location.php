@@ -16,6 +16,7 @@ use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Modules\Broadcast\Services\ResourceCastable;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Location as LocationResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
@@ -99,18 +100,49 @@ class Location extends BroadSignModel implements ResourceCastable {
      * @throws UnknownProperties
      */
     public function toResource(): LocationResource {
-        return new LocationResource([
-            "external_id"              => $this->getKey(),
-            "enabled"                  => $this->active,
-            "name"                     => $this->name,
-            "external_display_type_id" => [
-                "type"        => ExternalResourceType::DisplayType,
-                "external_id" => $this->display_unit_type_id,
-            ],
-            "container_id"             => [
-                "type"        => ExternalResourceType::Container,
-                "external_id" => $this->container_id,
-            ]
-        ]);
+        // Parse address
+        if (preg_match('/(^\d*)\s([.\-\w\s]+),\s*([.\-\w\s]+),\s*([A-Z]{2})\s(\w\d\w\s*\d\w\d)/iu', $this->address, $matches)) {
+            $address = trim($matches[1]);
+            if (!trim($matches[2])) {
+                $address .= " " . trim($matches[2]);
+            }
+
+            $city     = trim($matches[3]);
+            $province = trim($matches[4]);
+            $country  = "CA";
+            $zipcode  = str_replace(" ", "", trim($matches[5]));
+        } else {
+            $address  = null;
+            $city     = null;
+            $province = null;
+            $country  = null;
+            $zipcode  = null;
+        }
+
+        [$lng, $lat] = explode(",", substr($this->geolocation, 1, -1));
+
+        return new LocationResource(
+            broadcaster_id: $this->getBroadcasterId(),
+            external_id: $this->getKey(),
+            enabled: $this->active,
+            name: $this->name,
+            external_display_type_id: new ExternalBroadcasterResourceId(
+                type: ExternalResourceType::DisplayType,
+                broadcaster_id: $this->getBroadcasterId(),
+                external_id: $this->display_unit_type_id,
+            ),
+            container_id: new ExternalBroadcasterResourceId(
+                type: ExternalResourceType::Container,
+                broadcaster_id: $this->getBroadcasterId(),
+                external_id: $this->container_id,
+            ),
+            address: $address,
+            city: $city,
+            province: $province,
+            country: $country,
+            zipcode: $zipcode,
+            lat: $lat,
+            lng: $lng,
+        );
     }
 }

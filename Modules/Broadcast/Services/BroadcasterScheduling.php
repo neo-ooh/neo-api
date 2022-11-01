@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Services;
 use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
 use Neo\Modules\Broadcast\Services\Exceptions\CannotUpdateExternalResourceException;
 use Neo\Modules\Broadcast\Services\Resources\Campaign;
+use Neo\Modules\Broadcast\Services\Resources\CampaignSearchResult;
 use Neo\Modules\Broadcast\Services\Resources\CampaignTargeting;
 use Neo\Modules\Broadcast\Services\Resources\Content;
 use Neo\Modules\Broadcast\Services\Resources\Creative;
@@ -33,10 +34,20 @@ interface BroadcasterScheduling {
     */
 
     /**
+     * Search campaigns by name on the broadcaster
+     *
      * @param string $query
-     * @return array<Campaign>
+     * @return array<CampaignSearchResult>
      */
     public function findCampaigns(string $query): array;
+
+    /**
+     * List locations attached to the given campaign on the broadcaster
+     *
+     * @param ExternalBroadcasterResourceId $externalCampaign
+     * @return ExternalBroadcasterResourceId[]
+     */
+    public function getCampaignLocations(ExternalBroadcasterResourceId $externalCampaign): array;
 
     /**
      * @param Campaign $campaign
@@ -127,6 +138,13 @@ interface BroadcasterScheduling {
      * @return ExternalBroadcasterResourceId
      */
     public function importCreative(Creative $creative, CreativeStorageType $storageType, array $tags): ExternalBroadcasterResourceId;
+
+    /**
+     * @param ExternalBroadcasterResourceId $externalCreative
+     * @param array<Tag>                    $tags
+     * @return bool
+     */
+    public function updateCreative(ExternalBroadcasterResourceId $externalCreative, array $tags): bool;
 
     /**
      * @param ExternalBroadcasterResourceId $externalCreative

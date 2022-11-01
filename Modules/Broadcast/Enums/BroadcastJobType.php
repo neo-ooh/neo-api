@@ -18,5 +18,6 @@ enum BroadcastJobType: string {
     case DeleteSchedule = "schedule-delete";
 
     case ImportCreative = "creative-import";
+    case UpdateCreative = "creative-update";
     case DeleteCreative = "creative-delete";
 }

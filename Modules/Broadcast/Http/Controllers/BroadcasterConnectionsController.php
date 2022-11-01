@@ -46,6 +46,7 @@ class BroadcasterConnectionsController extends Controller {
         $connection              = new BroadcasterConnection();
         $connection->uuid        = v4();
         $connection->name        = $request->input("name");
+        $connection->contracts   = $request->input("contracts");
         $connection->broadcaster = $type;
 
         $settings = new BroadcasterSettings();
@@ -88,8 +89,9 @@ class BroadcasterConnectionsController extends Controller {
     }
 
     public function update(UpdateConnectionRequest $request, BroadcasterConnection $connection): Response {
-        $connection->name   = $request->input("name");
-        $connectionSettings = $connection->settings;
+        $connection->name      = $request->input("name");
+        $connection->contracts = $request->input("contracts");
+        $connectionSettings    = $connection->settings;
 
         switch ($connection->broadcaster) {
             case BroadcasterType::BroadSign:

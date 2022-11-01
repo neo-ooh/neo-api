@@ -1,6 +1,6 @@
 <component name="CopyrightManager">
   <copyright>
-    <option name="notice" value="Copyright 2020 (c) Neo-OOH - All Rights Reserved&#10;Unauthorized copying of this file, via any medium is strictly prohibited&#10;Proprietary and confidential&#10;Written by Valentin Dufois &lt;vdufois@neo-ooh.com&gt;&#10;&#10;&amp;#36;project.name - &amp;#36;file.fileName" />
+    <option name="notice" value="Copyright &amp;#36;today.year (c) Neo-OOH - All Rights Reserved&#10;Unauthorized copying of this file, via any medium is strictly prohibited&#10;Proprietary and confidential&#10;Written by Valentin Dufois &lt;vdufois@neo-ooh.com&gt;&#10;&#10;&amp;#36;project.name - &amp;#36;file.fileName" />
     <option name="myName" value="Neo" />
   </copyright>
 </component>

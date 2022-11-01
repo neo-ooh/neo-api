@@ -10,15 +10,12 @@
 
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\ContractBurstsController;
-use Neo\Models\BroadSignCriteria;
-use Neo\Models\BroadSignSeparation;
-use Neo\Models\BroadSignTrigger;
 use Neo\Models\ContractBurst;
 
 
 Route::group([
     "middleware" => "broadsign",
-    "prefix"     => "v1/broadsign"
+    "prefix"     => "v1/broadsign",
 ], function () {
     /*
     |--------------------------------------------------------------------------

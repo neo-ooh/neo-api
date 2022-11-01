@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs\Properties;
 
+use ArrayIterator;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
@@ -19,10 +20,14 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\OpeningHours;
 use Neo\Models\Property;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
-use Neo\Modules\Broadcast\Services\PiSignage\PiSignageConfig;
-use Neo\Services\Broadcast\Broadcast;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
+use Neo\Modules\Broadcast\Exceptions\UnsupportedBroadcasterFunctionalityException;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
+use Neo\Modules\Broadcast\Services\BroadcasterCapability;
+use Neo\Modules\Broadcast\Services\BroadcasterLocations;
+use Neo\Modules\Broadcast\Services\BroadcasterOperator;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -32,11 +37,16 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
     public function __construct(protected int $propertyId) {
     }
 
-    public function unique() {
+    public function unique(): int {
         return $this->propertyId;
     }
 
-    public function handle() {
+    /**
+     * @throws UnsupportedBroadcasterFunctionalityException
+     * @throws UnknownProperties
+     * @throws InvalidBroadcasterAdapterException
+     */
+    public function handle(): bool {
         /** @var Property|null $property */
         $property = Property::query()
                             ->with(["actor:id,name"])
@@ -46,43 +56,38 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
             return false;
         }
 
-        $location = $property->actor->own_locations()->first();
-        if (!$location) {
+
+        /** @var ArrayIterator<int, Location> $locationsIterator */
+        $locationsIterator = $property->actor->own_locations->getIterator();
+
+        do {
+            /** @var Location $location */
+            $location = $locationsIterator->current();
+
+            /** @var (BroadcasterOperator&BroadcasterLocations) $broadcaster */
+            $broadcaster = BroadcasterAdapterFactory::makeForNetwork($location->network_id);
+
+            if (!$broadcaster->hasCapability(BroadcasterCapability::Locations)) {
+                $broadcaster = null;
+            }
+        } while ($broadcaster === null && $locationsIterator->valid());
+
+        if (!$broadcaster) {
+            // Could not found a broadcaster supporting locations, stop here
             return false;
         }
 
-        $config = Broadcast::network($location->network_id)->getConfig();
+        $openingHours = $broadcaster->getLocationOpeningHours($location->toExternalBroadcastIdResource());
 
-        if ($config instanceof PiSignageConfig) {
-            // PiSignage is unsupported at this time
-            return false;
-        }
-
-        $dayPart = DayPart::getByDisplayUnit(new BroadSignClient($config), $location->external_id)
-                          ->firstWhere("minute_mask", "!==", "");
-
-        if (!$dayPart) {
-            return false;
-        }
-
-        $days = collect(explode(";", $dayPart->minute_mask));
-        $days = $days->map(fn($day, $i) => array_map(function ($time) use ($i) {
-            $tmp     = $time - ($i * 60 * 24);
-            $hours   = floor($tmp / 60);
-            $minutes = $tmp % 60;
-
-            return str_pad($hours, 2, "0", STR_PAD_LEFT) . ":" . str_pad($minutes, 2, "0", STR_PAD_LEFT);
-        }, explode("-", $day)));
-
-        $days->each(function ($day, $i) use ($property) {
+        foreach ($openingHours->days as $i => $times) {
             OpeningHours::query()->updateOrInsert([
                 "property_id" => $property->getKey(),
-                "weekday"     => $i + 1
+                "weekday"     => $i + 1,
             ], [
-                "open_at"  => $day[0],
-                "close_at" => $day[1]
+                "open_at"  => $times[0],
+                "close_at" => $times[1],
             ]);
-        });
+        }
 
         return true;
     }

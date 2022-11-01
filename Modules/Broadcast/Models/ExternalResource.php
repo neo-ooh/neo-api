@@ -53,8 +53,9 @@ class ExternalResource extends Model {
      */
     public function toResource(): ExternalBroadcasterResourceId {
         return new ExternalBroadcasterResourceId([
-            "type"        => $this->type,
-            "external_id" => $this->data->external_id,
+            "type"           => $this->type,
+            "broadcaster_id" => $this->broadcaster_id,
+            "external_id"    => $this->data->external_id,
         ]);
     }
 }

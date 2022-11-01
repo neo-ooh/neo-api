@@ -39,7 +39,29 @@ class BroadcasterAdapterFactory {
      */
     public static function makeForNetwork(int $networkId) {
         /** @var Network $network */
-        $network = Network::query()->with(["broadcaster_connection"])->find($networkId);
+        $network = Network::query()->with(["broadcaster_connection"])
+                          ->find($networkId);
+
+        return static::make($network->broadcaster_connection, $network);
+    }
+
+    /**
+     * Builds a BroadacsterOperator instance for the provided broadcaster Id.
+     * The specific network attached to the returned instance can be any of the networks of the provider, no guarantee is
+     * provided here.
+     *
+     * @throws InvalidBroadcasterAdapterException
+     */
+    public static function makeForBroadcaster(int $broadcasterId) {
+        /** @var Network $network */
+        $network = Network::query()
+                          ->with(["broadcaster_connection"])
+                          ->where("connection_id", "=", $broadcasterId)
+                          ->first();
+
+        if (!$network) {
+            throw new InvalidBroadcasterAdapterException("#$broadcasterId");
+        }
 
         return static::make($network->broadcaster_connection, $network);
     }

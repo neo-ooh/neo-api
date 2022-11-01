@@ -9,7 +9,6 @@
  */
 
 
-use Neo\Modules\Broadcast\Http\Controllers\ContentsBroadcastTagsController;
 use Neo\Modules\Broadcast\Http\Controllers\ContentsController;
 use Neo\Modules\Broadcast\Http\Controllers\CreativesController;
 use Neo\Modules\Broadcast\Http\Controllers\LibrariesContentsController;
@@ -21,7 +20,7 @@ use Neo\Modules\Broadcast\Models\Library;
 
 Route::group([
     "middleware" => "default",
-    "prefix"     => "v2"
+    "prefix"     => "v2",
 ], static function () {
 
     /*
@@ -41,6 +40,7 @@ Route::group([
     Route::delete("libraries/{library}", LibrariesController::class . "@destroy");
 
     Route::   get('libraries/{library}/contents', LibrariesContentsController::class . "@index");
+    Route::   put('libraries/{library}/_move', LibrariesContentsController::class . "@move");
 
     /*
     |----------------------------------------------------------------------

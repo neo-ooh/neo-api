@@ -13,21 +13,32 @@ namespace Neo\Http\Controllers;
 use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Neo\Documents\XLSX\Worksheet;
+use Neo\Exceptions\InvalidOpeningHoursException;
 use Neo\Http\Requests\Impressions\ExportBroadsignImpressionsRequest;
 use Neo\Models\OpeningHours;
 use Neo\Models\Product;
 use Neo\Models\Property;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopPolicy;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Skin;
-use Neo\Services\Broadcast\Broadcast;
+use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
+use Neo\Modules\Broadcast\Services\BroadcasterType;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignAdapter;
+use Neo\Modules\Broadcast\Services\Resources\Frame;
+use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsController {
+    /**
+     * @throws UnknownProperties
+     * @throws Exception
+     * @throws InvalidBroadcasterAdapterException
+     * @throws InvalidBroadcastResource
+     * @throws InvalidOpeningHoursException
+     */
     public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, int $displayUnitId) {
         if (!is_int($displayUnitId)) {
             return new Response(["Invalid display unit id: $displayUnitId"], 400);
@@ -46,23 +57,28 @@ class ImpressionsController {
             ], 400);
         }
 
-        $config = Broadcast::network($location->network_id)->getConfig();
+        /** @var BroadSignAdapter $broadcaster */
+        $broadcaster = BroadcasterAdapterFactory::makeForNetwork($location->network_id);
 
-        if (!($config instanceof BroadSignConfig)) {
+        // As of 2022-10-31, only BroadSign is supported
+        if ($broadcaster->getBroadcasterType() !== BroadcasterType::BroadSign) {
             return new Response([
                 "error"   => true,
-                "type"    => "invalid-value",
+                "type"    => "unsupported-broadcaster",
                 "message" => "The provided Display Unit Id is not a BroadSign Display Unit.",
             ], 400);
         }
-
-        $client = new BroadSignClient($config);
 
         // We need to generate a file for each week of the year, for each frame of the display unit
         // Load the property, impressions data and traffic data attached with this location
         /** @var Product|null $product */
         $product = $location->products()
-                            ->with(["impressions_models", "category.impressions_models"])
+                            ->with([
+                                "impressions_models",
+                                "loop_configurations",
+                                "category.impressions_models",
+                                "category.loop_configurations",
+                            ])
                             ->withCount("locations")
                             ->first();
 
@@ -81,12 +97,7 @@ class ImpressionsController {
         $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic($property->network_id);
 
         // Load all the frames, of the display unit, and load their loop policies as well
-        $frames = Skin::byDisplayUnit($client, ["display_unit_id" => $location->external_id]);
-        $frames->each(/**
-         * @param Skin $frame
-         */ function (Skin $frame) use ($client) {
-            $frame->loop_policy = LoopPolicy::get($client, $frame->loop_policy_id);
-        });
+        $frames = $broadcaster->getLocationFrames($location->toExternalBroadcastIdResource());
 
         // Create a spreadsheet document
         $doc   = new Spreadsheet();
@@ -114,13 +125,15 @@ class ImpressionsController {
 
         // And now, for each frame of the display unit, for every day of the week, we have to calculate the hourly impressions.
         $datePointer = Carbon::now()->startOf("week");
+
+        // Define how many days should be generated. Here: a month
         $endBoundary = $datePointer->clone()->addMonth();
 
         // Dump a failover row for every frame
         foreach ($frames as $frame) {
             $sheet->printRow([
                 $location->external_id,
-                $frame->id,
+                $frame->external_id,
                 "",
                 "",
                 "",
@@ -132,7 +145,7 @@ class ImpressionsController {
                 1,
                 1,
                 1,
-                1
+                1,
             ]);
         }
 
@@ -140,6 +153,11 @@ class ImpressionsController {
          * @param OpeningHours $hours
          * @return array
          */ fn(OpeningHours $hours) => [$hours->weekday => $hours->open_at->diffInMinutes($hours->close_at, true)]);
+
+        // Make sure all the lengths are valid
+        if ($openLengths->some(fn($length) => $length === 0)) {
+            throw new InvalidOpeningHoursException($property);
+        }
 
         // For each week
         do {
@@ -150,21 +168,25 @@ class ImpressionsController {
             for ($i = 0; $i < 7; $i++) {
                 $weekday = $i + 1;
                 $date    = $datePointer->clone()->addDays($i);
-                // Get the appropriate impressions model
-                $model = $product->getImpressionModel($date);
 
-                if (!$model) {
-                    // No model, no impressions
+                // Get the loop configuration
+                $loopConfiguration = $product->getLoopConfiguration($date);
+
+                // Get the appropriate impressions model
+                $impressionsModel = $product->getImpressionModel($date);
+
+                // If the impressions model or the loop configuration is missing, ignore
+                if (!$impressionsModel || !$loopConfiguration) {
                     continue;
                 }
 
                 $el                = new ExpressionLanguage();
-                $impressionsPerDay = $el->evaluate($model->formula, array_merge([
+                $impressionsPerDay = $el->evaluate($impressionsModel->formula, array_merge([
                     "traffic" => $traffic,
                     "faces"   => $product->quantity,
                     "spots"   => 1,
                 ],
-                    $model->variables
+                    $impressionsModel->variables
                 ));
 
                 // Because the impression for the product is spread on all the display unit attached to it,
@@ -179,22 +201,22 @@ class ImpressionsController {
                     continue;
                 }
 
-                /** @var Skin $frame */
+                /** @var Frame $frame */
                 foreach ($frames as $frame) {
-                    $playPerDay         = $openLengths[$weekday] * 60_000 / ($frame->loop_policy->max_duration_msec);
+                    $playPerDay         = $openLengths[$weekday] * 60_000 / $loopConfiguration->loop_length_ms;
                     $impressionsPerPlay = $impressionsPerDay / $playPerDay;
 
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $frame->loop_policy->primary_inventory_share_msec;
+                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopConfiguration->loop_length_ms;
 
                     $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
 
                     $sheet->printRow([
                         $location->external_id,
-                        $frame->id,
+                        $frame->external_id,
                         $date->toDateString(),
                         $date->clone()->endOfDay()->toDateString(),
-                        $hours->open_at->toTimeString(),
-                        $hours->close_at->toTimeString(),
+                        $hours->open_at->startOf('minute')->toTimeString(),
+                        $hours->close_at->endOf('minute')->toTimeString(),
                         $i == 0 ? 1 : 0, // Monday
                         $i == 1 ? 1 : 0, // Tuesday
                         $i == 2 ? 1 : 0, // Wednesday
@@ -202,7 +224,7 @@ class ImpressionsController {
                         $i == 4 ? 1 : 0, // Friday
                         $i == 5 ? 1 : 0, // Saturday
                         $i == 6 ? 1 : 0, // Sunday
-                        $impressionsPerHour
+                        $impressionsPerHour,
                     ]);
                 }
             }

@@ -40,7 +40,7 @@ abstract class APIModel implements JsonSerializable, Arrayable {
         return $this->$key ?? null;
     }
 
-    final public function __construct(APIClientInterface $client, array $attributes = []) {
+    public function __construct(APIClientInterface $client, array $attributes = []) {
         $this->api        = $client;
         $this->attributes = $attributes;
     }

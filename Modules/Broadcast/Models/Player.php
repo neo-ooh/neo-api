@@ -16,6 +16,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Neo\Modules\Broadcast\Enums\ExternalResourceType;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Player
@@ -70,5 +73,18 @@ class Player extends Model {
 
     public function location(): BelongsTo {
         return $this->belongsTo(Location::class, "location_id");
+    }
+
+
+    /**
+     * @return ExternalBroadcasterResourceId
+     * @throws UnknownProperties
+     */
+    public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
+        return new ExternalBroadcasterResourceId([
+            "type"           => ExternalResourceType::Player,
+            "broadcaster_id" => $this->network->connection_id,
+            "external_id"    => $this->external_id,
+        ]);
     }
 }

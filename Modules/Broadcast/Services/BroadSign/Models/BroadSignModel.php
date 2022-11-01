@@ -23,4 +23,8 @@ use Neo\Services\API\APIModel;
 abstract class BroadSignModel extends APIModel {
     protected static string $unwrapKey;
     protected static string $key = "id";
+
+    public function getBroadcasterId(): int {
+        return $this->api->getConfig()->connectionID;
+    }
 }

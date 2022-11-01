@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel {
         ClearOldScreenshots::class,
 
         // property:pull-traffic {property}
-        PullPropertyTraffic::class
+        PullPropertyTraffic::class,
     ];
 
     /**
@@ -90,9 +90,6 @@ class Kernel extends ConsoleKernel {
         $schedule->command('properties:sync')->daily();
         $schedule->command('contracts:clear-screenshots')->daily();
 
-        // Try scheduling jobs that have not been scheduled properly
-//        $schedule->job(RetrySchedulesJob::class)->daily();
-
         // End of schedule email
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()
                  ->timezone('America/Toronto')
@@ -109,8 +106,6 @@ class Kernel extends ConsoleKernel {
 
         // Send Reminder about traffic data to users
         $schedule->job(TrafficRequiredReminder::class)->monthlyOn(7);
-
-        // Input last month traffic value were missing
     }
 
     /**

@@ -36,6 +36,8 @@ class StoreConnectionRequest extends FormRequest {
             "name" => ["required", "string"],
             "type" => ["required", new Enum(BroadcasterType::class)],
 
+            "contracts" => ["required", "boolean"],
+
             ...$this->getBroadcasterOptions(),
         ];
     }

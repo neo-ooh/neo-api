@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs\Odoo;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Console\Command;
 use Neo\Models\Property;
 use Neo\Services\Odoo\OdooConfig;
@@ -35,6 +36,7 @@ class SynchronizeProperties extends Command {
      * Execute the console command.
      *
      * @return int
+     * @throws OdooException
      */
     public function handle(): int {
         $client = OdooConfig::fromConfig()->getClient();

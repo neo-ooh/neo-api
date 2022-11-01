@@ -194,7 +194,7 @@ class SynchronizeNetworkJob extends Job {
         /** @var DisplayType $displayType */
         $displayType = DisplayType::query()->firstOrNew([
             "connection_id" => $broadcaster->getBroadcasterId(),
-            "external_id"   => $externalDisplayTypeId->external_id
+            "external_id"   => $externalDisplayTypeId->external_id,
         ]);
 
         $externalDisplayType = $broadcaster->getDisplayType($externalDisplayTypeId);
@@ -205,7 +205,7 @@ class SynchronizeNetworkJob extends Job {
         }
 
         $displayType->internal_name = $externalDisplayType->name;
-        $displayType->name          = $broadcaster->getConfig()->name . ":" . $externalDisplayType->name;
+        $displayType->name          = $broadcaster->getConfig()->name . ": " . $externalDisplayType->name;
 
         $displayType->save();
 

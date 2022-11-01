@@ -21,7 +21,12 @@ return new class extends Migration {
         });
 
         Schema::table("clients", static function (Blueprint $table) {
-            $table->dropColumn(["external_id", "broadsign_customer_id"]);
+            $table->dropColumn("broadsign_customer_id");
+            $table->renameColumn("external_id", "odoo_id");
+        });
+
+        Schema::table("advertisers", static function (Blueprint $table) {
+            $table->renameColumn("external_id", "odoo_id");
         });
 
         Schema::table("contracts_reservations", static function (Blueprint $table) {

@@ -17,6 +17,7 @@ use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Jobs\Campaigns\DeleteCampaignJob;
 use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
 use Neo\Modules\Broadcast\Jobs\Creatives\ImportCreativeJob;
+use Neo\Modules\Broadcast\Jobs\Creatives\UpdateCreativeJob;
 use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
 use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 
@@ -86,6 +87,9 @@ class BroadcastJob extends Model {
                 break;
             case BroadcastJobType::ImportCreative:
                 ImportCreativeJob::dispatchSync($this->resource_id, $this->payload["broadcasterId"], $this);
+                break;
+            case BroadcastJobType::UpdateCreative:
+                UpdateCreativeJob::dispatchSync($this->resource_id, $this);
                 break;
             case BroadcastJobType::DeleteCreative:
                 ImportCreativeJob::dispatchSync($this->resource_id, $this);

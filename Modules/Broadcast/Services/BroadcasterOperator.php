@@ -43,6 +43,10 @@ abstract class BroadcasterOperator {
         return $this->broadcasterType;
     }
 
+    public function getBroadcasterType(): BroadcasterType {
+        return $this->config->type;
+    }
+
     public function getBroadcasterId(): int {
         return $this->config->connectionID;
     }

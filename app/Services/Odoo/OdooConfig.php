@@ -10,6 +10,8 @@
 
 namespace Neo\Services\Odoo;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
+
 class OdooConfig {
     public function __construct(protected string $serverUrl,
                                 protected string $username,
@@ -26,7 +28,10 @@ class OdooConfig {
         );
     }
 
-    public function getClient() {
+    /**
+     * @throws OdooException
+     */
+    public function getClient(): OdooClient {
         return new OdooClient($this->serverUrl, $this->database, $this->username, $this->password);
     }
 }

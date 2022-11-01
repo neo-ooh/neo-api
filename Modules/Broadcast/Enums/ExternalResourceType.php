@@ -23,6 +23,7 @@ enum ExternalResourceType: string {
     case Bundle = "bundle";
     case Container = "container";
     case DisplayType = "display-type";
+    case Frame = "frame";
 
     // Others
     case Tag = "tag";

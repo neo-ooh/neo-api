@@ -17,15 +17,18 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Cache;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
+use Neo\Modules\Broadcast\Models\BroadcasterConnection;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Models\Network;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignConfig;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Location as BSLocation;
+use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
+use Neo\Modules\Broadcast\Services\BroadcasterCapability;
+use Neo\Modules\Broadcast\Services\BroadcasterOperator;
+use Neo\Modules\Broadcast\Services\BroadcasterReporting;
+use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\ReservablePerformance;
-use Neo\Services\Broadcast\Broadcast;
-use Neo\Services\Broadcast\Broadcaster;
-use RuntimeException;
+use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Contract
@@ -59,7 +62,7 @@ class Contract extends Model {
     protected $fillable = [
         "contract_id",
         "client_id",
-        "salesperson_id"
+        "salesperson_id",
     ];
 
     protected $dates = [
@@ -136,64 +139,57 @@ class Contract extends Model {
 
     public function getPerformancesAttribute() {
         return Cache::tags(["contract-performances"])->remember($this->getContractPerformancesCacheKey(), 3600 * 3, function () {
-            $config          = static::getConnectionConfig();
-            $broadsignClient = new BroadSignClient($config);
+            $reservationsByBroadcaster = $this->reservations->groupBy("broadcaster_id");
 
-            $reservations = $this->reservations;
+            /** @var CampaignPerformance[][] $performances */
+            $performances = [];
 
-            if ($reservations->isEmpty()) {
-                return collect();
+            /** @var Collection<ContractReservation> $reservations */
+            foreach ($reservationsByBroadcaster as $broadcasterId => $reservations) {
+                /** @var BroadcasterOperator & BroadcasterReporting $broadcaster */
+                $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($broadcasterId);
+
+                // Make sure the broadcaster supports reporting
+                if (!$broadcaster->hasCapability(BroadcasterCapability::Reporting)) {
+                    continue;
+                }
+
+                $performances[] = $broadcaster->getCampaignsPerformances($reservations->map(fn(ContractReservation $reservation) => $reservation->toResource())
+                                                                                      ->toArray());
             }
 
-            $performances = ReservablePerformance::byReservable(
-                $broadsignClient,
-                $reservations->pluck('external_id')
-                             ->values()
-                             ->toArray());
-
-            return $performances->values();
+            return collect(array_merge(...$performances));
         });
     }
 
+    /**
+     * List all the reservations of the contracts, with their `locations` property set to the targeted locations
+     *
+     * @return \Illuminate\Support\Collection<ContractReservation>
+     * @throws InvalidBroadcasterAdapterException
+     * @throws UnknownProperties
+     */
+    public function loadReservationsLocations(): \Illuminate\Support\Collection {
+        $reservationsByBroadcaster = $this->reservations->groupBy("broadcaster_id");
 
-    /*
-    |--------------------------------------------------------------------------
-    | Additional Attributes
-    |--------------------------------------------------------------------------
-    */
+        /** @var Collection<ContractReservation> $reservations */
+        foreach ($reservationsByBroadcaster as $broadcasterId => $reservations) {
+            /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
+            $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($broadcasterId);
 
-    public function loadReservationsLocations(): void {
-        $config          = static::getConnectionConfig();
-        $broadsignClient = new BroadSignClient($config);
+            /** @var BroadcasterConnection $connection */
+            $connection = BroadcasterConnection::query()->find($broadcaster->getBroadcasterId());
+            $networkIds = $connection->networks()->get()->pluck("id");
 
-        foreach ($this->reservations as $reservation) {
-            $bsLocations            = BSLocation::byReservable($broadsignClient, ["reservable_id" => $reservation->external_id])
-                                                ->pluck('id');
-            $reservation->locations = Location::query()->whereIn("external_id", $bsLocations)->get();
-        }
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Utils
-    |--------------------------------------------------------------------------
-    */
-
-    public static function getConnectionConfig(): BroadSignConfig {
-        // As any requests with Broadsign requires a valid connection, and valid network, we will use any network already setup with the connection specified for the network.
-        // Also, since all the contracts work is reading information, we don't care about the customer, container and tracking information specified for the network
-        /** @var ?Network $network */
-        $network = Network::query()->where("connection_id", "=", Param::find("CONTRACTS_CONNECTION")->value)->first();
-
-        if (!$network) {
-            throw new RuntimeException("No network setup for the contracts connection");
+            foreach ($this->reservations as $reservation) {
+                $externalLocations      = $broadcaster->getCampaignLocations($reservation->toResource());
+                $reservation->locations = Location::query()
+                                                  ->whereIn("network_id", $networkIds)
+                                                  ->whereIn("external_id", array_map(static fn(ExternalBroadcasterResourceId $location) => $location->external_id, $externalLocations))
+                                                  ->get();
+            }
         }
 
-
-        if ($network->broadcaster_connection->broadcaster !== Broadcaster::BROADSIGN) {
-            throw new RuntimeException("Contracts connection MUST be a BroadSign connection");
-        }
-
-        return Broadcast::network($network->id)->getConfig();
+        return $reservationsByBroadcaster->flatten();
     }
 }

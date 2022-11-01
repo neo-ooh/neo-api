@@ -46,6 +46,10 @@ return new class extends Migration {
                 }
                 EOF
             )->after("duration");
+
+            $table->renameColumn("type", "type_old");
+
+            $table->enum("type", ["static", "url"])->after("frame_id");
         });
     }
 };

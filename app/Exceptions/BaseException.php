@@ -13,10 +13,11 @@ namespace Neo\Exceptions;
 use Exception;
 use Illuminate\Http\Response;
 use JsonException;
+use Throwable;
 
-abstract class BaseException extends Exception {
-    public function __construct(string $message = "", protected string $errorCode = "error.unknown", protected int $status = 422) {
-        parent::__construct($message, $this->status);
+class BaseException extends Exception {
+    public function __construct(string $message = "", protected string $errorCode = "error.unknown", protected int $status = 422, ?Throwable $previous = null) {
+        parent::__construct($message, $this->status, $previous);
     }
 
     public function toArray(): array {

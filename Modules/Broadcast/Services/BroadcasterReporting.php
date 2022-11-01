@@ -15,8 +15,8 @@ use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 
 interface BroadcasterReporting {
     /**
-     * @param ExternalBroadcasterResourceId|array<ExternalBroadcasterResourceId> $campaignIds
-     * @return array<CampaignPerformance>
+     * @param ExternalBroadcasterResourceId[] $campaignIds
+     * @return CampaignPerformance[]
      */
-    public function getCampaignsPerformances(ExternalBroadcasterResourceId|array $campaignIds): array;
+    public function getCampaignsPerformances(array $campaignIds): array;
 }

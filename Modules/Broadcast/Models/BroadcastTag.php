@@ -47,18 +47,18 @@ class BroadcastTag extends BroadcastResourceModel {
         "type",
         "name_en",
         "name_fr",
-        "scope"
+        "scope",
     ];
 
     protected $casts = [
         "type"  => BroadcastTagType::class,
-        "scope" => EnumSetCast::class . ":" . BroadcastTagScope::class
+        "scope" => EnumSetCast::class . ":" . BroadcastTagScope::class,
     ];
 
     protected string $accessRule = AccessibleBroadcastTag::class;
 
     protected array $publicRelations = [
-        "representations" => "external_representations"
+        "representations" => "external_representations",
     ];
 
     /**
@@ -69,9 +69,10 @@ class BroadcastTag extends BroadcastResourceModel {
         $externalRepresentation = $this->external_representations->firstWhere("broadcaster_id", "=", $broadcasterId);
 
         return new TagResource([
-            "name"        => $this->name_en,
-            "external_id" => $externalRepresentation?->data->external_id ?? "-1",
-            "tag_type"    => $this->type,
+            "name"           => $this->name_en,
+            "broadcaster_id" => $broadcasterId,
+            "external_id"    => $externalRepresentation?->data->external_id ?? "-1",
+            "tag_type"       => $this->type,
         ]);
     }
 

@@ -33,7 +33,8 @@ class UpdateConnectionRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "name" => ["required", "string"],
+            "name"      => ["required", "string"],
+            "contracts" => ["required", "boolean"],
 
             ...$this->getBroadcasterOptions(),
         ];

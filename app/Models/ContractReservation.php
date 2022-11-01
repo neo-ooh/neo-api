@@ -10,9 +10,12 @@
 
 namespace Neo\Models;
 
-use Carbon\Traits\Date;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Neo\Modules\Broadcast\Enums\ExternalResourceType;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class ContractReservation
@@ -22,25 +25,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int    $id
  * @property int    $contract_id
  * @property int    $flight_id
- * @property int    $external_id
+ * @property int    $broadcaster_id
+ * @property string $external_id
  * @property string $network
  * @property string $name
  * @property string $original_name
- * @property Date   $start_date
- * @property Date   $end_date
- * @property Date   $created_at
- * @property Date   $updated_at
+ * @property Carbon $start_date
+ * @property Carbon $end_date
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class ContractReservation extends Model {
     protected $table = "contracts_reservations";
 
     protected $dates = [
         "start_date",
-        "end_date"
+        "end_date",
     ];
 
     protected $fillable = [
         "contract_id",
+        "broadcaster_id",
         "external_id",
         "network",
         "name",
@@ -61,5 +66,20 @@ class ContractReservation extends Model {
 
     public function flight(): BelongsTo {
         return $this->belongsTo(ContractFlight::class, "flight_id");
+    }
+
+    public function broadcaster(): BelongsTo {
+        return $this->belongsTo(ContractFlight::class, "flight_id");
+    }
+
+    /**
+     * @throws UnknownProperties
+     */
+    public function toResource(): ExternalBroadcasterResourceId {
+        return new ExternalBroadcasterResourceId(
+            type: ExternalResourceType::Campaign,
+            broadcaster_id: $this->broadcaster_id,
+            external_id: $this->external_id,
+        );
     }
 }

@@ -68,12 +68,13 @@ class ReservablePerformance extends BroadSignModel implements ResourceCastable {
     public function toResource(): CampaignPerformanceResource {
         return new CampaignPerformanceResource([
             "campaign"    => [
-                "type"        => ExternalResourceType::Campaign,
-                "external_id" => $this->reservable_id,
+                "type"           => ExternalResourceType::Campaign,
+                "broadcaster_id" => $this->getBroadcasterId(),
+                "external_id"    => $this->reservable_id,
             ],
             "date"        => $this->played_on,
             "repetitions" => $this->total,
-            "impressions" => $this->total_impressions
+            "impressions" => $this->total_impressions,
         ]);
     }
 }

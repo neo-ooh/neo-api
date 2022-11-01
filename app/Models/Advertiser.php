@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
 /**
  * @property int    $id
  * @property string $name
- * @property int    $external_id
+ * @property int    $odoo_id
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
@@ -27,6 +27,6 @@ class Advertiser extends Model {
 
     protected $fillable = [
         "name",
-        "external_id"
+        "odoo_id",
     ];
 }

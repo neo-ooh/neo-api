@@ -201,8 +201,9 @@ class Location extends SecuredModel {
      */
     public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
         return new ExternalBroadcasterResourceId([
-            "type"        => ExternalResourceType::Location,
-            "external_id" => $this->external_id,
+            "type"           => ExternalResourceType::Location,
+            "broadcaster_id" => $this->network->connection_id,
+            "external_id"    => $this->external_id,
         ]);
     }
 }

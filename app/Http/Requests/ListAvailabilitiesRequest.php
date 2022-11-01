@@ -18,7 +18,7 @@ class ListAvailabilitiesRequest extends FormRequest {
             "product_ids"     => ["required", "array"],
             "product_ids.*"   => ["integer"],
             "product_spots"   => ["required", "array"],
-            "product_spots.*" => ["integer"],
+            "product_spots.*" => ["numeric"],
             "from"            => ["required", "date"],
             "to"              => ["required", "date"],
         ];

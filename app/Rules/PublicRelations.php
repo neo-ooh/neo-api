@@ -24,7 +24,6 @@ class PublicRelations implements Rule {
     }
 
     public function passes($attribute, $value): bool {
-        clock($value);
         $requestedRelations = is_string($value) ? [$value] : $value;
 
         if (!is_array($requestedRelations) && $requestedRelations !== null) {
@@ -50,8 +49,8 @@ class PublicRelations implements Rule {
     public function message(): string {
         if ($this->error === "invalid-format") {
             return 'The provided list of public relations is invalid. Only an array of strings is accepted';
-        } else {
-            return "'$this->badRelation' is not a public relation of the model";
         }
+
+        return "'$this->badRelation' is not a public relation of the model";
     }
 }

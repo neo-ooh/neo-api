@@ -50,7 +50,7 @@ class Endpoint {
      */
     public array $options = [
         "verify"      => false,
-        "http_errors" => false
+        "http_errors" => false,
     ];
 
     protected array $urlParameters = [];
@@ -63,7 +63,7 @@ class Endpoint {
      *
      * @var ResponseParser|Callable|null
      */
-    public mixed $parse;
+    public mixed $parse = null;
 
     /**
      * Tell if the value should be cached, and for how long.

@@ -17,7 +17,6 @@ use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\ExternalResource;
-use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
@@ -46,13 +45,8 @@ class DeleteCreativeJob extends BroadcastJobBase {
 
         /** @var ExternalResource $externalCreative */
         foreach ($externalRepresentations as $externalCreative) {
-            /** @var Network $network */
-            $network = Network::query()->where("connection_id", "=", $externalCreative->broadcaster_id)
-                              ->with(["broadcaster_connection"])
-                              ->first();
-
             /** @var BroadcasterOperator&BroadcasterScheduling $broadcaster */
-            $broadcaster = BroadcasterAdapterFactory::make($network->broadcaster_connection, $network);
+            $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($externalCreative->broadcaster_id);
 
             $broadcaster->deleteCreative($externalCreative->toResource());
 

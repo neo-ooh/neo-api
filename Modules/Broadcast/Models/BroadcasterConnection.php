@@ -32,6 +32,7 @@ use Symfony\Component\HttpFoundation\File\File;
  * @property BroadcasterType         $broadcaster
  * @property string                  $name
  * @property bool                    $active
+ * @property bool                    $contracts True if the connection should be used for contracts
  * @property Date                    $created_at
  * @property Date                    $updated_at
  * @property Date                    $deleted_at
@@ -48,6 +49,7 @@ class BroadcasterConnection extends Model {
     protected $casts = [
         "broadcaster" => BroadcasterType::class,
         "active"      => "bool",
+        "contracts"   => "bool",
         "settings"    => BroadcasterSettings::class,
     ];
 

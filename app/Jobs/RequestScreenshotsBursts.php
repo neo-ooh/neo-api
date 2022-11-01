@@ -21,13 +21,11 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Neo\Models\ContractBurst;
-use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScreenshotsBurst;
-use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
@@ -45,9 +43,9 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
      * @throws Exception
      */
     public function handle(): void {
-        if (config("app.env") !== "production") {
-            return;
-        }
+        /*        if (config("app.env") !== "production") {
+                    return;
+                }*/
 
         // Load bursts starting now or up to one minute in the future
         /** @var Collection $bursts */
@@ -84,10 +82,7 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
         }
 
         $broadcaster->requestScreenshotsBurst(
-            players: [new ExternalBroadcasterResourceId([
-                "type"        => ExternalResourceType::Player,
-                "external_id" => $player->external_id,
-            ])],
+            players: [$player->toExternalBroadcastIdResource()],
             responseUri: config("app.url") . "/v1/broadsign/burst_callback/" . $burst->getKey(),
             scale: $burst->scale_percent,
             duration_ms: $burst->duration_ms,

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @package Neo\Models
  *
  * @property integer    $id
+ * @property string     $odoo_id
  * @property string     $name
  * @property Date       $created_at
  * @property Date       $updated_at

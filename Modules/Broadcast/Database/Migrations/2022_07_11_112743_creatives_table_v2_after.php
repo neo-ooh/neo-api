@@ -28,6 +28,7 @@ return new class extends Migration {
         Schema::table("creatives", static function (Blueprint $table) {
             // Make the newly created `properties_tmp` column permanent by renaming it
             $table->renameColumn("properties_tmp", "properties");
+            $table->dropColumn("type_old");
         });
 
         Schema::table("creatives", static function (Blueprint $table) {
@@ -47,8 +48,6 @@ return new class extends Migration {
                   ->cascadeOnUpdate()
                   ->cascadeOnDelete();
 
-            // Update the type of the `type` column to be more strict
-            $table->enum("type", ["static", "url"])->after("frame_id")->change();
         });
         $output->writeln("Done.");
     }

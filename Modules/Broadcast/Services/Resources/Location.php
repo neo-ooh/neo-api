@@ -22,4 +22,13 @@ class Location extends ExternalBroadcasterResourceId {
     public ExternalBroadcasterResourceId $external_display_type_id;
 
     public ExternalBroadcasterResourceId $container_id;
+
+    public string|null $address = null;
+    public string|null $city = null;
+    public string|null $province = null;
+    public string|null $country = null;
+    public string|null $zipcode = null;
+
+    public string|null $lat = null;
+    public string|null $lng = null;
 }

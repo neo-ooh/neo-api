@@ -11,6 +11,7 @@
 namespace Neo\Modules\Broadcast\Services;
 
 abstract class BroadcasterConfig {
+    public BroadcasterType $type;
     public string $name;
 
     public int $connectionID;

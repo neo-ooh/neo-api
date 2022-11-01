@@ -16,12 +16,17 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\ContractReservation;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Campaign;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
+use Neo\Modules\Broadcast\Models\BroadcasterConnection;
+use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
+use Neo\Modules\Broadcast\Services\BroadcasterOperator;
+use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
+use Neo\Modules\Broadcast\Services\Resources\CampaignSearchResult;
 
 /**
  * Class CreateSignupToken
@@ -45,10 +50,11 @@ class ImportContractReservations implements ShouldQueue {
      * Execute the job.
      *
      * @return void
+     * @throws InvalidBroadcasterAdapterException
      */
     public function handle(): void {
-        /** @var Contract $contract */
-        $contract = Contract::find($this->contractId);
+        /** @var Contract|null $contract */
+        $contract = Contract::query()->find($this->contractId);
 
         if (!$contract) {
             // Contract does not exist, stop here
@@ -57,70 +63,66 @@ class ImportContractReservations implements ShouldQueue {
 
         $contract->load("flights");
 
-        $config          = Contract::getConnectionConfig();
-        $broadsignClient = new BroadSignClient($config);
+        /** @var \Illuminate\Database\Eloquent\Collection<BroadcasterConnection> $broadcastersConnections */
+        $broadcastersConnections = BroadcasterConnection::query()->where("contracts", "=", true)->get();
 
+        /** @var Collection<CampaignSearchResult> $externalCampaigns */
+        $externalCampaigns = collect();
 
-        // Because there is always problems witht he dashes in the name of reservations,
-        // we are gonna do three requests, with variation on the hyphens, and merge all the results
+        /** @var BroadcasterConnection $broadcastersConnection */
+        foreach ($broadcastersConnections as $broadcastersConnection) {
+            /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
+            $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($broadcastersConnection->getKey());
 
-        // Get all the Broadsign Reservations matching the report's contract Id
-        $identifier   = strtoupper($contract->contract_id);
-        $reservations = Campaign::search($broadsignClient, ["name" => $identifier]);
+            $identifier        = strtoupper($contract->contract_id);
+            $externalCampaigns = $externalCampaigns->merge($broadcaster->findCampaigns($identifier));
 
-        // let's do another request, this time replacing hyphen-minus with hyphen...
-//        $identifier   = strtoupper(str_replace('-', mb_chr(8208, 'UTF-8'), $contract->contract_id));
-//        $reservations = $reservations->merge(Campaign::search($broadsignClient, ["name" => $identifier]));
+            $identifier        = strtoupper(str_replace('-', '_', $contract->contract_id));
+            $externalCampaigns = $externalCampaigns->merge($broadcaster->findCampaigns($identifier));
+        }
 
-        // Finally, we do a final one with an underscore this time
-        $identifier   = strtoupper(str_replace('-', '_', $contract->contract_id));
-        $reservations = $reservations->merge(Campaign::search($broadsignClient, ["name" => $identifier]));
-
-        $reservations = $reservations->unique("id");
+        $externalCampaigns = $externalCampaigns->unique(fn(CampaignSearchResult $searchResult) => "{$searchResult->id->broadcaster_id}-{$searchResult->id->external_id}");
 
         $storedReservationsId = [];
 
         // Now make sure all reservations are properly associated with the report
-        /** @var Campaign $reservation */
-        foreach ($reservations as $reservation) {
-            // In the case of contract with identical numbers but different prefix, the Broadsign API will return both. eg: NEO-092-21 and OTG-092-21. We need to validate the beggining of the campaign names as an additional filter step
-//            if (!str_starts_with($reservation->name, $identifier)) {
-//                continue;
-//            }
-
-            /** @var ContractReservation $rr */
-            $rr = ContractReservation::query()->firstOrNew([
-                "external_id" => $reservation->id
+        /** @var CampaignSearchResult $externalCampaign */
+        foreach ($externalCampaigns as $externalCampaign) {
+            /** @var ContractReservation $cr */
+            $cr = ContractReservation::query()->firstOrNew([
+                "broadcaster_id" => $externalCampaign->id->broadcaster_id,
+                "external_id"    => $externalCampaign->id->external_id,
             ]);
 
             // Make sure information about the campaign are up to date
-            $rr->contract_id   = $contract->id;
-            $rr->name          = $reservation->name;
-            $rr->original_name = $reservation->name;
-            $rr->start_date    = Carbon::parse($reservation->start_date . " " . $reservation->start_time);
-            $rr->end_date      = Carbon::parse($reservation->end_date . " " . $reservation->end_time);
+            $cr->contract_id   = $contract->id;
+            $cr->name          = $externalCampaign->name;
+            $cr->original_name = $externalCampaign->name;
+            $cr->start_date    = Carbon::parse($externalCampaign->start_date . " " . $externalCampaign->start_time);
+            $cr->end_date      = Carbon::parse($externalCampaign->end_date . " " . $externalCampaign->end_time);
 
             if ($contract->flights->count() === 1) {
                 // If only one flight, assign by default
-                $rr->flight_id = $contract->flights->first()->id;
-            } else if (!$rr->flight_id) {
-                $flight = $contract->flights()->where("start_date", "=", $reservation->start_date)
-                                   ->where("end_date", "=", $reservation->end_date)
-                                   ->when(str_ends_with($reservation->name, "BUA"), function ($query) {
+                $cr->flight_id = $contract->flights->first()->id;
+            } else if (!$cr->flight_id) {
+                /** @var ContractFlight|null $flight */
+                $flight = $contract->flights()->where("start_date", "=", $externalCampaign->start_date)
+                                   ->where("end_date", "=", $externalCampaign->end_date)
+                                   ->when(str_ends_with($externalCampaign->name, "BUA"), function ($query) {
                                        $query->where("type", "=", ContractFlight::BUA);
-                                   })->when(!str_ends_with($reservation->name, "BUA"), function ($query) {
+                                   })->when(!str_ends_with($externalCampaign->name, "BUA"), function ($query) {
                         $query->where("type", "!=", ContractFlight::BUA);
                     })
                                    ->first();
 
                 if ($flight) {
-                    $rr->flight_id = $flight->id;
+                    $cr->flight_id = $flight->id;
                 }
             }
 
-            $rr->save();
+            $cr->save();
 
-            $storedReservationsId[] = $rr->id;
+            $storedReservationsId[] = $cr->id;
         }
 
         $contract->reservations()->whereNotIn("id", $storedReservationsId)->delete();

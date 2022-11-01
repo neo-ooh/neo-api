@@ -51,7 +51,6 @@ class BroadcastResource extends Model {
      */
     public function jobs(): HasMany {
         return $this->hasMany(BroadcastJob::class, "resource_id", "id")
-                    ->orderBy('last_attempt_at', 'desc')
                     ->orderBy('created_at', 'desc');
     }
 

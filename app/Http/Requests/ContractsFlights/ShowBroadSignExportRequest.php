@@ -24,6 +24,6 @@ class ShowBroadSignExportRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::contracts_manage);
+        return Gate::allows(Capability::contracts_manage->value);
     }
 }

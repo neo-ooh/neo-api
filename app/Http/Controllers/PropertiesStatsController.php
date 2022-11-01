@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
+use Neo\Enums\ActorType;
 use Neo\Http\Requests\PropertiesStatistics\ShowPropertiesStatisticsRequest;
 use Neo\Models\Actor;
 
@@ -23,18 +24,19 @@ class PropertiesStatsController {
 
         // Is there any children bellow ?
         /** @var Collection $childGroups */
-        $childGroups = $actor->selectActors()
-                             ->directChildren()
-                             ->where("is_group", "=", true)
-                             ->orderBy("name")
-                             ->get();
+        $childGroups = $actor->getAccessibleActors(true, false, false, false)
+                             ->filter(fn(Actor $actor) => in_array($actor->getTypeAttribute(), [ActorType::Property, ActorType::Group], true));
 
         if ($childGroups->isEmpty()) {
             // No group children, and not a property, return 404;
             return new Response(null, 404);
         }
 
+        $childGroups->load(["property.traffic.data"]);
+
+        clock()->event("Calculating compound traffic")->begin();
         $actor->properties = $childGroups->append("compound_traffic");
+        clock()->event("Calculating compound traffic")->end();
 
         $actor->properties->makeHidden("property");
 

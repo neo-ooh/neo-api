@@ -131,6 +131,9 @@ class ContentsController extends Controller {
         }
 
         $content->save();
+
+        $content->promote();
+
         return new Response($content->loadPublicRelations());
     }
 

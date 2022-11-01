@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs;
 
+use ArrayIterator;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -20,10 +21,13 @@ use Neo\Models\Address;
 use Neo\Models\City;
 use Neo\Models\Property;
 use Neo\Models\Province;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Services\Broadcast\Broadcast;
-use Symfony\Component\Console\Output\ConsoleOutput;
+use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
+use Neo\Modules\Broadcast\Services\BroadcasterCapability;
+use Neo\Modules\Broadcast\Services\BroadcasterLocations;
+use Neo\Modules\Broadcast\Services\BroadcasterOperator;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -31,57 +35,65 @@ class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
     public function __construct(protected int $property_id) {
     }
 
-    public function handle() {
+    /**
+     * @throws UnknownProperties
+     * @throws InvalidBroadcasterAdapterException
+     */
+    public function handle(): bool {
         // For each property, we will see if it's associated group has at leas one location.
-        // If so, we pull the adress and lat/lng from its matching display unit in BroadSign and fill in our addresses
-        /** @var Property $property */
-        $property = Property::query()->with("actor.own_locations")->find($this->property_id);
+        // If so, we pull the adress and lat/lng from its matching external representation
+        /** @var Property|null $property */
+        $property = Property::query()
+                            ->with(["actor:id,name"])
+                            ->find($this->property_id);
 
-        // No locations, do nothing
-        if ($property->actor->own_locations->count() === 0) {
-            (new ConsoleOutput())->writeln("no locations:" . $property->actor->name);
-            return;
+        if (!$property) {
+            return false;
         }
 
-        /** @var Location $location */
-        $location = $property->actor->own_locations->first();
-        if ($location->province === '--') {
-            (new ConsoleOutput())->writeln("no province:" . $property->actor->name);
-            return; // ignore
+        /** @var ArrayIterator<int, Location> $locationsIterator */
+        $locationsIterator = $property->actor->own_locations->getIterator();
+
+        do {
+            /** @var Location $location */
+            $location = $locationsIterator->current();
+
+            /** @var (BroadcasterOperator&BroadcasterLocations) $broadcaster */
+            $broadcaster = BroadcasterAdapterFactory::makeForNetwork($location->network_id);
+
+            if (!$broadcaster->hasCapability(BroadcasterCapability::Locations)) {
+                $broadcaster = null;
+            }
+        } while ($broadcaster === null && $locationsIterator->valid());
+
+        if (!$broadcaster) {
+            // Could not found a broadcaster supporting locations, stop here
+            return false;
         }
 
+        $externalLocation = $broadcaster->getLocation($location->toExternalBroadcastIdResource());
+
+        // Collect models for components of the address
         /** @var Province $province */
-        $province = Province::query()->where("slug", "=", $location->province)->first();
+        $province = Province::query()->where("slug", "=", $externalLocation->province)->first();
+
         /** @var City $city */
         $city = City::query()->firstOrCreate([
             "province_id" => $province->id,
-            "name"        => $location->city
+            "name"        => $externalLocation->city,
         ]);
 
-        $address          = $property->address ?? new Address();
-        $address->city_id = $city->id;
-
-        $networkConfig = Broadcast::network($location->network_id)->getConfig();
-        $displayUnit   = \Neo\Modules\Broadcast\Services\BroadSign\Models\Location::get(new BroadSignClient($networkConfig), $location->external_id);
-
-        // Extract additional information from the address
-        // Matches:
-        // [0] => Full address
-        // [1] => Street #
-        // [2] => Street Name
-        // [3] => City
-        // [4] => Province
-        // [5] => Zip code
-        if (preg_match('/(^\d*)\s([.\-\w\s]+),\s*([.\-\w\s]+),\s*([A-Z]{2})\s(\w\d\w\s*\d\w\d)/iu', $displayUnit->address, $matches)) {
-            $address->line_1  = trim($matches[1]) . " " . trim($matches[2]);
-            $address->zipcode = str_replace(" ", "", trim($matches[5]));
-        }
-
-        [$lng, $lat] = explode(",", substr($displayUnit->geolocation, 1, -1));
-        $address->geolocation = new Point($lat, $lng);
-
+        // Fill the address
+        $address              = $property->address ?? new Address();
+        $address->line_1      = $externalLocation->address;
+        $address->city_id     = $city->getKey();
+        $address->zipcode     = $externalLocation->zipcode;
+        $address->geolocation = new Point($externalLocation->lat, $externalLocation->lng);
         $address->save();
+
         $property->address_id = $address->id;
         $property->save();
+
+        return true;
     }
 }

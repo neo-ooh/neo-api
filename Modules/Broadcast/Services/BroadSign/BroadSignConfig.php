@@ -12,8 +12,11 @@ namespace Neo\Modules\Broadcast\Services\BroadSign;
 
 use Illuminate\Support\Facades\Storage;
 use Neo\Modules\Broadcast\Services\BroadcasterConfig;
+use Neo\Modules\Broadcast\Services\BroadcasterType;
 
 class BroadSignConfig extends BroadcasterConfig {
+    public BroadcasterType $type = BroadcasterType::BroadSign;
+
     public int $domainId;
 
     public int $customerId;

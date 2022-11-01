@@ -11,10 +11,15 @@
 namespace Neo\Modules\Broadcast\Database\Seeders;
 
 use Illuminate\Database\Seeder as BaseSeeder;
+use Neo\Modules\Broadcast\Database\Seeders\views\SchedulesDetailsViewSeeder;
 
 class DatabaseSeeder extends BaseSeeder {
     public function run(): void {
         $this->call([
+            // Views
+            SchedulesDetailsViewSeeder::class,
+
+            // Data
             ParametersSeeder::class,
         ]);
     }

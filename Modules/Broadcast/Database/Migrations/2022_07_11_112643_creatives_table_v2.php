@@ -28,7 +28,7 @@ return new class extends Migration {
         $output = (new ConsoleOutput());
 
         // For each creative, repatriate its settings, either from the `dynamic_creatives` or `static_creatives` table into the new `properties` JSON field
-        $creatives = DB::table("creatives")->where("id_tmp", "=", 0)->orderBy("id")->get();
+        $creatives = DB::table("creatives")->where("id_tmp", "=", 0)->orderBy("id")->lazy(500);
 
         $output->writeln("Iterate over every creatives...");
         $progressSection = $output->section();
@@ -49,17 +49,17 @@ return new class extends Migration {
 
             // Pull properties of the creative, and build the new property object
             /** @var object $legacyProperties */
-            $legacyProperties = DB::table($creative->type === 'static' ? "static_creatives" : "dynamic_creatives")
+            $legacyProperties = DB::table($creative->type_old === 'static' ? "static_creatives" : "dynamic_creatives")
                                   ->where("creative_id", "=", $creative->id)
                                   ->first();
 
             $creativeProperties = new CreativeProperties();
-            if ($creative->type === 'static') {
+            if ($creative->type_old === 'static') {
                 $creativeProperties->extension = $legacyProperties->extension;
                 $creativeProperties->checksum  = $legacyProperties->checksum;
             }
 
-            if ($creative->type === 'dynamic') {
+            if ($creative->type_old === 'dynamic') {
                 $creativeProperties->url                      = $legacyProperties->url;
                 $creativeProperties->refresh_interval_minutes = $legacyProperties->refresh_interval;
             }
@@ -68,7 +68,7 @@ return new class extends Migration {
               ->where("id", "=", $creative->id)
               ->update([
                   "id_tmp"         => $broadcastResource->getKey(),
-                  "type"           => $creative->type === 'static' ? CreativeType::Static : CreativeType::Url,
+                  "type"           => $creative->type_old === 'static' ? CreativeType::Static : CreativeType::Url,
                   "properties_tmp" => $creativeProperties->toJson(),
               ]);
 

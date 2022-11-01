@@ -20,7 +20,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 return new class extends Migration {
     public function up() {
         // For all schedules, we move its external_ids to the external_resources table
-        $schedules = DB::table("schedules")->orderBy("id")->lazy(500);
+        $schedules = DB::table("schedules")->orderBy("id")->lazy(250);
 
         $output = new ConsoleOutput();
         $output->writeln("");

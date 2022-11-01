@@ -10,11 +10,18 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\views\ActorsDetailsViewSeeder;
+use Database\Seeders\views\FieldsSegmentsStatsViewSeeder;
 use Illuminate\Database\Seeder as BaseSeeder;
 
 class DatabaseSeeder extends BaseSeeder {
-    public function run (): void {
+    public function run(): void {
         $this->call([
+            // Views
+            ActorsDetailsViewSeeder::class,
+            FieldsSegmentsStatsViewSeeder::class,
+
+            // Data
             ParamsSeeder::class,
             CapabilitiesSeeder::class,
             BootstrapSeeder::class,

@@ -77,7 +77,7 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
             return false;
         }
 
-        $openingHours = $broadcaster->getLocationOpeningHours($location->toExternalBroadcastIdResource());
+        $openingHours = $broadcaster->getLocationActiveHours($location->toExternalBroadcastIdResource());
 
         foreach ($openingHours->days as $i => $times) {
             OpeningHours::query()->updateOrInsert([

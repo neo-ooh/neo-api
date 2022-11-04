@@ -21,15 +21,15 @@ class FieldsSegmentsStatsViewSeeder extends Seeder {
 
         DB::statement(/** @lang SQL */ <<<EOS
         CREATE VIEW `$viewName` AS
-        SELECT `s`.`id`                              AS `schedule_id`,
-               `c`.`is_approved` || COALESCE(`r`.`approved`, 0) AS `is_approved`
-        FROM `schedules` `s`
-          JOIN `contents` `c` ON `c`.`id` = `s`.`content_id`
-          LEFT JOIN `schedule_reviews` `r`
-            ON `r`.`id` = (
-            SELECT MAX(`schedule_reviews`.`id`)
-            FROM `schedule_reviews`
-            WHERE `schedule_reviews`.`schedule_id` = `s`.`id`)
+          SELECT `fs`.`id` AS `id`,
+                 COUNT(`pfsv`.`property_id`) AS `value_count`,
+                 MIN(`pfsv`.`index`) AS `min_index`,
+                 MAX(`pfsv`.`index`) AS `max_index`
+        FROM `fields_segments` `fs`
+          LEFT JOIN `properties_fields_segments_values` `pfsv`
+            ON `pfsv`.`fields_segment_id` = `fs`.`id`
+        GROUP BY
+            `fs`.`id`
         EOS
         );
 

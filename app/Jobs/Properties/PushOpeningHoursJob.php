@@ -25,7 +25,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterLocations;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
-use Neo\Modules\Broadcast\Services\Resources\OpeningHours as OpeningHoursResource;
+use Neo\Modules\Broadcast\Services\Resources\ActiveHours as OpeningHoursResource;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
@@ -73,7 +73,7 @@ class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
                 continue;
             }
 
-            $broadcaster->setLocationOpeningHours($location->toExternalBroadcastIdResource(), $openingHours);
+            $broadcaster->setLocationActiveHours($location->toExternalBroadcastIdResource(), $openingHours);
         }
     }
 }

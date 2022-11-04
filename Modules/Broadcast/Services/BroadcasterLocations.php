@@ -10,10 +10,10 @@
 
 namespace Neo\Modules\Broadcast\Services;
 
+use Neo\Modules\Broadcast\Services\Resources\ActiveHours;
 use Neo\Modules\Broadcast\Services\Resources\DisplayType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Location;
-use Neo\Modules\Broadcast\Services\Resources\OpeningHours;
 use Neo\Modules\Broadcast\Services\Resources\Player;
 use Traversable;
 
@@ -45,19 +45,19 @@ interface BroadcasterLocations {
     public function getLocation(ExternalBroadcasterResourceId $location): Location;
 
     /**
-     * Get the opening hours for the given location
+     * Get the active hours for the given location
      *
      * @param ExternalBroadcasterResourceId $location
-     * @return OpeningHours
+     * @return ActiveHours
      */
-    public function getLocationOpeningHours(ExternalBroadcasterResourceId $location): OpeningHours;
+    public function getLocationActiveHours(ExternalBroadcasterResourceId $location): ActiveHours;
 
     /**
-     * Set the opening hours of the given location
+     * Set the active hours of the given location
      *
      * @param ExternalBroadcasterResourceId $location
-     * @param OpeningHours                  $openingHours
+     * @param ActiveHours                   $activeHours
      * @return bool
      */
-    public function setLocationOpeningHours(ExternalBroadcasterResourceId $location, OpeningHours $openingHours): bool;
+    public function setLocationActiveHours(ExternalBroadcasterResourceId $location, ActiveHours $activeHours): bool;
 }

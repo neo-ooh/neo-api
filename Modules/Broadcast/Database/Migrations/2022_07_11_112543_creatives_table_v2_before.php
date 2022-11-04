@@ -19,14 +19,6 @@ return new class extends Migration {
         $output->writeln("");
         $output->writeln("Drop auxiliary tables foreign keys");
 
-//        Schema::table("static_creatives", static function (Blueprint $table) {
-//            $table->dropForeign("static_creatives_creative_id_foreign");
-//        });
-
-//        Schema::table("dynamic_creatives", static function (Blueprint $table) {
-//            $table->dropForeign("dynamic_creatives_creative_id_foreign");
-//        });
-
         // Update the table columns
         $output->writeln("Update creative table with new columns...");
         Schema::table('creatives', static function (Blueprint $table) {
@@ -37,17 +29,7 @@ return new class extends Migration {
             $table->foreignId("id_tmp")->after("id");
 
             // Add new column to store creative properties; instead of having additional tables
-            $table->json("properties_tmp")->comment(<<<EOF
-                {
-                    // type = static 
-                    "extension": "string",
-                    "checksum": "string",
-                    // type = dynamic
-                    "url": "string",
-                    "refresh_interval_minutes": "int (minutes)",
-                }
-                EOF
-            )->after("duration");
+            $table->json("properties_tmp")->after("duration");
 
             $table->renameColumn("type", "type_old");
         });

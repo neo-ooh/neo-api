@@ -45,10 +45,14 @@ class CapabilitiesSeeder extends Seeder {
                 "roles",
                 "brandings",
             ],
-            "DIRECT"     => [
+            "BROADCAST"  => [
+                "broadcast",
+                "networks",
+                "formats",
                 "campaigns",
-                "libraries",
+                "schedules",
                 "contents",
+                "libraries",
             ],
             "SALES"      => [
                 "contracts",
@@ -66,11 +70,6 @@ class CapabilitiesSeeder extends Seeder {
                 "traffic",
                 "impressions",
             ],
-            "NETWORK"    => [
-                "networks",
-                "formats",
-                "broadcast",
-            ],
             "DYNAMICS"   => [
                 "dynamics",
             ],
@@ -81,6 +80,7 @@ class CapabilitiesSeeder extends Seeder {
                 "documents",
                 "chores",
                 "tests",
+                "dev",
             ],
         ];
 
@@ -88,7 +88,7 @@ class CapabilitiesSeeder extends Seeder {
             $q = Capability::query();
 
             foreach ($prefixes as $prefix) {
-                $q->where("slug", "like", $prefix . "_%");
+                $q->orWhere("slug", "like", $prefix . "_%");
             }
 
             $q->update(["service" => $group]);

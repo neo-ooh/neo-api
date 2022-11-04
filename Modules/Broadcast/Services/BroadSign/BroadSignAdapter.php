@@ -47,6 +47,7 @@ use Neo\Modules\Broadcast\Services\Exceptions\BroadcastServiceException;
 use Neo\Modules\Broadcast\Services\Exceptions\CannotUpdateExternalResourceException;
 use Neo\Modules\Broadcast\Services\Exceptions\InvalidExternalBroadcasterResourceType;
 use Neo\Modules\Broadcast\Services\Exceptions\MissingExternalResourceException;
+use Neo\Modules\Broadcast\Services\Resources\ActiveHours;
 use Neo\Modules\Broadcast\Services\Resources\Campaign;
 use Neo\Modules\Broadcast\Services\Resources\CampaignSearchResult;
 use Neo\Modules\Broadcast\Services\Resources\CampaignTargeting;
@@ -58,7 +59,6 @@ use Neo\Modules\Broadcast\Services\Resources\DisplayType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Frame;
 use Neo\Modules\Broadcast\Services\Resources\Location;
-use Neo\Modules\Broadcast\Services\Resources\OpeningHours;
 use Neo\Modules\Broadcast\Services\Resources\Player;
 use Neo\Modules\Broadcast\Services\Resources\Schedule;
 use Neo\Modules\Broadcast\Services\Resources\Tag;
@@ -255,7 +255,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
      * @throws UnknownProperties
      * @throws UnsupportedBroadcasterFunctionalityException
      */
-    public function getLocationOpeningHours(ExternalBroadcasterResourceId $location): OpeningHours {
+    public function getLocationActiveHours(ExternalBroadcasterResourceId $location): ActiveHours {
         // Opening hours resides in the daypart attached to the location.
         /** @var DayPart|null $dayPart */
         $dayPart = DayPart::getByDisplayUnit($this->getAPIClient(), $location->external_id)
@@ -263,7 +263,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
         // If no daypart could be found, we assume 24h operations
         if (!$dayPart) {
-            return new OpeningHours(days: [
+            return new ActiveHours(days: [
                 ["00:00", "23:59"],
                 ["00:00", "23:59"],
                 ["00:00", "23:59"],
@@ -291,16 +291,16 @@ class BroadSignAdapter extends BroadcasterOperator implements
             return str_pad($hours, 2, "0", STR_PAD_LEFT) . ":" . str_pad($minutes, 2, "0", STR_PAD_LEFT);
         }, explode("-", $day)));
 
-        return new OpeningHours(days: $days->all());
+        return new ActiveHours(days: $days->all());
     }
 
-    public function setLocationOpeningHours(ExternalBroadcasterResourceId $location, OpeningHours $openingHours): bool {
+    public function setLocationActiveHours(ExternalBroadcasterResourceId $location, ActiveHours $activeHours): bool {
         // Transform the given opening hour into a format that works for BroadSign
-        $mask = implode(";", array_map(static function (array $openingHours, int $i) {
-            $openTimes    = explode(":", $openingHours[0]);
+        $mask = implode(";", array_map(static function (array $activeHours, int $i) {
+            $openTimes    = explode(":", $activeHours[0]);
             $openHour     = (int)$openTimes[0];
             $openMinutes  = (int)$openTimes[1];
-            $closeTimes   = explode(":", $openingHours[1]);
+            $closeTimes   = explode(":", $activeHours[1]);
             $closeHour    = (int)$closeTimes[0];
             $closeMinutes = (int)$closeTimes[1];
 
@@ -308,7 +308,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
             $endMask   = (24 * 60 * $i) + $closeHour * 60 + $closeMinutes;
 
             return $startMask . "-" . $endMask;
-        }, $openingHours->days, array_keys($openingHours->days)));
+        }, $activeHours->days, array_keys($activeHours->days)));
 
         $dayParts = DayPart::getByDisplayUnit($this->getAPIClient(), $location->external_id);
 

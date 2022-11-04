@@ -18,13 +18,11 @@ return new class extends Migration {
         $output = new ConsoleOutput();
         $output->writeln("");
 
-        $output->writeln("Drop deprecated tables...");
         // Remove the now deprecated `static_creatives` and `dynamic_creatives` tables
         Schema::dropIfExists("static_creatives");
         Schema::dropIfExists("dynamic_creatives");
         Schema::dropIfExists("creatives_external_ids");
 
-        $output->writeln("Finalize Creatives table...");
         Schema::table("creatives", static function (Blueprint $table) {
             // Make the newly created `properties_tmp` column permanent by renaming it
             $table->renameColumn("properties_tmp", "properties");
@@ -49,6 +47,5 @@ return new class extends Migration {
                   ->cascadeOnDelete();
 
         });
-        $output->writeln("Done.");
     }
 };

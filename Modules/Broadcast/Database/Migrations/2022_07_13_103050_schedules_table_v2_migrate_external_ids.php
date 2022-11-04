@@ -46,12 +46,7 @@ return new class extends Migration {
                              ->where("networks.id", "=", $campaign->network_id)
                              ->first(["broadcasters_connections.*"]);
 
-            if (!$broadcaster) {
-                // Broadcaster not found, ignore.
-                continue;
-            }
-
-            if ($broadcaster->broadcaster === BroadcasterType::BroadSign->value && $schedule->external_id_1 !== null) {
+            if ($broadcaster && $broadcaster->broadcaster === BroadcasterType::BroadSign->value && $schedule->external_id_1 !== null) {
                 ExternalResource::query()->create([
                     "resource_id"    => $schedule->id,
                     "broadcaster_id" => $broadcaster->id,

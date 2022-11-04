@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - OpeningHours.php
+ * @neo/api - ActiveHours.php
  */
 
 namespace Neo\Models;
@@ -29,7 +29,7 @@ class OpeningHours extends Model {
 
     protected $primaryKey = [
         "property_id",
-        "weekday"
+        "weekday",
     ];
 
     public $incrementing = false;

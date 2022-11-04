@@ -37,10 +37,10 @@ class PricelistProduct extends Pivot {
         "pricing",
         "value",
         "min",
-        "max"
+        "max",
     ];
 
-    function getRouteKeyName() {
+    public function getRouteKeyName() {
         return "product_id";
     }
 }

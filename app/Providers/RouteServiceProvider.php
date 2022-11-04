@@ -16,6 +16,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\StatusController;
 
 /**
  * Class RouteServiceProvider
@@ -30,6 +31,13 @@ class RouteServiceProvider extends ServiceProvider {
      */
     public function boot(): void {
         $this->configureRateLimiting();
+
+        // Register our status route
+        Route::group([
+            "middleware" => "guests",
+        ], static function () {
+            Route:: get('/_status', StatusController::class . '@getStatus');
+        });
 
         $this->routes(function () {
             // Guests and not fully authenticated routes
@@ -64,7 +72,7 @@ class RouteServiceProvider extends ServiceProvider {
 
 
             // Heartbeat route for up-time monitoring
-            Route::get("/_heartbeat", fn() => new Response());
+            Route::get("/_heartbeat", static fn() => new Response());
         });
     }
 

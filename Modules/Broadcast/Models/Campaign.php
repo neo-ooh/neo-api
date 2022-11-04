@@ -342,7 +342,6 @@ class Campaign extends BroadcastResourceModel {
             /** @var Collection<int, Location> $locationsByFormatId */
             $locationsByFormatId = collect($networkLocations)->mapToDictionary(fn(Location $location) => [$location->getRelationValue("pivot")->format_id => $location]);
 
-
             foreach ($locationsByFormatId as $formatId => $formatLocations) {
                 $breakdown[] = new ExternalCampaignDefinition(
                     campaign_id: $this->getKey(),

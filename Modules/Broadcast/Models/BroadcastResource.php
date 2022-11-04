@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Models\Traits\HasPublicRelations;
@@ -69,7 +70,7 @@ class BroadcastResource extends Model {
             BroadcastResourceType::Content  => Content::withTrashed()->find($this->getKey())?->toResource(),
             BroadcastResourceType::Schedule => Schedule::withTrashed()->find($this->getKey())?->toResource(),
             BroadcastResourceType::Campaign => Campaign::withTrashed()->find($this->getKey())?->toResource(),
-            BroadcastResourceType::Tag      => throw new \Exception('Unsupported'),
+            BroadcastResourceType::Tag      => throw new Exception('Unsupported'),
         };
     }
 }

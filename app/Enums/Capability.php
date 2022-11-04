@@ -68,9 +68,6 @@ enum Capability: string {
     // Terms Of Services
     case tos_update = "tos.update";
 
-    // Tests
-    case tests = "test.capability";
-
     // Contracts
     case contracts_edit = "contracts.edit";
     case contracts_manage = "contracts.manage";

@@ -100,7 +100,7 @@ return [
             'password' => env('CANADIAN_PRESS_PASSWORD'),
             'root'     => env('CANADIAN_PRESS_FTP_ROOT'),
             'port'     => 21,
-        ]
+        ],
     ],
 
     /*

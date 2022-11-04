@@ -18,18 +18,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Http\Requests\Locations\ListLocationsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Locations\SearchLocationsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Locations\ShowLocationRequest;
 use Neo\Modules\Broadcast\Http\Requests\Locations\UpdateLocationRequest;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
-use Neo\Modules\Broadcast\Services\BroadcasterCapability;
-use Neo\Modules\Broadcast\Services\BroadcasterLocationsSleepSimple;
-use Neo\Modules\Broadcast\Services\BroadcasterOperator;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class LocationsController extends Controller {
@@ -110,8 +104,6 @@ class LocationsController extends Controller {
      * @param UpdateLocationRequest $request
      * @param Location              $location
      * @return Response
-     * @throws UnknownProperties
-     * @throws InvalidBroadcasterAdapterException
      */
     public function update(UpdateLocationRequest $request, Location $location): Response {
         $location->name = $request->input('name');
@@ -120,14 +112,6 @@ class LocationsController extends Controller {
         $location->sleep_end       = $request->input("sleep_end");
         $location->sleep_start     = $request->input("sleep_start");
         $location->save();
-
-        // If the broadcaster support
-        /** @var BroadcasterOperator&BroadcasterLocationsSleepSimple $broadcaster */
-        $broadcaster = BroadcasterAdapterFactory::makeForNetwork($location->network_id);
-
-        if ($broadcaster->hasCapability(BroadcasterCapability::LocationsSleepSimple)) {
-            $broadcaster->updateSleepSchedule($location->toExternalBroadcastIdResource(), $location->scheduled_sleep, $location->sleep_start->toTimeString(), $location->sleep_end->toTimeString());
-        }
 
         return new Response($location->load('display_type'));
     }

@@ -25,13 +25,13 @@ class ActorsLocationsController extends Controller {
         // Should we scope by network ?
         if ($request->has("network_id")) {
             $locations = $locations->where("network_id", "=", $request->input("network_id"));
-        };
+        }
 
         // Should we scope by format ?
         if ($request->has("format_id")) {
             $displayTypes = Format::query()->find($request->input("format_id"))->display_types->pluck("id");
             $locations    = $locations->whereIn("display_type_id", $displayTypes);
-        };
+        }
 
         return new Response($locations->loadPublicRelations());
     }

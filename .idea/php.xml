@@ -218,6 +218,11 @@
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
       <path value="$PROJECT_DIR$/vendor/seld/signal-handler" />
       <path value="$PROJECT_DIR$/vendor/mpdf/mpdf_compare" />
+      <path value="$PROJECT_DIR$/vendor/async-aws/core" />
+      <path value="$PROJECT_DIR$/vendor/async-aws/s3" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client-contracts" />
+      <path value="$PROJECT_DIR$/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/vendor/league/flysystem-async-aws-s3" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

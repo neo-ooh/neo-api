@@ -4,7 +4,7 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "aaa7f9734c426f593e1353ec838d6144",
+  "content-hash": "12c7ad525d22aa520b6c07d997d4aacf",
   "packages": [
     {
       "name": "aloha/twilio",
@@ -79,6 +79,133 @@
         }
       ],
       "time": "2021-02-10T17:00:02+00:00"
+    },
+    {
+      "name": "async-aws/core",
+      "version": "1.17.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/async-aws/core.git",
+        "reference": "3b58a4b3ddace0a9616028bde8f596fa7d7a2d7e"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/async-aws/core/zipball/3b58a4b3ddace0a9616028bde8f596fa7d7a2d7e",
+        "reference": "3b58a4b3ddace0a9616028bde8f596fa7d7a2d7e",
+        "shasum": ""
+      },
+      "require": {
+        "ext-hash": "*",
+        "ext-json": "*",
+        "ext-simplexml": "*",
+        "php": "^7.2.5 || ^8.0",
+        "psr/cache": "^1.0 || ^2.0 || ^3.0",
+        "psr/log": "^1.0 || ^2.0 || ^3.0",
+        "symfony/deprecation-contracts": "^2.1 || ^3.0",
+        "symfony/http-client": "^4.4.16 || ^5.1.7,!=5.2.0 || ^6.0",
+        "symfony/http-client-contracts": "^1.1.8 || ^2.0 || ^3.0",
+        "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0"
+      },
+      "conflict": {
+        "async-aws/s3": "<1.1"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "1.17-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "AsyncAws\\Core\\": "src"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "description": "Core package to integrate with AWS. This is a lightweight AWS SDK provider by AsyncAws.",
+      "keywords": [
+        "amazon",
+        "async-aws",
+        "aws",
+        "sdk",
+        "sts"
+      ],
+      "support": {
+        "source": "https://github.com/async-aws/core/tree/1.17.0"
+      },
+      "funding": [
+        {
+          "url": "https://github.com/jderusse",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/nyholm",
+          "type": "github"
+        }
+      ],
+      "time": "2022-08-01T16:46:07+00:00"
+    },
+    {
+      "name": "async-aws/s3",
+      "version": "1.12.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/async-aws/s3.git",
+        "reference": "0e353d87ac3d6dc15becfce22ccad4ffa7842c5f"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/async-aws/s3/zipball/0e353d87ac3d6dc15becfce22ccad4ffa7842c5f",
+        "reference": "0e353d87ac3d6dc15becfce22ccad4ffa7842c5f",
+        "shasum": ""
+      },
+      "require": {
+        "async-aws/core": "^1.9",
+        "ext-dom": "*",
+        "ext-filter": "*",
+        "ext-hash": "*",
+        "ext-simplexml": "*",
+        "php": "^7.2.5 || ^8.0"
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-master": "1.12-dev"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "AsyncAws\\S3\\": "src"
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "description": "S3 client, part of the AWS SDK provided by AsyncAws.",
+      "keywords": [
+        "amazon",
+        "async-aws",
+        "aws",
+        "s3",
+        "sdk"
+      ],
+      "support": {
+        "source": "https://github.com/async-aws/s3/tree/1.12.0"
+      },
+      "funding": [
+        {
+          "url": "https://github.com/jderusse",
+          "type": "github"
+        },
+        {
+          "url": "https://github.com/nyholm",
+          "type": "github"
+        }
+      ],
+      "time": "2022-05-27T23:40:14+00:00"
     },
     {
       "name": "aws/aws-crt-php",
@@ -3624,6 +3751,80 @@
         }
       ],
       "time": "2022-10-25T07:01:47+00:00"
+    },
+    {
+      "name": "league/flysystem-async-aws-s3",
+      "version": "3.10.0",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/thephpleague/flysystem-async-aws-s3.git",
+        "reference": "4b773d935fb1fd919d81d4a7c5e6082e5e42915b"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/thephpleague/flysystem-async-aws-s3/zipball/4b773d935fb1fd919d81d4a7c5e6082e5e42915b",
+        "reference": "4b773d935fb1fd919d81d4a7c5e6082e5e42915b",
+        "shasum": ""
+      },
+      "require": {
+        "async-aws/s3": "^1.5",
+        "league/flysystem": "^3.10.0",
+        "league/mime-type-detection": "^1.0.0",
+        "php": "^8.0.2"
+      },
+      "conflict": {
+        "async-aws/simple-s3": "<1.1",
+        "symfony/http-client": "<5.2"
+      },
+      "require-dev": {
+        "async-aws/simple-s3": "^1.1"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "League\\Flysystem\\AsyncAwsS3\\": ""
+        }
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Frank de Jonge",
+          "email": "info@frankdejonge.nl"
+        }
+      ],
+      "description": "AsyncAws S3 filesystem adapter for Flysystem.",
+      "keywords": [
+        "Flysystem",
+        "async-aws",
+        "aws",
+        "file",
+        "files",
+        "filesystem",
+        "s3",
+        "storage"
+      ],
+      "support": {
+        "issues": "https://github.com/thephpleague/flysystem-async-aws-s3/issues",
+        "source": "https://github.com/thephpleague/flysystem-async-aws-s3/tree/3.10.0"
+      },
+      "funding": [
+        {
+          "url": "https://ecologi.com/frankdejonge",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/frankdejonge",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/league/flysystem",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2022-10-20T21:00:57+00:00"
     },
     {
       "name": "league/flysystem-aws-s3-v3",
@@ -8082,6 +8283,171 @@
         }
       ],
       "time": "2022-07-29T07:42:06+00:00"
+    },
+    {
+      "name": "symfony/http-client",
+      "version": "v6.1.7",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/symfony/http-client.git",
+        "reference": "f515d066728774efb34347a87580621416ca8968"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/symfony/http-client/zipball/f515d066728774efb34347a87580621416ca8968",
+        "reference": "f515d066728774efb34347a87580621416ca8968",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=8.1",
+        "psr/log": "^1|^2|^3",
+        "symfony/http-client-contracts": "^3",
+        "symfony/service-contracts": "^1.0|^2|^3"
+      },
+      "provide": {
+        "php-http/async-client-implementation": "*",
+        "php-http/client-implementation": "*",
+        "psr/http-client-implementation": "1.0",
+        "symfony/http-client-implementation": "3.0"
+      },
+      "require-dev": {
+        "amphp/amp": "^2.5",
+        "amphp/http-client": "^4.2.1",
+        "amphp/http-tunnel": "^1.0",
+        "amphp/socket": "^1.1",
+        "guzzlehttp/promises": "^1.4",
+        "nyholm/psr7": "^1.0",
+        "php-http/httplug": "^1.0|^2.0",
+        "psr/http-client": "^1.0",
+        "symfony/dependency-injection": "^5.4|^6.0",
+        "symfony/http-kernel": "^5.4|^6.0",
+        "symfony/process": "^5.4|^6.0",
+        "symfony/stopwatch": "^5.4|^6.0"
+      },
+      "type": "library",
+      "autoload": {
+        "psr-4": {
+          "Symfony\\Component\\HttpClient\\": ""
+        },
+        "exclude-from-classmap": [
+          "/Tests/"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Nicolas Grekas",
+          "email": "p@tchwork.com"
+        },
+        {
+          "name": "Symfony Community",
+          "homepage": "https://symfony.com/contributors"
+        }
+      ],
+      "description": "Provides powerful methods to fetch HTTP resources synchronously or asynchronously",
+      "homepage": "https://symfony.com",
+      "support": {
+        "source": "https://github.com/symfony/http-client/tree/v6.1.7"
+      },
+      "funding": [
+        {
+          "url": "https://symfony.com/sponsor",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/fabpot",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2022-10-28T16:23:08+00:00"
+    },
+    {
+      "name": "symfony/http-client-contracts",
+      "version": "v3.1.1",
+      "source": {
+        "type": "git",
+        "url": "https://github.com/symfony/http-client-contracts.git",
+        "reference": "fd038f08c623ab5d22b26e9ba35afe8c79071800"
+      },
+      "dist": {
+        "type": "zip",
+        "url": "https://api.github.com/repos/symfony/http-client-contracts/zipball/fd038f08c623ab5d22b26e9ba35afe8c79071800",
+        "reference": "fd038f08c623ab5d22b26e9ba35afe8c79071800",
+        "shasum": ""
+      },
+      "require": {
+        "php": ">=8.1"
+      },
+      "suggest": {
+        "symfony/http-client-implementation": ""
+      },
+      "type": "library",
+      "extra": {
+        "branch-alias": {
+          "dev-main": "3.1-dev"
+        },
+        "thanks": {
+          "name": "symfony/contracts",
+          "url": "https://github.com/symfony/contracts"
+        }
+      },
+      "autoload": {
+        "psr-4": {
+          "Symfony\\Contracts\\HttpClient\\": ""
+        },
+        "exclude-from-classmap": [
+          "/Test/"
+        ]
+      },
+      "notification-url": "https://packagist.org/downloads/",
+      "license": [
+        "MIT"
+      ],
+      "authors": [
+        {
+          "name": "Nicolas Grekas",
+          "email": "p@tchwork.com"
+        },
+        {
+          "name": "Symfony Community",
+          "homepage": "https://symfony.com/contributors"
+        }
+      ],
+      "description": "Generic abstractions related to HTTP clients",
+      "homepage": "https://symfony.com",
+      "keywords": [
+        "abstractions",
+        "contracts",
+        "decoupling",
+        "interfaces",
+        "interoperability",
+        "standards"
+      ],
+      "support": {
+        "source": "https://github.com/symfony/http-client-contracts/tree/v3.1.1"
+      },
+      "funding": [
+        {
+          "url": "https://symfony.com/sponsor",
+          "type": "custom"
+        },
+        {
+          "url": "https://github.com/fabpot",
+          "type": "github"
+        },
+        {
+          "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+          "type": "tidelift"
+        }
+      ],
+      "time": "2022-04-22T07:30:54+00:00"
     },
     {
       "name": "symfony/http-foundation",

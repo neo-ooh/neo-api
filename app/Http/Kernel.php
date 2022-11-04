@@ -25,8 +25,8 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Middleware\ValidateSignature;
 use Neo\Http\Middleware\AccessLogsMiddleware;
 use Neo\Http\Middleware\Authenticate;
+use Neo\Http\Middleware\CheckForMaintenanceMode;
 use Neo\Http\Middleware\DynamicsMiddleware;
-use Neo\Http\Middleware\PreventRequestsDuringMaintenance;
 use Neo\Http\Middleware\SimpleErrors;
 use Neo\Http\Middleware\TrimStrings;
 use Neo\Http\Middleware\TrustProxies;
@@ -42,7 +42,7 @@ class Kernel extends HttpKernel {
     protected $middleware = [
         TrustProxies::class,
         HandleCors::class,
-        PreventRequestsDuringMaintenance::class,
+        CheckForMaintenanceMode::class,
         ValidatePostSize::class,
         TrimStrings::class,
         ConvertEmptyStringsToNull::class,

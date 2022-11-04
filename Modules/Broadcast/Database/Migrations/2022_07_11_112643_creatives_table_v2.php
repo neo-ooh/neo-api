@@ -28,7 +28,7 @@ return new class extends Migration {
         $output = (new ConsoleOutput());
 
         // For each creative, repatriate its settings, either from the `dynamic_creatives` or `static_creatives` table into the new `properties` JSON field
-        $creatives = DB::table("creatives")->where("id_tmp", "=", 0)->orderBy("id")->lazy(500);
+        $creatives = DB::table("creatives")->where("id_tmp", "=", 0)->orderBy("id")->get();
 
         $output->writeln("Iterate over every creatives...");
         $progressSection = $output->section();
@@ -96,10 +96,11 @@ return new class extends Migration {
             }
 
             // Rename files
-            if (($env === 'production') && $creative->type === 'static') {
+            if (/*($env === 'production') &&*/ $creative->type === 'static') {
                 // Move creative file
                 $from = "creatives/" . $creative->id . "." . $creativeProperties->extension;
                 $to   = "creatives/" . Hashids::encode($broadcastResource->getKey()) . "." . $creativeProperties->extension;
+
 
                 $info->overwrite("<info>$from => $to</info>");
                 Storage::disk("public")->move($from, $to);

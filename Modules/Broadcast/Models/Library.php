@@ -102,7 +102,7 @@ class Library extends SecuredModel {
     protected function getPublicRelations() {
         return [
             "parent"   => ["owner"],
-            "contents" => ["contents", "contents.creatives", fn(Library $library) => $library->contents->loadCount("schedules")],
+            "contents" => ["contents", "contents.creatives", "contents.broadcast_tags", fn(Library $library) => $library->contents->loadCount("schedules")],
             "formats"  => "formats",
             "layouts"  => ["layouts", "layouts.frames", "append:content_layouts"],
             "shares"   => "shares",

@@ -26,7 +26,7 @@ class BroadcasterAdapterFactory {
         $adapter = $adapters[$connection->broadcaster->value] ?? null;
 
         if (!$adapter) {
-            throw new InvalidBroadcasterAdapterException($connection->broadcaster);
+            throw new InvalidBroadcasterAdapterException($connection->broadcaster->value);
         }
 
         $config = $adapter::buildConfig($connection, $network);

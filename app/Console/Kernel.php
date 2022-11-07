@@ -23,6 +23,7 @@ use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
 use Neo\Jobs\Traffic\PullLatestTrafficData;
 use Neo\Jobs\Traffic\TrafficRequiredReminder;
+use Neo\Modules\Broadcast\Jobs\PullCampaignsPerformancesJob;
 
 class Kernel extends ConsoleKernel {
     /**
@@ -94,6 +95,9 @@ class Kernel extends ConsoleKernel {
         $schedule->job(NotifyEndOfSchedules::class)->weekdays()
                  ->timezone('America/Toronto')
                  ->at("06:00");
+
+        // Campaigns Performances
+        $schedule->job(PullCampaignsPerformancesJob::class)->daily();
 
 
         /* -----------------

@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Jobs\Schedules;
 
+use Illuminate\Support\Collection;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
@@ -22,7 +23,6 @@ use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Format;
-use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
@@ -47,6 +47,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
      */
     public function __construct(int $scheduleId, ExternalCampaignDefinition|null $representation = null, BroadcastJob|null $broadcastJob = null) {
         parent::__construct(BroadcastJobType::PromoteSchedule, $scheduleId, ["representation" => $representation], $broadcastJob);
+        clock("promote-schedule-construct");
     }
 
     /**
@@ -67,6 +68,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @throws InvalidBroadcasterAdapterException
      */
     protected function run(): array|null {
+        clock("promote-schedule-run");
         // A schedule has a content which in turn fits in a layout
         // A layout can be present in multiple formats
         // We list all the formats the schedule content's layout fit in,
@@ -81,8 +83,13 @@ class PromoteScheduleJob extends BroadcastJobBase {
             ];
         }
 
-        $schedule->load(["campaign", "external_representations", "content", "content.layout"]);
-        $formatsIds = $schedule->content->layout->formats()->allRelatedIds();
+        $schedule->load([
+            "campaign",
+            "external_representations",
+            "contents.layout.formats",
+            "contents.schedule_settings.disabled_formats_ids",
+        ]);
+        $formatsIds = $schedule->contents->flatMap(fn(Content $content) => $content->layout->formats)->pluck("id")->unique();
 
         $campaignRepresentations = [];
 
@@ -123,6 +130,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 ];
                 continue;
             }
+
             /** @var Format $representationFormat */
             $representationFormat = Format::query()->find($representation->format_id);
 
@@ -142,6 +150,16 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 continue;
             }
 
+            // List which content from the schedule match the current definition. For a content
+            // to be included, its layout must be attached to the definition format, and the definition format must not be part of the list of excluded formats for the content for this schedule.
+            /** @var Collection<Content> $contents */
+            $contents = $schedule->contents->filter(function (Content $content) use ($representation) {
+                return $content->layout->formats->pluck("id")->contains($representation->format_id) &&
+                    $content->schedule_settings->disabled_formats_ids->pluck("format_id")
+                                                                     ->doesntContain($representation->format_id);
+            });
+
+
             // Get the external ID representation for this schedule
             /** @var array<ExternalResource> $externalResources Existing external representations at the start of the job */
             $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->network_id, $representation->format_id);
@@ -155,55 +173,43 @@ class PromoteScheduleJob extends BroadcastJobBase {
             // Format tags
             $tags->collect($representationFormat->broadcast_tags, [BroadcastTagType::Category]);
             // Layout tags
-            $tags->collect($schedule->content->layout->broadcast_tags, [BroadcastTagType::Category, BroadcastTagType::Trigger]);
+            $tags->collect($schedule->contents->pluck("layout.broadcast_tags")
+                                              ->flatten(), [BroadcastTagType::Category, BroadcastTagType::Trigger]);
             // Content tags
-            $tags->collect($schedule->content->broadcast_tags, [BroadcastTagType::Category]);
+            $tags->collect($schedule->contents->pluck("broadcast_tags")->flatten(), [BroadcastTagType::Category]);
 
             $scheduleTags = $tags->get($broadcaster->getBroadcasterId());
-
-            try {
-                if (count($externalResources) === 0) {
-                    // If no external resource could be found, it means the external schedule for this representation does not exist, create it.
-                    // Create the schedule in the broadcaster
+            if (count($externalResources) === 0) {
+                // If no external resource could be found, it means the external schedule for this representation does not exist, create it.
+                // Create the schedule in the broadcaster
+                $updatedExternalResources = $this->createSchedule(
+                    broadcaster: $broadcaster,
+                    schedule: $schedule,
+                    externalCampaignResource: $externalCampaignResource,
+                    contents: $contents,
+                    format: $representationFormat,
+                    tags: $scheduleTags,
+                );
+            } else {
+                // We have ids for this schedule, try to update it
+                try {
+                    // There is an external schedule for this representation, update it
+                    $updatedExternalResources = $broadcaster->updateSchedule(
+                        externalResources: array_map(static fn(ExternalResource $r) => $r->toResource(), $externalResources),
+                        schedule: $schedule->toResource(),
+                        tags: $scheduleTags,
+                    );
+                } catch (ExternalBroadcastResourceNotFoundException|MissingExternalResourceException $err) {
+                    // The broadcaster did not find any schedule with the id provided. Try to create it instead
                     $updatedExternalResources = $this->createSchedule(
                         broadcaster: $broadcaster,
                         schedule: $schedule,
                         externalCampaignResource: $externalCampaignResource,
-                        content: $schedule->content,
+                        contents: $contents,
                         format: $representationFormat,
                         tags: $scheduleTags,
                     );
-                } else {
-                    // We have ids for this schedule, try to update it
-                    try {
-                        // There is an external schedule for this representation, update it
-                        $updatedExternalResources = $broadcaster->updateSchedule(
-                            externalResources: array_map(static fn(ExternalResource $r) => $r->toResource(), $externalResources),
-                            schedule: $schedule->toResource(),
-                            tags: $scheduleTags,
-                        );
-                    } catch (ExternalBroadcastResourceNotFoundException|MissingExternalResourceException $err) {
-                        // The broadcaster did not find any schedule with the id provided. Try to create it instead
-                        $updatedExternalResources = $this->createSchedule(
-                            broadcaster: $broadcaster,
-                            schedule: $schedule,
-                            externalCampaignResource: $externalCampaignResource,
-                            content: $schedule->content,
-                            format: $representationFormat,
-                            tags: $scheduleTags,
-                        );
-                    }
                 }
-            } catch (MissingExternalCreativeException $e) {
-                // There was a problem readying up the creatives for the schedule, register the error and move along
-                $results[] = [
-                    "error"          => true,
-                    "message"        => "Could not get creatives ready for schedule creation",
-                    "broadcaster_id" => $broadcaster->getBroadcasterId(),
-                    "trace"          => $e->getTrace(),
-                ];
-
-                continue;
             }
 
             if (count($updatedExternalResources) === 0) {
@@ -259,7 +265,24 @@ class PromoteScheduleJob extends BroadcastJobBase {
                     array_push($results, ...$validResources);
                 }
             }
+
+            // Finally, attach/sync the creatives with the schedules
+            try {
+                // Now that we have our schedule created, set the creatives it has to display
+                $this->attachCreativesToSchedules($broadcaster, $updatedExternalResources, $contents);
+            } catch (MissingExternalCreativeException $e) {
+                // There was a problem readying up the creatives for the schedule, register the error and move along
+                $results[] = [
+                    "error"          => true,
+                    "message"        => "Could not get creatives ready for schedule creation",
+                    "broadcaster_id" => $broadcaster->getBroadcasterId(),
+                    "trace"          => $e->getTrace(),
+                ];
+
+                continue;
+            }
         }
+
         return $results;
     }
 
@@ -267,56 +290,65 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @param BroadcasterOperator&BroadcasterScheduling $broadcaster
      * @param Schedule                                  $schedule
      * @param ExternalResource                          $externalCampaignResource
-     * @param Content                                   $content
+     * @param Collection<Content>                       $contents
      * @param Format                                    $format
      * @param array<Tag>                                $tags
      * @return array<ExternalBroadcasterResourceId>
-     * @throws MissingExternalCreativeException
      * @throws UnknownProperties
      */
     protected function createSchedule(BroadcasterOperator&BroadcasterScheduling $broadcaster,
                                       Schedule                                  $schedule,
                                       ExternalResource                          $externalCampaignResource,
-                                      Content                                   $content,
+                                      Collection                                $contents,
                                       Format                                    $format,
                                       array                                     $tags): array {
-        // To create a schedule, we need to make sure all the creative attached to its content have been imported in the broadcaster
-        // For each creative, we need to check if it exist in the current broadcaster, and if not, import it
-        $creatives            = $content->creatives;
-        $creativesExternalIds = [];
+        // List all layouts of the current format used by the contents
+        $layouts = $format->layouts()->where("layout_id", "in", $contents->pluck("layout_id"))->get();
 
-        /** @var Creative $creative */
-        foreach ($creatives as $creative) {
-            $creativesExternalId = $this->getCreativeExternalId($broadcaster, $creative);
+        $scheduleResource = $schedule->toResource();
 
-            if (is_null($creativesExternalId)) {
-                throw new MissingExternalCreativeException($broadcaster, $creative);
-            }
-
-            $creativesExternalIds[] = $creativesExternalId;
-        }
-
-        // Also, we need to get the `is_fullscreen` attribute for the layout in the format
-        /** @var Layout $layout */
-        $layout = $format->layouts()->where("layout_id", "=", $content->layout_id)->first();
-
-        $contentResource                = $content->toResource();
-        $contentResource->is_fullscreen = $layout->settings->is_fullscreen;
-
-        // If the schedule duration is 0, use the campaign overrides if available, otherwise, use the format's content length
-        if ($contentResource->duration_msec === 0 && $schedule->campaign->static_duration_override > 0) {
-            $contentResource->duration_msec = (int)($schedule->campaign->static_duration_override * 1000);
-        } else if ($contentResource->duration_msec === 0) {
-            $contentResource->duration_msec = $format->content_length * 1000;
-        }
+        // Complete the schedule resource
+        // Use the campaign duration override, fallback to the format's content length otherrwise
+        $scheduleResource->duration_msec = ($schedule->campaign->static_duration_override > 0 ? $schedule->campaign->static_duration_override : $format->content_length) * 1000;
+        // If all the layouts in this format are fullscreen, mark the bundle as such
+        $scheduleResource->is_fullscreen = $layouts->every("settings.is_fullscreen", "=", true);
 
         // Now that we have all the creatives Ids, create the schedule
         return $broadcaster->createSchedule(
             schedule: $schedule->toResource(),
             campaign: $externalCampaignResource->toResource(),
-            content: $contentResource,
-            creatives: $creativesExternalIds,
             tags: $tags);
+    }
+
+    /**
+     * @param BroadcasterOperator&BroadcasterScheduling $broadcaster
+     * @param ExternalBroadcasterResourceId[]           $externalRepresentations
+     * @param Collection<Content>                       $contents
+     * @return void
+     * @throws MissingExternalCreativeException
+     * @throws UnknownProperties
+     */
+    public function attachCreativesToSchedules(BroadcasterOperator&BroadcasterScheduling $broadcaster, array $externalRepresentations, Collection $contents): void {
+        // To create a schedule, we need to make sure all the creatives attached to its content have been imported in the broadcaster
+        $creativesExternalIds = [];
+
+        foreach ($contents as $content) {
+            // For each creative, we need to check if it exist in the current broadcaster, and if not, import it
+            $creatives = $content->creatives;
+
+            /** @var Creative $creative */
+            foreach ($creatives as $creative) {
+                $creativesExternalId = $this->getCreativeExternalId($broadcaster, $creative);
+
+                if (is_null($creativesExternalId)) {
+                    throw new MissingExternalCreativeException($broadcaster, $creative);
+                }
+
+                $creativesExternalIds[] = $creativesExternalId;
+            }
+        }
+
+        $broadcaster->setScheduleContents($externalRepresentations, $creativesExternalIds);
     }
 
     /**

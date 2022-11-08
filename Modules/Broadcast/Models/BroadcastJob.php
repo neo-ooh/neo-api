@@ -80,7 +80,8 @@ class BroadcastJob extends Model {
                 DeleteCampaignJob::dispatchSync($this->resource_id, $this);
                 break;
             case BroadcastJobType::PromoteSchedule:
-                PromoteScheduleJob::dispatchSync($this->resource_id, $this->payload["representation"], $this);
+//                PromoteScheduleJob::dispatchSync($this->resource_id, $this->payload["representation"], $this);
+                (new PromoteScheduleJob($this->resource_id, $this->payload["representation"], $this))->handle();
                 break;
             case BroadcastJobType::DeleteSchedule:
                 DeleteScheduleJob::dispatchSync($this->resource_id, $this->payload["representation"], $this);

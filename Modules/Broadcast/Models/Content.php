@@ -10,9 +10,11 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\DB;
@@ -57,11 +59,14 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property-read Collection<Schedule> $schedules
  * @property-read int                  $schedules_count
  *
+ * @property-read ScheduleContent      $schedule_settings
+ *
  * @mixin DB
  */
 class Content extends BroadcastResourceModel {
     use SoftDeletes;
     use HasPublicRelations;
+    use EagerLoadPivotTrait;
 
     /*
     |--------------------------------------------------------------------------
@@ -193,10 +198,12 @@ class Content extends BroadcastResourceModel {
     /**
      * The Schedules using this content
      *
-     * @return HasMany
+     * @return BelongsToMany<Schedule>
      */
-    public function schedules(): HasMany {
-        return $this->hasMany(Schedule::class, 'content_id', 'id')->withTrashed();
+    public function schedules(): BelongsToMany {
+        return $this->belongsToMany(Schedule::class, 'schedule_contents', 'content_id', 'schedule_id')
+                    ->using(ScheduleContent::class)
+                    ->withTrashed();
     }
 
     /**

@@ -11,8 +11,6 @@
 namespace Neo\Modules\Broadcast\Http\Requests\Layouts;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Gate;
-use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Rules\PublicRelations;
 
@@ -23,7 +21,7 @@ class ShowLayoutRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::formats_edit->value);
+        return true;
     }
 
     /**

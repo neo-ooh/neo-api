@@ -70,7 +70,7 @@ class Bundle extends BroadSignModel {
                                                ->parser(new MultipleResourcesParser(static::class)),
             "byReservable" => BroadSignEndpoint::get("/bundle/v12/by_reservable")
                                                ->unwrap(static::$unwrapKey)
-                                               ->parser(new MultipleResourcesParser(static::class))
+                                               ->parser(new MultipleResourcesParser(static::class)),
         ];
     }
 
@@ -92,7 +92,7 @@ class Bundle extends BroadSignModel {
         "name",
         "position",
         "secondary_sep_category_ids",
-        "trigger_category_id"
+        "trigger_category_id",
     ];
 
     /**

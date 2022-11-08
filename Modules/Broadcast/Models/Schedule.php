@@ -10,10 +10,12 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use AjCastro\EagerLoadPivotRelations\EagerLoadPivotTrait;
 use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,7 +36,6 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  *
  * @property int                        $id
  * @property int                        $campaign_id
- * @property int                        $content_id
  * @property int                        $owner_id
  * @property Date                       $start_date
  * @property Date                       $start_time
@@ -53,8 +54,8 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  *
  * - Relations
  * @property Actor                      $owner
- * @property Content                    $content
  * @property Campaign                   $campaign
+ * @property Collection<Content>        $contents
  *
  * @property int                        $reviews_count
  * @property Collection<ScheduleReview> $reviews
@@ -64,6 +65,7 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 class Schedule extends BroadcastResourceModel {
     use SoftDeletes;
     use HasPublicRelations;
+    use EagerLoadPivotTrait;
 
     public BroadcastResourceType $resourceType = BroadcastResourceType::Schedule;
     /**
@@ -80,7 +82,6 @@ class Schedule extends BroadcastResourceModel {
      */
     protected $fillable = [
         "campaign_id",
-        "content_id",
         "owner_id",
         "start_date",
         "start_time",
@@ -124,7 +125,7 @@ class Schedule extends BroadcastResourceModel {
     protected string $accessRule = AccessibleSchedule::class;
 
     protected array $publicRelations = [
-        "content"  => ["content.creatives", "content.schedules"],
+        "contents" => ["contents.creatives", "contents.schedules", "contents.schedule_settings.disabled_formats_ids"],
         "reviews"  => "reviews",
         "owner"    => "owner",
         "tags"     => "broadcast_tags",
@@ -177,10 +178,14 @@ class Schedule extends BroadcastResourceModel {
     }
 
     /**
-     * @return BelongsTo<Content, Schedule>
+     * @return BelongsToMany<Content>
      */
-    public function content(): BelongsTo {
-        return $this->belongsTo(Content::class, 'content_id', 'id')->withTrashed();
+    public function contents(): BelongsToMany {
+        return $this->belongsToMany(Content::class, "schedule_contents", "schedule_id", "content_id")
+                    ->using(ScheduleContent::class)
+                    ->withPivot(['id'])
+                    ->as("schedule_settings")
+                    ->withTrashed();
     }
 
     /**
@@ -255,7 +260,7 @@ class Schedule extends BroadcastResourceModel {
     public function toResource(): ScheduleResource {
         return new ScheduleResource([
             "enabled"        => $this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live,
-            "name"           => $this->campaign->name . " - " . $this->content->name,
+            "name"           => $this->campaign->name . " - " . $this->contents->first()->name,
             "start_date"     => $this->start_date->toDateString(),
             "start_time"     => $this->start_time->toTimeString(),
             "end_date"       => $this->end_date->toDateString(),

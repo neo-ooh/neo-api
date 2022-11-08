@@ -84,7 +84,9 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
      * @return array
      */
     public function middleware(): array {
-        return [new WithoutOverlapping($this->resourceId)];
+        return [
+            new WithoutOverlapping($this->resourceId),
+        ];
     }
 
     /*
@@ -92,8 +94,6 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
     | Lifecycle
     |--------------------------------------------------------------------------
     */
-
-    abstract protected function run(): array|null;
 
     public function getLastAttemptResult(): mixed {
         return $this->broadcastJob->last_attempt_result;

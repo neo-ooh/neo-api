@@ -4,10 +4,12 @@ use Neo\Modules\Broadcast\Http\Controllers\CampaignsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsLocationsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsSchedulesController;
 use Neo\Modules\Broadcast\Http\Controllers\ExternalResourcesController;
+use Neo\Modules\Broadcast\Http\Controllers\ScheduleContentsController;
 use Neo\Modules\Broadcast\Http\Controllers\SchedulesController;
 use Neo\Modules\Broadcast\Http\Controllers\SchedulesReviewsController;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Schedule;
+use Neo\Modules\Broadcast\Models\ScheduleContent;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,14 +58,17 @@ Route::group([
    |----------------------------------------------------------------------
    */
 
-    Route::bind("schedule", fn($id) => Schedule::withTrashed()->find($id));
+    Route::model("schedule", Schedule::class);
+    Route::model("scheduleContent", ScheduleContent::class);
 
     Route::  post("schedules", SchedulesController::class . "@store");
     Route::   get("schedules/_by_id", SchedulesController::class . "@byIds");
     Route::   get("schedules/_pending", SchedulesController::class . "@pending");
-    Route::   get("schedules/{schedule}", SchedulesController::class . "@show");
+    Route::   get("schedules/{schedule}", SchedulesController::class . "@show")->withTrashed();
     Route::   put("schedules/{schedule}", SchedulesController::class . "@update");
     Route::delete("schedules/{schedule}", SchedulesController::class . "@destroy");
+
+    Route::   put("schedules/{schedule}/contents/{scheduleContent}", ScheduleContentsController::class . "@update");
 
     Route::   get("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@list");
     Route::  post("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@store");

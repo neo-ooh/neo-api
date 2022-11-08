@@ -22,4 +22,7 @@ class Schedule extends ExternalBroadcasterResource {
     public int $broadcast_days;
 
     public int $order;
+
+    public int $duration_msec = 0;
+    public bool $is_fullscreen = false;
 }

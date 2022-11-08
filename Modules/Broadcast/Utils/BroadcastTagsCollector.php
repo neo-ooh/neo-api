@@ -25,7 +25,8 @@ class BroadcastTagsCollector {
     }
 
     /**
-     * @param array<BroadcastTag>|Collection<BroadcastTag> $tags
+     * @param array<BroadcastTag>|Collection $tags
+     * @param array|null                     $types
      * @return void
      */
     public function collect(array|Collection $tags, array|null $types = null): void {
@@ -37,7 +38,7 @@ class BroadcastTagsCollector {
             $tags = $tags->filter(fn(BroadcastTag $tag) => in_array($tag->type, $types, true));
         }
 
-        $this->tags = $this->tags->merge($tags);
+        $this->tags = $this->tags->merge($tags)->unique("id");
     }
 
     /**
@@ -45,8 +46,7 @@ class BroadcastTagsCollector {
      * @return array<TagResource>
      */
     public function get(int $broadcasterId): array {
-        return $this->tags->unique("id")
-                          ->map(fn(BroadcastTag $tag) => $tag->toResource($broadcasterId))
+        return $this->tags->map(fn(BroadcastTag $tag) => $tag->toResource($broadcasterId))
                           ->where("external_id", "!==", "-1")
                           ->all();
     }

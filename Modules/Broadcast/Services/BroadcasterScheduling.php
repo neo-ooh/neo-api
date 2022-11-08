@@ -15,7 +15,6 @@ use Neo\Modules\Broadcast\Services\Exceptions\CannotUpdateExternalResourceExcept
 use Neo\Modules\Broadcast\Services\Resources\Campaign;
 use Neo\Modules\Broadcast\Services\Resources\CampaignSearchResult;
 use Neo\Modules\Broadcast\Services\Resources\CampaignTargeting;
-use Neo\Modules\Broadcast\Services\Resources\Content;
 use Neo\Modules\Broadcast\Services\Resources\Creative;
 use Neo\Modules\Broadcast\Services\Resources\CreativeStorageType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
@@ -100,14 +99,14 @@ interface BroadcasterScheduling {
     */
 
     /**
-     * @param Schedule                             $schedule
-     * @param ExternalBroadcasterResourceId        $campaign
-     * @param Content                              $content
-     * @param array<ExternalBroadcasterResourceId> $creatives
-     * @param array<Tag>                           $tags
+     * Create an empty schedule set to broadcast at the specified dates, times and days
+     *
+     * @param Schedule                      $schedule
+     * @param ExternalBroadcasterResourceId $campaign
+     * @param array<Tag>                    $tags
      * @return array<ExternalBroadcasterResourceId>
      */
-    public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, Content $content, array $creatives, array $tags): array;
+    public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, array $tags): array;
 
     /**
      * @param array<ExternalBroadcasterResourceId> $externalResources
@@ -123,6 +122,21 @@ interface BroadcasterScheduling {
      * @return bool
      */
     public function deleteSchedule(array $externalResources): bool;
+
+    /*
+    |--------------------------------------------------------------------------
+    | Contents Handles
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Set which creatives a schedule should broadcast
+     *
+     * @param ExternalBroadcasterResourceId[] $externalResources
+     * @param ExternalBroadcasterResourceId[] $creatives
+     * @return mixed
+     */
+    public function setScheduleContents(array $externalResources, array $creatives);
 
 
     /*

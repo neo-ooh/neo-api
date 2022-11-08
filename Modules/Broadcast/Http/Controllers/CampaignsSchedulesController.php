@@ -29,7 +29,7 @@ use Neo\Modules\Broadcast\Utils\ScheduleValidator;
 
 class CampaignsSchedulesController extends Controller {
     public function index(ListSchedulesRequest $request, Campaign $campaign): Response {
-        return new Response($campaign->schedules->each(fn(Schedule $schedule) => $schedule->loadPublicRelations()));
+        return new Response($campaign->schedules->loadPublicRelations());
     }
 
     /**
@@ -45,11 +45,11 @@ class CampaignsSchedulesController extends Controller {
         $validator = new ScheduleValidator();
         $validator->validateContentFitCampaign($content, $campaign);
 
-        $schedule                 = new Schedule();
-        $schedule->campaign_id    = $campaign->getKey();
-        $schedule->content_id     = $content->id;
-        $schedule->owner_id       = Auth::id();
-        $schedule->start_date     = Carbon::today()->max($campaign->start_date);
+        $schedule              = new Schedule();
+        $schedule->campaign_id = $campaign->getKey();
+        $schedule->owner_id    = Auth::id();
+        // Schedule should start today, but not before the campaign start, not after the day before the end of the campaign
+        $schedule->start_date     = Carbon::today()->max($campaign->start_date)->min($campaign->end_date->clone()->subDay());
         $schedule->start_time     = $campaign->start_time;
         $schedule->end_date       = $schedule->start_date->clone()
                                                          ->addDays($content->max_schedule_duration ?: 14)
@@ -58,6 +58,9 @@ class CampaignsSchedulesController extends Controller {
         $schedule->broadcast_days = $campaign->broadcast_days;
         $schedule->order          = $request->input("order");
         $schedule->save();
+
+        // Attach the content to the schedule
+        $schedule->contents()->attach($content->getKey());
 
         $schedule->promote();
 

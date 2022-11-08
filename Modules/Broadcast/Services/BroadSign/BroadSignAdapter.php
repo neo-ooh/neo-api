@@ -30,6 +30,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterScreenshotsBurst;
 use Neo\Modules\Broadcast\Services\BroadcasterUtils;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Bundle as BroadSignBundle;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\BundleContent;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Campaign as BroadSignCampaign;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Container as BroadSignContainer;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Creative as BroadSignCreative;
@@ -52,7 +53,6 @@ use Neo\Modules\Broadcast\Services\Resources\Campaign;
 use Neo\Modules\Broadcast\Services\Resources\CampaignSearchResult;
 use Neo\Modules\Broadcast\Services\Resources\CampaignTargeting;
 use Neo\Modules\Broadcast\Services\Resources\Container;
-use Neo\Modules\Broadcast\Services\Resources\Content;
 use Neo\Modules\Broadcast\Services\Resources\Creative;
 use Neo\Modules\Broadcast\Services\Resources\CreativeStorageType;
 use Neo\Modules\Broadcast\Services\Resources\DisplayType;
@@ -506,7 +506,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
      * @inheritDoc
      * @throws UnknownProperties
      */
-    public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, Content $content, array $creatives, array $tags): array {
+    public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, array $tags): array {
         // First get the loop slot for the campaign
         $loopSlots = LoopSlot::forCampaign($this->getAPIClient(), $campaign->external_id);
 
@@ -544,8 +544,8 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $bsBundle->name     = $bsSchedule->name;
         $bsBundle->position = $schedule->order;
 
-        $bsBundle->max_duration_msec = $content->duration_msec;
-        $bsBundle->fullscreen        = $content->is_fullscreen;
+        $bsBundle->max_duration_msec = $schedule->duration_msec;
+        $bsBundle->fullscreen        = $schedule->is_fullscreen;
 
         $bsBundle->auto_synchronized     = true;
         $bsBundle->allow_custom_duration = true;
@@ -568,11 +568,6 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         $bsBundle->create();
-
-        // Associate the creatives to the bundle
-        foreach ($creatives as $creative) {
-            $bsBundle->associateCreative($creative->external_id);
-        }
 
         return [
             new ExternalBroadcasterResourceId(
@@ -683,6 +678,44 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setScheduleContents(array $externalResources, array $creatives) {
+        $externalBundle = $this->getResourceByType($externalResources, ExternalResourceType::Bundle);
+
+        // List the creatives already attached to the bundle
+        $bundleContents = BundleContent::byBundle($this->getAPIClient(), $externalBundle->external_id);
+
+        /** @var int[] $attachedCreativesIds */
+        $attachedCreativesIds = $bundleContents->pluck("content_id")->all();
+        /** @var int[] $specifiedCreativesIds */
+        $specifiedCreativesIds = array_map(static fn(ExternalBroadcasterResourceId $creative) => $creative->external_id, $creatives);
+
+        // Compute difference between attached ad-copies, and the given list
+        $obsoleteAdCopiesIds = array_diff($attachedCreativesIds, $specifiedCreativesIds);
+        $missingCreativesIds = array_diff($specifiedCreativesIds, $attachedCreativesIds);
+
+        // Disable all obsolete bundle contents
+        foreach ($obsoleteAdCopiesIds as $obsoleteAdCopy) {
+            $bundleContents
+                ->where("content_id", "=", $obsoleteAdCopy)
+                ->each(function (BundleContent $bundleContent) {
+                    $bundleContent->active = false;
+                    $bundleContent->save();
+                });
+        }
+
+        // Add missing creatives to the bundle
+        foreach ($missingCreativesIds as $creativeId) {
+            $bundleContent             = new BundleContent($this->getAPIClient());
+            $bundleContent->parent_id  = (int)$externalBundle->external_id;
+            $bundleContent->content_id = $creativeId;
+            $bundleContent->create();
+        }
+
     }
 
     /**

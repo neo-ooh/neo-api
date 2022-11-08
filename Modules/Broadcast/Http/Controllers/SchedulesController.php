@@ -32,11 +32,11 @@ use Neo\Modules\Broadcast\Exceptions\IncompatibleContentLengthAndCampaignExcepti
 use Neo\Modules\Broadcast\Exceptions\InvalidScheduleBroadcastDaysException;
 use Neo\Modules\Broadcast\Exceptions\InvalidScheduleDatesException;
 use Neo\Modules\Broadcast\Exceptions\InvalidScheduleTimesException;
-use Neo\Modules\Broadcast\Http\Requests\CampaignsSchedules\UpdateScheduleRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\DestroyScheduleRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\ListPendingSchedulesRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\ListSchedulesByIdsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\StoreScheduleRequest;
+use Neo\Modules\Broadcast\Http\Requests\Schedules\UpdateScheduleRequest;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Schedule;
@@ -45,13 +45,13 @@ use Neo\Modules\Broadcast\Utils\ScheduleValidator;
 
 class SchedulesController extends Controller {
 
-    public function byIds(ListSchedulesByIdsRequest $request) {
+    public function byIds(ListSchedulesByIdsRequest $request): Response {
         $schedules = Schedule::query()->findMany($request->input("ids"));
 
         return new Response($schedules->loadPublicRelations());
     }
 
-    public function show(ListSchedulesByIdsRequest $request, Schedule $schedule) {
+    public function show(ListSchedulesByIdsRequest $request, Schedule $schedule): Response {
         return new Response($schedule->loadPublicRelations());
     }
 
@@ -70,12 +70,11 @@ class SchedulesController extends Controller {
         $campaigns = $user->getCampaigns()->pluck('id');
         $schedules = Schedule::query()
                              ->select('schedules.*')
-                             ->join('contents', 'contents.id', '=', "schedules.content_id")
                              ->join('schedule_details', 'schedule_details.schedule_id', '=', "schedules.id")
                              ->whereIn("schedules.campaign_id", $campaigns)
                              ->where("schedules.is_locked", "=", 1)
                              ->where("schedule_details.is_approved", "=", 0)
-                             ->where('contents.is_approved', '=', 0)
+                             ->where('schedule_details.is_rejected', '=', 0)
                              ->whereNotExists(fn($query) => $query->select(DB::raw(1))
                                                                   ->from('schedule_reviews')
                                                                   ->whereRaw('schedule_reviews.schedule_id = schedules.id'))
@@ -110,7 +109,6 @@ class SchedulesController extends Controller {
 
         // Prepare the schedule
         $schedule                 = new Schedule();
-        $schedule->content_id     = $content->id;
         $schedule->owner_id       = Auth::id();
         $schedule->start_date     = $startDate;
         $schedule->start_time     = $startTime;
@@ -167,6 +165,9 @@ class SchedulesController extends Controller {
                 $campaignSchedule->order       = $campaign->schedules()->count();
                 $campaignSchedule->save();
 
+                // Attach the content to the schedule
+                $campaignSchedule->contents()->attach($content->getKey());
+
                 // Copy tags from content to the schedule
                 $campaignSchedule->broadcast_tags()->sync([...$content->broadcast_tags()->allRelatedIds(), ...$broadcastTags]);
 
@@ -187,7 +188,8 @@ class SchedulesController extends Controller {
                         $review->save();
                     }
 
-                    if (!$campaignSchedule->content->is_approved && !Gate::allows(Capability::contents_review->value)) {
+                    // If not all contents of the schedule are pre-approved, send an email
+                    if ($campaignSchedule->contents->some("is_approved", "!==", true) && !Gate::allows(Capability::contents_review->value)) {
                         SendReviewRequestEmail::dispatch($campaignSchedule->id);
                     }
                 }
@@ -211,8 +213,8 @@ class SchedulesController extends Controller {
     }
 
     /**
-     * @param UpdateScheduleRequest $request
-     * @param Schedule              $schedule
+     * @param \Neo\Modules\Broadcast\Http\Requests\Schedules\UpdateScheduleRequest $request
+     * @param Schedule                                                             $schedule
      *
      * @return Response
      * @throws InvalidScheduleBroadcastDaysException
@@ -265,7 +267,7 @@ class SchedulesController extends Controller {
                 $review->save();
             }
 
-            if (!$schedule->content->is_approved && !Gate::allows(Capability::contents_review->value)) {
+            if ($schedule->contents->some("is_approved", "!==", true) && !Gate::allows(Capability::contents_review->value)) {
                 SendReviewRequestEmail::dispatch($schedule->id);
             }
         }

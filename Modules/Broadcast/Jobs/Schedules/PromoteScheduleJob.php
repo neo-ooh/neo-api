@@ -91,10 +91,11 @@ class PromoteScheduleJob extends BroadcastJobBase {
         ]);
         $formatsIds = $schedule->contents->flatMap(fn(Content $content) => $content->layout->formats)->pluck("id")->unique();
 
-        $campaignRepresentations = [];
+        $useSpecificRepresentation = !is_null($this->payload["representation"]);
+        $campaignRepresentations   = [];
 
         // If a specific representation is given, use this one, otherwise list all the representation of the campaign
-        if (!is_null($this->payload["representation"])) {
+        if ($useSpecificRepresentation) {
             $campaignRepresentations[] = $this->payload["representation"];
         } else {
             // For each representation of the campaign, we dispatch an update and a targeting action
@@ -113,7 +114,8 @@ class PromoteScheduleJob extends BroadcastJobBase {
         }
 
         // This array will hold newly created resources, and errors
-        $results = [];
+        $results   = [];
+        $hasErrors = false;
 
         /** @var ExternalCampaignDefinition $representation */
         foreach ($scheduleRepresentations as $representation) {
@@ -121,13 +123,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
             $broadcaster = BroadcasterAdapterFactory::makeForNetwork($representation->network_id);
 
             if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
-                // This broadcaster does not handle content scheduling
-                $results[] = [
-                    "error"      => false,
-                    "message"    => "Representation skipped because broadcaster does not support direct scheduling",
-                    "network_id" => $representation->network_id,
-                    "format_id"  => $representation->format_id,
-                ];
+                // This broadcaster does not handle content scheduling, ignore
                 continue;
             }
 
@@ -146,6 +142,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                     "network_id" => $representation->network_id,
                     "format_id"  => $representation->format_id,
                 ];
+                $hasErrors = true;
 
                 continue;
             }
@@ -221,6 +218,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                     "format_id"                  => $representation->format_id,
                     "updated_external_resources" => $updatedExternalResources,
                 ];
+                $hasErrors = true;
             }
 
             // We now have IDs to our resources, check if some have changed, and replace them if necessary
@@ -278,8 +276,47 @@ class PromoteScheduleJob extends BroadcastJobBase {
                     "broadcaster_id" => $broadcaster->getBroadcasterId(),
                     "trace"          => $e->getTrace(),
                 ];
+                $hasErrors = true;
 
                 continue;
+            }
+        }
+
+        // If we are working with all the representations, and no errors occured,
+        // we do a cleanup of the external resources attached to the schedule, removing
+        // all resources that are not present in the results list
+        if (!$useSpecificRepresentation && !$hasErrors) {
+            $validRepresentationsIds = collect($results)->pluck("id");
+
+            // Group external resources by definition (network+format)
+            $outdatedRepresentations = $schedule->external_representations->whereNotIn("id", $validRepresentationsIds)
+                                                                          ->whereNull("deleted_at")
+                                                                          ->groupBy(fn(ExternalResource $resource) => "{$resource->data->network_id}-{$resource->data->formats_id[0]}");
+
+            // For each outdated representation, remove them from their broadcaster, and mark them as removed
+            foreach ($outdatedRepresentations as $externalResources) {
+                /** @var ExternalResource $resource */
+                $resource  = $externalResources->first();
+                $networkId = $resource->data->network_id;
+                $formatId  = $resource->data->formats_id[0];
+
+                /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
+                $broadcaster = BroadcasterAdapterFactory::makeForNetwork($networkId);
+
+                if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
+                    // This broadcaster does not handle content scheduling
+                    return [];
+                }
+
+                // Get the external ID representation for this schedule
+                /** @var array<ExternalResource> $externalResources */
+                $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $networkId, $formatId);
+
+                $broadcaster->deleteSchedule(externalResources: array_map(static fn(ExternalResource $resource) => $resource->toResource(), $externalResources));
+
+                foreach ($externalResources as $externalResource) {
+                    $externalResource->delete();
+                }
             }
         }
 

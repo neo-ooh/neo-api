@@ -350,7 +350,7 @@ class Campaign extends BroadcastResourceModel {
                     campaign_id: $this->getKey(),
                     network_id: $networkId,
                     format_id: $formatId,
-                    locations: collect($formatLocations)->map(fn(Location $location) => $location->toExternalBroadcastIdResource()),
+                    locations: array_map(static fn(Location $location) => $location->toExternalBroadcastIdResource(), $formatLocations),
                 );
             }
         }

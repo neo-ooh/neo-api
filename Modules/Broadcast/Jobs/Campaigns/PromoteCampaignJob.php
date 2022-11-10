@@ -66,6 +66,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
 
         $campaignRepresentations = $campaign->getExternalBreakdown();
         $updatedResources        = [];
+        $hasErrors               = false;
 
         /** @var ExternalCampaignDefinition $representation */
         foreach ($campaignRepresentations as $representation) {
@@ -97,7 +98,6 @@ class PromoteCampaignJob extends BroadcastJobBase {
             $externalResource = $campaign->getExternalRepresentation($broadcaster->getBroadcasterId(), $broadcaster->getNetworkId(), $format->getKey());
 
             // If no external resource could be found, it means the external campaign for this representation does not exist, create it.
-
             /** @var ExternalBroadcasterResourceId|null $externalCampaignId */
             $externalCampaignId = null;
             $createCampaign     = !$externalResource;
@@ -145,6 +145,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
                     "network_id" => $representation->network_id,
                     "format_id"  => $representation->format_id,
                 ];
+                $hasErrors        = true;
                 continue;
             }
 
@@ -201,13 +202,35 @@ class PromoteCampaignJob extends BroadcastJobBase {
             // Target the campaign
             $targeting = new CampaignTargeting([
                 "campaignTags"  => $campaignTags->get($broadcaster->getBroadcasterId()),
-                "locations"     => $representation->locations->all(),
+                "locations"     => $representation->locations,
                 "locationsTags" => $locationsTags->get($broadcaster->getBroadcasterId()),
             ]);
 
             $broadcaster->targetCampaign($externalCampaignId, $targeting);
 
             $updatedResources[] = $externalResource;
+        }
+
+        if (!$hasErrors) {
+            // No error in script, `$updateResources` holds all the valid external representation for the campaign.
+            // If there is other representations attached to the campaign, we remove them
+            // List campaign representation not in the list of valid ones
+            $validRepresentationsIds = collect($updatedResources)->pluck("id");
+            $outdatedRepresentations = $campaign->external_representations->whereNotIn("id", $validRepresentationsIds)
+                                                                          ->whereNull("deleted_at");
+
+            foreach ($outdatedRepresentations as $outdatedRepresentation) {
+                /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
+                $broadcaster = BroadcasterAdapterFactory::makeForNetwork($outdatedRepresentation->data->network_id);
+
+                if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
+                    // This broadcaster does not handle content scheduling
+                    continue;
+                }
+
+                $broadcaster->deleteCampaign($outdatedRepresentation->toResource());
+                $outdatedRepresentation->delete();
+            }
         }
 
         return $updatedResources;

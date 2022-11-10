@@ -55,54 +55,62 @@ class DeleteScheduleJob extends BroadcastJobBase {
      * @throws InvalidBroadcasterAdapterException|InvalidBroadcastResource
      */
     protected function run(): array|null {
-        // A schedule has a content which in turn fits in a layout
-        // A layout can be present in multiple formats
-        // We list all the formats the schedule content's layout fit in,
-        // and only keep the campaign representation that match with this list
+        // Load the schedule
         /** @var Schedule $schedule */
         $schedule = Schedule::withTrashed()->find($this->resourceId);
         $schedule->load(["campaign", "external_representations", "content", "content.layout"]);
-        $formatsIds = $schedule->content->layout->formats()->allRelatedIds();
 
-        $campaignRepresentations = [];
-
-        // If a specific representation is given, use this one, otherwise list all the representation of the campaign
-        if (!is_null($this->payload["representation"])) {
-            $campaignRepresentations[] = $this->payload["representation"];
-        } else {
-            // For each representation of the campaign, we dispatch an update and a targeting action
-            $campaignRepresentations = $schedule->campaign->getExternalBreakdown();
+        // If a representation is given, we remove this one only
+        if ($representation = $this->payload["representation"]) {
+            return $this->removeRepresentation($schedule, $representation->network_id, $representation->format_id);
         }
 
-        // Filter the campaign's representations to only keep the one matching the formats with which the content's layout is associated
-        $scheduleRepresentations = array_filter($campaignRepresentations, static fn(ExternalCampaignDefinition $representation) => $formatsIds->contains($representation->format_id));
+        // No representation given, list all the external resources of the schedule, group them by representation (network+format), and remove them
+        $representations = $schedule->external_representations->groupBy(fn(ExternalResource $resource) => "{$resource->data->network_id}-{$resource->data->formats_id[0]}");
 
         // This array will hold updated resources, and errors
         $results = [];
 
-        /** @var ExternalCampaignDefinition $representation */
-        foreach ($scheduleRepresentations as $representation) {
-            /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-            $broadcaster = BroadcasterAdapterFactory::makeForNetwork($representation->network_id);
+        foreach ($representations as $externalResources) {
+            /** @var ExternalResource $resource */
+            $resource  = $externalResources->first();
+            $networkId = $resource->data->network_id;
+            $formatId  = $resource->data->formats_id[0];
 
-            if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
-                // This broadcaster does not handle content scheduling
-                continue;
-            }
-
-            // Get the external ID representation for this schedule
-            /** @var array<ExternalResource> $externalResources */
-            $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->network_id, $representation->format_id);
-
-            $broadcaster->deleteSchedule(externalResources: array_map(static fn(ExternalResource $resource) => $resource->toResource(), $externalResources));
-
-            foreach ($externalResources as $externalResource) {
-                $externalResource->delete();
-            }
-
-            $results[] = $externalResources;
+            $results[] = $this->removeRepresentation($schedule, $networkId, $formatId);
         }
 
         return $results;
+    }
+
+    /**
+     * @param Schedule $schedule
+     * @param int      $networkId
+     * @param int      $formatId
+     * @return ExternalResource[]
+     * @throws InvalidBroadcastResource
+     * @throws InvalidBroadcasterAdapterException
+     * @throws UnknownProperties
+     */
+    protected function removeRepresentation(Schedule $schedule, int $networkId, int $formatId): array {
+        /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
+        $broadcaster = BroadcasterAdapterFactory::makeForNetwork($networkId);
+
+        if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
+            // This broadcaster does not handle content scheduling
+            return [];
+        }
+
+        // Get the external ID representation for this schedule
+        /** @var array<ExternalResource> $externalResources */
+        $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $networkId, $formatId);
+
+        $broadcaster->deleteSchedule(externalResources: array_map(static fn(ExternalResource $resource) => $resource->toResource(), $externalResources));
+
+        foreach ($externalResources as $externalResource) {
+            $externalResource->delete();
+        }
+
+        return $externalResources;
     }
 }

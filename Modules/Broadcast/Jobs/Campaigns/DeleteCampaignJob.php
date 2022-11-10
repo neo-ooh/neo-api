@@ -20,7 +20,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
-use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
@@ -41,35 +40,26 @@ class DeleteCampaignJob extends BroadcastJobBase {
         /** @var Campaign $campaign */
         $campaign = Campaign::withTrashed()->find($this->resourceId);
 
-        // For each representation of the campaign, we dispatch an update and a targeting action
-        $campaignRepresentations  = $campaign->getExternalBreakdown();
-        $deletedExternalResources = [];
+        // For each representation of the campaign, we remove it from its broadcaster, and mark it as deleted
+        $externalResources = $campaign->external_representations->whereNull("deleted_at");
+        $results           = [];
 
-        /** @var ExternalCampaignDefinition $representation */
-        foreach ($campaignRepresentations as $representation) {
+        /** @var ExternalResource $externalResource */
+        foreach ($externalResources as $externalResource) {
             /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-            $broadcaster = BroadcasterAdapterFactory::makeForNetwork($representation->network_id);
+            $broadcaster = BroadcasterAdapterFactory::makeForNetwork($externalResource->data->network_id);
 
             if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
                 // This broadcaster does not handle content scheduling
                 continue;
             }
 
-            // Get the external ID for this campaign representation
-            /** @var ExternalResource|null $externalResource */
-            $externalResource = $campaign->getExternalRepresentation($broadcaster->getBroadcasterId(), $broadcaster->getNetworkId(), $representation->format_id);
-
-            if (!$externalResource) {
-                // No resource available for this representation
-                continue;
-            }
-
-            $broadcaster->deleteCampaign($externalResource->toResource());
+            $broadcaster->deleteCampaign(externalCampaign: $externalResource->toResource());
 
             $externalResource->delete();
-            $deletedExternalResources[] = $externalResource;
+            $results[] = $externalResource;
         }
 
-        return $deletedExternalResources;
+        return $results;
     }
 }

@@ -20,6 +20,8 @@ use Neo\Modules\Broadcast\Jobs\Creatives\ImportCreativeJob;
 use Neo\Modules\Broadcast\Jobs\Creatives\UpdateCreativeJob;
 use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
 use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
+use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @property int                $id
@@ -70,6 +72,9 @@ class BroadcastJob extends Model {
         $this->save();
     }
 
+    /**
+     * @throws UnknownProperties
+     */
     public function retry(): void {
         switch ($this->type) {
             case BroadcastJobType::PromoteCampaign:
@@ -81,10 +86,10 @@ class BroadcastJob extends Model {
                 break;
             case BroadcastJobType::PromoteSchedule:
 //                PromoteScheduleJob::dispatchSync($this->resource_id, $this->payload["representation"], $this);
-                (new PromoteScheduleJob($this->resource_id, $this->payload["representation"], $this))->handle();
+                (new PromoteScheduleJob($this->resource_id, $this->payload["representation"] ? new ExternalCampaignDefinition($this->payload["representation"]) : null, $this))->handle();
                 break;
             case BroadcastJobType::DeleteSchedule:
-                DeleteScheduleJob::dispatchSync($this->resource_id, $this->payload["representation"], $this);
+                DeleteScheduleJob::dispatchSync($this->resource_id, new ExternalCampaignDefinition($this->payload["representation"]), $this);
                 break;
             case BroadcastJobType::ImportCreative:
                 ImportCreativeJob::dispatchSync($this->resource_id, $this->payload["broadcasterId"], $this);

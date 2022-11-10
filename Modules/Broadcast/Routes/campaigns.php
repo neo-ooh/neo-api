@@ -68,13 +68,16 @@ Route::group([
     Route::   put("schedules/{schedule}", SchedulesController::class . "@update");
     Route::delete("schedules/{schedule}", SchedulesController::class . "@destroy");
 
+    Route::  post("schedules/{schedule}/contents", ScheduleContentsController::class . "@store");
     Route::   put("schedules/{schedule}/contents/{scheduleContent}", ScheduleContentsController::class . "@update");
+    Route::delete("schedules/{schedule}/contents/{scheduleContent}", ScheduleContentsController::class . "@remove");
 
-    Route::   get("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@list");
+    Route::   get("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@index");
+    Route::   get("campaigns/{campaign}/expired-schedules", CampaignsSchedulesController::class . "@indexExpired");
     Route::  post("campaigns/{campaign}/schedules", CampaignsSchedulesController::class . "@store");
-    Route::   put("campaigns/{campaign}/schedules/{schedule}", SchedulesController::class . "@update");
+    Route::   put("campaigns/{campaign}/schedules/{schedule}", SchedulesController::class . "@updateWithCampaign");
     Route::  post("campaigns/{campaign}/schedules/_reorder", CampaignsSchedulesController::class . "@reorder");
-    Route::delete("campaigns/{campaign}/schedules/{schedule}", SchedulesController::class . "@destroy");
+    Route::delete("campaigns/{campaign}/schedules/{schedule}", SchedulesController::class . "@destroyWithCampaign");
 
     /*
     |----------------------------------------------------------------------

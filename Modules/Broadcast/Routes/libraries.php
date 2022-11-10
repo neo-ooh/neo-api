@@ -65,7 +65,6 @@ Route::group([
 
     Route::   get("/contents/{content}", ContentsController::class . "@show");
     Route::   put("/contents/{content}", ContentsController::class . "@update");
-    Route::   put("/contents/{content}/_swap", ContentsController::class . "@swap");
     Route::delete("/contents/{content}", ContentsController::class . "@destroy");
 
     /*

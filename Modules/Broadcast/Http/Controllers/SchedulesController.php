@@ -212,9 +212,13 @@ class SchedulesController extends Controller {
         return new Response(array_map(static fn(Schedule $schedule) => $schedule->getKey(), $schedules), 201);
     }
 
+    public function updateWithCampaign(UpdateScheduleRequest $request, Campaign $campaign, Schedule $schedule) {
+        return $this->update($request, $schedule);
+    }
+
     /**
-     * @param \Neo\Modules\Broadcast\Http\Requests\Schedules\UpdateScheduleRequest $request
-     * @param Schedule                                                             $schedule
+     * @param UpdateScheduleRequest $request
+     * @param Schedule              $schedule
      *
      * @return Response
      * @throws InvalidScheduleBroadcastDaysException
@@ -284,6 +288,10 @@ class SchedulesController extends Controller {
         $schedule->promote();
 
         return new Response($schedule->loadPublicRelations());
+    }
+
+    public function destroyWithCampaign(DestroyScheduleRequest $request, Campaign $campaign, Schedule $schedule) {
+        return $this->destroy($request, $schedule);
     }
 
     /**

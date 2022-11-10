@@ -66,6 +66,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  *
  * @property int                  $schedules_count
  * @property Collection<Schedule> $schedules
+ * @property Collection<Schedule> $expired_schedules
  *
  * @property int                  $locations_count
  * @property Collection<Location> $locations
@@ -139,8 +140,8 @@ class Campaign extends BroadcastResourceModel {
         "parent"                   => "parent",
         "creator"                  => "creator",
         "shares"                   => "shares",
-        "schedules"                => ["schedules.owner:id,name", "schedules.contents.creatives", "schedules.broadcast_tags", "schedules.contents.schedule_settings.disabled_formats_ids"],
-        "expired_schedules"        => ["expired_schedules.owner:id,name", "expired_schedules.contents.creatives", "expired_schedules.broadcast_tags", "expired_schedules.contents.schedule_settings.disabled_formats_ids"],
+        "schedules"                => ["schedules.owner:id,name"],
+        "expired_schedules"        => ["expired_schedules.owner:id,name"],
         "locations"                => "locations",
         "formats"                  => ["formats.layouts.frames"],
         "tags"                     => "broadcast_tags",
@@ -198,9 +199,11 @@ class Campaign extends BroadcastResourceModel {
      */
     public function schedules(): HasMany {
         return $this->hasMany(Schedule::class, "campaign_id", "id")
-                    ->where("end_date", ">", Carbon::now())
-                    ->orWhereRelation("details", function (Builder $query) {
-                        $query->where("is_approved", "=", false);
+                    ->where(function (Builder $query) {
+                        $query->where("end_date", ">", Carbon::now())
+                              ->orWhereRelation("details", function (Builder $query) {
+                                  $query->where("is_approved", "=", false);
+                              });
                     })
                     ->orderBy("order");
     }

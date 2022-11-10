@@ -32,6 +32,10 @@ class CampaignsSchedulesController extends Controller {
         return new Response($campaign->schedules->loadPublicRelations());
     }
 
+    public function indexExpired(ListSchedulesRequest $request, Campaign $campaign): Response {
+        return new Response($campaign->expired_schedules->loadPublicRelations());
+    }
+
     /**
      * @throws IncompatibleContentFormatAndCampaignException
      * @throws IncompatibleContentLengthAndCampaignException

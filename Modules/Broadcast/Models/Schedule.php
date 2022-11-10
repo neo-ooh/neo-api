@@ -125,7 +125,7 @@ class Schedule extends BroadcastResourceModel {
     protected string $accessRule = AccessibleSchedule::class;
 
     protected array $publicRelations = [
-        "contents" => ["contents.creatives", "contents.schedules", "contents.schedule_settings.disabled_formats_ids"],
+        "contents" => ["contents.creatives", "contents.schedules", "contents.broadcast_tags", "contents.schedule_settings.disabled_formats_ids"],
         "reviews"  => "reviews",
         "owner"    => "owner",
         "tags"     => "broadcast_tags",
@@ -182,8 +182,9 @@ class Schedule extends BroadcastResourceModel {
      */
     public function contents(): BelongsToMany {
         return $this->belongsToMany(Content::class, "schedule_contents", "schedule_id", "content_id")
-                    ->using(ScheduleContent::class)
+                    ->wherePivotNull("deleted_at")
                     ->withPivot(['id'])
+                    ->using(ScheduleContent::class)
                     ->as("schedule_settings")
                     ->withTrashed();
     }

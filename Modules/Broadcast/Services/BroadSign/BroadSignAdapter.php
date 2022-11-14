@@ -540,9 +540,8 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         // Create the bundle
-        $bsBundle           = new BroadSignBundle($this->getAPIClient());
-        $bsBundle->name     = $bsSchedule->name;
-        $bsBundle->position = $schedule->order;
+        $bsBundle       = new BroadSignBundle($this->getAPIClient());
+        $bsBundle->name = $bsSchedule->name;
 
         $bsBundle->max_duration_msec = $schedule->duration_msec;
         $bsBundle->fullscreen        = $schedule->is_fullscreen;
@@ -600,13 +599,14 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
         // Only update schedule if necessary
         $scheduleComparator = new ResourcesComparator($schedule, $bsSchedule->toResource());
-        if ($scheduleComparator->isDifferent(["enabled", "start_date", "start_time", "end_date", "end_time", "broadcast_days"])) {
+        if ($scheduleComparator->isDifferent(["enabled", "start_date", "start_time", "end_date", "end_time", "broadcast_days", "order"])) {
             $bsSchedule->active           = $schedule->enabled;
             $bsSchedule->start_date       = $schedule->start_date;
             $bsSchedule->start_time       = $schedule->start_time;
             $bsSchedule->end_date         = $schedule->end_date;
             $bsSchedule->end_time         = $schedule->end_time;
             $bsSchedule->day_of_week_mask = $schedule->broadcast_days;
+            $bsSchedule->weight           = $schedule->order;
             $bsSchedule->save();
         }
 

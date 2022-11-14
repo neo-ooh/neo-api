@@ -283,7 +283,7 @@ class Creative extends BroadcastResourceModel {
     public function toResource(): CreativeResource {
         return new CreativeResource([
             "id"                   => $this->getKey(),
-            "name"                 => $this->owner->name . " - " . $this->original_name . "@" . $this->content->library->name,
+            "name"                 => $this->owner->name . " - " . $this->original_name . " #" . $this->getKey(),
             "fileName"             => $this->original_name,
             "type"                 => $this->type,
             "width"                => $this->frame->width,

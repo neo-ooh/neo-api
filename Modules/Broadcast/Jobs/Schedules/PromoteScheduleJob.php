@@ -15,6 +15,7 @@ use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
 use Neo\Modules\Broadcast\Exceptions\MissingExternalCreativeException;
 use Neo\Modules\Broadcast\Jobs\BroadcastJobBase;
 use Neo\Modules\Broadcast\Jobs\Creatives\ImportCreativeJob;
@@ -66,6 +67,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @return array|null
      * @throws UnknownProperties
      * @throws InvalidBroadcasterAdapterException
+     * @throws InvalidBroadcastResource
      */
     protected function run(): array|null {
         clock("promote-schedule-run");
@@ -106,6 +108,10 @@ class PromoteScheduleJob extends BroadcastJobBase {
         $scheduleRepresentations = array_filter($campaignRepresentations, static fn(ExternalCampaignDefinition $representation) => $formatsIds->contains($representation->format_id));
 
         if (count($scheduleRepresentations) === 0) {
+            // Since no representation could be found, we cannot do anything.
+            // Still, perform a cleanup before stopping
+            $this->cleanUpExternalRepresentations($schedule, []);
+
             return [
                 "error"                    => true,
                 "message"                  => "No representation of campaign matching schedule found",
@@ -128,7 +134,8 @@ class PromoteScheduleJob extends BroadcastJobBase {
             }
 
             /** @var Format $representationFormat */
-            $representationFormat = Format::query()->find($representation->format_id);
+            $representationFormat      = Format::query()->find($representation->format_id);
+            $representationMaxDuration = $schedule->campaign->dynamic_duration_override ?: $representationFormat->content_length;
 
             // Get the external ID for this campaign representation
             /** @var ExternalResource|null $externalCampaignResource */
@@ -150,10 +157,23 @@ class PromoteScheduleJob extends BroadcastJobBase {
             // List which content from the schedule match the current definition. For a content
             // to be included, its layout must be attached to the definition format, and the definition format must not be part of the list of excluded formats for the content for this schedule.
             /** @var Collection<Content> $contents */
-            $contents = $schedule->contents->filter(function (Content $content) use ($representation) {
-                return $content->layout->formats->pluck("id")->contains($representation->format_id) &&
-                    $content->schedule_settings->disabled_formats_ids->pluck("format_id")
-                                                                     ->doesntContain($representation->format_id);
+            $contents = $schedule->contents->filter(function (Content $content) use ($representation, $representationMaxDuration) {
+                // Validate content length is within representation limit
+                if ($content->duration >= $representationMaxDuration + .1) {
+                    return false;
+                }
+
+                // Validate one of the content formats matches the campaign
+                if ($content->layout->formats->pluck("id")->doesntContain($representation->format_id)) {
+                    return false;
+                }
+
+                // Validate the representation format has not been disabled for this content
+                if ($content->schedule_settings->disabled_formats_ids->pluck("format_id")->contains($representation->format_id)) {
+                    return false;
+                }
+
+                return true;
             });
 
 
@@ -287,37 +307,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
         // all resources that are not present in the results list
         if (!$useSpecificRepresentation && !$hasErrors) {
             $validRepresentationsIds = collect($results)->pluck("id");
-
-            // Group external resources by definition (network+format)
-            $outdatedRepresentations = $schedule->external_representations->whereNotIn("id", $validRepresentationsIds)
-                                                                          ->whereNull("deleted_at")
-                                                                          ->groupBy(fn(ExternalResource $resource) => "{$resource->data->network_id}-{$resource->data->formats_id[0]}");
-
-            // For each outdated representation, remove them from their broadcaster, and mark them as removed
-            foreach ($outdatedRepresentations as $externalResources) {
-                /** @var ExternalResource $resource */
-                $resource  = $externalResources->first();
-                $networkId = $resource->data->network_id;
-                $formatId  = $resource->data->formats_id[0];
-
-                /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-                $broadcaster = BroadcasterAdapterFactory::makeForNetwork($networkId);
-
-                if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
-                    // This broadcaster does not handle content scheduling
-                    return [];
-                }
-
-                // Get the external ID representation for this schedule
-                /** @var array<ExternalResource> $externalResources */
-                $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $networkId, $formatId);
-
-                $broadcaster->deleteSchedule(externalResources: array_map(static fn(ExternalResource $resource) => $resource->toResource(), $externalResources));
-
-                foreach ($externalResources as $externalResource) {
-                    $externalResource->delete();
-                }
-            }
+            $this->cleanUpExternalRepresentations($schedule, $validRepresentationsIds->all());
         }
 
         return $results;
@@ -345,8 +335,8 @@ class PromoteScheduleJob extends BroadcastJobBase {
         $scheduleResource = $schedule->toResource();
 
         // Complete the schedule resource
-        // Use the campaign duration override, fallback to the format's content length otherrwise
-        $scheduleResource->duration_msec = ($schedule->campaign->static_duration_override > 0 ? $schedule->campaign->static_duration_override : $format->content_length) * 1000;
+        // Use the campaign duration override, fallback to the format's content length otherwise
+        $scheduleResource->duration_msec = ($schedule->campaign->static_duration_override ?: $format->content_length) * 1000;
         // If all the layouts in this format are fullscreen, mark the bundle as such
         $scheduleResource->is_fullscreen = $layouts->every("settings.is_fullscreen", "=", true);
 
@@ -358,6 +348,9 @@ class PromoteScheduleJob extends BroadcastJobBase {
     }
 
     /**
+     * Takes a list of contents, the representations for a schedule, and properly attach the contents to the schedule
+     * using the given broadcaster.
+     *
      * @param BroadcasterOperator&BroadcasterScheduling $broadcaster
      * @param ExternalBroadcasterResourceId[]           $externalRepresentations
      * @param Collection<Content>                       $contents
@@ -404,5 +397,50 @@ class PromoteScheduleJob extends BroadcastJobBase {
         $importCreativeJob = new ImportCreativeJob($creative->getKey(), $broadcaster->getBroadcasterId());
         $importCreativeJob->handle();
         return $importCreativeJob->getLastAttemptResult();
+    }
+
+    /**
+     * Takes a list of valid `ExternalResource` models ids, and properly remove other external resources still attached
+     * to the schedules, removing them from their broadcasters as well.
+     *
+     * @param Schedule $schedule
+     * @param int[]    $validRepresentationsIds
+     * @return void
+     * @throws InvalidBroadcasterAdapterException
+     * @throws UnknownProperties
+     * @throws InvalidBroadcastResource
+     */
+    protected function cleanUpExternalRepresentations(Schedule $schedule, array $validRepresentationsIds): void {
+        // Group external resources by definition (network+format)
+        $outdatedRepresentations = $schedule->external_representations
+            ->whereNotIn("id", $validRepresentationsIds)
+            ->whereNull("deleted_at")
+            ->groupBy(fn(ExternalResource $resource) => "{$resource->data->network_id}-{$resource->data->formats_id[0]}");
+
+        // For each outdated representation, remove them from their broadcaster, and mark them as removed
+        foreach ($outdatedRepresentations as $externalResources) {
+            /** @var ExternalResource $resource */
+            $resource  = $externalResources->first();
+            $networkId = $resource->data->network_id;
+            $formatId  = $resource->data->formats_id[0];
+
+            /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
+            $broadcaster = BroadcasterAdapterFactory::makeForNetwork($networkId);
+
+            if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
+                // This broadcaster does not handle content scheduling
+                continue;
+            }
+
+            // Get the external ID representation for this schedule
+            /** @var array<ExternalResource> $externalResources */
+            $externalResources = $schedule->getExternalRepresentation($broadcaster->getBroadcasterId(), $networkId, $formatId);
+
+            $broadcaster->deleteSchedule(externalResources: array_map(static fn(ExternalResource $resource) => $resource->toResource(), $externalResources));
+
+            foreach ($externalResources as $externalResource) {
+                $externalResource->delete();
+            }
+        }
     }
 }

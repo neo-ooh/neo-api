@@ -96,8 +96,7 @@ class SchedulesController extends Controller {
      * @throws InvalidScheduleTimesException
      */
     public function store(StoreScheduleRequest $request): Response {
-        /** @var Content $content */
-        $content = Content::query()->with("layout")->findOrFail($request->input("content_id"));
+        $contents = Content::query()->findMany($request->input("contents"));
 
         $startDate     = Carbon::createFromFormat("Y-m-d", $request->input("start_date"));
         $startTime     = Carbon::createFromFormat("H:i:s", $request->input("start_time"));
@@ -105,7 +104,6 @@ class SchedulesController extends Controller {
         $endTime       = Carbon::createFromFormat("H:i:s", $request->input("end_time"));
         $broadcastDays = $request->input("broadcast_days");
         $broadcastTags = $request->input("tags", []);
-
 
         // Prepare the schedule
         $schedule                 = new Schedule();
@@ -131,8 +129,23 @@ class SchedulesController extends Controller {
             DB::beginTransaction();
 
             foreach ($campaigns as $campaign) {
-                $validator->validateContentFitCampaign($content, $campaign);
+                // List contents that match the campaign
+                $campaignContents = [];
+                foreach ($contents as $content) {
+                    try {
+                        $validator->validateContentFitCampaign($content, $campaign);
+                        $campaignContents[] = $content;
+                    } catch (BaseException) {
+                        continue;
+                    }
+                }
 
+                if (count($campaignContents) === 0) {
+                    // If no content match, skip
+                    continue;
+                }
+
+                // Create the schedule for the campaign
                 $campaignSchedule = clone $schedule;
 
                 if ($forceFit) {
@@ -160,16 +173,13 @@ class SchedulesController extends Controller {
                     );
                 }
 
-                // Schedule ws validated for campaign, store it
+                // Schedule is validated for campaign, store it
                 $campaignSchedule->campaign_id = $campaign->id;
                 $campaignSchedule->order       = $campaign->schedules()->count();
                 $campaignSchedule->save();
 
-                // Attach the content to the schedule
-                $campaignSchedule->contents()->attach($content->getKey());
-
-                // Copy tags from content to the schedule
-                $campaignSchedule->broadcast_tags()->sync([...$content->broadcast_tags()->allRelatedIds(), ...$broadcastTags]);
+                // Attach the contents to the schedule
+                $campaignSchedule->contents()->attach($contents->pluck("id"));
 
                 // If the schedule is locked on creation, check if we should auto-approve it or warn someone to approve it
                 if ($campaignSchedule->is_locked) {

@@ -35,10 +35,11 @@ class StoreScheduleRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "content_id" => ["required", "integer", new AccessibleContent()],
+            "contents"   => ["required", "array"],
+            "contents.*" => ["integer", new AccessibleContent()],
 
             "campaigns"   => ["required", "array"],
-            "campaigns.*" => ["int", new AccessibleCampaign()],
+            "campaigns.*" => ["integer", new AccessibleCampaign()],
 
             "start_date"     => ["required", "date_format:Y-m-d"],
             "start_time"     => ["required", "date_format:H:i:s"],
@@ -51,7 +52,7 @@ class StoreScheduleRequest extends FormRequest {
 
             "send_for_review" => ["required", "boolean"],
 
-            "force" => ["boolean"]
+            "force" => ["boolean"],
         ];
     }
 }

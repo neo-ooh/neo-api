@@ -42,6 +42,7 @@ use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Models\ScheduleReview;
 use Neo\Modules\Broadcast\Utils\ScheduleValidator;
+use Ramsey\Uuid\Uuid;
 
 class SchedulesController extends Controller {
 
@@ -96,7 +97,11 @@ class SchedulesController extends Controller {
      * @throws InvalidScheduleTimesException
      */
     public function store(StoreScheduleRequest $request): Response {
+        /** @var Collection<Content> $contents */
         $contents = Content::query()->findMany($request->input("contents"));
+
+        /** @var Collection<Campaign> $campaigns */
+        $campaigns = Campaign::query()->whereIn("id", $request->input("campaigns"))->get();
 
         $startDate     = Carbon::createFromFormat("Y-m-d", $request->input("start_date"));
         $startTime     = Carbon::createFromFormat("H:i:s", $request->input("start_time"));
@@ -115,13 +120,15 @@ class SchedulesController extends Controller {
         $schedule->broadcast_days = $broadcastDays;
         $schedule->is_locked      = $request->input('send_for_review');
 
+        // If there is more than one campaign, apply a batch id to the schedule
+        if ($campaigns->count() > 1) {
+            $schedule->batch_id = Uuid::uuid4();
+        }
+
         /** @var array<Schedule> $schedules */
         $schedules = [];
 
         // Validate the content and scheduling fit all the selected campaigns
-        /** @var Collection<Campaign> $campaigns */
-        $campaigns = Campaign::query()->whereIn("id", $request->input("campaigns"))->get();
-
         $validator = new ScheduleValidator();
         $forceFit  = $request->input("force", false);
 
@@ -180,6 +187,7 @@ class SchedulesController extends Controller {
 
                 // Attach the contents to the schedule
                 $campaignSchedule->contents()->attach($contents->pluck("id"));
+                $campaignSchedule->broadcast_tags()->sync($broadcastTags);
 
                 // If the schedule is locked on creation, check if we should auto-approve it or warn someone to approve it
                 if ($campaignSchedule->is_locked) {

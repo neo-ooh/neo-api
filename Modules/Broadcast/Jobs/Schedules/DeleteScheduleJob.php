@@ -58,7 +58,7 @@ class DeleteScheduleJob extends BroadcastJobBase {
         // Load the schedule
         /** @var Schedule $schedule */
         $schedule = Schedule::withTrashed()->find($this->resourceId);
-        $schedule->load(["campaign", "external_representations", "content", "content.layout"]);
+        $schedule->load(["campaign", "external_representations", "contents", "contents.layout"]);
 
         // If a representation is given, we remove this one only
         if ($representation = $this->payload["representation"]) {

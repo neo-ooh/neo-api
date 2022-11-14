@@ -45,6 +45,7 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property int                        $order
  * @property bool                       $is_locked
  * @property Date|null                  $locked_at
+ * @property string                     $batch_id
  *
  * @property ScheduleDetails            $details
  *

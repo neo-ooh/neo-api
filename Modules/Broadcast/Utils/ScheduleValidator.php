@@ -5,6 +5,7 @@ namespace Neo\Modules\Broadcast\Utils;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Neo\Modules\Broadcast\Enums\BroadcastParameters;
 use Neo\Modules\Broadcast\Exceptions\CannotScheduleContentAnymoreException;
 use Neo\Modules\Broadcast\Exceptions\CannotScheduleIncompleteContentException;
 use Neo\Modules\Broadcast\Exceptions\IncompatibleContentFormatAndCampaignException;
@@ -54,12 +55,14 @@ class ScheduleValidator {
 
         // If the content length is not zero, we make sure its length match at least one of the format
         if ($content->duration > 0) {
+            /** @var float $lengthThresholdSec */
+            $lengthThresholdSec = param(BroadcastParameters::CreativeLengthFlexibilitySec);
             // If the campaign has a dynamic override, this takes priority over the formats, check that first
-            if ($campaign->dynamic_duration_override > 0 && $content->duration > ($campaign->dynamic_duration_override + .1)) {
+            if ($campaign->dynamic_duration_override > 0 && $content->duration > ($campaign->dynamic_duration_override + $lengthThresholdSec)) {
                 throw new IncompatibleContentLengthAndCampaignException();
             }
 
-            $validFormats = $campaignFormats->filter(fn(Format $format) => $content->duration < ($format->content_length + .1));
+            $validFormats = $campaignFormats->filter(fn(Format $format) => $content->duration < ($format->content_length + $lengthThresholdSec));
 
             if ($validFormats->isEmpty()) {
                 throw new IncompatibleContentLengthAndCampaignException();

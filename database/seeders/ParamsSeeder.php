@@ -11,24 +11,11 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Neo\Enums\Parameters;
-use Neo\Models\Param;
+use Neo\Enums\CommonParameters;
+use Neo\Helpers\ParametersSeeder;
 
 class ParamsSeeder extends Seeder {
     public static function run(): void {
-        foreach (Parameters::cases() as $paramCase) {
-            /** @var Param $param */
-            $param = Param::query()->firstOrCreate([
-                "slug" => $paramCase->value
-            ], [
-                "format" => $paramCase->format(),
-                "value"  => $paramCase->defaultValue(),
-            ]);
-
-            if ($param->format !== $paramCase->format()) {
-                $param->format = $paramCase->format();
-                $param->save();
-            }
-        }
+        ParametersSeeder::seed(CommonParameters::class);
     }
 }

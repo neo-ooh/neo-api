@@ -206,6 +206,11 @@ enum Capability: string {
     case properties_contacts = "properties.contacts";
 
     /**
+     * Allows editing broadcast settings
+     */
+    case broadcast_settings = "broadcast.settings";
+
+    /**
      * Allows creating and editing broadcast tags
      */
     case broadcast_tags = "broadcast.tags";

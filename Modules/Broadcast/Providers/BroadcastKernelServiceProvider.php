@@ -14,6 +14,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Neo\Modules\Broadcast\Jobs\Chores\DeleteExpiredResourcesJob;
 use Neo\Modules\Broadcast\Jobs\Networks\SynchronizeAllNetworksJob;
+use Neo\Modules\Broadcast\Jobs\Performances\PullCampaignsPerformancesJob;
 
 class BroadcastKernelServiceProvider extends ServiceProvider {
     public function register() {
@@ -24,6 +25,9 @@ class BroadcastKernelServiceProvider extends ServiceProvider {
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
             $schedule->job(SynchronizeAllNetworksJob::class)->daily();
             $schedule->job(DeleteExpiredResourcesJob::class)->daily();
+
+            // Campaigns Performances
+            $schedule->job(PullCampaignsPerformancesJob::class)->daily();
         });
     }
 }

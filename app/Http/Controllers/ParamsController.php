@@ -10,16 +10,17 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use Neo\Enums\CommonParameters;
+use Neo\Http\Requests\Parameters\UpdateParameterRequest;
 use Neo\Models\Actor;
 use Neo\Models\Param;
+use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 
 /**
  * Class ParamsController
@@ -36,49 +37,33 @@ class ParamsController extends Controller {
     }
 
     /**
-     * @param Request $request
-     * @param Param   $parameter
+     * @param UpdateParameterRequest $request
+     * @param Param                  $parameter
      *
      * @return Response
      * @throws ValidationException
      */
-    public function update(Request $request, Param $parameter) {
+    public function update(UpdateParameterRequest $request, Param $parameter): Response {
         if (Str::startsWith($parameter->format, "file:")) {
             $file = $request->file("value");
 
             // Confirm upload success
             if (!$file->isValid()) {
-                return new Response([
-                    "code"    => "upload.error",
-                    "message" => "Error during upload",
-                ],
-                    400);
+                throw new UploadException();
             }
 
             $this->handleFileParameter($parameter, $file);
         }
 
-        if ($parameter->format === "actor" || $parameter->format === "text") {
-            $parameter->value = $request->get("value");
-        }
-
+        $parameter->value = $request->input("value");
         $parameter->save();
 
         return new Response($parameter);
     }
 
-    protected function handleFileParameter(Param $parameter, UploadedFile $file) {
-        $fileType = explode(":", $parameter->format)[1];
-
-        // Validate the file
-        $validator = Validator::make(["value" => $file], ["value" => "file|mimes:$fileType"]);
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
-
-        // File is OK, store it properly
-        if ($parameter->slug === "tos") {
-            $fileName = "$parameter->slug.$fileType";
+    protected function handleFileParameter(Param $parameter, UploadedFile $file): void {
+        if ($parameter->slug === CommonParameters::TermsOfService->value) {
+            $fileName = "$parameter->slug.pdf";
             if (Storage::disk("public")->exists($fileName)) {
                 Storage::disk("public")->delete($fileName);
             }

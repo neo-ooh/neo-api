@@ -21,9 +21,16 @@ interface ParametersEnum extends BackedEnum {
     public function defaultValue(): mixed;
 
     /**
-     * Specify the format of the paramter value
+     * Specify the format of the parameter value
      *
      * @return string
      */
     public function format(): string;
+
+    /**
+     * Specify which capability is required to edit the parameter
+     *
+     * @return Capability
+     */
+    public function capability(): Capability;
 }

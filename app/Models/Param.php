@@ -13,15 +13,17 @@ namespace Neo\Models;
 use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Neo\Models\Utils\ParamValueCaster;
 
 /**
  * Neo\Models\Param
  *
- * @property string $slug
- * @property string $format
- * @property string $value
- * @property Date   $created_at
- * @property Date   $updated_at
+ * @property string                $slug
+ * @property string                $format
+ * @property \Neo\Enums\Capability $capability
+ * @property string                $value
+ * @property Date                  $created_at
+ * @property Date                  $updated_at
  *
  * @mixin Builder
  */
@@ -55,6 +57,7 @@ class Param extends Model {
     protected $fillable = [
         'slug',
         'format',
+        'capability',
         'value',
     ];
 
@@ -64,6 +67,8 @@ class Param extends Model {
      * @var array
      */
     protected $casts = [
-        'approved' => 'boolean',
+        "approved"   => "boolean",
+        "capability" => \Neo\Enums\Capability::class,
+        "value"      => ParamValueCaster::class,
     ];
 }

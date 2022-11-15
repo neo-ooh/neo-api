@@ -9,16 +9,17 @@
  */
 
 use Illuminate\Support\Facades\Route;
-use Neo\Http\Controllers\ParamsController;
-use Neo\Models\Param;
+use Neo\Http\Controllers\ParametersController;
+use Neo\Models\Parameter;
 
 Route::group([
     "middleware" => "default",
-    "prefix" => "v1"
-], function () {
-    Route::model("parameter", Param::class);
+    "prefix"     => "v1",
+], static function () {
+    Route::model("parameter", Parameter::class);
 
-    Route::  get("params/{parameter:slug}", ParamsController::class . "@show");
-    Route:: post("params/{parameter:slug}", ParamsController::class . "@update");
-    Route::  put("params/{parameter:slug}", ParamsController::class . "@update");
+    Route::  get("parameters", ParametersController::class . "@index");
+    Route::  get("parameters/{parameter:slug}", ParametersController::class . "@show");
+    Route:: post("parameters/{parameter:slug}", ParametersController::class . "@update");
+    Route::  put("parameters/{parameter:slug}", ParametersController::class . "@update");
 });

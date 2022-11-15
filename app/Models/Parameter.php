@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Param.php
+ * @neo/api - Parameter.php
  */
 
 namespace Neo\Models;
@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Neo\Models\Utils\ParamValueCaster;
 
 /**
- * Neo\Models\Param
+ * Neo\Models\Parameter
  *
  * @property string                $slug
  * @property string                $format
@@ -27,7 +27,7 @@ use Neo\Models\Utils\ParamValueCaster;
  *
  * @mixin Builder
  */
-class Param extends Model {
+class Parameter extends Model {
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -52,7 +52,7 @@ class Param extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'slug',
@@ -64,7 +64,7 @@ class Param extends Model {
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     protected $casts = [
         "approved"   => "boolean",

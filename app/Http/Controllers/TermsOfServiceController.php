@@ -14,7 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\TermsOfService\AcceptTermsOfServiceRequest;
 use Neo\Models\Actor;
-use Neo\Models\Param;
+use Neo\Models\Parameter;
 
 /**
  * Class TermsOfServiceController
@@ -23,8 +23,8 @@ use Neo\Models\Param;
  */
 class TermsOfServiceController extends Controller {
     public function show(): Response {
-        /** @var Param $tos */
-        $tos = Param::query()->find('tos');
+        /** @var Parameter $tos */
+        $tos = Parameter::query()->find('tos');
 
         return new Response(["url" => $tos->value, "updated" => $tos->updated_at]);
     }

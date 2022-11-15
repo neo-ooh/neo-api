@@ -101,6 +101,12 @@ class CreativeValidator {
      * @throws InvalidCreativeSize
      */
     protected function validateVideo(): bool {
+        // Validate weight
+        $maxSize = param(BroadcastParameters::CreativeVideoMaxSizeMiB) * 1.049e+6;       // MiB to Byte
+        if ($this->file->getSize() > $maxSize) {
+            throw new InvalidCreativeSize();
+        }
+
         /** @noinspection SpellCheckingInspection */
         $ffprobe = FFProbe::create(config('ffmpeg'));
 
@@ -138,17 +144,14 @@ class CreativeValidator {
             throw new InvalidCreativeDuration(expectedLength: $this->content->duration, foundLength: $this->creativeLength);
         }
 
-        // Weight
-        $maxSize = param(BroadcastParameters::CreativeVideoMaxSizeMiB) * 1.049e+6;       // MiB to Byte
-        if ($this->file->getSize() > $maxSize) {
-            throw new InvalidCreativeSize();
-        }
-
         $this->validationPerformed = true;
         return true;
     }
 
-    protected function validateAspectRatio() {
+    /**
+     * @throws InvalidCreativeDimensions
+     */
+    protected function validateAspectRatio(): void {
         $creativeAspectRatio = aspect_ratio($this->creativeWidth / $this->creativeHeight);
         $frameAspectRatio    = aspect_ratio($this->frame->width / $this->frame->height);
 

@@ -3,7 +3,7 @@
 namespace Neo\Helpers;
 
 use Neo\Enums\ParametersEnum;
-use Neo\Models\Param;
+use Neo\Models\Parameter;
 
 class ParametersSeeder {
     /**
@@ -12,8 +12,8 @@ class ParametersSeeder {
      */
     public static function seed(string $enum) {
         foreach ($enum::cases() as $paramCase) {
-            /** @var Param $param */
-            $param = Param::query()->firstOrCreate([
+            /** @var Parameter $param */
+            $param = Parameter::query()->firstOrCreate([
                 "slug" => $paramCase->value,
             ], [
                 "format"     => $paramCase->format(),

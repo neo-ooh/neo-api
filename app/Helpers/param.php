@@ -1,15 +1,15 @@
 <?php
 
 use Neo\Enums\ParametersEnum;
-use Neo\Models\Param;
+use Neo\Models\Parameter;
 
 if (!function_exists("param")) {
     /**
      *
      */
     function param(ParametersEnum $slug): mixed {
-        /** @var Param|null $parameter */
-        $parameter = Param::query()->find($slug->value);
+        /** @var Parameter|null $parameter */
+        $parameter = Parameter::query()->find($slug->value);
 
         // If the param does not exist, we raise a warning, and return the default value
         if (!$parameter) {

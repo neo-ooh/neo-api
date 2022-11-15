@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ParamsController.php
+ * @neo/api - ParametersController.php
  */
 
 namespace Neo\Http\Controllers;
@@ -19,31 +19,35 @@ use Illuminate\Validation\ValidationException;
 use Neo\Enums\CommonParameters;
 use Neo\Http\Requests\Parameters\UpdateParameterRequest;
 use Neo\Models\Actor;
-use Neo\Models\Param;
+use Neo\Models\Parameter;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 
 /**
- * Class ParamsController
+ * Class ParametersController
  *
  * @package Neo\Http\Controllers
  */
-class ParamsController extends Controller {
+class ParametersController extends Controller {
+    public function index(): Response {
+        return new Response(Parameter::query()->get());
+    }
+
     /**
-     * @param Param $parameter
+     * @param Parameter $parameter
      * @return Response
      */
-    public function show(Param $parameter): Response {
+    public function show(Parameter $parameter): Response {
         return new Response($parameter);
     }
 
     /**
      * @param UpdateParameterRequest $request
-     * @param Param                  $parameter
+     * @param Parameter              $parameter
      *
      * @return Response
      * @throws ValidationException
      */
-    public function update(UpdateParameterRequest $request, Param $parameter): Response {
+    public function update(UpdateParameterRequest $request, Parameter $parameter): Response {
         if (Str::startsWith($parameter->format, "file:")) {
             $file = $request->file("value");
 
@@ -61,7 +65,7 @@ class ParamsController extends Controller {
         return new Response($parameter);
     }
 
-    protected function handleFileParameter(Param $parameter, UploadedFile $file): void {
+    protected function handleFileParameter(Parameter $parameter, UploadedFile $file): void {
         if ($parameter->slug === CommonParameters::TermsOfService->value) {
             $fileName = "$parameter->slug.pdf";
             if (Storage::disk("public")->exists($fileName)) {

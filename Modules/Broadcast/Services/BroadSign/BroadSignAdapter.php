@@ -325,8 +325,15 @@ class BroadSignAdapter extends BroadcasterOperator implements
      * @throws UnknownProperties
      */
     public function createCampaign(Campaign $campaign): ExternalBroadcasterResourceId {
+        // Make sure the name of the campaign reflects the campaign priority
+        $campaignName = $campaign->name;
+
+        if ($campaign->priority > 1) {
+            $campaignName .= "_BUA";
+        }
+
         $bsCampaign = new BroadSignCampaign($this->getAPIClient(), [
-            "name" => $campaign->name,
+            "name" => $campaignName,
 
             "duration_msec" => $campaign->duration_msec,
 
@@ -405,7 +412,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $comparator = new ResourcesComparator($campaign, $bsCampaign->toResource());
 
         // It is not possible to change some of the properties of a campaign after it has been created.
-        $readonlyProperties = ["start_date", "start_time", "end_date", "end_time", "occurrences_in_loop", "broadcast_days", "duration_msec"];
+        $readonlyProperties = ["start_date", "start_time", "end_date", "end_time", "occurrences_in_loop", "broadcast_days", "duration_msec", "priority"];
         $updatable          = true;
         $breakingProperty   = "";
 
@@ -424,7 +431,6 @@ class BroadSignAdapter extends BroadcasterOperator implements
         // Update non-readonly properties
         $bsCampaign->active     = $campaign->enabled;
         $bsCampaign->name       = $campaign->name;
-        $bsCampaign->priority   = $campaign->priority;
         $bsCampaign->saturation = $campaign->occurrences_in_loop;
         $bsCampaign->save();
 

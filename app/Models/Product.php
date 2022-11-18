@@ -21,6 +21,7 @@ use Neo\Models\Interfaces\WithAttachments;
 use Neo\Models\Interfaces\WithImpressionsModels;
 use Neo\Models\Traits\HasImpressionsModels;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
@@ -117,8 +118,15 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         return $this->belongsTo(ProductCategory::class, "category_id", "id");
     }
 
+    public function campaigns(): BelongsToMany {
+        return $this->belongsToMany(Campaign::class, "campaign_locations", "product_id", "campaign_id")
+                    ->withPivot(["location_id"])
+                    ->withTimestamps();
+    }
+
     public function locations(): BelongsToMany {
-        return $this->belongsToMany(Location::class, "products_locations", "product_id", "location_id")->withPivot(["format_id"]);
+        return $this->belongsToMany(Location::class, "products_locations", "product_id", "location_id")
+                    ->withPivot(["format_id", "product_id"]);
     }
 
     public function attachments(): BelongsToMany {

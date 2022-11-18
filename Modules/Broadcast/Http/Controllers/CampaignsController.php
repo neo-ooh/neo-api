@@ -12,9 +12,11 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 
 use Auth;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Controllers\Controller;
+use Neo\Models\Product;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\ListCampaignsRequest;
@@ -22,8 +24,12 @@ use Neo\Modules\Broadcast\Http\Requests\Campaigns\ShowCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Schedule;
 
+/**
+ * @phpstan-type CampaignLocation array{location_id: int, format_id: int, product_id: int|null}
+ */
 class CampaignsController extends Controller {
     /**
      * @param ListCampaignsRequest $request
@@ -73,17 +79,39 @@ class CampaignsController extends Controller {
         $campaign->static_duration_override  = $request->input("static_duration_override");
         $campaign->dynamic_duration_override = $request->input("dynamic_duration_override");
 
+        // List all the locations given
+        /** @var \Illuminate\Support\Collection<CampaignLocation> $locations */
+        $locations = collect($request->input("locations", []))->map(fn($entry) => ([
+            "location_id" => $entry["location_id"],
+            "format_id"   => $entry["format_id"],
+            "product_id"  => null,
+        ]));
+
+        // If products where given, we add their locations to the list as well
+        $productIds = collect($request->input("products", []));
+        /** @var Collection<Product> $products */
+        $products = Product::query()->with(["locations", "category"])->findMany($productIds);
+
+        /** @var Product $product */
+        foreach ($products as $product) {
+            $locations->push(...$product->locations->map(fn(Location $location) => ([
+                "location_id" => $location->getKey(),
+                "format_id"   => $product->format_id ?? $product->category->format_id,
+                "product_id"  => $product->getKey(),
+            ])));
+        }
+
         // We create the campaign and attach its location in a transaction as we want to prevent the campaign creation if there is a problem with the locations
         try {
             DB::beginTransaction();
             $campaign->save();
 
-
             // Set the campaign locations
-            $locations = collect($request->input("locations"));
             $campaign->locations()
-                     ->sync($locations->mapWithKeys(fn(array $locationDefinition) => [$locationDefinition["location_id"] => ["format_id" => $locationDefinition["format_id"]]])
-                                      ->all());
+                     ->sync($locations->mapWithKeys(fn(array $locationDefinition) => [$locationDefinition["location_id"] => [
+                         "format_id"  => $locationDefinition["format_id"],
+                         "product_id" => $locationDefinition["product_id"],
+                     ]])->all());
 
             DB::commit();
         } catch (Exception $e) {

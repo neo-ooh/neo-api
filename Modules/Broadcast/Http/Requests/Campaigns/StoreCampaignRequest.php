@@ -53,14 +53,20 @@ class StoreCampaignRequest extends FormRequest {
             "dynamic_duration_override" => ["required", "numeric", "min:0"],
 
             // Locations
-            "locations"                 => ["required", "array"],
+            "locations"                 => ["array"],
             "locations.*.location_id"   => ["required", "int"],
             "locations.*.format_id"     => ["required", "int"],
 
-            "tags"   => ["array"],
-            "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],
+            // Products
+            "products"                  => ["array"],
+            "products.*"                => ["int"],
 
-            "with" => ["array", new PublicRelations(Campaign::class)],
+            // Tags
+            "tags"                      => ["array"],
+            "tags.*"                    => ["int", new Exists(BroadcastTag::class, "id")],
+
+            //
+            "with"                      => ["array", new PublicRelations(Campaign::class)],
         ];
     }
 }

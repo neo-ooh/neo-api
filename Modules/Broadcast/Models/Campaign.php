@@ -226,7 +226,7 @@ class Campaign extends BroadcastResourceModel {
      */
     public function locations(): BelongsToMany {
         return $this->belongsToMany(Location::class, "campaign_locations", "campaign_id", "location_id")
-                    ->withPivot(["format_id"])
+                    ->withPivot(["format_id", "product_id"])
                     ->withTimestamps();
     }
 
@@ -311,7 +311,7 @@ class Campaign extends BroadcastResourceModel {
 
         return new CampaignResource([
             "enabled"             => true,
-            "name"                => $this->parent->name . " - " . $this->name,
+            "name"                => $this->parent->name . "_" . $this->name,
             "start_date"          => $this->start_date->toDateString(),
             "start_time"          => $this->start_time->toTimeString(),
             "end_date"            => $this->end_date->toDateString(),

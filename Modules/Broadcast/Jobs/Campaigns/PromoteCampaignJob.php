@@ -91,7 +91,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
 
             // Get the campaign resource and complete it
             $campaignResource                = $campaign->toResource();
-            $campaignResource->name          .= " - " . $format->name;
+            $campaignResource->name          .= "_" . str_replace(" ", "-", $format->name);
             $campaignResource->duration_msec = $format->content_length * 1000;
 
             // Get the external ID for this campaign representation

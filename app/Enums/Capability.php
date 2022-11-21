@@ -219,4 +219,9 @@ enum Capability: string {
      * Allows access to various tools/info for developers
      */
     case dev_tools = "dev.tools";
+
+    /**
+     * Allows user to edit advertisers
+     */
+    case advertiser_edit = "advertisers.edit";
 }

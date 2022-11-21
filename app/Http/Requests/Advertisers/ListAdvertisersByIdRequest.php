@@ -13,11 +13,14 @@ namespace Neo\Http\Requests\Advertisers;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\Advertiser;
+use Neo\Rules\PublicRelations;
 
 class ListAdvertisersByIdRequest extends FormRequest {
     public function rules(): array {
         return [
-            "ids" => ["required", "array"],
+            "ids"  => ["required", "array"],
+            "with" => ["array", new PublicRelations(Advertiser::class)],
         ];
     }
 

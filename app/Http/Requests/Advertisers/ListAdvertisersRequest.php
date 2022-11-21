@@ -5,7 +5,6 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListAdvertisersByIdRequest.php
  */
 
 namespace Neo\Http\Requests\Advertisers;
@@ -16,7 +15,7 @@ use Neo\Enums\Capability;
 use Neo\Models\Advertiser;
 use Neo\Rules\PublicRelations;
 
-class ShowAdvertiserRequest extends FormRequest {
+class ListAdvertisersRequest extends FormRequest {
     public function rules(): array {
         return [
             "with" => ["array", new PublicRelations(Advertiser::class)],
@@ -24,6 +23,6 @@ class ShowAdvertiserRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::contracts_edit->value);
+        return Gate::allows(Capability::advertiser_edit->value);
     }
 }

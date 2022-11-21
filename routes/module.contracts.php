@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\AdvertiserRepresentationsController;
 use Neo\Http\Controllers\AdvertisersController;
 use Neo\Http\Controllers\AvailabilitiesController;
 use Neo\Http\Controllers\ClientsController;
@@ -36,8 +37,14 @@ Route::group([
 
     Route::model("advertiser", Advertiser::class);
 
-    Route::get("advertisers/_by_id", AdvertisersController::class . "@byId");
-    Route::get("advertisers/{advertiser}", AdvertisersController::class . "@show");
+    Route::   get("advertisers", AdvertisersController::class . "@index");
+    Route::   get("advertisers/_by_id", AdvertisersController::class . "@byId");
+    Route::   get("advertisers/{advertiser}", AdvertisersController::class . "@show");
+    Route::   put("advertisers/{advertiser}", AdvertisersController::class . "@update");
+
+    Route::  post("advertisers/{advertiser}/representations", AdvertiserRepresentationsController::class . "@store");
+    Route::   put("advertisers/{advertiser}/representations/{broadcaster}", AdvertiserRepresentationsController::class . "@update");
+    Route::delete("advertisers/{advertiser}/representations/{broadcaster}", AdvertiserRepresentationsController::class . "@destroy");
 
 
     /*
@@ -51,6 +58,7 @@ Route::group([
     Route::get("clients", ClientsController::class . "@index");
     Route::get("clients/_by_id", ClientsController::class . "@byId");
     Route::get("clients/{client}", ClientsController::class . "@show");
+
 
     /*
     |----------------------------------------------------------------------

@@ -27,4 +27,5 @@ enum ExternalResourceType: string {
 
     // Others
     case Tag = "tag";
+    case Advertiser = "advertiser";
 }

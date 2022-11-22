@@ -30,7 +30,6 @@ class PublicRelations {
         $publicRelations = $model->getPublicRelationsList();
 
         foreach (static::prepareRelationsList($relations) as $requestedRelation) {
-            clock($requestedRelation, $publicRelations);
             if (!array_key_exists($requestedRelation, $publicRelations)) {
                 // Block on invalid relations in dev
                 if (config("app.env") === 'development') {

@@ -12,7 +12,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAdvertiserExternalIdsTable extends Migration {
+class CreateAdvertiserRepresentationsTable extends Migration {
     public function up(): void {
         Schema::create('advertiser_representations', static function (Blueprint $table) {
             $table->foreignId("advertiser_id")

@@ -277,12 +277,14 @@ class Creative extends BroadcastResourceModel {
     */
 
     /**
+     * @param int $broadcasterId
      * @return CreativeResource
      * @throws UnknownProperties
      */
-    public function toResource(): CreativeResource {
+    public function toResource(int|null $broadcasterId): CreativeResource {
         return new CreativeResource([
             "id"                   => $this->getKey(),
+            "advertiser"           => $broadcasterId ? $this->content->library->advertiser?->getExternalRepresentation($broadcasterId) : null,
             "name"                 => $this->owner->name . " - " . $this->original_name . " #" . $this->getKey(),
             "fileName"             => $this->original_name,
             "type"                 => $this->type,

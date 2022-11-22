@@ -11,24 +11,32 @@
 namespace Neo\Jobs\Odoo;
 
 use Carbon\Carbon;
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use JsonException;
+use Neo\Services\Odoo\Models\Attachment;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\Models\Message;
 use Neo\Services\Odoo\Models\OrderLine;
+use Neo\Services\Odoo\OdooClient;
 use Neo\Services\Odoo\OdooConfig;
 
 class SendContractJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected Contract $contract, protected array $flights, protected bool $clearOnSend) {
+    public function __construct(protected Contract $contract, protected array $plan, protected bool $clearOnSend) {
     }
 
+    /**
+     * @throws OdooException
+     * @throws JsonException
+     */
     public function handle(): void {
         $client = OdooConfig::fromConfig()->getClient();
 
@@ -40,11 +48,13 @@ class SendContractJob implements ShouldQueue {
         $flightsDescriptions = [];
 
         // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required order lines
-        foreach ($this->flights as $flightIndex => $flight) {
+        foreach ($this->plan["flights"] as $flightIndex => $flight) {
             SendContractFlightJob::dispatchSync($this->contract, $flight, $flightIndex);
 
             $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
         }
+
+        $this->attachPlan($client);
 
         // Log import in odoo
         Message::create($client, [
@@ -57,7 +67,7 @@ class SendContractJob implements ShouldQueue {
             "res_id"       => $this->contract->id,
             "message_type" => "notification",
             "subtype_id"   => 2,
-        ]);
+        ], pullRecord: false);
     }
 
     protected function cleanupContract($client): void {
@@ -72,12 +82,32 @@ class SendContractJob implements ShouldQueue {
 
         // Remove all flights from the contract
         $response = Campaign::delete($client, [
-            ["order_id", "=", $this->contract->id]
+            ["order_id", "=", $this->contract->getKey()],
         ]);
 
         if ($response !== true) {
             Log::debug("Error when deleting flight lines on contract " . $this->contract->name, [$response]);
         }
+    }
+
+    protected function attachPlan(OdooClient $client) {
+        $planFileName = $this->plan["contract"] . ".ccp";
+
+        // Remove existing plan attached to the contract
+        Attachment::delete($client, [
+            ["name", "=", $planFileName],
+            ["res_model", "=", Contract::$slug],
+            ["res_id", "=", $this->contract->getKey()],
+        ]);
+
+        // Store the plan in Odoo as well
+        Attachment::create($client, [
+            "name"      => $this->plan["contract"] . ".ccp",
+            "res_model" => Contract::$slug,
+            "res_id"    => $this->contract->id,
+            "type"      => 'binary',
+            "datas"     => base64_encode(gzencode(json_encode($this->plan, JSON_THROW_ON_ERROR))),
+        ], pullRecord: false);
     }
 
     protected function getFlightDescription(array $flight, int $flightIndex): string {

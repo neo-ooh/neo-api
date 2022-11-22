@@ -15,10 +15,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResource;
 
 /**
- * @property int                   $id
- * @property BroadcastResourceType $type
+ * @property int                         $id
+ * @property BroadcastResourceType       $type
+ *
+ * @property ExternalBroadcasterResource $resource
  */
 class BroadcastResource extends Model {
     use HasPublicRelations;
@@ -66,7 +69,7 @@ class BroadcastResource extends Model {
 
     public function getResourceAttribute() {
         return match ($this->type) {
-            BroadcastResourceType::Creative => Creative::withTrashed()->find($this->getKey())?->toResource(),
+            BroadcastResourceType::Creative => Creative::withTrashed()->find($this->getKey())?->toResource(null),
             BroadcastResourceType::Content  => Content::withTrashed()->find($this->getKey())?->toResource(),
             BroadcastResourceType::Schedule => Schedule::withTrashed()->find($this->getKey())?->toResource(),
             BroadcastResourceType::Campaign => Campaign::withTrashed()->find($this->getKey())?->toResource(),

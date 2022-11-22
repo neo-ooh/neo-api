@@ -48,7 +48,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
      */
     public function __construct(int $scheduleId, ExternalCampaignDefinition|null $representation = null, BroadcastJob|null $broadcastJob = null) {
         parent::__construct(BroadcastJobType::PromoteSchedule, $scheduleId, ["representation" => $representation], $broadcastJob);
-        clock("promote-schedule-construct");
     }
 
     /**
@@ -70,7 +69,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @throws InvalidBroadcastResource
      */
     protected function run(): array|null {
-        clock("promote-schedule-run");
         // A schedule has a content which in turn fits in a layout
         // A layout can be present in multiple formats
         // We list all the formats the schedule content's layout fit in,

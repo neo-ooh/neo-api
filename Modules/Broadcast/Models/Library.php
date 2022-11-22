@@ -21,6 +21,7 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
+use Neo\Models\Advertiser;
 use Neo\Models\Factories\LibraryFactory;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasPublicRelations;
@@ -33,12 +34,14 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  *
  * @property int                     $id
  * @property int                     $owner_id
+ * @property int|null                $advertiser_id
  * @property string                  $name
  * @property int                     $content_limit
  *
  * @property int                     $contents_count
  *
  * @property Actor                   $owner
+ * @property Advertiser|null         $advertiser
  * @property Collection<Content>     $contents
  * @property Collection<Actor>       $shares
  * @property Collection<Format>      $formats
@@ -101,11 +104,12 @@ class Library extends SecuredModel {
 
     protected function getPublicRelations() {
         return [
-            "parent"   => ["owner"],
-            "contents" => ["contents", "contents.creatives", "contents.broadcast_tags", fn(Library $library) => $library->contents->loadCount("schedules")],
-            "formats"  => "formats",
-            "layouts"  => ["layouts", "layouts.frames", "append:content_layouts"],
-            "shares"   => "shares",
+            "parent"     => ["owner"],
+            "advertiser" => "advertiser",
+            "contents"   => ["contents", "contents.creatives", "contents.broadcast_tags", fn(Library $library) => $library->contents->loadCount("schedules")],
+            "formats"    => "formats",
+            "layouts"    => ["layouts", "layouts.frames", "append:content_layouts"],
+            "shares"     => "shares",
         ];
     }
 
@@ -212,6 +216,13 @@ class Library extends SecuredModel {
     public function shares(): BelongsToMany {
         return $this->belongsToMany(Actor::class, 'library_shares', 'library_id', 'actor_id')
                     ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsTo<Advertiser, Library>
+     */
+    public function advertiser(): BelongsTo {
+        return $this->belongsTo(Advertiser::class, "advertiser_id", "id");
     }
 
     /**

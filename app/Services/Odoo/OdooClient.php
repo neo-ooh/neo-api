@@ -12,6 +12,7 @@ namespace Neo\Services\Odoo;
 
 use Edujugon\Laradoo\Exceptions\OdooException;
 use Edujugon\Laradoo\Odoo;
+use JsonException;
 
 /**
  * Handles communication with Odoo XMLRPC API
@@ -36,6 +37,10 @@ class OdooClient {
 
     }
 
+    /**
+     * @throws OdooException
+     * @throws JsonException
+     */
     public function get(string $model, array $filters = [], array $fields = [], int|null $limit = null, int $offset = 0) {
         $request = $this->client;
 
@@ -47,8 +52,15 @@ class OdooClient {
             $request->limit($limit, $offset);
         }
 
-        return $request->fields($fields)
-                       ->get($model);
+        $event = uniqid('', true);
+        clock()->event("[Odoo] get@$model")->name($event)->color("cyan")->begin();
+
+        $response = $request->fields($fields)
+                            ->get($model);
+
+        clock()->event($event)->end();
+
+        return $response;
     }
 
     /**
@@ -59,18 +71,31 @@ class OdooClient {
      * @param array|int $ids
      * @param array     $fields
      * @return mixed
+     * @throws JsonException
      */
     public function getById(string $model, array|int $ids, $fields = []) {
         $modelIds = is_int($ids) ? [$ids] : $ids;
 
+        $event = uniqid('', true);
+        clock()->event("[Odoo] ids@$model [" . implode(', ', $modelIds) . "]")->name($event)->color("cyan")->begin();
+
         $models = $this->client->call($model, 'read', [$modelIds], ["fields" => $fields]);
+
+        clock()->event($event)->end();
 
         return is_int($ids) ? $models->get(0, null) : $models;
     }
 
     public function update(OdooModel $model, array $values): bool {
-        return $this->client->where("id", "=", $model->getKey())
-                            ->update($model::$slug, $values);
+        $event = uniqid('', true);;
+        clock()->event("[Odoo] get@$model")->name($event)->color("cyan")->begin();
+
+        $response = $this->client->where("id", "=", $model->getKey())
+                                 ->update($model::$slug, $values);
+
+        clock()->event($event)->end();
+
+        return $response;
     }
 
     public function findBy(string $model, string $field, $value, int|null $limit = null, int $offset = 0) {
@@ -80,11 +105,37 @@ class OdooClient {
             $request->limit($limit, $offset);
         }
 
-        return $request->get($model);
+        $event = uniqid('', true);
+        clock()->event("[Odoo] find@$model [$field => $value]", ["data" => [$field => $value]])
+               ->name($event)->color("cyan")->begin();
+
+        $response = $request->get($model);
+
+        clock()->event($event)->end();
+
+        return $response;
     }
 
     public function create(string $model, array $fields) {
-        return $this->client->create($model, $fields);
+        $event = uniqid('', true);
+        clock()->event("[Odoo] create@$model")->name($event)->color("cyan")->begin();
+
+        $response = $this->client->create($model, $fields);
+
+        clock()->event($event)->end();
+
+        return $response;
+    }
+
+    public function createMany(string $model, array $records) {
+        $event = uniqid('', true);
+        clock()->event("[Odoo] create@$model")->name($event)->color("cyan")->begin();
+
+        $response = $this->client->call($model, "create", [$records]);
+
+        clock()->event($event)->end();
+
+        return $response;
     }
 
     public function delete(string $model, array $where) {
@@ -92,6 +143,13 @@ class OdooClient {
             $this->client->where(...$whereCondition);
         }
 
-        return $this->client->delete($model);
+        $event = uniqid('', true);
+        clock()->event("[Odoo] delete@$model")->name($event)->color("cyan")->begin();
+
+        $response = $this->client->delete($model);
+
+        clock()->event($event)->end();
+
+        return $response;
     }
 }

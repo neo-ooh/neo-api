@@ -110,7 +110,7 @@ class ImportCreativeJob extends BroadcastJobBase {
         $creativeTags = $tags->get($broadcaster->getBroadcasterId());
 
         // Perform the creation
-        $creativeExternalId = $broadcaster->importCreative($creative->toResource(), $importType, $creativeTags);
+        $creativeExternalId = $broadcaster->importCreative($creative->toResource($broadcaster->getBroadcasterId()), $importType, $creativeTags);
 
         $externalResource = new ExternalResource([
             "resource_id"    => $creative->getKey(),

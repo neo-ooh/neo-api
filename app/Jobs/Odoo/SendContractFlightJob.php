@@ -107,8 +107,8 @@ class SendContractFlightJob implements ShouldQueue {
 
         $sendGroups = $orderLinesToAdd->chunk(100);
 
-        foreach ($sendGroups as $sendGroup) {
-            $client->client->call(OrderLine::$slug, "create", [$sendGroup->toArray()]);
+        foreach ($sendGroups as $i => $sendGroup) {
+            OrderLine::createMany($client, $sendGroup->toArray());
         }
 
         // And we are done
@@ -160,7 +160,7 @@ class SendContractFlightJob implements ShouldQueue {
             "is_rental_line"  => 1,
             "is_linked_line"  => 1,
             "discount"        => 0,
-            "sequence"        => $this->flightIndex * 10
+            "sequence"        => $this->flightIndex * 10,
         ]);
 
         return $orderLines;

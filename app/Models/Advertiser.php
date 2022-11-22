@@ -14,6 +14,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Modules\Broadcast\Enums\ExternalResourceType;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @property int    $id
@@ -43,5 +46,23 @@ class Advertiser extends Model {
      */
     public function representations(): HasMany {
         return $this->hasMany(AdvertiserRepresentation::class, "advertiser_id", "id");
+    }
+
+    /**
+     * @throws UnknownProperties
+     */
+    public function getExternalRepresentation(int $broadcasterId): ExternalBroadcasterResourceId|null {
+        /** @var AdvertiserRepresentation|null $representation */
+        $representation = $this->representations()->where("broadcaster_id", "=", $broadcasterId)->first();
+
+        if (!$representation) {
+            return null;
+        }
+
+        return new ExternalBroadcasterResourceId([
+            "broadcaster_id" => $broadcasterId,
+            "external_id"    => $representation->external_id,
+            "type"           => ExternalResourceType::Advertiser,
+        ]);
     }
 }

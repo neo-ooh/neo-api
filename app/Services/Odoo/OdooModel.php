@@ -10,11 +10,14 @@
 
 namespace Neo\Services\Odoo;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
+use JsonException;
 use Neo\Services\API\Traits\HasAttributes;
 
 abstract class OdooModel implements Arrayable {
+
     use HasAttributes;
 
     /**
@@ -55,7 +58,7 @@ abstract class OdooModel implements Arrayable {
         $this->setAttributes((array)$attributes);
     }
 
-    protected function setAttributes(array $attributes) {
+    protected function setAttributes(array $attributes): void {
         $this->attributes = $attributes;
 
         // DisplayType relations
@@ -66,7 +69,7 @@ abstract class OdooModel implements Arrayable {
 
             $attr = [
                 "id"   => $this->{$relation}[0],
-                "name" => $this->{$relation}[1]
+                "name" => $this->{$relation}[1],
             ];
 
             // Set relation as incomplete model
@@ -83,7 +86,11 @@ abstract class OdooModel implements Arrayable {
      *
      * @param OdooClient $client
      * @param array      $filters
+     * @param int|null   $limit
+     * @param int        $offset
      * @return Collection
+     * @throws JsonException
+     * @throws OdooException
      */
     public static function all(OdooClient $client, array $filters = [], int|null $limit = null, int $offset = 0): Collection {
         $rawModels = $client->get(static::$slug, array_merge(static::$filters, $filters), static::$fields, $limit, $offset);
@@ -94,12 +101,28 @@ abstract class OdooModel implements Arrayable {
     /**
      * Pull multiple records using a custom field
      *
-     * @param OdooClient       $client
-     * @param array|Collection $ids
-     * @return Collection<static>
+     * @param OdooClient $client
+     * @param string     $field
+     * @param            $value
+     * @param int|null   $limit
+     * @param int        $offset
+     * @return Collection
      */
     public static function findBy(OdooClient $client, string $field, $value, int|null $limit = null, int $offset = 0): Collection {
         return $client->findBy(static::$slug, $field, $value, $limit, $offset)->map(fn($record) => new static($client, $record));
+    }
+
+    /**
+     * Pull multiple records using a custom field
+     *
+     * @param OdooClient $client
+     * @param array      $filters
+     * @return Collection
+     * @throws JsonException
+     * @throws OdooException
+     */
+    public static function search(OdooClient $client, array $filters): Collection {
+        return $client->get(static::$slug, $filters)->map(fn($record) => new static($client, $record));
     }
 
     /**
@@ -108,6 +131,7 @@ abstract class OdooModel implements Arrayable {
      * @param OdooClient       $client
      * @param array|Collection $ids
      * @return Collection<static>
+     * @throws JsonException
      */
     public static function getMultiple(OdooClient $client, array|Collection $ids): Collection {
         return $client->getById(static::$slug, $ids, static::$fields)
@@ -119,7 +143,8 @@ abstract class OdooModel implements Arrayable {
      *
      * @param OdooClient $client
      * @param mixed      $id Unique ID of the record
-     * @return static
+     * @return OdooModel|null
+     * @throws JsonException
      */
     public static function get(OdooClient $client, $id): static|null {
         $response = $client->getById(static::$slug, $id, static::$fields);
@@ -146,6 +171,7 @@ abstract class OdooModel implements Arrayable {
      * Push the value of the specified fields to Odoo
      *
      * @param array $fields
+     * @return bool
      */
     public function update(array $fields): bool {
         $values = collect($fields)->mapWithKeys(fn($k) => [$k => $this->{$k}]);
@@ -153,21 +179,42 @@ abstract class OdooModel implements Arrayable {
     }
 
     /**
-     * Pull a specific record using its id
+     * Store the model in Odoo
      *
      * @param OdooClient $client
-     * @param mixed      $id Unique ID of the record
-     * @return static
+     * @param array      $fields
+     * @param bool       $pullRecord
+     * @return OdooModel|int
+     * @throws JsonException
      */
-    public static function create(OdooClient $client, array $fields, $pullRecord = true): static|int {
+    public static function create(OdooClient $client, array $fields, bool $pullRecord = true): static|int {
         $recordId = $client->create(static::$slug, $fields);
         return $pullRecord ? static::get($client, $recordId) : $recordId;
     }
 
+    /**
+     * Store multiple records in Odoo
+     *
+     * @param OdooClient $client
+     * @param array      $records
+     * @return Collection<integer>
+     */
+    public static function createMany(OdooClient $client, array $records): Collection {
+        return $client->createMany(static::$slug, $records);
+    }
+
+    /**
+     * @param OdooClient $client
+     * @param array      $where
+     * @return Collection|string|true
+     */
     public static function delete(OdooClient $client, array $where) {
         return $client->delete(static::$slug, $where);
     }
 
+    /**
+     * @return Collection|string|true
+     */
     public function remove() {
         return $this->client->delete(static::$slug, [[static::$key, "=", $this->getKey()]]);
     }

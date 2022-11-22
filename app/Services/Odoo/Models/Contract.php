@@ -49,7 +49,7 @@ class Contract extends OdooModel {
     /**
      * Tell if the contract is confirmed, and its content should be taken into account for availabilities, etc.
      *
-     * @return void
+     * @return bool
      */
     public function isConfirmed(): bool {
         return !$this->isDraft() && !$this->isCancelled();

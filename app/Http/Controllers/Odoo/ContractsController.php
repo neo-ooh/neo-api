@@ -62,12 +62,12 @@ class ContractsController {
             throw new ContractIsNotDraftException($contract->name);
         }
 
-        SendContractJob::dispatchSync($contract, $request->input("flights"), $request->input("clearOnSend"));
+        SendContractJob::dispatchSync($contract, $request->input("plan"), $request->input("clearOnSend"));
 
         Log::info("connect.log", [
             "action"    => "planner.odoo.sent",
             "contract"  => $contract->name,
-            "sales_rep" => Auth::user()->name
+            "sales_rep" => Auth::user()->name,
         ]);
 
         return new Response([]);

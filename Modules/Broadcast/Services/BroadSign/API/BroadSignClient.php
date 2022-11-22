@@ -62,7 +62,7 @@ class BroadSignClient implements APIClientInterface {
             $payload = null;
         }
 
-        // Execute tge request
+        // Execute the request
         try {
             if ($endpoint->cache === 0 || strtolower($endpoint->method) !== 'get') {
                 // Bypass the cache if we are not making a `get` request
@@ -91,12 +91,18 @@ class BroadSignClient implements APIClientInterface {
      * @throws GuzzleException
      */
     protected function call_impl__(BroadSignEndpoint $endpoint, $payload, array $headers): mixed {
+
         if (config('app.env') !== 'production') {
             Log::debug("[BroadSign] $endpoint->method@{$endpoint->getPath()}", [json_encode($payload, JSON_THROW_ON_ERROR)]);
         }
 
+        $event = "$endpoint->method@$endpoint->path+" . json_encode($payload, JSON_THROW_ON_ERROR);
+        clock()->event("[BroadSign] $endpoint->method@$endpoint->path")->name($event)->color("purple")->begin();
+
         // Execute the request
         $response = $this->client->call($endpoint, $payload, $headers);
+
+        clock()->event($event)->end();
 
         // In case the resource wasn't found (404), return null
         if ($response->status() === 404) {

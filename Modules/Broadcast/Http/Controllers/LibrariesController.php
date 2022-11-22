@@ -40,14 +40,11 @@ class LibrariesController extends Controller {
 
         if ($request->has("formats")) {
             $libraries->load("formats");
-
             $libraries = $libraries->filter(fn(Library $library) => $library->formats->contains(fn(Format $format) => in_array($format->getKey(), array_map('intval', $request->input('formats', [])), true)));
         }
 
         if ($request->has("layouts")) {
             $libraries->load("layouts");
-
-            clock($request->input("layouts"));
             $libraries = $libraries->filter(fn(Library $library) => $library->layouts->contains(fn(Layout $layout) => in_array($layout->getKey(), array_map('intval', $request->input('layouts', [])), true)));
         }
 
@@ -78,6 +75,7 @@ class LibrariesController extends Controller {
         $library                = new Library();
         $library->name          = $request->input("name");
         $library->owner_id      = $request->input("owner_id");
+        $library->advertiser_id = $request->input("advertiser_id", null);
         $library->content_limit = $request->input("content_limit", 0);
         $library->save();
 
@@ -105,6 +103,7 @@ class LibrariesController extends Controller {
     public function update(UpdateLibraryRequest $request, Library $library): Response {
         $library->name          = $request->input("name");
         $library->owner_id      = $request->input("owner_id");
+        $library->advertiser_id = $request->input("advertiser_id", $library->advertiser_id);
         $library->content_limit = $request->input("content_limit");
 
         $library->save();

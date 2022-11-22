@@ -169,14 +169,23 @@ class Creative extends BroadSignModel {
                 fseek($tempFile, 0);
                 $creativePath = stream_get_meta_data($tempFile)['uri'];
 
-                $response = static::executeRequest($client, $metadata, $creativePath);
+                $response = static::executeRequest(
+                    client: $client,
+                    creative: $creative,
+                    payload: $metadata,
+                    file: $creativePath
+                );
 
                 fclose($tempFile);
 
                 return $response["id"];
             case CreativeStorageType::Link:
                 $metadata["size"] = "-1";
-                $response         = static::executeRequest($client, $metadata);
+                $response         = static::executeRequest(
+                    client: $client,
+                    creative: $creative,
+                    payload: $metadata
+                );
 
                 return $response["id"];
         }
@@ -198,7 +207,11 @@ class Creative extends BroadSignModel {
             "mime"             => "",
         ];
 
-        $response = static::executeRequest($client, $metadata);
+        $response = static::executeRequest(
+            client: $client,
+            creative: $creative,
+            payload: $metadata
+        );
 
         return $response["id"];
     }
@@ -206,11 +219,13 @@ class Creative extends BroadSignModel {
     /**
      * @throws JsonException
      */
-    protected static function executeRequest(BroadSignClient $client, array $payload, $file = null): array {
+    protected static function executeRequest(BroadSignClient $client, CreativeResource $creative, array $payload, $file = null): array {
         // Complete the payload
-        $payload["domain_id"]    = $client->getConfig()->domainId;
-        $payload["container_id"] = $client->getConfig()->adCopiesContainerId;
-        $payload["parent_id"]    = $client->getConfig()->customerId;
+        $payload["domain_id"] = $client->getConfig()->domainId;
+
+        // If the creative is associated with an advertiser, parent it to this one, otherwise, use the default one.
+        $payload["container_id"] = $creative->advertiser === null ? $client->getConfig()->adCopiesContainerId : null;
+        $payload["parent_id"]    = $creative->advertiser !== null ? (int)$creative->advertiser->external_id : $client->getConfig()->customerId;
 
         $metadata = json_encode($payload, JSON_THROW_ON_ERROR);
 

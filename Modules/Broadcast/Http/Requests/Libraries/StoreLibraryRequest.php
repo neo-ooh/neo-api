@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Models\Advertiser;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Library;
 use Neo\Rules\AccessibleActor;
@@ -38,6 +39,8 @@ class StoreLibraryRequest extends FormRequest {
         return [
             "name"          => ["required", "string", "min:3"],
             "owner_id"      => ["required", "integer", new AccessibleActor()],
+            "advertiser_id" => ["integer", new Exists(Advertiser::class, "id")],
+
             "content_limit" => ["required", "integer", "min:0"],
 
             "formats"   => ["array"],

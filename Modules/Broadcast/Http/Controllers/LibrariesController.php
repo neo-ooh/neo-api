@@ -112,7 +112,7 @@ class LibrariesController extends Controller {
 
         $library->refresh();
 
-        return new Response($library->load("layouts", "layouts.frames"));
+        return new Response($library->loadPublicRelations());
     }
 
     /**

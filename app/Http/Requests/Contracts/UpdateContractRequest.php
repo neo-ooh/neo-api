@@ -15,6 +15,7 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 use Neo\Models\Contract;
+use Neo\Rules\PublicRelations;
 
 class UpdateContractRequest extends FormRequest {
     /**
@@ -35,7 +36,9 @@ class UpdateContractRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "salesperson_id" => ["required", "exists:actors,id"]
+            "salesperson_id" => ["required", "exists:actors,id"],
+
+            "with" => ["array", new PublicRelations(Contract::class)],
         ];
     }
 }

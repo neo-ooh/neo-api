@@ -87,8 +87,8 @@ class SendContractFlightJob implements ShouldQueue {
         Campaign::create($client, [
             "order_id"   => $this->contract->id,
             "state"      => "draft",
-            "date_start" => $this->flight["start"],
-            "date_end"   => $this->flight["end"],
+            "date_start" => $this->flight["start_date"],
+            "date_end"   => $this->flight["end_date"],
         ], pullRecord: false);
 
         // Now, we loop over each compiled product, and build its orderlines
@@ -127,8 +127,8 @@ class SendContractFlightJob implements ShouldQueue {
             "customer_lead"      => 0.0,
             "nb_screen"          => $compiledProduct["quantity"],
             "product_id"         => $product->external_variant_id,
-            "rental_start"       => $this->flight["start"],
-            "rental_end"         => $this->flight["end"],
+            "rental_start"       => $this->flight["start_date"],
+            "rental_end"         => $this->flight["end_date"],
             "is_rental_line"     => 1,
             "is_linked_line"     => 0,
             "discount"           => $discountAmount,
@@ -155,8 +155,8 @@ class SendContractFlightJob implements ShouldQueue {
             "customer_lead"   => 0.0,
             "nb_screen"       => $linkedProduct->quantity,
             "product_id"      => $linkedProduct->external_variant_id,
-            "rental_start"    => $this->flight["start"],
-            "rental_end"      => $this->flight["end"],
+            "rental_start"    => $this->flight["start_date"],
+            "rental_end"      => $this->flight["end_date"],
             "is_rental_line"  => 1,
             "is_linked_line"  => 1,
             "discount"        => 0,

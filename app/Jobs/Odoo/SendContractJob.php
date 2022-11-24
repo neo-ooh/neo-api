@@ -19,7 +19,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use JsonException;
-use Neo\Services\Odoo\Models\Attachment;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\Models\Message;
@@ -90,29 +89,19 @@ class SendContractJob implements ShouldQueue {
         }
     }
 
+    /**
+     * @throws JsonException
+     */
     protected function attachPlan(OdooClient $client) {
         $planFileName = $this->plan["contract"] . ".ccp";
 
-        // Remove existing plan attached to the contract
-        Attachment::delete($client, [
-            ["name", "=", $planFileName],
-            ["res_model", "=", Contract::$slug],
-            ["res_id", "=", $this->contract->getKey()],
-        ]);
-
-        // Store the plan in Odoo as well
-        Attachment::create($client, [
-            "name"      => $this->plan["contract"] . ".ccp",
-            "res_model" => Contract::$slug,
-            "res_id"    => $this->contract->id,
-            "type"      => 'binary',
-            "datas"     => base64_encode(gzencode(json_encode($this->plan, JSON_THROW_ON_ERROR))),
-        ], pullRecord: false);
+        $this->contract->removeAttachment($planFileName);
+        $this->contract->storeAttachment($planFileName, base64_encode(gzencode(json_encode($this->plan, JSON_THROW_ON_ERROR))));
     }
 
     protected function getFlightDescription(array $flight, int $flightIndex): string {
-        $flightStart = Carbon::parse($flight['start'])->toDateString();
-        $flightEnd   = Carbon::parse($flight['end'])->toDateString();
+        $flightStart = Carbon::parse($flight['start_date'])->toDateString();
+        $flightEnd   = Carbon::parse($flight['end_date'])->toDateString();
         $flightType  = ucFirst($flight["type"]);
 
         return "Flight #" . ($flightIndex + 1) . " ($flightType) [$flightStart -> $flightEnd]";

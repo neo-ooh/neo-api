@@ -27,6 +27,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\Resources\CampaignSearchResult;
+use Neo\Resources\Contracts\FlightType;
 
 /**
  * Class CreateSignupToken
@@ -109,9 +110,9 @@ class ImportContractReservations implements ShouldQueue {
                 $flight = $contract->flights()->where("start_date", "=", $externalCampaign->start_date)
                                    ->where("end_date", "=", $externalCampaign->end_date)
                                    ->when(str_ends_with($externalCampaign->name, "BUA"), function ($query) {
-                                       $query->where("type", "=", ContractFlight::BUA);
+                                       $query->where("type", "=", FlightType::BUA);
                                    })->when(!str_ends_with($externalCampaign->name, "BUA"), function ($query) {
-                        $query->where("type", "!=", ContractFlight::BUA);
+                        $query->where("type", "!=", FlightType::BUA);
                     })
                                    ->first();
 

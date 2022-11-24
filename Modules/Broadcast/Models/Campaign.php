@@ -19,6 +19,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Carbon as Date;
 use Illuminate\Support\Collection;
 use Neo\Models\Actor;
+use Neo\Models\Contract;
+use Neo\Models\ContractFlight;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CampaignStatus;
@@ -39,6 +41,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int                  $id
  * @property int                  $parent_id
  * @property int                  $creator_id
+ * @property int|null             $flight_id
  * @property string               $name
  * @property double               $static_duration_override  Duration in seconds for contents without a predetermined duration
  *           (pictures). Override the format content length if set to a value above zero
@@ -72,6 +75,9 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Collection<Location> $locations
  *
  * @property Collection<Layout>   $layouts
+ *
+ * @property ContractFlight|null  $flight
+ * @property Contract|null        $contract
  *
  * @mixin Builder<Campaign>
  */
@@ -247,6 +253,14 @@ class Campaign extends BroadcastResourceModel {
          */
         return $this->hasManyDeepFromRelations([$this->formats(), (new Format())->layouts()])
                     ->distinct();
+    }
+
+    public function flight(): BelongsTo {
+        return $this->belongsTo(ContractFlight::class, "flight_id", "id");
+    }
+
+    public function contract(): void {
+        $this->hasOneDeepFromRelations([$this->flight(), (new ContractFlight())->contract()]);
     }
 
 

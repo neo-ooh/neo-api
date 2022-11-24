@@ -15,6 +15,7 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Neo\Enums\Capability;
 use Neo\Models\Contract;
+use Neo\Rules\PublicRelations;
 
 class ShowContractRequest extends FormRequest {
     /**
@@ -35,7 +36,7 @@ class ShowContractRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "with" => ["sometimes", "array"]
+            "with" => ["array", new PublicRelations(Contract::class)],
         ];
     }
 }

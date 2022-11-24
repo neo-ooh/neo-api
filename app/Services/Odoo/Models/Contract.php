@@ -10,6 +10,8 @@
 
 namespace Neo\Services\Odoo\Models;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
+use JsonException;
 use Neo\Services\Odoo\OdooClient;
 use Neo\Services\Odoo\OdooModel;
 
@@ -53,6 +55,62 @@ class Contract extends OdooModel {
      */
     public function isConfirmed(): bool {
         return !$this->isDraft() && !$this->isCancelled();
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attachements
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Get an attachment of the contract by its given name
+     *
+     * @param string $attachmentName
+     * @return Attachment|null
+     * @throws OdooException
+     * @throws JsonException
+     */
+    public function getAttachment(string $attachmentName) {
+        return Attachment::all($this->client, [
+            ["res_model", "=", static::$slug],
+            ["res_id", "=", $this->getKey()],
+            ["name", "=", $attachmentName],
+        ])->first();
+    }
+
+    /**
+     * Stores the given `rawData` as an attachment to the contract using the given name
+     *
+     * @param string $attachmentName
+     * @param string $data
+     * @return int
+     * @throws JsonException
+     */
+    public function storeAttachment(string $attachmentName, string $data): int {
+        return Attachment::create($this->client, [
+            "res_model" => static::$slug,
+            "res_id"    => $this->getKey(),
+
+            "name" => $attachmentName,
+
+            "type"  => 'binary',
+            "datas" => $data,
+        ], pullRecord: false);
+    }
+
+    /**
+     * Delete attachment for the contract using the given name
+     *
+     * @param string $attachmentName
+     * @return \Illuminate\Support\Collection|string|true
+     */
+    public function removeAttachment(string $attachmentName) {
+        return Attachment::delete($this->client, [
+            ["res_model", "=", static::$slug],
+            ["res_id", "=", $this->getKey()],
+            ["name", "=", $attachmentName],
+        ]);
     }
 }
 

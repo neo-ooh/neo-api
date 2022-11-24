@@ -31,7 +31,6 @@ use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\Contracts\ImportContractReservations;
 use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Models\Contract;
-use Neo\Models\ContractFlight;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -100,56 +99,14 @@ class ContractsController extends Controller {
     }
 
     public function show(ShowContractRequest $request, Contract $contract) {
-        $with = $request->get("with", []);
-
-        if (in_array("salesperson", $with, true)) {
-            $contract->load("salesperson", "salesperson.logo");
-        }
-
-        if (in_array("client", $with, true)) {
-            $contract->load("client");
-        }
-
-        if (in_array("advertiser", $with, true)) {
-            $contract->load("advertiser");
-        }
-
-        if (in_array("reservations", $with, true)) {
-            $contract->load("reservations");
-
-            if (in_array("reservations.locations", $with, true)) {
-                $contract->loadReservationsLocations();
-            }
-        }
-
-        if (in_array("flights", $with, true)) {
-            $contract->load("flights");
-            $contract->flights->append("expected_impressions");
-
-            // Add the network ID to each order line
-            $contract->flights->each(fn(ContractFlight $flight) => $flight->lines->append(["network_id", "product_type"]));
-        }
-
-        if (in_array("performances", $with, true)) {
-            $contract->append("performances");
-        }
-
-        if (in_array("bursts", $with, true)) {
-            $contract->load("bursts", "bursts.screenshots", "bursts.location");
-        }
-
-        if (in_array("validated_screenshots", $with, true)) {
-            $contract->load("validated_screenshots");
-        }
-
-        return new Response($contract);
+        return new Response($contract->loadPublicRelations());
     }
 
     public function update(UpdateContractRequest $request, Contract $contract) {
         $contract->salesperson_id = $request->input("salesperson_id");
         $contract->save();
 
-        return new Response($contract);
+        return new Response($contract->loadPublicRelations());
     }
 
     public function refresh(RefreshContractRequest $request, Contract $contract) {

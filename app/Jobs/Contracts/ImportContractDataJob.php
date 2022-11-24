@@ -15,6 +15,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
+use JsonException;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Advertiser;
 use Neo\Models\Client;
@@ -22,10 +24,13 @@ use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\ContractLine;
 use Neo\Models\Product;
+use Neo\Resources\Contracts\CPCompiledFlight;
+use Neo\Resources\Contracts\FlightType;
 use Neo\Services\Odoo\Models\Contract as OdooContract;
 use Neo\Services\Odoo\Models\OrderLine;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use function Ramsey\Uuid\v4;
 
 class ImportContractDataJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -79,8 +84,17 @@ class ImportContractDataJob implements ShouldQueue {
         $contract->client_id     = $client->getKey();
         $contract->save();
 
+        // Check if the contract has a compiled plan attached to it. If yes, import and store it
+        $contractAttachment = $this->odooContract->getAttachment($contract->getAttachedPlanName());
+
+        if ($contractAttachment) {
+            $contract->storePlan($contractAttachment->datas);
+            $contract->has_plan = true;
+            $contract->save();
+        }
+
         // Now, we pull all the lines from the contract and put them in their own flights
-        $flights    = collect();
+        $flights    = $this->getFlightsFromPlan($contract);
         $orderLines = collect();
         $chunkSize  = 50;
 
@@ -145,6 +159,7 @@ class ImportContractDataJob implements ShouldQueue {
             if ($flight === null) {
                 $flight = ContractFlight::query()->firstOrCreate([
                     "contract_id" => $contract->getKey(),
+                    "uid"         => v4(),
                     "type"        => $type,
                     "start_date"  => $orderLine->rental_start,
                     "end_date"    => $orderLine->rental_end,
@@ -169,7 +184,7 @@ class ImportContractDataJob implements ShouldQueue {
 
             // If the line is guaranteed and for a digital product, sum its impressions
             if ($product->category->fill_strategy === ProductsFillStrategy::digital &&
-                $flight->type !== ContractFlight::BUA) {
+                $flight->type !== FlightType::BUA) {
                 $expectedDigitalImpressions += $line["impressions"];
             }
         }
@@ -186,17 +201,17 @@ class ImportContractDataJob implements ShouldQueue {
 
         // Update contract start date, end date and expected impressions
         $startDate = $flights
-            ->where("type", "!=", ContractFlight::BUA)
+            ->where("type", "!=", FlightType::BUA)
             ->whenEmpty(function () use ($flights) {
-                return $flights->where("type", "=", ContractFlight::BUA);
+                return $flights->where("type", "=", FlightType::BUA);
             })
             ->sortBy("start_date")
             ->first()?->start_date;
 
         $endDate = $flights
-            ->where("type", "!=", ContractFlight::BUA)
+            ->where("type", "!=", FlightType::BUA)
             ->whenEmpty(function () use ($flights) {
-                return $flights->where("type", "=", ContractFlight::BUA);
+                return $flights->where("type", "=", FlightType::BUA);
             })
             ->sortBy("end_date", SORT_REGULAR, "desc")
             ->first()?->end_date;
@@ -208,5 +223,34 @@ class ImportContractDataJob implements ShouldQueue {
 
         // Remove any flights attached with the contract that are not part of the current run
         $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();
+    }
+
+    /**
+     * @throws JsonException
+     */
+    public function getFlightsFromPlan(Contract $contract): Collection {
+        // Get the compiled plan from the contract
+        $plan = $contract->getStoredPlanAttribute();
+
+        if (!$plan) {
+            return collect();
+        }
+
+        $flights = collect();
+
+        /** @var CPCompiledFlight $flight */
+        foreach ($plan->flights as $i => $flight) {
+            $flights->push(ContractFlight::query()->firstOrCreate([
+                "contract_id" => $contract->getKey(),
+                "uid"         => $flight->id,
+            ], [
+                "name"       => $flight->name ?? "Flight #" . $i,
+                "type"       => $flight->type->value,
+                "start_date" => $flight->start_date->toDateString(),
+                "end_date"   => $flight->end_date->toDateString(),
+            ]));
+        }
+
+        return $flights;
     }
 }

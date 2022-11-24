@@ -13,12 +13,15 @@ namespace Neo\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Neo\Enums\ProductsFillStrategy;
+use Neo\Modules\Broadcast\Models\Campaign;
 
 /**
  * @property-read int                 $id
+ * @property-read int                 $uid
  * @property-read int                 $contract_id
  * @property string                   $name
  * @property Carbon                   $start_date
@@ -30,16 +33,13 @@ use Neo\Enums\ProductsFillStrategy;
  * @property Collection<ContractLine> $lines
  */
 class ContractFlight extends Model {
-    public const GUARANTEED = "guaranteed";
-    public const BONUS = "bonus";
-    public const BUA = "bua";
-
     protected $table = "contracts_flights";
 
     protected $primaryKey = "id";
 
     protected $fillable = [
         "contract_id",
+        "uid",
         "name",
         "start_date",
         "end_date",
@@ -57,6 +57,14 @@ class ContractFlight extends Model {
 
     public function reservations(): HasMany {
         return $this->hasMany(ContractReservation::class, "flight_id", "id");
+    }
+
+    public function contract(): BelongsTo {
+        return $this->belongsTo(Contract::class, "contract_id", "id");
+    }
+
+    public function campaigns(): HasMany {
+        return $this->hasMany(Campaign::class, "flight_id", "id");
     }
 
     public function getExpectedImpressionsAttribute() {

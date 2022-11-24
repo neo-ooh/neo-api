@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Cache;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\ContractReservation;
+use Neo\Resources\Contracts\FlightType;
 
 class RefreshContractsPerformancesJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -51,7 +52,7 @@ class RefreshContractsPerformancesJob implements ShouldQueue {
 
                 /** @var ContractFlight|null $flight */
                 $flight = $contract->flights->firstWhere("id", "=", $reservation->flight_id);
-                return $flight && $flight->type !== ContractFlight::BUA;
+                return $flight && $flight->type !== FlightType::BUA;
             })->pluck("external_id");
 
             $contract->received_impressions = $contract->performances->whereIn("reservable_id", $reservationExternalIds)

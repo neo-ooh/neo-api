@@ -18,8 +18,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Http\Requests\ListAvailabilitiesRequest;
-use Neo\Models\ContractFlight;
 use Neo\Models\Product;
+use Neo\Resources\Contracts\FlightType;
 
 class AvailabilitiesController {
     public function index(ListAvailabilitiesRequest $request) {
@@ -67,7 +67,7 @@ class AvailabilitiesController {
                                                    ->whereIn("products.id", $chunk)
                                                    ->where('contracts_flights.start_date', '<', $to->toDateString())
                                                    ->where('contracts_flights.end_date', '>', $from->toDateString())
-                                                   ->where('contracts_flights.type', '<>', ContractFlight::BUA)
+                                                   ->where('contracts_flights.type', '<>', FlightType::BUA)
                                                    ->get()
                                                    ->map(function ($reservation) {
                                                        return [

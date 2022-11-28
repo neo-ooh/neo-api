@@ -60,6 +60,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property Client                            $client
  * @property Collection<ContractFlight>        $flights
  * @property Actor                             $owner
+ * @property Advertiser|null                   $advertiser
  * @property Collection<ContractBurst>         $bursts
  * @property Collection<ContractReservation>   $reservations
  * @property Collection<ReservablePerformance> $performances

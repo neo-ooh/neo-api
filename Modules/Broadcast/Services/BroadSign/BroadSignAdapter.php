@@ -347,8 +347,8 @@ class BroadSignAdapter extends BroadcasterOperator implements
             "saturation" => $campaign->occurrences_in_loop,
 
             "auto_synchronize_bundles" => true,
-            "container_id"             => $this->config->reservationsContainerId,
-            "parent_id"                => $this->config->customerId,
+            "container_id"             => !$campaign->advertiser ? $this->config->reservationsContainerId : null,
+            "parent_id"                => $campaign->advertiser?->external_id ?? $this->config->customerId,
         ]);
 
         $bsCampaign->create();

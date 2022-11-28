@@ -33,6 +33,7 @@ use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasOneDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
@@ -153,7 +154,7 @@ class Campaign extends BroadcastResourceModel {
         "tags"                     => "broadcast_tags",
     ];
 
-    public static function boot(): void {
+    protected static function boot(): void {
         parent::boot();
 
         static::deleting(static function (Campaign $campaign) {
@@ -259,8 +260,8 @@ class Campaign extends BroadcastResourceModel {
         return $this->belongsTo(ContractFlight::class, "flight_id", "id");
     }
 
-    public function contract(): void {
-        $this->hasOneDeepFromRelations([$this->flight(), (new ContractFlight())->contract()]);
+    public function contract(): HasOneDeep {
+        return $this->hasOneDeepFromRelations([$this->flight(), (new ContractFlight())->contract()]);
     }
 
 
@@ -318,9 +319,11 @@ class Campaign extends BroadcastResourceModel {
     */
 
     /**
+     * @param int|null $broadcasterId required to populate `advertiser` property
+     * @return CampaignResource
      * @throws UnknownProperties
      */
-    public function toResource(): CampaignResource {
+    public function toResource(int|null $broadcasterId = null): CampaignResource {
         $this->loadMissing("parent");
 
         return new CampaignResource([
@@ -333,6 +336,7 @@ class Campaign extends BroadcastResourceModel {
             "broadcast_days"      => $this->broadcast_days,
             "priority"            => $this->priority,
             "occurrences_in_loop" => $this->occurrences_in_loop,
+            "advertiser"          => $broadcasterId ? $this->contract?->advertiser?->getExternalRepresentation($broadcasterId) : null,
         ]);
     }
 
@@ -394,7 +398,7 @@ class Campaign extends BroadcastResourceModel {
     |--------------------------------------------------------------------------
     */
 
-    public function getWarningsAttribute() {
+    public function getWarningsAttribute(): array {
         $warnings = [];
 
         if ($this->locations()->count() === 0) {

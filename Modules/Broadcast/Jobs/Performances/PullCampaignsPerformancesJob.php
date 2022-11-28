@@ -29,7 +29,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterReporting;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -45,7 +44,7 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
     protected int $lookBack = 3;
 
     /**
-     * @throws UnknownProperties
+     * @return void
      */
     public function handle(): void {
         // List all campaigns currently active with their external representations

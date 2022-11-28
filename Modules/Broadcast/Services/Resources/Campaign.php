@@ -26,4 +26,6 @@ class Campaign extends ExternalBroadcasterResource {
     public float $occurrences_in_loop;
 
     public int $duration_msec = 0;
+
+    public ExternalBroadcasterResourceId|null $advertiser;
 }

@@ -11,6 +11,7 @@
 namespace Neo\Modules\Broadcast\Services\BroadSign\Models;
 
 use Illuminate\Support\Collection;
+use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\ResourceIDParser;
@@ -240,9 +241,14 @@ class Campaign extends BroadSignModel implements ResourceCastable {
             "end_date"            => $this->end_date,
             "end_time"            => $this->end_time,
             "broadcast_days"      => $this->day_of_week_mask,
-            "priority"            => 0,
+            "priority"            => $this->priority,
             "occurrences_in_loop" => $this->saturation,
             "duration_msec"       => $this->duration_msec,
+            "advertiser_id"       => $this->parent_id ? [
+                "broadcaster_id" => $this->getBroadcasterId(),
+                "external_id"    => $this->parent_id,
+                "type"           => ExternalResourceType::Advertiser,
+            ] : null,
         ]);
     }
 }

@@ -220,9 +220,6 @@ class ImportContractDataJob implements ShouldQueue {
         $contract->end_date             = $endDate;
         $contract->expected_impressions = $expectedDigitalImpressions;
         $contract->save();
-
-        // Remove any flights attached with the contract that are not part of the current run
-        $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();
     }
 
     /**
@@ -240,16 +237,22 @@ class ImportContractDataJob implements ShouldQueue {
 
         /** @var CPCompiledFlight $flight */
         foreach ($plan->flights as $i => $flight) {
-            $flights->push(ContractFlight::query()->firstOrCreate([
+            $flights->push(ContractFlight::query()->updateOrCreate([
                 "contract_id" => $contract->getKey(),
                 "uid"         => $flight->id,
             ], [
                 "name"       => $flight->name ?? "Flight #" . $i,
                 "type"       => $flight->type->value,
-                "start_date" => $flight->start_date->toDateString(),
-                "end_date"   => $flight->end_date->toDateString(),
+                "start_date" => $flight->start_date,
+                "end_date"   => $flight->end_date,
             ]));
         }
+
+        // Empty all flights lines as they will all be re-imported
+        $flights->each(fn(ContractFlight $flight) => $flight->lines()->delete());
+
+        // Remove any flights attached with the contract that are not part of the ones just created
+        $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();
 
         return $flights;
     }

@@ -73,6 +73,7 @@ class CampaignsController extends Controller {
         $campaign->end_date       = $request->input("end_date");
         $campaign->end_time       = $request->input("end_time");
         $campaign->broadcast_days = $request->input("broadcast_days");
+        $campaign->flight_id      = $request->input("flight_id");
 
         $campaign->occurrences_in_loop       = $request->input("occurrences_in_loop");
         $campaign->priority                  = $request->input("priority");

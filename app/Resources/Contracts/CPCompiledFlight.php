@@ -10,7 +10,6 @@
 
 namespace Neo\Resources\Contracts;
 
-use Carbon\Carbon;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Casts\DateTimeInterfaceCast;
@@ -23,14 +22,14 @@ class CPCompiledFlight extends Data {
         public string|null    $name,
         public FlightType     $type,
 
-        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon         $start_date,
-        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public Carbon         $end_date,
-        #[WithCast(DateTimeInterfaceCast::class, format: 'H:i:s')]
-        public Carbon         $start_time,
-        #[WithCast(DateTimeInterfaceCast::class, format: 'H:i:s')]
-        public Carbon         $end_time,
+//        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        public string         $start_date,
+//        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
+        public string         $end_date,
+//        #[WithCast(DateTimeInterfaceCast::class, format: 'H:i:s')]
+        public string         $start_time,
+//        #[WithCast(DateTimeInterfaceCast::class, format: 'H:i:s')]
+        public string         $end_time,
 
         public int            $weekdays,
 

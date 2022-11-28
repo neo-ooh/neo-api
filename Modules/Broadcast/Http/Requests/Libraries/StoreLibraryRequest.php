@@ -39,7 +39,7 @@ class StoreLibraryRequest extends FormRequest {
         return [
             "name"          => ["required", "string", "min:3"],
             "owner_id"      => ["required", "integer", new AccessibleActor()],
-            "advertiser_id" => ["integer", new Exists(Advertiser::class, "id")],
+            "advertiser_id" => ["nullable", "integer", new Exists(Advertiser::class, "id")],
 
             "content_limit" => ["required", "integer", "min:0"],
 

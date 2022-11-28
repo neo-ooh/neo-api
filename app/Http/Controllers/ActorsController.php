@@ -266,9 +266,6 @@ class ActorsController extends Controller {
             case "to-self":
                 $actor->children->each(fn($actor) => $actor->moveTo(Auth::user()));
                 break;
-            default: // case "to_parent":
-                $actor->children->each(fn($child) => $child->delete());
-                break;
         }
 
         $actor->phone?->delete();

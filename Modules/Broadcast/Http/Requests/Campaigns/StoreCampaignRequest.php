@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Models\ContractFlight;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Rules\AccessibleActor;
@@ -38,6 +39,9 @@ class StoreCampaignRequest extends FormRequest {
         return [
             "parent_id"                 => ["required", "integer", new AccessibleActor()],
             "name"                      => ["nullable", "string"],
+
+            // Contract
+            "flight_id"                 => ["integer", new Exists(ContractFlight::class, "id")],
 
             // Scheduling
             "start_date"                => ["required", "date_format:Y-m-d"],

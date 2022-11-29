@@ -109,8 +109,11 @@ class ContractsController extends Controller {
         return new Response($contract->loadPublicRelations());
     }
 
-    public function refresh(RefreshContractRequest $request, Contract $contract) {
-        ImportContractDataJob::dispatchSync($contract->id);
+    public function refresh(RefreshContractRequest $request, Contract $contract): Response {
+        if ($request->input("reload_data", false)) {
+            ImportContractDataJob::dispatchSync($contract->id);
+        }
+
         ImportContractReservations::dispatchSync($contract->id);
         RefreshContractsPerformancesJob::dispatchSync($contract->id);
 

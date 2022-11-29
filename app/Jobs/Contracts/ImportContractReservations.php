@@ -82,13 +82,19 @@ class ImportContractReservations implements ShouldQueue {
             $externalCampaigns = $externalCampaigns->merge($broadcaster->findCampaigns($identifier));
         }
 
-        $externalCampaigns = $externalCampaigns->unique(fn(CampaignSearchResult $searchResult) => "{$searchResult->id->broadcaster_id}-{$searchResult->id->external_id}");
+        $externalCampaigns = $externalCampaigns->unique(fn(CampaignSearchResult $searchResult) => "{$searchResult->id->broadcaster_id}-{$searchResult->id->external_id}")
+                                               ->filter(fn(CampaignSearchResult $searchResult) => $searchResult->enabled === true);
 
         $storedReservationsId = [];
 
         // Now make sure all reservations are properly associated with the report
         /** @var CampaignSearchResult $externalCampaign */
         foreach ($externalCampaigns as $externalCampaign) {
+            // Ignore disabled campaigns
+            if (!$externalCampaign->enabled) {
+                continue;
+            }
+
             /** @var ContractReservation $cr */
             $cr = ContractReservation::query()->firstOrNew([
                 "broadcaster_id" => $externalCampaign->id->broadcaster_id,
@@ -102,22 +108,25 @@ class ImportContractReservations implements ShouldQueue {
             $cr->start_date    = Carbon::parse($externalCampaign->start_date . " " . $externalCampaign->start_time);
             $cr->end_date      = Carbon::parse($externalCampaign->end_date . " " . $externalCampaign->end_time);
 
-            if ($contract->flights->count() === 1) {
-                // If only one flight, assign by default
-                $cr->flight_id = $contract->flights->first()->id;
-            } else if (!$cr->flight_id) {
-                /** @var ContractFlight|null $flight */
-                $flight = $contract->flights()->where("start_date", "=", $externalCampaign->start_date)
-                                   ->where("end_date", "=", $externalCampaign->end_date)
-                                   ->when(str_ends_with($externalCampaign->name, "BUA"), function ($query) {
-                                       $query->where("type", "=", FlightType::BUA);
-                                   })->when(!str_ends_with($externalCampaign->name, "BUA"), function ($query) {
-                        $query->where("type", "!=", FlightType::BUA);
-                    })
-                                   ->first();
+            // If the contract has a plan attached, do not associate campaigns by default as they may be part of the contract's campaigns
+            if (!$contract->has_plan) {
+                if ($contract->flights->count() === 1) {
+                    // If only one flight, assign by default
+                    $cr->flight_id = $contract->flights->first()->id;
+                } else if (!$cr->flight_id) {
+                    /** @var ContractFlight|null $flight */
+                    $flight = $contract->flights()->where("start_date", "=", $externalCampaign->start_date)
+                                       ->where("end_date", "=", $externalCampaign->end_date)
+                                       ->when(str_ends_with($externalCampaign->name, "BUA"), function ($query) {
+                                           $query->where("type", "=", FlightType::BUA);
+                                       })->when(!str_ends_with($externalCampaign->name, "BUA"), function ($query) {
+                            $query->where("type", "!=", FlightType::BUA);
+                        })
+                                       ->first();
 
-                if ($flight) {
-                    $cr->flight_id = $flight->id;
+                    if ($flight) {
+                        $cr->flight_id = $flight->id;
+                    }
                 }
             }
 

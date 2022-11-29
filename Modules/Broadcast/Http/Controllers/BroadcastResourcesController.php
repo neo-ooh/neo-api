@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ListResourceJobsRequest;
+use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ListResourcePerformancesRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ListResourceRepresentationsRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ShowBroadcastResourceRequest;
 use Neo\Modules\Broadcast\Models\BroadcastResource;
@@ -28,5 +29,9 @@ class BroadcastResourcesController extends Controller {
 
     public function jobs(ListResourceJobsRequest $request, BroadcastResource $broadcastResource): Response {
         return new Response($broadcastResource->jobs()->get());
+    }
+
+    public function performances(ListResourcePerformancesRequest $request, BroadcastResource $broadcastResource): Response {
+        return new Response($broadcastResource->performances()->get());
     }
 }

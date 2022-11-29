@@ -110,7 +110,7 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
                 continue;
             }
 
-            // List all the resource external ID
+            // List all the resources external ID
             $externalRepresentations = collect($batch->external_resources);
             $resources               = $externalRepresentations->map(fn(ExternalResource $resource) => $resource->toResource());
 
@@ -142,7 +142,7 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
 
                 $record = ResourcePerformance::query()
                                              ->where("resource_id", "=", $representation->resource_id)
-                                             ->whereDate("recorded_at", "=", $performance->date)
+                                             ->where("recorded_at", "=", $performance->date)
                                              ->where("data->network_id", $representation->data->network_id)
                                              ->whereJsonContains("data->formats_id", $representation->data->formats_id)
                                              ->first();
@@ -150,7 +150,7 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
                 if ($record) {
                     ResourcePerformance::query()
                                        ->where("resource_id", "=", $representation->resource_id)
-                                       ->whereDate("recorded_at", "=", $performance->date)
+                                       ->where("recorded_at", "=", $performance->date)
                                        ->where("data->network_id", $representation->data->network_id)
                                        ->whereJsonContains("data->formats_id", $representation->data->formats_id)
                                        ->update([

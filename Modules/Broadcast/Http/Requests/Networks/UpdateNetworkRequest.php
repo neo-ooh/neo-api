@@ -34,6 +34,8 @@ class UpdateNetworkRequest extends FormRequest {
     public function rules(): array {
         return [
             "name"  => ["required", "string"],
+            "slug"  => ["required", "string", "unique:" . Network::class . ",slug," . $this->route()
+                                                                                           ?->originalParameter("network")],
             "color" => ["required", "string"],
 
             // Broadcaster dependant settings

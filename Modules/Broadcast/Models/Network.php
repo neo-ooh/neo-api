@@ -28,6 +28,7 @@ use Neo\Modules\Broadcast\Models\StructuredColumns\NetworkSettings;
  * @property string                       $uuid
  * @property int                          $connection_id
  * @property string                       $name
+ * @property string                       $slug
  * @property string                       $color
  * @property NetworkSettings              $settings
  * @property Date|null                    $last_sync_at

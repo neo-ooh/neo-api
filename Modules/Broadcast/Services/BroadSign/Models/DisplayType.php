@@ -75,9 +75,10 @@ class DisplayType extends BroadSignModel implements ResourceCastable {
      */
     public function toResource(): DisplayTypeResource {
         return new DisplayTypeResource([
-            "type"        => ExternalResourceType::DisplayType,
-            "external_id" => $this->getKey(),
-            "name"        => $this->name,
+            "broadcaster_id" => $this->getBroadcasterId(),
+            "type"           => ExternalResourceType::DisplayType,
+            "external_id"    => $this->getKey(),
+            "name"           => $this->name,
         ]);
     }
 }

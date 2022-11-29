@@ -23,7 +23,10 @@ class BroadcastKernelServiceProvider extends ServiceProvider {
 
     public function boot() {
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            // Networks
             $schedule->job(SynchronizeAllNetworksJob::class)->daily();
+
+            // Resources
             $schedule->job(DeleteExpiredResourcesJob::class)->daily();
 
             // Campaigns Performances

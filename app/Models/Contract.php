@@ -257,7 +257,6 @@ class Contract extends Model {
      * @return void
      */
     public function storePlan(string $rawPlan): void {
-        clock($this->getContractStoragePath(), $this->getAttachedPlanName());
         Storage::disk("public")->put($this->getContractStoragePath() . $this->getAttachedPlanName(), $rawPlan);
     }
 

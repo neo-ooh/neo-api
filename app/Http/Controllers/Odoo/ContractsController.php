@@ -19,6 +19,7 @@ use Neo\Exceptions\Odoo\ContractNotFoundException;
 use Neo\Http\Requests\Odoo\Contracts\SendContractRequest;
 use Neo\Http\Requests\Odoo\Contracts\ShowContractRequest;
 use Neo\Jobs\Odoo\SendContractJob;
+use Neo\Resources\Contracts\CPCompiledPlan;
 use Neo\Services\Odoo\Models\Contract as OdooContract;
 use Neo\Services\Odoo\OdooConfig;
 
@@ -62,7 +63,9 @@ class ContractsController {
             throw new ContractIsNotDraftException($contract->name);
         }
 
-        SendContractJob::dispatchSync($contract, $request->input("plan"), $request->input("clearOnSend"));
+        $plan = CPCompiledPlan::from($request->input("plan"));
+
+        SendContractJob::dispatchSync($contract, $plan, $request->input("clearOnSend"));
 
         Log::info("connect.log", [
             "action"    => "planner.odoo.sent",

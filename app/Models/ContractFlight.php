@@ -74,4 +74,17 @@ class ContractFlight extends Model {
             });
         })->sum("impressions");
     }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Performances
+    |--------------------------------------------------------------------------
+    */
+
+    // Contract can pull their performances from two different places:
+    // The first place and most straightforward is form the campaign associated with the flight that are
+    // setup in Connect. For these, we just have to format the already stored performances.
+    // The other place is external reservations (campaigns in external broadcaster) that have been associated directly with the
+    // flight without passing throught a Connect campaign). For these we need to pull the performances straight from the broadcaster and format them
+
 }

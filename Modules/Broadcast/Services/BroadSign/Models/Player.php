@@ -159,12 +159,14 @@ class Player extends BroadSignModel implements ResourceCastable {
      */
     public function toResource(): PlayerResource {
         return new PlayerResource([
-            "enabled"     => $this->active,
-            "external_id" => $this->getKey(),
-            "name"        => $this->name,
-            "location_id" => [
-                "type"        => ExternalResourceType::Location,
-                "external_id" => $this->display_unit_id,
+            "broadcaster_id" => $this->getBroadcasterId(),
+            "enabled"        => $this->active,
+            "external_id"    => $this->getKey(),
+            "name"           => $this->name,
+            "location_id"    => [
+                "broadcaster_id" => $this->getBroadcasterId(),
+                "type"           => ExternalResourceType::Location,
+                "external_id"    => $this->display_unit_id,
             ],
         ]);
     }

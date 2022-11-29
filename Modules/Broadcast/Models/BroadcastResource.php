@@ -11,6 +11,7 @@
 namespace Neo\Modules\Broadcast\Models;
 
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Models\Traits\HasPublicRelations;
@@ -18,10 +19,13 @@ use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResource;
 
 /**
- * @property int                         $id
- * @property BroadcastResourceType       $type
+ * @property int                             $id
+ * @property BroadcastResourceType           $type
  *
- * @property ExternalBroadcasterResource $resource
+ * @property ExternalBroadcasterResource     $resource
+ * @property Collection<BroadcastJob>        $jobs
+ * @property Collection<ExternalResource>    $external_representations
+ * @property Collection<ResourcePerformance> $performances
  */
 class BroadcastResource extends Model {
     use HasPublicRelations;
@@ -67,9 +71,16 @@ class BroadcastResource extends Model {
                     ->withTrashed();
     }
 
+    public function performances() {
+        return $this->hasMany(ResourcePerformance::class, "resource_id", "id");
+    }
+
+    /**
+     * @throws Exception
+     */
     public function getResourceAttribute() {
         return match ($this->type) {
-            BroadcastResourceType::Creative => Creative::withTrashed()->find($this->getKey())?->toResource(null),
+            BroadcastResourceType::Creative => Creative::withTrashed()->find($this->getKey())?->toResource(),
             BroadcastResourceType::Content  => Content::withTrashed()->find($this->getKey())?->toResource(),
             BroadcastResourceType::Schedule => Schedule::withTrashed()->find($this->getKey())?->toResource(),
             BroadcastResourceType::Campaign => Campaign::withTrashed()->find($this->getKey())?->toResource(),

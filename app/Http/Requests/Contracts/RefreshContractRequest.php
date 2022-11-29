@@ -35,7 +35,7 @@ class RefreshContractRequest extends FormRequest {
      */
     public function rules() {
         return [
-            //
+            "reload_data" => ["boolean"],
         ];
     }
 }

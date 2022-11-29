@@ -46,6 +46,7 @@ class NetworksController extends Controller {
         $network->uuid          = v4();
         $network->connection_id = $request->input("connection_id");
         $network->name          = $request->input("name");
+        $network->slug          = $request->input("slug");
         $network->color         = $request->input("color");
 
         $settings = $this->applySettings($request, $network, new NetworkSettings());
@@ -65,6 +66,7 @@ class NetworksController extends Controller {
 
     public function update(UpdateNetworkRequest $request, Network $network): Response {
         $network->name  = $request->input("name");
+        $network->slug  = $request->input("slug");
         $network->color = $request->input("color");
 
         $settings = $this->applySettings($request, $network, $network->settings);

@@ -16,6 +16,7 @@ use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
+use Neo\Modules\Broadcast\Services\BroadSign\BroadSignReservationState;
 use Neo\Modules\Broadcast\Services\ResourceCastable;
 use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
@@ -233,18 +234,22 @@ class Campaign extends BroadSignModel implements ResourceCastable {
      * @throws UnknownProperties
      */
     public function toResource(): CampaignResource {
+        $isEnabled = $this->active &&
+            $this->state !== BroadSignReservationState::Cancelled->value &&
+            $this->state !== BroadSignReservationState::HeldCancelled->value;
+
         return new CampaignResource([
-            "enabled"             => $this->active,
+            "enabled"             => $isEnabled,
             "name"                => $this->name,
             "start_date"          => $this->start_date,
             "start_time"          => $this->start_time,
             "end_date"            => $this->end_date,
             "end_time"            => $this->end_time,
             "broadcast_days"      => $this->day_of_week_mask,
-            "priority"            => $this->priority,
+            "priority"            => -1,
             "occurrences_in_loop" => $this->saturation,
             "duration_msec"       => $this->duration_msec,
-            "advertiser_id"       => $this->parent_id ? [
+            "advertiser"          => $this->parent_id ? [
                 "broadcaster_id" => $this->getBroadcasterId(),
                 "external_id"    => $this->parent_id,
                 "type"           => ExternalResourceType::Advertiser,

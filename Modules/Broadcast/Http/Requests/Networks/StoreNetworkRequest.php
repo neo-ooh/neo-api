@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\BroadcasterConnection;
+use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Services\BroadcasterType;
 
 class StoreNetworkRequest extends FormRequest {
@@ -35,6 +36,7 @@ class StoreNetworkRequest extends FormRequest {
     public function rules(): array {
         return [
             "name"          => ["required", "string"],
+            "slug"          => ["required", "string", "unique:" . Network::class . ",slug"],
             "color"         => ["required", "string"],
             "connection_id" => ["required", new Exists(BroadcasterConnection::class, "id")],
 

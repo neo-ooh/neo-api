@@ -91,38 +91,14 @@ class Container extends BroadSignModel implements ResourceCastable {
      */
     public function toResource(): ContainerResource {
         return new ContainerResource([
-            "external_id" => $this->getKey(),
-            "name"        => $this->name,
-            "parent"      => $this->container_id ? [
-                "type"        => ExternalResourceType::Container,
-                "external_id" => $this->container_id,
+            "broadcaster_id" => $this->getBroadcasterId(),
+            "external_id"    => $this->getKey(),
+            "name"           => $this->name,
+            "parent"         => $this->container_id ? [
+                "broadcaster_id" => $this->getBroadcasterId(),
+                "type"           => ExternalResourceType::Container,
+                "external_id"    => $this->container_id,
             ] : null,
         ]);
     }
-
-    /**
-     * Replicate itself inside our own database with all its parents. These methods can be called even if the container
-     * has already been replicated, handling errors and duplications.
-     * This method takes into account the network's root container and WILL NOT replicate it in the database. Direct children
-     * containers' parent's id will be set to NULL to denote their position at the root of the hierarchy.
-     */
-    /*    public function replicate(int $networkId): void {
-            $isRoot = $this->id === $this->api->getConfig()->containerId;
-
-            // Make sure our parent container is already in the DDB if we have one and it is not the network root
-            if ($this->container_id !== 0 && !$isRoot) {
-                $this->getParent()->replicate($networkId);
-            }
-
-            $parentId = $this->container_id === 0 || $isRoot ? null : $this->container_id;
-
-            \Neo\Modules\Broadcast\Models\NetworkContainer::query()->updateOrInsert([
-                "id" => $this->id,
-            ],
-                [
-                    "network_id" => $networkId,
-                    "parent_id"  => $parentId,
-                    "name"       => $this->name,
-                ]);
-        }*/
 }

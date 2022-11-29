@@ -24,6 +24,7 @@ use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Frame;
 use Neo\Modules\Broadcast\Models\Layout;
+use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
@@ -89,9 +90,12 @@ class PromoteCampaignJob extends BroadcastJobBase {
                                     "loop_configurations"])
                             ->find($representation->format_id);
 
+            /** @var Network $network */
+            $network = Network::query()->findOrFail($representation->network_id);
+
             // Get the campaign resource and complete it
             $campaignResource                = $campaign->toResource($broadcaster->getBroadcasterId());
-            $campaignResource->name          .= "_" . str_replace(" ", "-", $format->name);
+            $campaignResource->name          .= "_" . $network->slug . "_" . str_replace(" ", "-", $format->name);
             $campaignResource->duration_msec = $format->content_length * 1000;
 
             // Get the external ID for this campaign representation

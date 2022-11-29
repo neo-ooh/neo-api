@@ -30,6 +30,7 @@ use Neo\Modules\Broadcast\Services\Resources\Location as LocationResource;
 use Neo\Modules\Broadcast\Services\Resources\Player as PlayerResource;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Throwable;
 
 /**
  * Synchronize a network' locations and players with its broadcaster
@@ -100,7 +101,7 @@ class SynchronizeNetworkJob extends Job {
             if (!$externalLocation->enabled && Location::query()->where("network_id", "=", $broadcaster->getNetworkId())
                                                        ->where("external_id", "=", $externalLocation->external_id)
                                                        ->doesntExist()) {
-                $locationLine->writeln("<comment>Location is not enabled and is not in connect, ignore.</comment>");
+                $locationLine->writeln("<comment>Location is not enabled and is not in Connect. Ignore.</comment>");
                 continue;
             }
 
@@ -180,14 +181,20 @@ class SynchronizeNetworkJob extends Job {
                 ->whereNotIn("id", $locations)
                 ->delete();
 
+        return null;
+    }
+
+    protected function onSuccess(mixed $result): void {
         // Update timestamp on network table
         DB::table((new Network())->getTable())
           ->where("id", "=", $this->networkId)
           ->update([
               "last_sync_at" => Carbon::now(),
           ]);
+    }
 
-        return null;
+    protected function onFailure(Throwable $exception): void {
+        throw $exception;
     }
 
     protected function getDisplayType(BroadcasterOperator&BroadcasterLocations $broadcaster, ExternalBroadcasterResourceId $externalDisplayTypeId): DisplayType|null {

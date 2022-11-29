@@ -10,7 +10,6 @@
 
 namespace Neo\Jobs\Odoo;
 
-use Carbon\Carbon;
 use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,6 +18,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use JsonException;
+use Neo\Resources\Contracts\CPCompiledFlight;
+use Neo\Resources\Contracts\CPCompiledPlan;
 use Neo\Services\Odoo\Models\Campaign;
 use Neo\Services\Odoo\Models\Contract;
 use Neo\Services\Odoo\Models\Message;
@@ -29,7 +30,7 @@ use Neo\Services\Odoo\OdooConfig;
 class SendContractJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected Contract $contract, protected array $plan, protected bool $clearOnSend) {
+    public function __construct(protected Contract $contract, protected CPCompiledPlan $plan, protected bool $clearOnSend) {
     }
 
     /**
@@ -47,7 +48,8 @@ class SendContractJob implements ShouldQueue {
         $flightsDescriptions = [];
 
         // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required order lines
-        foreach ($this->plan["flights"] as $flightIndex => $flight) {
+        /** @var CPCompiledFlight $flight */
+        foreach ($this->plan->flights as $flightIndex => $flight) {
             SendContractFlightJob::dispatchSync($this->contract, $flight, $flightIndex);
 
             $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
@@ -92,18 +94,15 @@ class SendContractJob implements ShouldQueue {
     /**
      * @throws JsonException
      */
-    protected function attachPlan(OdooClient $client) {
-        $planFileName = $this->plan["contract"] . ".ccp";
+    protected function attachPlan(OdooClient $client): void {
+        $planFileName = $this->plan->contract . ".ccp";
 
         $this->contract->removeAttachment($planFileName);
         $this->contract->storeAttachment($planFileName, base64_encode(gzencode(json_encode($this->plan, JSON_THROW_ON_ERROR))));
     }
 
-    protected function getFlightDescription(array $flight, int $flightIndex): string {
-        $flightStart = Carbon::parse($flight['start_date'])->toDateString();
-        $flightEnd   = Carbon::parse($flight['end_date'])->toDateString();
-        $flightType  = ucFirst($flight["type"]);
-
-        return "Flight #" . ($flightIndex + 1) . " ($flightType) [$flightStart -> $flightEnd]";
+    protected function getFlightDescription(CPCompiledFlight $flight, int $flightIndex): string {
+        $type = $flight->type->name;
+        return "Flight #" . ($flightIndex + 1) . " ($type) [$flight->start_date -> $flight->end_date]";
     }
 }

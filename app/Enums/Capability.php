@@ -40,6 +40,11 @@ enum Capability: string {
     // campaigns
     case campaigns_edit = "campaigns.edit";
 
+    /**
+     * Allows access to campaign performances
+     */
+    case campaigns_performances = "campaigns.performances";
+
     // Contents
     case contents_edit = "contents.edit";
     case contents_dynamic = "contents.dynamic";

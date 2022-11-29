@@ -10,6 +10,7 @@
 
 namespace Neo\Jobs\Contracts;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -28,6 +29,7 @@ use Neo\Resources\Contracts\CPCompiledFlight;
 use Neo\Resources\Contracts\FlightType;
 use Neo\Services\Odoo\Models\Contract as OdooContract;
 use Neo\Services\Odoo\Models\OrderLine;
+use Neo\Services\Odoo\OdooClient;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use function Ramsey\Uuid\v4;
@@ -39,6 +41,10 @@ class ImportContractDataJob implements ShouldQueue {
                                 protected OdooContract|null $odooContract = null) {
     }
 
+    /**
+     * @throws OdooException
+     * @throws JsonException
+     */
     public function handle(): void {
         $output = new ConsoleOutput();
 
@@ -57,6 +63,7 @@ class ImportContractDataJob implements ShouldQueue {
             $this->odooContract = OdooContract::findByName($odooClient, $contract->contract_id);
         }
 
+        // Get contract client
         /** @var Client $client */
         $client = Client::query()->firstOrCreate([
             "odoo_id" => $this->odooContract->partner_id[0],
@@ -66,6 +73,7 @@ class ImportContractDataJob implements ShouldQueue {
 
         $output->writeln($contract->contract_id . ": Set client to $client->name (#$client->id))");
 
+        // Get contract advertiser
         $advertiser = null;
 
         if ($this->odooContract->analytic_account_id) {
@@ -93,29 +101,17 @@ class ImportContractDataJob implements ShouldQueue {
             $contract->save();
         }
 
-        // Now, we pull all the lines from the contract and put them in their own flights
+        // Load flights from the plan if available, and merge existing flights with them
+        // Remove any already existing flight
+        $contract->flights()->delete();
+
+        // Load flights from the plan, if available
         $flights    = $this->getFlightsFromPlan($contract);
-        $orderLines = collect();
-        $chunkSize  = 50;
+        $orderLines = $this->getLinesFromOdoo($odooClient);
 
-        do {
-            $hasMore = false;
+        $output->writeln($contract->contract_id . ": Received {$orderLines->count()} lines...");
 
-            $lines = OrderLine::all($odooClient, [
-                ["order_id", '=', $this->odooContract->id],
-                ["is_linked_line", '!=', 1],
-            ], $chunkSize, $orderLines->count());
-
-            if ($lines->count() === $chunkSize) {
-                $hasMore = true;
-            }
-
-            $orderLines = $orderLines->merge($lines);
-
-            $output->writeln($contract->contract_id . ": Received {$orderLines->count()} lines...");
-
-        } while ($hasMore);
-
+        // Now, we parse all the lines and import them
         $contractLines              = [];
         $expectedDigitalImpressions = 0;
 
@@ -220,6 +216,9 @@ class ImportContractDataJob implements ShouldQueue {
         $contract->end_date             = $endDate;
         $contract->expected_impressions = $expectedDigitalImpressions;
         $contract->save();
+
+        // Remove any flights attached with the contract that are not part of the ones just created
+        $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();
     }
 
     /**
@@ -251,9 +250,29 @@ class ImportContractDataJob implements ShouldQueue {
         // Empty all flights lines as they will all be re-imported
         $flights->each(fn(ContractFlight $flight) => $flight->lines()->delete());
 
-        // Remove any flights attached with the contract that are not part of the ones just created
-        $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();
-
         return $flights;
+    }
+
+    public function getLinesFromOdoo(OdooClient $client) {
+        $lines     = collect();
+        $chunkSize = 50;
+
+        do {
+            $hasMore = false;
+
+            $lines = OrderLine::all($client, [
+                ["order_id", '=', $this->odooContract->id],
+                ["is_linked_line", '!=', 1],
+            ], $chunkSize, $lines->count());
+
+            if ($lines->count() === $chunkSize) {
+                $hasMore = true;
+            }
+
+            $lines = $lines->merge($lines);
+
+        } while ($hasMore);
+
+        return $lines;
     }
 }

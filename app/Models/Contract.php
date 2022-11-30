@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use JsonException;
 use Neo\Models\Traits\HasPublicRelations;
@@ -24,12 +23,9 @@ use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\BroadcasterConnection;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
-use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
-use Neo\Modules\Broadcast\Services\BroadcasterReporting;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\ReservablePerformance;
-use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Resources\Contracts\CPCompiledPlan;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
@@ -176,33 +172,9 @@ class Contract extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function getContractPerformancesCacheKey(): string {
-        return "contract-" . $this->id . "-performances";
-    }
-
     public function getPerformancesAttribute() {
-        return Cache::tags(["contract-performances"])->remember($this->getContractPerformancesCacheKey(), 3600 * 3, function () {
-            $reservationsByBroadcaster = $this->reservations->groupBy("broadcaster_id");
-
-            /** @var CampaignPerformance[][] $performances */
-            $performances = [];
-
-            /** @var Collection<ContractReservation> $reservations */
-            foreach ($reservationsByBroadcaster as $broadcasterId => $reservations) {
-                /** @var BroadcasterOperator & BroadcasterReporting $broadcaster */
-                $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($broadcasterId);
-
-                // Make sure the broadcaster supports reporting
-                if (!$broadcaster->hasCapability(BroadcasterCapability::Reporting)) {
-                    continue;
-                }
-
-                $performances[] = $broadcaster->getCampaignsPerformances($reservations->map(fn(ContractReservation $reservation) => $reservation->toResource())
-                                                                                      ->toArray());
-            }
-
-            return collect(array_merge(...$performances));
-        });
+        return $this->flights->append("performances")
+                             ->reduce(fn(\Illuminate\Support\Collection $acc, ContractFlight $flight) => $acc->push(...$flight->performances), collect());
     }
 
     /**
@@ -242,10 +214,20 @@ class Contract extends Model {
     |--------------------------------------------------------------------------
     */
 
+    /**
+     * File name of the stored plan. This does not check if a plan is present.
+     *
+     * @return string
+     */
     public function getAttachedPlanName(): string {
         return $this->contract_id . ".ccp";
     }
 
+    /**
+     * Gives the path to the plan file, without the file name
+     *
+     * @return string
+     */
     public function getContractStoragePath(): string {
         return "contracts/" . Hashids::encode($this->getKey()) . "/";
     }

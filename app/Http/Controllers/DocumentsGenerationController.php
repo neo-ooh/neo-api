@@ -97,7 +97,7 @@ class DocumentsGenerationController extends Controller {
         }
 
         return new Response($document->output(), 200, [
-            $document->format()
+            $document->format(),
         ]);
     }
 }

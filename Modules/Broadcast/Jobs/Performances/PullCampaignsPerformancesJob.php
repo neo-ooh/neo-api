@@ -10,9 +10,6 @@
 
 namespace Neo\Modules\Broadcast\Jobs\Performances;
 
-use Carbon\Carbon;
-use Carbon\CarbonInterface;
-use Carbon\CarbonPeriod;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -38,6 +35,9 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 class PullCampaignsPerformancesJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    public function __construct(protected int|null $networkId = null) {
+    }
+
     /**
      * @var int How many days in the past should we look at
      */
@@ -54,13 +54,13 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
                              ->with(["external_representations"])
                              ->lazy(500);
 
-        $concernedDates = collect(
-            CarbonPeriod::create(
-                Carbon::now()->subDays($this->lookBack)->toDateString(),
-                Carbon::now()->toDateString(),
-                '1 day'
-            )->toArray()
-        )->map(fn(CarbonInterface $date) => $date->toDateString());
+        /*        $concernedDates = collect(
+                    CarbonPeriod::create(
+                        Carbon::now()->subDays($this->lookBack)->toDateString(),
+                        Carbon::now()->toDateString(),
+                        '1 day'
+                    )->toArray()
+                )->map(fn(CarbonInterface $date) => $date->toDateString());*/
 
         // Group external representations together for batch queries
         /** @var Collection<PerformanceBatch> $batches */
@@ -69,6 +69,10 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
             $campaign->external_representations->each(function (ExternalResource $resource) use ($batches) {
                 // Skip representation without a specific network as it's a UB
                 if (!$resource->data->network_id) {
+                    return;
+                }
+
+                if ($this->networkId && $resource->data->network_id !== $this->networkId) {
                     return;
                 }
 
@@ -119,7 +123,7 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
             $performances = collect($broadcaster->getCampaignsPerformances($resources->all()));
 
             // Filter out all the unwanted dates
-            $performances = $performances->whereIn("date", $concernedDates);
+//            $performances = $performances->whereIn("date", $concernedDates);
 
             $section = $output->section();
             $section->writeln("");

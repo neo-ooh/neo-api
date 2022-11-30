@@ -31,7 +31,8 @@ class MakeDocumentRequest extends FormRequest {
      */
     public function rules() {
         return [
-            "file" => ["sometimes", "file"],
+            "file"   => ["sometimes", "file"],
+            "locale" => ["sometimes", "string"],
         ];
     }
 }

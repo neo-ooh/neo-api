@@ -30,7 +30,8 @@ class PlannerExport extends XLSXDocument {
     protected array $columns;
 
     /**
-     * @param array{properties: array<int>, year: int} $data
+     * @param $data
+     * @return bool
      */
     protected function ingest($data): bool {
         $this->contractReference = $data["odoo"]["contract"] ?? "";
@@ -76,10 +77,10 @@ class PlannerExport extends XLSXDocument {
             'font'      => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => "FFFFFFFF"
+                    'argb' => "FFFFFFFF",
                 ],
                 'size'  => "13",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -176,7 +177,7 @@ class PlannerExport extends XLSXDocument {
             $flight->start->toDateString(),
             '→',
             $flight->end->toDateString(),
-            Lang::get("common.order-type-" . $flight->type)
+            Lang::get("common.order-type-" . $flight->type),
         ]);
 
         $this->ws->getStyle($this->ws->getRelativeRange(9))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
@@ -186,7 +187,7 @@ class PlannerExport extends XLSXDocument {
                 'startColor' => [
                     'argb' => "FFFFFFFF",
                 ],
-            ]
+            ],
         ]);
 
         $this->ws->printRow([
@@ -253,7 +254,7 @@ class PlannerExport extends XLSXDocument {
                 "font" => [
                     "color" => [
                         "argb" => "FF" . $network->color,
-                    ]
+                    ],
                 ],
             ]);
             $this->ws->setRelativeCellFormat("#,##0_-", 2);
@@ -289,7 +290,7 @@ class PlannerExport extends XLSXDocument {
                 "font" => [
                     "color" => [
                         "argb" => "FF" . $group->group?->color ?? "000000",
-                    ]
+                    ],
                 ],
             ]);
             $this->ws->setRelativeCellFormat("#,##0_-", 2);
@@ -328,7 +329,7 @@ class PlannerExport extends XLSXDocument {
             $flight->start->toDateString(),
             '→',
             $flight->end->toDateString(),
-            Lang::get("common.order-type-" . $flight->type)
+            Lang::get("common.order-type-" . $flight->type),
         ]);
     }
 
@@ -355,14 +356,14 @@ class PlannerExport extends XLSXDocument {
                         'size'  => "14",
                         "color" => [
                             "argb" => "FF" . $group->group?->color ?? "000000",
-                        ]
+                        ],
                     ],
                     "fill" => [
                         'fillType'   => Fill::FILL_SOLID,
                         'startColor' => [
                             'argb' => "FFFFFFFF",
                         ],
-                    ]
+                    ],
                 ]);
 
                 $this->ws->printRow([
@@ -386,14 +387,14 @@ class PlannerExport extends XLSXDocument {
                         'size'  => "14",
                         "color" => [
                             "argb" => "FF" . $network->color,
-                        ]
+                        ],
                     ],
                     "fill" => [
                         'fillType'   => Fill::FILL_SOLID,
                         'startColor' => [
                             'argb' => "FFFFFFFF",
                         ],
-                    ]
+                    ],
                 ]);
 
                 $this->ws->printRow([
@@ -421,7 +422,7 @@ class PlannerExport extends XLSXDocument {
                             'startColor' => [
                                 'argb' => "FFFFFFFF",
                             ],
-                        ]
+                        ],
                     ]);
 
                     $this->ws->setRelativeCellFormat("#,##0_-", 3);
@@ -455,20 +456,20 @@ class PlannerExport extends XLSXDocument {
                         foreach ($products as $product) {
                             $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
                                 "font" => [
-                                    "size" => 10
+                                    "size" => 10,
                                 ],
                                 "fill" => [
                                     'fillType'   => Fill::FILL_SOLID,
                                     'startColor' => [
                                         'argb' => "FFFFFFFF",
                                     ],
-                                ]
+                                ],
                             ]);
 
                             $this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
                                 'alignment' => [
-                                    "indent" => 8
-                                ]
+                                    "indent" => 8,
+                                ],
                             ]);
 
                             $this->ws->setRelativeCellFormat("#,##0_-", 3);
@@ -501,7 +502,7 @@ class PlannerExport extends XLSXDocument {
                         'startColor' => [
                             'argb' => "FFFFFFFF",
                         ],
-                    ]
+                    ],
                 ]);
 
                 $this->ws->moveCursor(0, 1);
@@ -535,7 +536,7 @@ class PlannerExport extends XLSXDocument {
                     'startColor' => [
                         'argb' => "FFFFFFFF",
                     ],
-                ]
+                ],
             ]);
 
             $this->ws->moveCursor(0, 2);

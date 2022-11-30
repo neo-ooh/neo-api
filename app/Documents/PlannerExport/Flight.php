@@ -32,8 +32,8 @@ class Flight {
 
     public function __construct(array $compiledFlight) {
         $this->name   = $compiledFlight["name"];
-        $this->start  = Carbon::parse($compiledFlight['start']);
-        $this->end    = Carbon::parse($compiledFlight['end']);
+        $this->start  = Carbon::parse($compiledFlight['start_date']);
+        $this->end    = Carbon::parse($compiledFlight['end_date']);
         $this->length = $compiledFlight['length'];
         $this->type   = $compiledFlight['type'];
 

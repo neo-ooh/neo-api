@@ -14,15 +14,13 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class MakeDocumentRequest extends FormRequest
-{
+class MakeDocumentRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
+    public function authorize() {
         return Gate::allows(Capability::documents_generation);
     }
 
@@ -31,10 +29,10 @@ class MakeDocumentRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
-    {
+    public function rules() {
         return [
-            "file"=> ["sometimes", "file"],
+            "file"   => ["sometimes", "file"],
+            "locale" => ["sometimes", "string"],
         ];
     }
 }

@@ -12,6 +12,7 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Storage;
 use League\Csv\Reader;
 use Neo\Documents\Contract\PDFContract;
@@ -36,6 +37,10 @@ class DocumentsGenerationController extends Controller {
         /** @var UploadedFile $file */
         $file = $request->file("file");
         $data = $request->input("data");
+
+        if ($request->has("locale")) {
+            Lang::setLocale($request->input("locale"));
+        }
 
         switch ($request->route('document')) {
             case "contract":

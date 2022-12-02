@@ -20,7 +20,7 @@ class AddCampaignFlightId extends Migration {
                   ->after("creator_id")
                   ->constrained("contracts_flights", "id")
                   ->cascadeOnUpdate()
-                  ->cascadeOnDelete();
+                  ->nullOnDelete();
         });
     }
 }

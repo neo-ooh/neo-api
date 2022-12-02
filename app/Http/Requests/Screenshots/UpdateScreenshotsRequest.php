@@ -5,27 +5,23 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - RefreshContractRequest.php
+ * @neo/api - DestroyScreenshotsRequest.php
  */
 
-namespace Neo\Http\Requests\Contracts;
+namespace Neo\Http\Requests\Screenshots;
 
-use Auth;
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Models\Contract;
 
-class RefreshContractRequest extends FormRequest {
+class UpdateScreenshotsRequest extends FormRequest {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize() {
-        /** @var Contract $contract */
-        $contract = $this->route("contract");
-        return $contract->salesperson_id === Auth::id() || Gate::allows(Capability::contracts_manage->value);
+    public function authorize(): bool {
+        return Gate::allows(Capability::bursts_request->value);
     }
 
     /**
@@ -33,9 +29,9 @@ class RefreshContractRequest extends FormRequest {
      *
      * @return array
      */
-    public function rules() {
+    public function rules(): array {
         return [
-            "reimport" => ["boolean"],
+            "is_locked" => ["required", "boolean"],
         ];
     }
 }

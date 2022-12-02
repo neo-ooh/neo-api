@@ -110,7 +110,7 @@ class ContractsController extends Controller {
     }
 
     public function refresh(RefreshContractRequest $request, Contract $contract): Response {
-        if ($request->input("reload_data", false)) {
+        if ($request->input("reimport", false)) {
             ImportContractDataJob::dispatchSync($contract->id);
         }
 

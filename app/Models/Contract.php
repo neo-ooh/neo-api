@@ -19,16 +19,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Storage;
 use JsonException;
 use Neo\Models\Traits\HasPublicRelations;
-use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
-use Neo\Modules\Broadcast\Models\BroadcasterConnection;
-use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
-use Neo\Modules\Broadcast\Services\BroadcasterOperator;
-use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\ReservablePerformance;
-use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Resources\Contracts\CPCompiledPlan;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 use Vinkla\Hashids\Facades\Hashids;
@@ -90,6 +82,10 @@ class Contract extends Model {
                 fn(Contract $contract) => $contract->flights
                     ->append("expected_impressions")
                     ->each(fn(ContractFlight $flight) => $flight->lines->append(["network_id", "product_type"])),
+            ],
+            "locations"              => [
+                fn(Contract $contract) => $contract->flights
+                    ->append("locations"),
             ],
             "owner"                  => "owner",
             "performances"           => "append:performances",
@@ -175,37 +171,6 @@ class Contract extends Model {
     public function getPerformancesAttribute() {
         return $this->flights->append("performances")
                              ->reduce(fn(\Illuminate\Support\Collection $acc, ContractFlight $flight) => $acc->push(...$flight->performances), collect());
-    }
-
-    /**
-     * List all the reservations of the contracts, with their `locations` property set to the targeted locations
-     *
-     * @return \Illuminate\Support\Collection<ContractReservation>
-     * @throws InvalidBroadcasterAdapterException
-     * @throws UnknownProperties
-     */
-    public function loadReservationsLocations(): \Illuminate\Support\Collection {
-        $reservationsByBroadcaster = $this->reservations->groupBy("broadcaster_id");
-
-        /** @var Collection<ContractReservation> $reservations */
-        foreach ($reservationsByBroadcaster as $broadcasterId => $reservations) {
-            /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-            $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($broadcasterId);
-
-            /** @var BroadcasterConnection $connection */
-            $connection = BroadcasterConnection::query()->find($broadcaster->getBroadcasterId());
-            $networkIds = $connection->networks()->get()->pluck("id");
-
-            foreach ($this->reservations as $reservation) {
-                $externalLocations      = $broadcaster->getCampaignLocations($reservation->toResource());
-                $reservation->locations = Location::query()
-                                                  ->whereIn("network_id", $networkIds)
-                                                  ->whereIn("external_id", array_map(static fn(ExternalBroadcasterResourceId $location) => $location->external_id, $externalLocations))
-                                                  ->get();
-            }
-        }
-
-        return $reservationsByBroadcaster->flatten();
     }
 
     /*

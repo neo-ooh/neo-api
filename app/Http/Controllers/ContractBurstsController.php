@@ -18,6 +18,8 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Http\Requests\Bursts\DeleteBurstRequest;
+use Neo\Http\Requests\Bursts\DeleteBurstUnlockedScreenshotsRequest;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
 use Neo\Models\ContractBurst;
 use Neo\Models\ContractScreenshot;
@@ -87,7 +89,7 @@ class ContractBurstsController extends Controller {
         }
 
         // Check if the burst is complete
-        if ($burst->screenshots_count >= $burst->expected_screenshots - 1) {
+        if ($burst->screenshots_count >= $burst->expected_screenshots - 2) {
             $burst->status = "OK";
             $burst->save();
         }
@@ -97,12 +99,19 @@ class ContractBurstsController extends Controller {
         return new Response($burst->load('screenshots', 'location'));
     }
 
-    public function destroy(ContractBurst $burst): Response {
-        if ($burst->status !== "OK") {
-            $burst->delete();
-            return new Response();
+    public function destroyUnlockedScreenshots(DeleteBurstUnlockedScreenshotsRequest $request, ContractBurst $burst) {
+        $unlockedScreenshots = $burst->screenshots()->where("is_locked", "=", false)->get();
+
+        foreach ($unlockedScreenshots as $screenshot) {
+            $screenshot->delete();
         }
 
-        return new Response(["Burst is already started"], 400);
+        return new Response($burst);
+    }
+
+    public function destroy(DeleteBurstRequest $request, ContractBurst $burst): Response {
+        $burst->delete();
+
+        return new Response(["status" => "ok"]);
     }
 }

@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Cache;
 use Neo\Enums\ProductsFillStrategy;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Broadcast\Models\ResourcePerformance;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
@@ -48,7 +49,8 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property Contract                                $contract
  * @property EloquentCollection<Campaign>            $campaigns
  *
- * @property Collection<FlightPerformanceDatum>      $performances
+ * @property Collection<FlightPerformanceDatum>      $performances // Attribute
+ * @property Collection<Location>                    $locations    // Attribute
  */
 class ContractFlight extends Model {
     protected $table = "contracts_flights";
@@ -91,8 +93,8 @@ class ContractFlight extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function getExpectedImpressionsAttribute() {
-        return $this->lines()->whereHas('product', function (Builder $query) {
+    public function getExpectedImpressionsAttribute(): int {
+        return (int)$this->lines()->whereHas('product', function (Builder $query) {
             $query->whereHas("category", function (Builder $query) {
                 $query->where("fill_strategy", "=", ProductsFillStrategy::digital);
             });
@@ -114,7 +116,6 @@ class ContractFlight extends Model {
         // The other place is external reservations (campaigns in external broadcaster) that have been associated directly
         // with the flight without passing through a Connect campaign. For these we need to pull the performances straight
         // from the broadcaster and format them
-
         $this->campaigns->load("performances");
 
         /** @var EloquentCollection<FlightPerformanceDatum> $performances */
@@ -125,7 +126,7 @@ class ContractFlight extends Model {
                 return new FlightPerformanceDatum(
                     flight_id: $this->getKey(),
                     network_id: $performance->data->network_id,
-                    recorded_at: $performance->recorded_at,
+                    recorded_at: $performance->recorded_at->toDateString(),
                     repetitions: $performance->repetitions,
                     impressions: $performance->impressions,
                 );
@@ -144,56 +145,71 @@ class ContractFlight extends Model {
      * @return Collection<FlightPerformanceDatum>
      * @throws InvalidBroadcasterAdapterException|UnknownProperties
      */
-    public function getReservationsPerformances(): Collection {
-        return Cache::tags(["contract-performances"])->remember("contract-" . $this->id . "-performances", 3600 * 3, function () {
-            $reservationsByBroadcaster = $this->reservations->groupBy("broadcaster_id");
+    protected function getReservationsPerformances(): Collection {
+        return Cache::tags(["contract-performances", $this->contract->contract_id])
+                    ->remember("contract-" . $this->id . "-performances", 3600 * 3, function () {
+                        $reservationsByBroadcaster = $this->reservations->groupBy("broadcaster_id");
 
-            /** @var Collection<FlightPerformanceDatum> $performances */
-            $performances = collect();
+                        /** @var Collection<FlightPerformanceDatum> $performances */
+                        $performances = collect();
 
-            /** @var EloquentCollection<Network> $networks */
-            $networks = Network::query()->whereHas('broadcaster_connection', function (Builder $query) {
-                $query->where("contracts", "=", true);
-            })->get();
+                        /** @var EloquentCollection<Network> $networks */
+                        $networks = Network::query()->whereHas('broadcaster_connection', function (Builder $query) {
+                            $query->where("contracts", "=", true);
+                        })->get();
 
-            /** @var EloquentCollection<ContractReservation> $reservations */
-            foreach ($reservationsByBroadcaster as $broadcasterId => $reservations) {
-                // For each reservation, we try to find on which network it is playing
-                $reservationsNetworks = [];
-                foreach ($reservations as $reservation) {
-                    foreach ($networks as $network) {
-                        if (str_contains($reservation->original_name, "_{$network->slug}_") ||
-                            str_contains($reservation->original_name, "-{$network->slug}-")) {
-                            $reservationsNetworks[$reservation->external_id] = $network->getKey();
-                            break;
+                        /** @var EloquentCollection<ContractReservation> $reservations */
+                        foreach ($reservationsByBroadcaster as $broadcasterId => $reservations) {
+                            // For each reservation, we try to find on which network it is playing
+                            $reservationsNetworks = [];
+                            foreach ($reservations as $reservation) {
+                                foreach ($networks as $network) {
+                                    if (str_contains($reservation->original_name, "_{$network->slug}_") ||
+                                        str_contains($reservation->original_name, "-{$network->slug}-")) {
+                                        $reservationsNetworks[$reservation->external_id] = $network->getKey();
+                                        break;
+                                    }
+                                }
+                            }
+
+                            /** @var BroadcasterOperator & BroadcasterReporting $broadcaster */
+                            $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($broadcasterId);
+
+                            // Make sure the broadcaster supports reporting
+                            if (!$broadcaster->hasCapability(BroadcasterCapability::Reporting)) {
+                                continue;
+                            }
+
+                            $performances->push(...collect($broadcaster->getCampaignsPerformances(
+                                $reservations->map(fn(ContractReservation $reservation) => $reservation->toResource())
+                                             ->toArray()
+                            ))->map(function (CampaignPerformance $performance) use ($reservationsNetworks): FlightPerformanceDatum {
+                                return new FlightPerformanceDatum(
+                                    flight_id: $this->getKey(),
+                                    network_id: $reservationsNetworks[$performance->campaign->external_id] ?? null,
+                                    recorded_at: $performance->date,
+                                    repetitions: $performance->repetitions,
+                                    impressions: $performance->impressions,
+                                );
+                            }));
                         }
-                    }
-                }
 
-                /** @var BroadcasterOperator & BroadcasterReporting $broadcaster */
-                $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($broadcasterId);
-
-                // Make sure the broadcaster supports reporting
-                if (!$broadcaster->hasCapability(BroadcasterCapability::Reporting)) {
-                    continue;
-                }
-
-                $performances->push(...collect($broadcaster->getCampaignsPerformances(
-                    $reservations->map(fn(ContractReservation $reservation) => $reservation->toResource())
-                                 ->toArray()
-                ))->map(function (CampaignPerformance $performance) use ($reservationsNetworks): FlightPerformanceDatum {
-                    return new FlightPerformanceDatum(
-                        flight_id: $this->getKey(),
-                        network_id: $reservationsNetworks[$performance->campaign->external_id] ?? null,
-                        recorded_at: $performance->date,
-                        repetitions: $performance->repetitions,
-                        impressions: $performance->impressions,
-                    );
-                }));
-            }
-
-            return $performances;
-        });
+                        return $performances;
+                    });
     }
 
+    /*
+    |--------------------------------------------------------------------------
+    | Locations
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * @return Collection<Location>
+     */
+    public function getLocationsAttribute(): Collection {
+        $this->lines->load("product.locations");
+
+        return $this->lines->flatMap(fn(ContractLine $line) => $line->product?->locations)->whereNotNull()->unique();
+    }
 }

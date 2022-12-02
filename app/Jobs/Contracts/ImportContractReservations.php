@@ -137,6 +137,6 @@ class ImportContractReservations implements ShouldQueue {
 
         $contract->reservations()->whereNotIn("id", $storedReservationsId)->delete();
 
-        Cache::forget($contract->getContractPerformancesCacheKey());
+        Cache::tags($contract->contract_id)->flush();
     }
 }

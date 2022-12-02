@@ -100,6 +100,7 @@ Route::group([
     Route::  post("bursts", ContractBurstsController::class . "@store");
     Route::   get("bursts/{burst}", ContractBurstsController::class . "@show");
     Route::delete("bursts/{burst}", ContractBurstsController::class . "@destroy");
+    Route::delete("bursts/{burst}/screenshots", ContractBurstsController::class . "@destroyUnlockedScreenshots");
 
 
     /*
@@ -110,7 +111,9 @@ Route::group([
 
     Route::model("screenshot", ContractScreenshot::class);
 
+    Route::   put("screenshots/{screenshot}", ContractsScreenshotsController::class . "@update");
     Route::delete("screenshots/{screenshot}", ContractsScreenshotsController::class . "@destroy");
+    Route::delete("contracts/{contract}/screenshots", ContractsScreenshotsController::class . "@destroyContractScreenshots");
 
 
     /*

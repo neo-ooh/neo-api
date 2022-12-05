@@ -10,6 +10,7 @@
 
 namespace Neo\Http\Controllers;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -35,7 +36,7 @@ use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ContractsController extends Controller {
-    public function index(ListContractsRequest $request) {
+    public function index(ListContractsRequest $request): Response {
         $salespersonId = $request->input("actor_id", null);
 
         if (!$salespersonId && !Gate::allows(Capability::contracts_manage->value)) {
@@ -50,7 +51,7 @@ class ContractsController extends Controller {
     }
 
 
-    public function recent(ListContractsRequest $request) {
+    public function recent(ListContractsRequest $request): Response {
         $contracts = Contract::query()->where("salesperson_id", "=", Auth::id())
                              ->whereHas("flights", function (Builder $query) {
                                  $query->where("start_date", "<", Date::now());
@@ -63,7 +64,10 @@ class ContractsController extends Controller {
         return new Response($contracts);
     }
 
-    public function store(StoreContractRequest $request) {
+    /**
+     * @throws OdooException
+     */
+    public function store(StoreContractRequest $request): Response {
         // The contract ID is a sensitive value, as it is the one that will be used to match additional campaigns with the contract.
         // Now, for some f***ing reason, hyphens are not made equal, and contract name are not standardized. So we want to make sure all stored contract name uses hyphen-minus, which is the default hyphen on a keyboard (looking at you Word).
         $contractId = strtoupper(str_replace(mb_chr(8208, 'UTF-8'), '-', $request->input("contract_id")));
@@ -100,11 +104,11 @@ class ContractsController extends Controller {
         return new Response($contract, 201);
     }
 
-    public function show(ShowContractRequest $request, Contract $contract) {
+    public function show(ShowContractRequest $request, Contract $contract): Response {
         return new Response($contract->loadPublicRelations());
     }
 
-    public function update(UpdateContractRequest $request, Contract $contract) {
+    public function update(UpdateContractRequest $request, Contract $contract): Response {
         $contract->salesperson_id = $request->input("salesperson_id");
         $contract->save();
 
@@ -113,16 +117,17 @@ class ContractsController extends Controller {
 
     public function refresh(RefreshContractRequest $request, Contract $contract): Response {
         if ($request->input("reimport", false)) {
-            ImportContractDataJob::dispatchSync($contract->id);
+            ImportContractDataJob::dispatch($contract->id);
         }
 
-        ImportContractReservations::dispatchSync($contract->id);
-        RefreshContractsPerformancesJob::dispatchSync($contract->id);
+        ImportContractReservations::dispatch($contract->id)->chain([
+            new RefreshContractsPerformancesJob($contract->id),
+        ]);
 
         return new Response(["status" => "ok"]);
     }
 
-    public function destroy(DestroyContractRequest $request, Contract $contract) {
+    public function destroy(DestroyContractRequest $request, Contract $contract): void {
         $contract->delete();
     }
 }

@@ -21,6 +21,7 @@ use Neo\Enums\Capability;
 use Neo\Http\Requests\Bursts\DeleteBurstRequest;
 use Neo\Http\Requests\Bursts\DeleteBurstUnlockedScreenshotsRequest;
 use Neo\Http\Requests\Bursts\StoreBurstRequest;
+use Neo\Jobs\Contracts\DeleteBurstJob;
 use Neo\Models\ContractBurst;
 use Neo\Models\ContractScreenshot;
 
@@ -100,11 +101,7 @@ class ContractBurstsController extends Controller {
     }
 
     public function destroyUnlockedScreenshots(DeleteBurstUnlockedScreenshotsRequest $request, ContractBurst $burst) {
-        $unlockedScreenshots = $burst->screenshots()->where("is_locked", "=", false)->get();
-
-        foreach ($unlockedScreenshots as $screenshot) {
-            $screenshot->delete();
-        }
+        DeleteBurstJob::dispatch($burst->getKey(), false);
 
         return new Response($burst);
     }

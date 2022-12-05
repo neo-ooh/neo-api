@@ -43,14 +43,9 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
      * @throws Exception
      */
     public function handle(): void {
-        /*        if (config("app.env") !== "production") {
-                    return;
-                }*/
-
         // Load bursts starting now or up to one minute in the future
         /** @var Collection $bursts */
         $bursts = ContractBurst::query()->where("status", "=", "PENDING")
-                               ->where("id", "=", 6556)
                                ->whereDate("start_at", "<=", Date::now()->setTimezone('America/Toronto')->addMinute())
                                ->distinct()
                                ->get();

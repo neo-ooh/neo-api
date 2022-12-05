@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Neo\Jobs\Contracts\DeleteBurstJob;
 use Neo\Modules\Broadcast\Models\Location;
 
 /**
@@ -35,6 +37,7 @@ use Neo\Modules\Broadcast\Models\Location;
  * @property int                            $frequency_ms
  * @property Date                           $created_at
  * @property Date                           $updated_at
+ * @property Date|null                      $deleted_at
  *
  * @property integer                        $expected_screenshots
  * @property integer                        $screenshots_count
@@ -47,11 +50,12 @@ use Neo\Modules\Broadcast\Models\Location;
  */
 class ContractBurst extends Model {
     use HasFactory;
+    use SoftDeletes;
 
     protected $table = "contracts_bursts";
 
     protected $dates = [
-        "start_at"
+        "start_at",
     ];
 
     protected $fillable = [
@@ -81,11 +85,11 @@ class ContractBurst extends Model {
     protected static function boot() {
         parent::boot();
 
-        static::deleting(function (ContractBurst $burst) {
-            // Delete all the screenshots of the burst
-            /** @var ContractScreenshot $screenshot */
-            foreach ($burst->screenshots as $screenshot) {
-                $screenshot->delete();
+        static::deleting(static function (ContractBurst $burst) {
+            // On soft delete, trigger the job.
+            // Don't trigger on force delete, as the job will be using it to fully delete the burst
+            if (!$burst->isForceDeleting()) {
+                DeleteBurstJob::dispatch($burst->getKey(), true);
             }
         });
     }
@@ -124,6 +128,6 @@ class ContractBurst extends Model {
 
 
     public function getExpectedScreenshotsAttribute() {
-        return ceil($this->duration_ms / $this->frequency_ms) + 1;
+        return ceil($this->duration_ms / $this->frequency_ms);
     }
 }

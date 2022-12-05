@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\Screenshots\DestroyContractScreenshotsRequest;
 use Neo\Http\Requests\Screenshots\DestroyScreenshotsRequest;
 use Neo\Http\Requests\Screenshots\UpdateScreenshotsRequest;
+use Neo\Jobs\Contracts\DeleteBurstJob;
 use Neo\Models\Contract;
 use Neo\Models\ContractScreenshot;
 
@@ -34,22 +35,16 @@ class ContractsScreenshotsController extends Controller {
     public function destroyContractScreenshots(DestroyContractScreenshotsRequest $request, Contract $contract) {
         $deleteLocked = $request->input("delete_locked", false);
 
-        $contract->load("bursts.screenshots");
-
         foreach ($contract->bursts as $burst) {
             // If we want to keep locked screenshot, delete them one by one and check their status every time
             if (!$deleteLocked) {
-                foreach ($burst->screenshots as $screenshot) {
-                    if (!$screenshot->is_locked) {
-                        $screenshot->delete();
-                    }
-                }
+                DeleteBurstJob::dispatch($burst->getKey(), true);
+                continue;
             }
 
-            // If we don't want to keep the locked screenshots, of the burst is empty, delete it
-            if ($deleteLocked || $burst->screenshots()->count() === 0) {
-                $burst->delete();
-            }
+            $burst->delete();
         }
+
+        return new Response(["status" => "ok"]);
     }
 }

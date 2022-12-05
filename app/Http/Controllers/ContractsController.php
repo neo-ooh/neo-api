@@ -45,8 +45,10 @@ class ContractsController extends Controller {
         return new Response(Contract::query()
                                     ->when($salespersonId !== null, fn(Builder $query) => $query->where("salesperson_id", "=", $salespersonId))
                                     ->orderBy("contract_id")
-                                    ->get());
+                                    ->get()
+                                    ->loadPublicRelations());
     }
+
 
     public function recent(ListContractsRequest $request) {
         $contracts = Contract::query()->where("salesperson_id", "=", Auth::id())

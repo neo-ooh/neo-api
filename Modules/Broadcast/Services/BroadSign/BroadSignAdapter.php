@@ -412,7 +412,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $comparator = new ResourcesComparator($campaign, $bsCampaign->toResource());
 
         // It is not possible to change some of the properties of a campaign after it has been created.
-        $readonlyProperties = ["start_date", "start_time", "end_date", "end_time", "occurrences_in_loop", "broadcast_days", "duration_msec", "priority"];
+        $readonlyProperties = ["start_date", "start_time", "end_date", "end_time", "occurrences_in_loop", "broadcast_days", "duration_msec"]; // We don't check priority because BroadSign does not return it when querying a campaign
         $updatable          = true;
         $breakingProperty   = "";
 
@@ -425,14 +425,17 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         if (!$updatable) {
+            clock($breakingProperty);
             throw new CannotUpdateExternalResourceException($this->getType(), "Cannot update a campaign $breakingProperty property after creation");
         }
 
         // Update non-readonly properties
-        $bsCampaign->active     = $campaign->enabled;
-        $bsCampaign->name       = $campaign->name;
-        $bsCampaign->saturation = $campaign->occurrences_in_loop;
-        $bsCampaign->save();
+        if ($comparator->isDifferent(["enabled", "name", "occurrences_in_loop"])) {
+            $bsCampaign->active     = $campaign->enabled;
+            $bsCampaign->name       = $campaign->name;
+            $bsCampaign->saturation = $campaign->occurrences_in_loop;
+            $bsCampaign->save();
+        }
 
         return new ExternalBroadcasterResourceId(
             external_id: $bsCampaign->getKey(),

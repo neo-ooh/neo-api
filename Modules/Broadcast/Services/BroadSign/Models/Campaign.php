@@ -112,28 +112,28 @@ class Campaign extends BroadSignModel implements ResourceCastable {
 
     protected static function actions(): array {
         return [
-            "all"                 => Endpoint::get("/reservation/v21")
+            "all"                 => Endpoint::get("/reservation/v22")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new MultipleResourcesParser(static::class))
                                              ->cache(3600),
-            "currents"            => Endpoint::get("/reservation/v21?current_only=True")
+            "currents"            => Endpoint::get("/reservation/v22?current_only=True")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new MultipleResourcesParser(static::class))
                                              ->cache(3600),
-            "create"              => Endpoint::post("/reservation/v21/add")
+            "create"              => Endpoint::post("/reservation/v22/add")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new ResourceIDParser()),
-            "get"                 => Endpoint::get("/reservation/v21/{id}")
+            "get"                 => Endpoint::get("/reservation/v22/{id}")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new SingleResourcesParser(static::class))
                                              ->cache(3600),
-            "byId"                => Endpoint::get("/reservation/v21/by_id")
+            "byId"                => Endpoint::get("/reservation/v22/by_id")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new MultipleResourcesParser(static::class)),
-            "by_container"        => Endpoint::get("/reservation/v21/by_container")
+            "by_container"        => Endpoint::get("/reservation/v22/by_container")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new MultipleResourcesParser(static::class)),
-            "update"              => Endpoint::put("/reservation/v21")
+            "update"              => Endpoint::put("/reservation/v22")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new ResourceIDParser()),
             "addSkinSlots"        => Endpoint::post("/reservation/v22/add_skin_slots")
@@ -142,7 +142,7 @@ class Campaign extends BroadSignModel implements ResourceCastable {
             "promoteSkinSlots"    => Endpoint::post("/reservation/v22/promote_skin_slots")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new ResourceIDParser()),
-            "dropSkinSlots"       => Endpoint::post("/reservation/v21/batch_drop_skin_slots")
+            "dropSkinSlots"       => Endpoint::post("/reservation/v22/batch_drop_skin_slots")
                                              ->unwrap(static::$unwrapKey)
                                              ->parser(new ResourceIDParser()),
             "addResourceCriteria" => Endpoint::post("/resource_criteria/v7/add")

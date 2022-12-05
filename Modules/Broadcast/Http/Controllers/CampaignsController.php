@@ -15,6 +15,8 @@ use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
 use Neo\Models\Product;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
@@ -154,6 +156,10 @@ class CampaignsController extends Controller {
         $campaign->end_time       = $request->input("end_time");
         $campaign->broadcast_days = $request->input("broadcast_days");
 
+        if (Gate::allows(Capability::contracts_edit->value)) {
+            $campaign->flight_id = $request->input("flight_id");
+        }
+
         $campaign->occurrences_in_loop       = $request->input("occurrences_in_loop");
         $campaign->priority                  = $request->input("priority");
         $campaign->static_duration_override  = $request->input("static_duration_override");
@@ -161,7 +167,9 @@ class CampaignsController extends Controller {
 
         $campaign->save();
 
-        $campaign->broadcast_tags()->sync($request->input("tags"));
+        if ($request->has("tags")) {
+            $campaign->broadcast_tags()->sync($request->input("tags"));
+        }
 
         $campaign->refresh();
 

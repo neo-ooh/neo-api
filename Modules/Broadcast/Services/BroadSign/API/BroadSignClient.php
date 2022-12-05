@@ -96,7 +96,7 @@ class BroadSignClient implements APIClientInterface {
             Log::debug("[BroadSign] $endpoint->method@{$endpoint->getPath()}", [json_encode($payload, JSON_THROW_ON_ERROR)]);
         }
 
-        $event = "$endpoint->method@$endpoint->path+" . json_encode($payload, JSON_THROW_ON_ERROR);
+        $event = uniqid("$endpoint->method@$endpoint->path", true);
         clock()->event("[BroadSign] $endpoint->method@$endpoint->path")->name($event)->color("purple")->begin();
 
         // Execute the request

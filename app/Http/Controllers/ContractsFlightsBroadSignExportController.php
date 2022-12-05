@@ -15,7 +15,6 @@ use Illuminate\Support\Collection;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Http\Requests\ContractsFlights\ListBroadSignExportsRequest;
 use Neo\Http\Requests\ContractsFlights\ShowBroadSignExportRequest;
-use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\ContractLine;
 use Neo\Modules\Broadcast\Models\Location;
@@ -25,7 +24,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ContractsFlightsBroadSignExportController {
-    public function index(ListBroadSignExportsRequest $request, Contract $contract, ContractFlight $flight) {
+    public function index(ListBroadSignExportsRequest $request, ContractFlight $flight) {
         // A flight exports are broken down by network & formats
         $lines = $flight->lines;
         $lines->load(["product.property"]);
@@ -48,7 +47,7 @@ class ContractsFlightsBroadSignExportController {
         return new Response($breakdown);
     }
 
-    public function show(ShowBroadSignExportRequest $request, Contract $contract, ContractFlight $flight, Network $network) {
+    public function show(ShowBroadSignExportRequest $request, ContractFlight $flight, Network $network) {
         // A flight exports are broken down by network & formats
         $lines = $flight->lines;
         $lines->load(["product.property", "product.locations"]);
@@ -59,7 +58,7 @@ class ContractsFlightsBroadSignExportController {
         $filteredLines = $lines->filter(fn(ContractLine $line) => $line->product->property->network_id === $networkId && $line->product->category_id === $categoryId);
 
         $doc   = new Spreadsheet();
-        $sheet = new Worksheet(null, $contract->contract_id);
+        $sheet = new Worksheet(null, $flight->contract->contract_id);
         $doc->addSheet($sheet);
         $doc->removeSheetByIndex(0);
 

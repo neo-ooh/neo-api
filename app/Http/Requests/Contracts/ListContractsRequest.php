@@ -13,11 +13,14 @@ namespace Neo\Http\Requests\Contracts;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\Contract;
+use Neo\Rules\PublicRelations;
 
 class ListContractsRequest extends FormRequest {
     public function rules(): array {
         return [
-            "actor_id" => ["sometimes", "exists:actors,id"]
+            "actor_id" => ["sometimes", "exists:actors,id"],
+            "with"     => ["array", new PublicRelations(Contract::class)],
         ];
     }
 

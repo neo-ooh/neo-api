@@ -19,6 +19,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Neo\Enums\ProductsFillStrategy;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Location;
@@ -53,6 +54,8 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property Collection<Location>                    $locations    // Attribute
  */
 class ContractFlight extends Model {
+    use HasPublicRelations;
+
     protected $table = "contracts_flights";
 
     protected $primaryKey = "id";
@@ -69,6 +72,11 @@ class ContractFlight extends Model {
     protected $dates = [
         "start_date",
         "end_date",
+    ];
+
+    protected array $publicRelations = [
+        "contract"   => "contract",
+        "advertiser" => "contract.advertiser",
     ];
 
     public function lines(): HasMany {

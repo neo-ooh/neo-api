@@ -153,6 +153,8 @@ class Campaign extends BroadcastResourceModel {
         "formats"                  => ["formats.layouts.frames"],
         "tags"                     => "broadcast_tags",
         "performances"             => "performances",
+        "flight"                   => "flight",
+        "contract"                 => "contract",
     ];
 
     protected static function boot(): void {

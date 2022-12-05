@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Models\ContractFlight;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Rules\AccessibleActor;
@@ -44,6 +45,8 @@ class UpdateCampaignRequest extends FormRequest {
             "end_time"   => ["required", "date_format:H:i:s"],
 
             "broadcast_days" => ["required", "integer", "max:127"],
+
+            "flight_id" => ["nullable", new Exists(ContractFlight::class, "id")],
 
             "occurrences_in_loop"       => ["required", "integer", "min:0"],
             "priority"                  => ["required", "integer", "min:0"],

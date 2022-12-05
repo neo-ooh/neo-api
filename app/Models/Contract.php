@@ -77,8 +77,8 @@ class Contract extends Model {
             "bursts"                 => ["bursts.screenshots", "bursts.location"],
             "client"                 => "client",
             "data"                   => "data",
-            "flights"                => [
-                "flights",
+            "flights"                => "flights",
+            "expected_impressions"   => [
                 fn(Contract $contract) => $contract->flights
                     ->append("expected_impressions")
                     ->each(fn(ContractFlight $flight) => $flight->lines->append(["network_id", "product_type"])),

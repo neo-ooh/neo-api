@@ -234,7 +234,7 @@ class ActorsController extends Controller {
         $actor->save();
 
         // If a parent_id is present and different from the current actor's parent, try to move the actor
-        if (($parentID = $request->get("parent_id", false)) && $parentID !== $actor->parent_id) {
+        if (($parentID = $request->get("parent_id", null)) && $parentID !== $actor->parent_id) {
             /** @var Actor $parent */
             $parent = Actor::query()->findOrFail($parentID);
 

@@ -73,7 +73,7 @@ class RecoveryToken extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'email',
@@ -83,7 +83,7 @@ class RecoveryToken extends Model {
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array
+     * @var list<string>
      */
     protected $hidden = [
         'token',
@@ -106,7 +106,10 @@ class RecoveryToken extends Model {
             $model->token      = Str::random(32);
             $model->created_at = $model->freshTimestamp();
 
-            Mail::to($model->actor)->send(new RecoverPasswordEmail($model->actor()->first(), $model));
+            /** @var Actor $actor */
+            $actor = $model->actor()->first();
+
+            Mail::to($model->actor)->send(new RecoverPasswordEmail($actor, $model));
         });
     }
 

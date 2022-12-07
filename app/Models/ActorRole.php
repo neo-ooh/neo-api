@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
@@ -22,8 +21,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @mixin Model
  */
 class ActorRole extends Pivot {
-    use HasFactory;
-
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -41,7 +38,7 @@ class ActorRole extends Pivot {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'actor_id',

@@ -15,10 +15,11 @@ use Illuminate\Database\Eloquent\Builder;
 trait HasCompositePrimaryKey {
     public function getKey() {
         $attributes = [];
-        /** @var array $keys */
+
+        /** @var array<string> $keys */
         $keys = $this->getKeyName();
 
-        foreach ($this->getKeyName() as $key) {
+        foreach ($keys as $key) {
             $attributes[$key] = $this->getAttribute($key);
         }
 
@@ -32,7 +33,7 @@ trait HasCompositePrimaryKey {
      * @return Builder
      */
     protected function setKeysForSaveQuery($query) {
-        /** @var string|array $keys */
+        /** @var string|array<string> $keys */
         $keys = $this->getKeyName();
         if (!is_array($keys)) {
             return parent::setKeysForSaveQuery($query);

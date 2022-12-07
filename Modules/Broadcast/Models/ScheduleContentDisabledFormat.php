@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Concerns\AsPivot;
 
 /**
- * @property int schedule_content_id
+ * @property int $schedule_content_id
  * @property int $format_id
  */
 class ScheduleContentDisabledFormat extends Model {

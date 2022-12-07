@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
 
@@ -29,7 +30,7 @@ class UpdateActorRequest extends FormRequest {
         /** @var Actor $actor */
         $actor = $this->route('actor');
 
-        if (!Auth::user()->is_group && Auth::user()->is($actor)) {
+        if (!Auth::user()->is_group && Auth::user()?->is($actor)) {
             return true; // The actor can update itself
         }
 
@@ -38,7 +39,7 @@ class UpdateActorRequest extends FormRequest {
         }
 
         // Check if the actor we want to update is a descendant of the current one
-        return Auth::user()->hasAccessTo($actor);
+        return Auth::user()?->hasAccessTo($actor);
     }
 
     /**
@@ -48,16 +49,18 @@ class UpdateActorRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "name"           => ["sometimes", "string"],
-            "email"          => ["sometimes", "exclude_unless:is_group,false", "email", Rule::unique('actors')
-                                                                                            ->ignore($this->route('actor')->id)],
-            "locale"         => ["sometimes", "string"],
-            "password"       => ["sometimes", "string", "min:6"],
-            "is_locked"      => ["sometimes", "boolean"],
-            "parent_id"      => ["sometimes", "integer", "exists:actors,id"],
+            "name"      => ["sometimes", "string"],
+            "email"     => ["sometimes", "exclude_unless:is_group,false", "email", Rule::unique('actors')
+                                                                                       ->ignore($this->route('actor')->id)],
+            "locale"    => ["sometimes", "string"],
+            "password"  => ["sometimes", "string", "min:6"],
+            "is_locked" => ["sometimes", "boolean"],
+
+            "parent_id" => ["nullable", new Exists(Actor::class, "id")],
+
             "branding_id"    => ["sometimes", "present"],
             "limited_access" => ["sometimes", "boolean"],
-            "two_fa_method"  => ["sometimes", "string"]
+            "two_fa_method"  => ["sometimes", "string"],
         ];
     }
 }

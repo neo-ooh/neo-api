@@ -91,7 +91,7 @@ class Property extends SecuredModel {
     /**
      * The attributes that should be cast.
      *
-     * @var array
+     * @var array<string, string>
      */
     public $casts = [
         "require_traffic"        => "boolean",

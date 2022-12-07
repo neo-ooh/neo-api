@@ -31,16 +31,11 @@ class ThumbnailCreator {
      */
     public function getThumbnailAsStream() {
         $extension = strtolower($this->file->guessExtension());
-        switch ($extension) {
-            case "jpg":
-            case "jpeg":
-            case "png":
-                return $this->makeThumbnailForImage($this->file);
-            case "mp4":
-                return $this->makeThumbnailForVideo($this->file);
-            default:
-                throw new UnsupportedFileFormatException();
-        }
+        return match ($extension) {
+            "jpg", "jpeg", "png" => $this->makeThumbnailForImage($this->file),
+            "mp4"                => $this->makeThumbnailForVideo($this->file),
+            default              => throw new UnsupportedFileFormatException(),
+        };
     }
 
     /**

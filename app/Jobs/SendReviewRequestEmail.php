@@ -12,7 +12,6 @@ namespace Neo\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -58,7 +57,7 @@ class SendReviewRequestEmail implements ShouldQueue {
         $schedule = Schedule::query()->findOrFail($this->scheduleID);
 
         // If the schedule is not locked, do nothing.
-        if (!$schedule->locked) {
+        if (!$schedule->is_locked) {
             return;
         }
 
@@ -67,34 +66,5 @@ class SendReviewRequestEmail implements ShouldQueue {
 
         $reviewers->each(fn($reviewer) => Mail::to($reviewer)->send(new ReviewRequestEmail($reviewer, $schedule))
         );
-    }
-
-    public function getReviewers(Schedule $schedule): Collection {
-        // We start by the owner of the campaign and we move upward until we found someone
-        $actor = $schedule->campaign->owner;
-
-        do {
-            // Is this actor a group ?
-            if ($actor->is_group) {
-                // Does this group has actor with the proper capability ?
-                $reviewers = $actor->getAccessibleActors(true, true, false, false)
-                                   ->filter(fn($child) => !$child->is_group && $child->hasCapability(Capability::contents_review))
-                                   ->each(fn($actor) => $actor->unsetRelations());
-
-                if ($reviewers->count() > 0) {
-                    return $reviewers;
-                }
-            }
-
-            if ($actor->hasCapability(Capability::contents_review)) {
-                // This actor has the proper capability, use it
-                return (new Collection())->push($actor);
-            }
-
-            // No match, go up
-            $actor = $actor->parent;
-        } while ($actor !== null);
-
-        return new Collection();
     }
 }

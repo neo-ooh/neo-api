@@ -10,9 +10,8 @@
 
 namespace Neo\Models;
 
-use Carbon\Traits\Date;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -29,15 +28,15 @@ use Neo\Modules\Broadcast\Models\Location;
  * @property integer                        $contract_id
  * @property integer                        $reservation_id
  * @property ?integer                       $actor_id
- * @property integer                        $location_id
- * @property Date                           $start_at
+ * @property integer|null                   $location_id
+ * @property Carbon                         $start_at
  * @property string                         $status
  * @property int                            $scale_percent
  * @property int                            $duration_ms
  * @property int                            $frequency_ms
- * @property Date                           $created_at
- * @property Date                           $updated_at
- * @property Date|null                      $deleted_at
+ * @property Carbon                         $created_at
+ * @property Carbon                         $updated_at
+ * @property Carbon|null                    $deleted_at
  *
  * @property integer                        $expected_screenshots
  * @property integer                        $screenshots_count
@@ -46,10 +45,9 @@ use Neo\Modules\Broadcast\Models\Location;
  * @property Contract                       $contract
  * @property ContractReservation            $reservation
  * @property Actor                          $actor
- * @property Location                       $location
+ * @property Location|null                  $location
  */
 class ContractBurst extends Model {
-    use HasFactory;
     use SoftDeletes;
 
     protected $table = "contracts_bursts";

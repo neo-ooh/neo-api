@@ -19,12 +19,12 @@ use Neo\Modules\Broadcast\Models\Location;
  *
  * @package NeoModels\Traits
  *
- * @property Collection<Location> own_locations
- * @property Collection<Location> group_locations
- * @property Collection<Location> locations
+ * @property Collection<Location> $own_locations
+ * @property Collection<Location> $group_locations
+ * @property Collection<Location> $locations
  */
 trait HasLocations {
-    public function getLocations($own = true, $group = true, $children = true, $recurs = false): Collection {
+    public function getLocations(bool $own = true, bool $group = true, bool $children = true, bool $recurs = false): Collection {
         $locations = new Collection();
 
         if ($group && !$this->is_group && $this->details->parent_is_group) {
@@ -34,7 +34,7 @@ trait HasLocations {
         }
 
         if ($children && !$recurs) {
-            $locations = $locations->merge($this->direct_children->map(fn($child) => $child->getLocations(true, false, $children && $recurs, $recurs))
+            $locations = $locations->merge($this->direct_children->map(fn($child) => $child->getLocations(true, false, false, false))
                                                                  ->flatten());
         }
 

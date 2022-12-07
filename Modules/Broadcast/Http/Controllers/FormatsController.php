@@ -11,6 +11,7 @@
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -35,16 +36,17 @@ class FormatsController extends Controller {
     public function index(ListFormatsRequest $request): Response {
         if (!Gate::allows(Capability::formats_edit->value)) {
             // The current actor doesn't have the capability to access format, we will only return formats he has access to from its hierarchy
-            $accessibleActors = Auth::user()->getAccessibleActors();
-            $formats          = Format::query()
-                                      ->orderBy("name")
-                                      ->whereHas("display_types", function (Builder $query) use ($accessibleActors) {
-                                          $query->whereHas("locations", function (Builder $query) use ($accessibleActors) {
-                                              $query->whereHas("actors", function (Builder $query) use ($accessibleActors) {
-                                                  $query->where("id", "in", $accessibleActors->pluck("id"));
-                                              });
-                                          });
-                                      });
+            $accessibleActors = Auth::user()?->getAccessibleActors() ?? new Collection();
+
+            $formats = Format::query()
+                             ->orderBy("name")
+                             ->whereHas("display_types", function (Builder $query) use ($accessibleActors) {
+                                 $query->whereHas("locations", function (Builder $query) use ($accessibleActors) {
+                                     $query->whereHas("actors", function (Builder $query) use ($accessibleActors) {
+                                         $query->where("id", "in", $accessibleActors->pluck("id"));
+                                     });
+                                 });
+                             });
 
             return new Response($formats->loadPublicRelations());
         }
@@ -52,7 +54,7 @@ class FormatsController extends Controller {
         return new Response(Format::query()->orderBy("name")->get()->loadPublicRelations());
     }
 
-    public function byIds(ListFormatsByIdsRequest $request) {
+    public function byIds(ListFormatsByIdsRequest $request): Response {
         $formats = Format::query()->findMany($request->input("ids"));
         return new Response($formats->loadPublicRelations());
     }

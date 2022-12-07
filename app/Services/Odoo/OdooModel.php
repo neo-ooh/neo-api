@@ -143,7 +143,7 @@ abstract class OdooModel implements Arrayable {
      *
      * @param OdooClient $client
      * @param mixed      $id Unique ID of the record
-     * @return OdooModel|null
+     * @return static|null
      * @throws JsonException
      */
     public static function get(OdooClient $client, $id): static|null {
@@ -163,7 +163,7 @@ abstract class OdooModel implements Arrayable {
             return;
         }
 
-        $this->setAttributes(static::get($this->client, $this->id));
+        $this->setAttributes(static::get($this->client, $this->getKey()));
         $this->isIncomplete = false;
     }
 
@@ -184,7 +184,7 @@ abstract class OdooModel implements Arrayable {
      * @param OdooClient $client
      * @param array      $fields
      * @param bool       $pullRecord
-     * @return OdooModel|int
+     * @return static|int
      * @throws JsonException
      */
     public static function create(OdooClient $client, array $fields, bool $pullRecord = true): static|int {

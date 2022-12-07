@@ -11,6 +11,7 @@
 namespace Neo\Services\Odoo;
 
 use Edujugon\Laradoo\Exceptions\OdooException;
+use Edujugon\Laradoo\Facades\Odoo as OdooFacade;
 use Edujugon\Laradoo\Odoo;
 use JsonException;
 
@@ -28,12 +29,12 @@ class OdooClient {
      * @throws OdooException
      */
     public function __construct(string $url, protected string $db, string $userLogin, string $userPassword) {
-        $this->client = \Edujugon\Laradoo\Facades\Odoo::host($url)
-                                                      ->apiSuffix('/')
-                                                      ->db($db)
-                                                      ->username($userLogin)
-                                                      ->password($userPassword)
-                                                      ->connect();
+        $this->client = OdooFacade::host($url)
+                                  ->apiSuffix('/')
+                                  ->db($db)
+                                  ->username($userLogin)
+                                  ->password($userPassword)
+                                  ->connect();
 
     }
 
@@ -87,7 +88,7 @@ class OdooClient {
     }
 
     public function update(OdooModel $model, array $values): bool {
-        $event = uniqid('', true);;
+        $event = uniqid('', true);
         clock()->event("[Odoo] get@$model")->name($event)->color("cyan")->begin();
 
         $response = $this->client->where("id", "=", $model->getKey())

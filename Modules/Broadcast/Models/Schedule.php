@@ -245,11 +245,6 @@ class Schedule extends BroadcastResourceModel {
         return ScheduleStatus::Live;
     }
 
-    public function getLengthAttribute(): float {
-        return $this->content->duration;
-    }
-
-
     /*
     |--------------------------------------------------------------------------
     |

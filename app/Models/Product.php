@@ -52,8 +52,10 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Property                      $property
  * @property ProductCategory               $category
  * @property Collection<ImpressionsModel>  $impressions_models
- * @property Collection<Location>          $locations
  * @property Collection<LoopConfiguration> $loop_configurations
+ *
+ * @property int                           $locations_count           // Laravel `withCount` result accessor
+ * @property Collection<Location>          $locations
  */
 class Product extends Model implements WithImpressionsModels, WithAttachments {
     use SoftDeletes;

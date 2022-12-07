@@ -32,7 +32,6 @@ namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
@@ -46,8 +45,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @mixin Builder
  */
 class Branding extends Model {
-    use HasFactory;
-
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -65,7 +62,7 @@ class Branding extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'name',
@@ -74,17 +71,9 @@ class Branding extends Model {
     /**
      * The relationships that should always be loaded.
      *
-     * @var array
+     * @var array<string>
      */
     protected $with = ["files"];
-
-    /**
-     * @return Factories\BrandingFactory
-     */
-    protected static function newFactory(): Factories\BrandingFactory {
-        return Factories\BrandingFactory::new();
-    }
-
 
     /*
     |--------------------------------------------------------------------------

@@ -73,28 +73,26 @@ class Contract extends Model {
 
     protected function getPublicRelations(): array {
         return [
-            "advertiser"             => "advertiser",
-            "bursts"                 => ["bursts.screenshots", "bursts.location"],
-            "client"                 => "client",
-            "data"                   => "data",
-            "flights"                => "flights",
-            "expected_impressions"   => [
+            "advertiser"           => "advertiser",
+            "bursts"               => ["bursts.screenshots", "bursts.location"],
+            "client"               => "client",
+            "flights"              => "flights",
+            "expected_impressions" => [
                 fn(Contract $contract) => $contract->flights
                     ->append("expected_impressions")
                     ->each(fn(ContractFlight $flight) => $flight->lines->append(["network_id", "product_type"])),
             ],
-            "locations"              => [
+            "locations"            => [
                 fn(Contract $contract) => $contract->flights
                     ->append("locations"),
             ],
-            "owner"                  => "owner",
-            "performances"           => "append:performances",
-            "plan"                   => "append:stored_plan",
-            "reservations"           => "reservations",
-            "reservations.locations" => fn(Contract $contract) => $contract->loadReservationsLocations(),
-            "salesperson"            => "salesperson",
-            "screenshots"            => "validated_screenshots",
-            "campaigns"              => "campaigns",
+            "owner"                => "owner",
+            "performances"         => "append:performances",
+            "plan"                 => "append:stored_plan",
+            "reservations"         => "reservations",
+            "salesperson"          => "salesperson",
+            "screenshots"          => "validated_screenshots",
+            "campaigns"            => "campaigns",
         ];
     }
 
@@ -136,10 +134,6 @@ class Contract extends Model {
 
     public function reservations(): HasMany {
         return $this->hasMany(ContractReservation::class, "contract_id", "id");
-    }
-
-    public function data(): HasMany {
-        return $this->hasMany(ContractNetworkData::class, "contract_id", "id");
     }
 
     public function flights(): HasMany {

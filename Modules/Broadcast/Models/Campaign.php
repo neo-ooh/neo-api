@@ -226,8 +226,8 @@ class Campaign extends BroadcastResourceModel {
                     ->whereRelation("details", function (Builder $query) {
                         $query->where("is_approved", "=", true);
                     })
-                    ->withTrashed()
                     ->where("end_date", "<", Carbon::now())
+                    ->withTrashed()
                     ->orderByDesc("end_date");
     }
 

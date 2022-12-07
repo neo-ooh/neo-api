@@ -19,6 +19,7 @@ use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Models\Field;
 use Neo\Models\Property;
 use Neo\Models\PropertyFieldSegmentValue;
+use Neo\Modules\Broadcast\Models\Network;
 
 class FieldsController {
     public function index(ListFieldsRequest $request): Response {
@@ -28,7 +29,7 @@ class FieldsController {
     public function show(ListFieldsRequest $request, Field $field): Response {
         $field->load(["category", "networks:id"]);
 
-        $field->network_ids = $field->networks->map(fn($n) => $n->id);
+        $field->network_ids = $field->networks->map(fn(Network $n) => $n->id);
         $field->makeHidden("networks");
 
         return new Response($field);
@@ -53,7 +54,7 @@ class FieldsController {
         $field->segments()->create([
             "name_en" => "Default",
             "name_fr" => "Default",
-            "order"   => 0
+            "order"   => 0,
         ]);
 
         return new Response($field->load("segments"), 201);

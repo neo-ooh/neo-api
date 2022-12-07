@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Models\Client;
 
 class ShowClientRequest extends FormRequest {
     /**
@@ -28,9 +29,11 @@ class ShowClientRequest extends FormRequest {
         }
 
         // Get the request client
-        return $this->route("client")?->has("contracts", function (Builder $query) {
+        /** @var Client $client */
+        $client = $this->route()?->parameter("client");
+        return $client->has("contracts", function (Builder $query) {
             $query->where("owner_id", "=", Auth::id());
-        })->get();
+        })->exists();
     }
 
     /**

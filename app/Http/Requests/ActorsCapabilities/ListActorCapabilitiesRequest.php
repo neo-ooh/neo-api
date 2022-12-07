@@ -24,7 +24,7 @@ class ListActorCapabilitiesRequest extends FormRequest {
      * @return bool
      */
     public function authorize(): bool {
-        return Gate::allows(Capability::actors_edit->value) || $this->route("actor")?->id === Auth::id();
+        return Gate::allows(Capability::actors_edit->value) || $this->route()?->originalParameter("actor") === Auth::id();
     }
 
     /**
@@ -34,7 +34,7 @@ class ListActorCapabilitiesRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "all" => ["nullable"]
+            "all" => ["nullable"],
         ];
     }
 }

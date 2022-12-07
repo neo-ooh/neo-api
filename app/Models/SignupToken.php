@@ -70,7 +70,7 @@ class SignupToken extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'actor_id',
@@ -79,7 +79,7 @@ class SignupToken extends Model {
     /**
      * The attributes that should be hidden for arrays.
      *
-     * @var array
+     * @var list<string>
      */
     protected $hidden = [
         'token',
@@ -96,11 +96,11 @@ class SignupToken extends Model {
 
     public $timestamps = false;
 
-    public static function boot (): void {
+    public static function boot(): void {
         parent::boot();
 
         static::creating(function (SignupToken $model) {
-            $model->token = Str::random(32);
+            $model->token      = Str::random(32);
             $model->created_at = $model->freshTimestamp();
         });
     }
@@ -111,7 +111,7 @@ class SignupToken extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function actor (): BelongsTo {
+    public function actor(): BelongsTo {
         return $this->belongsTo(Actor::class);
     }
 }

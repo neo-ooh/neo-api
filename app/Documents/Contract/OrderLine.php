@@ -52,7 +52,7 @@ class OrderLine {
     public string $product;
     public string $product_category;
     public string $product_description;
-    public string $product_rental;
+    public bool $product_rental;
     public bool $isMobileProduct = false;
     public bool $isAdServerProduct = false;
     public string $product_type;

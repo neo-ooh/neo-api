@@ -13,27 +13,25 @@ namespace Neo\Models;
 use Carbon\Traits\Date;
 use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Address
  *
  * @package Neo\Models
- * @property int    $id
- * @property string $line_1
- * @property string $line_2
- * @property int    $city_id
- * @property City   $city
- * @property string $zipcode
- * @property Point  $geolocation
- * @property Date   $created_at
- * @property Date   $updated_at
+ * @property int        $id
+ * @property string     $line_1
+ * @property string     $line_2
+ * @property int        $city_id
+ * @property City       $city
+ * @property string     $zipcode
+ * @property Point|null $geolocation
+ * @property Date       $created_at
+ * @property Date       $updated_at
  *
- * @property string $string_representation Human-readable version of the address
+ * @property string     $string_representation Human-readable version of the address
  */
 class Address extends Model {
-    use HasFactory;
     use SpatialTrait;
 
     public bool $wktOptions = false;
@@ -54,7 +52,7 @@ class Address extends Model {
     ];
 
     protected $appends = [
-        "string_representation"
+        "string_representation",
     ];
 
     public function city() {
@@ -63,7 +61,7 @@ class Address extends Model {
 
     public function getStringRepresentationAttribute(): string {
         $str = $this->line_1;
-        if ($this->line_2 && strlen($this->line_2) > 0) {
+        if ($this->line_2 && $this->line_2 !== '') {
             $str .= ", $this->line_2";
         }
 

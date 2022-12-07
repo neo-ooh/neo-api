@@ -27,19 +27,19 @@ use Neo\Models\ActorClosure;
  *
  * @mixin Model
  * @mixin QueryBuilder
- * @property Collection<Actor> parents
+ * @property Collection<Actor> $parents
  *
- * @property int               children_count
- * @property Collection<Actor> children
+ * @property int               $children_count
+ * @property Collection<Actor> $children
  *
- * @property int               direct_children_count
- * @property Collection<Actor> direct_children
+ * @property int               $direct_children_count
+ * @property Collection<Actor> $direct_children
  *
  * @method Builder Parents() scope
  * @method Builder Parent() scope
  * @method Builder Children() scope
  *
- * @property int               parents_count
+ * @property int               $parents_count
  */
 trait HasHierarchy {
     use WithRelationCaching;
@@ -232,7 +232,7 @@ trait HasHierarchy {
      *
      * @param Actor $parent
      *
-     * @return HasHierarchy
+     * @return static
      */
     public function moveTo(Actor $parent): self {
         if ($this->is($parent)) {

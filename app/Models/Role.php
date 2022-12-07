@@ -13,7 +13,6 @@ namespace Neo\Models;
 use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -32,8 +31,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @mixin Builder<Role>
  */
 class Role extends Model {
-    use HasFactory;
-
     /*
 |--------------------------------------------------------------------------
 | Table properties
@@ -51,17 +48,12 @@ class Role extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         'name',
         'desc',
     ];
-
-    protected static function newFactory(): Factories\RoleFactory {
-        return Factories\RoleFactory::new();
-    }
-
 
     /*
     |--------------------------------------------------------------------------

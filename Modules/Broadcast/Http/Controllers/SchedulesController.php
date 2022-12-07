@@ -273,12 +273,18 @@ class SchedulesController extends Controller {
         $schedule->end_time       = $endTime;
         $schedule->broadcast_days = $broadcastDays;
 
-        if (!$schedule->is_locked && $request->input("is_locked", false)) {
+        if (!$schedule->is_locked && $request->input("is_locked", false) && $schedule->end_date->isAfter(Carbon::now())) {
             $schedule->is_locked = true;
             $schedule->locked_at = Date::now();
 
+            // If the schedule start date is set in the past, we move it to today
+            if ($schedule->start_date->isBefore(Carbon::now()->startOfDay())) {
+                $schedule->start_date = Carbon::now()->startOfDay();
+            }
+
             /** @var Actor $user */
             $user = Auth::user();
+
 
             if ($user->hasCapability(Capability::contents_review)) {
                 $review              = new ScheduleReview();
@@ -322,10 +328,22 @@ class SchedulesController extends Controller {
         // If a schedule has not be reviewed, we want to completely remove it
         if ($schedule->status === ScheduleStatus::Draft || $schedule->status === ScheduleStatus::Pending) {
             $schedule->forceDelete();
-        } else {
-            $schedule->delete();
+            return new Response([]);
         }
 
+        // If the schedule is approved, we check if it has started playing.
+        // If so, we set its end-date for yesterday, effectively stopping its broadcast, but keeping it in the
+        // `expired` list
+        if ($schedule->start_date < Carbon::now()) {
+            $schedule->end_date = Carbon::now()->subDay();
+            $schedule->save();
+            $schedule->promote();
+
+            return new Response([]);
+        }
+
+        // Schedule has not started playing, delete it
+        $schedule->delete();
         return new Response([]);
     }
 }

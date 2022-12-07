@@ -39,7 +39,7 @@ class Order {
     public float $total;
     public int $traffic;
 
-    public string $show_investment;
+    public bool $show_investment;
 
     public Collection $orderLines;
     public Collection $productionLines;

@@ -16,6 +16,10 @@ use Neo\Modules\Broadcast\Models\Network;
 
 class BroadcasterAdapterFactory {
     /**
+     * Give a new broadcaster operator for the given network.
+     * Return type is set as mixed, as the returned broadcaster instance may have different interfaces depending
+     * on its capabilities.
+     *
      * @throws InvalidBroadcasterAdapterException
      */
     public static function make(BroadcasterConnection $connection, Network $network) {
@@ -35,9 +39,13 @@ class BroadcasterAdapterFactory {
     }
 
     /**
+     * Give a new broadcaster operator for the given network.
+     * Return type is set as mixed, as the returned broadcaster instance may have different interfaces depending
+     * on its capabilities.
+     *
      * @throws InvalidBroadcasterAdapterException
      */
-    public static function makeForNetwork(int $networkId) {
+    public static function makeForNetwork(int $networkId): mixed {
         /** @var Network $network */
         $network = Network::query()->with(["broadcaster_connection"])
                           ->find($networkId);

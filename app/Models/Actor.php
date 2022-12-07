@@ -17,7 +17,6 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -58,6 +57,8 @@ use Neo\Rules\AccessibleActor;
  * @property int|null            $locked_by             Tell who locke this actor, if applicable
  * @property int|null            $branding_id           ID of the branding applied to this user
  *
+ * @property ActorDetails        $details               Meta information about the actor
+ *
  * @property Date                $created_at
  * @property Date                $updated_at
  * @property Date                $last_login_at
@@ -79,9 +80,8 @@ use Neo\Rules\AccessibleActor;
  * @property SignupToken|null    $signupToken
  *
  *
- * @property Property            $property
+ * @property Property|null       $property
  *
- * @property Collection          $accessible_actors
  * @property Collection          $shared_actors
  * @property int|null            $parent_id
  * @property Actor               $parent
@@ -112,7 +112,6 @@ use Neo\Rules\AccessibleActor;
  */
 class Actor extends SecuredModel implements AuthenticatableContract, AuthorizableContract {
     use Notifiable, Authenticatable, Authorizable;
-    use HasFactory;
     use HasLocations;
     use HasRoles;
     use HasHierarchy;
@@ -132,7 +131,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     /**
      * The attributes that should not be included in serialization
      *
-     * @var array<int, string>
+     * @var list<string>
      */
     protected $hidden = [
         "password",
@@ -183,10 +182,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @var string
      */
     protected string $accessRule = AccessibleActor::class;
-
-    protected static function newFactory(): Factories\ActorFactory {
-        return Factories\ActorFactory::new();
-    }
 
     protected function getPublicRelations() {
         return [
@@ -420,25 +415,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
                     ->orderBy("name");
     }
 
-    /**
-     * Gives all actors this actor is allowed to interact with
-     *
-     * @return Collection<Actor>
-     */
-    public function getAccessibleActorsAttribute(): Collection {
-        // We have access to all our children and the descendants of all the items who shared their pool with us as well as all descendants and accessible actors of our parent if it is a group. We do not use the parent `accessible users` property as we don't want to get recursive.
-        /** @var Collection<Actor> $accessible */
-        $accessible = $this->newQuery()->AccessibleActors()->get();
-
-        // A user can access its group actors, but a group cannot access its parent actors, even if it is a group.
-        if (($this->parent->is_group ?? false) && !$this->is_group) {
-            $accessible = $accessible->merge($this->parent->children);
-            $accessible = $accessible->merge($this->parent->shared_actors);
-        }
-
-        return $accessible->unique("id");
-    }
-
     public function scopeSharedActors(Builder $query): Builder {
         $ancestorColumn   = $this->getQualifiedClosureColumn("ancestor_id");
         $descendantColumn = $this->getQualifiedClosureColumn("descendant_id");
@@ -483,7 +459,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->details->parent_is_group;
     }
 
-    public function getIsPropertyAttribute(): ?bool {
+    public function getIsPropertyAttribute(): bool {
         return $this->details->is_property;
     }
 

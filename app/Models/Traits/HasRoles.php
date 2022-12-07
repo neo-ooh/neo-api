@@ -93,8 +93,7 @@ trait HasRoles {
     /**
      * @param int[] $roles
      *
-     * @return HasRoles
-     * @return HasRoles
+     * @return self
      */
     public function addRoles(array $roles): self {
         foreach ($roles as $roleID) {
@@ -110,14 +109,14 @@ trait HasRoles {
     /**
      * @param int[] $roles
      *
-     * @return HasRoles
+     * @return self
      */
     public function removeRoles(array $roles): self {
         $binds = implode(", ", array_fill(0, count($roles), "?"));
         DB::delete("DELETE FROM `actors_roles` WHERE `actor_id` = ? AND `role_id` IN ($binds)",
             [
                 $this->getKey(),
-                ...$roles
+                ...$roles,
             ]);
 
         return $this;

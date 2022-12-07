@@ -10,7 +10,7 @@
 
 namespace Neo\Models;
 
-use Carbon\Carbon as Date;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
@@ -25,8 +25,10 @@ use Intervention\Image\Facades\Image;
  * @property int    $id
  * @property int    $actor_id
  * @property string $original_name
- * @property Date   $created_at
- * @property Date   $updated_at
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
+ *
+ * @property string $file_path
  */
 class ActorLogo extends Model {
     /*
@@ -42,7 +44,7 @@ class ActorLogo extends Model {
     protected $table = "actors_logo";
 
     /**
-     * @var array
+     * @var array<string>
      */
     protected $fillable = ["id", "original_name"];
 

@@ -31,7 +31,7 @@ use Illuminate\Support\Collection;
  * @property Date                        $updated_at
  * @property Date                        $deleted_at
  *
- * @property ?Actor                      actor
+ * @property Actor|null                  $actor
  * @property Collection<HeadlineMessage> $messages
  * @property Collection<Capability>      $capabilities
  *

@@ -12,7 +12,6 @@ namespace Neo\Models;
 
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Http\UploadedFile;
@@ -33,7 +32,6 @@ use Illuminate\Support\Facades\Storage;
  */
 class BrandingFile extends Model {
     use Notifiable;
-    use HasFactory;
 
     /*
     |--------------------------------------------------------------------------
@@ -52,7 +50,7 @@ class BrandingFile extends Model {
     /**
      * The attributes that are mass assignable.
      *
-     * @var array
+     * @var array<string>
      */
     protected $fillable = [
         "type",
@@ -64,14 +62,9 @@ class BrandingFile extends Model {
     /**
      * The accessors to append to the model's array form.
      *
-     * @var array
+     * @var array<string>
      */
     protected $appends = ['file_path'];
-
-    protected static function newFactory(): Factories\BrandingFileFactory {
-        return Factories\BrandingFileFactory::new();
-    }
-
 
     /*
     |--------------------------------------------------------------------------

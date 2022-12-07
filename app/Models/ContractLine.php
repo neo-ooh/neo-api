@@ -29,7 +29,7 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  * @property int                       $impressions
  *
  * @property ContractFlight            $flight
- * @property Product                   $product
+ * @property Product|null              $product
  *
  * @property number|null               $network_id
  * @property ProductsFillStrategy|null $product_type
@@ -69,12 +69,12 @@ class ContractLine extends Model {
     public function getNetworkIdAttribute() {
         return Property::query()->whereHas("products", function (Builder $query) {
             $query->where("id", "=", $this->product_id);
-        })->setEagerLoads([])->first()?->network_id ?? null;
+        })->setEagerLoads([])->first()->network_id ?? null;
     }
 
     public function getProductTypeAttribute() {
         return ProductCategory::query()->whereHas("products", function (Builder $query) {
             $query->where("id", "=", $this->product_id);
-        })->setEagerLoads([])->first()?->fill_strategy ?? null;
+        })->setEagerLoads([])->first()->fill_strategy ?? null;
     }
 }

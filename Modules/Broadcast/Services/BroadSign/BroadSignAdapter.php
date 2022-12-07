@@ -348,7 +348,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
             "auto_synchronize_bundles" => true,
             "container_id"             => !$campaign->advertiser ? $this->config->reservationsContainerId : null,
-            "parent_id"                => $campaign->advertiser?->external_id ?? $this->config->customerId,
+            "parent_id"                => $campaign->advertiser->external_id ?? $this->config->customerId,
         ]);
 
         $bsCampaign->create();

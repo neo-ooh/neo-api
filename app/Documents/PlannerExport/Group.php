@@ -69,7 +69,8 @@ class Group {
         $categories          = ProductCategory::query()->get();
         $formattedProperties = $compiledProperties
             ->map(fn(array $compiledProperty) => new Property($compiledProperty, $properties->firstWhere("actor_id", "=", $compiledProperty["id"]), $categories, $products))
-            ->sortBy("property.actor.name");
+            ->sortBy("property.actor.name")
+            ->values();
 
         $this->properties = $formattedProperties;
 

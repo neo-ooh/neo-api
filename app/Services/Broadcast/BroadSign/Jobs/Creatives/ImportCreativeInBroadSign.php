@@ -109,10 +109,12 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
      * @throws Exception
      */
     protected function importStaticCreative(Creative $creative): void {
+        $creativeName = str_replace('\'', '', $creative->original_name);
+
         // Prepare the creative metadata for BroadSign
         $metadata = [
-            "name"             => $creative->owner->email . " - " . $creative->original_name,
-            "originalfilename" => $creative->original_name,
+            "name"             => $creative->owner->email . " - " . $creativeName,
+            "originalfilename" => $creativeName,
             "size"             => Storage::disk("public")->size($creative->properties->file_path),
             "feeds"            => "",
             "attributes"       => $this->getAttributesForCreative($creative),
@@ -138,10 +140,12 @@ class ImportCreativeInBroadSign extends BroadSignJob implements ShouldBeUnique {
     }
 
     protected function importDynamicCreative(Creative $creative): void {
+        $creativeName = str_replace('\'', '', $creative->original_name);
+
         // Prepare the creative metadata for BroadSign
         $metadata = [
-            "name"             => $creative->owner->email . " - " . $creative->original_name,
-            "originalfilename" => $creative->original_name,
+            "name"             => $creative->owner->email . " - " . $creativeName,
+            "originalfilename" => $creativeName,
             "size"             => "-1",
             "feeds"            => "",
             "attributes"       => $this->getAttributesForCreative($creative),

@@ -15,7 +15,6 @@ use Neo\Services\API\Parsers\MultipleResourcesParser;
 use Neo\Services\Broadcast\BroadSign\API\BroadsignClient;
 use Neo\Services\Broadcast\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Services\Broadcast\BroadSign\API\Parsers\SingleResourcesParser;
-use phpDocumentor\Reflection\Types\Array_;
 
 /**
  * Class ActorsLocations

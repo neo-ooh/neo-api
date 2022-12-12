@@ -28,7 +28,6 @@ use Neo\Modules\Broadcast\Services\Resources\Container as ContainerResource;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Location as LocationResource;
 use Neo\Modules\Broadcast\Services\Resources\Player as PlayerResource;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Throwable;
 
@@ -47,7 +46,7 @@ class SynchronizeNetworkJob extends Job {
      * 2. List all players for network
      * 3. Register/update location in Connect, replicating containers (if applicable) and players
      *
-     * @throws InvalidBroadcasterAdapterException|UnknownProperties
+     * @throws InvalidBroadcasterAdapterException
      */
     protected function run(): mixed {
         $output = new ConsoleOutput();
@@ -111,7 +110,7 @@ class SynchronizeNetworkJob extends Job {
             /** @var Location $location */
             $location = Location::withTrashed()->updateOrCreate([
                 "network_id"  => $broadcaster->getNetworkId(),
-                "external_id" => $externalLocation->external_id,
+                "external_id" => (string)$externalLocation->external_id,
             ], [
                 "display_type_id" => $displayType->getKey(),
                 "internal_name"   => $externalLocation->name,
@@ -184,19 +183,6 @@ class SynchronizeNetworkJob extends Job {
         return null;
     }
 
-    protected function onSuccess(mixed $result): void {
-        // Update timestamp on network table
-        DB::table((new Network())->getTable())
-          ->where("id", "=", $this->networkId)
-          ->update([
-              "last_sync_at" => Carbon::now(),
-          ]);
-    }
-
-    protected function onFailure(Throwable $exception): void {
-        throw $exception;
-    }
-
     protected function getDisplayType(BroadcasterOperator&BroadcasterLocations $broadcaster, ExternalBroadcasterResourceId $externalDisplayTypeId): DisplayType|null {
         /** @var DisplayType $displayType */
         $displayType = DisplayType::query()->firstOrNew([
@@ -226,7 +212,6 @@ class SynchronizeNetworkJob extends Job {
      * @param BroadcasterOperator&BroadcasterContainers $broadcaster
      * @param ExternalBroadcasterResourceId             $externalContainerId
      * @return int|null ID of the given external Container ID in connect, if any
-     * @throws UnknownProperties
      */
     protected function persistContainersHierarchy(BroadcasterOperator&BroadcasterContainers $broadcaster, ExternalBroadcasterResourceId $externalContainerId): int|null {
         // Pull the external container
@@ -253,5 +238,18 @@ class SynchronizeNetworkJob extends Job {
         ]);
 
         return $container->getKey();
+    }
+
+    protected function onSuccess(mixed $result): void {
+        // Update timestamp on network table
+        DB::table((new Network())->getTable())
+          ->where("id", "=", $this->networkId)
+          ->update([
+              "last_sync_at" => Carbon::now(),
+          ]);
+    }
+
+    protected function onFailure(Throwable $exception): void {
+        throw $exception;
     }
 }

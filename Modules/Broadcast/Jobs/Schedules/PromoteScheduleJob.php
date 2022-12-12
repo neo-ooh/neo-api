@@ -33,6 +33,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\Exceptions\MissingExternalResourceException;
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Neo\Modules\Broadcast\Services\Resources\Schedule as ScheduleResource;
 use Neo\Modules\Broadcast\Services\Resources\Tag;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
 use Spatie\DataTransferObject\Exceptions\UnknownProperties;
@@ -174,6 +175,18 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 return true;
             });
 
+            // Get the campaign resource
+            $layouts = $representationFormat->layouts()->where("layout_id", "in", $contents->pluck("layout_id"))->get();
+
+            $scheduleResource = $schedule->toResource();
+
+            // Complete the schedule resource
+            // Use the campaign duration override, fallback to the format's content length otherwise
+            $scheduleResource->duration_msec = ($schedule->campaign->static_duration_override ?: $representationFormat->content_length) * 1000;
+            // If all the layouts in this format are fullscreen, mark the bundle as such
+            $scheduleResource->is_fullscreen = $layouts->every("settings.is_fullscreen", "=", true);
+
+            clock($scheduleResource);
 
             // Get the external ID representation for this schedule
             /** @var array<ExternalResource> $externalResources Existing external representations at the start of the job */
@@ -199,7 +212,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 // Create the schedule in the broadcaster
                 $updatedExternalResources = $this->createSchedule(
                     broadcaster: $broadcaster,
-                    schedule: $schedule,
+                    scheduleResource: $scheduleResource,
                     externalCampaignResource: $externalCampaignResource,
                     contents: $contents,
                     format: $representationFormat,
@@ -211,14 +224,14 @@ class PromoteScheduleJob extends BroadcastJobBase {
                     // There is an external schedule for this representation, update it
                     $updatedExternalResources = $broadcaster->updateSchedule(
                         externalResources: array_map(static fn(ExternalResource $r) => $r->toResource(), $externalResources),
-                        schedule: $schedule->toResource(),
+                        schedule: $scheduleResource,
                         tags: $scheduleTags,
                     );
                 } catch (ExternalBroadcastResourceNotFoundException|MissingExternalResourceException $err) {
                     // The broadcaster did not find any schedule with the id provided. Try to create it instead
                     $updatedExternalResources = $this->createSchedule(
                         broadcaster: $broadcaster,
-                        schedule: $schedule,
+                        scheduleResource: $scheduleResource,
                         externalCampaignResource: $externalCampaignResource,
                         contents: $contents,
                         format: $representationFormat,
@@ -322,25 +335,14 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @throws UnknownProperties
      */
     protected function createSchedule(BroadcasterOperator&BroadcasterScheduling $broadcaster,
-                                      Schedule                                  $schedule,
+                                      ScheduleResource                          $scheduleResource,
                                       ExternalResource                          $externalCampaignResource,
                                       Collection                                $contents,
                                       Format                                    $format,
                                       array                                     $tags): array {
-        // List all layouts of the current format used by the contents
-        $layouts = $format->layouts()->where("layout_id", "in", $contents->pluck("layout_id"))->get();
-
-        $scheduleResource = $schedule->toResource();
-
-        // Complete the schedule resource
-        // Use the campaign duration override, fallback to the format's content length otherwise
-        $scheduleResource->duration_msec = ($schedule->campaign->static_duration_override ?: $format->content_length) * 1000;
-        // If all the layouts in this format are fullscreen, mark the bundle as such
-        $scheduleResource->is_fullscreen = $layouts->every("settings.is_fullscreen", "=", true);
-
         // Now that we have all the creatives Ids, create the schedule
         return $broadcaster->createSchedule(
-            schedule: $schedule->toResource(),
+            schedule: $scheduleResource,
             campaign: $externalCampaignResource->toResource(),
             tags: $tags);
     }

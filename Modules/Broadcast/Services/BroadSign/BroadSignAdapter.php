@@ -638,8 +638,10 @@ class BroadSignAdapter extends BroadcasterOperator implements
         if ($schedule->order !== $bsBundle->position ||
             $triggerTag !== $bsBundle->trigger_category_id ||
             $primarySeparationTag !== $bsBundle->category_id ||
-            $secondarySeparationTags !== $bsBundle->secondary_sep_category_ids
+            $secondarySeparationTags !== $bsBundle->secondary_sep_category_ids ||
+            $schedule->is_fullscreen !== $bsBundle->fullscreen
         ) {
+            $bsBundle->fullscreen                 = $schedule->is_fullscreen;
             $bsBundle->auto_synchronized          = $triggerTag !== 0;
             $bsBundle->trigger_category_id        = $triggerTag;
             $bsBundle->category_id                = $primarySeparationTag;

@@ -176,8 +176,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
             });
 
             // Get the campaign resource
-            $layouts = $representationFormat->layouts()->where("layout_id", "in", $contents->pluck("layout_id"))->get();
-
+            $layouts          = $representationFormat->layouts()->whereIn("layouts.id", $contents->pluck("layout_id"))->get();
             $scheduleResource = $schedule->toResource();
 
             // Complete the schedule resource
@@ -185,8 +184,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
             $scheduleResource->duration_msec = ($schedule->campaign->static_duration_override ?: $representationFormat->content_length) * 1000;
             // If all the layouts in this format are fullscreen, mark the bundle as such
             $scheduleResource->is_fullscreen = $layouts->every("settings.is_fullscreen", "=", true);
-
-            clock($scheduleResource);
 
             // Get the external ID representation for this schedule
             /** @var array<ExternalResource> $externalResources Existing external representations at the start of the job */

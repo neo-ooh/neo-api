@@ -59,6 +59,7 @@ class CapabilitiesSeeder extends Seeder {
                 "bursts",
                 "tools",
                 "planning",
+                "advertisers",
             ],
             "PROPERTIES" => [
                 "properties",

@@ -10,12 +10,9 @@
 namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\ActorsCapabilities\ListActorCapabilitiesRequest;
 use Neo\Http\Requests\ActorsCapabilities\SyncActorCapabilitiesRequest;
 use Neo\Models\Actor;
-use Neo\Models\ActorCapability;
-use Neo\Models\Capability;
 
 class ActorsCapabilitiesController extends Controller {
     public function index(ListActorCapabilitiesRequest $request, Actor $actor): Response {
@@ -25,43 +22,8 @@ class ActorsCapabilitiesController extends Controller {
     }
 
     public function sync(SyncActorCapabilitiesRequest $request, Actor $actor): Response {
-        $capabilities = $request->validated()['capabilities'];
+        $actor->standalone_capabilities()->sync($request->input("capabilities"));
 
-        // Make sure the listed capabilities are all standalone
-        foreach ($capabilities as $capability) {
-            if (!Capability::query()->find($capability)->standalone) {
-                return new Response([
-                    "code"    => "capabilities.not-assigned",
-                    "message" => "User do not have capability",
-                ],
-                    403);
-            }
-        }
-
-        // All good, add the capabilities
-        $capabilitiesID = $actor->standalone_capabilities->pluck("id")->values()->toArray();
-
-        $toAdd    = array_diff($capabilities, $capabilitiesID);
-        $toRemove = array_diff($capabilitiesID, $capabilities);
-
-        foreach ($toAdd as $cID) {
-            ActorCapability::query()->create([
-                "actor_id"      => $actor->getKey(),
-                "capability_id" => $cID,
-            ]);
-        }
-
-        if (count($toRemove) > 0) {
-            $binds = implode(", ", array_fill(0, count($toRemove), "?"));
-
-            DB::delete("DELETE FROM `actors_capabilities` WHERE `capability_id` IN ($binds) AND `actor_id` = ?",
-                [
-                    ...$toRemove,
-                    $actor->getKey(),
-                ]);
-        }
-
-        $actor->unsetRelations();
         return new Response($actor->standalone_capabilities);
     }
 }

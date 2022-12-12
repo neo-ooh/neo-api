@@ -38,9 +38,9 @@ class HeadlinesController extends Controller {
 
 
         /** @var Actor $user */
-        $user = Auth::user()->load(["roles_capabilities", "standalone_capabilities"]);
+        $user = Auth::user()->load("capabilities");
 
-        $userCapabilities = $user->roles_capabilities->merge($user->standalone_capabilities)->pluck("id");
+        $userCapabilities = $user->capabilities;
 
         $headlines = $headlines->filter(function (Headline $headline) use ($userCapabilities) {
             return $userCapabilities->diff($headline->capabilities->pluck("id"))

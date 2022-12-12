@@ -25,13 +25,9 @@ class CapabilitiesController extends Controller {
      *
      * @return Response
      */
-    public function index (ListCapabilitiesRequest $request): Response {
+    public function index(ListCapabilitiesRequest $request): Response {
         // A user can only see the capabilities directly or indirectly associated with it
-        $capabilities = Auth::user()->capabilities;
-
-        if ($request->has("standalone")) {
-            $capabilities = $capabilities->filter(fn ($c) => $c->standalone === true);
-        }
+        $capabilities = Auth::user()->standalone_capabilities->merge(Auth::user()->roles_capabilities)->unique();
 
         return new Response($capabilities->values());
     }
@@ -44,7 +40,7 @@ class CapabilitiesController extends Controller {
      *
      * @return Response
      */
-    public function update (UpdateCapabilityRequest $request, Capability $capability): Response {
+    public function update(UpdateCapabilityRequest $request, Capability $capability): Response {
         $capability->standalone = $request->validated()['standalone'];
         $capability->save();
 

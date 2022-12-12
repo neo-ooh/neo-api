@@ -10,6 +10,7 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\views\ActorsCapabilitiesViewSeeder;
 use Database\Seeders\views\ActorsDetailsViewSeeder;
 use Database\Seeders\views\FieldsSegmentsStatsViewSeeder;
 use Illuminate\Database\Seeder as BaseSeeder;
@@ -19,6 +20,7 @@ class DatabaseSeeder extends BaseSeeder {
         $this->call([
             // Views
             ActorsDetailsViewSeeder::class,
+            ActorsCapabilitiesViewSeeder::class,
             FieldsSegmentsStatsViewSeeder::class,
 
             // Data

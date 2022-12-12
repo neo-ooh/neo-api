@@ -21,11 +21,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Neo\Enums\ActorType;
 use Neo\Models\Traits\HasCampaigns;
@@ -35,7 +33,7 @@ use Neo\Models\Traits\HasLocations;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Models\Traits\HasRoles;
 use Neo\Models\Traits\WithRelationCaching;
-use Neo\Modules\Broadcast\Enums\CampaignStatus;
+use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Broadcast\Models\Library;
 use Neo\Rules\AccessibleActor;
 
@@ -92,9 +90,7 @@ use Neo\Rules\AccessibleActor;
  * @property Collection          $locations
  * @property Branding|null       $branding
  *
- * @property Collection          $own_libraries
- * @property Collection          $shared_libraries
- * @property Collection          $children_libraries
+ * @property Collection<Library> $libraries
  *
  * @property Collection          $campaign_planner_saves
  * @property Collection          $campaign_planner_polygons
@@ -323,10 +319,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     }
 
     /**
-     * @return BelongsToMany<Library>
+     * @return HasMany<Library>
      */
-    public function shared_libraries(): BelongsToMany {
-        return $this->belongsToMany(Library::class, "library_shares", "actor_id", "library_id");
+    public function libraries(): HasMany {
+        return $this->hasMany(Library::class, "owner_id", "id");
     }
 
 
@@ -372,83 +368,29 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @param bool $shallow
      * @param bool $shared
      * @param bool $parent
+     * @param bool $ids
      * @return \Illuminate\Support\Collection
      */
-    public function getAccessibleActors(bool $children = true, bool $shallow = false, bool $shared = true, bool $parent = true): \Illuminate\Support\Collection {
-        /** @var Collection<Actor> $actors */
-        $actors = new Collection();
+    public function getAccessibleActors(bool $children = true, bool $shallow = false, bool $shared = true, bool $parent = true, bool $ids = false): \Illuminate\Support\Collection {
+        $getter = ActorsGetter::from($this);
 
-        if ($children && $shallow) {
-            $actors = $actors->merge($this->direct_children);
+        if (!$this->limited_access) {
+            $getter->selectSiblings(!$shallow);
         }
 
-        if ($children && !$shallow) {
-            $actors = $actors->merge($this->children);
+        if ($children) {
+            $getter->selectChildren(!$shallow);
         }
 
         if ($shared) {
-            $actors = $actors->merge($this->shared_actors);
+            $getter->selectShared(!$shallow);
         }
 
-        if ($parent && !$this->is_group && ($this->parent_is_group ?? false)) {
-            $actors->push($this->parent);
-            $actors = $actors->merge($this->parent->getAccessibleActors(!$this->limited_access, false, !$this->limited_access, false));
+        if ($parent && !$this->limited_access) {
+            $getter->selectParent();
         }
 
-        // By default, a user cannot see itself
-        $actors = $actors->filter(fn(Actor $actor) => $actor->id !== Auth::id());
-
-        return $actors->values()->unique("id");
-    }
-
-    /**
-     * Scope to all actors the current user has access to. Use
-     *
-     * @return Builder
-     */
-    public function scopeAccessibleActors(): Builder {
-        return $this->selectActors()
-                    ->Children()
-                    ->union($this->selectActors()
-                                 ->SharedActors()
-                                 ->distinct())
-                    ->orderBy("name");
-    }
-
-    public function scopeSharedActors(Builder $query): Builder {
-        $ancestorColumn   = $this->getQualifiedClosureColumn("ancestor_id");
-        $descendantColumn = $this->getQualifiedClosureColumn("descendant_id");
-
-        return $query->join("actors_closures",
-            function (JoinClause $join) use ($descendantColumn) {
-                $join->on($descendantColumn, "=", "actors.id");
-            })
-                     ->join("actors_shares as s",
-                         function (JoinClause $join) use ($ancestorColumn) {
-                             $join->on("s.sharer_id", "=", $ancestorColumn);
-//                             $join->on("s.sharer_id", "<>", $descendantColumn);
-                         })
-                     ->where("s.shared_with_id", "=", $this->getKey());
-    }
-
-    /**
-     * @return Collection<Actor>
-     */
-    public function getSharedActorsAttribute(): Collection {
-        return $this->selectActors()->SharedActors()->select($this->qualifyColumn("*"))->get();
-    }
-
-    /**
-     * Return the group this item is a part of. If the item is not part of any group, null is returned
-     *
-     * @return Actor|null
-     */
-    public function getGroupAttribute(): ?self {
-        if (($this->parent->is_group ?? false)) {
-            return $this->parent;
-        }
-
-        return null;
+        return $ids ? $getter->getSelection() : $getter->getActors();
     }
 
     public function getParentIdAttribute(): ?int {
@@ -489,74 +431,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @return bool
      */
     public function hasAccessTo(Actor $node): bool {
-        // Start by checking if we are a parent of the actor
-        if ($this->isParentOf($node)) {
-            return true;
-        }
-
         // We are not a parent of the given actor, is it shared with us or part of our parent hierarchy if its a group ?
-        return $this->getAccessibleActors()->pluck("id")->contains($node->id);
-    }
-
-    /*
-    |----------------------------------------------------------------|
-    | Libraries
-    |----------------------------------------------------------------|
-    */
-
-    /**
-     * List all the libraries this actor has access to. The flags allow for specifying which type of related libraries are
-     * returned.
-     *
-     * @param bool $own      True to list the actor's own libraries
-     * @param bool $shared   True to list libraries shared with the actor
-     * @param bool $children True to list this actor's children's libraries
-     * @param bool $parent   True to list the parent of the actor's libraries, libraries shared with it, and its parent library
-     *                       if its a group.
-     * @return Collection
-     */
-    public function getLibraries(bool $own = true, bool $shared = true, bool $children = true, bool $parent = true): Collection {
-        $libraries = new Collection();
-
-        // Actor's own libraries
-        if ($own) {
-            $libraries = $libraries->merge($this->own_libraries);
-        }
-
-        // Libraries shared with the actor
-        if ($shared) {
-            $libraries = $libraries->merge($this->shared_libraries);
-            $libraries = $libraries->merge($this->sharers->flatMap(fn(/** @var Actor $sharer */ $sharer) => $sharer->getLibraries(true, false, true, false)));
-        }
-
-        // Libraries of children of this actor
-        if ($children) {
-            $libraries = $libraries->merge($this->children_libraries);
-        }
-
-        // Libraries of the parent of the user
-//        if ($parent && ($this->details->parent_is_group ?? false)) {  --  WTF is this not working ?????
-        if ($parent && ($this->parent->is_group ?? false)) {
-            $libraries = $libraries->merge($this->parent->getLibraries(true, true, !$this->is_group && Gate::allows(\Neo\Enums\Capability::libraries_edit->value) && !$this->limited_access, false));
-        }
-
-        return $libraries->unique("id")->sortBy("name")->values();
-    }
-
-    /**
-     * Give libraries directly owned by this actor
-     *
-     * @return Collection<Library>
-     */
-    protected function getOwnLibrariesAttribute(): Collection {
-        return $this->getCachedRelation("own_libraries", fn() => Library::of($this)->get());
-    }
-
-    /**
-     * @return Collection<Library>
-     */
-    protected function getChildrenLibrariesAttribute(): Collection {
-        return $this->getCachedRelation("children_libraries", fn() => Library::ofChildrenOf($this)->get());
+        return $this->getAccessibleActors(ids: true)->contains($node->id);
     }
 
     /*
@@ -691,36 +567,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         return JWT::encode($payload, config("auth.jwt_private_key"), "RS256");
-    }
-
-    public function getCampaignsStatusAttribute(): CampaignStatus|null {
-        /** @var Collection<CampaignStatus> $campaignsStatus */
-        $campaignsStatus = $this->getCampaigns(true, false, false, false)
-                                ->load("schedules")
-                                ->pluck("status")
-                                ->values();
-
-        if ($campaignsStatus->count() === 0) {
-            return null;
-        }
-
-        if ($campaignsStatus->contains(CampaignStatus::Pending)) {
-            return CampaignStatus::Pending;
-        }
-
-        if ($campaignsStatus->contains(CampaignStatus::Offline) || $campaignsStatus->contains(CampaignStatus::Empty)) {
-            return CampaignStatus::Offline;
-        }
-
-        if ($campaignsStatus->contains(CampaignStatus::Live)) {
-            return CampaignStatus::Live;
-        }
-
-        if ($campaignsStatus->contains(CampaignStatus::Expired)) {
-            return CampaignStatus::Expired;
-        }
-
-        return CampaignStatus::Offline;
     }
 
     /**

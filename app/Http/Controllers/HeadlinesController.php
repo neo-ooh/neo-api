@@ -20,6 +20,7 @@ use Neo\Http\Requests\Headlines\ShowHeadlineRequest;
 use Neo\Http\Requests\Headlines\StoreHeadlineRequest;
 use Neo\Http\Requests\Headlines\UpdateHeadlineMessageRequest;
 use Neo\Http\Requests\Headlines\UpdateHeadlineRequest;
+use Neo\Models\Actor;
 use Neo\Models\Headline;
 use Neo\Models\HeadlineMessage;
 
@@ -36,15 +37,14 @@ class HeadlinesController extends Controller {
                              ->get();
 
 
-        $userCapabilities = Auth::user()->capabilities->pluck("id");
+        /** @var Actor $user */
+        $user = Auth::user()->load(["roles_capabilities", "standalone_capabilities"]);
 
-        $headlines = $headlines->filter(function($headline) use ($userCapabilities) {
-             if($headline->capabilities->count() === 0) {
-                 return true;
-             }
+        $userCapabilities = $user->roles_capabilities->merge($user->standalone_capabilities)->pluck("id");
 
-             return $userCapabilities->diff($headline->capabilities->pluck("id"))
-                                     ->count() !== $userCapabilities->count();
+        $headlines = $headlines->filter(function (Headline $headline) use ($userCapabilities) {
+            return $userCapabilities->diff($headline->capabilities->pluck("id"))
+                                    ->count() !== $userCapabilities->count();
         });
 
         return new Response($headlines);

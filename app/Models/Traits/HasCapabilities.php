@@ -19,7 +19,7 @@ use Neo\Models\Capability;
  *
  * @package Neo\Models\Traits
  *
- * @property Collection<Capability> $capabilities List all capabilities directly and indirectly applying to this user
+ * @property Collection<Capability> $standalone_capabilities List all capabilities directly applied
  */
 trait HasCapabilities {
 

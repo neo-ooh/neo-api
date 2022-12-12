@@ -26,15 +26,6 @@ class RolesCapabilitiesController extends Controller {
     }
 
     public function store(StoreRoleCapabilityRequest $request, Role $role): Response {
-        Gate::authorize(Capability::roles_edit->value);
-
-        if ($role->capabilities->pluck('id')->contains($request->validated()["capability"])) {
-            return new Response([
-                "code"    => "roles.cannot-add",
-                "message" => "The role already has this capability",
-            ], 403);
-        }
-
         $role->capabilities()->attach($request->validated()["capability"]);
         $role->refresh();
 
@@ -49,8 +40,6 @@ class RolesCapabilitiesController extends Controller {
     }
 
     public function destroy(DeleteRoleCapabilityRequest $request, Role $role): Response {
-        Gate::authorize(Capability::roles_edit->value);
-
         if (!$role->capabilities->pluck('id')->contains($request->validated()["capability"])) {
             return new Response([
                 "code"    => "roles.not-removable",

@@ -25,11 +25,11 @@ class BootstrapSeeder extends Seeder {
      *
      * @return void
      */
-    public static function run (): void {
+    public static function run(): void {
         // Do we already have a root actor ?
         $actor = Actor::query()->where('name', '=', 'root')
-                    ->where('email', '=', 'root@root.neo-ooh.info')
-                    ->first();
+                      ->where('email', '=', 'root@root.neo-ooh.info')
+                      ->first();
 
         if (!is_null($actor)) {
             // Root actor already exist
@@ -38,13 +38,13 @@ class BootstrapSeeder extends Seeder {
 
         // Create the root actor
         if (is_null(Actor::query()->where("email", "=", "root@root.neo-ooh.info")->first())) {
-            $actor = new Actor();
-            $actor->name = 'root';
-            $actor->email = "root@root.neo-ooh.info";
-            $actor->password = 'password'; // Password is in clear, but MUST be changed upon first deployment
+            $actor               = new Actor();
+            $actor->name         = 'root';
+            $actor->email        = "root@root.neo-ooh.info";
+            $actor->password     = 'password'; // Password is in clear, but MUST be changed upon first deployment
             $actor->tos_accepted = true;
             $actor->save();
-            $actor->addRoles([Role::query()->first()->id]);
+            $actor->roles()->attach(Role::query()->first());
         }
     }
 }

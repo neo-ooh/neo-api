@@ -26,7 +26,8 @@
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
  * @neo/api - ActorsRolesController.php
- */ /** @noinspection PhpUnusedParameterInspection */
+ */
+/** @noinspection PhpUnusedParameterInspection */
 
 namespace Neo\Http\Controllers;
 
@@ -36,13 +37,13 @@ use Neo\Http\Requests\ActorsRoles\SyncActorRolesRequest;
 use Neo\Models\Actor;
 
 class ActorsRolesController extends Controller {
-    public function index (ListActorRolesRequest $request, Actor $actor): Response {
+    public function index(ListActorRolesRequest $request, Actor $actor): Response {
         return new Response($actor->roles);
     }
 
-    public function sync (SyncActorRolesRequest $request, Actor $actor): Response {
+    public function sync(SyncActorRolesRequest $request, Actor $actor): Response {
         $actor->syncRoles($request->validated()['roles']);
 
-        return new Response(["roles" => $actor->roles, "own_roles" => $actor->own_roles]);
+        return new Response($actor->roles);
     }
 }

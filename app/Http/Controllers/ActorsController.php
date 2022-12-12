@@ -59,10 +59,15 @@ class ActorsController extends Controller {
         }
 
         if ($request->has("capabilities")) {
-            $actors->append("capabilities");
-            $actors = $actors->filter(fn(Actor $actor) => $actor->capabilities->hasAny($request->input("capabilities")));
-            $actors->makeHidden("capabilities");
+            $actors->load(["capabilities"]);
+
+            $actors = $actors->filter(fn(Actor $actor) => array_any($request->input("capabilities"), static fn(string $capSlug) => $actor->hasCapability(Capability::from($capSlug))
+            )
+            );
+
+            $actors->makeHidden(["capabilities"]);
         }
+
 
         // Legacy filters; Deprecated
 
@@ -76,17 +81,8 @@ class ActorsController extends Controller {
             $actors = $actors->whereNotIn("id", $params["exclude"]);
         }
 
-        if ($request->has("campaigns_status")) {
-            $actors->load("own_campaigns", "own_campaigns.schedules");
-            $actors->each(fn(Actor $actor) => $actor->own_campaigns->makeHidden(["schedules", "network"]));
-        }
-
         if ($request->has("property")) {
             $actors->load(Gate::allows(Capability::odoo_properties->value) ? "property.odoo" : "property");
-        }
-
-        if ($request->has("capability")) {
-            $actors = $actors->filter(fn(Actor $actor) => $actor->hasCapability(Capability::from($request->input("capability"))));
         }
 
         return new Response($actors->loadPublicRelations()->sortBy("name")->values());
@@ -111,12 +107,20 @@ class ActorsController extends Controller {
             $actor->append("direct_children");
         }
 
-        if (in_array("capabilities", $with, true)) {
-            $actor->append("capabilities");
+        if (in_array("roles", $with, true)) {
+            $actor->load("roles");
+        }
+
+        if (in_array("roles_capabilities", $with, true)) {
+            $actor->load("roles_capabilities");
         }
 
         if (in_array("standalone_capabilities", $with, true)) {
-            $actor->append("standalone_capabilities");
+            $actor->load("standalone_capabilities");
+        }
+
+        if (in_array("capabilities", $with, true)) {
+            $actor->load(["capabilities"]);
         }
 
         if (!is_null($actor->branding_id) && in_array("branding", $with, true)) {
@@ -125,11 +129,6 @@ class ActorsController extends Controller {
 
         if (in_array("applied_branding", $with, true)) {
             $actor->append("applied_branding");
-        }
-
-        if (in_array("roles", $with, true)) {
-            $actor->append("roles");
-            $actor->append("own_roles");
         }
 
         if (in_array("own_locations", $with, true)) {
@@ -181,8 +180,8 @@ class ActorsController extends Controller {
         if (!$actor->is_group) {
             $actor->email       = $values['email'];
             $actor->branding_id = $values['branding_id'];
-            $actor->addRoles($values['roles']);
-            $actor->addCapabilities($values['capabilities']);
+            $actor->roles()->attach($values['roles']);
+            $actor->standalone_capabilities()->attach($values['capabilities']);
             $actor->save();
 
             // Execute the user's creation side effects

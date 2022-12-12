@@ -65,10 +65,8 @@ class SchedulesController extends Controller {
         // List all accessible schedules pending review
         // A schedule pending review is a schedule who is locked, is not pre-approved, and who doesn't have any reviews
 
-        /** @var Actor $user */
-        $user = Auth::user();
-
-        $campaigns = $user->getCampaigns()->pluck('id');
+        /** @var Collection<Campaign> $libraries */
+        $campaigns = Auth::user()?->getAccessibleActors(ids: true);
         $schedules = Schedule::query()
                              ->select('schedules.*')
                              ->join('schedule_details', 'schedule_details.schedule_id', '=', "schedules.id")

@@ -13,7 +13,6 @@ namespace Neo\Modules\Broadcast\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,7 +21,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
 use Neo\Models\Advertiser;
-use Neo\Models\Factories\LibraryFactory;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
@@ -55,7 +53,6 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @mixin Builder
  */
 class Library extends SecuredModel {
-    use HasFactory;
     use Notifiable;
     use HasPublicRelations;
     use HasRelationships;
@@ -108,7 +105,7 @@ class Library extends SecuredModel {
             "advertiser" => "advertiser",
             "contents"   => ["contents", "contents.creatives", "contents.broadcast_tags", fn(Library $library) => $library->contents->loadCount("schedules")],
             "formats"    => "formats",
-            "layouts"    => ["layouts", "layouts.frames", "append:content_layouts"],
+            "layouts"    => ["layouts", "layouts.frames", "contents_layouts.frames"],
             "shares"     => "shares",
         ];
     }
@@ -126,11 +123,6 @@ class Library extends SecuredModel {
             }
         });
     }
-
-    protected static function newFactory(): LibraryFactory {
-        return LibraryFactory::new();
-    }
-
 
     /**
      * Gets all libraries owned by the given actor
@@ -247,22 +239,12 @@ class Library extends SecuredModel {
                     ->distinct();
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Attributes
-    |--------------------------------------------------------------------------
-    */
-
-    public function getContentLayoutsAttribute(): Collection {
-        return $this->layouts()
-                    ->get()
-                    ->merge($this->hasManyDeepFromRelations($this->contents(), (new Content())->layout())
-                                 ->get())
-                    ->unique()
-                    ->load("frames");
+    /**
+     * @return HasManyDeep<Layout>
+     */
+    public function contents_layouts(): HasManyDeep {
+        return $this->hasManyDeepFromRelations($this->contents(), (new Content())->layout());
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -276,27 +258,6 @@ class Library extends SecuredModel {
             return true;
         }
 
-        // Is the actor's parent a group ?
-        if ($actor->parent->is_group ?? false) {
-            // Does the library belongs to it ?
-            return $this->isAccessibleBy($actor->parent);
-        }
-
-        // Is the library shared with the given actor ?
-        if (DB::selectOne("SELECT COUNT(`ls`.`actor_id`) AS `shared` FROM `library_shares` `ls` WHERE `library_id` = ? AND `actor_id` = ?",
-                [
-                    $this->getKey(),
-                    $actor->getKey(),
-                ])->shared === 1) {
-            return true;
-        }
-
-
-        // Is the owner a child of the actor ?
-        if ($actor->accessibleActors()->get("id")->pluck("id")->contains($this->owner_id)) {
-            return true;
-        }
-
-        return false;
+        return $actor->getAccessibleActors(ids: true)->contains($this->owner_id);
     }
 }

@@ -24,7 +24,7 @@ class InsertScheduleRequest extends FormRequest {
      */
     public function authorize(): bool {
         $allowed  = Gate::allows(Capability::contents_schedule->value);
-        $campaign = Auth::user()->canAccessCampaign($this->route("campaign"));
+        $campaign = Auth::user()?->canAccessCampaign($this->route()?->originalParameter("campaign"));
         return $allowed && $campaign;
     }
 

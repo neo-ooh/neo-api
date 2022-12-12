@@ -204,6 +204,10 @@ class Schedule extends BroadcastResourceModel {
     |--------------------------------------------------------------------------
     */
 
+    public function isApproved() {
+        return $this->details->is_approved;
+    }
+
     public function getStatusAttribute(): ScheduleStatus {
         if ($this->trashed()) {
             return ScheduleStatus::Trashed;
@@ -215,7 +219,7 @@ class Schedule extends BroadcastResourceModel {
 
         // Schedule is locked
         // Check reviews and its content pre-approval
-        if (!$this->details->is_approved) {
+        if (!$this->isApproved()) {
             // Schedule's content is not pre-approved,
             // Is their a review for it ?
             $mostRecentReview = $this->reviews->first();

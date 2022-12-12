@@ -66,7 +66,6 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  *
  * @property Actor                $parent
  * @property Actor                $creator
- * @property Collection<Actor>    $shares
  *
  * @property int                  $schedules_count
  * @property Collection<Schedule> $schedules
@@ -194,14 +193,6 @@ class Campaign extends BroadcastResourceModel {
      */
     public function creator(): BelongsTo {
         return $this->belongsTo(Actor::class, 'creator_id', 'id');
-    }
-
-    /**
-     * @return BelongsToMany<Actor>
-     */
-
-    public function shares(): BelongsToMany {
-        return $this->belongsToMany(Actor::class, "campaign_shares", "campaign_id", "actor_id");
     }
 
     /**

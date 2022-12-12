@@ -112,8 +112,6 @@ class Creative extends BroadcastResourceModel {
         parent::boot();
 
         static::deleting(static function (Creative $creative) {
-            // Tell services to disable the creative
-            DeleteCreativeJob::dispatch($creative->getKey());
 
             // If the content has no more creatives attached to it, we reset its duration
             // We check for 1 creative and not zero has we are not deleted yet
@@ -125,6 +123,9 @@ class Creative extends BroadcastResourceModel {
             $creative->deleteFile();
 
             if ($creative->isForceDeleting()) {
+                // Tell services to disable the creative
+                DeleteCreativeJob::dispatch($creative->getKey());
+
                 $creative->deleteThumbnail();
             }
         });

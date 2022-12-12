@@ -40,7 +40,8 @@ class CampaignsController extends Controller {
      * @noinspection PhpUnusedParameterInspection
      */
     public function index(ListCampaignsRequest $request): Response {
-        $campaigns = $request->user()->getCampaigns();
+        /** @var Collection<Campaign> $libraries */
+        $campaigns = Campaign::query()->whereIn("parent_id", Auth::user()?->getAccessibleActors(ids: true))->get();
 
         if ($request->has("layout_id")) {
             $campaigns->load("layouts");

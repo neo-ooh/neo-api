@@ -34,9 +34,8 @@ class LibrariesController extends Controller {
      * @return Response
      */
     public function index(ListLibrariesRequest $request): Response {
-        /** @noinspection NullPointerExceptionInspection We are necessarily logged in if we passed the route and request checks */
         /** @var Collection<Library> $libraries */
-        $libraries = Auth::user()->getLibraries();
+        $libraries = Library::query()->whereIn("owner_id", Auth::user()?->getAccessibleActors(ids: true))->get();
 
         if ($request->has("formats")) {
             $libraries->load("formats");
@@ -54,8 +53,8 @@ class LibrariesController extends Controller {
     public function query(SearchLibrariesRequest $request): Response {
         $q = strtolower($request->input("q"));
 
-        /** @noinspection NullPointerExceptionInspection We are necessarily logged in if we passed the route and request checks */
-        $libraries    = Auth::user()->getLibraries();
+        /** @var Collection<Library> $libraries */
+        $libraries    = Library::query()->whereIn("owner_id", Auth::user()?->getAccessibleActors(ids: true))->get();
         $searchEngine = new Fuse($libraries->toArray(), [
             "keys" => [
                 "name",

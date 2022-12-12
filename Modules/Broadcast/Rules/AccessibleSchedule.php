@@ -26,7 +26,7 @@ class AccessibleSchedule implements Rule {
      */
     public function passes($attribute, $value): bool {
         /** @var Schedule $schedule */
-        $schedule = Schedule::query()->findOrFail($value);
+        $schedule = Schedule::withTrashed()->findOrFail($value);
 
         /** @var Actor|null $user */
         $user = Auth::user();

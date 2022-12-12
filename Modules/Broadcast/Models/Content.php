@@ -147,18 +147,6 @@ class Content extends BroadcastResourceModel {
                     $creative->delete();
                 }
             }
-
-            /** @var Collection<Schedule> $schedules */
-            $schedules = $content->schedules()->withTrashed()->get();
-
-            foreach ($schedules as $schedule) {
-                // If a schedule has not be reviewed, we want to completely remove it
-                if (($schedule->status === ScheduleStatus::Draft || $schedule->status === ScheduleStatus::Pending) || $schedule->isForceDeleting()) {
-                    $schedule->forceDelete();
-                } else {
-                    $schedule->delete();
-                }
-            }
         });
     }
 
@@ -192,7 +180,7 @@ class Content extends BroadcastResourceModel {
      * @return HasMany
      */
     public function creatives(): HasMany {
-        return $this->hasMany(Creative::class, 'content_id', 'id');
+        return $this->hasMany(Creative::class, 'content_id', 'id')->withTrashed();
     }
 
     /**

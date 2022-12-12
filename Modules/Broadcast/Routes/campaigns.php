@@ -66,7 +66,7 @@ Route::group([
    |----------------------------------------------------------------------
    */
 
-    Route::model("schedule", Schedule::class);
+    Route::bind("schedule", fn($id) => Schedule::withTrashed()->find($id));
     Route::model("scheduleContent", ScheduleContent::class);
 
     Route::  post("schedules", SchedulesController::class . "@store");

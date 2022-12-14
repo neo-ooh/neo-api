@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +24,7 @@ use Neo\Models\Actor;
 use Neo\Models\Advertiser;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Modules\Broadcast\Jobs\Libraries\RemoveLibraryCreativesJob;
 use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
@@ -49,6 +51,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  *
  * @property Carbon                  $created_at
  * @property Carbon                  $updated_at
+ * @property Carbon                  $deleted_at
  *
  * @mixin Builder
  */
@@ -56,6 +59,7 @@ class Library extends SecuredModel {
     use Notifiable;
     use HasPublicRelations;
     use HasRelationships;
+    use SoftDeletes;
 
     /*
     |--------------------------------------------------------------------------
@@ -117,10 +121,7 @@ class Library extends SecuredModel {
          * On library deletion, also deletes all its contents
          */
         static::deleting(static function (Library $library) {
-            /** @var Content $content */
-            foreach ($library->contents as $content) {
-                $content->delete();
-            }
+            RemoveLibraryCreativesJob::dispatch($library->getKey());
         });
     }
 

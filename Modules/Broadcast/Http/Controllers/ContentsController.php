@@ -153,6 +153,6 @@ class ContentsController extends Controller {
             $content->forceDelete();
         }
 
-        return new Response([]);
+        return new Response($content);
     }
 }

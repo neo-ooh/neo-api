@@ -21,6 +21,7 @@ use Neo\Http\Controllers\Controller;
 use Neo\Models\Product;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\DestroyCampaignRequest;
+use Neo\Modules\Broadcast\Http\Requests\Campaigns\ListCampaignsByIdsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\ListCampaignsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\ShowCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\StoreCampaignRequest;
@@ -57,6 +58,12 @@ class CampaignsController extends Controller {
         }
 
         return new Response($campaigns->loadPublicRelations()->values()->all());
+    }
+
+    public function byIds(ListCampaignsByIdsRequest $request) {
+        $campaigns = Campaign::withTrashed()->findMany($request->input("ids"));
+
+        return new Response($campaigns->loadPublicRelations());
     }
 
     /**
@@ -214,6 +221,6 @@ class CampaignsController extends Controller {
     public function destroy(DestroyCampaignRequest $request, Campaign $campaign): Response {
         $campaign->delete();
 
-        return new Response(["result" => "ok"]);
+        return new Response($campaign);
     }
 }

@@ -52,6 +52,8 @@ class StoreScheduleRequest extends FormRequest {
 
             "send_for_review" => ["required", "boolean"],
 
+            "batch_id" => ["string"],
+
             "force" => ["boolean"],
         ];
     }

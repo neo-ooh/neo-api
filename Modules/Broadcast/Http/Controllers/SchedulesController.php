@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\UnauthorizedException;
 use Neo\Enums\Capability;
 use Neo\Exceptions\BaseException;
 use Neo\Http\Controllers\Controller;
@@ -35,16 +36,33 @@ use Neo\Modules\Broadcast\Exceptions\InvalidScheduleTimesException;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\DestroyScheduleRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\ListPendingSchedulesRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\ListSchedulesByIdsRequest;
+use Neo\Modules\Broadcast\Http\Requests\Schedules\ListSchedulesRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\StoreScheduleRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\UpdateScheduleRequest;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Models\ScheduleReview;
+use Neo\Modules\Broadcast\Utils\ScheduleUpdater;
 use Neo\Modules\Broadcast\Utils\ScheduleValidator;
 use Ramsey\Uuid\Uuid;
 
 class SchedulesController extends Controller {
+    public function index(ListSchedulesRequest $request): Response {
+        /** @var Collection<Schedule> $schedules */
+        $schedules = Schedule::query()
+                             ->where("batch_id", "=", $request->input("batch_id"))
+                             ->with("contents")
+                             ->get();
+
+        if ($schedules->flatMap(fn(Schedule $schedule) => $schedule->contents)
+                      ->unique()
+                      ->some(fn(Content $content) => !$content->authorizeAccess())) {
+            throw new UnauthorizedException("You are not allowed to access these contents");
+        }
+
+        return new Response($schedules->loadPublicRelations());
+    }
 
     public function byIds(ListSchedulesByIdsRequest $request): Response {
         $schedules = Schedule::query()->findMany($request->input("ids"));
@@ -119,8 +137,8 @@ class SchedulesController extends Controller {
         $schedule->is_locked      = $request->input('send_for_review');
 
         // If there is more than one campaign, apply a batch id to the schedule
-        if ($campaigns->count() > 1) {
-            $schedule->batch_id = Uuid::uuid4();
+        if ($request->has("batch_id") || $campaigns->count() > 1) {
+            $schedule->batch_id = $request->input("batch_id", Uuid::uuid4());
         }
 
         /** @var array<Schedule> $schedules */
@@ -254,22 +272,17 @@ class SchedulesController extends Controller {
             return new Response(["You are not authorized to edit this schedule"], 403);
         }
 
-        $validator = new ScheduleValidator();
-        $validator->validateSchedulingFitCampaign(
-            campaign: $campaign,
-            startDate: $startDate,
-            startTime: $startTime,
-            endDate: $endDate,
-            endTime: $endTime,
-            weekdays: $broadcastDays
-        );
-
-        // We are good, update the schedule
-        $schedule->start_date     = $startDate;
-        $schedule->start_time     = $startTime;
-        $schedule->end_date       = $endDate;
-        $schedule->end_time       = $endTime;
-        $schedule->broadcast_days = $broadcastDays;
+        $updater = new ScheduleUpdater();
+        $updater->setSchedule($schedule)
+                ->setCampaign($campaign)
+                ->update(
+                    startDate: $startDate,
+                    startTime: $startTime,
+                    endDate: $endDate,
+                    endTime: $endTime,
+                    weekdays: $broadcastDays,
+                    forceFit: false
+                );
 
         if (!$schedule->is_locked && $request->input("is_locked", false) && $schedule->end_date->isAfter(Carbon::now())) {
             $schedule->is_locked = true;
@@ -298,6 +311,10 @@ class SchedulesController extends Controller {
             }
         }
 
+        if ($request->input("remove_from_batch", false)) {
+            $schedule->batch_id = null;
+        }
+
         $schedule->save();
 
         if (Gate::allows(Capability::schedules_tags->value)) {
@@ -306,8 +323,40 @@ class SchedulesController extends Controller {
 
         $schedule->refresh();
 
-        // Propagate the update to the associated BroadSign Schedule
-        $schedule->promote();
+        if (!$request->input("remove_from_batch", false)) {
+            // Propagate the update to the associated BroadSign Schedule
+
+            $schedule->promote();
+
+            // If the schedule is part of a batch, we want to update the rest of it as well
+            if ($schedule->batch_id !== null) {
+                /** @var Collection<Schedule> $batchSchedules */
+                $batchSchedules = Schedule::query()
+                                          ->where("batch_id", "=", $schedule->batch_id)
+                                          ->where("id", "<>", $schedule->getKey())
+                                          ->with("campaign")
+                                          ->get();
+
+                foreach ($batchSchedules as $batchSchedule) {
+                    $updater->setSchedule($batchSchedule)
+                            ->setCampaign($batchSchedule->campaign)
+                            ->update(
+                                startDate: $startDate,
+                                startTime: $startTime,
+                                endDate: $endDate,
+                                endTime: $endTime,
+                                weekdays: $broadcastDays,
+                                forceFit: true
+                            );
+
+                    if (Gate::allows(Capability::schedules_tags->value)) {
+                        $schedule->broadcast_tags()->sync($request->input("tags"));
+                    }
+
+                    $batchSchedule->promote();
+                }
+            }
+        }
 
         return new Response($schedule->loadPublicRelations());
     }
@@ -323,25 +372,35 @@ class SchedulesController extends Controller {
      * @return Response
      */
     public function destroy(DestroyScheduleRequest $request, Schedule $schedule): Response {
-        // If a schedule has not be reviewed, we want to completely remove it
-        if ($schedule->status === ScheduleStatus::Draft || $schedule->status === ScheduleStatus::Pending) {
-            $schedule->forceDelete();
-            return new Response([]);
+        $schedules = collect([$schedule]);
+
+        if ($schedule->batch_id !== null && $request->input("delete_batch", false)) {
+            $schedules = Schedule::query()->where("batch_id", "=", $schedule->batch_id)->get();
         }
 
-        // If the schedule is approved, we check if it has started playing.
-        // If so, we set its end-date for yesterday, effectively stopping its broadcast, but keeping it in the
-        // `expired` list
-        if ($schedule->start_date < Carbon::now()) {
-            $schedule->end_date = Carbon::now()->subDay();
-            $schedule->save();
-            $schedule->promote();
+        foreach ($schedules as $s) {
+            // If a schedule has not be reviewed, we want to completely remove it
+            if ($s->status === ScheduleStatus::Draft || $s->status === ScheduleStatus::Pending) {
+                $s->forceDelete();
+                return new Response([]);
+            }
 
-            return new Response([]);
+            // If the schedule is approved, we check if it has started playing.
+            // If so, we set its end-date for yesterday, effectively stopping its broadcast, but keeping it in the
+            // `expired` list
+            if ($s->start_date < Carbon::now()) {
+                $s->end_date = Carbon::now()->subDay();
+                $s->save();
+                $s->promote();
+
+                return new Response([]);
+            }
+
+            // Schedule has not started playing, delete it
+            $s->delete();
         }
 
-        // Schedule has not started playing, delete it
-        $schedule->delete();
-        return new Response([]);
+        return new Response($schedule);
     }
 }
+

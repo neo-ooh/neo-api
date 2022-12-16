@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - DestroyScheduleRequest.php
+ * @neo/api - ListSchedulesRequest.php
  */
 
 namespace Neo\Modules\Broadcast\Http\Requests\Schedules;
@@ -13,25 +13,18 @@ namespace Neo\Modules\Broadcast\Http\Requests\Schedules;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\Schedule;
+use Neo\Rules\PublicRelations;
 
-class DestroyScheduleRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool {
-        return Gate::allows(Capability::contents_schedule->value);
-    }
-
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
+class ListSchedulesRequest extends FormRequest {
     public function rules(): array {
         return [
-            "delete_batch" => ["boolean"],
+            "batch_id" => ["required", "string"],
+            "with"     => ["array", new PublicRelations(Schedule::class)],
         ];
+    }
+
+    public function authorize(): bool {
+        return Gate::allows(Capability::contents_schedule->value);
     }
 }

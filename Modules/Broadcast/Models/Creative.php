@@ -112,10 +112,9 @@ class Creative extends BroadcastResourceModel {
         parent::boot();
 
         static::deleting(static function (Creative $creative) {
-
             // If the content has no more creatives attached to it, we reset its duration
             // We check for 1 creative and not zero has we are not deleted yet
-            if (($creative->content->duration) !== 0.0 && $creative->content->creatives_count === 1) {
+            if ($creative->content->creatives_count === 1) {
                 $creative->content->duration = 0;
                 $creative->content->save();
             }

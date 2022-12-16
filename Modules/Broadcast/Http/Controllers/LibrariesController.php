@@ -124,6 +124,6 @@ class LibrariesController extends Controller {
     public function destroy(DestroyLibraryRequest $request, Library $library): Response {
         $library->delete();
 
-        return new Response([]);
+        return new Response($library);
     }
 }

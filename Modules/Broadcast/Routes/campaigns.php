@@ -36,6 +36,7 @@ Route::group([
     Route::model("campaign", Campaign::class);
 
     Route::   get("campaigns", CampaignsController::class . "@index");
+    Route::   get("campaigns/_by_id", CampaignsController::class . "@byIds");
     Route::  post("campaigns", CampaignsController::class . "@store");
 
     Route::   get("campaigns/{campaign}", CampaignsController::class . "@show");
@@ -69,6 +70,7 @@ Route::group([
     Route::bind("schedule", fn($id) => Schedule::withTrashed()->find($id));
     Route::model("scheduleContent", ScheduleContent::class);
 
+    Route::   get("schedules", SchedulesController::class . "@index");
     Route::  post("schedules", SchedulesController::class . "@store");
     Route::   get("schedules/_by_id", SchedulesController::class . "@byIds");
     Route::   get("schedules/_pending", SchedulesController::class . "@pending");

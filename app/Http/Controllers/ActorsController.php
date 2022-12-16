@@ -271,7 +271,7 @@ class ActorsController extends Controller {
 
         $actor->delete();
 
-        return new Response([]);
+        return new Response($actor);
     }
 
     /**

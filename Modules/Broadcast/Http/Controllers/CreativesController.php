@@ -182,6 +182,6 @@ class CreativesController extends Controller {
             $content->save();
         }
 
-        return new Response(["status" => "ok"]);
+        return new Response($creative);
     }
 }

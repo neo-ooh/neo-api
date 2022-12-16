@@ -47,7 +47,9 @@ class UpdateScheduleRequest extends FormRequest {
             "tags"   => ["array"],
             "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")],
 
-            "with" => ["array", new PublicRelations(Schedule::class)]
+            "remove_from_batch" => ["boolean"],
+
+            "with" => ["array", new PublicRelations(Schedule::class)],
         ];
     }
 }

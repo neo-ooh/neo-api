@@ -143,8 +143,10 @@ class Schedule extends BroadcastResourceModel {
         parent::boot();
 
         static::deleting(static function (Schedule $schedule) {
-            // Clean up all reviews for the schedule
-            $schedule->reviews()->delete();
+            if ($schedule->isForceDeleting()) {
+                // Clean up all reviews for the schedule
+                $schedule->reviews()->delete();
+            }
 
             // Dispatch job to delete schedules in broadcasters
             DeleteScheduleJob::dispatch($schedule->getKey());

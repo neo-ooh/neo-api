@@ -225,8 +225,8 @@ class PropertyDump extends XLSXDocument {
                 $displayUnitPlayersData->push(array_merge([
                     "Venue Name"      => $property->actor->name,
                     "Display Unit ID" => $location->external_id,
-                    "Player ID"       => $player->id,
                     "Display Unit"    => $location->name,
+                    "Player ID"       => $player->id,
                     "Name"            => $player->name,
                     "Screens"         => $player->nscreens,
                     "Width"           => $bsDisplayType->res_width,
@@ -364,8 +364,8 @@ class PropertyDump extends XLSXDocument {
         $this->ws->printRow([
             "Venue Name",
             "Display Unit ID",
-            "Player ID",
             "Display Unit",
+            "Player ID",
             "Name",
             "Screens",
             "Width",

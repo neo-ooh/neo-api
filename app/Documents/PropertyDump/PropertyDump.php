@@ -128,11 +128,13 @@ class PropertyDump extends XLSXDocument {
                 ->pluck("display_type.external_id")
             )->unique()->toArray());
 
-        $this->players = BSPlayer::getMultiple($client, $this->properties
+        $players = $this->properties
             ->flatMap(fn($property) => $property->actor
                 ->own_locations
                 ->flatMap(fn($location) => $location->players->pluck("external_id"))
-            )->unique()->toArray());
+            )->unique()->toArray();
+
+        $this->players = BSPlayer::getMultiple($client, $players);
 
         $this->dayParts     = DayPart::all($client);
         $this->skins        = Skin::all($client);

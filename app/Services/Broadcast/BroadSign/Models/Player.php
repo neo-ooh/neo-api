@@ -79,7 +79,7 @@ class Player extends BroadSignModel {
      * @return Collection<static>
      */
     public static function getMultiple(BroadsignClient $client, array $playersIds) {
-        return static::get_multiple($client, ["ids" => implode(",", $playersIds)]);
+        return static::get_multiple($client, ["ids" => implode(",", $playersIds)]) ?? collect();
     }
 
     /**
@@ -140,7 +140,7 @@ class Player extends BroadSignModel {
         return $this->callAction("request",
             [
                 "player_id"    => $this->id,
-                "request_json" => $payload
+                "request_json" => $payload,
             ]);
     }
 }

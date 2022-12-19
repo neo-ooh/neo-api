@@ -126,11 +126,13 @@ class PropertyDump extends XLSXDocument {
                 ->pluck("display_type.external_id")
             )->unique()->toArray());
 
-        $this->players = BSPlayer::getMultiple($client, $this->properties
+        $players = $this->properties
             ->flatMap(fn($property) => $property->actor
                 ->own_locations
                 ->flatMap(fn($location) => $location->players->pluck("external_id"))
-            )->unique()->toArray());
+            )->unique()->toArray();
+
+        $this->players = BSPlayer::getMultiple($client, $players);
 
         $this->dayParts     = DayPart::all($client);
         $this->skins        = Skin::all($client);
@@ -223,6 +225,7 @@ class PropertyDump extends XLSXDocument {
                 $displayUnitPlayersData->push(array_merge([
                     "Venue Name"      => $property->actor->name,
                     "Display Unit ID" => $location->external_id,
+                    "Display Unit"    => $location->name,
                     "Player ID"       => $player->id,
                     "Name"            => $player->name,
                     "Screens"         => $player->nscreens,
@@ -244,7 +247,7 @@ class PropertyDump extends XLSXDocument {
                 "Screens"         => $displayUnitPlayersData->sum("Screens"),
                 "Width"           => $displayUnitPlayersData->first()["Width"],
                 "Height"          => $displayUnitPlayersData->first()["Height"],
-                "Resolution"      => $displayUnitPlayersData->first()["Resolution"]
+                "Resolution"      => $displayUnitPlayersData->first()["Resolution"],
             ], $addressComponents, $operatingHoursComponents, [
                 "Weekly Traffic"     => $weeklyTraffic,
                 "Weekly Impressions" => $displayUnitImpressions,
@@ -288,7 +291,7 @@ class PropertyDump extends XLSXDocument {
         $impressionsPerWeekForOneAd = $el->evaluate($model->formula, array_merge([
             "traffic" => $weeklyTraffic,
             "faces"   => $product->quantity,
-            "spots"   => 1
+            "spots"   => 1,
         ], $model->variables));
 
         /** @var LoopPolicy $loopPolicy */
@@ -361,6 +364,7 @@ class PropertyDump extends XLSXDocument {
         $this->ws->printRow([
             "Venue Name",
             "Display Unit ID",
+            "Display Unit",
             "Player ID",
             "Name",
             "Screens",

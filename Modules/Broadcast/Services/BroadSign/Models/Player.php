@@ -85,7 +85,7 @@ class Player extends BroadSignModel implements ResourceCastable {
      * @return Collection<static>
      */
     public static function getMultiple(BroadSignClient $client, array $playersIds): Collection {
-        return static::get_multiple($client, ["ids" => implode(",", $playersIds)]);
+        return static::get_multiple($client, ["ids" => implode(",", $playersIds)]) ?? collect();
     }
 
     /**

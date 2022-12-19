@@ -226,6 +226,7 @@ class PropertyDump extends XLSXDocument {
                     "Venue Name"      => $property->actor->name,
                     "Display Unit ID" => $location->external_id,
                     "Player ID"       => $player->id,
+                    "Display Unit"    => $location->name,
                     "Name"            => $player->name,
                     "Screens"         => $player->nscreens,
                     "Width"           => $bsDisplayType->res_width,
@@ -246,7 +247,7 @@ class PropertyDump extends XLSXDocument {
                 "Screens"         => $displayUnitPlayersData->sum("Screens"),
                 "Width"           => $displayUnitPlayersData->first()["Width"],
                 "Height"          => $displayUnitPlayersData->first()["Height"],
-                "Resolution"      => $displayUnitPlayersData->first()["Resolution"]
+                "Resolution"      => $displayUnitPlayersData->first()["Resolution"],
             ], $addressComponents, $operatingHoursComponents, [
                 "Weekly Traffic"     => $weeklyTraffic,
                 "Weekly Impressions" => $displayUnitImpressions,
@@ -290,7 +291,7 @@ class PropertyDump extends XLSXDocument {
         $impressionsPerWeekForOneAd = $el->evaluate($model->formula, array_merge([
             "traffic" => $weeklyTraffic,
             "faces"   => $product->quantity,
-            "spots"   => 1
+            "spots"   => 1,
         ], $model->variables));
 
         /** @var LoopPolicy $loopPolicy */
@@ -364,6 +365,7 @@ class PropertyDump extends XLSXDocument {
             "Venue Name",
             "Display Unit ID",
             "Player ID",
+            "Display Unit",
             "Name",
             "Screens",
             "Width",

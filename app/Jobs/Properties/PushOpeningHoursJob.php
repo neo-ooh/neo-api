@@ -26,7 +26,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterLocations;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\Resources\ActiveHours as OpeningHoursResource;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -42,7 +41,6 @@ class PushOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
     }
 
     /**
-     * @throws UnknownProperties
      * @throws InvalidBroadcasterAdapterException
      */
     public function handle(): void {

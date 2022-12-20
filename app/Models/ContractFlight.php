@@ -31,7 +31,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterReporting;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
 use Neo\Resources\Contracts\FlightPerformanceDatum;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @property-read int                                $id
@@ -115,7 +114,6 @@ class ContractFlight extends Model {
      *
      * @return EloquentCollection<FlightPerformanceDatum>
      * @throws InvalidBroadcasterAdapterException
-     * @throws UnknownProperties
      */
     public function getPerformancesAttribute(): Collection {
         // Contract can pull their performances from two different places:
@@ -132,8 +130,8 @@ class ContractFlight extends Model {
         foreach ($this->campaigns as $campaign) {
             $performances->push(...$campaign->performances->map(function (ResourcePerformance $performance) {
                 return new FlightPerformanceDatum(
-                    flight_id: $this->getKey(),
-                    network_id: $performance->data->network_id,
+                    flight_id  : $this->getKey(),
+                    network_id : $performance->data->network_id,
                     recorded_at: $performance->recorded_at->toDateString(),
                     repetitions: $performance->repetitions,
                     impressions: $performance->impressions,
@@ -150,8 +148,8 @@ class ContractFlight extends Model {
     /**
      * Loads performances of attached reservations
      *
-     * @return Collection<FlightPerformanceDatum>
-     * @throws InvalidBroadcasterAdapterException|UnknownProperties
+     * @return Collection
+     * @throws InvalidBroadcasterAdapterException
      */
     protected function getReservationsPerformances(): Collection {
         return Cache::tags(["contract-performances", $this->contract->contract_id])
@@ -193,8 +191,8 @@ class ContractFlight extends Model {
                                              ->toArray()
                             ))->map(function (CampaignPerformance $performance) use ($reservationsNetworks): FlightPerformanceDatum {
                                 return new FlightPerformanceDatum(
-                                    flight_id: $this->getKey(),
-                                    network_id: $reservationsNetworks[$performance->campaign->external_id] ?? null,
+                                    flight_id  : $this->getKey(),
+                                    network_id : $reservationsNetworks[$performance->campaign->external_id] ?? null,
                                     recorded_at: $performance->date,
                                     repetitions: $performance->repetitions,
                                     impressions: $performance->impressions,

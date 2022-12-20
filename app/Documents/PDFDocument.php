@@ -23,39 +23,39 @@ abstract class PDFDocument extends Document {
         set_time_limit(120);
 
         $this->mpdf = new Mpdf(array_merge([
-            "fontDir"      => [resource_path('fonts/')],
-            "fontdata"     => [
-                "poppins-bold"        => [
-                    "R"  => "Poppins-SemiBold.ttf",
-                    "I"  => "Poppins-SemiBoldItalic.ttf",
-                    "B"  => "Poppins-Bold.ttf",
-                    "BI" => "Poppins-BoldItalic.ttf",
-                ],
-                "poppins-regular"     => [
-                    "R"  => "Poppins-Regular.ttf",
-                    "I"  => "Poppins-Italic.ttf",
-                    "B"  => "Poppins-Medium.ttf",
-                    "BI" => "Poppins-MediumItalic.ttf",
-                ],
-                "poppins-light"       => [
-                    "R" => "Poppins-Light.ttf",
-                    "I" => "Poppins-Italic.ttf",
-                ],
-                "poppins-extra-light" => [
-                    "R" => "Poppins-ExtraLight.ttf",
-                    "I" => "Poppins-ExtraItalic.ttf",
-                ]
-            ],
-            "default_font" => "poppins-regular",
-        ], $mpdfConfiguration
-        ));
+                                               "fontDir" => [resource_path('fonts/')],
+                                                                                                                                                                    "fontdata" => [
+                                                                                                                                                                        "poppins-bold" => [
+                                                                                                                                                                            "R" => "Poppins-SemiBold.ttf",
+                                                                                  "I" => "Poppins-SemiBoldItalic.ttf",
+                                                                                  "B" => "Poppins-Bold.ttf",
+                                                                                  "BI" => "Poppins-BoldItalic.ttf",
+                                                                                                                                                                        ],
+                                                                                                            "poppins-regular" => [
+                                                                                                                "R" => "Poppins-Regular.ttf",
+                                                                                                 "I" => "Poppins-Italic.ttf",
+                                                                                                 "B" => "Poppins-Medium.ttf",
+                                                                                                 "BI" => "Poppins-MediumItalic.ttf",
+                                                                                                            ],
+                                                                                                                                 "poppins-light" => [
+                                                                                                                                     "R" => "Poppins-Light.ttf",
+                                                                                                                                     "I" => "Poppins-Italic.ttf",
+                                                                                                                                 ],
+                                                                                                                                          "poppins-extra-light" => [
+                                                                                                                                              "R" => "Poppins-ExtraLight.ttf",
+                                                                                                                                              "I" => "Poppins-ExtraItalic.ttf",
+                                                                                                                                          ],
+                                                                                                                                                                    ],
+                                                                                                                                                                                                                                "default_font" => "poppins-regular",
+                                           ], $mpdfConfiguration
+                               ));
     }
 
-    public function format(): string {
-        return "application/pdf";
+    public function format(): DocumentFormat {
+        return DocumentFormat::PDF;
     }
 
-    public function output() {
+    public function output(): null|string {
         return $this->mpdf->Output($this->getName(), Destination::STRING_RETURN);
     }
 
@@ -69,20 +69,20 @@ abstract class PDFDocument extends Document {
 
     protected function setLayout(string $title, $dimensions, $context = [], $pageselector = ""): void {
         $this->mpdf->DefHTMLHeaderByName("default_header", view($this->header_view, array_merge([
-            "title"    => $title,
-        ], $context))->render());
+                                                                                                    "title" => $title,
+                                                                                                ], $context))->render());
 
         $this->mpdf->SetHTMLHeaderByName("default_header");
 
         // Add a new page
         $this->mpdf->AddPageByArray([
-            "orientation" => "P",
-            "sheet-size" => $dimensions,
-            "pageselector" => $pageselector,
-        ]);
+                                        "orientation"  => "P",
+                                        "sheet-size"   => $dimensions,
+                                        "pageselector" => $pageselector,
+                                    ]);
         $this->mpdf->DefHTMLFooterByName("default_footer", view($this->footer_view, array_merge([
-            "width" => is_array($dimensions) ? $dimensions[0]-5 : 210,
-        ], $context))->render());
+                                                                                                    "width" => is_array($dimensions) ? $dimensions[0] - 5 : 210,
+                                                                                                ], $context))->render());
 
         $this->mpdf->SetHTMLFooterByName("default_footer");
     }

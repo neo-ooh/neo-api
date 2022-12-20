@@ -11,15 +11,21 @@
 namespace Neo\Modules\Broadcast\Services;
 
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Spatie\DataTransferObject\DataTransferObject;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\Data;
+use Spatie\LaravelData\DataCollection;
 
-class ExternalCampaignDefinition extends DataTransferObject {
-    public int $campaign_id;
-    public int $network_id;
-    public int $format_id;
+class ExternalCampaignDefinition extends Data {
+    public function __construct(
+        public int            $campaign_id,
+        public int            $network_id,
+        public int            $format_id,
 
-    /**
-     * @var ExternalBroadcasterResourceId[]
-     */
-    public array $locations;
+        /**
+         * @var DataCollection<ExternalBroadcasterResourceId>
+         */
+        #[DataCollectionOf(ExternalBroadcasterResourceId::class)]
+        public DataCollection $locations,
+    ) {
+    }
 }

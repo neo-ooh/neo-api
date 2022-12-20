@@ -48,28 +48,28 @@ return new class extends Migration {
 
             if ($broadcaster && $broadcaster->broadcaster === BroadcasterType::BroadSign->value && $schedule->external_id_1 !== null) {
                 ExternalResource::query()->create([
-                    "resource_id"    => $schedule->id,
-                    "broadcaster_id" => $broadcaster->id,
-                    "type"           => ExternalResourceType::Bundle,
-                    "data"           => new ExternalResourceData([
-                        "formats_id"  => [$campaign->format_id],
-                        "network_id"  => $campaign->network_id,
-                        "external_id" => $schedule->external_id_1,
-                    ]),
-                ]);
+                                                      "resource_id"    => $schedule->id,
+                                                      "broadcaster_id" => $broadcaster->id,
+                                                      "type"           => ExternalResourceType::Bundle,
+                                                      "data"           => new ExternalResourceData(
+                                                          external_id: $schedule->external_id_1,
+                                                          network_id : $campaign->network_id,
+                                                          formats_id : [$campaign->format_id],
+                                                      ),
+                                                  ]);
             }
 
             if ($schedule->external_id_2 !== null) {
                 ExternalResource::query()->create([
-                    "resource_id"    => $schedule->id,
-                    "broadcaster_id" => $broadcaster->id,
-                    "type"           => ExternalResourceType::Schedule,
-                    "data"           => new ExternalResourceData([
-                        "formats_id"  => [$campaign->format_id],
-                        "network_id"  => $campaign->network_id,
-                        "external_id" => $schedule->external_id_2,
-                    ]),
-                ]);
+                                                      "resource_id"    => $schedule->id,
+                                                      "broadcaster_id" => $broadcaster->id,
+                                                      "type"           => ExternalResourceType::Schedule,
+                                                      "data"           => new ExternalResourceData(
+                                                          external_id: $schedule->external_id_2,
+                                                          network_id : $campaign->network_id,
+                                                          formats_id : [$campaign->format_id],
+                                                      ),
+                                                  ]);
             }
         }
 

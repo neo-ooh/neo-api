@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class ContractReservation
@@ -72,14 +71,11 @@ class ContractReservation extends Model {
         return $this->belongsTo(ContractFlight::class, "flight_id");
     }
 
-    /**
-     * @throws UnknownProperties
-     */
     public function toResource(): ExternalBroadcasterResourceId {
         return new ExternalBroadcasterResourceId(
-            type: ExternalResourceType::Campaign,
             broadcaster_id: $this->broadcaster_id,
-            external_id: $this->external_id,
+            external_id   : $this->external_id,
+            type          : ExternalResourceType::Campaign,
         );
     }
 }

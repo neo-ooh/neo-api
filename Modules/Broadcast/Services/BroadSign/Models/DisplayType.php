@@ -11,14 +11,12 @@
 namespace Neo\Modules\Broadcast\Services\BroadSign\Models;
 
 use Illuminate\Support\Collection;
-use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Modules\Broadcast\Services\ResourceCastable;
 use Neo\Modules\Broadcast\Services\Resources\DisplayType as DisplayTypeResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Support
@@ -71,14 +69,14 @@ class DisplayType extends BroadSignModel implements ResourceCastable {
 
     /**
      * @return DisplayTypeResource
-     * @throws UnknownProperties
      */
     public function toResource(): DisplayTypeResource {
-        return new DisplayTypeResource([
-            "broadcaster_id" => $this->getBroadcasterId(),
-            "type"           => ExternalResourceType::DisplayType,
-            "external_id"    => $this->getKey(),
-            "name"           => $this->name,
-        ]);
+        return new DisplayTypeResource(
+            broadcaster_id: $this->getBroadcasterId(),
+            external_id   : $this->getKey(),
+            name          : $this->name,
+            width_px      : $this->res_width,
+            height_px     : $this->res_height,
+        );
     }
 }

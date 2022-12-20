@@ -27,7 +27,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\Resources\CreativeStorageType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @extends BroadcastJobBase<array{broadcasterId: int}>
@@ -39,7 +38,6 @@ class ImportCreativeJob extends BroadcastJobBase {
 
     /**
      * @return ExternalBroadcasterResourceId|null
-     * @throws UnknownProperties
      */
     public function getLastAttemptResult(): ExternalBroadcasterResourceId|null {
         $results = $this->broadcastJob->last_attempt_result;
@@ -52,9 +50,9 @@ class ImportCreativeJob extends BroadcastJobBase {
 
         if (isset($result["type"], $result["external_id"])) {
             return new ExternalBroadcasterResourceId(
-                type: ExternalResourceType::from($result["type"]),
                 broadcaster_id: $this->broadcastJob->payload["broadcasterId"],
-                external_id: $result["external_id"]
+                external_id   : $result["external_id"],
+                type          : ExternalResourceType::from($result["type"])
             );
         }
 
@@ -64,7 +62,6 @@ class ImportCreativeJob extends BroadcastJobBase {
     /**
      * @inheritDoc
      * @return array|null
-     * @throws UnknownProperties
      * @throws InvalidBroadcasterAdapterException
      */
     protected function run(): array|null {
@@ -113,13 +110,13 @@ class ImportCreativeJob extends BroadcastJobBase {
         $creativeExternalId = $broadcaster->importCreative($creative->toResource($broadcaster->getBroadcasterId()), $importType, $creativeTags);
 
         $externalResource = new ExternalResource([
-            "resource_id"    => $creative->getKey(),
-            "broadcaster_id" => $broadcaster->getBroadcasterId(),
-            "type"           => ExternalResourceType::Creative,
-            "data"           => new ExternalResourceData([
-                "external_id" => $creativeExternalId->external_id,
-            ]),
-        ]);
+                                                     "resource_id"    => $creative->getKey(),
+                                                     "broadcaster_id" => $broadcaster->getBroadcasterId(),
+                                                     "type"           => ExternalResourceType::Creative,
+                                                     "data"           => new ExternalResourceData(
+                                                         external_id: $creativeExternalId->external_id,
+                                                     ),
+                                                 ]);
         $externalResource->save();
 
         return [$creativeExternalId];

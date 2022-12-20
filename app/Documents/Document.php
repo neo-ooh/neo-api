@@ -13,6 +13,9 @@ namespace Neo\Documents;
 use Neo\Documents\Exceptions\UnknownGenerationException;
 
 abstract class Document {
+    /**
+     * @throws UnknownGenerationException
+     */
     public static function make($data): Document {
         $document = new static();
 
@@ -40,15 +43,16 @@ abstract class Document {
     abstract public function build(): bool;
 
     /**
-     * @return string The name of the generated document
+     * @return string The name of the generated document, without the file extension
      */
     abstract public function getName(): string;
 
     /**
-     * Must return the mime/type of the built document
-     * @return string
+     * Must return the format of the built document.
+     *
+     * @return DocumentFormat
      */
-    abstract public function format(): string;
+    abstract public function format(): DocumentFormat;
 
     /**
      * @return mixed The raw built document, ready to be shown in the browser

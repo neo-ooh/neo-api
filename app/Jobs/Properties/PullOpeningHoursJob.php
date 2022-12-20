@@ -27,7 +27,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterLocations;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -42,9 +41,9 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
     }
 
     /**
-     * @throws UnsupportedBroadcasterFunctionalityException
-     * @throws UnknownProperties
+     * @return bool
      * @throws InvalidBroadcasterAdapterException
+     * @throws UnsupportedBroadcasterFunctionalityException
      */
     public function handle(): bool {
         /** @var Property|null $property */
@@ -81,12 +80,12 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
 
         foreach ($openingHours->days as $i => $times) {
             OpeningHours::query()->updateOrInsert([
-                "property_id" => $property->getKey(),
-                "weekday"     => $i + 1,
-            ], [
-                "open_at"  => $times[0],
-                "close_at" => $times[1],
-            ]);
+                                                      "property_id" => $property->getKey(),
+                                                      "weekday"     => $i + 1,
+                                                  ], [
+                                                      "open_at"  => $times[0],
+                                                      "close_at" => $times[1],
+                                                  ]);
         }
 
         return true;

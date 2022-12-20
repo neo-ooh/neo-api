@@ -20,7 +20,6 @@ use Neo\Modules\Broadcast\Enums\BroadcastTagScope;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Rules\AccessibleBroadcastTag;
 use Neo\Modules\Broadcast\Services\Resources\Tag as TagResource;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @property int                      $id
@@ -61,19 +60,16 @@ class BroadcastTag extends BroadcastResourceModel {
         "representations" => "external_representations",
     ];
 
-    /**
-     * @throws UnknownProperties
-     */
     public function toResource(int $broadcasterId): TagResource {
         /** @var ExternalResource|null $externalRepresentation */
         $externalRepresentation = $this->external_representations->firstWhere("broadcaster_id", "=", $broadcasterId);
 
-        return new TagResource([
-            "name"           => $this->name_en,
-            "broadcaster_id" => $broadcasterId,
-            "external_id"    => $externalRepresentation?->data->external_id ?? "-1",
-            "tag_type"       => $this->type,
-        ]);
+        return new TagResource(
+            broadcaster_id: $broadcasterId,
+            external_id   : $externalRepresentation?->data->external_id ?? "-1",
+            name          : $this->name_en,
+            tag_type      : $this->type,
+        );
     }
 
     /*

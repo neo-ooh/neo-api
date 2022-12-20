@@ -10,8 +10,8 @@
 
 namespace Neo\Modules\Broadcast\Services\Resources;
 
-use Spatie\DataTransferObject\DataTransferObject;
+use Spatie\LaravelData\Data;
 
-abstract class ExternalBroadcasterResource extends DataTransferObject {
+abstract class ExternalBroadcasterResource extends Data {
 
 }

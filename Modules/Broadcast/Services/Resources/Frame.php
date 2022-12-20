@@ -13,17 +13,25 @@ namespace Neo\Modules\Broadcast\Services\Resources;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 
 class Frame extends ExternalBroadcasterResourceId {
-    public ExternalResourceType $type = ExternalResourceType::Frame;
+    public function __construct(
+        int           $broadcaster_id,
+        string        $external_id,
+        public string $name,
 
-    public string $name;
+        /**
+         * px
+         */
+        public int    $width,
 
-    /**
-     * px
-     */
-    public int $width;
-
-    /**
-     * px
-     */
-    public int $height;
+        /**
+         * px
+         */
+        public int    $height,
+    ) {
+        parent::__construct(
+            broadcaster_id: $broadcaster_id,
+            external_id   : $external_id,
+            type          : ExternalResourceType::Frame,
+        );
+    }
 }

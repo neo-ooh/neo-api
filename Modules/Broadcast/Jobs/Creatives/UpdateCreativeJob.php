@@ -22,7 +22,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @extends BroadcastJobBase<array{broadcasterId: int}>
@@ -35,7 +34,6 @@ class UpdateCreativeJob extends BroadcastJobBase {
     /**
      * @inheritDoc
      * @return array|null
-     * @throws UnknownProperties
      * @throws InvalidBroadcasterAdapterException
      */
     protected function run(): array|null {

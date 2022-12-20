@@ -23,6 +23,8 @@ use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
 use Neo\Jobs\Traffic\PullLatestTrafficData;
 use Neo\Jobs\Traffic\TrafficRequiredReminder;
+use Neo\Modules\Broadcast\Console\Commands\FetchCampaignsPerformancesCommand;
+use Neo\Modules\Broadcast\Console\Commands\SynchronizeNetworkCommand;
 
 class Kernel extends ConsoleKernel {
     /**
@@ -42,6 +44,12 @@ class Kernel extends ConsoleKernel {
 
         // property:pull-traffic {property}
         PullPropertyTraffic::class,
+
+        // Broadcast -------------------
+
+        // network:sync
+        SynchronizeNetworkCommand::class,
+        FetchCampaignsPerformancesCommand::class,
     ];
 
     /**

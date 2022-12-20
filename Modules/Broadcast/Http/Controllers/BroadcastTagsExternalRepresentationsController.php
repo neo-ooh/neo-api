@@ -17,7 +17,6 @@ use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\ListExternalRepresentation
 use Neo\Modules\Broadcast\Http\Requests\BroadcastTags\UpdateExternalRepresentationsRequest;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class BroadcastTagsExternalRepresentationsController extends Controller {
     public function index(ListExternalRepresentationsRequest $request, BroadcastTag $broadcastTag): Response {
@@ -25,20 +24,24 @@ class BroadcastTagsExternalRepresentationsController extends Controller {
     }
 
     /**
-     * @throws UnknownProperties
+     * @param UpdateExternalRepresentationsRequest $request
+     * @param BroadcastTag                         $broadcastTag
+     * @return Response
      */
     public function update(UpdateExternalRepresentationsRequest $request, BroadcastTag $broadcastTag): Response {
         $broadcasterIds = [];
 
         foreach ($request->input("representations", []) as ["broadcaster_id" => $broadcasterId, "external_id" => $externalId]) {
             $broadcastTag->external_representations()->updateOrCreate([
-                "broadcaster_id" => $broadcasterId,
-                "type"           => ExternalResourceType::Tag,
-            ], [
-                "data" => new ExternalResourceData([
-                    "external_id" => $externalId,
-                ]),
-            ]);
+                                                                          "broadcaster_id" => $broadcasterId,
+                                                                          "type"           => ExternalResourceType::Tag,
+                                                                      ], [
+                                                                          "data" => new ExternalResourceData(
+                                                                              external_id: $externalId,
+                                                                              network_id : null,
+                                                                              formats_id : null,
+                                                                          ),
+                                                                      ]);
 
             $broadcasterIds[] = $broadcasterId;
         }

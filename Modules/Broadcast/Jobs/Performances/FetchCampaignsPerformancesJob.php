@@ -5,13 +5,17 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - PullCampaignsPerformancesJob.php
+ * @neo/api - FetchCampaignsPerformancesJob.php
  */
 
 namespace Neo\Modules\Broadcast\Jobs\Performances;
 
+use Carbon\Carbon;
+use Carbon\CarbonInterface;
+use Carbon\CarbonPeriod;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -21,6 +25,7 @@ use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\ResourcePerformance;
+use Neo\Modules\Broadcast\Models\StructuredColumns\ResourcePerformanceData;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
@@ -32,16 +37,15 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 /**
  * This job update all the
  */
-class PullCampaignsPerformancesJob implements ShouldQueue {
+class FetchCampaignsPerformancesJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected int|null $networkId = null) {
-    }
-
     /**
-     * @var int How many days in the past should we look at
+     * @param int|null $networkId
+     * @param int|null $lookBack How many days in the past should we look at
      */
-    protected int $lookBack = 3;
+    public function __construct(protected int|null $networkId = null, protected int|null $lookBack = 3) {
+    }
 
     /**
      * @return void
@@ -50,17 +54,23 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
         // List all campaigns currently active with their external representations
         $campaigns = Campaign::query()
                              ->where("start_date", "<", DB::raw("NOW()"))
-                             ->where("end_date", ">=", DB::raw(/** @lang SQL */ "SUBDATE(NOW(), $this->lookBack)"))
+                             ->when($this->lookBack !== null, function (Builder $query) {
+                                 $query->where("end_date", ">=", DB::raw(/** @lang SQL */ "SUBDATE(NOW(), $this->lookBack)"));
+                             })
                              ->with(["external_representations"])
                              ->lazy(500);
 
-        /*        $concernedDates = collect(
-                    CarbonPeriod::create(
-                        Carbon::now()->subDays($this->lookBack)->toDateString(),
-                        Carbon::now()->toDateString(),
-                        '1 day'
-                    )->toArray()
-                )->map(fn(CarbonInterface $date) => $date->toDateString());*/
+        if ($this->lookBack) {
+            $concernedDates = collect(
+                CarbonPeriod::create(
+                    Carbon::now()->subDays($this->lookBack)->toDateString(),
+                    Carbon::now()->toDateString(),
+                    '1 day'
+                )->toArray()
+            )->map(fn(CarbonInterface $date) => $date->toDateString());
+        } else {
+            $concernedDates = collect();
+        }
 
         // Group external representations together for batch queries
         /** @var Collection<PerformanceBatch> $batches */
@@ -81,7 +91,7 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
                 if (!$batch) {
                     $batch = new PerformanceBatch(
                         broadcaster_id: $resource->broadcaster_id,
-                        network_id: $resource->data->network_id
+                        network_id    : $resource->data->network_id
                     );
                     $batches->push($batch);
                 }
@@ -123,7 +133,9 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
             $performances = collect($broadcaster->getCampaignsPerformances($resources->all()));
 
             // Filter out all the unwanted dates
-//            $performances = $performances->whereIn("date", $concernedDates);
+            if ($this->lookBack) {
+                $performances = $performances->whereIn("date", $concernedDates);
+            }
 
             $section = $output->section();
             $section->writeln("");
@@ -158,23 +170,23 @@ class PullCampaignsPerformancesJob implements ShouldQueue {
                                        ->where("data->network_id", $representation->data->network_id)
                                        ->whereJsonContains("data->formats_id", $representation->data->formats_id)
                                        ->update([
-                                           "repetitions" => $performance->repetitions,
-                                           "impressions" => $performance->impressions,
-                                       ]);
+                                                    "repetitions" => $performance->repetitions,
+                                                    "impressions" => $performance->impressions,
+                                                ]);
 
                     continue;
                 }
 
                 $record = new ResourcePerformance([
-                    "resource_id" => $representation->resource_id,
-                    "recorded_at" => $performance->date,
-                    "repetitions" => $performance->repetitions,
-                    "impressions" => $performance->impressions,
-                    "data"        => [
-                        "network_id" => $representation->data->network_id,
-                        "formats_id" => $representation->data->formats_id,
-                    ],
-                ]);
+                                                      "resource_id" => $representation->resource_id,
+                                                      "recorded_at" => $performance->date,
+                                                      "repetitions" => $performance->repetitions,
+                                                      "impressions" => $performance->impressions,
+                                                      "data"        => new ResourcePerformanceData(
+                                                          network_id: $representation->data->network_id,
+                                                          formats_id: $representation->data->formats_id,
+                                                      ),
+                                                  ]);
 
                 $record->save();
             }

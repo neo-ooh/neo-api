@@ -25,7 +25,6 @@ use Neo\Modules\Broadcast\Models\StructuredColumns\CreativeProperties;
 use Neo\Modules\Broadcast\Rules\AccessibleCreative;
 use Neo\Modules\Broadcast\Services\Resources\Creative as CreativeResource;
 use Neo\Modules\Broadcast\Utils\ThumbnailCreator;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
@@ -279,23 +278,22 @@ class Creative extends BroadcastResourceModel {
     /**
      * @param int|null $broadcasterId
      * @return CreativeResource
-     * @throws UnknownProperties
      */
     public function toResource(int|null $broadcasterId = null): CreativeResource {
-        return new CreativeResource([
-            "id"                   => $this->getKey(),
-            "advertiser"           => $broadcasterId ? $this->content->library->advertiser?->getExternalRepresentation($broadcasterId) : null,
-            "name"                 => $this->owner->name . " - " . $this->original_name . " #" . $this->getKey(),
-            "fileName"             => $this->original_name,
-            "type"                 => $this->type,
-            "width"                => $this->frame->width,
-            "height"               => $this->frame->height,
-            "length_ms"            => $this->duration * 1000,
-            "path"                 => $this->type === CreativeType::Static ? $this->file_path : "",
-            "url"                  => $this->type === CreativeType::Static ? $this->file_url : $this->properties->url,
-            "extension"            => $this->type === CreativeType::Static ? $this->properties->extension : "",
-            "refresh_rate_minutes" => $this->type === CreativeType::Static ? 0 : $this->properties->refresh_interval_minutes,
-        ]);
+        return new CreativeResource(
+            id                  : $this->getKey(),
+            advertiser          : $broadcasterId ? $this->content->library->advertiser?->getExternalRepresentation($broadcasterId) : null,
+            name                : $this->owner->name . " - " . $this->original_name . " #" . $this->getKey(),
+            fileName            : $this->original_name,
+            type                : $this->type,
+            width               : $this->frame->width,
+            height              : $this->frame->height,
+            length_ms           : $this->duration * 1000,
+            path                : $this->type === CreativeType::Static ? $this->file_path : "",
+            extension           : $this->type === CreativeType::Static ? $this->properties->extension : "",
+            url                 : $this->type === CreativeType::Static ? $this->file_url : $this->properties->url,
+            refresh_rate_minutes: $this->type === CreativeType::Static ? 0 : $this->properties->refresh_interval_minutes,
+        );
     }
 
     /**

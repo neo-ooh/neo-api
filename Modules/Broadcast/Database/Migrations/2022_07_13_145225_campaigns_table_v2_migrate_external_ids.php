@@ -48,15 +48,15 @@ return new class extends Migration {
             }
 
             ExternalResource::query()->create([
-                "resource_id"    => $campaign->id,
-                "broadcaster_id" => $broadcaster->id,
-                "type"           => ExternalResourceType::Campaign,
-                "data"           => new ExternalResourceData([
-                    "network_id"  => $campaign->network_id,
-                    "formats_id"  => [$campaign->format_id],
-                    "external_id" => $campaign->external_id
-                ])
-            ]);
+                                                  "resource_id"    => $campaign->id,
+                                                  "broadcaster_id" => $broadcaster->id,
+                                                  "type"           => ExternalResourceType::Campaign,
+                                                  "data"           => new ExternalResourceData(
+                                                      external_id: $campaign->external_id,
+                                                      network_id : $campaign->network_id,
+                                                      formats_id : [$campaign->format_id]
+                                                  ),
+                                              ]);
         }
 
         $progress->finish();

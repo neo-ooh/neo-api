@@ -5,15 +5,17 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - 2022_12_08_151717_remove_libraries_campaigns_shares.php
+ * @neo/api - 2022_12_19_142242_players_screen_count.php
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class RemoveLibrariesCampaignsShares extends Migration {
+class PlayersScreenCount extends Migration {
     public function up() {
-        Schema::dropIfExists("campaign_shares");
-        Schema::dropIfExists("libraries_shares");
+        Schema::table('players', function (Blueprint $table) {
+            $table->unsignedInteger("screen_count")->default(0)->after("name");
+        });
     }
 }

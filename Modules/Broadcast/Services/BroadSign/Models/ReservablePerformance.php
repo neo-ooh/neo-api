@@ -16,8 +16,8 @@ use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Modules\Broadcast\Services\ResourceCastable;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance as CampaignPerformanceResource;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class ReservablePerformance
@@ -63,18 +63,18 @@ class ReservablePerformance extends BroadSignModel implements ResourceCastable {
     }
 
     /**
-     * @throws UnknownProperties
+     * @return CampaignPerformanceResource
      */
     public function toResource(): CampaignPerformanceResource {
-        return new CampaignPerformanceResource([
-            "campaign"    => [
-                "type"           => ExternalResourceType::Campaign,
-                "broadcaster_id" => $this->getBroadcasterId(),
-                "external_id"    => $this->reservable_id,
-            ],
-            "date"        => $this->played_on,
-            "repetitions" => $this->total,
-            "impressions" => $this->total_impressions,
-        ]);
+        return new CampaignPerformanceResource(
+            campaign   : new ExternalBroadcasterResourceId(
+                             broadcaster_id: $this->getBroadcasterId(),
+                             external_id   : $this->reservable_id,
+                             type          : ExternalResourceType::Campaign,
+                         ),
+            date       : $this->played_on,
+            repetitions: $this->total,
+            impressions: $this->total_impressions,
+        );
     }
 }

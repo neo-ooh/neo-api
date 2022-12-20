@@ -20,7 +20,6 @@ use Neo\Modules\Broadcast\Services\Resources\CreativeStorageType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Schedule;
 use Neo\Modules\Broadcast\Services\Resources\Tag;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Handles on a broadcaster for scheduling content
@@ -63,18 +62,10 @@ interface BroadcasterScheduling {
 
     /**
      * @param ExternalBroadcasterResourceId $externalCampaign
-     * @param CampaignTargeting             $expected
-     * @return ResourcesComparator
-     */
-    public function checkCampaignTargeting(ExternalBroadcasterResourceId $externalCampaign, CampaignTargeting $expected): ResourcesComparator;
-
-    /**
-     * @param ExternalBroadcasterResourceId $externalCampaign
      * @param Campaign                      $campaign
      * @return ExternalBroadcasterResourceId
      * @throws CannotUpdateExternalResourceException
      * @throws ExternalBroadcastResourceNotFoundException
-     * @throws UnknownProperties
      */
     public function updateCampaign(ExternalBroadcasterResourceId $externalCampaign, Campaign $campaign): ExternalBroadcasterResourceId;
 

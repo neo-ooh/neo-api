@@ -83,4 +83,13 @@ class LoopConfiguration extends Model {
         // ----x----|start|----✓----|end|----x----|NY|
         return $this->start_date <= $normalizedDate && $normalizedDate <= $this->end_date;
     }
+
+    /**
+     * Tell how many spots there is in the loop, including reserved spots
+     *
+     * @return positive-int
+     */
+    public function getSpotCount(): int {
+        return $this->loop_length_ms / $this->spot_length_ms;
+    }
 }

@@ -17,7 +17,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
-use Neo\Documents\PropertyDump\PropertyDump;
+use Neo\Documents\Exceptions\UnknownGenerationException;
+use Neo\Documents\ProgrammaticExport\ProgrammaticExport;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Properties\DestroyPropertyRequest;
 use Neo\Http\Requests\Properties\DumpPropertyRequest;
@@ -51,18 +52,18 @@ class PropertiesController extends Controller {
         $properties = $query->get();
 
         $properties->load([
-            "data",
-            "address",
-            "odoo",
-        ]);
+                              "data",
+                              "address",
+                              "odoo",
+                          ]);
 
         $expansion = $request->input("with", []);
 
         if (in_array("rolling_monthly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
-                "traffic",
-                "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"]),
-            ]);
+                                         "traffic",
+                                         "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"]),
+                                     ]);
 
             $properties->each(function ($p) {
                 $p->rolling_monthly_traffic = $p->traffic->getMonthlyTraffic($p->address?->city->province);
@@ -73,9 +74,9 @@ class PropertiesController extends Controller {
 
         if (in_array("weekly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
-                "traffic",
-                "traffic.weekly_data",
-            ]);
+                                         "traffic",
+                                         "traffic.weekly_data",
+                                     ]);
 
             $properties->each(function (Property $p) {
                 $p->traffic->append("weekly_traffic");
@@ -97,14 +98,14 @@ class PropertiesController extends Controller {
 
         if (in_array("fields", $request->input("with", []), true)) {
             $properties->load([
-                "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
-            ]);
+                                  "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
+                              ]);
         }
 
         if (in_array("tenants", $request->input("with", []), true)) {
             $properties->load([
-                "tenants" => fn($q) => $q->select(["id"]),
-            ]);
+                                  "tenants" => fn($q) => $q->select(["id"]),
+                              ]);
         }
 
         $public = array_diff($expansion, ["rolling_monthly_traffic", "weekly_traffic", "rolling_weekly_traffic", "fields", "tenants"]);
@@ -125,14 +126,14 @@ class PropertiesController extends Controller {
             "id"          => $actor->getKey(),
             "name"        => $actor->name,
             "parent_name" => $actor->parent?->name,
-        ])->toArray(), [
-            "isCaseSensitive" => false,
-            "includeScore"    => true,
-            "keys"            => [
-                "name",
-                "parent_name",
-            ],
-        ]);
+        ])->toArray(),           [
+                                     "isCaseSensitive" => false,
+                                     "includeScore"    => true,
+                                     "keys"            => [
+                                         "name",
+                                         "parent_name",
+                                     ],
+                                 ]);
 
         $matchedIds = collect($searchEngine->search($request->input("q")))->pluck("item.id");
         $actorIds   = $accessibleActors->whereIn("id", $matchedIds)
@@ -273,9 +274,9 @@ class PropertiesController extends Controller {
 
         /** @var City $city */
         $city = City::query()->firstOrCreate([
-            "name"        => $request->input("city"),
-            "province_id" => $province->id,
-        ]);
+                                                 "name"        => $request->input("city"),
+                                                 "province_id" => $province->id,
+                                             ]);
 
         $address          = $property->address ?? new Address();
         $address->line_1  = $request->input("line_1");
@@ -302,24 +303,31 @@ class PropertiesController extends Controller {
         return new Response(["status" => "ok"]);
     }
 
+    /**
+     * @param DumpPropertyRequest $request
+     * @param Property            $property
+     * @throws UnknownGenerationException
+     */
     public function dump(DumpPropertyRequest $request, Property $property): void {
-        $doc = new PropertyDump([$property->getKey()]);
+        $doc = ProgrammaticExport::make([$property->getKey()]);
         $doc->build();
         $doc->output();
     }
 
+    /**
+     * @param DumpPropertyRequest $request
+     * @param Network             $network
+     * @throws UnknownGenerationException
+     */
     public function dumpNetwork(DumpPropertyRequest $request, Network $network) {
         set_time_limit(90);
-        $doc = new PropertyDump(Property::query()
-                                        ->where("network_id", "=", $network->getKey())
-                                        ->setEagerLoads([])
-                                        ->get()
-                                        ->pluck("actor_id")
-                                        ->toArray());
-
+        $doc = ProgrammaticExport::make(Property::query()
+                                                ->where("network_id", "=", $network->getKey())
+                                                ->setEagerLoads([])
+                                                ->get()
+                                                ->pluck("actor_id")
+                                                ->toArray());
         $doc->build();
         $doc->output();
-
-//        return new Response();
     }
 }

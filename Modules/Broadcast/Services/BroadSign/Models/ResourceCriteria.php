@@ -37,7 +37,7 @@ class ResourceCriteria extends BroadSignModel {
 
     protected static array $updatable = [
         "id",
-        "active"
+        "active",
     ];
 
     /**

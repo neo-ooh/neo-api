@@ -15,11 +15,18 @@ use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Services\DoNotCompare;
 
 class Tag extends ExternalBroadcasterResourceId {
-    public ExternalResourceType $type = ExternalResourceType::Tag;
-
-    #[DoNotCompare]
-    public string $name;
-
-    #[DoNotCompare]
-    public BroadcastTagType $tag_type;
+    public function __construct(
+        int                     $broadcaster_id,
+        string                  $external_id,
+        #[DoNotCompare]
+        public string           $name,
+        #[DoNotCompare]
+        public BroadcastTagType $tag_type,
+    ) {
+        parent::__construct(
+            broadcaster_id: $broadcaster_id,
+            external_id   : $external_id,
+            type          : ExternalResourceType::Tag
+        );
+    }
 }

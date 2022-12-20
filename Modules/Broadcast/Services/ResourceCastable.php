@@ -10,10 +10,10 @@
 
 namespace Neo\Modules\Broadcast\Services;
 
-use Spatie\DataTransferObject\DataTransferObject;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResource;
 
 /**
- * @template TResource of DataTransferObject
+ * @template TResource of ExternalBroadcasterResource
  */
 interface ResourceCastable {
     /**
@@ -21,5 +21,5 @@ interface ResourceCastable {
      *
      * @return TResource
      */
-    public function toResource(): DataTransferObject;
+    public function toResource(): ExternalBroadcasterResource;
 }

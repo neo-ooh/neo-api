@@ -11,18 +11,22 @@
 namespace Neo\Modules\Broadcast\Services\Resources;
 
 class Schedule extends ExternalBroadcasterResource {
-    public bool $enabled;
-    public string $name;
+    public function __construct(
+        public bool   $enabled,
+        public string $name,
 
-    public string $start_date;
-    public string $start_time;
-    public string $end_date;
-    public string $end_time;
+        public string $start_date,
+        public string $start_time,
+        public string $end_date,
+        public string $end_time,
 
-    public int $broadcast_days;
+        public int    $broadcast_days,
 
-    public int $order;
+        public int    $order,
 
-    public int $duration_msec = 0;
-    public bool $is_fullscreen = false;
+        public int    $duration_msec = 0,
+        public bool   $is_fullscreen = false,
+    ) {
+
+    }
 }

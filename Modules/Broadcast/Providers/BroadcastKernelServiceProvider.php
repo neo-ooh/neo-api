@@ -14,11 +14,10 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Neo\Modules\Broadcast\Jobs\Chores\DeleteExpiredResourcesJob;
 use Neo\Modules\Broadcast\Jobs\Networks\SynchronizeAllNetworksJob;
-use Neo\Modules\Broadcast\Jobs\Performances\PullCampaignsPerformancesJob;
+use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 
 class BroadcastKernelServiceProvider extends ServiceProvider {
     public function register() {
-
     }
 
     public function boot() {
@@ -30,7 +29,7 @@ class BroadcastKernelServiceProvider extends ServiceProvider {
             $schedule->job(DeleteExpiredResourcesJob::class)->daily();
 
             // Campaigns Performances
-            $schedule->job(PullCampaignsPerformancesJob::class)->daily();
+            $schedule->job(FetchCampaignsPerformancesJob::class)->daily();
         });
     }
 }

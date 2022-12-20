@@ -26,7 +26,6 @@ use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Rules\AccessibleLocation;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Neo\Models\ActorsLocations
@@ -197,13 +196,12 @@ class Location extends SecuredModel {
 
     /**
      * @return ExternalBroadcasterResourceId
-     * @throws UnknownProperties
      */
     public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
-        return new ExternalBroadcasterResourceId([
-            "type"           => ExternalResourceType::Location,
-            "broadcaster_id" => $this->network->connection_id,
-            "external_id"    => $this->external_id,
-        ]);
+        return new ExternalBroadcasterResourceId(
+            broadcaster_id: $this->network->connection_id,
+            external_id   : $this->external_id,
+            type          : ExternalResourceType::Location,
+        );
     }
 }

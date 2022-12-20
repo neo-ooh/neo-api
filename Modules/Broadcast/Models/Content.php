@@ -25,7 +25,6 @@ use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Jobs\Creatives\UpdateCreativeJob;
 use Neo\Modules\Broadcast\Rules\AccessibleContent;
 use Neo\Modules\Broadcast\Services\Resources\Content as ContentResource;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Neo\Models\Contents
@@ -228,14 +227,14 @@ class Content extends BroadcastResourceModel {
 
 
     /**
-     * @throws UnknownProperties
+     * @return ContentResource
      */
     public function toResource(): ContentResource {
-        return new ContentResource([
-            "name"          => $this->name ?? "Content #{$this->getKey()}",
-            "duration_msec" => (int)($this->duration * 1000),
-            "is_fullscreen" => false,
-        ]);
+        return new ContentResource(
+            name         : $this->name ?? "Content #{$this->getKey()}",
+            duration_msec: (int)($this->duration * 1000),
+            is_fullscreen: false,
+        );
     }
 
 

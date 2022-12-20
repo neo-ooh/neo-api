@@ -11,11 +11,15 @@
 namespace Neo\Documents\XLSX;
 
 
+use JetBrains\PhpStorm\NoReturn;
 use Neo\Documents\Document;
+use Neo\Documents\DocumentFormat;
+use Neo\Exceptions\Documents\UnsupportedDocumentFormatException;
 use PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /**
@@ -33,7 +37,7 @@ abstract class XLSXDocument extends Document {
     /**
      * @throws Exception
      */
-    public function __construct() {
+    protected function __construct() {
         $this->spreadsheet = new Spreadsheet();
         $this->worksheet   = new Worksheet(null, 'Worksheet 1');
         $this->spreadsheet->addSheet($this->worksheet);
@@ -61,20 +65,28 @@ abstract class XLSXDocument extends Document {
     /**
      * @inheritDoc
      */
-    public function format(): string {
-        return "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    public function format(): DocumentFormat {
+        return DocumentFormat::XLSX;
     }
 
     /**
      * @inheritDoc
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception|Exception
+     * @throws UnsupportedDocumentFormatException
      */
-    public function output() {
-        $writer = new Xlsx($this->spreadsheet);
-        $writer->setPreCalculateFormulas(false);
+    #[NoReturn] public function output(): never {
+        $writer = match ($this->format()) {
+            DocumentFormat::XLSX => new Xlsx($this->spreadsheet),
+            DocumentFormat::CSV  => new Csv($this->spreadsheet),
+            default              => throw new UnsupportedDocumentFormatException($this->format(), [DocumentFormat::XLSX, DocumentFormat::CSV])
+        };
+
+        if ($this->format() === DocumentFormat::XLSX) {
+            $writer->setPreCalculateFormulas(false);
+        }
 
         header("access-control-allow-origin: *");
-        header("content-type: " . $this->format());
+        header("content-type: " . $this->format()->value);
 
         $writer->save("php://output");
         exit;

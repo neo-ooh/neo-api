@@ -17,7 +17,6 @@ use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Modules\Broadcast\Services\ResourceCastable;
 use Neo\Modules\Broadcast\Services\Resources\Schedule as ScheduleResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Schedules
@@ -89,18 +88,18 @@ class Schedule extends BroadSignModel implements ResourceCastable {
 
 
     /**
-     * @throws UnknownProperties
+     * @return ScheduleResource
      */
     public function toResource(): ScheduleResource {
-        return new ScheduleResource([
-            "enabled"        => $this->active,
-            "name"           => $this->name,
-            "start_date"     => $this->start_date,
-            "start_time"     => $this->start_time,
-            "end_date"       => $this->end_date,
-            "end_time"       => $this->end_time,
-            "broadcast_days" => $this->day_of_week_mask,
-            "order"          => -1,
-        ]);
+        return new ScheduleResource(
+            enabled       : $this->active,
+            name          : $this->name,
+            start_date    : $this->start_date,
+            start_time    : $this->start_time,
+            end_date      : $this->end_date,
+            end_time      : $this->end_time,
+            broadcast_days: $this->day_of_week_mask,
+            order         : -1,
+        );
     }
 }

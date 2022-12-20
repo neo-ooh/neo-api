@@ -10,12 +10,14 @@
 
 namespace Neo\Modules\Broadcast\Services\Resources;
 
-use Spatie\DataTransferObject\DataTransferObject;
+class ActiveHours extends ExternalBroadcasterResource {
+    public function __construct(
+        /**
+         * @var array<array{0: string, 1: string}> List of open-close times pairs in the HH:mm, 24h format,.
+         * There should be always be 7 entries in this array. Starting at 0 for Monday, and ending a 6 for sunday.
+         */
+        public array $days,
+    ) {
 
-class ActiveHours extends DataTransferObject {
-    /**
-     * @var array<array{0: string, 1: string}> List of open-close times pairs in the HH:mm, 24h format,.
-     * There should be always be 7 entries in this array. Starting at 0 for Monday, and ending a 6 for sunday.
-     */
-    public array $days;
+    }
 }

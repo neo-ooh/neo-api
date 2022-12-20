@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Player
@@ -30,6 +29,7 @@ use Spatie\DataTransferObject\Exceptions\UnknownProperties;
  * @property string    $external_id
  * @property int       $location_id
  * @property string    $name
+ * @property int       $screen_count
  * @property Date      $created_at
  * @property Date      $updated_at
  * @property Date|null $deleted_at
@@ -55,10 +55,11 @@ class Player extends Model {
      * @var array<string>
      */
     protected $fillable = [
-        'network_id',
-        'external_id',
-        'location_id',
-        'name',
+        "network_id",
+        "external_id",
+        "location_id",
+        "name",
+        "screen_count",
     ];
 
     /*
@@ -78,13 +79,12 @@ class Player extends Model {
 
     /**
      * @return ExternalBroadcasterResourceId
-     * @throws UnknownProperties
      */
     public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
-        return new ExternalBroadcasterResourceId([
-            "type"           => ExternalResourceType::Player,
-            "broadcaster_id" => $this->network->connection_id,
-            "external_id"    => $this->external_id,
-        ]);
+        return new ExternalBroadcasterResourceId(
+            broadcaster_id: $this->network->connection_id,
+            external_id   : $this->external_id,
+            type          : ExternalResourceType::Player,
+        );
     }
 }

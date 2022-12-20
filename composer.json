@@ -52,7 +52,6 @@
     "propaganistas/laravel-phone": "^4.3",
     "ramsey/uuid": "^4.1",
     "skagarwal/google-places-api": "^2.0",
-    "spatie/data-transfer-object": "^3.8",
     "spatie/image": "^2.2",
     "spatie/laravel-data": "^2.0",
     "staudenmeir/eloquent-has-many-deep": "^1.15",

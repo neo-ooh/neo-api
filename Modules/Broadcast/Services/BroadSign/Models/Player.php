@@ -18,9 +18,9 @@ use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Modules\Broadcast\Services\ResourceCastable;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Player as PlayerResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Player
@@ -103,17 +103,17 @@ class Player extends BroadSignModel implements ResourceCastable {
         $uri = UriModifier::appendQuery($uri, "player_id={$this->getKey()}");
 
         $this->sendRequest([
-            "rc" => [
-                "version"            => 1,
-                "id"                 => $burstID,
-                "action"             => "screenshot_request",
-                //                "dest_url"           => config("app.url") . "/v1/broadsign/burst_callback/" . $burstID . "?player_id=" . $this->id,
-                "dest_url"           => (string)$uri,
-                "scale_factor"       => $scale,
-                "burst_duration_ms"  => $duration_ms,
-                "burst_frequency_ms" => $frequency_ms,
-            ],
-        ]);
+                               "rc" => [
+                                   "version"            => 1,
+                                   "id"                 => $burstID,
+                                   "action"             => "screenshot_request",
+                                   //                "dest_url"           => config("app.url") . "/v1/broadsign/burst_callback/" . $burstID . "?player_id=" . $this->id,
+                                   "dest_url"           => (string)$uri,
+                                   "scale_factor"       => $scale,
+                                   "burst_duration_ms"  => $duration_ms,
+                                   "burst_frequency_ms" => $frequency_ms,
+                               ],
+                           ]);
     }
 
     /**
@@ -123,13 +123,13 @@ class Player extends BroadSignModel implements ResourceCastable {
      */
     public function nowPlaying(int $frameId = 0): void {
         $this->sendRequest([
-            "rc" => [
-                "version"  => 3,
-                "id"       => (string)$this->id,
-                "action"   => "now_playing",
-                "frame_id" => $frameId,
-            ],
-        ]);
+                               "rc" => [
+                                   "version"  => 3,
+                                   "id"       => (string)$this->id,
+                                   "action"   => "now_playing",
+                                   "frame_id" => $frameId,
+                               ],
+                           ]);
     }
 
     /**
@@ -137,37 +137,38 @@ class Player extends BroadSignModel implements ResourceCastable {
      */
     public function forceUpdatePlaylist() {
         return $this->sendRequest([
-            "rc" => [
-                "version" => 1,
-                "id"      => (string)$this->id,
-                "action"  => "poll_request",
-            ],
-        ]);
+                                      "rc" => [
+                                          "version" => 1,
+                                          "id"      => (string)$this->id,
+                                          "action"  => "poll_request",
+                                      ],
+                                  ]);
     }
 
     public function sendRequest(array $payload) {
         return $this->callAction("request",
-            [
-                "player_id"    => $this->id,
-                "request_json" => $payload,
-            ]);
+                                 [
+                                     "player_id"    => $this->id,
+                                     "request_json" => $payload,
+                                 ]);
     }
 
 
     /**
-     * @throws UnknownProperties
+     * @return PlayerResource
      */
     public function toResource(): PlayerResource {
-        return new PlayerResource([
-            "broadcaster_id" => $this->getBroadcasterId(),
-            "enabled"        => $this->active,
-            "external_id"    => $this->getKey(),
-            "name"           => $this->name,
-            "location_id"    => [
-                "broadcaster_id" => $this->getBroadcasterId(),
-                "type"           => ExternalResourceType::Location,
-                "external_id"    => $this->display_unit_id,
-            ],
-        ]);
+        return new PlayerResource(
+            broadcaster_id: $this->getBroadcasterId(),
+            external_id   : $this->getKey(),
+            enabled       : $this->active,
+            name          : $this->name,
+            screen_count  : $this->nscreens,
+            location_id   : new ExternalBroadcasterResourceId(
+                                broadcaster_id: $this->getBroadcasterId(),
+                                external_id   : $this->display_unit_id,
+                                type          : ExternalResourceType::Location,
+                            )
+        );
     }
 }

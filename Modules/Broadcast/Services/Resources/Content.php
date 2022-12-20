@@ -11,8 +11,11 @@
 namespace Neo\Modules\Broadcast\Services\Resources;
 
 class Content extends ExternalBroadcasterResource {
-    public string $name;
+    public function __construct(
+        public string $name,
 
-    public int $duration_msec;
-    public bool $is_fullscreen;
+        public int    $duration_msec,
+        public bool   $is_fullscreen,
+    ) {
+    }
 }

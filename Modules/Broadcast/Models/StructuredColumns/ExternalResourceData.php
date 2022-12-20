@@ -13,12 +13,16 @@ namespace Neo\Modules\Broadcast\Models\StructuredColumns;
 use Neo\Models\Utils\JSONDBColumn;
 
 class ExternalResourceData extends JSONDBColumn {
-    public int|null $network_id;
+    public function __construct(
+        public string     $external_id,
 
-    /**
-     * @var array<int>|null
-     */
-    public array|null $formats_id;
+        public int|null   $network_id = null,
 
-    public string $external_id;
+        /**
+         * @var array<int>|null
+         */
+        public array|null $formats_id = null,
+
+    ) {
+    }
 }

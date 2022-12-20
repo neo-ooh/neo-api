@@ -22,7 +22,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @extends BroadcastJobBase<array{representation: ExternalCampaignDefinition|null}>
@@ -51,7 +50,6 @@ class DeleteScheduleJob extends BroadcastJobBase {
      *
      * @inheritDoc
      * @return array|null
-     * @throws UnknownProperties
      * @throws InvalidBroadcasterAdapterException|InvalidBroadcastResource
      */
     protected function run(): array|null {
@@ -90,7 +88,6 @@ class DeleteScheduleJob extends BroadcastJobBase {
      * @return ExternalResource[]
      * @throws InvalidBroadcastResource
      * @throws InvalidBroadcasterAdapterException
-     * @throws UnknownProperties
      */
     protected function removeRepresentation(Schedule $schedule, int $networkId, int $formatId): array {
         /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */

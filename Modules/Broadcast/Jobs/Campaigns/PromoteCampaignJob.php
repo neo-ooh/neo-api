@@ -35,8 +35,8 @@ use Neo\Modules\Broadcast\Services\Exceptions\CannotUpdateExternalResourceExcept
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\CampaignTargeting;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Neo\Modules\Broadcast\Services\Resources\Tag;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @extends BroadcastJobBase<array>
@@ -49,7 +49,6 @@ class PromoteCampaignJob extends BroadcastJobBase {
     /**
      * @inheritDoc
      * @return array|null
-     * @throws UnknownProperties
      * @throws InvalidBroadcasterAdapterException
      */
     protected function run(): array|null {
@@ -159,15 +158,15 @@ class PromoteCampaignJob extends BroadcastJobBase {
                 $externalResource?->delete();
 
                 $externalResource = new ExternalResource([
-                    "resource_id"    => $campaign->getKey(),
-                    "broadcaster_id" => $broadcaster->getBroadcasterId(),
-                    "type"           => ExternalResourceType::Campaign,
-                    "data"           => new ExternalResourceData([
-                        "network_id"  => $broadcaster->getNetworkId(),
-                        "formats_id"  => [$format->getKey()],
-                        "external_id" => $externalCampaignId->external_id,
-                    ]),
-                ]);
+                                                             "resource_id"    => $campaign->getKey(),
+                                                             "broadcaster_id" => $broadcaster->getBroadcasterId(),
+                                                             "type"           => ExternalResourceType::Campaign,
+                                                             "data"           => new ExternalResourceData(
+                                                                 external_id: $externalCampaignId->external_id,
+                                                                 network_id : $broadcaster->getNetworkId(),
+                                                                 formats_id : [$format->getKey()],
+                                                             ),
+                                                         ]);
                 $externalResource->save();
             }
 
@@ -204,11 +203,11 @@ class PromoteCampaignJob extends BroadcastJobBase {
             $campaignTags->collect($campaign->broadcast_tags, [BroadcastTagType::Targeting]);
 
             // Target the campaign
-            $targeting = new CampaignTargeting([
-                "campaignTags"  => $campaignTags->get($broadcaster->getBroadcasterId()),
-                "locations"     => $representation->locations,
-                "locationsTags" => $locationsTags->get($broadcaster->getBroadcasterId()),
-            ]);
+            $targeting = new CampaignTargeting(
+                campaignTags : Tag::collection($campaignTags->get($broadcaster->getBroadcasterId())),
+                locations    : $representation->locations,
+                locationsTags: Tag::collection($locationsTags->get($broadcaster->getBroadcasterId())),
+            );
 
             $broadcaster->targetCampaign($externalCampaignId, $targeting);
 

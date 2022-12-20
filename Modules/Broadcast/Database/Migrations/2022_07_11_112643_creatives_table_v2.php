@@ -67,10 +67,10 @@ return new class extends Migration {
             DB::table("creatives")
               ->where("id", "=", $creative->id)
               ->update([
-                  "id_tmp"         => $broadcastResource->getKey(),
-                  "type"           => $creative->type_old === 'static' ? CreativeType::Static : CreativeType::Url,
-                  "properties_tmp" => $creativeProperties->toJson(),
-              ]);
+                           "id_tmp"         => $broadcastResource->getKey(),
+                           "type"           => $creative->type_old === 'static' ? CreativeType::Static : CreativeType::Url,
+                           "properties_tmp" => $creativeProperties->toJson(),
+                       ]);
 
             // If the creative has not been deleted, we migrate its external ids
             if (is_null($creative->deleted_at)) {
@@ -84,14 +84,14 @@ return new class extends Migration {
                     $network = Network::query()->where("id", "=", $externalId->network_id)->first();
 
                     ExternalResource::query()->create([
-                        "resource_id"    => $broadcastResource->getKey(),
-                        "broadcaster_id" => $network->connection_id,
-                        "type"           => ExternalResourceType::Creative,
-                        "data"           => new ExternalResourceData([
-                            "network_id"  => $externalId->network_id,
-                            "external_id" => $externalId->external_id,
-                        ]),
-                    ]);
+                                                          "resource_id"    => $broadcastResource->getKey(),
+                                                          "broadcaster_id" => $network->connection_id,
+                                                          "type"           => ExternalResourceType::Creative,
+                                                          "data"           => new ExternalResourceData(
+                                                              external_id: $externalId->external_id,
+                                                              network_id : $externalId->network_id,
+                                                          ),
+                                                      ]);
                 }
             }
 

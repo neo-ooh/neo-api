@@ -22,12 +22,12 @@ use Neo\Models\City;
 use Neo\Models\Property;
 use Neo\Models\Province;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterLocations;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -36,8 +36,9 @@ class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
     }
 
     /**
-     * @throws UnknownProperties
+     * @return bool
      * @throws InvalidBroadcasterAdapterException
+     * @throws InvalidBroadcastResource
      */
     public function handle(): bool {
         // For each property, we will see if it's associated group has at leas one location.
@@ -79,9 +80,9 @@ class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
 
         /** @var City $city */
         $city = City::query()->firstOrCreate([
-            "province_id" => $province->id,
-            "name"        => $externalLocation->city,
-        ]);
+                                                 "province_id" => $province->id,
+                                                 "name"        => $externalLocation->city,
+                                             ]);
 
         // Fill the address
         $address              = $property->address ?? new Address();

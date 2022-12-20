@@ -29,6 +29,7 @@ use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Location as LocationResource;
 use Neo\Modules\Broadcast\Services\Resources\Player as PlayerResource;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 /**
@@ -37,7 +38,7 @@ use Throwable;
  * @extends Job<null>
  */
 class SynchronizeNetworkJob extends Job {
-    public function __construct(protected int $networkId) {
+    public function __construct(protected int $networkId, protected OutputInterface|null $output = null) {
     }
 
     /**
@@ -49,7 +50,7 @@ class SynchronizeNetworkJob extends Job {
      * @throws InvalidBroadcasterAdapterException
      */
     protected function run(): mixed {
-        $output = new ConsoleOutput();
+        $output = $this->output ?? new ConsoleOutput();
 
         /** @var BroadcasterOperator&BroadcasterLocations&BroadcasterContainers $broadcaster */
         $broadcaster = BroadcasterAdapterFactory::makeForNetwork($this->networkId);
@@ -109,14 +110,14 @@ class SynchronizeNetworkJob extends Job {
             // Insert the location in the DB
             /** @var Location $location */
             $location = Location::withTrashed()->updateOrCreate([
-                "network_id"  => $broadcaster->getNetworkId(),
-                "external_id" => (string)$externalLocation->external_id,
-            ], [
-                "display_type_id" => $displayType->getKey(),
-                "internal_name"   => $externalLocation->name,
-                "name"            => $externalLocation->name,
-                "container_id"    => $containerId,
-            ]);
+                                                                    "network_id" => $broadcaster->getNetworkId(),
+                                                                                                                                                                                                                                                                                                                                                                                                                                               "external_id" => (string)$externalLocation->external_id,
+                                                                ], [
+                                                                    "display_type_id" => $displayType->getKey(),
+                                                                    "internal_name"   => $externalLocation->name,
+                                                                    "name"            => $externalLocation->name,
+                                                                    "container_id"    => $containerId,
+                                                                ]);
 
             if ($externalLocation->enabled && $location->trashed()) {
                 $location->restore();
@@ -147,12 +148,13 @@ class SynchronizeNetworkJob extends Job {
                 $log->writeln("<comment>  Player #$externalPlayer->external_id - $externalPlayer->name</comment>");
                 /** @var Player $player */
                 $player = Player::query()->updateOrCreate([
-                    "network_id"  => $broadcaster->getNetworkId(),
-                    "external_id" => $externalPlayer->external_id,
-                ], [
-                    "location_id" => $location->id,
-                    "name"        => $externalPlayer->name,
-                ]);
+                                                              "network_id" => $broadcaster->getNetworkId(),
+                                                                                                                                                                                                                                                                                                                                                                                                                                         "external_id" => $externalPlayer->external_id,
+                                                          ], [
+                                                              "location_id"  => $location->id,
+                                                              "name"         => $externalPlayer->name,
+                                                              "screen_count" => $externalPlayer->screen_count,
+                                                          ]);
 
                 // Make sure the player is trashed/not-trashed according to the external player enabled status
                 if ($externalPlayer->enabled && $player->trashed()) {
@@ -186,9 +188,9 @@ class SynchronizeNetworkJob extends Job {
     protected function getDisplayType(BroadcasterOperator&BroadcasterLocations $broadcaster, ExternalBroadcasterResourceId $externalDisplayTypeId): DisplayType|null {
         /** @var DisplayType $displayType */
         $displayType = DisplayType::query()->firstOrNew([
-            "connection_id" => $broadcaster->getBroadcasterId(),
-            "external_id"   => $externalDisplayTypeId->external_id,
-        ]);
+                                                            "connection_id" => $broadcaster->getBroadcasterId(),
+                                                            "external_id"   => $externalDisplayTypeId->external_id,
+                                                        ]);
 
         $externalDisplayType = $broadcaster->getDisplayType($externalDisplayTypeId);
 
@@ -199,6 +201,8 @@ class SynchronizeNetworkJob extends Job {
 
         $displayType->internal_name = $externalDisplayType->name;
         $displayType->name          = $broadcaster->getConfig()->name . ": " . $externalDisplayType->name;
+        $displayType->width_px      = $externalDisplayType->width_px;
+        $displayType->height_px     = $externalDisplayType->height_px;
 
         $displayType->save();
 
@@ -231,11 +235,11 @@ class SynchronizeNetworkJob extends Job {
 
         // Persist or update the container in the DB
         $container = NetworkContainer::query()->firstOrCreate([
-            "network_id"  => $broadcaster->getNetworkId(),
-            "parent_id"   => $parentId,
-            "name"        => $externalContainer->name,
-            "external_id" => $externalContainer->external_id,
-        ]);
+                                                                  "network_id"  => $broadcaster->getNetworkId(),
+                                                                  "parent_id"   => $parentId,
+                                                                  "name"        => $externalContainer->name,
+                                                                  "external_id" => $externalContainer->external_id,
+                                                              ]);
 
         return $container->getKey();
     }
@@ -245,8 +249,8 @@ class SynchronizeNetworkJob extends Job {
         DB::table((new Network())->getTable())
           ->where("id", "=", $this->networkId)
           ->update([
-              "last_sync_at" => Carbon::now(),
-          ]);
+                       "last_sync_at" => Carbon::now(),
+                   ]);
     }
 
     protected function onFailure(Throwable $exception): void {

@@ -46,31 +46,31 @@ return new class extends Migration {
             $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Tag]);
 
             DB::table("broadcast_tags")->insert([
-                "id"      => $broadcastResource->getKey(),
-                "type"    => BroadcastTagType::Trigger,
-                "name_en" => $trigger->name,
-                "name_fr" => $trigger->name,
-                "scope"   => BroadcastTagScope::Layout->value,
-            ]);
+                                                    "id"      => $broadcastResource->getKey(),
+                                                    "type"    => BroadcastTagType::Trigger,
+                                                    "name_en" => $trigger->name,
+                                                    "name_fr" => $trigger->name,
+                                                    "scope"   => BroadcastTagScope::Layout->value,
+                                                ]);
 
             // Insert the external_id
             ExternalResource::query()->create([
-                "resource_id"    => $broadcastResource->getKey(),
-                "broadcaster_id" => $broadsignProvider->id,
-                "type"           => ExternalResourceType::Tag,
-                "data"           => new ExternalResourceData([
-                    "external_id" => $trigger->broadsign_trigger_id
-                ])
-            ]);
+                                                  "resource_id"    => $broadcastResource->getKey(),
+                                                  "broadcaster_id" => $broadsignProvider->id,
+                                                  "type"           => ExternalResourceType::Tag,
+                                                  "data"           => new ExternalResourceData(
+                                                      external_id: $trigger->broadsign_trigger_id
+                                                  ),
+                                              ]);
 
             // List all the layout using the trigger, and add a reference to the newly created tag
             $layouts = DB::table("formats_layouts")->where("trigger_id", "=", $trigger->id)->get();
 
             foreach ($layouts as $layout) {
                 DB::table("layout_broadcast_tags")->insert([
-                    "layout_id"        => $layout->id,
-                    "broadcast_tag_id" => $broadcastResource->getKey(),
-                ]);
+                                                               "layout_id"        => $layout->id,
+                                                               "broadcast_tag_id" => $broadcastResource->getKey(),
+                                                           ]);
             }
         }
 
@@ -92,31 +92,31 @@ return new class extends Migration {
             $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Tag]);
 
             DB::table("broadcast_tags")->insert([
-                "id"      => $broadcastResource->getKey(),
-                "type"    => BroadcastTagType::Category,
-                "name_en" => $separation->name,
-                "name_fr" => $separation->name,
-                "scope"   => BroadcastTagScope::Layout->value,
-            ]);
+                                                    "id"      => $broadcastResource->getKey(),
+                                                    "type"    => BroadcastTagType::Category,
+                                                    "name_en" => $separation->name,
+                                                    "name_fr" => $separation->name,
+                                                    "scope"   => BroadcastTagScope::Layout->value,
+                                                ]);
 
             // Insert the external_id
             ExternalResource::query()->create([
-                "resource_id"    => $broadcastResource->getKey(),
-                "broadcaster_id" => $broadsignProvider->id,
-                "type"           => ExternalResourceType::Tag,
-                "data"           => new ExternalResourceData([
-                    "external_id" => $separation->broadsign_separation_id
-                ])
-            ]);
+                                                  "resource_id"    => $broadcastResource->getKey(),
+                                                  "broadcaster_id" => $broadsignProvider->id,
+                                                  "type"           => ExternalResourceType::Tag,
+                                                  "data"           => new ExternalResourceData(
+                                                      external_id: $separation->broadsign_separation_id,
+                                                  ),
+                                              ]);
 
             // List all the layout using the trigger, and add a reference to the newly created tag
             $layouts = DB::table("formats_layouts")->where("separation_id", "=", $separation->id)->get();
 
             foreach ($layouts as $layout) {
                 DB::table("layout_broadcast_tags")->insert([
-                    "layout_id"        => $layout->id,
-                    "broadcast_tag_id" => $broadcastResource->getKey(),
-                ]);
+                                                               "layout_id"        => $layout->id,
+                                                               "broadcast_tag_id" => $broadcastResource->getKey(),
+                                                           ]);
             }
         }
 
@@ -138,31 +138,31 @@ return new class extends Migration {
             $broadcastResource = BroadcastResource::query()->create(["type" => BroadcastResourceType::Tag]);
 
             DB::table("broadcast_tags")->insert([
-                "id"      => $broadcastResource->getKey(),
-                "type"    => BroadcastTagType::Targeting,
-                "name_en" => $criterion->name,
-                "name_fr" => $criterion->name,
-                "scope"   => BroadcastTagScope::Frame->value,
-            ]);
+                                                    "id"      => $broadcastResource->getKey(),
+                                                    "type"    => BroadcastTagType::Targeting,
+                                                    "name_en" => $criterion->name,
+                                                    "name_fr" => $criterion->name,
+                                                    "scope"   => BroadcastTagScope::Frame->value,
+                                                ]);
 
             // Insert the external_id
             ExternalResource::query()->create([
-                "resource_id"    => $broadcastResource->getKey(),
-                "broadcaster_id" => $broadsignProvider->id,
-                "type"           => ExternalResourceType::Tag,
-                "data"           => new ExternalResourceData([
-                    "external_id" => $criterion->broadsign_criteria_id
-                ])
-            ]);
+                                                  "resource_id"    => $broadcastResource->getKey(),
+                                                  "broadcaster_id" => $broadsignProvider->id,
+                                                  "type"           => ExternalResourceType::Tag,
+                                                  "data"           => new ExternalResourceData(
+                                                      external_id: $criterion->broadsign_criteria_id,
+                                                  ),
+                                              ]);
 
             // List all the layout using the trigger, and add a reference to the newly created tag
             $frames = DB::table("frame_settings_broadsign")->where("criteria_id", "=", $criterion->id)->get();
 
             foreach ($frames as $frame) {
                 DB::table("frame_broadcast_tags")->insert([
-                    "frame_id"         => $frame->frame_id,
-                    "broadcast_tag_id" => $broadcastResource->getKey(),
-                ]);
+                                                              "frame_id"         => $frame->frame_id,
+                                                              "broadcast_tag_id" => $broadcastResource->getKey(),
+                                                          ]);
             }
         }
 

@@ -11,12 +11,12 @@
 namespace Neo\Modules\Broadcast\Services\Resources;
 
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
-use Spatie\DataTransferObject\DataTransferObject;
 
-class ExternalBroadcasterResourceId extends DataTransferObject {
-    public int $broadcaster_id;
-
-    public string $external_id;
-
-    public ExternalResourceType $type;
+class ExternalBroadcasterResourceId extends ExternalBroadcasterResource {
+    public function __construct(
+        public int                  $broadcaster_id,
+        public string               $external_id,
+        public ExternalResourceType $type,
+    ) {
+    }
 }

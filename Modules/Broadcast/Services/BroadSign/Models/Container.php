@@ -17,8 +17,8 @@ use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Modules\Broadcast\Services\ResourceCastable;
 use Neo\Modules\Broadcast\Services\Resources\Container as ContainerResource;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * A Container is a directory in BroadSign resources structure.
@@ -87,18 +87,18 @@ class Container extends BroadSignModel implements ResourceCastable {
     */
 
     /**
-     * @throws UnknownProperties
+     * @return ContainerResource
      */
     public function toResource(): ContainerResource {
-        return new ContainerResource([
-            "broadcaster_id" => $this->getBroadcasterId(),
-            "external_id"    => $this->getKey(),
-            "name"           => $this->name,
-            "parent"         => $this->container_id ? [
-                "broadcaster_id" => $this->getBroadcasterId(),
-                "type"           => ExternalResourceType::Container,
-                "external_id"    => $this->container_id,
-            ] : null,
-        ]);
+        return new ContainerResource(
+            broadcaster_id: $this->getBroadcasterId(),
+            external_id   : $this->getKey(),
+            name          : $this->name,
+            parent        : $this->container_id ? new ExternalBroadcasterResourceId(
+                                broadcaster_id: $this->getBroadcasterId(),
+                                external_id   : $this->container_id,
+                                type          : ExternalResourceType::Container,
+                            ) : null,
+        );
     }
 }

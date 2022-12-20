@@ -16,7 +16,6 @@ use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Modules\Broadcast\Services\Resources\Frame;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Support
@@ -71,15 +70,14 @@ class Skin extends BroadSignModel {
     }
 
     /**
-     * @throws UnknownProperties
      */
     public function toResource(): Frame {
         return new Frame(
             broadcaster_id: $this->getBroadcasterId(),
-            external_id: $this->getKey(),
-            name: $this->name,
-            width: $this->width,
-            height: $this->height,
+            external_id   : $this->getKey(),
+            name          : $this->name,
+            width         : $this->width,
+            height        : $this->height,
         );
     }
 }

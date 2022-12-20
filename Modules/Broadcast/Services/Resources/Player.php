@@ -13,11 +13,21 @@ namespace Neo\Modules\Broadcast\Services\Resources;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 
 class Player extends ExternalBroadcasterResourceId {
-    public ExternalResourceType $type = ExternalResourceType::Player;
+    public function __construct(
+        int                                  $broadcaster_id,
+        string                               $external_id,
 
-    public bool $enabled;
+        public bool                          $enabled,
+        public string                        $name,
 
-    public string $name;
+        public int                           $screen_count,
 
-    public ExternalBroadcasterResourceId $location_id;
+        public ExternalBroadcasterResourceId $location_id,
+    ) {
+        parent::__construct(
+            broadcaster_id: $broadcaster_id,
+            external_id   : $external_id,
+            type          : ExternalResourceType::Player,
+        );
+    }
 }

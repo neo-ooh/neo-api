@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ExternalResourceData;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @property int                  $id
@@ -49,13 +48,12 @@ class ExternalResource extends Model {
 
     /**
      * @return ExternalBroadcasterResourceId
-     * @throws UnknownProperties
      */
     public function toResource(): ExternalBroadcasterResourceId {
-        return new ExternalBroadcasterResourceId([
-            "type"           => $this->type,
-            "broadcaster_id" => $this->broadcaster_id,
-            "external_id"    => $this->data->external_id,
-        ]);
+        return new ExternalBroadcasterResourceId(
+            broadcaster_id: $this->broadcaster_id,
+            external_id   : $this->data->external_id,
+            type          : $this->type,
+        );
     }
 }

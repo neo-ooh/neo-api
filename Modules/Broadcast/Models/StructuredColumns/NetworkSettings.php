@@ -13,15 +13,26 @@ namespace Neo\Modules\Broadcast\Models\StructuredColumns;
 use Neo\Models\Utils\JSONDBColumn;
 
 class NetworkSettings extends JSONDBColumn {
-    // BroadSign customer ID to use when creating resources
-    public int|null $customer_id;
+    public function __construct(
+        /**
+         * BroadSign customer ID to use when creating resources
+         */
+        public int|null $customer_id = null,
 
-    // Root container for the network resources
-    public int|null $root_container_id;
+        /**
+         * Root container for the network resources
+         */
+        public int|null $root_container_id = null,
 
-    // Container where to place created reservations
-    public int|null $campaigns_container_id;
+        /**
+         * Container where to place created reservations
+         */
+        public int|null $campaigns_container_id = null,
 
-    // Container where to place created creatives
-    public int|null $creatives_container_id;
+        /**
+         * Container where to place created creatives
+         */
+        public int|null $creatives_container_id = null,
+    ) {
+    }
 }

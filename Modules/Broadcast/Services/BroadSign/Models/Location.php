@@ -19,7 +19,6 @@ use Neo\Modules\Broadcast\Services\ResourceCastable;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Services\Resources\Location as LocationResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class ActorsLocations
@@ -97,7 +96,7 @@ class Location extends BroadSignModel implements ResourceCastable {
     */
 
     /**
-     * @throws UnknownProperties
+     * @return LocationResource
      */
     public function toResource(): LocationResource {
         // Parse address
@@ -122,27 +121,27 @@ class Location extends BroadSignModel implements ResourceCastable {
         [$lng, $lat] = explode(",", substr($this->geolocation, 1, -1));
 
         return new LocationResource(
-            broadcaster_id: $this->getBroadcasterId(),
-            external_id: $this->getKey(),
-            enabled: $this->active,
-            name: $this->name,
+            broadcaster_id          : $this->getBroadcasterId(),
+            external_id             : $this->getKey(),
+            enabled                 : $this->active,
+            name                    : $this->name,
             external_display_type_id: new ExternalBroadcasterResourceId(
-                type: ExternalResourceType::DisplayType,
-                broadcaster_id: $this->getBroadcasterId(),
-                external_id: $this->display_unit_type_id,
-            ),
-            container_id: new ExternalBroadcasterResourceId(
-                type: ExternalResourceType::Container,
-                broadcaster_id: $this->getBroadcasterId(),
-                external_id: $this->container_id,
-            ),
-            address: $address,
-            city: $city,
-            province: $province,
-            country: $country,
-            zipcode: $zipcode,
-            lat: $lat,
-            lng: $lng,
+                                          broadcaster_id: $this->getBroadcasterId(),
+                                          external_id   : $this->display_unit_type_id,
+                                          type          : ExternalResourceType::DisplayType,
+                                      ),
+            container_id            : new ExternalBroadcasterResourceId(
+                                          broadcaster_id: $this->getBroadcasterId(),
+                                          external_id   : $this->container_id,
+                                          type          : ExternalResourceType::Container,
+                                      ),
+            address                 : $address,
+            city                    : $city,
+            province                : $province,
+            country                 : $country,
+            zipcode                 : $zipcode,
+            lat                     : $lat,
+            lng                     : $lng,
         );
     }
 }

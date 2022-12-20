@@ -15,6 +15,7 @@ use Neo\Exceptions\InvalidRequestException;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
 use Neo\Modules\Broadcast\Http\Requests\ExternalResources\DestroyExternalResourceRequest;
 use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Models\Network;
@@ -22,12 +23,14 @@ use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 class ExternalResourcesController extends Controller {
     /**
-     * @throws UnknownProperties
+     * @param DestroyExternalResourceRequest $request
+     * @param ExternalResource               $externalResource
+     * @return Response
      * @throws InvalidBroadcasterAdapterException
+     * @throws InvalidBroadcastResource
      */
     public function destroy(DestroyExternalResourceRequest $request, ExternalResource $externalResource): Response {
         switch ($externalResource->type) {

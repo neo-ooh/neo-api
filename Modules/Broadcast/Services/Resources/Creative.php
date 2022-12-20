@@ -13,32 +13,35 @@ namespace Neo\Modules\Broadcast\Services\Resources;
 use Neo\Modules\Broadcast\Enums\CreativeType;
 
 class Creative extends ExternalBroadcasterResource {
-    public int $id;
-    public ExternalBroadcasterResourceId|null $advertiser;
+    public function __construct(
+        public int                                $id,
+        public ExternalBroadcasterResourceId|null $advertiser,
 
-    public string $name;
-    public string $fileName;
-    public CreativeType $type;
+        public string                             $name,
+        public string                             $fileName,
+        public CreativeType                       $type,
 
-    public int $width;
-    public int $height;
+        public int                                $width,
+        public int                                $height,
 
-    public int $length_ms;
+        public int                                $length_ms,
 
-    /**
-     * @var string file path to the creative file, will not be set for Url creatives
-     */
-    public string $path;
+        /**
+         * @var string file path to the creative file, will not be set for Url creatives
+         */
+        public string                             $path,
 
-    /**
-     * @var string file extension of the creative file, will not be set for Url creatives
-     */
-    public string|null $extension;
+        /**
+         * @var string file extension of the creative file, will not be set for Url creatives
+         */
+        public string|null                        $extension,
 
-    /**
-     * @var string Url to the creative
-     */
-    public string $url;
+        /**
+         * @var string Url to the creative
+         */
+        public string                             $url,
 
-    public int $refresh_rate_minutes;
+        public int                                $refresh_rate_minutes,
+    ) {
+    }
 }

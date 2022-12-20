@@ -27,7 +27,6 @@ use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
 use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 use Neo\Modules\Broadcast\Rules\AccessibleSchedule;
 use Neo\Modules\Broadcast\Services\Resources\Schedule as ScheduleResource;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Neo\Models\Branding
@@ -258,19 +257,19 @@ class Schedule extends BroadcastResourceModel {
     */
 
     /**
-     * @throws UnknownProperties
+     * @return ScheduleResource
      */
     public function toResource(): ScheduleResource {
-        return new ScheduleResource([
-            "enabled"        => $this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live,
-            "name"           => $this->campaign->name . " - " . $this->contents->first()->name,
-            "start_date"     => $this->start_date->toDateString(),
-            "start_time"     => $this->start_time->toTimeString(),
-            "end_date"       => $this->end_date->toDateString(),
-            "end_time"       => $this->end_time->toTimeString(),
-            "broadcast_days" => $this->broadcast_days,
-            "order"          => $this->order,
-        ]);
+        return new ScheduleResource(
+            enabled       : $this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live,
+            name          : $this->campaign->name . " - " . $this->contents->first()->name,
+            start_date    : $this->start_date->toDateString(),
+            start_time    : $this->start_time->toTimeString(),
+            end_date      : $this->end_date->toDateString(),
+            end_time      : $this->end_time->toTimeString(),
+            broadcast_days: $this->broadcast_days,
+            order         : $this->order,
+        );
     }
 
     /**

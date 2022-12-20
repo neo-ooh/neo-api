@@ -10,236 +10,33 @@
 
 namespace Neo\Http\Controllers;
 
-use Carbon\Carbon;
 use Illuminate\Http\Response;
-use Neo\Documents\XLSX\Worksheet;
-use Neo\Exceptions\InvalidOpeningHoursException;
+use Neo\Documents\BroadSignAudienceFile\BroadSignAudienceFile;
+use Neo\Documents\Exceptions\UnknownGenerationException;
 use Neo\Http\Requests\Impressions\ExportBroadsignImpressionsRequest;
-use Neo\Models\OpeningHours;
-use Neo\Models\Product;
-use Neo\Models\Property;
-use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
-use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
 use Neo\Modules\Broadcast\Models\Location;
-use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
-use Neo\Modules\Broadcast\Services\BroadcasterType;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignAdapter;
-use Neo\Modules\Broadcast\Services\Resources\Frame;
-use PhpOffice\PhpSpreadsheet\Exception;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Csv;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ImpressionsController {
     /**
-     * @throws UnknownProperties
-     * @throws Exception
-     * @throws InvalidBroadcasterAdapterException
-     * @throws InvalidBroadcastResource
-     * @throws InvalidOpeningHoursException
+     * @param ExportBroadsignImpressionsRequest $request
+     * @param int                               $displayUnitId
+     * @return Response|void
+     * @throws UnknownGenerationException
      */
     public function broadsignDisplayUnit(ExportBroadsignImpressionsRequest $request, int $displayUnitId) {
-        if (!is_int($displayUnitId)) {
-            return new Response(["Invalid display unit id: $displayUnitId"], 400);
-        }
-
-        $displayUnitId = (int)$displayUnitId;
-
         /** @var Location|null $location */
         $location = Location::query()->where("external_id", "=", $displayUnitId)->first();
 
         if (!$location) {
             return new Response([
-                "error"   => true,
-                "type"    => "unknown-value",
-                "message" => "The provided Display Unit Id is not registered on Connect.",
-            ], 400);
+                                    "error" => true,
+                                                                                 "type" => "unknown-value",
+                                                                                 "message" => "The provided Display Unit Id is not registered on Connect.",
+                                ], 400);
         }
 
-        /** @var BroadSignAdapter $broadcaster */
-        $broadcaster = BroadcasterAdapterFactory::makeForNetwork($location->network_id);
-
-        // As of 2022-10-31, only BroadSign is supported
-        if ($broadcaster->getBroadcasterType() !== BroadcasterType::BroadSign) {
-            return new Response([
-                "error"   => true,
-                "type"    => "unsupported-broadcaster",
-                "message" => "The provided Display Unit Id is not a BroadSign Display Unit.",
-            ], 400);
-        }
-
-        // We need to generate a file for each week of the year, for each frame of the display unit
-        // Load the property, impressions data and traffic data attached with this location
-        /** @var Product|null $product */
-        $product = $location->products()
-                            ->with([
-                                "impressions_models",
-                                "loop_configurations",
-                                "category.impressions_models",
-                                "category.loop_configurations",
-                            ])
-                            ->withCount("locations")
-                            ->first();
-
-        if (!$product) {
-            return new Response([
-                "error"   => true,
-                "type"    => "invalid-value",
-                "message" => "The Display Unit is not associated with a product.",
-            ], 400);
-        }
-
-        /** @var Property $property */
-        $property                         = Property::query()
-                                                    ->with(["opening_hours", "traffic.weekly_data"])
-                                                    ->find($product->property_id);
-        $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic($property->network_id);
-
-        // Load all the frames, of the display unit, and load their loop policies as well
-        $frames = $broadcaster->getLocationFrames($location->toExternalBroadcastIdResource());
-
-        // Create a spreadsheet document
-        $doc   = new Spreadsheet();
-        $sheet = new Worksheet(null, 'Worksheet 1');
-        $doc->addSheet($sheet);
-        $doc->removeSheetByIndex(0);
-
-        // Insert the headers
-        $sheet->printRow([
-            "Display Unit Id",
-            "Frame Id",
-            "Start Date",
-            "End Date",
-            "Start Time",
-            "End Time",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday",
-            "Total Impressions per hour",
-        ]);
-
-        // And now, for each frame of the display unit, for every day of the week, we have to calculate the hourly impressions.
-        $datePointer = Carbon::now()->startOf("week");
-
-        // Define how many days should be generated. Here: a month
-        $endBoundary = $datePointer->clone()->addMonth();
-
-        // Dump a failover row for every frame
-        foreach ($frames as $frame) {
-            $sheet->printRow([
-                $location->external_id,
-                $frame->external_id,
-                "",
-                "",
-                "",
-                "",
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-                1,
-            ]);
-        }
-
-        $openLengths = $property->opening_hours->mapWithKeys(/**
-         * @param OpeningHours $hours
-         * @return array
-         */ fn(OpeningHours $hours) => [$hours->weekday => $hours->open_at->diffInMinutes($hours->close_at, true)]);
-
-        // Make sure all the lengths are valid
-        if ($openLengths->some(fn($length) => $length === 0)) {
-            throw new InvalidOpeningHoursException($property);
-        }
-
-        // For each week
-        do {
-            // Get the week traffic
-            $traffic = floor($property->rolling_weekly_traffic[(int)strftime("%W", $datePointer->timestamp)] / 7);
-
-            // For each day of the week
-            for ($i = 0; $i < 7; $i++) {
-                $weekday = $i + 1;
-                $date    = $datePointer->clone()->addDays($i);
-
-                // Get the loop configuration
-                $loopConfiguration = $product->getLoopConfiguration($date);
-
-                // Get the appropriate impressions model
-                $impressionsModel = $product->getImpressionModel($date);
-
-                // If the impressions model or the loop configuration is missing, ignore
-                if (!$impressionsModel || !$loopConfiguration) {
-                    continue;
-                }
-
-                $el                = new ExpressionLanguage();
-                $impressionsPerDay = $el->evaluate($impressionsModel->formula, array_merge([
-                    "traffic" => $traffic,
-                    "faces"   => $product->quantity,
-                    "spots"   => 1,
-                ],
-                    $impressionsModel->variables
-                ));
-
-                // Because the impression for the product is spread on all the display unit attached to it,
-                // we divide the number of impressions by the number of display unit for the product
-                $impressionsPerDay = $impressionsPerDay / $product->locations_count;
-
-                /** @var OpeningHours|null $hours */
-                $hours = $property->opening_hours->firstWhere("weekday", "=", $weekday);
-
-                // If no hours, no calculations
-                if (!$hours) {
-                    continue;
-                }
-
-                /** @var Frame $frame */
-                foreach ($frames as $frame) {
-                    $playPerDay         = $openLengths[$weekday] * 60_000 / $loopConfiguration->loop_length_ms;
-                    $impressionsPerPlay = $impressionsPerDay / $playPerDay;
-
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopConfiguration->loop_length_ms;
-
-                    $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
-
-                    $sheet->printRow([
-                        $location->external_id,
-                        $frame->external_id,
-                        $date->toDateString(),
-                        $date->clone()->endOfDay()->toDateString(),
-                        $hours->open_at->startOf('minute')->toTimeString(),
-                        $hours->close_at->endOf('minute')->toTimeString(),
-                        $i == 0 ? 1 : 0, // Monday
-                        $i == 1 ? 1 : 0, // Tuesday
-                        $i == 2 ? 1 : 0, // Wednesday
-                        $i == 3 ? 1 : 0, // Thursday
-                        $i == 4 ? 1 : 0, // Friday
-                        $i == 5 ? 1 : 0, // Saturday
-                        $i == 6 ? 1 : 0, // Sunday
-                        $impressionsPerHour,
-                    ]);
-                }
-            }
-
-            $datePointer->addWeek();
-        } while ($datePointer->isBefore($endBoundary));
-
-        $writer = new Csv($doc);
-        $writer->setEnclosure('');
-        $writer->setPreCalculateFormulas(false);
-
-        header("access-control-allow-origin: *");
-        header("content-type: text/csv");
-
-        $writer->save("php://output");
-        exit;
+        $audienceFile = BroadSignAudienceFile::make($location);
+        $audienceFile->build();
+        $audienceFile->output();
     }
 }

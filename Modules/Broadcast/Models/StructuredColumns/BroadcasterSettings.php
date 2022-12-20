@@ -13,15 +13,19 @@ namespace Neo\Modules\Broadcast\Models\StructuredColumns;
 use Neo\Models\Utils\JSONDBColumn;
 
 class BroadcasterSettings extends JSONDBColumn {
-    // BroadSign domain ID
-    public int|null $domain_id;
+    public function __construct(
+        // BroadSign domain ID
+        public int|null    $domain_id = null,
 
-    // BroadSign customer to use for created resources
-    public int|null $customer_id;
+        // BroadSign customer to use for created resources
+        public int|null    $customer_id = null,
 
-    // PiSignage Server URL
-    public string|null $server_url;
+        // PiSignage Server URL
+        public string|null $server_url = null,
 
-    // PiSignage Server auth token
-    public string|null $token;
+        // PiSignage Server auth token
+        public string|null $token = null,
+    ) {
+
+    }
 }

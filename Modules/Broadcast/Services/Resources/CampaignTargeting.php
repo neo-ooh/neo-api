@@ -11,36 +11,43 @@
 namespace Neo\Modules\Broadcast\Services\Resources;
 
 use Neo\Modules\Broadcast\Services\DoNotCompare;
+use Spatie\LaravelData\Attributes\DataCollectionOf;
+use Spatie\LaravelData\DataCollection;
 
 class CampaignTargeting extends ExternalBroadcasterResource {
-    /**
-     * @var array<Tag>
-     */
-    public array $campaignTags;
+    public function __construct(
+        /**
+         * @var DataCollection<Tag>
+         */
+        #[DataCollectionOf(Tag::class)]
+        public DataCollection $campaignTags,
 
+        /**
+         * @var DataCollection<ExternalBroadcasterResourceId>
+         */
+        #[DataCollectionOf(ExternalBroadcasterResourceId::class)]
+        public DataCollection $locations,
 
-    /**
-     * @var array<ExternalBroadcasterResourceId>
-     */
-    public array $locations;
-
-    /**
-     * @var array<Tag>
-     */
-    #[DoNotCompare]
-    public array $locationsTags;
+        /**
+         * @var DataCollection<Tag>
+         */
+        #[DataCollectionOf(Tag::class)]
+        #[DoNotCompare]
+        public DataCollection $locationsTags,
+    ) {
+    }
 
     /**
      * @return array<string>
      */
     public function getLocationsExternalIds(): array {
-        return array_map(static fn(ExternalBroadcasterResourceId $location) => $location->external_id, $this->locations);
+        return array_map(static fn(ExternalBroadcasterResourceId $location) => $location->external_id, $this->locations->items());
     }
 
     /**
      * @return array<string>
      */
     public function getLocationsTagsExternalIds(): array {
-        return array_map(static fn(Tag $tag) => $tag->external_id, $this->locationsTags);
+        return array_map(static fn(Tag $tag) => $tag->external_id, $this->locationsTags->items());
     }
 }

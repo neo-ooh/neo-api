@@ -26,6 +26,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int                   $external_id
  * @property string                $name
  * @property string                $internal_name
+ * @property int                   $width_px
+ * @property int                   $height_px
  * @property Date                  $created_at
  * @property Date                  $updated_at
  *

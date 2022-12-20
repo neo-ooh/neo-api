@@ -31,7 +31,7 @@ use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
 use Neo\Modules\Broadcast\Rules\AccessibleCampaign;
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasOneDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
@@ -315,30 +315,28 @@ class Campaign extends BroadcastResourceModel {
     /**
      * @param int|null $broadcasterId required to populate `advertiser` property
      * @return CampaignResource
-     * @throws UnknownProperties
      */
     public function toResource(int|null $broadcasterId = null): CampaignResource {
         $this->loadMissing("parent");
 
-        return new CampaignResource([
-            "enabled"             => true,
-            "name"                => $this->parent->name . "_" . $this->name,
-            "start_date"          => $this->start_date->toDateString(),
-            "start_time"          => $this->start_time->toTimeString(),
-            "end_date"            => $this->end_date->toDateString(),
-            "end_time"            => $this->end_time->toTimeString(),
-            "broadcast_days"      => $this->broadcast_days,
-            "priority"            => $this->priority,
-            "occurrences_in_loop" => $this->occurrences_in_loop,
-            "advertiser"          => $broadcasterId ? $this->contract?->advertiser?->getExternalRepresentation($broadcasterId) : null,
-        ]);
+        return new CampaignResource(
+            enabled            : true,
+            name               : $this->parent->name . "_" . $this->name,
+            start_date         : $this->start_date->toDateString(),
+            start_time         : $this->start_time->toTimeString(),
+            end_date           : $this->end_date->toDateString(),
+            end_time           : $this->end_time->toTimeString(),
+            broadcast_days     : $this->broadcast_days,
+            priority           : $this->priority,
+            occurrences_in_loop: $this->occurrences_in_loop,
+            advertiser         : $broadcasterId ? $this->contract?->advertiser?->getExternalRepresentation($broadcasterId) : null,
+        );
     }
 
     /**
      * List all the different representations necessary for this campaign to run
      *
      * @return array<ExternalCampaignDefinition>
-     * @throws UnknownProperties
      */
     public function getExternalBreakdown(): array {
         // A campaign in Connect may be represented by multiple external campaign, across several broadcasters.
@@ -360,9 +358,9 @@ class Campaign extends BroadcastResourceModel {
             foreach ($locationsByFormatId as $formatId => $formatLocations) {
                 $breakdown[] = new ExternalCampaignDefinition(
                     campaign_id: $this->getKey(),
-                    network_id: $networkId,
-                    format_id: $formatId,
-                    locations: array_map(static fn(Location $location) => $location->toExternalBroadcastIdResource(), $formatLocations),
+                    network_id : $networkId,
+                    format_id  : $formatId,
+                    locations  : ExternalBroadcasterResourceId::collection(array_map(static fn(Location $location) => $location->toExternalBroadcastIdResource(), $formatLocations)),
                 );
             }
         }

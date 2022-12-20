@@ -35,12 +35,11 @@
       <excludeFolder url="file://$MODULE_DIR$/../../bootstrap/cache" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/jetbrains/phpstorm-attributes" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/nwidart/laravel-modules" />
-      <excludeFolder url="file://$MODULE_DIR$/../../vendor/spatie/data-transfer-object" />
-      <excludeFolder url="file://$MODULE_DIR$/../../vendor/nunomaduro/termwind" />
-      <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/uri" />
-      <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/uri-interfaces" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/uri-components" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/nunomaduro/termwind" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/staudenmeir/eloquent-has-many-deep" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/uri-interfaces" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/uri" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />

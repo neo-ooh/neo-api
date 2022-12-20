@@ -19,8 +19,8 @@ use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Modules\Broadcast\Services\BroadSign\BroadSignReservationState;
 use Neo\Modules\Broadcast\Services\ResourceCastable;
 use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
+use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class Campaigns
@@ -169,11 +169,11 @@ class Campaign extends BroadSignModel implements ResourceCastable {
 
     public function addCriteria(int $criteriaID, int $type): void {
         $this->addResourceCriteria([
-            "active"      => true,
-            "criteria_id" => $criteriaID,
-            "parent_id"   => $this->id,
-            "type"        => $type,
-        ]);
+                                       "active"      => true,
+                                       "criteria_id" => $criteriaID,
+                                       "parent_id"   => $this->id,
+                                       "type"        => $type,
+                                   ]);
     }
 
     /**
@@ -206,9 +206,9 @@ class Campaign extends BroadSignModel implements ResourceCastable {
         }
 
         $this->promoteSkinSlots([
-            "id"            => $this->id,
-            "skin_slot_ids" => $skinSlotsID->join(','),
-        ]);
+                                    "id"            => $this->id,
+                                    "skin_slot_ids" => $skinSlotsID->join(','),
+                                ]);
     }
 
     /**
@@ -217,11 +217,11 @@ class Campaign extends BroadSignModel implements ResourceCastable {
      */
     public function removeLocations(Collection $display_units_ids): void {
         $this->dropSkinSlots([
-            "id"           => $this->id,
-            "sub_elements" => [
-                "display_unit" => $display_units_ids->map(fn($du) => ["id" => $du])->values()->toArray(),
-            ],
-        ]);
+                                 "id"           => $this->id,
+                                 "sub_elements" => [
+                                     "display_unit" => $display_units_ids->map(fn($du) => ["id" => $du])->values()->toArray(),
+                                 ],
+                             ]);
     }
 
     /*
@@ -231,29 +231,29 @@ class Campaign extends BroadSignModel implements ResourceCastable {
     */
 
     /**
-     * @throws UnknownProperties
+     * @return CampaignResource
      */
     public function toResource(): CampaignResource {
         $isEnabled = $this->active &&
             $this->state !== BroadSignReservationState::Cancelled->value &&
             $this->state !== BroadSignReservationState::HeldCancelled->value;
 
-        return new CampaignResource([
-            "enabled"             => $isEnabled,
-            "name"                => $this->name,
-            "start_date"          => $this->start_date,
-            "start_time"          => $this->start_time,
-            "end_date"            => $this->end_date,
-            "end_time"            => $this->end_time,
-            "broadcast_days"      => $this->day_of_week_mask,
-            "priority"            => -1,
-            "occurrences_in_loop" => $this->saturation,
-            "duration_msec"       => $this->duration_msec,
-            "advertiser"          => $this->parent_id ? [
-                "broadcaster_id" => $this->getBroadcasterId(),
-                "external_id"    => $this->parent_id,
-                "type"           => ExternalResourceType::Advertiser,
-            ] : null,
-        ]);
+        return new CampaignResource(
+            enabled            : $isEnabled,
+            name               : $this->name,
+            start_date         : $this->start_date,
+            start_time         : $this->start_time,
+            end_date           : $this->end_date,
+            end_time           : $this->end_time,
+            broadcast_days     : $this->day_of_week_mask,
+            priority           : -1,
+            occurrences_in_loop: $this->saturation,
+            advertiser         : $this->parent_id ? new ExternalBroadcasterResourceId(
+                                     broadcaster_id: $this->getBroadcasterId(),
+                                     external_id   : $this->parent_id,
+                                     type          : ExternalResourceType::Advertiser,
+                                 ) : null,
+            duration_msec      : $this->duration_msec,
+        );
     }
 }

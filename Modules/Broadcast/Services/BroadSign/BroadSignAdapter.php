@@ -63,7 +63,6 @@ use Neo\Modules\Broadcast\Services\Resources\Player;
 use Neo\Modules\Broadcast\Services\Resources\Schedule;
 use Neo\Modules\Broadcast\Services\Resources\Tag;
 use Neo\Modules\Broadcast\Services\ResourcesComparator;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 use Traversable;
 
 /**
@@ -106,7 +105,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
     }
 
     /**
-     * @throws UnknownProperties
+     * @return Traversable
      */
     public function listLocations(): Traversable {
         return $this->parseContainer($this->config->containerId);
@@ -116,7 +115,6 @@ class BroadSignAdapter extends BroadcasterOperator implements
      * @param int  $containerId
      * @param bool $recursive
      * @return Generator<Location>
-     * @throws UnknownProperties
      */
     protected function parseContainer(int $containerId, bool $recursive = true): Generator {
         $bsLocations = BroadSignLocation::inContainer($this->getAPIClient(), $containerId);
@@ -145,7 +143,6 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
     /**
      * @return iterable<Player>
-     * @throws UnknownProperties
      */
     public function listPlayers(): iterable {
         /** @var Collection<BroadSignPlayer> $allPlayers */
@@ -155,19 +152,20 @@ class BroadSignAdapter extends BroadcasterOperator implements
     }
 
     /**
-     * @throws UnknownProperties
+     * @return ExternalBroadcasterResourceId
      */
     public function getRootContainerId(): ExternalBroadcasterResourceId {
-        return new ExternalBroadcasterResourceId([
-            "type"           => ExternalResourceType::Container,
-            "broadcaster_id" => $this->getBroadcasterId(),
-            "external_id"    => $this->config->containerId,
-        ]);
+        return new ExternalBroadcasterResourceId(
+            broadcaster_id: $this->getBroadcasterId(),
+            external_id   : $this->config->containerId,
+            type          : ExternalResourceType::Container,
+        );
     }
 
     /**
      * @inheritDoc
-     * @throws UnknownProperties
+     * @param ExternalBroadcasterResourceId $container
+     * @return Container|null
      */
     public function getContainer(ExternalBroadcasterResourceId $container): Container|null {
         return BroadSignContainer::get($this->getAPIClient(), $container->external_id)?->toResource();
@@ -176,7 +174,6 @@ class BroadSignAdapter extends BroadcasterOperator implements
     /**
      * @param ExternalBroadcasterResourceId $displayType
      * @return DisplayType|null
-     * @throws UnknownProperties
      */
     public function getDisplayType(ExternalBroadcasterResourceId $displayType): DisplayType|null {
         return BroadSignDisplayType::get($this->getAPIClient(), (int)$displayType->external_id)?->toResource();
@@ -184,7 +181,9 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
     /**
      * @inheritdoc
-     * @throws UnknownProperties
+     * @param ExternalBroadcasterResourceId $location
+     * @return Location
+     * @throws InvalidBroadcastResource
      */
     public function getLocation(ExternalBroadcasterResourceId $location): Location {
         if ($location->type !== ExternalResourceType::Location) {
@@ -226,14 +225,15 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         return BroadSignCampaign::byId($this->getAPIClient(), ["ids" => $resources->pluck("id")->values()->join(",")])
-                                ->map(fn(BroadSignCampaign $campaign) => new CampaignSearchResult([
-                                    ...$campaign->toResource()->toArray(),
-                                    "id" => [
-                                        "broadcaster_id" => $this->getBroadcasterId(),
-                                        "external_id"    => $campaign->getKey(),
-                                        "type"           => ExternalResourceType::Campaign,
-                                    ],
-                                ]))
+                                ->map(fn(BroadSignCampaign $campaign) => CampaignSearchResult::from([
+                                                                                                        ...$campaign->toResource()
+                                                                                                                    ->toArray(),
+                                                                                                        "id" => [
+                                                                                                            "broadcaster_id" => $this->getBroadcasterId(),
+                                                                                                            "external_id"    => $campaign->getKey(),
+                                                                                                            "type"           => ExternalResourceType::Campaign,
+                                                                                                        ],
+                                                                                                    ]))
                                 ->all();
     }
 
@@ -252,7 +252,8 @@ class BroadSignAdapter extends BroadcasterOperator implements
     }
 
     /**
-     * @throws UnknownProperties
+     * @param ExternalBroadcasterResourceId $location
+     * @return ActiveHours
      * @throws UnsupportedBroadcasterFunctionalityException
      */
     public function getLocationActiveHours(ExternalBroadcasterResourceId $location): ActiveHours {
@@ -264,14 +265,14 @@ class BroadSignAdapter extends BroadcasterOperator implements
         // If no daypart could be found, we assume 24h operations
         if (!$dayPart) {
             return new ActiveHours(days: [
-                ["00:00", "23:59"],
-                ["00:00", "23:59"],
-                ["00:00", "23:59"],
-                ["00:00", "23:59"],
-                ["00:00", "23:59"],
-                ["00:00", "23:59"],
-                ["00:00", "23:59"],
-            ]);
+                                             ["00:00", "23:59"],
+                                             ["00:00", "23:59"],
+                                             ["00:00", "23:59"],
+                                             ["00:00", "23:59"],
+                                             ["00:00", "23:59"],
+                                             ["00:00", "23:59"],
+                                             ["00:00", "23:59"],
+                                         ]);
         }
 
         // Broadsign stores opening hours in minutes from the start of week, so we need to convert it to regular hours
@@ -322,7 +323,8 @@ class BroadSignAdapter extends BroadcasterOperator implements
     }
 
     /**
-     * @throws UnknownProperties
+     * @param Campaign $campaign
+     * @return ExternalBroadcasterResourceId
      */
     public function createCampaign(Campaign $campaign): ExternalBroadcasterResourceId {
         // Make sure the name of the campaign reflects the campaign priority
@@ -358,14 +360,16 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $bsCampaign->save();
 
         return new ExternalBroadcasterResourceId(
-            external_id: $bsCampaign->getKey(),
             broadcaster_id: $this->getBroadcasterId(),
-            type: ExternalResourceType::Campaign,
+            external_id   : $bsCampaign->getKey(),
+            type          : ExternalResourceType::Campaign,
         );
     }
 
     /**
-     * @throws UnknownProperties
+     * @param ExternalBroadcasterResourceId $externalCampaign
+     * @param Campaign                      $expected
+     * @return ResourcesComparator
      */
     public function checkCampaign(ExternalBroadcasterResourceId $externalCampaign, Campaign $expected): ResourcesComparator {
         $bsCampaign = BroadSignCampaign::get($this->getAPIClient(), $externalCampaign->external_id);
@@ -374,33 +378,10 @@ class BroadSignAdapter extends BroadcasterOperator implements
     }
 
     /**
-     * @throws UnknownProperties
-     */
-    public function checkCampaignTargeting(ExternalBroadcasterResourceId $externalCampaign, CampaignTargeting $expected): ResourcesComparator {
-        $bsCampaign = new BroadSignCampaign($this->getAPIClient(), ["id" => $externalCampaign->external_id]);
-
-        $campaignTags = $bsCampaign->criteria()->map(fn(ResourceCriteria $resourceCriteria) => new Tag(
-            external_id: $resourceCriteria->getKey(),
-            name: $resourceCriteria->criteria()->name,
-        ));
-
-        $locations = $bsCampaign->locations()
-                                ->map(fn(BroadSignLocation $location) => new ExternalBroadcasterResourceId(
-                                    type: ExternalResourceType::Location,
-                                    broadcaster_id: $this->getBroadcasterId(),
-                                    external_id: $location->getKey()
-                                ));
-
-        return new ResourcesComparator($expected, new CampaignTargeting(
-            campaignTags: $campaignTags,
-            locations: $locations,
-        ));
-    }
-
-    /**
-     * @throws UnknownProperties
+     * @param ExternalBroadcasterResourceId $externalCampaign
+     * @param Campaign                      $campaign
+     * @return ExternalBroadcasterResourceId
      * @throws ExternalBroadcastResourceNotFoundException
-     * @throws CannotUpdateExternalResourceException
      */
     public function updateCampaign(ExternalBroadcasterResourceId $externalCampaign, Campaign $campaign): ExternalBroadcasterResourceId {
         $bsCampaign = BroadSignCampaign::get($this->getAPIClient(), $externalCampaign->external_id);
@@ -438,9 +419,9 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         return new ExternalBroadcasterResourceId(
-            external_id: $bsCampaign->getKey(),
             broadcaster_id: $this->getBroadcasterId(),
-            type: ExternalResourceType::Campaign,
+            external_id   : $bsCampaign->getKey(),
+            type          : ExternalResourceType::Campaign,
         );
     }
 
@@ -457,7 +438,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
             "id" => $externalCampaign->external_id,
         ]);
 
-        $campaignTags = array_map(static fn(Tag $tag) => $tag->external_id, $campaignTargeting->campaignTags);
+        $campaignTags = array_map(static fn(Tag $tag) => $tag->external_id, $campaignTargeting->campaignTags->items());
 
         /** @var ResourceCriteria $criterion */
         foreach ($campaignCriteria as $criterion) {
@@ -513,7 +494,10 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
     /**
      * @inheritDoc
-     * @throws UnknownProperties
+     * @param Schedule                      $schedule
+     * @param ExternalBroadcasterResourceId $campaign
+     * @param array                         $tags
+     * @return array
      */
     public function createSchedule(Schedule $schedule, ExternalBroadcasterResourceId $campaign, array $tags): array {
         // First get the loop slot for the campaign
@@ -579,14 +563,14 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
         return [
             new ExternalBroadcasterResourceId(
-                type: ExternalResourceType::Schedule,
                 broadcaster_id: $this->getBroadcasterId(),
-                external_id: $bsSchedule->getKey()
+                external_id   : $bsSchedule->getKey(),
+                type          : ExternalResourceType::Schedule
             ),
             new ExternalBroadcasterResourceId(
-                type: ExternalResourceType::Bundle,
                 broadcaster_id: $this->getBroadcasterId(),
-                external_id: $bsBundle->getKey()
+                external_id   : $bsBundle->getKey(),
+                type          : ExternalResourceType::Bundle
             ),
         ];
     }
@@ -594,8 +578,11 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
     /**
      * @inheritDoc
+     * @param array    $externalResources
+     * @param Schedule $schedule
+     * @param array    $tags
+     * @return array
      * @throws ExternalBroadcastResourceNotFoundException
-     * @throws UnknownProperties
      */
     public function updateSchedule(array $externalResources, Schedule $schedule, array $tags): array {
         $externalSchedule = $this->getResourceByType($externalResources, ExternalResourceType::Schedule);
@@ -731,7 +718,10 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
     /**
      * @inheritDoc
-     * @throws UnknownProperties
+     * @param Creative            $creative
+     * @param CreativeStorageType $storageType
+     * @param array               $tags
+     * @return ExternalBroadcasterResourceId
      */
     public function importCreative(Creative $creative, CreativeStorageType $storageType, array $tags): ExternalBroadcasterResourceId {
         // First, import the creative
@@ -748,9 +738,9 @@ class BroadSignAdapter extends BroadcasterOperator implements
         }
 
         return new ExternalBroadcasterResourceId(
-            type: ExternalResourceType::Creative,
             broadcaster_id: $this->getBroadcasterId(),
-            external_id: $creativeId,
+            external_id   : $creativeId,
+            type          : ExternalResourceType::Creative,
         );
     }
 
@@ -820,10 +810,10 @@ class BroadSignAdapter extends BroadcasterOperator implements
             $bsPlayer = new BroadSignPlayer($this->getAPIClient(), ["id" => $playerId->external_id]);
 
             $bsPlayer->requestScreenshotsBurst(
-                burstID: $requestID,
-                responseUri: $responseUri,
-                scale: $scale,
-                duration_ms: $duration_ms,
+                burstID     : $requestID,
+                responseUri : $responseUri,
+                scale       : $scale,
+                duration_ms : $duration_ms,
                 frequency_ms: $frequency_ms,
             );
         }

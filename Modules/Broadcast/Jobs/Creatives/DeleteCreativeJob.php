@@ -20,7 +20,6 @@ use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @extends BroadcastJobBase<array>
@@ -33,7 +32,6 @@ class DeleteCreativeJob extends BroadcastJobBase {
     /**
      * @inheritDoc
      * @return array|null
-     * @throws UnknownProperties
      * @throws InvalidBroadcasterAdapterException
      */
     protected function run(): array|null {

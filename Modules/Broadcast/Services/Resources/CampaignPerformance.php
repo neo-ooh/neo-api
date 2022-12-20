@@ -10,22 +10,24 @@
 
 namespace Neo\Modules\Broadcast\Services\Resources;
 
-use Spatie\DataTransferObject\DataTransferObject;
+class CampaignPerformance extends ExternalBroadcasterResource {
+    public function __construct(
+        public ExternalBroadcasterResourceId $campaign,
+        /**
+         * @var string Date string YYYY-mm-DD
+         */
+        public string                        $date,
 
-class CampaignPerformance extends DataTransferObject {
-    public ExternalBroadcasterResourceId $campaign;
-    /**
-     * @var string Date string YYYY-mm-DD
-     */
-    public string $date;
+        /**
+         * @var int How many repetitions for the campaign on this date
+         */
+        public int                           $repetitions,
 
-    /**
-     * @var int How many repetitions for the campaign on this date
-     */
-    public int $repetitions;
+        /**
+         * @var int How many impressions for the campaign on this date
+         */
+        public int                           $impressions,
+    ) {
 
-    /**
-     * @var int How many impressions for the campaign on this date
-     */
-    public int $impressions;
+    }
 }

@@ -13,9 +13,16 @@ namespace Neo\Modules\Broadcast\Services\Resources;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 
 class Container extends ExternalBroadcasterResourceId {
-    public ExternalResourceType $type = ExternalResourceType::Container;
-
-    public string $name;
-
-    public ExternalBroadcasterResourceId|null $parent;
+    public function __construct(
+        int                                       $broadcaster_id,
+        string                                    $external_id,
+        public string                             $name,
+        public ExternalBroadcasterResourceId|null $parent,
+    ) {
+        parent::__construct(
+            broadcaster_id: $broadcaster_id,
+            external_id   : $external_id,
+            type          : ExternalResourceType::Container,
+        );
+    }
 }

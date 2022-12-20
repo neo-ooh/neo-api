@@ -13,10 +13,14 @@ namespace Neo\Modules\Broadcast\Models\StructuredColumns;
 use Neo\Models\Utils\JSONDBColumn;
 
 class ResourcePerformanceData extends JSONDBColumn {
-    public int $network_id;
+    public function __construct(
+        public int   $network_id,
 
-    /**
-     * @var array<int>
-     */
-    public array $formats_id;
+        /**
+         * @var array<int>
+         */
+        public array $formats_id,
+    ) {
+
+    }
 }

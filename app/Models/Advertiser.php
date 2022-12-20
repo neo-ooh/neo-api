@@ -16,7 +16,6 @@ use Illuminate\Support\Carbon;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @property int    $id
@@ -49,7 +48,8 @@ class Advertiser extends Model {
     }
 
     /**
-     * @throws UnknownProperties
+     * @param int $broadcasterId
+     * @return ExternalBroadcasterResourceId|null
      */
     public function getExternalRepresentation(int $broadcasterId): ExternalBroadcasterResourceId|null {
         /** @var AdvertiserRepresentation|null $representation */
@@ -59,10 +59,10 @@ class Advertiser extends Model {
             return null;
         }
 
-        return new ExternalBroadcasterResourceId([
-            "broadcaster_id" => $broadcasterId,
-            "external_id"    => $representation->external_id,
-            "type"           => ExternalResourceType::Advertiser,
-        ]);
+        return new ExternalBroadcasterResourceId(
+            broadcaster_id: $broadcasterId,
+            external_id   : $representation->external_id,
+            type          : ExternalResourceType::Advertiser,
+        );
     }
 }

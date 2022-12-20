@@ -21,12 +21,12 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Neo\Models\ContractBurst;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScreenshotsBurst;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * Class RequestScreenshotsBursts
@@ -55,7 +55,7 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
 
     /**
      * @param ContractBurst $burst
-     * @throws UnknownProperties
+     * @throws InvalidBroadcasterAdapterException
      */
     protected function sendRequest(ContractBurst $burst): void {
         // Get one random player for the location of the burst
@@ -78,10 +78,10 @@ class RequestScreenshotsBursts implements ShouldBeUnique {
         }
 
         $broadcaster->requestScreenshotsBurst(
-            players: [$player->toExternalBroadcastIdResource()],
-            responseUri: config("app.url") . "/v1/broadsign/burst_callback/" . $burst->getKey(),
-            scale: $burst->scale_percent,
-            duration_ms: $burst->duration_ms,
+            players     : [$player->toExternalBroadcastIdResource()],
+            responseUri : config("app.url") . "/v1/broadsign/burst_callback/" . $burst->getKey(),
+            scale       : $burst->scale_percent,
+            duration_ms : $burst->duration_ms,
             frequency_ms: $burst->frequency_ms,
         );
 

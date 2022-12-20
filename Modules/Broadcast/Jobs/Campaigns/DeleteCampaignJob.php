@@ -20,7 +20,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
-use Spatie\DataTransferObject\Exceptions\UnknownProperties;
 
 /**
  * @extends BroadcastJobBase<array>
@@ -34,7 +33,6 @@ class DeleteCampaignJob extends BroadcastJobBase {
      * @inheritDoc
      * @return array|null
      * @throws InvalidBroadcasterAdapterException
-     * @throws UnknownProperties
      */
     protected function run(): array|null {
         /** @var Campaign $campaign */

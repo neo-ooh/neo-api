@@ -30,15 +30,15 @@ class XLSXStyleFactory {
             'font'      => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => "FFFFFFFF"
+                    'argb' => "FFFFFFFF",
                 ],
                 'size'  => "24",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText"   => true
+                "wrapText"   => true,
             ],
             'fill'      => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -54,15 +54,15 @@ class XLSXStyleFactory {
             'font'      => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => "FFFFFFFF"
+                    'argb' => "FFFFFFFF",
                 ],
                 'size'  => "12",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText"   => true
+                "wrapText"   => true,
             ],
             'fill'      => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -77,15 +77,15 @@ class XLSXStyleFactory {
         return [
             'font'      => [
                 'color' => [
-                    'argb' => "FFFFFFFF"
+                    'argb' => "FFFFFFFF",
                 ],
                 'size'  => "14",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText"   => true
+                "wrapText"   => true,
             ],
             'fill'      => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -100,23 +100,23 @@ class XLSXStyleFactory {
         return [
             'font'         => [
                 'color' => [
-                    'argb' => "FF000000"
+                    'argb' => "FF000000",
                 ],
                 'size'  => "12",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0_-'
+                "formatCode" => '#,##0_-',
             ],
             'alignment'    => [
                 'vertical' => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText" => true,
             ],
             "borders"      => [
                 "allBorders" => [
                     "borderStyle" => Border::BORDER_THIN,
-                ]
-            ]
+                ],
+            ],
         ];
     }
 
@@ -124,22 +124,22 @@ class XLSXStyleFactory {
         return [
             'font'         => [
                 'color' => [
-                    'argb' => "FFFFFFFF"
+                    'argb' => "FFFFFFFF",
                 ],
                 'size'  => "12",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0_-'
+                "formatCode" => '#,##0_-',
             ],
             'alignment'    => [
                 'vertical' => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText" => true,
             ],
             "borders"      => [
                 "allBorders" => [
                     "borderStyle" => Border::BORDER_THIN,
-                ]
+                ],
             ],
             'fill'         => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -154,22 +154,22 @@ class XLSXStyleFactory {
         return [
             'font'         => [
                 'color' => [
-                    'argb' => "FFFFFFFF"
+                    'argb' => "FFFFFFFF",
                 ],
                 'size'  => "12",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0_-'
+                "formatCode" => '#,##0_-',
             ],
             'alignment'    => [
                 'vertical' => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText" => true,
             ],
             "borders"      => [
                 "allBorders" => [
                     "borderStyle" => Border::BORDER_THIN,
-                ]
+                ],
             ],
             'fill'         => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -185,17 +185,17 @@ class XLSXStyleFactory {
             'font'         => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => "FFFFFFFF"
+                    'argb' => "FFFFFFFF",
                 ],
                 'size'  => "14",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0_-'
+                "formatCode" => '#,##0_-',
             ],
             'alignment'    => [
                 'vertical' => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText" => true,
             ],
             'fill'         => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -211,17 +211,17 @@ class XLSXStyleFactory {
             'font'         => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => static::COLORS[$network]
+                    'argb' => static::COLORS[$network],
                 ],
                 'size'  => "14",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0_-'
+                "formatCode" => '#,##0_-',
             ],
             'alignment'    => [
                 'vertical' => Alignment::VERTICAL_CENTER,
-                "wrapText" => true
+                "wrapText" => true,
             ],
         ];
     }
@@ -231,15 +231,15 @@ class XLSXStyleFactory {
             'font'      => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => "FFFFFFFF"
+                    'argb' => "FFFFFFFF",
                 ],
                 'size'  => "15",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             'alignment' => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-                "wrapText"   => true
+                "wrapText"   => true,
             ],
             'fill'      => [
                 'fillType'   => Fill::FILL_SOLID,
@@ -252,40 +252,110 @@ class XLSXStyleFactory {
 
     public static function simpleTableHeader() {
         return [
-            'font'      => [
+            'font'         => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => "FF000000"
+                    'argb' => "FF000000",
                 ],
                 'size'  => "13",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0_-'
+                "formatCode" => '#,##0_-',
             ],
-            'alignment' => [
+            'alignment'    => [
                 'horizontal' => Alignment::HORIZONTAL_CENTER,
                 'vertical'   => Alignment::VERTICAL_CENTER,
-            ]
+            ],
         ];
     }
 
     public static function simpleTableTotals() {
         return [
-            'font'      => [
+            'font'         => [
                 'bold'  => true,
                 'color' => [
-                    'argb' => "FF000000"
+                    'argb' => "FF000000",
                 ],
                 'size'  => "12",
-                "name"  => "Calibri"
+                "name"  => "Calibri",
             ],
             "numberFormat" => [
-                "formatCode" => '#,##0_-'
+                "formatCode" => '#,##0_-',
+            ],
+            'alignment'    => [
+                'vertical' => Alignment::VERTICAL_CENTER,
+            ],
+        ];
+    }
+
+    public static function programmaticPropertyRow() {
+        return [
+            'font'      => [
+                "bold"  => true,
+                'color' => [
+                    'argb' => "FFFFFFFF",
+                ],
+                'size'  => "15",
+                "name"  => "Calibri",
             ],
             'alignment' => [
-                'vertical'   => Alignment::VERTICAL_CENTER,
-            ]
+//                'horizontal' => Alignment::HORIZONTAL_CENTER,
+//                'vertical'   => Alignment::VERTICAL_CENTER,
+"wrapText" => true,
+            ],
+            'fill'      => [
+                'fillType'   => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => static::COLORS['dark-blue'],
+                ],
+            ],
+        ];
+    }
+
+    public static function programmaticProductRow() {
+        return [
+            'font'      => [
+                'color' => [
+                    'argb' => "FFFFFFFF",
+                ],
+                'size'  => "13",
+                "name"  => "Calibri",
+            ],
+            'alignment' => [
+//                'horizontal' => Alignment::HORIZONTAL_CENTER,
+//                'vertical'   => Alignment::VERTICAL_CENTER,
+"wrapText" => true,
+            ],
+            'fill'      => [
+                'fillType'   => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => static::COLORS['light-blue'],
+                ],
+            ],
+        ];
+    }
+
+    public static function programmaticLocationRow() {
+        return [
+            'font'      => [
+                'color' => [
+                    'argb' => "FF000000",
+                ],
+                'size'  => "11",
+                "name"  => "Calibri",
+            ],
+            'alignment' => [
+//                'horizontal' => Alignment::HORIZONTAL_CENTER,
+//                'vertical'   => Alignment::VERTICAL_CENTER,
+"wrapText" => true,
+            ],
+            'fill'      => [
+                'fillType'   => Fill::FILL_SOLID,
+                'startColor' => [
+                    'argb' => 'FFDDDDDD',
+                ],
+            ],
         ];
     }
 }

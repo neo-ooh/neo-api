@@ -100,13 +100,13 @@ class PromoteCampaignJob extends BroadcastJobBase {
             // Get the external ID for this campaign representation
             $externalResource = $campaign->getExternalRepresentation($broadcaster->getBroadcasterId(), $broadcaster->getNetworkId(), $format->getKey());
 
-            // If no external resource could be found, it means the external campaign for this representation does not exist, create it.
             /** @var ExternalBroadcasterResourceId|null $externalCampaignId */
             $externalCampaignId = null;
-            $createCampaign     = !$externalResource;
+
+            // This flag will let us know if the campaign schedules needs to be rescheduled
+            $createCampaign = !$externalResource;
 
             if ($externalResource) {
-                // This flag will let us know if the campaign schedules needs to be rescheduled
                 try {
                     // There is an external campaign for this representation, update it
                     $externalCampaignId = $broadcaster->updateCampaign($externalResource->toResource(), $campaignResource);
@@ -121,7 +121,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
                     $createCampaign = true;
                 } finally {
                     if ($createCampaign) {
-                        // If we want to create the campaign, that means we had to remove the existing one, or we couldn't find the one we had in store.
+                        // If we want to create the campaign, that means we have to remove the existing one, or we couldn't find the one we had in store.
                         // To prevent leaving dangling resources on the broadcaster, we will also remove all the schedules attached to this representation
                         $schedules = $campaign->schedules;
 
@@ -178,8 +178,8 @@ class PromoteCampaignJob extends BroadcastJobBase {
 
                 /** @var Schedule $schedule */
                 foreach ($schedules as $schedule) {
-                    $deleteScheduleJob = new PromoteScheduleJob($schedule->getKey(), $representation);
-                    $deleteScheduleJob->handle();
+                    $promoteScheduleJob = new PromoteScheduleJob($schedule->getKey(), $representation);
+                    $promoteScheduleJob->handle();
                 }
             }
 

@@ -12,6 +12,7 @@ namespace Neo\Modules\Broadcast\Jobs\Schedules;
 
 use Illuminate\Support\Collection;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
+use Neo\Modules\Broadcast\Enums\BroadcastParameters;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
 use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
@@ -52,7 +53,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
     /**
      * Steps here:
-     * 1. List all formats in the campaign the schedule fits in;
+     * 1. List all formats/representations of the campaign the schedule fits in;
      * 2. For each representation:
      *   2A. List external ids for the schedule
      *   2B. Update the schedule if ids exist, or create it
@@ -68,9 +69,9 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @throws InvalidBroadcastResource
      */
     protected function run(): array|null {
-        // A schedule has a content which in turn fits in a layout
+        // A schedule has one or more contents which in turn fits in a layout
         // A layout can be present in multiple formats
-        // We list all the formats the schedule content's layout fit in,
+        // We list all the formats the schedule's contents' layouts fit in,
         // and only keep the campaign representation that match with this list
         /** @var Schedule $schedule */
         $schedule = Schedule::withTrashed()->find($this->resourceId);
@@ -93,15 +94,16 @@ class PromoteScheduleJob extends BroadcastJobBase {
         $useSpecificRepresentation = !is_null($this->payload["representation"]);
         $campaignRepresentations   = [];
 
+        $lengthThresholdSec = param(BroadcastParameters::CreativeLengthFlexibilitySec);
+
         // If a specific representation is given, use this one, otherwise list all the representation of the campaign
         if ($useSpecificRepresentation) {
             $campaignRepresentations[] = $this->payload["representation"];
         } else {
-            // For each representation of the campaign, we dispatch an update and a targeting action
             $campaignRepresentations = $schedule->campaign->getExternalBreakdown();
         }
 
-        // Filter the campaign's representations to only keep the one matching the formats with which the content's layout is associated
+        // Filter the representations to only keep the ones matching the formats within which the contents' layouts are associated
         $scheduleRepresentations = array_filter($campaignRepresentations, static fn(ExternalCampaignDefinition $representation) => $formatsIds->contains($representation->format_id));
 
         if (count($scheduleRepresentations) === 0) {
@@ -120,6 +122,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
         $results   = [];
         $hasErrors = false;
 
+        // Iterate over all the selected representations
         /** @var ExternalCampaignDefinition $representation */
         foreach ($scheduleRepresentations as $representation) {
             /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
@@ -151,12 +154,12 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 continue;
             }
 
-            // List which content from the schedule match the current definition. For a content
-            // to be included, its layout must be attached to the definition format, and the definition format must not be part of the list of excluded formats for the content for this schedule.
+            // List which contents from the schedule match the current definition. For a content
+            // to be included, its layout must be attached to the definition's format, and the definition's format must not be part of the list of excluded formats of the content for this schedule.
             /** @var Collection<Content> $contents */
-            $contents = $schedule->contents->filter(function (Content $content) use ($representation, $representationMaxDuration) {
+            $contents = $schedule->contents->filter(function (Content $content) use ($lengthThresholdSec, $representation, $representationMaxDuration) {
                 // Validate content length is within representation limit
-                if ($content->duration >= $representationMaxDuration + .1) {
+                if ($content->duration >= $representationMaxDuration + $lengthThresholdSec) {
                     return false;
                 }
 
@@ -173,7 +176,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
                 return true;
             });
 
-            // Get the campaign resource
+            // Get the required resources
             $layouts          = $representationFormat->layouts()->whereIn("layouts.id", $contents->pluck("layout_id"))->get();
             $scheduleResource = $schedule->toResource();
 
@@ -209,8 +212,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
                     broadcaster             : $broadcaster,
                     scheduleResource        : $scheduleResource,
                     externalCampaignResource: $externalCampaignResource,
-                    contents                : $contents,
-                    format                  : $representationFormat,
                     tags                    : $scheduleTags,
                 );
             } else {
@@ -228,8 +229,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
                         broadcaster             : $broadcaster,
                         scheduleResource        : $scheduleResource,
                         externalCampaignResource: $externalCampaignResource,
-                        contents                : $contents,
-                        format                  : $representationFormat,
                         tags                    : $scheduleTags,
                     );
                 }
@@ -323,8 +322,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @param BroadcasterOperator&BroadcasterScheduling $broadcaster
      * @param ScheduleResource                          $scheduleResource
      * @param ExternalResource                          $externalCampaignResource
-     * @param Collection                                $contents
-     * @param Format                                    $format
      * @param array<Tag>                                $tags
      * @return array<ExternalBroadcasterResourceId>
      */
@@ -332,8 +329,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
         BroadcasterOperator&BroadcasterScheduling $broadcaster,
         ScheduleResource                          $scheduleResource,
         ExternalResource                          $externalCampaignResource,
-        Collection                                $contents,
-        Format                                    $format,
         array                                     $tags
     ): array {
         // Now that we have all the creatives Ids, create the schedule

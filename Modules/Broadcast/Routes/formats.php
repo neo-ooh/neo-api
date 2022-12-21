@@ -30,9 +30,9 @@ use Neo\Modules\Broadcast\Models\Frame;
 use Neo\Modules\Broadcast\Models\Layout;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v2",
-], static function () {
+                 "middleware" => "default",
+                 "prefix"     => "v2",
+             ], static function () {
     /*
     |----------------------------------------------------------------------
     | Layouts
@@ -74,6 +74,7 @@ Route::group([
     Route::  post("formats", FormatsController::class . "@store");
     Route::   get("formats/{format}", FormatsController::class . "@show");
     Route::   put("formats/{format}", FormatsController::class . "@update");
+    Route::   put("formats/{format}/_clone", FormatsController::class . "@clone");
     Route::delete("formats/{format}", FormatsController::class . "@destroy");
 
     Route::put("formats/{format}/layouts/_sync", FormatsLayoutsController::class . "@sync");

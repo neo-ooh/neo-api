@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
+use Neo\Modules\Broadcast\Http\Requests\Formats\CloneFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\DestroyFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\ListFormatsByIdsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\ListFormatsRequest;
@@ -24,6 +25,7 @@ use Neo\Modules\Broadcast\Http\Requests\Formats\ShowFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\StoreFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\UpdateFormatRequest;
 use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
 class FormatsController extends Controller {
     /**
@@ -71,6 +73,28 @@ class FormatsController extends Controller {
         return new Response($format, 201);
     }
 
+    public function clone(CloneFormatRequest $request, Format $format): Response {
+        $clone                 = new Format();
+        $clone->network_id     = $request->input("network_id");
+        $clone->name           = $request->input("name");
+        $clone->content_length = $format->content_length;
+        $clone->save();
+
+        $clone->display_types()->sync($format->display_types);
+        $clone->layouts()->sync($format->layouts);
+        $clone->broadcast_tags()->sync($format->broadcast_tags);
+
+        foreach ($format->loop_configurations as $loop_configuration) {
+            $clonedLoop = new LoopConfiguration($loop_configuration->getAttributes());
+            unset($clonedLoop->id);
+            $clonedLoop->save();
+
+            $clone->loop_configurations()->attach($clonedLoop);
+        }
+
+        return new Response($clone);
+    }
+
     /**
      * @param ShowFormatRequest $request
      * @param Format            $format
@@ -95,8 +119,8 @@ class FormatsController extends Controller {
         $format->broadcast_tags()->sync($request->input("tags"));
 
         $format->loop_configurations()->update([
-            "spot_length_ms" => $format->content_length * 1000,
-        ]);
+                                                   "spot_length_ms" => $format->content_length * 1000,
+                                               ]);
 
         return new Response($format->loadPublicRelations());
     }

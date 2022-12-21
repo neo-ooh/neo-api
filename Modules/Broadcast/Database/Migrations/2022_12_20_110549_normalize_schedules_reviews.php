@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - 2022_11_02_110549_normalize_schedules_reviews.php
+ * @neo/api - 2022_12_20_110549_normalize_schedules_reviews.php
  */
 
 use Illuminate\Database\Migrations\Migration;

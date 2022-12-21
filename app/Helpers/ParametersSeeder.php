@@ -14,15 +14,18 @@ class ParametersSeeder {
         foreach ($enum::cases() as $paramCase) {
             /** @var Parameter $param */
             $param = Parameter::query()->firstOrCreate([
-                "slug" => $paramCase->value,
-            ], [
-                "format"     => $paramCase->format(),
-                "capability" => $paramCase->capability(),
-                "value"      => $paramCase->defaultValue(),
-            ]);
+                                                           "slug" => $paramCase->value,
+                                                       ], [
+                                                           "format" => $paramCase->format(),
+                                                           "value"  => $paramCase->defaultValue(),
+                                                       ]);
 
-            $param->format     = $paramCase->format();
-            $param->capability = $paramCase->capability();
+            $param->format = $paramCase->format();
+
+            if (isset($param->capability)) {
+                $param->capability = $paramCase->capability();
+            }
+
             $param->save();
         }
     }

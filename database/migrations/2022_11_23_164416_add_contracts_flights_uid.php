@@ -9,13 +9,14 @@
  */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 use function Ramsey\Uuid\v4;
 
 class AddContractsFlightsUid extends Migration {
     public function up() {
-        /*        Schema::table('contracts_flights', static function (Blueprint $table) {
-                    $table->string("uid", 36)->after("id");
-                });*/
+        Schema::table('contracts_flights', static function (Blueprint $table) {
+            $table->string("uid", 36)->after("id");
+        });
 
         $flights = DB::table("contracts_flights")->get();
 
@@ -23,8 +24,8 @@ class AddContractsFlightsUid extends Migration {
             DB::table("contracts_flights")
               ->where("id", "=", $flight->id)
               ->update([
-                  "uid" => v4(),
-              ]);
+                           "uid" => v4(),
+                       ]);
         }
     }
 }

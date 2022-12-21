@@ -5,18 +5,17 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - 2022_11_14_145143_parameters_capability.php
+ * @neo/api - 2022_12_21_114809_libraries_soft_deletes.php
  */
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Neo\Enums\Capability;
 
-class ParametersCapability extends Migration {
-    public function up(): void {
-        Schema::table('parameters', static function (Blueprint $table) {
-            $table->string("capability", 64)->after("format")->default(Capability::dev_tools);
+return new class extends Migration {
+    public function up() {
+        Schema::table('libraries', static function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
-}
+};

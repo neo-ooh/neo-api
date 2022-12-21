@@ -40,13 +40,17 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
         } else {
             // Register the job
             $this->broadcastJob = new BroadcastJob([
-                "resource_id" => $this->resourceId,
-                "type"        => $this->type,
-                "payload"     => $this->payload,
-            ]);
+                                                       "resource_id" => $this->resourceId,
+                                                       "type"        => $this->type,
+                                                       "payload"     => $this->payload,
+                                                   ]);
         }
 
         $this->broadcastJob->save();
+    }
+
+    public function getBroadcastJob(): BroadcastJob {
+        return $this->broadcastJob;
     }
 
     /*

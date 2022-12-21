@@ -26,9 +26,9 @@ use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Neo\Modules\Broadcast\Models\BroadcastResource;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v1",
-], static function () {
+                 "middleware" => "default",
+                 "prefix"     => "v1",
+             ], static function () {
     /*
     |----------------------------------------------------------------------
     | Broadcast Resources
@@ -42,6 +42,8 @@ Route::group([
     Route::   get("broadcast-resources/{broadcastResource}/jobs", BroadcastResourcesController::class . "@jobs");
 
     Route::   get("broadcast-resources/{broadcastResource}/performances", BroadcastResourcesController::class . "@performances");
+
+    Route::  post("broadcast-resources/{broadcastResource}/_promote", BroadcastResourcesController::class . "@promote");
 
     /*
     |----------------------------------------------------------------------

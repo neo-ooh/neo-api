@@ -143,14 +143,19 @@ class ActorsGetter {
     public static function getSiblings(int $focus, bool $getChildren): Collection {
         $parent = static::getParent($focus);
 
-        // Check if we have a parent, if not, we are at the root of the tree and sibling querying is not possible
+        // Check if we have a parent, if not, we are at the root of the tree and sibling querying works differently
         if (!$parent) {
-            return collect();
-        }
+            $actors = DB::table("actors_details")
+                        ->whereNull("parent_id")
+                        ->where("id", "<>", $focus)
+                        ->pluck("id");
 
-        // List the parent's children, excluding the current focus
-        $actors = static::getChildren($parent, recursive: false)
-                        ->where(null, '!==', $focus);
+            clock($actors);
+        } else {
+            // List the parent's children, excluding the current focus
+            $actors = static::getChildren($parent, recursive: false)
+                            ->where(null, '!==', $focus);
+        }
 
         // If the siblings children are requested, load them as well
         if ($getChildren) {

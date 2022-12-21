@@ -170,19 +170,6 @@ class PromoteCampaignJob extends BroadcastJobBase {
                 $externalResource->save();
             }
 
-            // If we just created a campaign, trigger a promotion for the schedules in the campaign
-            // for the current representation. If we just recreated the campaign, the schedules have been deleted and need
-            // to be recreated.
-            if ($createCampaign) {
-                $schedules = $campaign->schedules;
-
-                /** @var Schedule $schedule */
-                foreach ($schedules as $schedule) {
-                    $promoteScheduleJob = new PromoteScheduleJob($schedule->getKey(), $representation);
-                    $promoteScheduleJob->handle();
-                }
-            }
-
             // Now that the campaign exist, we need to target it
             // List all tags relevant to the campaign, and dispatch the action
             $campaignTags  = new BroadcastTagsCollector();
@@ -210,6 +197,19 @@ class PromoteCampaignJob extends BroadcastJobBase {
             );
 
             $broadcaster->targetCampaign($externalCampaignId, $targeting);
+
+            // If we just created a campaign, trigger a promotion for the schedules in the campaign
+            // for the current representation. If we just recreated the campaign, the schedules have been deleted and need
+            // to be recreated.
+            if ($createCampaign) {
+                $schedules = $campaign->schedules;
+
+                /** @var Schedule $schedule */
+                foreach ($schedules as $schedule) {
+                    $promoteScheduleJob = new PromoteScheduleJob($schedule->getKey(), $representation);
+                    $promoteScheduleJob->handle();
+                }
+            }
 
             $updatedResources[] = $externalResource;
         }

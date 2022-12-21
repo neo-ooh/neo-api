@@ -12,10 +12,15 @@ namespace Neo\Modules\Broadcast\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
+use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
+use Neo\Modules\Broadcast\Exceptions\BroadcastResourceDoesNotSupportPromoteException;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ListResourceJobsRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ListResourcePerformancesRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ListResourceRepresentationsRequest;
+use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\PromoteResourceRequest;
 use Neo\Modules\Broadcast\Http\Requests\BroadcastResources\ShowBroadcastResourceRequest;
+use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
+use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 use Neo\Modules\Broadcast\Models\BroadcastResource;
 
 class BroadcastResourcesController extends Controller {
@@ -33,5 +38,24 @@ class BroadcastResourcesController extends Controller {
 
     public function performances(ListResourcePerformancesRequest $request, BroadcastResource $broadcastResource): Response {
         return new Response($broadcastResource->performances()->get());
+    }
+
+    public function promote(PromoteResourceRequest $request, BroadcastResource $broadcastResource) {
+        $job = null;
+
+        switch ($broadcastResource->type) {
+            case BroadcastResourceType::Schedule:
+                $job = new PromoteScheduleJob($broadcastResource->getKey());
+                break;
+            case BroadcastResourceType::Campaign:
+                $job = new PromoteCampaignJob($broadcastResource->getKey());
+                break;
+            default:
+                throw new BroadcastResourceDoesNotSupportPromoteException($broadcastResource->type);
+        }
+
+        $job->handle();
+
+        return new Response($job->getBroadcastJob());
     }
 }

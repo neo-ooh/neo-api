@@ -113,7 +113,8 @@ class Location extends SecuredModel {
         "broadcaster" => "network.broadcaster_connection",
         "players"     => "players",
         "actors"      => "actors",
-        "products"    => "append:product_ids",
+        "products"    => "products",
+        "product_ids" => "append:product_ids",
     ];
 
 

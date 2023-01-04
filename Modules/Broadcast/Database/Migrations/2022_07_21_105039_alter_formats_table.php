@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->foreignId("loop_configuration_id")
                   ->constrained("loop_configurations", "id")
                   ->cascadeOnUpdate()
-                  ->restrictOnDelete();
+                  ->cascadeOnDelete();
         });
     }
 };

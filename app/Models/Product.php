@@ -112,8 +112,12 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
     }
 
-    public function format(): BelongsTo {
-        return $this->belongsTo(Format::class, "format_id", "id");
+    public function format(): HasOneDeep|BelongsTo {
+        if ($this->format_id !== null) {
+            return $this->belongsTo(Format::class, "format_id", "id");
+        }
+
+        return $this->hasOneDeepFromRelations([$this->category(), (new ProductCategory())->format()]);
     }
 
     public function category(): BelongsTo {

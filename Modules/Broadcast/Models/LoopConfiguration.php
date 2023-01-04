@@ -32,8 +32,6 @@ use Neo\Models\ProductCategory;
  * @property Collection<ProductCategory> $product_categories
  * @property Collection<Product>         $products
  *
- * @property bool                        $crosses_new_year
- *
  * @mixin Builder<LoopConfiguration>
  */
 class LoopConfiguration extends Model {
@@ -55,7 +53,7 @@ class LoopConfiguration extends Model {
         "end_date",
     ];
 
-    public function product_categories(): BelongsToMany {
+    public function formats(): BelongsToMany {
         return $this->belongsToMany(ProductCategory::class, "products_categories_loop_configurations", "loop_configuration_id", "product_category_id");
     }
 
@@ -63,7 +61,10 @@ class LoopConfiguration extends Model {
         return $this->belongsToMany(Product::class, "products_loop_configurations", "loop_configuration_id", "product_id");
     }
 
-    public function getCrossesNewYearAttribute(): bool {
+    /**
+     * @return bool Tell if the loop configuration dates makes it crosses the new year
+     */
+    public function crossesNewYear(): bool {
         return $this->start_date->isAfter($this->end_date);
     }
 
@@ -75,7 +76,7 @@ class LoopConfiguration extends Model {
         $normalizedDate = $date->clone()->setYear(2000);
 
         // If the period crosses the new year, we have to change our comparison
-        if ($this->crosses_new_year) {
+        if ($this->crossesNewYear()) {
             // ----x----|start|----✓----|NY|----✓----|end|----x----
             return $normalizedDate >= $this->start_date || $normalizedDate <= $this->end_date;
         }

@@ -16,7 +16,7 @@ use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 class FetchCampaignsPerformancesCommand extends Command {
     protected $signature = 'campaigns:fetch-performances {--network=null} {--lookback=3}';
 
-    protected $description = 'Command description';
+    protected $description = "Fetch a campaign\'s performances";
 
     public function handle() {
         $network  = $this->option("network") === "null" ? null : $this->option("network");

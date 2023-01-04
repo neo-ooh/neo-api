@@ -77,6 +77,20 @@ class Format extends Model {
         "network"             => "network",
     ];
 
+    protected static function boot(): void {
+        parent::boot();
+
+        static::deleting(static function (Format $format) {
+            // Clean up loop configurations
+            $loopConfigurations = $format->loop_configurations;
+            $format->loop_configurations()->detach();
+
+            $loopConfigurations->each(
+                fn(LoopConfiguration $loopConfiguration) => $loopConfiguration->delete()
+            );
+        });
+    }
+
 
     /*
     |--------------------------------------------------------------------------

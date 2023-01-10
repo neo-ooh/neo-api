@@ -16,8 +16,9 @@ class ParametersSeeder {
             $param = Parameter::query()->firstOrCreate([
                                                            "slug" => $paramCase->value,
                                                        ], [
-                                                           "format" => $paramCase->format(),
-                                                           "value"  => $paramCase->defaultValue(),
+                                                           "format"     => $paramCase->format(),
+                                                           "value"      => $paramCase->defaultValue(),
+                                                           "capability" => $paramCase->capability(),
                                                        ]);
 
             $param->format = $paramCase->format();

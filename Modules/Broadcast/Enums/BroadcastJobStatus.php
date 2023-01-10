@@ -16,4 +16,5 @@ enum BroadcastJobStatus: string {
     case PendingRetry = "pending-retry";
     case Success = "success";
     case Failed = "failed";
+    case Skipped = "skipped";
 }

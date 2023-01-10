@@ -25,12 +25,13 @@ class UpdateBroadcastTagRequest extends FormRequest {
 
     public function rules() {
         return [
-            "name_en" => ["required", "string"],
-            "name_fr" => ["required", "string"],
-            "scope"   => ["nullable", "array"],
-            "scope.*" => [new Enum(BroadcastTagScope::class)],
+            "name_en"    => ["required", "string"],
+            "name_fr"    => ["required", "string"],
+            "scope"      => ["nullable", "array"],
+            "scope.*"    => [new Enum(BroadcastTagScope::class)],
+            "is_primary" => ["required", "boolean"],
 
-            "with" => ["array", new PublicRelations(BroadcastTag::class)]
+            "with" => ["array", new PublicRelations(BroadcastTag::class)],
         ];
     }
 }

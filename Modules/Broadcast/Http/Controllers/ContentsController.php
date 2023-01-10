@@ -82,6 +82,11 @@ class ContentsController extends Controller {
         $content->layout_id  = $layoutId;
         $content->library_id = $library->getKey();
         $content->save();
+
+        if (Gate::allows(Capability::contents_tags->value) && $request->has("tags")) {
+            $content->broadcast_tags()->sync($request->input("tags", []));
+        }
+
         $content->refresh();
 
         return new Response($content->load("layout.frames"), 201);

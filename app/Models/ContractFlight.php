@@ -188,7 +188,7 @@ class ContractFlight extends Model {
 
                             $performances->push(...collect($broadcaster->getCampaignsPerformances(
                                 $reservations->map(fn(ContractReservation $reservation) => $reservation->toResource())
-                                             ->toArray()
+                                             ->all()
                             ))->map(function (CampaignPerformance $performance) use ($reservationsNetworks): FlightPerformanceDatum {
                                 return new FlightPerformanceDatum(
                                     flight_id  : $this->getKey(),

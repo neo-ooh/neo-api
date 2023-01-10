@@ -27,6 +27,7 @@ use Neo\Modules\Broadcast\Services\Resources\Tag as TagResource;
  * @property string                   $name_en
  * @property string                   $name_fr
  * @property array<BroadcastTagScope> $scope
+ * @property boolean                  $is_primary
  *
  * @property Carbon                   $created_at
  * @property Carbon                   $updated_at
@@ -47,11 +48,13 @@ class BroadcastTag extends BroadcastResourceModel {
         "name_en",
         "name_fr",
         "scope",
+        "is_primary",
     ];
 
     protected $casts = [
-        "type"  => BroadcastTagType::class,
-        "scope" => EnumSetCast::class . ":" . BroadcastTagScope::class,
+        "type"       => BroadcastTagType::class,
+        "scope"      => EnumSetCast::class . ":" . BroadcastTagScope::class,
+        "is_primary" => "boolean",
     ];
 
     protected string $accessRule = AccessibleBroadcastTag::class;

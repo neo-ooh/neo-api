@@ -12,6 +12,7 @@ namespace Neo\Modules\Broadcast\Services;
 
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Services\Exceptions\InvalidExternalBroadcasterResourceType;
+use Neo\Modules\Broadcast\Services\Exceptions\InvalidResourceTypeException;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 
 class BroadcasterUtils {
@@ -28,6 +29,11 @@ class BroadcasterUtils {
         $ids = [];
 
         foreach ($resources as $resource) {
+            if (!($resource instanceof ExternalBroadcasterResourceId)) {
+                throw new InvalidResourceTypeException("ExternalBroadcasterResourceId", gettype($resource));
+            }
+
+
             if ($type && $resource->type !== $type) {
                 throw new InvalidExternalBroadcasterResourceType(expected: $type, found: $resource->type);
             }

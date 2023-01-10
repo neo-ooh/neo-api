@@ -14,6 +14,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\Library;
 
@@ -36,6 +37,9 @@ class StoreContentRequest extends FormRequest {
         return [
             "library_id" => ["required", "integer", new Exists(Library::class, "id")],
             "layout_id"  => ["required", "integer", new Exists(Layout::class, "id")],
+
+            "tags"   => ["array"],
+            "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],
         ];
     }
 }

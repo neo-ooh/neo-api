@@ -27,10 +27,10 @@ use Throwable;
  *
  * > Call order is as follow:
  * > Job::beforeRun();
- * > Job::run();
+ * > Job::run(); // Called if `beforeRun()` returned true
  * > Job::onSuccess(mixed $result); // Called if `run()` finished without throwing, The `run()` return value is passed as argument
  * > Job::onSuccess(Exception $exception); // Called if `run()` has thrown. The thrown exception is passed as argument
- * > Job::finally(); // Called no matter the result of `run()`
+ * > Job::finally(); // Called no matter the result of `beforeRun()` and `run()`
  *
  * @template TRunReturn Run method return value, passed to the success callback
  */
@@ -41,7 +41,10 @@ abstract class Job implements ShouldQueue {
     use SerializesModels;
 
     final public function handle(): void {
-        $this->beforeRun();
+        if (!$this->beforeRun()) {
+            $this->finally();
+            return;
+        }
 
         try {
             $result = $this->run();
@@ -64,9 +67,10 @@ abstract class Job implements ShouldQueue {
     /**
      * Lifecycle method called before `run()`
      *
-     * @return void
+     * @return bool Returning false here short-circuit the job
      */
-    protected function beforeRun(): void {
+    protected function beforeRun(): bool {
+        return true;
     }
 
     /**

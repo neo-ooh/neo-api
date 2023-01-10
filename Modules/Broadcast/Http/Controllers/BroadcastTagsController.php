@@ -38,11 +38,12 @@ class BroadcastTagsController extends Controller {
     }
 
     public function store(StoreBroadcastTagRequest $request): Response {
-        $broadcastTag          = new BroadcastTag();
-        $broadcastTag->type    = $request->enum("type", BroadcastTagType::class);
-        $broadcastTag->name_en = $request->input("name_en");
-        $broadcastTag->name_fr = $request->input("name_fr");
-        $broadcastTag->scope   = array_map(static fn(string $scope) => BroadcastTagScope::from($scope), $request->input("scope", []));
+        $broadcastTag             = new BroadcastTag();
+        $broadcastTag->type       = $request->enum("type", BroadcastTagType::class);
+        $broadcastTag->name_en    = $request->input("name_en");
+        $broadcastTag->name_fr    = $request->input("name_fr");
+        $broadcastTag->scope      = array_map(static fn(string $scope) => BroadcastTagScope::from($scope), $request->input("scope", []));
+        $broadcastTag->is_primary = $request->input("is_primary");
         $broadcastTag->save();
 
         return new Response($broadcastTag, 201);
@@ -60,9 +61,10 @@ class BroadcastTagsController extends Controller {
     }
 
     public function update(UpdateBroadcastTagRequest $request, BroadcastTag $broadcastTag): Response {
-        $broadcastTag->name_en = $request->input("name_en");
-        $broadcastTag->name_fr = $request->input("name_fr");
-        $broadcastTag->scope   = array_map(static fn(string $scope) => BroadcastTagScope::from($scope), $request->input("scope", []));
+        $broadcastTag->name_en    = $request->input("name_en");
+        $broadcastTag->name_fr    = $request->input("name_fr");
+        $broadcastTag->scope      = array_map(static fn(string $scope) => BroadcastTagScope::from($scope), $request->input("scope", []));
+        $broadcastTag->is_primary = $request->input("is_primary");
         $broadcastTag->save();
 
         return new Response($broadcastTag->loadPublicRelations());

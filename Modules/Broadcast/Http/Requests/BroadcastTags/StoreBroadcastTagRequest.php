@@ -24,11 +24,12 @@ class StoreBroadcastTagRequest extends FormRequest {
 
     public function rules() {
         return [
-            "type"    => ["required", new Enum(BroadcastTagType::class)],
-            "name_en" => ["required", "string"],
-            "name_fr" => ["required", "string"],
-            "scope"   => ["nullable", "array"],
-            "scope.*" => [new Enum(BroadcastTagScope::class)],
+            "type"       => ["required", new Enum(BroadcastTagType::class)],
+            "name_en"    => ["required", "string"],
+            "name_fr"    => ["required", "string"],
+            "scope"      => ["nullable", "array"],
+            "scope.*"    => [new Enum(BroadcastTagScope::class)],
+            "is_primary" => ["required", "boolean"],
         ];
     }
 }

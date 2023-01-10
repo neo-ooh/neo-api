@@ -52,9 +52,9 @@ use Neo\Models\TrafficSource;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v1",
-], function () {
+                 "middleware" => "default",
+                 "prefix"     => "v1",
+             ], function () {
     /*
     |----------------------------------------------------------------------
     | Properties
@@ -228,6 +228,7 @@ Route::group([
     Route::get("products", ProductsController::class . "@index");
     Route::get("products/_by_id", ProductsController::class . "@byIds");
     Route::get("products/{product}", ProductsController::class . "@show");
+    Route::put("products/{product}", ProductsController::class . "@update");
 
     Route:: put("products/{product}/locations", ProductsLocationsController::class . "@sync");
 
@@ -293,7 +294,7 @@ Route::group([
     Route::model("pricelistProductsCategory", Neo\Models\PricelistProductsCategory::class, function ($value) {
         return PricelistProductsCategory::query()
                                         ->where("products_category_id", "=", $value)
-                                        ->where("pricelist_id", "=", Request::route()->parameter("pricelist"))
+                                        ->where("pricelist_id", "=", Request::route()?->parameter("pricelist"))
                                         ->first();
     });
 

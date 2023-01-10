@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\Products\ListProductsByIdsRequest;
 use Neo\Http\Requests\Products\ListProductsRequest;
 use Neo\Http\Requests\Products\ShowProductRequest;
+use Neo\Http\Requests\Products\UpdateProductRequest;
 use Neo\Models\Product;
 
 class ProductsController {
@@ -37,5 +38,12 @@ class ProductsController {
         $products = Product::query()->whereIn("id", $request->input("ids"))->get();
 
         return new Response($products->loadPublicRelations());
+    }
+
+    public function update(UpdateProductRequest $request, Product $product) {
+        $product->format_id = $request->input("format_id");
+        $product->save();
+
+        return new Response($product->loadPublicRelations());
     }
 }

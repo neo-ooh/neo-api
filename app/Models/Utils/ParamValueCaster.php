@@ -20,8 +20,9 @@ class ParamValueCaster implements CastsAttributes {
         }
 
         return match ($model->format) {
-            "number" => (float)$value,
-            default  => $value,
+            "number"  => (float)$value,
+            "boolean" => (bool)$value,
+            default   => $value,
         };
     }
 

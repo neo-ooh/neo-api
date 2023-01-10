@@ -17,6 +17,7 @@ use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Neo\Jobs\Job;
 use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
+use Neo\Modules\Broadcast\Enums\BroadcastParameters;
 use Neo\Modules\Broadcast\Models\BroadcastJob;
 use Throwable;
 
@@ -103,11 +104,19 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
         return $this->broadcastJob->last_attempt_result;
     }
 
-    protected function beforeRun(): void {
+    protected function beforeRun(): bool {
         ++$this->broadcastJob->attempts;
         $this->broadcastJob->last_attempt_at = Carbon::now();
-        $this->broadcastJob->status          = BroadcastJobStatus::Active;
-        $this->broadcastJob->save();
+
+        // Check if broadcast jobs are enabled
+        if (param(BroadcastParameters::BroadcastJobsEnabledBool)) {
+            $this->broadcastJob->status = BroadcastJobStatus::Active;
+            $this->broadcastJob->save();
+            return true;
+        }
+
+        $this->broadcastJob->endAttempt(BroadcastJobStatus::Skipped, ["reason" => "broadcast.disabled-jobs"]);
+        return false;
     }
 
     /**
@@ -115,9 +124,7 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
      * @return void
      */
     protected function onSuccess(mixed $result): void {
-        $this->broadcastJob->status              = BroadcastJobStatus::Success;
-        $this->broadcastJob->last_attempt_result = $result;
-        $this->broadcastJob->save();
+        $this->broadcastJob->endAttempt(BroadcastJobStatus::Success, $result);
     }
 
     protected function onFailure(Throwable $exception): void {

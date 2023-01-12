@@ -51,6 +51,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  *
  * @property Property                      $property
  * @property ProductCategory               $category
+ * @property Format                        $format
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
  *
@@ -91,16 +92,18 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 
     public string $impressions_models_pivot_table = "products_impressions_models";
 
-    protected array $publicRelations = [
-        "property"            => "property",
-        "category"            => "category",
-        "locations"           => "locations",
-        "attachments"         => "attachments",
-        "impressions_models"  => "impressions_models",
-        "loop_configurations" => "loop_configurations",
-        "format"              => "format",
-        "pricelist"           => "load:pricelist:id",
-    ];
+    protected function getPublicRelations() {
+        return [
+            "property"            => "property",
+            "category"            => "category",
+            "locations"           => "locations",
+            "attachments"         => "attachments",
+            "impressions_models"  => ["impressions_models", "category.impressions_models"],
+            "loop_configurations" => ["loop_configurations", "category.loop_configurations"],
+            "format"              => "format",
+            "pricelist"           => "load:pricelist:id",
+        ];
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -112,12 +115,8 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
     }
 
-    public function format(): HasOneDeep|BelongsTo {
-        if ($this->format_id !== null) {
-            return $this->belongsTo(Format::class, "format_id", "id");
-        }
-
-        return $this->hasOneDeepFromRelations([$this->category(), (new ProductCategory())->format()]);
+    public function format(): BelongsTo {
+        return $this->belongsTo(Format::class, "format_id", "id");
     }
 
     public function category(): BelongsTo {

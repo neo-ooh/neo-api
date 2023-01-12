@@ -102,7 +102,7 @@ class DocumentsGenerationController extends Controller {
         }
 
         return new Response($document->output(), 200, [
-            $document->format(),
+            "Content-Type" => $document->format(),
         ]);
     }
 }

@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Enums\BroadcastParameters;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
+use Neo\Modules\Broadcast\Exceptions\CouldNotPromoteResourceException;
 use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
@@ -67,6 +68,8 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @return array|null
      * @throws InvalidBroadcasterAdapterException
      * @throws InvalidBroadcastResource
+     * @throws MissingExternalCreativeException
+     * @throws CouldNotPromoteResourceException
      */
     protected function run(): array|null {
         // A schedule has one or more contents which in turn fits in a layout
@@ -143,15 +146,11 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
             if (!$externalCampaignResource) {
                 // The campaign has no ID for this representation. This means the campaign is in an erroneous state
-                $results[] = [
-                    "error"      => true,
+                throw new CouldNotPromoteResourceException($broadcaster, $this->resourceId, [
                     "message"    => "Missing External Representation for campaign",
                     "network_id" => $representation->network_id,
                     "format_id"  => $representation->format_id,
-                ];
-                $hasErrors = true;
-
-                continue;
+                ]);
             }
 
             // List which contents from the schedule match the current definition. For a content
@@ -235,15 +234,13 @@ class PromoteScheduleJob extends BroadcastJobBase {
             }
 
             if (count($updatedExternalResources) === 0) {
-                $results[] = [
-                    "error"                      => true,
+                throw new CouldNotPromoteResourceException($broadcaster, $this->resourceId, [
                     "message"                    => "No external ids could be obtained or created for schedule",
                     "broadcaster_id"             => $broadcaster->getBroadcasterId(),
                     "network_id"                 => $representation->network_id,
                     "format_id"                  => $representation->format_id,
                     "updated_external_resources" => $updatedExternalResources,
-                ];
-                $hasErrors = true;
+                ]);
             }
 
             // We now have IDs to our resources, check if some have changed, and replace them if necessary
@@ -290,21 +287,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
             }
 
             // Finally, attach/sync the creatives with the schedules
-            try {
-                // Now that we have our schedule created, set the creatives it has to display
-                $this->attachCreativesToSchedules($broadcaster, $updatedExternalResources, $contents);
-            } catch (MissingExternalCreativeException $e) {
-                // There was a problem readying up the creatives for the schedule, register the error and move along
-                $results[] = [
-                    "error"          => true,
-                    "message"        => "Could not get creatives ready for schedule creation",
-                    "broadcaster_id" => $broadcaster->getBroadcasterId(),
-                    "trace"          => $e->getTrace(),
-                ];
-                $hasErrors = true;
-
-                continue;
-            }
+            $this->attachCreativesToSchedules($broadcaster, $updatedExternalResources, $contents);
         }
 
         // If we are working with all the representations, and no errors occured,

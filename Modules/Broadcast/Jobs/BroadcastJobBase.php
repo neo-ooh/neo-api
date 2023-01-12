@@ -72,7 +72,7 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
      *
      * @var int
      */
-    public $delay = 0;
+    public $delay = 5;
 
     /**
      * Prevent having many job for the same resource queued at the same time

@@ -16,7 +16,7 @@ use Neo\Enums\Capability;
 class ParametersCapability extends Migration {
     public function up(): void {
         Schema::table('parameters', static function (Blueprint $table) {
-            $table->string("capability", 64)->after("format")->default(Capability::dev_tools);
+            $table->string("capability", 64)->after("format")->default(Capability::dev_tools->value);
         });
     }
 }

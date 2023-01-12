@@ -11,6 +11,7 @@
 namespace Neo\Documents\BroadSignAudienceFile;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 use Neo\Documents\DocumentFormat;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Exceptions\InvalidOpeningHoursException;
@@ -54,16 +55,23 @@ class BroadSignAudienceFile extends XLSXDocument {
             throw new InvalidBroadcasterAdapterException($broadcaster->getBroadcasterType()->value);
         }
 
-        $this->product = $this->location->products()
-                                        ->where("is_bonus", "=", false)
-                                        ->with([
-                                                   "impressions_models",
-                                                   "loop_configurations",
-                                                   "category.impressions_models",
-                                                   "category.loop_configurations",
-                                               ])
-                                        ->withCount("locations")
-                                        ->first();
+        $product = $this->location->products()
+                                  ->where("is_bonus", "=", false)
+                                  ->with([
+                                             "impressions_models",
+                                             "loop_configurations",
+                                             "category.impressions_models",
+                                             "category.loop_configurations",
+                                         ])
+                                  ->withCount("locations")
+                                  ->first();
+
+        if ($product === null) {
+            Log::error("Location {$this->location->getKey()} ({$this->location->name}) is not associated with any product.");
+            return false;
+        }
+
+        $this->product = $product;
 
         /** @var Property $property */
         $property       = Property::query()

@@ -87,7 +87,10 @@ Route::group([
 
 
     Route::   get("flights/{flight}", ContractFlightsController::class . "@show");
-    Route::   get("flights/{flight}/broadsign-exports", ContractsFlightsBroadSignExportController::class . "@show");
+
+    Route::   get("flights/{flight}/broadsign-exports", ContractsFlightsBroadSignExportController::class . "@index");
+    Route::   get("flights/{flight}/broadsign-exports/{network}", ContractsFlightsBroadSignExportController::class . "@show");
+
     Route::   put("flights/{flight}/reservations/_sync", ContractsFlightsReservationsController::class . "@sync");
 
 

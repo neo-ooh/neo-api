@@ -42,7 +42,7 @@ class StoreActorRequest extends FormRequest {
             "roles.*"        => ["integer", "exists:roles,id"],
             "capabilities"   => ["sometimes", "array", "distinct"],
             "capabilities.*" => ["integer", "exists:capabilities,id"],
-            "make_library"   => ["required", "boolean"]
+            "make_library"   => ["boolean"],
         ];
     }
 }

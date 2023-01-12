@@ -195,7 +195,7 @@ class ActorsController extends Controller {
         }
 
         // Should we create a library for the user ?
-        if ($values['make_library']) {
+        if ($actor->is_group && $request->input("make_library", false)) {
             CreateActorLibrary::dispatch($actor->id);
         }
 
@@ -206,9 +206,9 @@ class ActorsController extends Controller {
         // Since all request properties are optional, make sure at least one was given
         if (count($request->all()) === 0) {
             return new Response([
-                "code"    => "empty-request",
-                "message" => "You must pass at lease 1 parameter when calling this route",
-            ], 422);
+                                    "code" => "empty-request",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "message" => "You must pass at lease 1 parameter when calling this route",
+                                ], 422);
         }
 
         // The request handles input validation
@@ -241,10 +241,10 @@ class ActorsController extends Controller {
             // A user cannot have one of its child or itself has its parent
             if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
                 return new Response([
-                    'code'    => 'actor.hierarchy-loop',
-                    'message' => 'Parent assignment would result in incoherent actors hierarchy',
-                    'data'    => $actor,
-                ], 403);
+                                        'code' => 'actor.hierarchy-loop',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             'message' => 'Parent assignment would result in incoherent actors hierarchy',
+                                        'data' => $actor,
+                                    ], 403);
             }
 
             $actor->moveTo($parent);
@@ -326,8 +326,8 @@ class ActorsController extends Controller {
         $signupToken?->makeVisible("token");
 
         return new Response([
-            "signup_token"     => $signupToken,
-            "two_factor_token" => $twoFAToken,
-        ]);
+                                "signup_token"     => $signupToken,
+                                "two_factor_token" => $twoFAToken,
+                            ]);
     }
 }

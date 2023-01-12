@@ -131,7 +131,9 @@ class CampaignsController extends Controller {
             throw $e;
         }
 
-        $campaign->broadcast_tags()->sync($request->input("tags"));
+        if (Gate::allows(Capability::campaigns_tags->value)) {
+            $campaign->broadcast_tags()->sync($request->input("tags"));
+        }
 
         // Replicate the campaign in the appropriate broadcaster
         $campaign->promote();
@@ -175,7 +177,7 @@ class CampaignsController extends Controller {
 
         $campaign->save();
 
-        if ($request->has("tags")) {
+        if (Gate::allows(Capability::campaigns_tags->value) && $request->has("tags")) {
             $campaign->broadcast_tags()->sync($request->input("tags"));
         }
 

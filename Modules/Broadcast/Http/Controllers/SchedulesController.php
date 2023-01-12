@@ -83,8 +83,10 @@ class SchedulesController extends Controller {
         // List all accessible schedules pending review
         // A schedule pending review is a schedule who is locked, is not pre-approved, and who doesn't have any reviews
 
-        /** @var Collection<Campaign> $libraries */
-        $campaigns = Auth::user()?->getAccessibleActors(ids: true);
+        /** @var Collection<integer> $users */
+        $users     = Auth::user()?->getAccessibleActors(ids: true);
+        $campaigns = Campaign::query()->whereIn("parent_id", $users)->pluck("id");
+
         $schedules = Schedule::query()
                              ->select('schedules.*')
                              ->join('schedule_details', 'schedule_details.schedule_id', '=', "schedules.id")
@@ -178,21 +180,21 @@ class SchedulesController extends Controller {
                      $schedule->end_time,
                      $schedule->broadcast_days,
                     ] = $validator->forceFitSchedulingInCampaign(
-                        campaign: $campaign,
+                        campaign : $campaign,
                         startDate: $startDate,
                         startTime: $startTime,
-                        endDate: $endDate,
-                        endTime: $endTime,
-                        weekdays: $broadcastDays
+                        endDate  : $endDate,
+                        endTime  : $endTime,
+                        weekdays : $broadcastDays
                     );
                 } else {
                     $validator->validateSchedulingFitCampaign(
-                        campaign: $campaign,
+                        campaign : $campaign,
                         startDate: $startDate,
                         startTime: $startTime,
-                        endDate: $endDate,
-                        endTime: $endTime,
-                        weekdays: $broadcastDays
+                        endDate  : $endDate,
+                        endTime  : $endTime,
+                        weekdays : $broadcastDays
                     );
                 }
 
@@ -278,10 +280,10 @@ class SchedulesController extends Controller {
                 ->update(
                     startDate: $startDate,
                     startTime: $startTime,
-                    endDate: $endDate,
-                    endTime: $endTime,
-                    weekdays: $broadcastDays,
-                    forceFit: false
+                    endDate  : $endDate,
+                    endTime  : $endTime,
+                    weekdays : $broadcastDays,
+                    forceFit : false
                 );
 
         if (!$schedule->is_locked && $request->input("is_locked", false) && $schedule->end_date->isAfter(Carbon::now())) {
@@ -343,10 +345,10 @@ class SchedulesController extends Controller {
                             ->update(
                                 startDate: $startDate,
                                 startTime: $startTime,
-                                endDate: $endDate,
-                                endTime: $endTime,
-                                weekdays: $broadcastDays,
-                                forceFit: true
+                                endDate  : $endDate,
+                                endTime  : $endTime,
+                                weekdays : $broadcastDays,
+                                forceFit : true
                             );
 
                     if (Gate::allows(Capability::schedules_tags->value)) {

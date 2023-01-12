@@ -19,13 +19,17 @@ class EnvironicsDefaultParser {
         $spreadsheet = $workbook->getActiveSheet();
         $data        = $spreadsheet->toArray();
 
-        // for this kind of file, value rows are identifyiable by the variable id on the first column, that always start with ECY
+        // Environics data files first datum is on line 6. Datum lines can be differentiated from section lines as they have an integer column on the F column.
 
         $entries = [];
         /** @var array $row */
-        foreach ($data as $row) {
+        foreach ($data as $i => $row) {
+            if ($i < 5) {
+                continue;
+            }
+
             // Is this a value row ?
-            if (!str_starts_with(trim($row[0]), "ECY")) {
+            if (!is_numeric($row[5])) {
                 continue;
             }
 

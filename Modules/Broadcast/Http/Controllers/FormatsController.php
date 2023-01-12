@@ -25,6 +25,7 @@ use Neo\Modules\Broadcast\Http\Requests\Formats\ShowFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\StoreFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\UpdateFormatRequest;
 use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
 class FormatsController extends Controller {
@@ -81,7 +82,8 @@ class FormatsController extends Controller {
         $clone->save();
 
         $clone->display_types()->sync($format->display_types);
-        $clone->layouts()->sync($format->layouts);
+        $clone->layouts()
+              ->sync($format->layouts->map(fn(Layout $layout) => [$layout->getKey() => ["is_fullscreen" => $layout->settings->is_fullscreen]]));
         $clone->broadcast_tags()->sync($format->broadcast_tags);
 
         foreach ($format->loop_configurations as $loop_configuration) {

@@ -73,9 +73,8 @@ class Property extends SecuredModel {
      */
     protected $table = "properties";
 
-
     /**
-     * The table associated with the model.
+     * The primary key for the table
      *
      * @var string
      */

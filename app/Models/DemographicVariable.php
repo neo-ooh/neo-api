@@ -21,9 +21,24 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon $updated_at
  */
 class DemographicVariable extends Model {
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
     protected $table = "demographic_variables";
 
+    /**
+     * The primary key for the table
+     *
+     * @var string
+     */
     protected $primaryKey = "id";
 
+    /**
+     * Indicates if the IDs are auto-incrementing.
+     *
+     * @var bool
+     */
     public $incrementing = false;
 }

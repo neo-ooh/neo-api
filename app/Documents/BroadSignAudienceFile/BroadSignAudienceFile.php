@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Log;
 use Neo\Documents\DocumentFormat;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Exceptions\InvalidOpeningHoursException;
+use Neo\Exceptions\LocationNotAssociatedWithProductException;
 use Neo\Models\OpeningHours;
 use Neo\Models\Product;
 use Neo\Models\Property;
@@ -42,6 +43,7 @@ class BroadSignAudienceFile extends XLSXDocument {
      * @return bool
      * @throws InvalidBroadcasterAdapterException
      * @throws InvalidBroadcastResource
+     * @throws LocationNotAssociatedWithProductException
      */
     protected function ingest($data): bool {
         $this->location = $data;
@@ -68,7 +70,7 @@ class BroadSignAudienceFile extends XLSXDocument {
 
         if ($product === null) {
             Log::error("Location {$this->location->getKey()} ({$this->location->name}) is not associated with any product.");
-            return false;
+            throw new LocationNotAssociatedWithProductException();
         }
 
         $this->product = $product;

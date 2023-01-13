@@ -68,6 +68,7 @@ class Schedule extends BroadcastResourceModel {
     use EagerLoadPivotTrait;
 
     public BroadcastResourceType $resourceType = BroadcastResourceType::Schedule;
+
     /**
      * The table associated with the model.
      *

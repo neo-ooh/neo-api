@@ -13,6 +13,7 @@ namespace Neo\Http\Controllers;
 use Illuminate\Http\Response;
 use Neo\Documents\BroadSignAudienceFile\BroadSignAudienceFile;
 use Neo\Documents\Exceptions\UnknownGenerationException;
+use Neo\Exceptions\LocationNotAssociatedWithProductException;
 use Neo\Http\Requests\Impressions\ExportBroadsignImpressionsRequest;
 use Neo\Modules\Broadcast\Models\Location;
 
@@ -35,8 +36,12 @@ class ImpressionsController {
                                 ], 400);
         }
 
-        $audienceFile = BroadSignAudienceFile::make($location);
-        $audienceFile->build();
-        $audienceFile->output();
+        try {
+            $audienceFile = BroadSignAudienceFile::make($location);
+            $audienceFile->build();
+            $audienceFile->output();
+        } catch (LocationNotAssociatedWithProductException $e) {
+            return new Response(400);
+        }
     }
 }

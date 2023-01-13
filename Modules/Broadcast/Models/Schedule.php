@@ -301,6 +301,6 @@ class Schedule extends BroadcastResourceModel {
      * @return void
      */
     public function promote(): void {
-        PromoteScheduleJob::dispatch($this->getKey());
+        PromoteScheduleJob::dispatch($this->getKey())->delay(300); // Wait 5 minutes before processing
     }
 }

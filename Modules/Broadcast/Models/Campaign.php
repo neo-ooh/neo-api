@@ -302,7 +302,7 @@ class Campaign extends BroadcastResourceModel {
      * @return void
      */
     public function promote(): void {
-        PromoteCampaignJob::dispatch($this->getKey());
+        PromoteCampaignJob::dispatch($this->getKey())->delay(300); // Wait 5 minutes before processing
     }
 
 

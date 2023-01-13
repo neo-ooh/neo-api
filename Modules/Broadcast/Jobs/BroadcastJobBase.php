@@ -11,7 +11,6 @@
 namespace Neo\Modules\Broadcast\Jobs;
 
 use Carbon\Carbon;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Neo\Jobs\Job;
@@ -25,7 +24,7 @@ use Throwable;
  * @template TPayload of array
  * @extends Job<array|null>
  */
-abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeUniqueUntilProcessing {
+abstract class BroadcastJobBase extends Job implements ShouldBeUniqueUntilProcessing {
     protected BroadcastJob $broadcastJob;
 
     /**
@@ -72,7 +71,7 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUnique, ShouldBeU
      *
      * @var int
      */
-    public $delay = 5;
+//    public $delay = 5;
 
     /**
      * Prevent having many job for the same resource queued at the same time

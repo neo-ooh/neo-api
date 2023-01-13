@@ -16,6 +16,7 @@ use Neo\Http\Controllers\CountriesController;
 use Neo\Http\Controllers\FieldsCategoriesController;
 use Neo\Http\Controllers\FieldsController;
 use Neo\Http\Controllers\FieldSegmentsController;
+use Neo\Http\Controllers\GroupTrafficStatsController;
 use Neo\Http\Controllers\LoopConfigurationsController;
 use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\OpeningHoursController;
@@ -75,6 +76,7 @@ Route::group([
 
     Route::get("properties/{property}/_dump", PropertiesController::class . "@dump");
 
+    Route::   get("actors/{actor}/traffic-statistics", GroupTrafficStatsController::class . "@show");
     Route::   get("properties-statistics/{actor}", PropertiesStatsController::class . "@show");
 
 

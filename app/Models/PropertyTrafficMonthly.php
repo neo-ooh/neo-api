@@ -10,7 +10,6 @@
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Gate;
@@ -30,7 +29,6 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  */
 class PropertyTrafficMonthly extends Model {
     use HasCompositePrimaryKey;
-    use HasFactory;
 
     /*
     |--------------------------------------------------------------------------

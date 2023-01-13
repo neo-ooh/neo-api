@@ -37,7 +37,7 @@ class BootstrapSeeder extends Seeder {
         }
 
         // Create the root actor
-        if (is_null(Actor::query()->where("email", "=", "root@root.neo-ooh.info")->first())) {
+        if (is_null(Actor::query()->where("email", "=", "root@neo-ooh.info")->first())) {
             $actor               = new Actor();
             $actor->name         = 'root';
             $actor->email        = "root@root.neo-ooh.info";

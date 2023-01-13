@@ -74,27 +74,25 @@ class BroadcastJob extends Model {
     public function retry(): void {
         switch ($this->type) {
             case BroadcastJobType::PromoteCampaign:
-                (new PromoteCampaignJob($this->resource_id, $this))->handle();
-//                PromoteCampaignJob::dispatchSync($this->resource_id, $this);
+                PromoteCampaignJob::dispatch($this->resource_id, $this);
                 break;
             case BroadcastJobType::DeleteCampaign:
-                DeleteCampaignJob::dispatchSync($this->resource_id, $this);
+                DeleteCampaignJob::dispatch($this->resource_id, $this);
                 break;
             case BroadcastJobType::PromoteSchedule:
-//                PromoteScheduleJob::dispatchSync($this->resource_id, $this->payload["representation"], $this);
-                (new PromoteScheduleJob($this->resource_id, $this->payload["representation"] ? ExternalCampaignDefinition::from($this->payload["representation"]) : null, $this))->handle();
+                PromoteScheduleJob::dispatch($this->resource_id, $this->payload["representation"] ? ExternalCampaignDefinition::from($this->payload["representation"]) : null, $this);
                 break;
             case BroadcastJobType::DeleteSchedule:
-                DeleteScheduleJob::dispatchSync($this->resource_id, ExternalCampaignDefinition::from($this->payload["representation"]), $this);
+                DeleteScheduleJob::dispatch($this->resource_id, ExternalCampaignDefinition::from($this->payload["representation"]), $this);
                 break;
             case BroadcastJobType::ImportCreative:
-                ImportCreativeJob::dispatchSync($this->resource_id, $this->payload["broadcasterId"], $this);
+                ImportCreativeJob::dispatch($this->resource_id, $this->payload["broadcasterId"], $this);
                 break;
             case BroadcastJobType::UpdateCreative:
-                UpdateCreativeJob::dispatchSync($this->resource_id, $this);
+                UpdateCreativeJob::dispatch($this->resource_id, $this);
                 break;
             case BroadcastJobType::DeleteCreative:
-                ImportCreativeJob::dispatchSync($this->resource_id, $this);
+                ImportCreativeJob::dispatch($this->resource_id, $this);
         }
     }
 }

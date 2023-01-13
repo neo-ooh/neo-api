@@ -37,8 +37,12 @@ use function Ramsey\Uuid\v4;
 class ImportContractDataJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected int               $contractId,
-                                protected OdooContract|null $odooContract = null) {
+    public int $timeout = 300;
+
+    public function __construct(
+        protected int               $contractId,
+        protected OdooContract|null $odooContract = null
+    ) {
     }
 
     /**
@@ -66,10 +70,10 @@ class ImportContractDataJob implements ShouldQueue {
         // Get contract client
         /** @var Client $client */
         $client = Client::query()->firstOrCreate([
-            "odoo_id" => $this->odooContract->partner_id[0],
-        ], [
-            "name" => $this->odooContract->partner_id[1],
-        ]);
+                                                     "odoo_id" => $this->odooContract->partner_id[0],
+                                                 ], [
+                                                     "name" => $this->odooContract->partner_id[1],
+                                                 ]);
 
         $output->writeln($contract->contract_id . ": Set client to $client->name (#$client->id))");
 
@@ -79,10 +83,10 @@ class ImportContractDataJob implements ShouldQueue {
         if ($this->odooContract->analytic_account_id) {
             /** @var Advertiser $advertiser */
             $advertiser = Advertiser::query()->firstOrCreate([
-                "odoo_id" => $this->odooContract->analytic_account_id[0],
-            ], [
-                "name" => $this->odooContract->analytic_account_id[1],
-            ]);
+                                                                 "odoo_id" => $this->odooContract->analytic_account_id[0],
+                                                             ], [
+                                                                 "name" => $this->odooContract->analytic_account_id[1],
+                                                             ]);
 
             $output->writeln($contract->contract_id . ": Set advertiser to $advertiser->name (#$advertiser->id))");
         }
@@ -99,6 +103,8 @@ class ImportContractDataJob implements ShouldQueue {
             $contract->storePlan($contractAttachment->datas);
             $contract->has_plan = true;
             $contract->save();
+
+            $output->writeln($contract->contract_id . ": Attached Campaign Planner Plan.");
         }
 
         // Load flights from the plan if available, and merge existing flights with them
@@ -106,8 +112,8 @@ class ImportContractDataJob implements ShouldQueue {
         $contract->flights()->delete();
 
         // Load flights from the plan, if available
-        $flights    = $this->getFlightsFromPlan($contract);
-        $orderLines = $this->getLinesFromOdoo($odooClient);
+        $flights    = $this->getFlightsFromPlan($contract, $output);
+        $orderLines = $this->getLinesFromOdoo($odooClient, $contract, $output);
 
         $output->writeln($contract->contract_id . ": Received {$orderLines->count()} lines...");
 
@@ -154,12 +160,12 @@ class ImportContractDataJob implements ShouldQueue {
 
             if ($flight === null) {
                 $flight = ContractFlight::query()->firstOrCreate([
-                    "contract_id" => $contract->getKey(),
-                    "uid"         => v4(),
-                    "type"        => $type,
-                    "start_date"  => $orderLine->rental_start,
-                    "end_date"    => $orderLine->rental_end,
-                ]);
+                                                                     "contract_id" => $contract->getKey(),
+                                                                     "uid"         => v4(),
+                                                                     "type"        => $type,
+                                                                     "start_date"  => $orderLine->rental_start,
+                                                                     "end_date"    => $orderLine->rental_end,
+                                                                 ]);
                 $flights->push($flight);
             }
 
@@ -224,7 +230,7 @@ class ImportContractDataJob implements ShouldQueue {
     /**
      * @throws JsonException
      */
-    public function getFlightsFromPlan(Contract $contract): Collection {
+    public function getFlightsFromPlan(Contract $contract, ConsoleOutput $output): Collection {
         // Get the compiled plan from the contract
         $plan = $contract->getStoredPlanAttribute();
 
@@ -234,17 +240,19 @@ class ImportContractDataJob implements ShouldQueue {
 
         $flights = collect();
 
+        $output->writeln($contract->contract_id . ": Loading plan flights from Odoo...");
+
         /** @var CPCompiledFlight $flight */
         foreach ($plan->flights as $i => $flight) {
             $flights->push(ContractFlight::query()->updateOrCreate([
-                "contract_id" => $contract->getKey(),
-                "uid"         => $flight->id,
-            ], [
-                "name"       => $flight->name ?? "Flight #" . $i,
-                "type"       => $flight->type->value,
-                "start_date" => $flight->start_date,
-                "end_date"   => $flight->end_date,
-            ]));
+                                                                       "contract_id" => $contract->getKey(),
+                                                                       "uid"         => $flight->id,
+                                                                   ], [
+                                                                       "name"       => $flight->name ?? "Flight #" . $i,
+                                                                       "type"       => $flight->type->value,
+                                                                       "start_date" => $flight->start_date,
+                                                                       "end_date"   => $flight->end_date,
+                                                                   ]));
         }
 
         // Empty all flights lines as they will all be re-imported
@@ -253,24 +261,26 @@ class ImportContractDataJob implements ShouldQueue {
         return $flights;
     }
 
-    public function getLinesFromOdoo(OdooClient $client) {
+    public function getLinesFromOdoo(OdooClient $client, Contract $contract, ConsoleOutput $output) {
         $lines     = collect();
         $chunkSize = 50;
+
+        $output->writeln($contract->contract_id . ": Loading contract lines from Odoo...");
 
         do {
             $hasMore = false;
 
-            $lines = OrderLine::all($client, [
+            $receivedLines = OrderLine::all($client, [
                 ["order_id", '=', $this->odooContract->id],
                 ["is_linked_line", '!=', 1],
-            ], $chunkSize, $lines->count());
+            ],                              $chunkSize, $lines->count());
 
-            if ($lines->count() === $chunkSize) {
+            if ($receivedLines->count() === $chunkSize) {
                 $hasMore = true;
             }
 
-            $lines = $lines->merge($lines);
-
+            $lines = $lines->merge($receivedLines);
+            $output->writeln($contract->contract_id . ": Collected {$lines->count()} lines...");
         } while ($hasMore);
 
         return $lines;

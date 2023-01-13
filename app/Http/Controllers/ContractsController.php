@@ -116,13 +116,15 @@ class ContractsController extends Controller {
     }
 
     public function refresh(RefreshContractRequest $request, Contract $contract): Response {
+        set_time_limit(120);
+
         if ($request->input("reimport", false)) {
             ImportContractDataJob::dispatch($contract->id);
         }
 
         ImportContractReservations::dispatch($contract->id)->chain([
-            new RefreshContractsPerformancesJob($contract->id),
-        ]);
+                                                                       new RefreshContractsPerformancesJob($contract->id),
+                                                                   ]);
 
         return new Response(["status" => "ok"]);
     }

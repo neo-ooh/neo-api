@@ -57,15 +57,19 @@ class ScheduleValidator {
         if ($content->duration > 0) {
             /** @var float $lengthThresholdSec */
             $lengthThresholdSec = param(BroadcastParameters::CreativeLengthFlexibilitySec);
+
             // If the campaign has a dynamic override, this takes priority over the formats, check that first
-            if ($campaign->dynamic_duration_override > 0 && $content->duration > ($campaign->dynamic_duration_override + $lengthThresholdSec)) {
+            if ($campaign->dynamic_duration_override > PHP_FLOAT_EPSILON && $content->duration > ($campaign->dynamic_duration_override + $lengthThresholdSec)) {
                 throw new IncompatibleContentLengthAndCampaignException();
             }
 
-            $validFormats = $campaignFormats->filter(fn(Format $format) => $content->duration < ($format->content_length + $lengthThresholdSec));
+            // If the campaign has no duration override, check that the content matches at least one format.
+            if ($campaign->dynamic_duration_override <= PHP_FLOAT_EPSILON) {
+                $validFormats = $campaignFormats->filter(fn(Format $format) => $content->duration < ($format->content_length + $lengthThresholdSec));
 
-            if ($validFormats->isEmpty()) {
-                throw new IncompatibleContentLengthAndCampaignException();
+                if ($validFormats->isEmpty()) {
+                    throw new IncompatibleContentLengthAndCampaignException();
+                }
             }
         }
     }

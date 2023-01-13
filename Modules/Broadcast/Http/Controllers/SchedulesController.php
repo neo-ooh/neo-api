@@ -23,7 +23,6 @@ use Illuminate\Validation\UnauthorizedException;
 use Neo\Enums\Capability;
 use Neo\Exceptions\BaseException;
 use Neo\Http\Controllers\Controller;
-use Neo\Jobs\SendReviewRequestEmail;
 use Neo\Models\Actor;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Exceptions\CannotScheduleContentAnymoreException;
@@ -225,9 +224,9 @@ class SchedulesController extends Controller {
                     }
 
                     // If not all contents of the schedule are pre-approved, send an email
-                    if ($campaignSchedule->contents->some("is_approved", "!==", true) && !Gate::allows(Capability::contents_review->value)) {
-                        SendReviewRequestEmail::dispatch($campaignSchedule->id);
-                    }
+//                    if ($campaignSchedule->contents->some("is_approved", "!==", true) && !Gate::allows(Capability::contents_review->value)) {
+//                        SendReviewRequestEmail::dispatch($campaignSchedule->id);
+//                    }
                 }
 
                 $schedules[] = $campaignSchedule;
@@ -308,9 +307,9 @@ class SchedulesController extends Controller {
                 $review->save();
             }
 
-            if ($schedule->contents->some("is_approved", "!==", true) && !Gate::allows(Capability::contents_review->value)) {
+            /*if ($schedule->contents->some("is_approved", "!==", true) && !Gate::allows(Capability::contents_review->value)) {
                 SendReviewRequestEmail::dispatch($schedule->id);
-            }
+            }*/
         }
 
         if ($request->input("remove_from_batch", false)) {

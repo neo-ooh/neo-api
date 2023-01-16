@@ -26,6 +26,11 @@ class GroupTrafficStatsController extends Controller {
 
         $childrenTrafficStats = [];
         foreach ($directChildren as $child) {
+            if ($child->type === ActorType::User) {
+                // ignore users
+                continue;
+            }
+
             if ($child->type === ActorType::Property) {
                 // If the child is a property, directly pull its traffic.
                 $traffic = $child->property->traffic->data;

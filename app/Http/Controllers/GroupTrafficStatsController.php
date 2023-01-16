@@ -19,10 +19,10 @@ use Neo\Models\PropertyTrafficMonthly;
 use Neo\Models\Utils\ActorsGetter;
 
 class GroupTrafficStatsController extends Controller {
-    public function show(ActorsTrafficStatisticsRequest $request, Actor $group) {
+    public function show(ActorsTrafficStatisticsRequest $request, Actor $actor) {
         // We want to list all the direct children of the provided actor. For each of them , we list all their own children that are properties, and aggregate their traffic
 
-        $directChildren = ActorsGetter::from($group)->selectChildren(recursive: false)->getActors();
+        $directChildren = ActorsGetter::from($actor)->selectChildren(recursive: false)->getActors();
 
         $childrenTrafficStats = [];
         foreach ($directChildren as $child) {

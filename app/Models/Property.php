@@ -128,7 +128,7 @@ class Property extends SecuredModel {
             "products"      => "load:products.attachments",
             "products_ids"  => "load:products:id",
             "tags"          => "load:actor.tags",
-            "traffic"       => "load:traffic.data",
+            "traffic"       => ["load:traffic.data", "load:traffic.source"],
             "warnings"      => "append:warnings",
         ];
     }

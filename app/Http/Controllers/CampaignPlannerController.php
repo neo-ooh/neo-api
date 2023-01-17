@@ -19,6 +19,7 @@ use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
+use Neo\Models\DemographicVariable;
 use Neo\Models\Field;
 use Neo\Models\FieldsCategory;
 use Neo\Models\Pricelist;
@@ -33,13 +34,13 @@ class CampaignPlannerController {
         $properties = Property::query()->has("odoo")->get();
 
         $properties->load([
-            "actor.tags",
-            "data",
-            "address",
-            "odoo",
-            "pictures",
-            "tenants" => fn($q) => $q->select(["id"]),
-        ]);
+                              "actor.tags",
+                              "data",
+                              "address",
+                              "odoo",
+                              "pictures",
+                              "tenants" => fn($q) => $q->select(["id"]),
+                          ]);
 
         return [
             "properties" => $properties->map(fn(Property $property) => [
@@ -62,8 +63,9 @@ class CampaignPlannerController {
         $properties = Property::query()->has("odoo")->get();
 
         $properties->load([
-            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"]),
-        ]);
+                              "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"])
+                                                             ->whereNull("reference_value"),
+                          ]);
 
         return [
             "properties" => $properties->map(fn(Property $property) => [
@@ -78,10 +80,10 @@ class CampaignPlannerController {
         $properties = Property::query()->has("odoo")->get();
 
         $properties->load([
-            "products",
-            "products.attachments",
-            "products.impressions_models",
-        ]);
+                              "products",
+                              "products.attachments",
+                              "products.impressions_models",
+                          ]);
 
         return [
             "properties" => $properties->map(fn(Property $property) => [
@@ -97,25 +99,27 @@ class CampaignPlannerController {
     public function dataChunk_4(GetCampaignPlannerDataRequest $request) {
         $properties = Property::query()->has("odoo")->get(["actor_id", "pricelist_id"]);
 
-        $categories      = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
-        $fieldCategories = FieldsCategory::query()->get();
-        $fields          = Field::query()
-                                ->with(["segments.stats"])
-                                ->get()
-                                ->append("network_ids");
-        $networks        = Network::query()->get();
-        $brands          = Brand::query()->with("child_brands:id,parent_id")->get();
-        $pricelists      = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
-                                    ->with(["categories_pricings", "products_pricings"])
-                                    ->get();
+        $categories           = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
+        $fieldCategories      = FieldsCategory::query()->get();
+        $fields               = Field::query()
+                                     ->with(["segments.stats"])
+                                     ->get()
+                                     ->append("network_ids");
+        $demographicVariables = DemographicVariable::query()->get();
+        $networks             = Network::query()->get();
+        $brands               = Brand::query()->with("child_brands:id,parent_id")->get();
+        $pricelists           = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
+                                         ->with(["categories_pricings", "products_pricings"])
+                                         ->get();
 
         return [
-            "categories"        => $categories,
-            "networks"          => $networks,
-            "fields_categories" => $fieldCategories,
-            "fields"            => $fields,
-            "brands"            => $brands,
-            "pricelists"        => $pricelists,
+            "categories"            => $categories,
+            "networks"              => $networks,
+            "fields_categories"     => $fieldCategories,
+            "fields"                => $fields,
+            "demographic_variables" => $demographicVariables,
+            "brands"                => $brands,
+            "pricelists"            => $pricelists,
         ];
     }
 

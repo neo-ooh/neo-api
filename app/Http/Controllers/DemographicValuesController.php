@@ -12,21 +12,28 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Neo\Http\Requests\DemograhicValues\ListDemographicValuesRequest;
 use Neo\Http\Requests\DemograhicValues\ListPipelinesRequest;
 use Neo\Http\Requests\DemograhicValues\StoreDemographicValuesRequest;
 use Neo\Jobs\Demographics\IngestDemographicFileJob;
 use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
+use Neo\Models\DemographicValue;
 use Neo\Models\Property;
 
 class DemographicValuesController {
+
+    public function index(ListDemographicValuesRequest $request) {
+        return new Response(DemographicValue::query()->whereIn("value_id", $request->input("variables"))->get());
+    }
+
     public function listPipelines(ListPipelinesRequest $request) {
         return new Response([
-            [
-                "slug"    => "environics-default",
-                "name_en" => "Environics - Default",
-                "name_fr" => "Environics - Défaut",
-            ]
-        ]);
+                                [
+                                    "slug"    => "environics-default",
+                                    "name_en" => "Environics - Default",
+                                    "name_fr" => "Environics - Défaut",
+                                ],
+                            ]);
     }
 
     public function store(StoreDemographicValuesRequest $request, Property $property) {

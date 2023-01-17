@@ -119,12 +119,18 @@ class ContractsController extends Controller {
         set_time_limit(120);
 
         if ($request->input("reimport", false)) {
-            ImportContractDataJob::dispatch($contract->id);
+            ImportContractDataJob::dispatch($contract->id)
+                                 ->chain([
+                                             new ImportContractReservations($contract->id),
+                                             new RefreshContractsPerformancesJob($contract->id),
+                                         ]);
+            // We don't fall through here because we want to importReservations and refresh performances to always be run after the importData job.
+        } else {
+            ImportContractReservations::dispatch($contract->id)
+                                      ->chain([
+                                                  new RefreshContractsPerformancesJob($contract->id),
+                                              ]);
         }
-
-        ImportContractReservations::dispatch($contract->id)->chain([
-                                                                       new RefreshContractsPerformancesJob($contract->id),
-                                                                   ]);
 
         return new Response(["status" => "ok"]);
     }

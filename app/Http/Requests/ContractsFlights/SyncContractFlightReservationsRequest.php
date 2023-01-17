@@ -10,17 +10,25 @@
 
 namespace Neo\Http\Requests\ContractsFlights;
 
+use Auth;
+use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Neo\Enums\Capability;
+use Neo\Models\ContractFlight;
 
 class SyncContractFlightReservationsRequest extends FormRequest {
     public function rules(): array {
         return [
             "reservations"   => ["nullable", "array"],
-            "reservations.*" => ["integer", "exists:contracts_reservations,id"]
+            "reservations.*" => ["integer", "exists:contracts_reservations,id"],
         ];
     }
 
     public function authorize(): bool {
-        return true;
+        $flightId = $this->route()->originalParameter("flight");
+        /** @var ContractFlight $flight */
+        $flight = ContractFlight::query()->findOrFail($flightId)->load("contract");
+        return ($flight->contract->salesperson_id === Auth::id() && Gate::allows(Capability::contracts_edit->value))
+            || Gate::allows(Capability::contracts_manage->value);
     }
 }

@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Providers;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Neo\Modules\Broadcast\Jobs\Chores\DeleteExpiredResourcesJob;
+use Neo\Modules\Broadcast\Jobs\Chores\RetryPendingBroadcastJobsJob;
 use Neo\Modules\Broadcast\Jobs\Networks\SynchronizeAllNetworksJob;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 
@@ -30,6 +31,9 @@ class BroadcastKernelServiceProvider extends ServiceProvider {
 
             // Campaigns Performances
             $schedule->job(FetchCampaignsPerformancesJob::class)->daily();
+
+            // Non executed broadcast jobs
+            $schedule->job(RetryPendingBroadcastJobsJob::class)->daily();
         });
     }
 }

@@ -42,8 +42,10 @@ use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
  * @extends BroadcastJobBase<array>
  */
 class PromoteCampaignJob extends BroadcastJobBase {
+    public const TYPE = BroadcastJobType::PromoteCampaign;
+
     public function __construct(int $campaignId, BroadcastJob|null $broadcastJob = null) {
-        parent::__construct(BroadcastJobType::PromoteCampaign, $campaignId, null, $broadcastJob);
+        parent::__construct(static::TYPE, $campaignId, null, $broadcastJob);
     }
 
     /**

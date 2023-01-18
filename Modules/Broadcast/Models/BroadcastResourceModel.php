@@ -40,8 +40,8 @@ abstract class BroadcastResourceModel extends SecuredModel {
 
         static::creating(static function (BroadcastResourceModel $model) {
             $resource = BroadcastResource::query()->create([
-                "type" => $model->resourceType,
-            ]);
+                                                               "type" => $model->resourceType,
+                                                           ]);
 
             $model->id = $resource->getKey();
         });
@@ -58,6 +58,13 @@ abstract class BroadcastResourceModel extends SecuredModel {
      */
     public function external_representations(): HasMany {
         return $this->hasMany(ExternalResource::class, "resource_id", "id");
+    }
+
+    /**
+     * @return HasMany<BroadcastJob>
+     */
+    public function broadcast_jobs() {
+        return $this->hasMany(BroadcastJob::class, "resource_id", "id");
     }
 
     /**

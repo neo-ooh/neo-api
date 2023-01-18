@@ -43,13 +43,15 @@ use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
  * @extends BroadcastJobBase<array{representation: ExternalCampaignDefinition|null}>
  */
 class PromoteScheduleJob extends BroadcastJobBase {
+    public const TYPE = BroadcastJobType::PromoteSchedule;
+
     /**
      * @param int                             $scheduleId
      * @param ExternalCampaignDefinition|null $representation Specific representation to work with
      * @param BroadcastJob|null               $broadcastJob
      */
     public function __construct(int $scheduleId, ExternalCampaignDefinition|null $representation = null, BroadcastJob|null $broadcastJob = null) {
-        parent::__construct(BroadcastJobType::PromoteSchedule, $scheduleId, ["representation" => $representation], $broadcastJob);
+        parent::__construct(static::TYPE, $scheduleId, ["representation" => $representation], $broadcastJob);
     }
 
     /**

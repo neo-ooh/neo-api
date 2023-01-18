@@ -302,6 +302,13 @@ class Campaign extends BroadcastResourceModel {
      * @return void
      */
     public function promote(): void {
+        // Check if the campaign already has a pending job, bail out if so.
+        if ($this->broadcast_jobs()->where("type", "=", PromoteCampaignJob::TYPE->value)
+                 ->whereNull("last_attempt_at")
+                 ->exists()) {
+            return;
+        }
+
         PromoteCampaignJob::dispatch($this->getKey())->delay(300); // Wait 5 minutes before processing
     }
 

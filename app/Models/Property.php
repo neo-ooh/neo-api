@@ -117,7 +117,9 @@ class Property extends SecuredModel {
         return [
             "actor"         => "load:actor",
             "address"       => "load:address",
+            "contacts"      => "load:contacts",
             "fields"        => ["network.properties_fields", "fields_values"],
+            "fields_values" => "load:fields_values",
             "locations"     => "load:actor.own_locations",
             "locations_ids" => "actor.own_locations:id,network_id",
             "network"       => "load:network",
@@ -128,6 +130,7 @@ class Property extends SecuredModel {
             "products"      => "load:products.attachments",
             "products_ids"  => "load:products:id",
             "tags"          => "load:actor.tags",
+            "tenants"       => ["load:tenants"],
             "traffic"       => ["load:traffic.data", "load:traffic.source"],
             "warnings"      => "append:warnings",
         ];

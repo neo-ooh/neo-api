@@ -59,19 +59,6 @@ class PropertiesController extends Controller {
 
         $expansion = $request->input("with", []);
 
-        if (in_array("rolling_monthly_traffic", $request->input("with", []), true)) {
-            $properties->loadMissing([
-                                         "traffic",
-                                         "traffic.data" => fn($q) => $q->select(["property_id", "year", "month", "final_traffic"]),
-                                     ]);
-
-            $properties->each(function ($p) {
-                $p->rolling_monthly_traffic = $p->traffic->getMonthlyTraffic($p->address?->city->province);
-            });
-
-            $properties->makeHidden("traffic");
-        }
-
         if (in_array("weekly_traffic", $request->input("with", []), true)) {
             $properties->loadMissing([
                                          "traffic",
@@ -244,14 +231,6 @@ class PropertiesController extends Controller {
                                     "products_categories",
                                     "products_categories.attachments",
                                     "products_categories.product_type"]);
-        }
-
-        if (in_array("tenants", $relations, true)) {
-            $property->loadMissing(["tenants"]);
-        }
-
-        if (in_array("contacts", $relations, true)) {
-            $property->loadMissing(["contacts"]);
         }
 
         return new Response($property->loadPublicRelations());

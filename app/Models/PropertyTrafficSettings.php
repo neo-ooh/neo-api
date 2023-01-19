@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use ArrayIterator;
-use Carbon\Carbon;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -19,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
-use stdClass;
 
 /**
  * @package Neo\Models
@@ -123,54 +121,6 @@ class PropertyTrafficSettings extends Model {
     |--------------------------------------------------------------------------
     */
 
-    /**
-     * This methods fills the `monthly_traffic` attribute of the model as an array containing traffic monthly traffic data that
-     * can be used to calculate impressions
-     */
-    public function getMonthlyTraffic(?Province $province): stdClass {
-        $monthly_traffic = new stdClass();
-        $trafficData     = $this->data->sortBy(["year, month"], descending: true);
-        $currentYear     = Carbon::now()->year;
-
-        for ($monthIndex = 0; $monthIndex < 12; ++$monthIndex) {
-            /** @var ?PropertyTrafficMonthly $trafficEntry */
-            $trafficEntry = $trafficData->where("month", "=", $monthIndex)->first();
-
-            // Is there a traffic entry for the month ?
-            if ($trafficEntry === null) {
-                // No, do we have a default value we can use ?
-                if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
-                    // Yes, use it
-                    $monthly_traffic->$monthIndex = $this->placeholder_value;
-                    continue;
-                }
-
-                // No data available, and no default value, set traffic as 0
-                $monthly_traffic->$monthIndex = 0;
-                continue;
-            }
-
-            // We have a traffic value. Is it for the current year ?
-            if ($trafficEntry->year === $currentYear) {
-                // This traffic data is for the current year, we can use it without any change
-                $monthly_traffic->$monthIndex = $trafficEntry->final_traffic;
-                continue;
-            }
-
-            // The traffic value is from a previous year, as of now (2021-09) we need to adjust the traffic value in order to use it
-            // If a default value is available, we will prefer using that
-            if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
-                $monthly_traffic->$monthIndex = $this->placeholder_value;
-                continue;
-            }
-
-            // No default value, we have to apply corrections based on the province
-            $provinceFactor               = $province?->slug === 'QC' ? '.75' : '.65';
-            $monthly_traffic->$monthIndex = round($trafficEntry->final_traffic * $provinceFactor);
-        }
-
-        return $monthly_traffic;
-    }
 
     public function getRollingWeeklyTrafficCacheKey(): string {
         return "property-$this->property_id-rolling-weekly-traffic";

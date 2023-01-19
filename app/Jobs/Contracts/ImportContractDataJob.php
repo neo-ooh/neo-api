@@ -248,7 +248,7 @@ class ImportContractDataJob implements ShouldQueue {
                                                                        "contract_id" => $contract->getKey(),
                                                                        "uid"         => $flight->id,
                                                                    ], [
-                                                                       "name"       => $flight->name ?? "Flight #" . $i,
+                                                                       "name"       => $flight->name ?? "Flight #" . ($i + 1),
                                                                        "type"       => $flight->type->value,
                                                                        "start_date" => $flight->start_date,
                                                                        "end_date"   => $flight->end_date,

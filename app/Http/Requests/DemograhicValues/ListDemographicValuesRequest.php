@@ -11,7 +11,9 @@
 namespace Neo\Http\Requests\DemograhicValues;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
+use Neo\Enums\Capability;
 use Neo\Models\DemographicVariable;
 
 class ListDemographicValuesRequest extends FormRequest {
@@ -23,6 +25,6 @@ class ListDemographicValuesRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return true;
+        return Gate::allows(Capability::tools_planning->value) || Gate::allows(Capability::properties_view->value) || Gate::allows(Capability::properties_fields->value);
     }
 }

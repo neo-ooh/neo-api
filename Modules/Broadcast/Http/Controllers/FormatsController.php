@@ -10,12 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
-use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Http\Requests\Formats\CloneFormatRequest;
 use Neo\Modules\Broadcast\Http\Requests\Formats\DestroyFormatRequest;
@@ -37,23 +32,6 @@ class FormatsController extends Controller {
      * @return Response
      */
     public function index(ListFormatsRequest $request): Response {
-        if (!Gate::allows(Capability::formats_edit->value)) {
-            // The current actor doesn't have the capability to access format, we will only return formats he has access to from its hierarchy
-            $accessibleActors = Auth::user()?->getAccessibleActors() ?? new Collection();
-
-            $formats = Format::query()
-                             ->orderBy("name")
-                             ->whereHas("display_types", function (Builder $query) use ($accessibleActors) {
-                                 $query->whereHas("locations", function (Builder $query) use ($accessibleActors) {
-                                     $query->whereHas("actors", function (Builder $query) use ($accessibleActors) {
-                                         $query->where("id", "in", $accessibleActors->pluck("id"));
-                                     });
-                                 });
-                             });
-
-            return new Response($formats->loadPublicRelations());
-        }
-
         return new Response(Format::query()->orderBy("name")->get()->loadPublicRelations());
     }
 

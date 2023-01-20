@@ -15,10 +15,12 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDataRequest;
+use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDemographicValuesRequest;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
+use Neo\Models\DemographicValue;
 use Neo\Models\DemographicVariable;
 use Neo\Models\Field;
 use Neo\Models\FieldsCategory;
@@ -139,6 +141,10 @@ class CampaignPlannerController {
         return [
             "traffic" => $snapshots,
         ];
+    }
+
+    public function demographicValues(GetCampaignPlannerDemographicValuesRequest $request) {
+        return new Response(DemographicValue::query()->whereIn("value_id", $request->input("variables"))->get());
     }
 
     public function save(Request $request, CampaignPlannerSave $campaignPlannerSave) {

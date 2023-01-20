@@ -16,9 +16,9 @@ use Neo\Http\Controllers\PointsOfInterestController;
 use Neo\Models\PointOfInterest;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v1"
-], function () {
+                 "middleware" => "default",
+                 "prefix"     => "v1",
+             ], function () {
     /*
     |----------------------------------------------------------------------
     | Campaign Planner data
@@ -30,6 +30,7 @@ Route::group([
     Route::   get("campaign-planner/_chunk_3", CampaignPlannerController::class . "@dataChunk_3");
     Route::   get("campaign-planner/_chunk_4", CampaignPlannerController::class . "@dataChunk_4");
     Route::   get("campaign-planner/_chunk_traffic", CampaignPlannerController::class . "@trafficChunk");
+    Route::   get("campaign-planner/_demographic_values", CampaignPlannerController::class . "@demographicValues");
 
     /*
     |----------------------------------------------------------------------
@@ -75,13 +76,14 @@ Route::group([
 
 // Open a specific routes for guests to be able to display a planner instance when using a shared link
 Route::group([
-    "middleware" => "guests",
-    "prefix"     => "v1"
-], function () {
+                 "middleware" => "guests",
+                 "prefix"     => "v1",
+             ], function () {
     Route::   get("campaign-planner/{campaignPlannerSave}/_save", CampaignPlannerController::class . "@save");
     Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_1", CampaignPlannerController::class . "@dataChunk_1");
     Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_2", CampaignPlannerController::class . "@dataChunk_2");
     Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_3", CampaignPlannerController::class . "@dataChunk_3");
     Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_4", CampaignPlannerController::class . "@dataChunk_4");
     Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_traffic", CampaignPlannerController::class . "@trafficChunk");
+    Route::   get("campaign-planner/{campaignPlannerSave}/_demographic_values", CampaignPlannerController::class . "@demographicValues");
 });

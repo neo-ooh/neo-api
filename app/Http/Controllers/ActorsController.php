@@ -207,7 +207,7 @@ class ActorsController extends Controller {
         if (count($request->all()) === 0) {
             return new Response([
                                     "code" => "empty-request",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "message" => "You must pass at lease 1 parameter when calling this route",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "message" => "You must pass at lease 1 parameter when calling this route",
                                 ], 422);
         }
 
@@ -242,7 +242,7 @@ class ActorsController extends Controller {
             if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
                 return new Response([
                                         'code' => 'actor.hierarchy-loop',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             'message' => 'Parent assignment would result in incoherent actors hierarchy',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      'message' => 'Parent assignment would result in incoherent actors hierarchy',
                                         'data' => $actor,
                                     ], 403);
             }
@@ -305,7 +305,7 @@ class ActorsController extends Controller {
      * @return Response
      */
     public function getToken(RequestActorTokenRequest $request): Response {
-        return new Response(["token" => Auth::user()?->getJWT()]);
+        return new Response(["token" => Auth::user()?->getJWT(updateIfNecessary: false)]);
     }
 
     public function impersonate(ImpersonateActorRequest $request, Actor $actor) {
@@ -315,7 +315,7 @@ class ActorsController extends Controller {
         }
 
         // Get and return the impersonating token
-        return new Response(["token" => $actor->getJWT(true)]);
+        return new Response(["token" => $actor->getJWT(isImpersonating: true)]);
     }
 
     public function security(ShowActorSecurityStatusRequest $request, Actor $actor): Response {

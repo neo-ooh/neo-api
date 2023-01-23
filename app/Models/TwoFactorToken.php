@@ -14,6 +14,7 @@ use Carbon\Carbon as Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Log;
 use Neo\Jobs\Actors\SendTwoFactorTokenJob;
 
 /**
@@ -36,6 +37,8 @@ class TwoFactorToken extends Model {
     | Table properties
     |--------------------------------------------------------------------------
     */
+
+    const UPDATED_AT = null;
 
     /**
      * The table associated with the model.
@@ -86,19 +89,13 @@ class TwoFactorToken extends Model {
         'token'        => 'integer',
         'validated'    => 'boolean',
         'validated_at' => 'date',
-        'updated_at'   => 'date',
-        'created_at'   => 'date',
     ];
-
-    /**
-     * @var bool
-     */
-    public $timestamps = false;
 
     public static function boot() {
         parent::boot();
 
         static::creating(static function (TwoFactorToken $model) {
+            Log::error("New 2FA Token");
             $model->token      = str_pad(random_int(100000, 999999), 6, '0', STR_PAD_LEFT);
             $model->created_at = $model->freshTimestamp();
         });

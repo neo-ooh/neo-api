@@ -486,23 +486,28 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
         // Is there a token ?
         if ($token === null) {
+//            Log::debug("No token");
             // If we are here, it means the user is logged in using its identifier, but has no twoFA.
             // We create one for it
             if ($updateIfNecessary) {
+//                Log::debug("No token -> Generating new token");
                 $token = new TwoFactorToken();
                 $token->actor()->associate($this);
                 $token->save();
             }
+
             return false;
         }
 
         // If the token is not validated and is too old, recreate one and stop here
         if (!$token->validated && $token->created_at->diffInMinutes(Date::now()) >= 15) {
+//            Log::debug("Token not validated & too old: {$token->created_at->toISOString()} - {$token->created_at->diffInMinutes(Date::now())}");
             TwoFactorToken::query()
                           ->where("actor_id", "=", $this->id)
                           ->delete();
 
             if ($updateIfNecessary) {
+//                Log::debug("Token not validated & too old -> making new one");
                 $token = new TwoFactorToken();
                 $token->actor()->associate($this);
                 $token->save();
@@ -513,14 +518,17 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
         // If the token is not validated and is not too old, stops here just saying not validated
         if (!$token->validated) {
+//            Log::debug("Token not validated");
             return false;
         }
 
         // If the token is validated but is too old, create a new one and say not validated
         if ($token->validated_at->diffInMonths(Date::now()) >= 1) {
+//            Log::debug("Token validated but too old");
             $token->delete();
 
             if ($updateIfNecessary) {
+//                Log::debug("Token validated but too old -> making new one");
                 $token = new TwoFactorToken();
                 $token->actor()->associate($this);
                 $token->save();
@@ -530,6 +538,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         // token is validated and is not expired
+//        Log::debug("Token is valid");
         return true;
     }
 
@@ -539,8 +548,8 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * @param bool $isImpersonating
      * @return string
      */
-    public function getJWT(bool $isImpersonating = false): string {
-        $twoFAIsValid = $this->is2FAValid(!$isImpersonating);
+    public function getJWT(bool $isImpersonating = false, bool $updateIfNecessary = true): string {
+        $twoFAIsValid = $this->is2FAValid($isImpersonating ? false : $updateIfNecessary);
 
         // If this token is for impersonating OR if the user hasn't finished all auth steps, the token should expire in the 24hrs, otherwise, it expires one month after the second FA has been done
         $expire = $isImpersonating || !$twoFAIsValid ? Date::now()

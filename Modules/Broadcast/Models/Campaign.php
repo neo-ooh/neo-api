@@ -217,7 +217,7 @@ class Campaign extends BroadcastResourceModel {
                     ->whereRelation("details", function (Builder $query) {
                         $query->where("is_approved", "=", true);
                     })
-                    ->where("end_date", "<", Carbon::now()->addDay()->startOfDay())
+                    ->where("end_date", "<", Carbon::now()->subDay()->startOfDay())
                     ->withTrashed()
                     ->orderByDesc("end_date");
     }

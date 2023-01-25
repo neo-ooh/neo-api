@@ -136,20 +136,23 @@ class BroadSignAudienceFile extends XLSXDocument {
                                 ]);
         }
 
-        $openLengths = $this->property->opening_hours->mapWithKeys(/**
+        /**
+         * How many minutes the property is open on each day
+         */
+        $openLengthsMinutes = $this->property->opening_hours->mapWithKeys(/**
          * @param OpeningHours $hours
          * @return array
          */ fn(OpeningHours $hours) => [$hours->weekday => $hours->open_at->diffInMinutes($hours->close_at, true)]);
 
         // Make sure all the lengths are valid
-        if ($openLengths->some(fn($length) => $length === 0)) {
+        if ($openLengthsMinutes->some(fn($length) => $length === 0)) {
             throw new InvalidOpeningHoursException($this->property);
         }
 
         // For each week
         do {
             // Get the week traffic
-            $traffic = floor($this->property->rolling_weekly_traffic[(int)strftime("%W", $datePointer->timestamp)] / 7);
+            $dailyTraffic = floor($this->property->rolling_weekly_traffic[(int)strftime("%W", $datePointer->timestamp)] / 7);
 
             // For each day of the week
             for ($i = 0; $i < 7; $i++) {
@@ -168,12 +171,13 @@ class BroadSignAudienceFile extends XLSXDocument {
                 }
 
                 $el                = new ExpressionLanguage();
-                $impressionsPerDay = $el->evaluate($impressionsModel->formula, array_merge([
-                                                                                               "traffic" => $traffic,
-                                                                                               "faces"   => $this->product->quantity,
-                                                                                               "spots"   => 1,
-                                                                                           ],
-                                                                                           $impressionsModel->variables
+                $impressionsPerDay = $el->evaluate($impressionsModel->formula, array_merge(
+                    [
+                        "traffic" => $dailyTraffic,
+                        "faces"   => $this->product->quantity,
+                        "spots"   => 1,
+                    ],
+                    $impressionsModel->variables
                 ));
 
                 // Because the impression for the product is spread on all the display unit attached to it,
@@ -190,11 +194,25 @@ class BroadSignAudienceFile extends XLSXDocument {
 
                 /** @var Frame $frame */
                 foreach ($this->frames as $frame) {
-                    $playPerDay         = $openLengths[$weekday] * 60_000 / $loopConfiguration->loop_length_ms;
-                    $impressionsPerPlay = $impressionsPerDay / $playPerDay;
+                    /**
+                     * How many times the loop runs in one day, or,
+                     * How many times a single ad will be shown in a day
+                     */
+                    $loopsPerDay = $openLengthsMinutes[$weekday] * 60_000 / $loopConfiguration->loop_length_ms;
 
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopConfiguration->loop_length_ms;
+                    /**
+                     * How many impressions a single play of an ad is gonna generate
+                     */
+                    $impressionsPerPlay = $impressionsPerDay / $loopsPerDay;
 
+                    /**
+                     * How many ads are played in an hour
+                     */
+                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopConfiguration->spot_length_ms;
+
+                    /**
+                     * How many impressions are generated in an hour
+                     */
                     $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
 
                     $this->ws->printRow([

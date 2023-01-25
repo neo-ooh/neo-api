@@ -22,6 +22,7 @@ use Neo\Models\Actor;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\CampaignStatus;
 use Neo\Modules\Broadcast\Enums\CampaignWarning;
@@ -304,6 +305,7 @@ class Campaign extends BroadcastResourceModel {
     public function promote(): void {
         // Check if the campaign already has a pending job, bail out if so.
         if ($this->broadcast_jobs()->where("type", "=", PromoteCampaignJob::TYPE->value)
+                 ->where("status", "<>", BroadcastJobStatus::Active)
                  ->whereNull("last_attempt_at")
                  ->exists()) {
             return;

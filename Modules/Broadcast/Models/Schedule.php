@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Actor;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
@@ -304,6 +305,7 @@ class Schedule extends BroadcastResourceModel {
     public function promote(): void {
         // Check if the campaign already has a pending job, bail out if so.
         if ($this->broadcast_jobs()->where("type", "=", PromoteScheduleJob::TYPE->value)
+                 ->where("status", "<>", BroadcastJobStatus::Active)
                  ->whereNull("last_attempt_at")
                  ->exists()) {
             return;

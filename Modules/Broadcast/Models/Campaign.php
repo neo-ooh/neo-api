@@ -201,7 +201,7 @@ class Campaign extends BroadcastResourceModel {
     public function schedules(): HasMany {
         return $this->hasMany(Schedule::class, "campaign_id", "id")
                     ->where(function (Builder $query) {
-                        $query->where("end_date", ">", Carbon::now())
+                        $query->where("end_date", ">=", Carbon::now())
                               ->orWhereRelation("details", function (Builder $query) {
                                   $query->where("is_approved", "=", false);
                               });

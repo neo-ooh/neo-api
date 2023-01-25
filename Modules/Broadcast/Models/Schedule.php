@@ -238,7 +238,7 @@ class Schedule extends BroadcastResourceModel {
         }
 
         // Has broadcasting finished ?
-        if ($this->end_date < Date::now()) {
+        if ($this->end_date < Date::now()->subDay()->startOfDay()) {
             return ScheduleStatus::Expired; // Finish
         }
 

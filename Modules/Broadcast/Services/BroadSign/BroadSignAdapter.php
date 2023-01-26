@@ -346,7 +346,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
             "day_of_week_mask" => $campaign->broadcast_days,
 
             "priority"   => $campaign->priority,
-            "saturation" => $campaign->occurrences_in_loop,
+            "saturation" => $campaign->occurrences_in_loop < 1 ? -1 / $campaign->occurrences_in_loop : $campaign->occurrences_in_loop,
 
             "auto_synchronize_bundles" => true,
             "container_id"             => !$campaign->advertiser ? $this->config->reservationsContainerId : null,
@@ -414,7 +414,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         if ($comparator->isDifferent(["enabled", "name", "occurrences_in_loop"])) {
             $bsCampaign->active     = $campaign->enabled;
             $bsCampaign->name       = $campaign->name;
-            $bsCampaign->saturation = $campaign->occurrences_in_loop;
+            $bsCampaign->saturation = $campaign->occurrences_in_loop < 1 ? -1 / $campaign->occurrences_in_loop : $campaign->occurrences_in_loop;
             $bsCampaign->save();
         }
 

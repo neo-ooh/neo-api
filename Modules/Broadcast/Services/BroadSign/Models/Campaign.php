@@ -247,7 +247,7 @@ class Campaign extends BroadSignModel implements ResourceCastable {
             end_time           : $this->end_time,
             broadcast_days     : $this->day_of_week_mask,
             priority           : -1,
-            occurrences_in_loop: $this->saturation,
+            occurrences_in_loop: $this->saturation < 1 ? -1 / $this->saturation : $this->saturation,
             advertiser         : $this->parent_id ? new ExternalBroadcasterResourceId(
                                      broadcaster_id: $this->getBroadcasterId(),
                                      external_id   : $this->parent_id,

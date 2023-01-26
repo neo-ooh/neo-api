@@ -51,7 +51,7 @@ class StoreCampaignRequest extends FormRequest {
             "broadcast_days"            => ["required", "integer", "max:127"],
 
             // Loop fit
-            "occurrences_in_loop"       => ["required", "integer", "min:0"],
+            "occurrences_in_loop"       => ["required", "numeric", "min:0"],
             "priority"                  => ["required", "integer", "min:0"],
             "static_duration_override"  => ["required", "numeric", "min:0"],
             "dynamic_duration_override" => ["required", "numeric", "min:0"],

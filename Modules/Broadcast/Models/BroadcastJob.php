@@ -88,7 +88,7 @@ class BroadcastJob extends Model {
                 PromoteScheduleJob::dispatch($this->resource_id, $this->payload["representation"] ? ExternalCampaignDefinition::from($this->payload["representation"]) : null, $this);
                 break;
             case BroadcastJobType::DeleteSchedule:
-                DeleteScheduleJob::dispatch($this->resource_id, ExternalCampaignDefinition::from($this->payload["representation"]), $this);
+                DeleteScheduleJob::dispatch($this->resource_id, $this->payload["representation"] ? ExternalCampaignDefinition::from($this->payload["representation"]) : null, $this);
                 break;
             case BroadcastJobType::ImportCreative:
                 ImportCreativeJob::dispatch($this->resource_id, $this->payload["broadcasterId"], $this);

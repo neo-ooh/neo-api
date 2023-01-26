@@ -34,7 +34,7 @@ class RetryPendingBroadcastJobsJob implements ShouldQueue {
 
         /** @var BroadcastJob $job */
         foreach ($jobs as $job) {
-            $job->retry();
+            $job->execute();
         }
     }
 }

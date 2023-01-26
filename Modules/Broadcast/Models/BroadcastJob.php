@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
+use Neo\Modules\Broadcast\Enums\BroadcastParameters;
 use Neo\Modules\Broadcast\Jobs\Campaigns\DeleteCampaignJob;
 use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
 use Neo\Modules\Broadcast\Jobs\Creatives\ImportCreativeJob;
@@ -27,6 +28,7 @@ use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
  * @property int                $resource_id
  * @property BroadcastJobType   $type
  * @property Carbon             $created_at
+ * @property Carbon             $scheduled_at
  * @property int                $attempts
  * @property Carbon|null        $last_attempt_at
  * @property BroadcastJobStatus $status
@@ -41,6 +43,7 @@ class BroadcastJob extends Model {
     protected $casts = [
         "type"                => BroadcastJobType::class,
         "created_at"          => "datetime",
+        "scheduled_at"        => "datetime",
         "last_attempt_at"     => "datetime",
         "status"              => BroadcastJobStatus::class,
         "payload"             => "array",
@@ -53,6 +56,7 @@ class BroadcastJob extends Model {
         "resource_id",
         "type",
         "created_at",
+        "scheduled_at",
         "payload",
     ];
 
@@ -60,8 +64,9 @@ class BroadcastJob extends Model {
         parent::boot();
 
         static::creating(static function (BroadcastJob $job) {
-            $job->created_at = Carbon::now();
-            $job->status     = BroadcastJobStatus::Pending;
+            $job->created_at   = Carbon::now();
+            $job->scheduled_at = Carbon::now()->addSeconds(param(BroadcastParameters::BroadcastJobsDelaySec));
+            $job->status       = BroadcastJobStatus::Pending;
         });
     }
 
@@ -71,7 +76,7 @@ class BroadcastJob extends Model {
         $this->save();
     }
 
-    public function retry(): void {
+    public function execute(): void {
         switch ($this->type) {
             case BroadcastJobType::PromoteCampaign:
                 PromoteCampaignJob::dispatch($this->resource_id, $this);

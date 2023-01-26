@@ -53,6 +53,7 @@ Route::group([
 
     Route::model("broadcastJob", BroadcastJob::class);
 
+    Route::   put("broadcast-jobs/{broadcastJob}/_cancel", BroadcastJobsController::class . "@cancel");
     Route::   put("broadcast-jobs/{broadcastJob}/_retry", BroadcastJobsController::class . "@retry");
 
 

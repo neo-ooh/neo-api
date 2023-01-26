@@ -60,7 +60,7 @@ class Network extends Model {
      */
     protected $casts = [
         "settings"     => NetworkSettings::class,
-        "last_sync_at" => "date",
+        "last_sync_at" => "datetime",
     ];
 
     /**

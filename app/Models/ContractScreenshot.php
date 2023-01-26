@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
@@ -33,8 +32,6 @@ use Illuminate\Support\Facades\Storage;
  * @property string        $url
  */
 class ContractScreenshot extends Model {
-    use HasFactory;
-
     protected $table = "contracts_screenshots";
 
     protected $casts = [

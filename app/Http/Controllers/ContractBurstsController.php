@@ -101,7 +101,7 @@ class ContractBurstsController extends Controller {
     }
 
     public function destroyUnlockedScreenshots(DeleteBurstUnlockedScreenshotsRequest $request, ContractBurst $burst) {
-        DeleteBurstJob::dispatch($burst->getKey(), false);
+        DeleteBurstJob::dispatch(burstId: $burst->getKey(), deleteLocked: false);
 
         return new Response($burst);
     }

@@ -17,4 +17,5 @@ enum BroadcastJobStatus: string {
     case Success = "success";
     case Failed = "failed";
     case Skipped = "skipped";
+    case Cancelled = "cancelled";
 }

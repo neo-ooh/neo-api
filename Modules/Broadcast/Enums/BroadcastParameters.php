@@ -10,6 +10,7 @@ enum BroadcastParameters: string implements ParametersEnum {
     case CreativeVideoMaxSizeMiB = 'CREATIVE_VIDEO_MAX_SIZE_MIB';
     case CreativeLengthFlexibilitySec = 'CREATIVE_LENGTH_FLEXIBILITY_SEC';
     case BroadcastJobsEnabledBool = 'BROADCAST_JOBS_ENABLED';
+    case BroadcastJobsDelaySec = 'BROADCAST_JOBS_DELAY_SEC';
 
     public function defaultValue(): mixed {
         return match ($this) {
@@ -17,6 +18,7 @@ enum BroadcastParameters: string implements ParametersEnum {
             self::CreativeVideoMaxSizeMiB      => 15,
             self::CreativeLengthFlexibilitySec => .1,
             self::BroadcastJobsEnabledBool     => true,
+            self::BroadcastJobsDelaySec        => 300,
         };
     }
 
@@ -26,6 +28,7 @@ enum BroadcastParameters: string implements ParametersEnum {
             self::CreativeVideoMaxSizeMiB      => "number",
             self::CreativeLengthFlexibilitySec => "number",
             self::BroadcastJobsEnabledBool     => "boolean",
+            self::BroadcastJobsDelaySec        => "number",
         };
     }
 
@@ -35,6 +38,7 @@ enum BroadcastParameters: string implements ParametersEnum {
             self::CreativeVideoMaxSizeMiB      => Capability::broadcast_settings,
             self::CreativeLengthFlexibilitySec => Capability::broadcast_settings,
             self::BroadcastJobsEnabledBool     => Capability::broadcast_settings,
+            self::BroadcastJobsDelaySec        => Capability::broadcast_settings,
         };
     }
 }

@@ -38,6 +38,10 @@ class DeleteCreativeJob extends BroadcastJobBase {
         /** @var Creative $creative */
         $creative = Creative::withTrashed()->find($this->resourceId);
 
+        if (!$creative) {
+            return null;
+        }
+
         /** @var Collection<ExternalResource> $externalRepresentations */
         $externalRepresentations = $creative->external_representations;
 

@@ -251,7 +251,7 @@ class Content extends BroadcastResourceModel {
      */
     public function promote(): void {
         $this->creatives->each(function (Creative $creative) {
-            UpdateCreativeJob::dispatch($creative->getKey());
+            new UpdateCreativeJob($creative->getKey());
         });
     }
 }

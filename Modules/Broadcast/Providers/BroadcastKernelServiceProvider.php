@@ -12,6 +12,7 @@ namespace Neo\Modules\Broadcast\Providers;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
+use Neo\Modules\Broadcast\Jobs\BroadcastJobsSchedulerJob;
 use Neo\Modules\Broadcast\Jobs\Chores\DeleteExpiredResourcesJob;
 use Neo\Modules\Broadcast\Jobs\Chores\RetryPendingBroadcastJobsJob;
 use Neo\Modules\Broadcast\Jobs\Networks\SynchronizeAllNetworksJob;
@@ -23,6 +24,9 @@ class BroadcastKernelServiceProvider extends ServiceProvider {
 
     public function boot() {
         $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+            // Broadcast jobs
+            $schedule->job(BroadcastJobsSchedulerJob::class)->everyMinute();
+
             // Networks
             $schedule->job(SynchronizeAllNetworksJob::class)->daily();
 

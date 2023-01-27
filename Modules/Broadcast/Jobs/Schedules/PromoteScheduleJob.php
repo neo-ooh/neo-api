@@ -182,8 +182,13 @@ class PromoteScheduleJob extends BroadcastJobBase {
             $scheduleResource = $schedule->toResource();
 
             // Complete the schedule resource
-            // Use the campaign duration override, fallback to the format's content length otherwise
-            $scheduleResource->duration_msec = ($schedule->campaign->static_duration_override ?: $representationFormat->content_length) * 1000;
+            // If at least one of the content has a set duration, we use the dynamic duration override if available
+            if ($schedule->campaign->dynamic_duration_override > PHP_FLOAT_EPSILON && $contents->max("duration") > PHP_FLOAT_EPSILON) {
+                $scheduleResource->duration_msec = (int)round($schedule->campaign->dynamic_duration_override * 1000);
+            } else {
+                $scheduleResource->duration_msec = (int)round(($schedule->campaign->static_duration_override ?: $representationFormat->content_length) * 1000);
+            }
+
             // If all the layouts in this format are fullscreen, mark the bundle as such
             $scheduleResource->is_fullscreen = $layouts->every("settings.is_fullscreen", "=", true);
 

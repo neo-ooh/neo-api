@@ -536,11 +536,11 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $bsBundle       = new BroadSignBundle($this->getAPIClient());
         $bsBundle->name = $bsSchedule->name;
 
-        $bsBundle->max_duration_msec = $schedule->duration_msec;
-        $bsBundle->fullscreen        = $schedule->is_fullscreen;
-
-        $bsBundle->auto_synchronized     = true;
         $bsBundle->allow_custom_duration = true;
+        $bsBundle->max_duration_msec     = $schedule->duration_msec;
+
+        $bsBundle->fullscreen        = $schedule->is_fullscreen;
+        $bsBundle->auto_synchronized = true;
 
         $bsBundle->parent_id = $bsSchedule->id;
 
@@ -626,8 +626,10 @@ class BroadSignAdapter extends BroadcasterOperator implements
             $triggerTag !== $bsBundle->trigger_category_id ||
             $primarySeparationTag !== $bsBundle->category_id ||
             $secondarySeparationTags !== $bsBundle->secondary_sep_category_ids ||
-            $schedule->is_fullscreen !== $bsBundle->fullscreen
+            $schedule->is_fullscreen !== $bsBundle->fullscreen ||
+            $bsBundle->max_duration_msec !== $schedule->duration_msec
         ) {
+            $bsBundle->max_duration_msec          = $schedule->duration_msec;
             $bsBundle->fullscreen                 = $schedule->is_fullscreen;
             $bsBundle->auto_synchronized          = $triggerTag !== 0;
             $bsBundle->trigger_category_id        = $triggerTag;

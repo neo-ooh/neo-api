@@ -50,7 +50,8 @@ class StoreScheduleRequest extends FormRequest {
             "tags"   => ["array"],
             "tags.*" => ["integer", new Exists(BroadcastTag::class, "id")],
 
-            "send_for_review" => ["required", "boolean"],
+            "schedule_as_bundle" => ["required", "boolean"],
+            "send_for_review"    => ["required", "boolean"],
 
             "batch_id" => ["string"],
 

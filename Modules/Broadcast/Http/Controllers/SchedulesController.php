@@ -127,6 +127,8 @@ class SchedulesController extends Controller {
         $broadcastDays = $request->input("broadcast_days");
         $broadcastTags = $request->input("tags", []);
 
+        $asBundle = (bool)$request->input("schedule_as_bundle");
+
         // Prepare the schedule
         $schedule                 = new Schedule();
         $schedule->owner_id       = Auth::id();
@@ -137,8 +139,9 @@ class SchedulesController extends Controller {
         $schedule->broadcast_days = $broadcastDays;
         $schedule->is_locked      = $request->input('send_for_review');
 
-        // If there is more than one campaign, apply a batch id to the schedule
-        if ($request->has("batch_id") || $campaigns->count() > 1) {
+        // If we are provided a batch id, or if there is more than one campaign,
+        // or multiple contents to schedule individually, assign a batch id to the created schedules
+        if ($request->has("batch_id") || $campaigns->count() > 1 || ($contents->count() > 0 && !$asBundle)) {
             $schedule->batch_id = $request->input("batch_id", Uuid::uuid4());
         }
 
@@ -170,7 +173,8 @@ class SchedulesController extends Controller {
                 }
 
                 // Create the schedule for the campaign
-                $campaignSchedule = clone $schedule;
+                $campaignSchedule              = clone $schedule;
+                $campaignSchedule->campaign_id = $campaign->id;
 
                 if ($forceFit) {
                     [$schedule->start_date,
@@ -197,19 +201,42 @@ class SchedulesController extends Controller {
                     );
                 }
 
-                // Schedule is validated for campaign, store it
-                $campaignSchedule->campaign_id = $campaign->id;
-                $campaignSchedule->order       = $campaign->schedules()->count();
-                $campaignSchedule->save();
-
-                // Attach the contents to the schedule
-                $campaignSchedule->contents()->attach($contents->pluck("id"));
-                $campaignSchedule->broadcast_tags()->sync($broadcastTags);
-
-                // If the schedule is locked on creation, check if we should auto-approve it or warn someone to approve it
-                if ($campaignSchedule->is_locked) {
-                    $campaignSchedule->locked_at = Date::now();
+                // Depending if we want to schedule each content individually or together, the next steps are not the same
+                if ($asBundle) {
+                    // Schedule is validated for campaign, store it
+                    $campaignSchedule->order = $campaign->schedules()->count();
                     $campaignSchedule->save();
+
+                    // Attach the contents to the schedule
+                    $campaignSchedule->contents()->attach($contents->pluck("id"));
+                    $campaignSchedule->broadcast_tags()->sync($broadcastTags);
+
+                    $schedules[] = $campaignSchedule;
+                } else { // if (!$asBundle) -> Schedule each content in a separate bundle
+                    foreach ($contents as $content) {
+                        // Schedule is validated for campaign, store it
+                        $campaignContentSchedule        = clone $campaignSchedule;
+                        $campaignContentSchedule->order = $campaign->schedules()->count();
+                        $campaignContentSchedule->save();
+
+                        // Attach the content to the schedule
+                        $campaignContentSchedule->contents()->attach($content->getKey());
+                        $campaignContentSchedule->broadcast_tags()->sync($broadcastTags);
+
+                        $schedules[] = $campaignContentSchedule;
+                    }
+                }
+            }
+
+            // For each schedules, check if we need to lock it
+            /**
+             * @var Schedule $schedule
+             */
+            foreach ($schedules as $schedule) {
+                // If the schedule is locked on creation, check if we should auto-approve it or warn someone to approve it
+                if ($schedule->is_locked) {
+                    $schedule->locked_at = Date::now();
+                    $schedule->save();
 
                     /** @var Actor $user */
                     $user = Auth::user();
@@ -217,19 +244,12 @@ class SchedulesController extends Controller {
                     if ($user->hasCapability(Capability::contents_review)) {
                         $review              = new ScheduleReview();
                         $review->reviewer_id = $user->getKey();
-                        $review->schedule_id = $campaignSchedule->getKey();
+                        $review->schedule_id = $schedule->getKey();
                         $review->approved    = true;
                         $review->message     = "[auto-approved]";
                         $review->save();
                     }
-
-                    // If not all contents of the schedule are pre-approved, send an email
-//                    if ($campaignSchedule->contents->some("is_approved", "!==", true) && !Gate::allows(Capability::contents_review->value)) {
-//                        SendReviewRequestEmail::dispatch($campaignSchedule->id);
-//                    }
                 }
-
-                $schedules[] = $campaignSchedule;
             }
 
             DB::commit();
@@ -379,6 +399,7 @@ class SchedulesController extends Controller {
             $schedules = Schedule::query()->where("batch_id", "=", $schedule->batch_id)->get();
         }
 
+        /** @var Schedule $s */
         foreach ($schedules as $s) {
             // If a schedule has not be reviewed, we want to completely remove it
             if ($s->status === ScheduleStatus::Draft || $s->status === ScheduleStatus::Pending) {
@@ -387,10 +408,10 @@ class SchedulesController extends Controller {
             }
 
             // If the schedule is approved, we check if it has started playing.
-            // If so, we set its end-date for yesterday, effectively stopping its broadcast, but keeping it in the
-            // `expired` list
-            if ($s->start_date < Carbon::now()) {
-                $s->end_date = Carbon::now()->subDay();
+            // If it has started playing earlier than today, we set its end-date for yesterday, effectively stopping its
+            // broadcast, but keeping it in the `expired` list
+            if ($s->start_date < Carbon::now() && !$s->start_date->isToday()) {
+                $s->end_date = Carbon::now()->subDay()->min($s->start_date);
                 $s->save();
                 $s->promote();
 

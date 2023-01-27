@@ -11,7 +11,7 @@
 namespace Neo\Http\Requests\Clients;
 
 use Auth;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;

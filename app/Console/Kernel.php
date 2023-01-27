@@ -16,7 +16,6 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\Contracts\RefreshContracts;
-use Neo\Jobs\NotifyEndOfSchedules;
 use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\Properties\CreateTrafficSnapshotJob;
 use Neo\Jobs\RequestScreenshotsBursts;
@@ -99,9 +98,9 @@ class Kernel extends ConsoleKernel {
         $schedule->command('contracts:clear-screenshots')->daily();
 
         // End of schedule email
-        $schedule->job(NotifyEndOfSchedules::class)->weekdays()
+        /*$schedule->job(NotifyEndOfSchedules::class)->weekdays()
                  ->timezone('America/Toronto')
-                 ->at("06:00");
+                 ->at("06:00");*/
 
 
         /* -----------------

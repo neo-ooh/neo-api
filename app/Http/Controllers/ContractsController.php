@@ -14,6 +14,7 @@ use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
@@ -117,6 +118,8 @@ class ContractsController extends Controller {
 
     public function refresh(RefreshContractRequest $request, Contract $contract): Response {
         set_time_limit(120);
+        // Clear the contract's cache
+        Cache::tags(["contract-performances", $contract->contract_id])->flush();
 
         if ($request->input("reimport", false)) {
             ImportContractDataJob::dispatch($contract->id)

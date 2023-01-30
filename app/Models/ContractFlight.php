@@ -117,7 +117,7 @@ class ContractFlight extends Model {
      */
     public function getPerformancesAttribute(): Collection {
         // Contract can pull their performances from two different places:
-        // The first place and most straightforward is form the campaign associated with the flight that are
+        // The first place and most straightforward is from the campaign associated with the flight that are
         // setup in Connect. For these, we just have to format the already stored performances.
         // The other place is external reservations (campaigns in external broadcaster) that have been associated directly
         // with the flight without passing through a Connect campaign. For these we need to pull the performances straight

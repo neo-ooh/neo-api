@@ -38,6 +38,7 @@ use Neo\Modules\Broadcast\Http\Requests\Schedules\ListSchedulesByIdsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\ListSchedulesRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\StoreScheduleRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\UpdateScheduleRequest;
+use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Schedule;
@@ -404,7 +405,7 @@ class SchedulesController extends Controller {
             // If a schedule has not be reviewed, we want to completely remove it
             if ($s->status === ScheduleStatus::Draft || $s->status === ScheduleStatus::Pending) {
                 $s->forceDelete();
-                return new Response([]);
+                continue;
             }
 
             // If the schedule is approved, we check if it has started playing.
@@ -415,7 +416,18 @@ class SchedulesController extends Controller {
                 $s->save();
                 $s->promote();
 
-                return new Response([]);
+                continue;
+            }
+
+            // If the schedule started today, we change its end date to today, its end time to now, and we delete it
+            if ($s->start_date < Carbon::now() && $s->start_date->isToday()) {
+                $s->end_date   = Carbon::today();
+                $s->end_time   = Carbon::now();
+                $s->start_time = $s->start_time->isAfter($s->end_time) ? $s->end_time->clone()->subMinutes(1) : $s->start_time;
+                $s->save();
+
+                new DeleteScheduleJob($s->getKey());
+                continue;
             }
 
             // Schedule has not started playing, delete it

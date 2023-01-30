@@ -26,6 +26,8 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterType;
 use Neo\Modules\Broadcast\Services\BroadSign\BroadSignAdapter;
 use Neo\Modules\Broadcast\Services\Resources\Frame;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
+use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class BroadSignAudienceFile extends XLSXDocument {
@@ -220,8 +222,8 @@ class BroadSignAudienceFile extends XLSXDocument {
                                             $frame->external_id,
                                             $date->toDateString(),
                                             $date->clone()->endOfDay()->toDateString(),
-                                            $hours->open_at->startOf('minute')->toTimeString(),
-                                            $hours->close_at->endOf('minute')->toTimeString(),
+                                            $hours->open_at->startOf('minute')->format('H:m:s'),
+                                            $hours->close_at->endOf('minute')->format('H:m:s'),
                                             $i === 0 ? 1 : 0, // Monday
                                             $i === 1 ? 1 : 0, // Tuesday
                                             $i === 2 ? 1 : 0, // Wednesday
@@ -231,6 +233,14 @@ class BroadSignAudienceFile extends XLSXDocument {
                                             $i === 6 ? 1 : 0, // Sunday
                                             $impressionsPerHour,
                                         ]);
+
+                    // We have to set the start and end date explicitly, otherwise PHPSpreadsheet is gonna remove the leading zero fo the opening hours
+                    $this->ws->setCellValueExplicit([5, $this->ws->getCursorRow() - 1],
+                                                    $hours->open_at->startOf('minute')->format('H:m:s'),
+                                                    DataType::TYPE_STRING);
+                    $this->ws->setCellValueExplicit([6, $this->ws->getCursorRow() - 1],
+                                                    $hours->close_at->endOf('minute')->format('H:m:s'),
+                                                    DataType::TYPE_STRING);
                 }
             }
 
@@ -249,5 +259,12 @@ class BroadSignAudienceFile extends XLSXDocument {
      */
     public function getName(): string {
         return "AudienceFile-{$this->location->external_id}";
+    }
+
+    public function customizeOutput(BaseWriter $writer) {
+        $writer->setPreCalculateFormulas(false);
+
+        // Writer is actually a Csv writer as we export only to csv
+        $writer->setEnclosure('');
     }
 }

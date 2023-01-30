@@ -19,6 +19,7 @@ use PhpOffice\PhpSpreadsheet\Cell\AdvancedValueBinder;
 use PhpOffice\PhpSpreadsheet\Cell\Cell;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -69,6 +70,12 @@ abstract class XLSXDocument extends Document {
         return DocumentFormat::XLSX;
     }
 
+    public function customizeOutput(BaseWriter $writer) {
+        if ($this->format() === DocumentFormat::XLSX) {
+            $writer->setPreCalculateFormulas(false);
+        }
+    }
+
     /**
      * @inheritDoc
      * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception|Exception
@@ -81,9 +88,7 @@ abstract class XLSXDocument extends Document {
             default              => throw new UnsupportedDocumentFormatException($this->format(), [DocumentFormat::XLSX, DocumentFormat::CSV])
         };
 
-        if ($this->format() === DocumentFormat::XLSX) {
-            $writer->setPreCalculateFormulas(false);
-        }
+        $this->customizeOutput($writer);
 
         header("access-control-allow-origin: *");
         header("content-type: " . $this->format()->value);

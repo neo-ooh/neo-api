@@ -147,12 +147,21 @@ class PromoteScheduleJob extends BroadcastJobBase {
             $externalCampaignResource = $schedule->campaign->getExternalRepresentation($broadcaster->getBroadcasterId(), $representation->network_id, $representation->format_id);
 
             if (!$externalCampaignResource) {
-                // The campaign has no ID for this representation. This means the campaign is in an erroneous state
-                throw new CouldNotPromoteResourceException($broadcaster, $this->resourceId, [
-                    "message"    => "Missing External Representation for campaign",
-                    "network_id" => $representation->network_id,
-                    "format_id"  => $representation->format_id,
-                ]);
+                // The campaign has no ID for this representation.
+                // The campaign may have not been replicated yet, or has failed its scheduling.
+                // We want to retry later for this specific representation, but only if we are not specialized
+                if ($useSpecificRepresentation) {
+                    throw new CouldNotPromoteResourceException($broadcaster, $this->resourceId, [
+                        "message"    => "Missing External Representation for campaign",
+                        "network_id" => $representation->network_id,
+                        "format_id"  => $representation->format_id,
+                    ]);
+                }
+
+                // Scheduled a promote job specific to the current representation so we can try again later.
+                new PromoteScheduleJob($this->resourceId, $representation);
+
+                continue;
             }
 
             // List which contents from the schedule match the current definition. For a content

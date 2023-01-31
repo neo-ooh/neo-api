@@ -210,7 +210,7 @@ class BroadSignAudienceFile extends XLSXDocument {
                     /**
                      * How many ads are played in an hour
                      */
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopConfiguration->spot_length_ms;
+                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopConfiguration->loop_length_ms;
 
                     /**
                      * How many impressions are generated in an hour

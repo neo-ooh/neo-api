@@ -109,16 +109,18 @@ class ImportContractDataJob implements ShouldQueue {
 
         // Load flights from the plan if available, and merge existing flights with them
         // Remove any already existing flight
-        $contract->flights()->delete();
+//        $contract->flights()->delete();
 
         // Load flights from the plan, if available
-        $flights    = $this->getFlightsFromPlan($contract, $output);
+        $flights = $this->getFlightsFromPlan($contract, $output);
+        /** @var Collection $lines */
+        $lines      = $flights->flatMap(fn(ContractFlight $flight) => $flight->lines);
         $orderLines = $this->getLinesFromOdoo($odooClient, $contract, $output);
 
         $output->writeln($contract->contract_id . ": Received {$orderLines->count()} lines...");
 
         // Now, we parse all the lines and import them
-        $contractLines              = [];
+        $contractLines              = collect();
         $expectedDigitalImpressions = 0;
 
         $output->writeln($contract->contract_id . ": Importing {$orderLines->count()} lines in the contract...");
@@ -169,28 +171,45 @@ class ImportContractDataJob implements ShouldQueue {
                 $flights->push($flight);
             }
 
-            $line = [
-                "product_id"    => $product->getKey(),
-                "flight_id"     => $flight->getKey(),
-                "external_id"   => $orderLine->getKey(),
-                "spots"         => $orderLine->product_uom_qty,
-                "media_value"   => $orderLine->price_unit * $orderLine->nb_weeks * $orderLine->nb_screen * $orderLine->product_uom_qty,
-                "discount"      => $orderLine->discount,
-                "discount_type" => "relative",
-                "price"         => $orderLine->price_subtotal,
-                "traffic"       => 0,
-                "impressions"   => $orderLine->connect_impression ?: $orderLine->impression,
-            ];
+            // If a line with the same external id already exists, use it, otherwise get a new line instance
+            $line = $lines->firstWhere("external_id", "===", $orderLine->getKey()) ?? new ContractLine();
+            $line->fill([
+                            "product_id"    => $product->getKey(),
+                            "flight_id"     => $flight->getKey(),
+                            "external_id"   => $orderLine->getKey(),
+                            "spots"         => $orderLine->product_uom_qty,
+                            "media_value"   => $orderLine->price_unit * $orderLine->nb_weeks * $orderLine->nb_screen * $orderLine->product_uom_qty,
+                            "discount"      => $orderLine->discount,
+                            "discount_type" => "relative",
+                            "price"         => $orderLine->price_subtotal,
+                            "traffic"       => 0,
+                            "impressions"   => $orderLine->connect_impression ?: $orderLine->impression,
+                        ]);
+            $line->save();
 
-            $contractLines[] = $line;
+            // Log the line for later use
+            $contractLines->push($line);
 
             // If the line is guaranteed and for a digital product, sum its impressions
             if ($product->category->fill_strategy === ProductsFillStrategy::digital &&
                 $flight->type !== FlightType::BUA) {
-                $expectedDigitalImpressions += $line["impressions"];
+                $expectedDigitalImpressions += $line->impressions;
             }
         }
 
+        // Everything has been inserted, do some cleanup
+        // Remove any flights attached with the contract that are not part of the ones just created
+        $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();
+
+        // Remove any line that may have been removed
+        $contractLines->groupBy("flight_id")->each(function (Collection $lines) {
+            ContractLine::query()
+                        ->where("flight_id", $lines[0]["flight_id"])
+                        ->whereNotIn("external_id", $lines->pluck("external_id"))
+                        ->delete();
+        });
+
+        // Did we insert any line at all ?
         if (count($contractLines) === 0) {
             // If there is no lines, in the contract, we delete it
             $output->writeln($contract->contract_id . ": No orderlines found, deleting contract");
@@ -198,7 +217,6 @@ class ImportContractDataJob implements ShouldQueue {
             return;
         }
 
-        ContractLine::query()->insertOrIgnore($contractLines);
         $output->writeln($contract->contract_id . ": {$flights->count()} Flights attached.");
 
         // Update contract start date, end date and expected impressions
@@ -222,9 +240,6 @@ class ImportContractDataJob implements ShouldQueue {
         $contract->end_date             = $endDate;
         $contract->expected_impressions = $expectedDigitalImpressions;
         $contract->save();
-
-        // Remove any flights attached with the contract that are not part of the ones just created
-        $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();
     }
 
     /**
@@ -235,7 +250,7 @@ class ImportContractDataJob implements ShouldQueue {
         $plan = $contract->getStoredPlanAttribute();
 
         if (!$plan) {
-            return collect();
+            return $contract->flights;
         }
 
         $flights = collect();

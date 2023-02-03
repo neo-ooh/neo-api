@@ -134,7 +134,7 @@ class CreativeValidator {
         //Check framerate
         $framerate = $this->fracToFloat($videoStream->get("r_frame_rate"));
         if ($framerate < 23.9 || $framerate > 30) {
-            throw new InvalidCreativeFrameRate();
+            throw new InvalidCreativeFrameRate($framerate);
         }
 
         // Check length if content length is not zero
@@ -157,10 +157,10 @@ class CreativeValidator {
 
         if ($creativeAspectRatio[0] !== $frameAspectRatio[0] || $creativeAspectRatio[1] !== $frameAspectRatio[1]) {
             throw new InvalidCreativeDimensions(
-                expectedWidth: $this->frame->width,
+                expectedWidth : $this->frame->width,
                 expectedHeight: $this->frame->height,
-                foundWidth: $this->creativeWidth,
-                foundHeight: $this->creativeHeight,
+                foundWidth    : $this->creativeWidth,
+                foundHeight   : $this->creativeHeight,
             );
         }
     }

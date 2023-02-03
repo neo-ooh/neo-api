@@ -17,11 +17,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
-use Neo\Models\ContractReservation;
-use Neo\Resources\Contracts\FlightType;
 
 class RefreshContractsPerformancesJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -43,20 +42,17 @@ class RefreshContractsPerformancesJob implements ShouldQueue {
                                  });
                              })
                              ->with(["flights", "reservations"])
-                             ->get()
-                             ->append(["performances"]);
+                             ->get();
 
         /** @var Contract $contract */
         foreach ($contracts as $contract) {
-            $reservationExternalIds = $contract->reservations->filter(function (ContractReservation $reservation) use ($contract) {
+            /** @var Collection<ContractFlight> $guaranteedFlights */
+            $guaranteedFlights = $contract->flights->where("type", "<>", "bua");
+            $guaranteedFlights->append("performances");
 
-                /** @var ContractFlight|null $flight */
-                $flight = $contract->flights->firstWhere("id", "=", $reservation->flight_id);
-                return $flight && $flight->type !== FlightType::BUA;
-            })->pluck("external_id");
+            $contract->received_impressions = $guaranteedFlights->flatMap(fn(ContractFlight $flight) => $flight->performances)
+                                                                ->sum("impressions");
 
-            $contract->received_impressions = $contract->performances->whereIn("reservable_id", $reservationExternalIds)
-                                                                     ->sum("total_impressions");
             $contract->save();
 
         }

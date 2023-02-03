@@ -148,7 +148,7 @@ class ContractFlight extends Model {
     /**
      * Loads performances of attached reservations
      *
-     * @return Collection
+     * @return Collection<FlightPerformanceDatum>
      * @throws InvalidBroadcasterAdapterException
      */
     protected function getReservationsPerformances(): Collection {

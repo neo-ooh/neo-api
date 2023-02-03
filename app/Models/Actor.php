@@ -21,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
@@ -60,6 +61,7 @@ use Neo\Rules\AccessibleActor;
  * @property Date                $created_at
  * @property Date                $updated_at
  * @property Date                $last_login_at
+ * @property Date|null           $deleted_at
  *
  * @property bool                $registration_sent     Tell if the registration email was sent to the actor. Not applicable to
  *           groups
@@ -115,6 +117,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
     use HasCapabilities;
     use WithRelationCaching;
     use HasPublicRelations;
+    use SoftDeletes;
 
 
     /**

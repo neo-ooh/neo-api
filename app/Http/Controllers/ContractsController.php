@@ -122,12 +122,18 @@ class ContractsController extends Controller {
         Cache::tags(["contract-performances", $contract->contract_id])->flush();
 
         if ($request->input("reimport", false)) {
-            ImportContractDataJob::dispatch($contract->id)
-                                 ->chain([
-                                             new ImportContractReservations($contract->id),
-                                             new RefreshContractsPerformancesJob($contract->id),
-                                         ]);
-            // We don't fall through here because we want to importReservations and refresh performances to always be run after the importData job.
+            if (config("app.env") === "development") {
+                (new ImportContractDataJob($contract->id))->handle();
+                (new ImportContractReservations($contract->id))->handle();
+                (new RefreshContractsPerformancesJob($contract->id))->handle();
+            } else {
+                ImportContractDataJob::dispatch($contract->id)
+                                     ->chain([
+                                                 new ImportContractReservations($contract->id),
+                                                 new RefreshContractsPerformancesJob($contract->id),
+                                             ]);
+                // We don't fall through here because we want to importReservations and refresh performances to always be run after the importData job.
+            }
         } else {
             ImportContractReservations::dispatch($contract->id)
                                       ->chain([

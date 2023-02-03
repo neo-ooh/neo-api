@@ -113,6 +113,8 @@ class ImportContractDataJob implements ShouldQueue {
 
         // Load flights from the plan, if available
         $flights = $this->getFlightsFromPlan($contract, $output);
+        /** @var Collection<ContractFlight> $usedFlights */
+        $usedFlights = collect();
         /** @var Collection $lines */
         $lines      = $flights->flatMap(fn(ContractFlight $flight) => $flight->lines);
         $orderLines = $this->getLinesFromOdoo($odooClient, $contract, $output);
@@ -171,6 +173,10 @@ class ImportContractDataJob implements ShouldQueue {
                 $flights->push($flight);
             }
 
+            if ($usedFlights->doesntContain("id", "===", $flight->getKey())) {
+                $usedFlights->push($flight);
+            }
+
             // If a line with the same external id already exists, use it, otherwise get a new line instance
             $line = $lines->firstWhere("external_id", "===", $orderLine->getKey()) ?? new ContractLine();
             $line->fill([
@@ -199,7 +205,7 @@ class ImportContractDataJob implements ShouldQueue {
 
         // Everything has been inserted, do some cleanup
         // Remove any flights attached with the contract that are not part of the ones just created
-        $contract->flights()->whereNotIn("id", $flights->pluck("id"))->delete();
+        $contract->flights()->whereNotIn("id", $usedFlights->pluck("id"))->delete();
 
         // Remove any line that may have been removed
         $contractLines->groupBy("flight_id")->each(function (Collection $lines) {

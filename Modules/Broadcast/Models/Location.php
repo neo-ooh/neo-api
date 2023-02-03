@@ -109,12 +109,13 @@ class Location extends SecuredModel {
      * @var array<string, string|callable>
      */
     protected array $publicRelations = [
-        "network"     => "network",
-        "broadcaster" => "network.broadcaster_connection",
-        "players"     => "players",
-        "actors"      => "actors",
-        "products"    => "products",
-        "product_ids" => "append:product_ids",
+        "display_type" => "display_type",
+        "network"      => "network",
+        "broadcaster"  => "network.broadcaster_connection",
+        "players"      => "players",
+        "actors"       => "actors",
+        "products"     => "products",
+        "product_ids"  => "append:product_ids",
     ];
 
 

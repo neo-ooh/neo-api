@@ -177,8 +177,10 @@ class ImportContractDataJob implements ShouldQueue {
                 $usedFlights->push($flight);
             }
 
-            // If a line with the same external id already exists, use it, otherwise get a new line instance
-            $line = $lines->firstWhere("external_id", "===", $orderLine->getKey()) ?? new ContractLine();
+            // If a line with the same product id and flight id already exists, use it, otherwise get a new line instance
+            $line = $lines->where("product_id", "===", $product->getKey())
+                          ->where("flight_id", "===", $flight->getKey())->first() ?? new ContractLine();
+
             $line->fill([
                             "product_id"    => $product->getKey(),
                             "flight_id"     => $flight->getKey(),

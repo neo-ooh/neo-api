@@ -26,7 +26,6 @@ use Neo\Modules\Broadcast\Http\Requests\Contents\StoreContentRequest;
 use Neo\Modules\Broadcast\Http\Requests\Contents\UpdateContentRequest;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Library;
-use Neo\Modules\Broadcast\Models\Schedule;
 
 class ContentsController extends Controller {
     public function byIds(ListContentsByIdsRequest $request) {
@@ -151,8 +150,8 @@ class ContentsController extends Controller {
      * @noinspection PhpUnusedParameterInspection
      */
     public function destroy(DestroyContentRequest $request, Library $library, Content $content): Response {
-        if ($content->schedules_count > 0 && $content->schedules->some(fn(Schedule $schedule) => $schedule->isApproved() && !$schedule->trashed())) {
-            // We don't want to remove a content that has approved schedules
+        if ($content->schedules_count > 0) {
+            // We don't want to remove a content that has any schedule
             $content->delete();
         } else {
             $content->forceDelete();

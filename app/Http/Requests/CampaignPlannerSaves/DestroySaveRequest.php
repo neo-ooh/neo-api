@@ -22,6 +22,6 @@ class DestroySaveRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::tools_planning->value);
+        return Gate::allows(Capability::planner_access->value);
     }
 }

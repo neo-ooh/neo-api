@@ -25,7 +25,7 @@ class ListNetworksRequest extends FormRequest {
             || Gate::allows(Capability::campaigns_edit->value)
             || Gate::allows(Capability::dynamics_weather->value)
             || Gate::allows(Capability::properties_edit->value)
-            || Gate::allows(Capability::tools_planning->value);
+            || Gate::allows(Capability::planner_access->value);
     }
 
     /**

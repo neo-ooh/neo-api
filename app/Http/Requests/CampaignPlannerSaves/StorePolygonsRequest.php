@@ -18,11 +18,11 @@ class StorePolygonsRequest extends FormRequest {
     public function rules(): array {
         return [
             "name" => ["required", "string"],
-            "data" => ["required", "array"]
+            "data" => ["required", "array"],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::tools_planning->value);
+        return Gate::allows(Capability::planner_access->value);
     }
 }

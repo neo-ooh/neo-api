@@ -15,15 +15,15 @@ use Neo\Http\Controllers\ActorsLogosController;
 use Neo\Http\Controllers\ActorsPhoneController;
 use Neo\Http\Controllers\ActorsSharingsController;
 use Neo\Http\Controllers\ActorsTagsController;
-use Neo\Http\Controllers\TagsController;
 use Neo\Http\Controllers\TwoFactorAuthController;
 use Neo\Models\Actor;
 use Neo\Models\Tag;
+use Neo\Modules\Properties\Http\Controllers\TagsController;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v1"
-], function () {
+                 "middleware" => "default",
+                 "prefix"     => "v1",
+             ], function () {
 
     Route::model("actor", Actor::class);
 

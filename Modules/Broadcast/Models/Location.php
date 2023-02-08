@@ -20,12 +20,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Neo\Models\Actor;
 use Neo\Models\ContractBurst;
-use Neo\Models\Product;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Rules\AccessibleLocation;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Neo\Modules\Properties\Models\Product;
 
 /**
  * Neo\Models\ActorsLocations

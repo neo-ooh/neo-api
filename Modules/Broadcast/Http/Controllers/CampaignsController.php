@@ -10,15 +10,14 @@
 
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
-use Auth;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
-use Neo\Models\Product;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\ListCampaignsByIdsRequest;
@@ -29,6 +28,7 @@ use Neo\Modules\Broadcast\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Schedule;
+use Neo\Modules\Properties\Models\Product;
 
 /**
  * @phpstan-type CampaignLocation array{location_id: int, format_id: int, product_id: int|null}

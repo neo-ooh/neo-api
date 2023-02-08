@@ -25,7 +25,7 @@ class ListNetworksByIdsRequest extends FormRequest {
             || Gate::allows(Capability::campaigns_edit)
             || Gate::allows(Capability::dynamics_weather)
             || Gate::allows(Capability::properties_edit)
-            || Gate::allows(Capability::tools_planning)
+            || Gate::allows(Capability::planner_access)
             || Gate::allows(Capability::contracts_manage);
     }
 

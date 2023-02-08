@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,8 +29,6 @@ use Illuminate\Support\Facades\Storage;
  * @property Date   $updated_at
  */
 class NewsBackground extends Model {
-    use HasFactory;
-
     protected $table = "news_backgrounds";
 
     protected $appends = ["url"];
@@ -41,11 +38,11 @@ class NewsBackground extends Model {
         "network",
         "format_id",
         "locale",
-        "path"
+        "path",
     ];
 
     protected $casts = [
-        "category" => "integer"
+        "category" => "integer",
     ];
 
     public static function boot(): void {

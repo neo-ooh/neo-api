@@ -18,10 +18,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Neo\Models\Field;
-use Neo\Models\Property;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\StructuredColumns\NetworkSettings;
+use Neo\Modules\Properties\Models\Field;
+use Neo\Modules\Properties\Models\Property;
 
 /**
  * @property int                          $id

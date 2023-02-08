@@ -11,9 +11,8 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * Class NewsRecord
@@ -33,18 +32,17 @@ use Storage;
  * @property Date   $updated_at
  */
 class NewsRecord extends Model {
-    use HasFactory;
 
     protected $table = "news_records";
 
     protected $dates = ["date"];
 
     protected $fillable = [
-        "cp_id", "date", "headline", "media", "subject", "locale", "width", "height"
+        "cp_id", "date", "headline", "media", "subject", "locale", "width", "height",
     ];
 
     protected $appends = [
-        "media_url"
+        "media_url",
     ];
 
     public function getMediaUrlAttribute() {

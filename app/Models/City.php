@@ -10,26 +10,22 @@
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class City
  *
- * @property int $id
- * @property string $name
- * @property int|null $market_id
- * @property int $province_id
+ * @package Neo\Models
+ * @property string      $name
+ * @property int|null    $market_id
+ * @property int         $province_id
  *
- * @property Province $province
+ * @property Province    $province
  * @property Market|null $market
  *
- * @package Neo\Models
+ * @property int         $id
  */
-class City extends Model
-{
-    use HasFactory;
-
+class City extends Model {
     protected $table = "cities";
 
     protected $primaryKey = "id";
@@ -39,7 +35,7 @@ class City extends Model
     protected $fillable = [
         "name",
         "market_id",
-        "province_id"
+        "province_id",
     ];
 
     public function province() {

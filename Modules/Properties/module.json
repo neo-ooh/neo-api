@@ -1,0 +1,17 @@
+{
+  "name": "Properties",
+  "alias": "properties",
+  "description": "",
+  "keywords": [],
+  "priority": 0,
+  "providers": [
+    "Neo\\Modules\\Properties\\Providers\\PropertiesServiceProvider"
+  ],
+  "aliases": {},
+  "files": [],
+  "requires": [],
+  "migration": {
+    "seeds": [
+    ]
+  }
+}

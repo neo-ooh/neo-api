@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Campaign;
@@ -30,6 +29,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterReporting;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
+use Neo\Modules\Properties\Enums\ProductsFillStrategy;
 use Neo\Resources\Contracts\FlightPerformanceDatum;
 
 /**

@@ -19,15 +19,18 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
 use Neo\Modules\Broadcast\Http\Controllers\FormatsController;
 use Neo\Modules\Broadcast\Http\Controllers\FormatsDisplayTypesController;
 use Neo\Modules\Broadcast\Http\Controllers\FormatsLayoutsController;
 use Neo\Modules\Broadcast\Http\Controllers\FormatsLoopConfigurationsController;
 use Neo\Modules\Broadcast\Http\Controllers\FramesController;
 use Neo\Modules\Broadcast\Http\Controllers\LayoutsController;
+use Neo\Modules\Broadcast\Http\Controllers\LoopConfigurationsController;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Frame;
 use Neo\Modules\Broadcast\Models\Layout;
+use Neo\Modules\Broadcast\Models\LoopConfiguration;
 
 Route::group([
                  "middleware" => "default",
@@ -81,4 +84,17 @@ Route::group([
     Route::put("formats/{format}/display-types/_sync", FormatsDisplayTypesController::class . "@sync");
     Route::put("formats/{format}/loop-configurations/_sync", FormatsLoopConfigurationsController::class . "@sync");
 
+    /*
+    |----------------------------------------------------------------------
+    | Loop Configuration
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("loopConfiguration", LoopConfiguration::class);
+
+    Route::   get("loop-configurations", LoopConfigurationsController::class . "@index");
+    Route::  post("loop-configurations", LoopConfigurationsController::class . "@store");
+    Route::   get("loop-configurations/{loopConfiguration}", LoopConfigurationsController::class . "@show");
+    Route::   put("loop-configurations/{loopConfiguration}", LoopConfigurationsController::class . "@update");
+    Route::delete("loop-configurations/{loopConfiguration}", LoopConfigurationsController::class . "@destroy");
 });

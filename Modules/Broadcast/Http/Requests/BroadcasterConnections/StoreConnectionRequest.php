@@ -10,8 +10,8 @@
 
 namespace Neo\Modules\Broadcast\Http\Requests\BroadcasterConnections;
 
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Services\BroadcasterType;

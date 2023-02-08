@@ -15,8 +15,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Neo\Models\Product;
-use Neo\Models\ProductCategory;
+use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Models\ProductCategory;
 
 /**
  * @property int                         $id

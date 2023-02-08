@@ -10,25 +10,21 @@
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Province
  *
- * @property int $id
- * @property string $slug
- * @property int $country_id
- * @property string $name
+ * @package Neo\Models
+ * @property string  $slug
+ * @property int     $country_id
+ * @property string  $name
  *
  * @property Country $country
  *
- * @package Neo\Models
+ * @property int     $id
  */
-class Province extends Model
-{
-    use HasFactory;
-
+class Province extends Model {
     protected $table = "provinces";
 
     protected $primaryKey = "id";
@@ -46,8 +42,7 @@ class Province extends Model
      *
      * @return string
      */
-    public function getRouteKeyName()
-    {
+    public function getRouteKeyName() {
         return 'slug';
     }
 

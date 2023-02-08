@@ -19,14 +19,15 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
 use Neo\Modules\Broadcast\Http\Controllers\BroadcastTagsController;
 use Neo\Modules\Broadcast\Http\Controllers\BroadcastTagsExternalRepresentationsController;
 use Neo\Modules\Broadcast\Models\BroadcastTag;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v1"
-], static function () {
+                 "middleware" => "default",
+                 "prefix"     => "v1",
+             ], static function () {
     /*
     |----------------------------------------------------------------------
     | Broadcast Tags

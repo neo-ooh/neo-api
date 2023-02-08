@@ -19,6 +19,7 @@
 |
 */
 
+use Illuminate\Support\Facades\Route;
 use Neo\Modules\Broadcast\Http\Controllers\BroadcastJobsController;
 use Neo\Modules\Broadcast\Http\Controllers\BroadcastResourcesController;
 use Neo\Modules\Broadcast\Http\Controllers\ExternalResourcesController;

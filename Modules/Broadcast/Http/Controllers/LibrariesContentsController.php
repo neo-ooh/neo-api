@@ -40,7 +40,7 @@ class LibrariesContentsController extends Controller {
         $libraryLayoutIds = $library->layouts->pluck("id")->all();
 
         // Are the contents layouts available in the target library ?
-        if ($layoutIds->some(fn(int $layoutId) => !in_array($layoutId, $libraryLayoutIds))) {
+        if ($layoutIds->some(fn(int $layoutId) => !in_array($layoutId, $libraryLayoutIds, true))) {
             throw new BaseException("Cannot store content in a library without the content the content's layout.", "library.missing-layout");
         }
 

@@ -18,11 +18,11 @@ class StoreSaveRequest extends FormRequest {
     public function rules(): array {
         return [
             "plan"  => ["required", "array"],
-            "_meta" => ["required", "array"]
+            "_meta" => ["required", "array"],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::tools_planning->value);
+        return Gate::allows(Capability::planner_access->value);
     }
 }

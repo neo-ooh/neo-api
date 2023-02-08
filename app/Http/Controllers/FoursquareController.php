@@ -15,7 +15,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Foursquare\SearchPlacesRequest;
-use Neo\Models\Brand;
+use Neo\Modules\Properties\Models\Brand;
 
 class FoursquareController {
     public function _searchPlaces(SearchPlacesRequest $request) {
@@ -31,7 +31,7 @@ class FoursquareController {
                 ],
                 'headers' => [
                     'Accept'        => 'application/json',
-                    'Authorization' => config('services.foursquare.key')
+                    'Authorization' => config('services.foursquare.key'),
                 ],
             ]);
         } catch (ClientException $e) {
@@ -52,7 +52,7 @@ class FoursquareController {
                 "position"    => [
                     "coordinates" => [$place->geocodes->main->longitude, $place->geocodes->main->latitude],
                     "type"        => "Point",
-                ]
+                ],
             ], $rawPlacesFiltered);
         }
 
@@ -68,14 +68,14 @@ class FoursquareController {
 
             $se     = new Fuse($allBrands->toArray(), [
                 "keys"      => ["name_en", "name_fr"],
-                "threshold" => 0.3
+                "threshold" => 0.3,
             ]);
             $brands = collect($se->search($request->input("q")))->map(fn($result) => $result["item"]);
         }
 
         return new Response([
-            "pois"   => array_values($places),
-            "brands" => $brands,
-        ]);
+                                "pois"   => array_values($places),
+                                "brands" => $brands,
+                            ]);
     }
 }

@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
 class DeleteBroadcastTagRequest extends FormRequest {
-    public function authorize() {
+    public function authorize(): bool {
         return Gate::allows(Capability::broadcast_tags->value);
     }
 
-    public function rules() {
+    public function rules(): array {
         return [
         ];
     }

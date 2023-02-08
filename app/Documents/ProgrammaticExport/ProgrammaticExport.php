@@ -201,7 +201,7 @@ class ProgrammaticExport extends XLSXDocument {
                             ...$operatingHoursComponents,
                             $weeklyTraffic,
                             round($productWeeklyImpressions * $playerImpressionsShare),
-                            round(($productWeeklyImpressions * $playerImpressionsShare) / $player->screen_count),
+                            $player->screen_count > 0 ? round(($productWeeklyImpressions * $playerImpressionsShare) / $player->screen_count) : 0,
                             $player->screen_count,
                             $location->display_type->width_px,
                             $location->display_type->height_px,

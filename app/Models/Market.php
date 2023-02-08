@@ -10,25 +10,21 @@
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Market
  *
- * @property int $id
- * @property int $province_id
- * @property string $name_en
- * @property string $name_fr
+ * @package Neo\Models
+ * @property int      $province_id
+ * @property string   $name_en
+ * @property string   $name_fr
  *
  * @property Province $province
  *
- * @package Neo\Models
+ * @property int      $id
  */
-class Market extends Model
-{
-    use HasFactory;
-
+class Market extends Model {
     protected $table = "markets";
 
     protected $primaryKey = "id";

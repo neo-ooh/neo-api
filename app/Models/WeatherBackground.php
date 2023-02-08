@@ -11,7 +11,6 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
@@ -31,8 +30,6 @@ use Illuminate\Support\Facades\Storage;
  * @property Date   $updated_at
  */
 class WeatherBackground extends Model {
-    use HasFactory;
-
     protected $table = "weather_backgrounds";
 
     protected $appends = ["url"];

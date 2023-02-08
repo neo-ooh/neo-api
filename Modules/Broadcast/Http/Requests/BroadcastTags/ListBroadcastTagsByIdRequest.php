@@ -30,7 +30,6 @@ class ListBroadcastTagsByIdRequest extends FormRequest {
             "ids"   => ["array"],
             "ids.*" => ["int", new Exists(BroadcastTag::class, "id")],
 
-
             "with" => ["array", new PublicRelations(BroadcastTag::class)],
         ];
     }

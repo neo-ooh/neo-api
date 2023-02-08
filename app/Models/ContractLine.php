@@ -13,8 +13,9 @@ namespace Neo\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Neo\Enums\ProductsFillStrategy;
 use Neo\Models\Traits\HasCompositePrimaryKey;
+use Neo\Modules\Properties\Enums\ProductsFillStrategy;
+use Neo\Modules\Properties\Models\Product;
 
 /**
  * @property-read int                  $product_id

@@ -10,9 +10,9 @@
 
 namespace Neo\Http\Controllers;
 
-use Auth;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Clients\ListClientsByIdsRequest;

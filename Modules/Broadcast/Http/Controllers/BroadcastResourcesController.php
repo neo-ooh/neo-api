@@ -40,9 +40,10 @@ class BroadcastResourcesController extends Controller {
         return new Response($broadcastResource->performances()->get());
     }
 
-    public function promote(PromoteResourceRequest $request, BroadcastResource $broadcastResource) {
-        $job = null;
-
+    /**
+     * @throws BroadcastResourceDoesNotSupportPromoteException
+     */
+    public function promote(PromoteResourceRequest $request, BroadcastResource $broadcastResource): Response {
         switch ($broadcastResource->type) {
             case BroadcastResourceType::Schedule:
                 $job = new PromoteScheduleJob($broadcastResource->getKey());

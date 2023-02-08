@@ -18,11 +18,11 @@ class ShareSaveRequest extends FormRequest {
     public function rules(): array {
         return [
             "actors"   => ["required", "array"],
-            "actors.*" => ["integer", "exists:actors,id"]
+            "actors.*" => ["integer", "exists:actors,id"],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::tools_planning->value);
+        return Gate::allows(Capability::planner_access->value);
     }
 }

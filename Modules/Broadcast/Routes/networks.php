@@ -19,7 +19,7 @@
 |
 */
 
-use Neo\Http\Controllers\PropertiesController;
+use Illuminate\Support\Facades\Route;
 use Neo\Modules\Broadcast\Http\Controllers\BroadcasterConnectionsController;
 use Neo\Modules\Broadcast\Http\Controllers\DisplayTypesController;
 use Neo\Modules\Broadcast\Http\Controllers\LocationsController;
@@ -29,11 +29,12 @@ use Neo\Modules\Broadcast\Http\Controllers\NetworksController;
 use Neo\Modules\Broadcast\Models\BroadcasterConnection;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Network;
+use Neo\Modules\Properties\Http\Controllers\PropertiesController;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v2"
-], static function () {
+                 "middleware" => "default",
+                 "prefix"     => "v2",
+             ], static function () {
     /*
     |----------------------------------------------------------------------
     | Broadcasters Connections

@@ -111,15 +111,6 @@ enum Capability: string {
     // Access Tokens
     case access_token_edit = "access-token.edit";
 
-    // Broadsign administration
-    // TODO: Rename this capability to `broadcasters.broadsign`
-    case chores_broadsign = "chores.broadsign";
-
-    /**
-     * Allow user to see information about properties he can access
-     */
-    case properties_view = "properties.view";
-
     /**
      * Allow user to create, edit and remove properties in its accessible hierarchy
      */
@@ -136,19 +127,9 @@ enum Capability: string {
     case properties_markets = "properties.markets";
 
     /**
-     * Allows the user to create and edit custom fields for the properties
-     */
-    case properties_fields = "properties.fields";
-
-    /**
      * Allows the user to view the products of properties
      */
     case properties_products = "properties.products";
-
-    /**
-     * Allows the user to edit the products of properties
-     */
-    case products_impressions = "products.impressions";
 
     /**
      * Allow user to setup traffic sources
@@ -163,7 +144,12 @@ enum Capability: string {
     /**
      * Allow user to setup and edit odoo properties and products
      */
-    case tools_planning = "tools.planning";
+    case planner_access = "tools.planning";
+
+    /**
+     * Allows the user to access other users plans in the planner
+     */
+    case planner_fullaccess = "planning.fullaccess";
 
     /**
      * Allow user to setup and edit odoo properties and products
@@ -181,39 +167,14 @@ enum Capability: string {
     case impressions_export = "impressions.export";
 
     /**
-     * Allows the user to request an excel file of the property
-     */
-    case properties_export = "properties.export";
-
-    /**
-     * Allows the user to access the list of tenants of properties
-     */
-    case properties_tenants = "properties.tenants";
-
-    /**
-     * Allows the user to access other users plans in the planner
-     */
-    case planning_fullaccess = "planning.fullaccess";
-
-    /**
      * Allows the user to edit tags
      */
     case tags_edit = "tags.edit";
 
     /**
-     * Allows the user to edit pricelists
-     */
-    case pricelists_edit = "pricelists.edit";
-
-    /**
      * Allows the user to edit loop configurations
      */
     case loops_edit = "loops.edit";
-
-    /**
-     * Allows the user to access properties contacts
-     */
-    case properties_contacts = "properties.contacts";
 
     /**
      * Allows editing broadcast settings
@@ -234,4 +195,235 @@ enum Capability: string {
      * Allows user to edit advertisers
      */
     case advertiser_edit = "advertisers.edit";
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Properties
+    |----------------------------------------------------------------------
+    */
+
+    /**
+     * Gives access to basic information on properties
+     * * Address
+     * * Opening hours
+     * * Website
+     * * Description
+     * * Non-demographic fields
+     */
+    case properties_view = "properties.view";
+
+    /**
+     * Allows creating and archiving properties
+     */
+    case properties_create = "properties.create";
+
+    /**
+     * Allows exporting properties data
+     */
+    case properties_export = "properties.export";
+
+    /**
+     * Allows editing properties address
+     */
+    case properties_address_edit = "properties.address.edit";
+
+    /**
+     * Allows editing properties opening hours
+     */
+    case properties_opening_hours_edit = "properties.opening-hours.edit";
+
+    /**
+     * Allows editing properties basic information
+     * * Website
+     * * Description
+     * * Non-demographic fields
+     */
+    case properties_infos_edit = "properties.infos.edit";
+
+    /**
+     * Gives access to properties pictures
+     */
+    case properties_pictures_view = "properties.pictures.view";
+
+    /**
+     * Allows adding and editing properties pictures
+     */
+    case properties_pictures_edit = "properties.pictures.edit";
+
+    /**
+     * Gives access to properties contacts
+     */
+    case properties_contacts_view = "properties.contacts.view";
+
+    /**
+     * Allows adding and editing properties contacts
+     */
+    case properties_contacts_edit = "properties.contacts.edit";
+
+    /**
+     * Gives access to properties tags
+     */
+    case properties_tags_view = "properties.tags.view";
+
+    /**
+     * Allows assigning tags to properties
+     */
+    case properties_tags_edit = "properties.tags.edit";
+
+    /**
+     * Allows creating new properties tags
+     */
+    case properties_tags_create = "properties.tags.create";
+
+    /**
+     * Gives access to properties demographic values
+     */
+    case properties_demographics_view = "properties.demographics.view";
+
+    /**
+     * Allows uploading demographic values
+     */
+    case properties_demographics_edit = "properties.demographics.edit";
+
+    /**
+     * Gives access to properties traffic
+     */
+    case properties_traffic_view = "properties.traffic.view";
+
+    /**
+     * Allows updating properties traffic values
+     */
+    case properties_traffic_fill = "properties.traffic.fill";
+
+    /**
+     * Allows editing properties traffic settings
+     */
+    case properties_traffic_manage = "properties.traffic.manage";
+
+    /**
+     * Gives access to properties tenants directory
+     */
+    case properties_tenants_view = "properties.tenants.view";
+
+    /**
+     * Allows updating properties tenants
+     */
+    case properties_tenants_edit = "properties.tenants.edit";
+
+    /**
+     * Gives access to properties pricelist
+     */
+    case properties_pricelist_view = "properties.pricelist.view";
+
+    /**
+     * Allows updating properties pricelist
+     */
+    case properties_pricelist_assign = "properties.pricelist.assign";
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Products
+    |----------------------------------------------------------------------
+    */
+
+    /**
+     * Gives access to properties products
+     */
+    case products_view = "products.view";
+
+    /**
+     * Allows updating products attachments
+     */
+    case products_attachments_edit = "products.attachments.edit";
+
+    /**
+     * Gives access to products impressions
+     */
+    case products_impressions_view = "products.impressions.view";
+
+    /**
+     * Allows updating products impressions models
+     */
+    case products_impressions_edit = "products.impressions.edit";
+
+    /**
+     * Gives access to products locations
+     */
+    case products_locations_view = "products.locations.view";
+
+    /**
+     * Allows editing products locations
+     */
+    case products_locations_edit = "products.locations.edit";
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Product Categories
+    |----------------------------------------------------------------------
+    */
+
+    /**
+     * Gives access to product categories
+     *
+     * Product categories uses the same capabilities for edition as products.
+     * e.g. To allow editing impressions models of product categories, use the product-equivalent capability.
+     */
+    case product_categories_edit = "product-categories.edit";
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Pricelists
+    |----------------------------------------------------------------------
+    */
+
+    /**
+     * Allows creating and updating pricelists
+     */
+    case pricelists_edit = "pricelists.edit";
+
+    /*
+    |----------------------------------------------------------------------
+    | Brands
+    |----------------------------------------------------------------------
+    */
+
+    /**
+     * Gives access to the brands list
+     */
+    case brands_view = "brands.view";
+
+    /**
+     * Allows adding and editing brands
+     */
+    case brands_edit = "brands.edit";
+
+    /**
+     * Give access to brands POIs list/map
+     */
+    case brands_poi_view = "brands.poi.view";
+
+    /**
+     * Allows editing brands POIs
+     */
+    case brands_poi_edit = "brands.poi.edit";
+
+    /*
+    |----------------------------------------------------------------------
+    | Fields
+    |----------------------------------------------------------------------
+    */
+
+    /**
+     * Allows creating, editing and assigning fields
+     */
+    case fields_edit = "fields.edit";
+
+    /**
+     * Allows creating and updating fields using demographic values
+     */
+    case fields_demographics_edit = "fields.demographics.edit";
 }

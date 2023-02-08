@@ -10,7 +10,6 @@
 
 namespace Neo\Http\Controllers;
 
-use GooglePlaces;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Log;
@@ -29,13 +28,13 @@ class GoogleMapsController {
                 "language" => App::currentLocale(),
                 "location" => $request->input("location"),
                 "radius"   => 10000,
-                "region"   => "ca"
+                "region"   => "ca",
             ]);
 
             return new Response($response);
         } catch (GooglePlacesApiException|InvalidRequestException|OverQueryLimitException|RequestDeniedException|UnknownErrorException|NotImplementedException $exception) {
             Log::error("google.places.api.error", [
-                "message" => $exception->getErrorMessage()
+                "message" => $exception->getErrorMessage(),
             ]);
 
             return new Response(["message" => $exception->getErrorMessage()], 400);

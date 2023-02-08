@@ -9,13 +9,13 @@
  */
 
 use Illuminate\Support\Facades\Route;
-use Neo\Http\Controllers\Odoo\ContractsController;
-use Neo\Http\Controllers\Odoo\PropertiesController;
+use Neo\Modules\Properties\Http\Controllers\Odoo\ContractsController;
+use Neo\Modules\Properties\Http\Controllers\Odoo\PropertiesController;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v1/odoo"
-], function () {
+                 "middleware" => "default",
+                 "prefix"     => "v1/odoo",
+             ], function () {
     /*
     |----------------------------------------------------------------------
     | Properties

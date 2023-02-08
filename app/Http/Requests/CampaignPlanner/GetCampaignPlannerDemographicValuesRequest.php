@@ -27,7 +27,7 @@ class GetCampaignPlannerDemographicValuesRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        if (Gate::allows(Capability::tools_planning->value)) {
+        if (Gate::allows(Capability::planner_access->value)) {
             return true;
         }
 

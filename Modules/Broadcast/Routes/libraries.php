@@ -9,6 +9,7 @@
  */
 
 
+use Illuminate\Support\Facades\Route;
 use Neo\Modules\Broadcast\Http\Controllers\ContentsController;
 use Neo\Modules\Broadcast\Http\Controllers\CreativesController;
 use Neo\Modules\Broadcast\Http\Controllers\LibrariesContentsController;
@@ -19,9 +20,9 @@ use Neo\Modules\Broadcast\Models\Creative;
 use Neo\Modules\Broadcast\Models\Library;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v2",
-], static function () {
+                 "middleware" => "default",
+                 "prefix"     => "v2",
+             ], static function () {
 
     /*
     |----------------------------------------------------------------------

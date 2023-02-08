@@ -16,9 +16,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use Neo\Enums\ProductsFillStrategy;
 use Neo\Http\Requests\ListAvailabilitiesRequest;
-use Neo\Models\Product;
+use Neo\Modules\Properties\Enums\ProductsFillStrategy;
+use Neo\Modules\Properties\Models\Product;
 use Neo\Resources\Contracts\FlightType;
 
 class AvailabilitiesController {
@@ -27,11 +27,11 @@ class AvailabilitiesController {
         $productsSpots = $request->input("product_spots");
 
         $arraySizeValidator = Validator::make([
-            "product_ids_count"   => count($productIds),
-            "product_spots_count" => count($productsSpots),
-        ], [
-            "product_spots_count" => ["same:product_ids_count"],
-        ]);
+                                                  "product_ids_count" => count($productIds),
+                                                                                                                                                                                                                                                                                                                                                                                                              "product_spots_count" => count($productsSpots),
+                                              ], [
+                                                  "product_spots_count" => ["same:product_ids_count"],
+                                              ]);
 
         if ($arraySizeValidator->fails()) {
             throw new ValidationException($arraySizeValidator);

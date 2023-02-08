@@ -10,7 +10,6 @@
 
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
-use Exception;
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Http\Requests\Frames\DestroyFrameRequest;
@@ -50,6 +49,7 @@ class FramesController extends Controller {
 
     /**
      * @param UpdateFrameRequest $request
+     * @param Layout             $layout
      * @param Frame              $frame
      *
      * @return Response
@@ -69,10 +69,10 @@ class FramesController extends Controller {
 
     /**
      * @param DestroyFrameRequest $request
+     * @param Layout              $layout
      * @param Frame               $frame
      *
      * @return Response
-     * @throws Exception
      */
     public function destroy(DestroyFrameRequest $request, Layout $layout, Frame $frame): Response {
         $frame->delete();

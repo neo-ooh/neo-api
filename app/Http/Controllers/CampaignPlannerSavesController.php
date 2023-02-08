@@ -21,11 +21,11 @@ use Neo\Http\Requests\CampaignPlannerSaves\UpdateSaveRequest;
 use Neo\Http\Resources\CampaignPlannerSaveExcerptResource;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Actor;
-use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
-use Neo\Models\ProductCategory;
-use Neo\Models\Property;
 use Neo\Modules\Broadcast\Models\Network;
+use Neo\Modules\Properties\Models\Brand;
+use Neo\Modules\Properties\Models\ProductCategory;
+use Neo\Modules\Properties\Models\Property;
 
 class CampaignPlannerSavesController {
     public function index(ListSavesRequest $request, Actor $actor) {
@@ -34,13 +34,13 @@ class CampaignPlannerSavesController {
 
     public function store(StoreSaveRequest $request) {
         $save = new CampaignPlannerSave([
-            "actor_id" => Auth::user()->id,
-            "name"     => $request->input("_meta")["name"],
-            "data"     => [
-                "plan"  => $request->input("plan"),
-                "_meta" => $request->input("_meta")
-            ]
-        ]);
+                                            "actor_id" => Auth::user()->id,
+                                            "name"     => $request->input("_meta")["name"],
+                                            "data"     => [
+                                                "plan"  => $request->input("plan"),
+                                                "_meta" => $request->input("_meta"),
+                                            ],
+                                        ]);
 
         $save->save();
 
@@ -63,7 +63,7 @@ class CampaignPlannerSavesController {
         $campaignPlannerSave->name = $request->input("_meta")["name"];
         $campaignPlannerSave->data = [
             "plan"  => $request->input("plan"),
-            "_meta" => $request->input("_meta")
+            "_meta" => $request->input("_meta"),
         ];
         $campaignPlannerSave->save();
 
@@ -94,19 +94,19 @@ class CampaignPlannerSavesController {
         $properties = Property::query()->get();
 
         $properties->load([
-            "data",
-            "address",
-            "odoo",
-            "fields_values",
-            "products",
-            "products.attachments",
-            "products.impressions_models",
-            "traffic",
-            "traffic.weekly_data",
-            "pictures",
-            "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
-            "tenants"       => fn($q) => $q->select(["id"]),
-        ]);
+                              "data",
+                              "address",
+                              "odoo",
+                              "fields_values",
+                              "products",
+                              "products.attachments",
+                              "products.impressions_models",
+                              "traffic",
+                              "traffic.weekly_data",
+                              "pictures",
+                              "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
+                              "tenants"       => fn($q) => $q->select(["id"]),
+                          ]);
 
 
         $properties->each(function (Property $property) {
@@ -120,11 +120,11 @@ class CampaignPlannerSavesController {
         $brands     = Brand::query()->get();
 
         return new Response([
-            "save"       => new CampaignPlannerSaveResource($campaignPlannerSave),
-            "properties" => $properties,
-            "categories" => $categories,
-            "networks"   => $networks,
-            "brands"     => $brands,
-        ]);
+                                "save"       => new CampaignPlannerSaveResource($campaignPlannerSave),
+                                "properties" => $properties,
+                                "categories" => $categories,
+                                "networks"   => $networks,
+                                "brands"     => $brands,
+                            ]);
     }
 }

@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\CampaignPlannerController;
 use Neo\Http\Controllers\CampaignPlannerPolygonsController;
 use Neo\Http\Controllers\CampaignPlannerSavesController;
-use Neo\Http\Controllers\PointsOfInterestController;
 use Neo\Models\PointOfInterest;
+use Neo\Modules\Properties\Http\Controllers\PointsOfInterestController;
 
 Route::group([
                  "middleware" => "default",

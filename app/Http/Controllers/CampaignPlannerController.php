@@ -18,17 +18,17 @@ use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDataRequest;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDemographicValuesRequest;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
-use Neo\Models\Brand;
 use Neo\Models\CampaignPlannerSave;
-use Neo\Models\DemographicValue;
-use Neo\Models\DemographicVariable;
-use Neo\Models\Field;
-use Neo\Models\FieldsCategory;
-use Neo\Models\Pricelist;
-use Neo\Models\ProductCategory;
-use Neo\Models\Property;
-use Neo\Models\PropertyTrafficSnapshot;
 use Neo\Modules\Broadcast\Models\Network;
+use Neo\Modules\Properties\Models\Brand;
+use Neo\Modules\Properties\Models\DemographicValue;
+use Neo\Modules\Properties\Models\DemographicVariable;
+use Neo\Modules\Properties\Models\Field;
+use Neo\Modules\Properties\Models\FieldsCategory;
+use Neo\Modules\Properties\Models\Pricelist;
+use Neo\Modules\Properties\Models\ProductCategory;
+use Neo\Modules\Properties\Models\Property;
+use Neo\Modules\Properties\Models\PropertyTrafficSnapshot;
 
 class CampaignPlannerController {
     public function dataChunk_1(GetCampaignPlannerDataRequest $request) {

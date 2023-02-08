@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsLocationsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsPerformancesController;
@@ -23,9 +24,9 @@ use Neo\Modules\Broadcast\Models\ScheduleContent;
 */
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v2",
-], static function () {
+                 "middleware" => "default",
+                 "prefix"     => "v2",
+             ], static function () {
 
     /*
    |----------------------------------------------------------------------

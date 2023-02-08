@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -11,6 +11,7 @@
 namespace Neo\Modules\Broadcast\Jobs\Networks;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Neo\Jobs\Job;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
@@ -111,7 +112,7 @@ class SynchronizeNetworkJob extends Job {
             /** @var Location $location */
             $location = Location::withTrashed()->updateOrCreate([
                                                                     "network_id" => $broadcaster->getNetworkId(),
-                                                                                                                                                                                                                                                                                                                                                                                                                                               "external_id" => (string)$externalLocation->external_id,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                        "external_id" => (string)$externalLocation->external_id,
                                                                 ], [
                                                                     "display_type_id" => $displayType->getKey(),
                                                                     "internal_name"   => $externalLocation->name,
@@ -149,7 +150,7 @@ class SynchronizeNetworkJob extends Job {
                 /** @var Player $player */
                 $player = Player::query()->updateOrCreate([
                                                               "network_id" => $broadcaster->getNetworkId(),
-                                                                                                                                                                                                                                                                                                                                                                                                                                         "external_id" => $externalPlayer->external_id,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                  "external_id" => $externalPlayer->external_id,
                                                           ], [
                                                               "location_id"  => $location->id,
                                                               "name"         => $externalPlayer->name,
@@ -239,6 +240,9 @@ class SynchronizeNetworkJob extends Job {
                                                                   "parent_id"   => $parentId,
                                                                   "name"        => $externalContainer->name,
                                                                   "external_id" => $externalContainer->external_id,
+                                                              ],
+                                                              [
+                                                                  "created_at" => Date::now(),
                                                               ]);
 
         return $container->getKey();

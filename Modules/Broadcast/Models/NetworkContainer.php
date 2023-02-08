@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +27,9 @@ use Illuminate\Support\Facades\DB;
  * @property int                     $network_id
  * @property string                  $name
  * @property string|null             $external_id
+ *
+ * @property Carbon|null             $created_at
+ * @property Carbon|null             $updated_at
  *
  * @property-read static|null        $parent
  * @property-read Collection<static> $parents_list
@@ -100,7 +104,7 @@ class NetworkContainer extends Model {
                       ON `c`.`id` = `cte`.`parent_id`
             )
             SELECT * FROM `cte`",
-            [$this->parent_id]
+                                                                [$this->parent_id]
         ));
 
         return $parents;

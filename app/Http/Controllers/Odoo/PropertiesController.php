@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -22,10 +22,6 @@ use Neo\Services\Odoo\Models\Property;
 use Neo\Services\Odoo\OdooConfig;
 
 class PropertiesController extends Controller {
-    public function _missing() {
-
-    }
-
     public function store(StorePropertyRequest $request): Response {
         $propertyId = $request->input("property_id");
         $odooId     = $request->input("odoo_id");

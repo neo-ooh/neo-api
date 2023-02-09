@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -61,7 +61,7 @@ class FormatsController extends Controller {
 
         $clone->display_types()->sync($format->display_types);
         $clone->layouts()
-              ->sync($format->layouts->map(fn(Layout $layout) => [$layout->getKey() => ["is_fullscreen" => $layout->settings->is_fullscreen]]));
+              ->sync($format->layouts->mapWithKeys(fn(Layout $layout) => [$layout->getKey() => ["is_fullscreen" => $layout->settings->is_fullscreen]]));
         $clone->broadcast_tags()->sync($format->broadcast_tags);
 
         foreach ($format->loop_configurations as $loop_configuration) {

@@ -334,6 +334,11 @@ enum Capability: string {
     case products_view = "products.view";
 
     /**
+     * Allows updating general information about products
+     */
+    case products_edit = "products.edit";
+
+    /**
      * Allows updating products attachments
      */
     case products_attachments_edit = "products.attachments.edit";

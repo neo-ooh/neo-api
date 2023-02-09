@@ -37,6 +37,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property string                        $name_fr
  * @property int|null                      $format_id
  * @property int                           $quantity
+ * @property boolean                       $is_sellable
  * @property int                           $unit_price
  * @property boolean                       $is_bonus
  * @property int                           $external_id
@@ -87,7 +88,8 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     ];
 
     protected $casts = [
-        "is_bonus" => "boolean",
+        "is_sellable" => "boolean",
+        "is_bonus"    => "boolean",
     ];
 
     public string $impressions_models_pivot_table = "products_impressions_models";

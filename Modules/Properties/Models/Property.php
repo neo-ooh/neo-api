@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
 use Neo\Models\Address;
 use Neo\Models\SecuredModel;
+use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Enums\ProductsFillStrategy;
@@ -36,8 +37,18 @@ use Throwable;
  * @property int                                   $address_id
  * @property int                                   $network_id
  * @property int|null                              $pricelist_id
+ * @property boolean                               $is_sellable
+ * @property boolean                               $has_tenants
+ * @property string                                $website
+ *
+ * @property Carbon                                $last_review_at
+ *
  * @property Date                                  $created_at
+ * @property int|null                              $created_by
  * @property Date                                  $updated_at
+ * @property int|null                              $updated_by
+ * @property Date|null                             $deleted_at
+ * @property int|null                              $deleted_by
  *
  * @property Actor                                 $actor
  * @property PropertyTrafficSettings               $traffic
@@ -47,8 +58,6 @@ use Throwable;
  * @property Collection<PropertyPicture>           $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
  * @property Collection<OpeningHours>              $opening_hours
- * @property boolean                               $has_tenants
- * @property Carbon                                $last_review_at
  * @property Collection<Brand>                     $tenants
  * @property Pricelist                             $pricelist
  * @property Collection<Actor>                     $contacts
@@ -60,6 +69,7 @@ use Throwable;
  */
 class Property extends SecuredModel {
     use HasPublicRelations;
+    use HasCreatedByUpdatedBy;
 
     /*
     |--------------------------------------------------------------------------
@@ -95,8 +105,8 @@ class Property extends SecuredModel {
      * @var array<string, string>
      */
     public $casts = [
-        "require_traffic"        => "boolean",
-        "traffic_grace_override" => "date",
+        "is_sellable" => "boolean",
+        "has_tenants" => "boolean",
     ];
 
     protected $dates = [

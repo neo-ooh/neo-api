@@ -6,7 +6,7 @@
       <schema-mapping />
     </data-source>
     <data-source name="@neo-db" uuid="722b66e2-b592-479e-93f1-568633a32a7e">
-      <database-info product="MariaDB" version="10.4.27-MariaDB-1:10.4.27+maria~ubu1804-log" jdbc-version="4.2" driver-name="MariaDB Connector/J" driver-version="2.7.3" dbms="MARIADB" exact-version="10.4.27" exact-driver-version="2.7">
+      <database-info product="MariaDB" version="10.4.28-MariaDB-1:10.4.28+maria~ubu1804-log" jdbc-version="4.2" driver-name="MariaDB Connector/J" driver-version="3.0.7" dbms="MARIADB" exact-version="10.4.28" exact-driver-version="3.0">
         <extra-name-characters>#@</extra-name-characters>
         <identifier-quote-string>`</identifier-quote-string>
       </database-info>
@@ -16,7 +16,6 @@
       <schema-mapping>
         <introspection-scope>
           <node kind="schema">
-            <name qname="addirect" />
             <name qname="neo_ooh" />
             <name qname="neo_ooh_dev" />
           </node>

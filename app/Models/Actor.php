@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -36,6 +36,7 @@ use Neo\Models\Traits\HasRoles;
 use Neo\Models\Traits\WithRelationCaching;
 use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Broadcast\Models\Library;
+use Neo\Modules\Properties\Models\Property;
 use Neo\Rules\AccessibleActor;
 
 /**
@@ -549,6 +550,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
      * Build and return a JWT for the current user.
      *
      * @param bool $isImpersonating
+     * @param bool $updateIfNecessary
      * @return string
      */
     public function getJWT(bool $isImpersonating = false, bool $updateIfNecessary = true): string {
@@ -579,49 +581,5 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         }
 
         return JWT::encode($payload, config("auth.jwt_private_key"), "RS256");
-    }
-
-    /**
-     * [year => [month => traffic]]
-     *
-     * @return array<int, array<int>>|null
-     */
-    public function getCompoundTrafficAttribute(): array|null {
-        if (!in_array($this->type, [ActorType::Group, ActorType::Property], true)) {
-            return null;
-        }
-
-        if ($this->type === ActorType::Property) {
-            return $this
-                ->property
-                ->traffic
-                ->data
-                ->groupBy(["year", "month"])
-                ->map(fn($yearData) => $yearData->map(fn($monthData) => $monthData->map(fn($d) => $d->traffic ?? $d->temporary)
-                                                                                  ->sum()))
-                ->toArray();
-        }
-
-        $children = $this->selectActors()->directChildren()->where("is_group", "=", true)->get();
-
-        $childrenData = $children->map(fn($child) => $child->compound_traffic);
-
-        $trafficValues = new Collection();
-
-        foreach ($childrenData as $dataset) {
-            foreach ($dataset as $year => $yearValues) {
-                if (!$trafficValues->has($year)) {
-                    $trafficValues[$year] = new Collection([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-                }
-
-                $v = $trafficValues[$year];
-                foreach ($yearValues as $monthIndex => $traffic) {
-                    $v[$monthIndex] += $traffic;
-                }
-                $trafficValues[$year] = $v;
-            }
-        }
-
-        return $trafficValues->toArray();
     }
 }

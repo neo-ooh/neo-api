@@ -51,6 +51,7 @@ use Throwable;
  * @property int|null                              $deleted_by
  *
  * @property Actor                                 $actor
+ * @property Collection<PropertyTranslation>       $translations
  * @property PropertyTrafficSettings               $traffic
  * @property Address|null                          $address
  * @property OdooProperty|null                     $odoo

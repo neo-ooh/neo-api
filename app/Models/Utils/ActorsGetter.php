@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - ActorsGetter.php
+ */
 
 namespace Neo\Models\Utils;
 
@@ -104,6 +112,7 @@ class ActorsGetter {
         return DB::table(static::CLOSURES_TABLE)
                  ->where("descendant_id", "=", $focus)
                  ->where("depth", "=", 1)
+                 ->limit(1)
                  ->pluck("ancestor_id")
                  ->first();
     }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -12,7 +12,7 @@ namespace Neo\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Neo\Models\Property;
+use Neo\Modules\Properties\Models\Property;
 
 /** @mixin Property */
 class CampaignPlannerPropertyResource extends JsonResource {
@@ -32,7 +32,8 @@ class CampaignPlannerPropertyResource extends JsonResource {
             "products_categories_ids" => $this->products->groupBy("category_id")
                                                         ->map(static fn($products) => $products->pluck('id')),
             "traffic"                 => $this->rolling_weekly_traffic,
-            "data"                    => $this->data,
+            "translations"                    => $this->translations,
+            "website"                    => $this->website,
             "pictures"                => $this->pictures,
             "fields_values"           => $this->fields_values,
             "has_tenants"             => $this->has_tenants,

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -61,7 +61,7 @@ class BroadcasterAdapterFactory {
      * @throws InvalidBroadcasterAdapterException
      */
     public static function makeForBroadcaster(int $broadcasterId) {
-        /** @var Network $network */
+        /** @var Network|null $network */
         $network = Network::query()
                           ->with(["broadcaster_connection"])
                           ->where("connection_id", "=", $broadcasterId)

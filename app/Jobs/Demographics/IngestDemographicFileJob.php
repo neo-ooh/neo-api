@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Neo\Jobs\Demographics\FilesParsers\EnvironicsDefaultParser;
 use Neo\Jobs\Demographics\FilesParsers\EnvironicsPrizmParser;
+use Neo\Models\DemographicValue;
 use Neo\Models\DemographicVariable;
 
 class IngestDemographicFileJob implements ShouldQueue {
@@ -58,7 +59,19 @@ class IngestDemographicFileJob implements ShouldQueue {
           ->whereIn("value_id", $entries->pluck("id"))
           ->delete();
 
+        // Register variables
         DemographicVariable::query()->insertOrIgnore($variables->toArray());
+
+        // Insert values
+        $values = $entries->map(fn($entry) => ([
+            "property_id"     => $this->propertyId,
+            "value_id"        => $entry["id"],
+            "value"           => $entry["value"],
+            "reference_value" => $entry["reference_value"],
+            "created_at"      => $now,
+            "updated_at"      => $now,
+        ]));
+        DemographicValue::query()->insertOrIgnore($values->toArray());
 
         $this->cleanUp();
     }

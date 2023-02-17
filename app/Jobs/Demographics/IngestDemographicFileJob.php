@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -16,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\DB;
 use Neo\Jobs\Demographics\FilesParsers\EnvironicsDefaultParser;
 use Neo\Jobs\Demographics\FilesParsers\EnvironicsPrizmParser;
 use Neo\Models\DemographicValue;
@@ -52,18 +53,25 @@ class IngestDemographicFileJob implements ShouldQueue {
             "updated_at" => $now,
         ]));
 
+        DB::query()
+          ->from("demographic_values")
+          ->where("property_id", "=", $this->propertyId)
+          ->whereIn("value_id", $entries->pluck("id"))
+          ->delete();
+
+        // Register variables
         DemographicVariable::query()->insertOrIgnore($variables->toArray());
 
-        foreach ($entries as $entry) {
-            DemographicValue::query()->updateOrInsert([
-                "property_id" => $this->propertyId,
-                "value_id"    => $entry["id"],
-            ], [
-                "value"           => $entry["value"],
-                "reference_value" => $entry["reference_value"],
-                "updated_at"      => Date::now("UTC"),
-            ]);
-        }
+        // Insert values
+        $values = $entries->map(fn($entry) => ([
+            "property_id"     => $this->propertyId,
+            "value_id"        => $entry["id"],
+            "value"           => $entry["value"],
+            "reference_value" => $entry["reference_value"],
+            "created_at"      => $now,
+            "updated_at"      => $now,
+        ]));
+        DemographicValue::query()->insertOrIgnore($values->toArray());
 
         $this->cleanUp();
     }

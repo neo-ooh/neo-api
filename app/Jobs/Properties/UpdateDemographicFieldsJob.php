@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -34,8 +34,10 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
         return "$pId-$fId";
     }
 
-    public function __construct(protected int|null $propertyId = null,
-                                protected int|null $fieldId = null) {
+    public function __construct(
+        protected int|null $propertyId = null,
+        protected int|null $fieldId = null
+    ) {
         $this->delay = 30;
     }
 
@@ -56,6 +58,8 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
             $query->where("demographic_filled", "=", true);
         })->with("segments")->get();
 
+        $segmentsIds = $fields->flatMap(fn(Field $field) => $field->segments->pluck("id"));
+
         $propertyIds = $this->propertyId
             ? collect($this->propertyId)
             : Property::query()->whereIn("network_id", DB::query()->from("fields_networks")
@@ -70,13 +74,18 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
                                          ->whereIn("property_id", $propertyIds)
                                          ->get();
 
+        $propertiesValues = PropertyFieldSegmentValue::query()
+                                                     ->whereIn("property_id", $propertyIds)
+                                                     ->whereIn("fields_segment_id", $segmentsIds)
+                                                     ->get();
+
         // Now loop over each fields and segments, for each property, and fill in the values;
         /** @var Field $field */
         foreach ($fields as $field) {
+
             /** @var FieldSegment $segment */
             foreach ($field->segments as $segment) {
                 $segmentValues = $demoValues->where("value_id", "=", $segment->variable_id);
-
 
                 foreach ($propertyIds as $propertyId) {
                     /** @var DemographicValue|null $demoValue */
@@ -87,10 +96,13 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
                     }
 
                     /** @var PropertyFieldSegmentValue $entry */
-                    $entry = PropertyFieldSegmentValue::query()->firstOrNew([
-                        "property_id"       => $propertyId,
-                        "fields_segment_id" => $segment->getKey()
-                    ]);
+                    $entry = $propertiesValues->first(
+                        fn(PropertyFieldSegmentValue $segmentValue) => $segmentValue->property_id === $propertyId && $segmentValue->fields_segment_id === $segment->getKey(),
+                        default: fn() => new PropertyFieldSegmentValue([
+                                                                           "property_id"       => $propertyId,
+                                                                           "fields_segment_id" => $segment->getKey()
+                                                                       ]));
+
                     // We go the pedantic way here because `value` is a generic word and may conflict with Eloquent methods.
                     $entry->setAttribute("value", $demoValue->value);
                     $entry->setAttribute("reference_value", $demoValue->reference_value);

@@ -29,14 +29,14 @@ return new class extends Migration {
               ->insert([
                            [
                                "property_id" => $propertyData->property_id,
-                               "locale"      => "en-CA",
+                               "locale"      => "fr-CA",
                                "description" => trim($propertyData->description_fr),
                                "created_at"  => Date::now(),
                                "updated_at"  => Date::now(),
                            ],
                            [
                                "property_id" => $propertyData->property_id,
-                               "locale"      => "fr-CA",
+                               "locale"      => "en-CA",
                                "description" => trim($propertyData->description_en),
                                "created_at"  => Date::now(),
                                "updated_at"  => Date::now(),

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -34,8 +34,8 @@ class RouteServiceProvider extends ServiceProvider {
 
         // Register our status route
         Route::group([
-            "middleware" => "guests",
-        ], static function () {
+                         "middleware" => "guests",
+                     ], static function () {
             Route:: get('/_status', StatusController::class . '@getStatus');
         });
 
@@ -45,6 +45,7 @@ class RouteServiceProvider extends ServiceProvider {
 
             // Core modules
             Route::group([], base_path('routes/core.actors.php'));
+            Route::group([], base_path('routes/core.address.php'));
             Route::group([], base_path('routes/core.networks.php'));
             Route::group([], base_path('routes/core.parameters.php'));
             Route::group([], base_path('routes/core.roles.php'));

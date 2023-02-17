@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -19,8 +19,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
-use Neo\Models\PropertyTraffic;
-use Neo\Models\PropertyTrafficMonthly;
+use Neo\Modules\Properties\Models\MonthlyTrafficDatum;
+use Neo\Modules\Properties\Models\WeeklyTrafficDatum;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
@@ -48,11 +48,11 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
         // List the month we need to get data from
         $monthTraffic = collect($weeks)
             ->mapWithKeys(fn($d) => ["$d->year-$d->month" => $d])
-            ->map(fn($d) => PropertyTrafficMonthly::query()
-                                                  ->where("property_id", "=", $this->propertyId)
-                                                  ->where("year", "=", $d->year)
-                                                  ->where("month", "=", $d->month - 1)
-                                                  ->first());
+            ->map(fn($d) => MonthlyTrafficDatum::query()
+                                               ->where("property_id", "=", $this->propertyId)
+                                               ->where("year", "=", $d->year)
+                                               ->where("month", "=", $d->month - 1)
+                                               ->first());
 
         array_pop($weeks);
 
@@ -92,23 +92,23 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
             if ($foundDaysTraffic < 7) {
                 $output->writeln("[Week #$weekNumber] Incomplete week of data, leave empty");
                 // Not enough information for this week, remove any records
-                PropertyTraffic::query()->where("property_id", "=", $this->propertyId)
-                               ->where("year", "=", $week->weekYear)
-                               ->where("week", "=", $weekNumber)
-                               ->delete();
+                WeeklyTrafficDatum::query()->where("property_id", "=", $this->propertyId)
+                                  ->where("year", "=", $week->weekYear)
+                                  ->where("week", "=", $weekNumber)
+                                  ->delete();
                 continue;
             }
 
             $weeklyTraffic[$weekNumber] = $trafficCount;
 
-            PropertyTraffic::query()->updateOrInsert([
-                "property_id" => $this->propertyId,
-                "year"        => $week->weekYear,
-                "week"        => $weekNumber,
-            ], [
-                "traffic"     => $trafficCount,
-                "is_estimate" => true
-            ]);
+            WeeklyTrafficDatum::query()->updateOrInsert([
+                                                            "property_id" => $this->propertyId,
+                                                            "year"        => $week->weekYear,
+                                                            "week"        => $weekNumber,
+                                                        ], [
+                                                            "traffic"     => $trafficCount,
+                                                            "is_estimate" => true,
+                                                        ]);
         }
 
         if ($this->month === 12 && Carbon::create($this->year, $this->month)
@@ -119,18 +119,18 @@ class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
 
             $output->writeln("Force adding 53rd week");
 
-            PropertyTraffic::query()->updateOrInsert([
-                "property_id" => $this->propertyId,
-                "year"        => $this->year,
-                "week"        => 53,
-            ], [
-                "traffic"     => $weeklyTraffic[52],
-                "is_estimate" => true
-            ]);
+            WeeklyTrafficDatum::query()->updateOrInsert([
+                                                            "property_id" => $this->propertyId,
+                                                            "year"        => $this->year,
+                                                            "week"        => 53,
+                                                        ], [
+                                                            "traffic"     => $weeklyTraffic[52],
+                                                            "is_estimate" => true,
+                                                        ]);
         }
 
         // All good, Push the new values to Odoo
-        PushPropertyTrafficJob::dispatch($this->propertyId);
+//        PushPropertyTrafficJob::dispatch($this->propertyId);
 
         // And clear our cache
         Cache::forget("property-$this->propertyId-rolling-weekly-traffic");

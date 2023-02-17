@@ -10,11 +10,18 @@
 
 namespace Neo\Modules\Properties\Http\Controllers;
 
+use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
-use Neo\Modules\Properties\Models\PropertyTranslation;
+use Neo\Modules\Properties\Http\Requests\PropertiesTranslations\UpdatePropertyTranslationRequest;
+use Neo\Modules\Properties\Models\Property;
 
 class PropertiesTranslationsController extends Controller {
-    public function update(PropertyTranslation $propertyTranslation) {
+    public function update(UpdatePropertyTranslationRequest $request, Property $property, string $locale) {
+        $property->translations()->where("locale", "=", $locale)
+                 ->update([
+                              "description" => $request->input("description", ""),
+                          ]);
 
+        return new Response($property->translations()->where("locale", "=", $locale)->first());
     }
 }

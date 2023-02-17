@@ -17,7 +17,7 @@ use Neo\Http\Controllers\Controller;
 use Neo\Http\Requests\ActorsTrafficStatisticsRequest;
 use Neo\Models\Actor;
 use Neo\Models\Utils\ActorsGetter;
-use Neo\Modules\Properties\Models\PropertyTrafficMonthly;
+use Neo\Modules\Properties\Models\MonthlyTrafficDatum;
 
 class GroupTrafficStatsController extends Controller {
     public function show(ActorsTrafficStatisticsRequest $request, Actor $actor) {
@@ -39,14 +39,14 @@ class GroupTrafficStatsController extends Controller {
                 // If the child is a group, we do a selection of itself, all its children, and load traffic values that belongs to them, aggregating them by year and month.
                 $children = ActorsGetter::from($child)->selectFocus()->selectChildren(recursive: true)->getSelection();
 
-                $traffic = PropertyTrafficMonthly::query()
-                                                 ->select(['year', 'month'])
-                                                 ->addSelect(DB::raw("SUM(`traffic`) as `traffic`"))
-                                                 ->addSelect(DB::raw("SUM(`temporary`) as `temporary`"))
-                                                 ->addSelect(DB::raw("SUM(`final_traffic`) as `final_traffic`"))
-                                                 ->groupBy(["year", "month"])
-                                                 ->whereIn("property_id", $children)
-                                                 ->get();
+                $traffic = MonthlyTrafficDatum::query()
+                                              ->select(['year', 'month'])
+                                              ->addSelect(DB::raw("SUM(`traffic`) as `traffic`"))
+                                              ->addSelect(DB::raw("SUM(`temporary`) as `temporary`"))
+                                              ->addSelect(DB::raw("SUM(`final_traffic`) as `final_traffic`"))
+                                              ->groupBy(["year", "month"])
+                                              ->whereIn("property_id", $children)
+                                              ->get();
 
             }
 

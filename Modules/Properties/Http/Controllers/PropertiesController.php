@@ -33,7 +33,6 @@ use Neo\Modules\Properties\Http\Requests\Properties\ListPropertiesByIdRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ListPropertiesPendingReviewRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\MarkPropertyReviewedRequest;
-use Neo\Modules\Properties\Http\Requests\Properties\SearchPropertiesRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\UpdateAddressRequest;
@@ -149,6 +148,10 @@ class PropertiesController extends Controller {
 
         // Create the traffic records for the property
         $property->traffic()->create();
+        $property->translations()->createMany([
+                                                  ["locale" => "fr-CA"],
+                                                  ["locale" => "en-CA"],
+                                              ]);
 
         PullOpeningHoursJob::dispatch($property->getKey());
 
@@ -235,8 +238,8 @@ class PropertiesController extends Controller {
 
         PullAddressGeolocationJob::dispatch($address);
 
-        if ($property->odoo) {
-            PushPropertyGeolocationJob::dispatch($property->id);
+        if ($property->odoo && config("app.env") === "production") {
+            PushPropertyGeolocationJob::dispatch($property->actor);
         }
 
         return new Response($address);

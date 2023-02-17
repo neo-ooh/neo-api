@@ -11,7 +11,6 @@
 namespace Neo\Modules\Properties\Models;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,6 +54,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Format                        $format
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
+ * @property Collection<Unavailability>    $unavailabilities
  *
  * @property int                           $locations_count           // Laravel `withCount` result accessor
  * @property Collection<Location>          $locations
@@ -148,34 +148,15 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         return $this->hasOneDeepFromRelations([$this->property(), (new Property())->pricelist()]);
     }
 
+    public function unavailabilities(): BelongsToMany {
+        return $this->belongsToMany(Unavailability::class, "products_unavailabilities", "property_id", "unavailability_id");
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Scopes
     |--------------------------------------------------------------------------
     */
-
-    /**
-     * @param Builder $query
-     * @param array   $columns
-     * @param array   $values
-     *
-     * @return Builder
-     */
-    public static function scopeWhereInMultiple(Builder $query, array $columns, array $values) {
-        collect($values)
-            ->transform(function ($v) use ($columns) {
-                $clause = [];
-                foreach ($columns as $index => $column) {
-                    $clause[] = [$column, '=', $v[$index]];
-                }
-                return $clause;
-            })
-            ->each(function ($clause, $index) use ($query) {
-                $query->where($clause, null, null, $index === 0 ? 'and' : 'or');
-            });
-
-        return $query;
-    }
 
     public function getImpressionModel(Carbon $date): ImpressionsModel|null {
         /**

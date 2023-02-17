@@ -27,7 +27,7 @@ use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Enums\ProductsFillStrategy;
 use Neo\Modules\Properties\Models\Odoo\Property as OdooProperty;
-use Neo\Rules\AccessibleProperty;
+use Neo\Modules\Properties\Rules\AccessibleProperty;
 use Throwable;
 
 /**
@@ -62,6 +62,8 @@ use Throwable;
  * @property Collection<Brand>                     $tenants
  * @property Pricelist                             $pricelist
  * @property Collection<Actor>                     $contacts
+ *
+ * @property Collection<Unavailability>            $unavailabilities
  *
  * @property Collection<Product>                   $products
  *
@@ -126,7 +128,7 @@ class Property extends SecuredModel {
     ];
 
 
-    public function getPublicRelations() {
+    public function getPublicRelations(): array {
         return [
             "actor"                    => "load:actor",
             "address"                  => "load:address",
@@ -141,17 +143,20 @@ class Property extends SecuredModel {
             "parent"                   => "load:actor.parent",
             "pictures"                 => "pictures",
             "pricelist"                => ["pricelist.categories_pricings", "pricelist.products_pricings"],
-            "products"                 => "load:products.attachments",
+            "products"                 => "load:products",
             "products_ids"             => "load:products:id",
             "tags"                     => "load:actor.tags",
             "tenants"                  => ["load:tenants"],
-            "traffic"                  => ["load:traffic.data", "load:traffic.source"],
+            "traffic.monthly_data"     => ["load:traffic.monthly_data"],
+            "traffic.weekly_data"      => ["load:traffic.weekly_data"],
+            "traffic.rolling_weekly"   => [fn(Property $property) => $property->traffic->append("rolling_weekly_traffic")],
+            "traffic.source"           => ["load:traffic.source"],
             "translations"             => "translations",
             "warnings"                 => "append:warnings",
         ];
     }
 
-    public static function boot(): void {
+    protected static function boot(): void {
         parent::boot();
 
         static::deleting(static function (Property $property) {
@@ -246,6 +251,10 @@ class Property extends SecuredModel {
                     ->as("contact");
     }
 
+    public function unavailabilities(): BelongsToMany {
+        return $this->belongsToMany(Unavailability::class, "properties_unavailabilities", "property_id", "unavailability_id");
+    }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -254,7 +263,7 @@ class Property extends SecuredModel {
     */
 
     public function getTraffic(int $year, int $month): int|null {
-        /** @var ?PropertyTrafficMonthly $traffic */
+        /** @var ?MonthlyTrafficDatum $traffic */
         $traffic = $this->traffic->data
             ->where("year", "=", $year)
             ->where("month", "=", $month)

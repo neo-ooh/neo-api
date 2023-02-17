@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -18,7 +18,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Neo\Models\Property;
+use Neo\Modules\Properties\Models\Property;
 use Neo\Services\Odoo\Models\WeeklyTraffic;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -81,7 +81,7 @@ class PushPropertyTrafficJob implements ShouldQueue, ShouldBeUnique {
                 $toCreate[] = [
                     "partner_id"  => $property->odoo->odoo_id,
                     "week_number" => $week - 1,
-                    "traffic"     => floor($dayTraffic)
+                    "traffic"     => floor($dayTraffic),
                 ];
             }
         }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -10,12 +10,11 @@
 
 namespace Neo\Documents\Traffic;
 
-use App;
 use Illuminate\Database\Eloquent\Collection;
-use Neo\Documents\XLSX\Worksheet;
+use Illuminate\Support\Facades\App;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
-use Neo\Models\Property;
+use Neo\Modules\Properties\Models\Property;
 
 class Traffic extends XLSXDocument {
 
@@ -27,11 +26,11 @@ class Traffic extends XLSXDocument {
      * @param array{properties: array<int>, year: int} $data
      */
     protected function ingest($data): bool {
-        $this->year = $data["year"];
+        $this->year       = $data["year"];
         $this->properties = Property::query()->whereIn("actor_id", $data["properties"])
-                                             ->with(["traffic", "network", "address", "actor"])
-                                             ->get()
-                                             ->sortBy("actor.name");
+                                    ->with(["traffic", "network", "address", "actor"])
+                                    ->get()
+                                    ->sortBy("actor.name");
 
         return true;
     }
@@ -47,23 +46,23 @@ class Traffic extends XLSXDocument {
         $this->ws->getRowDimension($this->ws->getCursorRow())->setRowHeight(30);
 
         $this->ws->printRow([
-            __("common.property"),
-            __("common.city"),
-            __("common.market"),
-            __("common.province"),
-            __("common.month-january"),
-            __("common.month-february"),
-            __("common.month-march"),
-            __("common.month-april"),
-            __("common.month-may"),
-            __("common.month-june"),
-            __("common.month-july"),
-            __("common.month-august"),
-            __("common.month-september"),
-            __("common.month-october"),
-            __("common.month-november"),
-            __("common.month-december"),
-        ]);
+                                __("common.property"),
+                                __("common.city"),
+                                __("common.market"),
+                                __("common.province"),
+                                __("common.month-january"),
+                                __("common.month-february"),
+                                __("common.month-march"),
+                                __("common.month-april"),
+                                __("common.month-may"),
+                                __("common.month-june"),
+                                __("common.month-july"),
+                                __("common.month-august"),
+                                __("common.month-september"),
+                                __("common.month-october"),
+                                __("common.month-november"),
+                                __("common.month-december"),
+                            ]);
 
         /** @var Property $property */
         foreach ($this->properties as $property) {
@@ -82,7 +81,7 @@ class Traffic extends XLSXDocument {
 
             $this->ws->printRow([$property->actor->name,
                                  $property->address?->city?->name,
-                                 $property->address?->city?->market?->{"name_".App::getLocale()},
+                                 $property->address?->city?->market?->{"name_" . App::getLocale()},
                                  $property->address?->city?->province->slug,
                                  $property->getTraffic($this->year, 0),
                                  $property->getTraffic($this->year, 1),
@@ -96,7 +95,7 @@ class Traffic extends XLSXDocument {
                                  $property->getTraffic($this->year, 9),
                                  $property->getTraffic($this->year, 10),
                                  $property->getTraffic($this->year, 11),
-                ]);
+                                ]);
         }
 
 

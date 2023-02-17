@@ -21,20 +21,20 @@ use Illuminate\Support\Facades\Cache;
 
 /**
  * @package Neo\Models
- * @property boolean                            $is_required
- * @property int                                $start_year
- * @property Date                               $grace_override
- * @property string                             $input_method
- * @property string                             $missing_value_strategy
- * @property int                                $placeholder_value
+ * @property boolean                         $is_required
+ * @property int                             $start_year
+ * @property Date                            $grace_override
+ * @property string                          $input_method
+ * @property string                          $missing_value_strategy
+ * @property int                             $placeholder_value
  *
- * @property int                                $property_id
- * @property Property                           $property
- * @property Collection<TrafficSource>          $source
- * @property Collection<PropertyTrafficMonthly> $data
+ * @property int                             $property_id
+ * @property Property                        $property
+ * @property Collection<TrafficSource>       $source
+ * @property Collection<MonthlyTrafficDatum> $data
  *
- * @property Collection<PropertyTraffic>        $weekly_data
- * @property \Illuminate\Support\Collection     $weekly_traffic
+ * @property Collection<WeeklyTrafficDatum>  $weekly_data
+ * @property \Illuminate\Support\Collection  $weekly_traffic
  */
 class PropertyTrafficSettings extends Model {
     /**
@@ -80,35 +80,38 @@ class PropertyTrafficSettings extends Model {
      * Monthly traffic data points
      *
      * @return HasMany
+     * @deprecated Use `monthlyData` relation instead.
      */
     public function data(): HasMany {
-        return $this->hasMany(PropertyTrafficMonthly::class, "property_id", "property_id")->orderBy("year", 'desc');
+        return $this->hasMany(MonthlyTrafficDatum::class, "property_id", "property_id")->orderBy("year", 'desc');
+    }
+
+    /**
+     * Monthly traffic data
+     *
+     * @return HasMany<MonthlyTrafficDatum>
+     */
+    public function monthly_data(): HasMany {
+        return $this->hasMany(MonthlyTrafficDatum::class, "property_id", "property_id")
+                    ->orderBy("year", "desc");
     }
 
     /**
      * Weekly traffic data points
      *
-     * @return HasMany
+     * @return HasMany<WeeklyTrafficDatum>
      */
     public function weekly_data(): HasMany {
-        return $this->hasMany(PropertyTraffic::class, "property_id", "property_id")
+        return $this->hasMany(WeeklyTrafficDatum::class, "property_id", "property_id")
                     ->orderBy("year")
                     ->orderBy("week");
     }
 
-
     /**
-     * Provide the weekly traffic of the property grouped by year then week.
-     * [ $year => [ 1 => 000000, 2 => 0000000, ... ] ]
      *
-     * @return \Illuminate\Support\Collection
+     *
+     * @return BelongsToMany<TrafficSource>
      */
-    public function getWeeklyTrafficAttribute(): \Illuminate\Support\Collection {
-        return $this->weekly_data->groupBy("year")
-                                 ->map(fn($points) => $points->mapWithKeys(fn($point) => [$point->week => $point->traffic]))
-                                 ->sortKeys(SORT_NUMERIC, "desc");
-    }
-
     public function source(): BelongsToMany {
         return $this->belongsToMany(TrafficSource::class, "property_traffic_source", "property_id", "source_id")
                     ->withPivot("uid");
@@ -126,6 +129,10 @@ class PropertyTrafficSettings extends Model {
         return "property-$this->property_id-rolling-weekly-traffic";
     }
 
+    public function getRollingWeeklyTrafficAttribute() {
+        return $this->getRollingWeeklyTraffic($this->property->network_id);
+    }
+
     /**
      * This method returns an array of 53 values corresponding of the weekly traffic for the property for a year.
      *
@@ -139,7 +146,7 @@ class PropertyTrafficSettings extends Model {
             }
 
             $rollingTraffic = [];
-            $trafficData    = $this->weekly_traffic;
+            $trafficData    = $this->weekly_data;
 
             /** Iterator across all years of data. Each year is an array whose indexes map the weeks  */
             /** @var ArrayIterator $yearTrafficIt */
@@ -213,6 +220,7 @@ class PropertyTrafficSettings extends Model {
             return $rollingTraffic;
         }
 
+        /** @var WeeklyTrafficDatum $referenceDatum */
         $referenceDatum = $this->weekly_data->first(
             fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week
         );
@@ -228,12 +236,12 @@ class PropertyTrafficSettings extends Model {
 
         for ($week = 2; $week <= 52; $week++) {
 
-            /** @var PropertyTraffic|null $mostRecentDatumForPeriod */
+            /** @var WeeklyTrafficDatum|null $mostRecentDatumForPeriod */
             $mostRecentDatumForPeriod = $this->weekly_data->where("week", "=", $week)
                                                           ->sortBy("year", SORT_REGULAR, "desc")
                                                           ->first();
 
-            /** @var PropertyTraffic|null $referenceDatumForPeriod */
+            /** @var WeeklyTrafficDatum|null $referenceDatumForPeriod */
             $referenceDatumForPeriod = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $week);
 
             // If the two data are the same, directly apply the factored-down result

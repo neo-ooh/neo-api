@@ -6,7 +6,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - PropertyTraffic.php
+ * @neo/api - WeeklyTrafficDatum.php
  */
 
 namespace Neo\Modules\Properties\Models;
@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int     $traffic
  * @property boolean $is_estimate
  */
-class PropertyTraffic extends Model {
+class WeeklyTrafficDatum extends Model {
     protected $table = "properties_traffic";
 
     protected $primaryKey = null;

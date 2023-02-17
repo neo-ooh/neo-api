@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - PropertyTrafficMonthly.php
+ * @neo/api - MonthlyTrafficDatum.php
  */
 
 namespace Neo\Modules\Properties\Models;
@@ -13,6 +13,7 @@ namespace Neo\Modules\Properties\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 use Neo\Models\Traits\HasCompositePrimaryKey;
 
 /**
@@ -27,7 +28,7 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
  *
  * @property Property $property
  */
-class PropertyTrafficMonthly extends Model {
+class MonthlyTrafficDatum extends Model {
     use HasCompositePrimaryKey;
 
     /*
@@ -78,8 +79,8 @@ class PropertyTrafficMonthly extends Model {
     protected static function boot() {
         parent::boot();
 
-        static::retrieved(function (PropertyTrafficMonthly $traffic) {
-            $traffic->makeHiddenIf(!Gate::allows(\Neo\Enums\Capability::properties_edit->value), ["temporary"]);
+        static::retrieved(function (MonthlyTrafficDatum $traffic) {
+            $traffic->makeHiddenIf(!Gate::allows(Capability::properties_edit->value), ["temporary"]);
         });
     }
 

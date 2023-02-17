@@ -13,15 +13,10 @@ namespace Neo\Modules\Properties\Http\Controllers;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Gate;
-use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
-use Neo\Jobs\Traffic\EstimateWeeklyTrafficFromMonthJob;
 use Neo\Modules\Properties\Http\Requests\PropertiesTraffic\ListTrafficRequest;
-use Neo\Modules\Properties\Http\Requests\PropertiesTraffic\StoreTrafficRequest;
 use Neo\Modules\Properties\Http\Requests\PropertiesTraffic\UpdatePropertyTrafficSettingsRequest;
 use Neo\Modules\Properties\Models\Property;
-use Neo\Modules\Properties\Models\PropertyTrafficMonthly;
 
 class PropertiesTrafficController extends Controller {
     public function index(ListTrafficRequest $request, Property $property): Response {
@@ -32,42 +27,6 @@ class PropertiesTrafficController extends Controller {
                                          ->groupBy("year");
 
         return new Response($yearTraffic);
-    }
-
-    public function store(StoreTrafficRequest $request, Property $property): Response {
-        $values = ["traffic" => $request->input("traffic")];
-
-        if (Gate::allows(Capability::properties_edit->value) && $request->has("temporary")) {
-            $values["temporary"] = $request->input("temporary");
-
-            if ($values["traffic"] === null && $values["temporary"] === null) {
-                // remove the record instead of adding it
-                PropertyTrafficMonthly::query()->where([
-                                                           "property_id" => $property->actor_id,
-                                                           "year"        => $request->input("year"),
-                                                           "month"       => $request->input("month"),
-                                                       ])->delete();
-
-                EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $request->input("year"), $request->input("month") + 1);
-
-                $property->touch("last_review_at");
-
-                return new Response([], 200);
-            }
-        }
-
-
-        $traffic = PropertyTrafficMonthly::query()->updateOrCreate([
-                                                                       "property_id" => $property->actor_id,
-                                                                       "year"        => $request->input("year"),
-                                                                       "month"       => $request->input("month"),
-                                                                   ], $values);
-
-        EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $request->input("year"), $request->input("month") + 1);
-
-        $property->touch("last_review_at");
-
-        return new Response($traffic, 201);
     }
 
     public function update(UpdatePropertyTrafficSettingsRequest $request, Property $property): Response {

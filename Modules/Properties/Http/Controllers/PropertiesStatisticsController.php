@@ -12,8 +12,8 @@ namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Neo\Models\Property;
 use Neo\Modules\Properties\Http\Requests\PropertiesStatistics\GetPropertyStatisticsRequest;
+use Neo\Modules\Properties\Models\Property;
 
 class PropertiesStatisticsController {
     public function show(GetPropertyStatisticsRequest $request, Property $property) {

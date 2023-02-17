@@ -52,13 +52,6 @@ class IngestDemographicFileJob implements ShouldQueue {
             "updated_at" => $now,
         ]));
 
-        clock(DB::query()
-                ->from("demographic_values")
-                ->where("property_id", "=", $this->propertyId)
-                ->whereIn("value_id", $entries->pluck("id"))->toSql());
-
-        $this->cleanUp();
-        return;
         DB::query()
           ->from("demographic_values")
           ->where("property_id", "=", $this->propertyId)
@@ -66,17 +59,6 @@ class IngestDemographicFileJob implements ShouldQueue {
           ->delete();
 
         DemographicVariable::query()->insertOrIgnore($variables->toArray());
-
-//        foreach ($entries as $entry) {
-//            DemographicValue::query()->updateOrInsert([
-//                "property_id" => $this->propertyId,
-//                "value_id"    => $entry["id"],
-//            ], [
-//                "value"           => $entry["value"],
-//                "reference_value" => $entry["reference_value"],
-//                "updated_at"      => Date::now("UTC"),
-//            ]);
-//        }
 
         $this->cleanUp();
     }

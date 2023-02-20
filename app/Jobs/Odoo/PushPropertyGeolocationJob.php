@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -11,11 +11,11 @@
 namespace Neo\Jobs\Odoo;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Neo\Models\Property;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Neo\Modules\Properties\Models\Property;
 use Neo\Services\Odoo\OdooConfig;
 
 class PushPropertyGeolocationJob implements ShouldQueue {
@@ -28,12 +28,12 @@ class PushPropertyGeolocationJob implements ShouldQueue {
         /** @var Property $property */
         $property = Property::find($this->propertyId);
 
-        if(!$property || !$property->address || !$property->address->geolocation) {
+        if (!$property || !$property->address || !$property->address->geolocation) {
             // Do nothing on missing data
             return;
         }
 
-        if(!$property->odoo) {
+        if (!$property->odoo) {
             // Do nothing if not connected to Odoo
             return;
         }
@@ -42,8 +42,8 @@ class PushPropertyGeolocationJob implements ShouldQueue {
         $odooClient = $odooConfig->getClient();
 
         $odooProperty = new \Neo\Services\Odoo\Models\Property($odooClient, [
-            "id" => $property->odoo->odoo_id,
-            "partner_latitude" => $property->address->geolocation->getLat(),
+            "id"                => $property->odoo->odoo_id,
+            "partner_latitude"  => $property->address->geolocation->getLat(),
             "partner_longitude" => $property->address->geolocation->getLng(),
         ]);
         $odooProperty->update(["partner_latitude", "partner_longitude"]);

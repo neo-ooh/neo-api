@@ -239,7 +239,7 @@ class PropertiesController extends Controller {
         PullAddressGeolocationJob::dispatch($address);
 
         if ($property->odoo && config("app.env") === "production") {
-            PushPropertyGeolocationJob::dispatch($property->actor);
+            PushPropertyGeolocationJob::dispatch($property->actor_id);
         }
 
         return new Response($address);

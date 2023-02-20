@@ -25,8 +25,8 @@ use Neo\Models\Traits\HasCreatedByUpdatedBy;
  * @property int                                   $created_by
  * @property Carbon                                $updated_at
  * @property int                                   $updated_by
- * @property Carbon                                deleted_at
- * @property int                                   deleted_by
+ * @property Carbon|null                           deleted_at
+ * @property int|null                              deleted_by
  *
  * @property Collection<UnavailabilityTranslation> $translations
  *
@@ -57,6 +57,6 @@ class Unavailability extends Model {
     */
 
     public function translations(): HasMany {
-        return $this->hasMany(PropertyTranslation::class, "property_id", "id");
+        return $this->hasMany(UnavailabilityTranslation::class, "unavailability_id", "id");
     }
 }

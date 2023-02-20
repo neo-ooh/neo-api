@@ -18,6 +18,7 @@ use Neo\Modules\Properties\Http\Requests\Unavailabilities\ShowUnavailabilityRequ
 use Neo\Modules\Properties\Http\Requests\Unavailabilities\StoreUnavailabilityRequest;
 use Neo\Modules\Properties\Http\Requests\Unavailabilities\UpdateUnavailabilityRequest;
 use Neo\Modules\Properties\Models\Unavailability;
+use Neo\Modules\Properties\Models\UnavailabilityTranslation;
 
 class UnavailabilitiesController extends Controller {
     public function store(StoreUnavailabilityRequest $request) {
@@ -42,6 +43,16 @@ class UnavailabilitiesController extends Controller {
                        ]);
         }
 
+        $translations = collect($request->input("translations"));
+
+        DB::table((new UnavailabilityTranslation())->getTable())
+          ->insert($translations->map(fn($translation) => [
+              "unavailability_id" => $unavailability->getKey(),
+              "locale"            => $translation["locale"],
+              "reason"            => $translation["reason"],
+              "comment"           => $translation["comment"] ?? "",
+          ])->toArray());
+
         return new Response($unavailability);
     }
 
@@ -53,6 +64,18 @@ class UnavailabilitiesController extends Controller {
         $unavailability->start_date = $request->input("start_date");
         $unavailability->end_date   = $request->input("end_date");
         $unavailability->save();
+
+        $translations = collect($request->input("translations"));
+
+        foreach ($translations as $translation) {
+            DB::table("unavailabilities_translations")
+              ->where("unavailability_id", "=", $unavailability->getKey())
+              ->where("locale", "=", $translation["locale"])
+              ->update([
+                           "reason"  => $translation["reason"],
+                           "comment" => $translation["comment"] ?? "",
+                       ]);
+        }
 
         return new Response($unavailability);
     }

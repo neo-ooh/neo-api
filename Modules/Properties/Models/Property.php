@@ -152,6 +152,7 @@ class Property extends SecuredModel {
             "traffic.rolling_weekly"   => [fn(Property $property) => $property->traffic->append("rolling_weekly_traffic")],
             "traffic.source"           => ["load:traffic.source"],
             "translations"             => "translations",
+            "unavailabilities"         => ["load:unavailabilities.translations"],
             "warnings"                 => "append:warnings",
         ];
     }

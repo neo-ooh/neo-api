@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - RouteServiceProvider.php
+ */
 
 namespace Neo\Modules\Properties\Providers;
 
@@ -46,5 +54,6 @@ class RouteServiceProvider extends ServiceProvider {
         Route::group([], module_path('Properties', '/Routes/fields.php'));
         Route::group([], module_path('Properties', '/Routes/demographics.php'));
         Route::group([], module_path('Properties', '/Routes/impressions.php'));
+        Route::group([], module_path('Properties', '/Routes/unavailabilities.php'));
     }
 }

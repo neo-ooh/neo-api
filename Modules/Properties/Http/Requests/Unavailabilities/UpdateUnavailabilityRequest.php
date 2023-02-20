@@ -19,6 +19,11 @@ class UpdateUnavailabilityRequest extends FormRequest {
         return [
             "start_date" => ["required_if:end_date,null", "nullable", "date"],
             "end_date"   => ["required_if:start_date,null", "nullable", "date"],
+            
+            "translations"           => ["array"],
+            "translations.*.locale"  => ["required", "string"],
+            "translations.*.reason"  => ["required", "string"],
+            "translations.*.comment" => ["nullable", "string"],
         ];
     }
 

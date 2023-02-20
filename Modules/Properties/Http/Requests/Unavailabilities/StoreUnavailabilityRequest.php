@@ -24,8 +24,13 @@ class StoreUnavailabilityRequest extends FormRequest {
             "start_date" => ["required_if:end_date,null", "nullable", "date"],
             "end_date"   => ["required_if:start_date,null", "nullable", "date"],
 
-            "property_id" => ["required_if:product_id,null", "integer", new Exists(Property::class, "id"), new AccessibleProperty()],
-            "product_id"  => ["required_if:property_id,null", "integer", new Exists(Property::class, "id"), new AccessibleProduct()],
+            "property_id" => ["required_if:product_id,null", "integer", "sometimes", new Exists(Property::class, "actor_id"), new AccessibleProperty()],
+            "product_id"  => ["required_if:property_id,null", "integer", "sometimes", new Exists(Property::class, "id"), new AccessibleProduct()],
+
+            "translations"           => ["array"],
+            "translations.*.locale"  => ["required", "string"],
+            "translations.*.reason"  => ["required", "string"],
+            "translations.*.comment" => ["nullable", "string"],
         ];
     }
 

@@ -27,20 +27,12 @@ class UnavailabilitiesController extends Controller {
         $unavailability->end_date   = $request->input("end_date", null);
         $unavailability->save();
 
-        if ($request->has("property_id")) {
-            DB::table("properties_unavailabilities")
-              ->insert([
-                           "property_id"       => $request->input("property_id"),
-                           "unavailability_id" => $unavailability->getKey(),
-                       ]);
+        if ($request->has("property")) {
+            $unavailability->properties()->sync([$request->input("property")]);
         }
 
-        if ($request->has("product_id")) {
-            DB::table("products_unavailabilities")
-              ->insert([
-                           "product_id"        => $request->input("product_id"),
-                           "unavailability_id" => $unavailability->getKey(),
-                       ]);
+        if ($request->has("products")) {
+            $unavailability->products()->sync($request->input("products"));
         }
 
         $translations = collect($request->input("translations"));
@@ -57,25 +49,28 @@ class UnavailabilitiesController extends Controller {
     }
 
     public function show(ShowUnavailabilityRequest $request, Unavailability $unavailability) {
-        return new Response($unavailability, 201);
+        return new Response($unavailability->loadPublicRelations(), 201);
     }
 
     public function update(UpdateUnavailabilityRequest $request, Unavailability $unavailability) {
-        $unavailability->start_date = $request->input("start_date");
-        $unavailability->end_date   = $request->input("end_date");
+        $unavailability->start_date = $request->input("start_date", null);
+        $unavailability->end_date   = $request->input("end_date", null);
         $unavailability->save();
+
+        $unavailability->properties()->sync($request->has("property") ? [$request->input("property")] : []);
+        $unavailability->products()->sync($request->input("products", []));
 
         $translations = collect($request->input("translations"));
 
-        foreach ($translations as $translation) {
-            DB::table("unavailabilities_translations")
-              ->where("unavailability_id", "=", $unavailability->getKey())
-              ->where("locale", "=", $translation["locale"])
-              ->update([
-                           "reason"  => $translation["reason"],
-                           "comment" => $translation["comment"] ?? "",
-                       ]);
-        }
+        UnavailabilityTranslation::query()->upsert(
+              $translations->map(fn($translation) => [
+                  "unavailability_id" => $unavailability->getKey(),
+                  "locale"            => $translation["locale"],
+                  "reason"            => $translation["reason"],
+                  "comment"           => $translation["comment"] ?? "",
+              ])->toArray()
+            , ["unavailability_id", "locale"], ["reason", "comment"]
+        );
 
         return new Response($unavailability);
     }

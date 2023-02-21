@@ -13,11 +13,13 @@ namespace Neo\Modules\Properties\Http\Requests\Unavailabilities;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Properties\Models\Unavailability;
+use Neo\Rules\PublicRelations;
 
 class ShowUnavailabilityRequest extends FormRequest {
     public function rules(): array {
         return [
-
+            "with" => ["array", new PublicRelations(Unavailability::class)],
         ];
     }
 

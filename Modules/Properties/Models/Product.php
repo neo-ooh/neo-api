@@ -149,7 +149,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     }
 
     public function unavailabilities(): BelongsToMany {
-        return $this->belongsToMany(Unavailability::class, "products_unavailabilities", "property_id", "unavailability_id");
+        return $this->belongsToMany(Unavailability::class, "products_unavailabilities", "product_id", "unavailability_id");
     }
 
     /*

@@ -264,7 +264,7 @@ class Schedule extends BroadcastResourceModel {
     public function toResource(): ScheduleResource {
         return new ScheduleResource(
             enabled       : $this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live,
-            name          : $this->campaign->name . " - " . $this->contents->first()->name,
+            name          : $this->campaign->name . " - " . $this->contents->first()?->name,
             start_date    : $this->start_date->toDateString(),
             start_time    : $this->start_time->toTimeString(),
             end_date      : $this->end_date->toDateString(),

@@ -28,7 +28,7 @@ use Neo\Modules\Properties\Models\Property;
  * @return string
  * @link https://stackoverflow.com/a/25353877
  */
-function stripQuotes(string $text) {
+function trimQuotes(string $text) {
     return preg_replace('/^(\'(.*)\'|"(.*)")$/', '$2$3', $text);
 }
 
@@ -48,8 +48,8 @@ class BrandsController {
 
     public function store(StoreBrandRequest $request) {
         $brand          = new Brand();
-        $brand->name_en = stripQuotes($request->input("name_en"));
-        $brand->name_fr = stripQuotes($request->input("name_fr"));
+        $brand->name_en = trimQuotes($request->input("name_en"));
+        $brand->name_fr = trimQuotes($request->input("name_fr"));
         $brand->save();
 
         return new Response($brand, 201);
@@ -58,8 +58,8 @@ class BrandsController {
     public function storeBatch(StoreBrandsBatchRequest $request) {
         $brandNames = collect($request->input("names"));
         Brand::query()->insert($brandNames->map(fn($brandName) => [
-            "name_en" => stripQuotes($brandName),
-            "name_fr" => stripQuotes($brandName),
+            "name_en" => trimQuotes($brandName),
+            "name_fr" => trimQuotes($brandName),
         ])->toArray());
 
         $brands = Brand::query()->whereIn("name_en", $brandNames)->get();

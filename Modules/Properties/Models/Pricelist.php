@@ -44,7 +44,7 @@ class Pricelist extends Model {
 
     protected array $publicRelations = [
         "categories",
-        "products",
+        "products" => ["load:products.property"],
         "properties",
         "categories_pricings",
         "products_pricings",

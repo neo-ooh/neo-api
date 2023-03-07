@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -32,6 +32,8 @@ use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
+use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Broadcast\Models\Library;
 use Symfony\Component\Mailer\Exception\TransportException;
 
 /**
@@ -207,7 +209,7 @@ class ActorsController extends Controller {
         if (count($request->all()) === 0) {
             return new Response([
                                     "code" => "empty-request",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "message" => "You must pass at lease 1 parameter when calling this route",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               "message" => "You must pass at lease 1 parameter when calling this route",
                                 ], 422);
         }
 
@@ -242,7 +244,7 @@ class ActorsController extends Controller {
             if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
                 return new Response([
                                         'code' => 'actor.hierarchy-loop',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      'message' => 'Parent assignment would result in incoherent actors hierarchy',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   'message' => 'Parent assignment would result in incoherent actors hierarchy',
                                         'data' => $actor,
                                     ], 403);
             }
@@ -261,9 +263,29 @@ class ActorsController extends Controller {
         switch ($request["behaviour"]) {
             case "to-parent":
                 $actor->children->each(fn($actor) => $actor->moveTo($actor->parent));
+                $actor->libraries->each(function (Library $library) use ($actor) {
+                    $library->owner_id = $actor->parent_id;
+                    $library->save();
+                });
+                $actor->campaigns->each(function (Campaign $campaign) use ($actor) {
+                    $campaign->parent_id = $actor->parent_id;
+                    $campaign->save();
+                });
                 break;
             case "to-self":
                 $actor->children->each(fn($actor) => $actor->moveTo(Auth::user()));
+                $actor->libraries->each(function (Library $library) use ($actor) {
+                    $library->owner_id = Auth::id();
+                    $library->save();
+                });
+                $actor->campaigns->each(function (Campaign $campaign) use ($actor) {
+                    $campaign->parent_id = Auth::id();
+                    $campaign->save();
+                });
+                break;
+            case "to-trash":
+                $actor->libraries->each(fn(Library $library) => $library->delete());
+                $actor->campaigns->each(fn(Campaign $campaign) => $campaign->delete());
                 break;
         }
 

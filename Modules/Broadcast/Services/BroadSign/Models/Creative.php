@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -22,6 +22,16 @@ use Neo\Modules\Broadcast\Services\Resources\Creative as CreativeResource;
 use Neo\Modules\Broadcast\Services\Resources\CreativeStorageType;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use RuntimeException;
+
+/**
+ * Remove all quotation marks (simple and double) from a string
+ *
+ * @param string $str
+ * @return string
+ */
+function stripQuotes(string $str): string {
+    return str_replace(["'", "\""], "", $str);
+}
 
 /**
  * Class Creatives
@@ -55,7 +65,6 @@ use RuntimeException;
  * @method null addResourceCriteria(array $payload)
  */
 class Creative extends BroadSignModel {
-
     protected static string $unwrapKey = "content";
 
     protected static array $updatable = [
@@ -104,11 +113,11 @@ class Creative extends BroadSignModel {
      */
     public function addCriteria(int $criteriaID, int $type): void {
         $this->addResourceCriteria([
-            "active"      => true,
-            "criteria_id" => $criteriaID,
-            "parent_id"   => $this->id,
-            "type"        => $type,
-        ]);
+                                       "active"      => true,
+                                       "criteria_id" => $criteriaID,
+                                       "parent_id"   => $this->id,
+                                       "type"        => $type,
+                                   ]);
     }
 
 
@@ -152,8 +161,8 @@ class Creative extends BroadSignModel {
     protected static function importStaticCreative(BroadSignClient $client, CreativeResource $creative, CreativeStorageType $storageType): int {
         // Prepare the creative metadata for BroadSign
         $metadata = [
-            "name"             => $creative->name,
-            "originalfilename" => $creative->fileName,
+            "name"             => stripQuotes($creative->name),
+            "originalfilename" => stripQuotes($creative->fileName),
             "feeds"            => "",
             "attributes"       => static::getAttributesForCreative($creative, $storageType),
             "mime"             => $creative->extension,
@@ -170,10 +179,10 @@ class Creative extends BroadSignModel {
                 $creativePath = stream_get_meta_data($tempFile)['uri'];
 
                 $response = static::executeRequest(
-                    client: $client,
+                    client  : $client,
                     creative: $creative,
-                    payload: $metadata,
-                    file: $creativePath
+                    payload : $metadata,
+                    file    : $creativePath
                 );
 
                 fclose($tempFile);
@@ -182,9 +191,9 @@ class Creative extends BroadSignModel {
             case CreativeStorageType::Link:
                 $metadata["size"] = "-1";
                 $response         = static::executeRequest(
-                    client: $client,
+                    client  : $client,
                     creative: $creative,
-                    payload: $metadata
+                    payload : $metadata
                 );
 
                 return $response["id"];
@@ -199,8 +208,8 @@ class Creative extends BroadSignModel {
     protected static function importDynamicCreative(BroadSignClient $client, CreativeResource $creative): int {
         // Prepare the creative metadata for BroadSign
         $metadata = [
-            "name"             => $creative->name,
-            "originalfilename" => $creative->fileName,
+            "name"             => stripQuotes($creative->name),
+            "originalfilename" => stripQuotes($creative->fileName),
             "size"             => "-1",
             "feeds"            => "",
             "attributes"       => static::getAttributesForCreative($creative, CreativeStorageType::Link),
@@ -208,9 +217,9 @@ class Creative extends BroadSignModel {
         ];
 
         $response = static::executeRequest(
-            client: $client,
+            client  : $client,
             creative: $creative,
-            payload: $metadata
+            payload : $metadata
         );
 
         return $response["id"];
@@ -245,6 +254,7 @@ class Creative extends BroadSignModel {
         $req[]        = "-F 'metadata=$metadata;type=application/json'";            // Request metadata
         $req[]        = $file ? "-F 'file=@$file'" : "-F 'file=dummy.txt'";         // Request file
         $curl_command = implode(" ", $req);
+        $curl_command .= " 2>&1"; // Redirect error output to standard output
 
         // Execute the request
         $output    = [];
@@ -254,15 +264,15 @@ class Creative extends BroadSignModel {
         if (config('app.env') !== 'production') {
             Log::debug("[BroadSign] $endpoint->method@{$endpoint->getPath()}", [json_encode($payload, JSON_THROW_ON_ERROR)]);
             clock([
-                "endpoint" => "$endpoint->method@{$endpoint->getPath()}",
-                "payload"  => $payload,
-            ]);
+                      "endpoint" => "$endpoint->method@{$endpoint->getPath()}",
+                      "payload"  => $payload,
+                  ]);
         }
 
         exec($curl_command, $output, $exit_code);
 
         if ($exit_code !== 0 || (int)$output[1] !== 200) {
-            throw new RuntimeException("Error while executing cURL request: " . implode(", ", $output));
+            throw new RuntimeException("Error while executing cURL request: `$curl_command`; Error:" . implode(", ", $output));
         }
 
         $responseBody = json_decode($output[0], true, 512, JSON_THROW_ON_ERROR)[$endpoint->unwrapKey];

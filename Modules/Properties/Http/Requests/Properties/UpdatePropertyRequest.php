@@ -18,6 +18,7 @@ class UpdatePropertyRequest extends FormRequest {
     public function rules(): array {
         return [
             "network_id"   => ["nullable", "exists:networks,id"],
+            "is_sellable"  => ["required", "boolean"],
             "has_tenants"  => ["required", "boolean"],
             "pricelist_id" => ["nullable", "exists:pricelists,id"],
         ];

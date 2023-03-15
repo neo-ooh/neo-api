@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -23,7 +23,7 @@ use Illuminate\Queue\SerializesModels;
 use Throwable;
 
 /**
- * This base class for jobs implements hooks for some of the lifecycle events of jobs
+ * This base class for jobs implements hooks for some lifecycle events of jobs
  *
  * > Call order is as follow:
  * > Job::beforeRun();
@@ -41,8 +41,15 @@ abstract class Job implements ShouldQueue {
     use SerializesModels;
 
     final public function handle(): void {
+        $jobID = uniqid();
+        clock()->event(get_class($this))
+               ->color("orange")
+               ->name($jobID)
+               ->begin();
+
         if (!$this->beforeRun()) {
             $this->finally();
+            clock()->event($jobID)->end();
             return;
         }
 
@@ -54,6 +61,7 @@ abstract class Job implements ShouldQueue {
             $this->onFailure($exception);
         } finally {
             $this->finally();
+            clock()->event($jobID)->end();
         }
     }
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -23,8 +23,8 @@ use Neo\Models\Client;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\ContractLine;
-use Neo\Models\Product;
-use Neo\Modules\Properties\Enums\ProductsFillStrategy;
+use Neo\Modules\Properties\Enums\ProductType;
+use Neo\Modules\Properties\Models\Product;
 use Neo\Resources\Contracts\CPCompiledFlight;
 use Neo\Resources\Contracts\FlightType;
 use Neo\Services\Odoo\Models\Contract as OdooContract;
@@ -199,7 +199,7 @@ class ImportContractDataJob implements ShouldQueue {
             $contractLines->push($line);
 
             // If the line is guaranteed and for a digital product, sum its impressions
-            if ($product->category->fill_strategy === ProductsFillStrategy::digital &&
+            if ($product->category->type === ProductType::Digital &&
                 $flight->type !== FlightType::BUA) {
                 $expectedDigitalImpressions += $line->impressions;
             }

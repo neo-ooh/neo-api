@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - PublicRelations.php
+ */
 
 namespace Neo\Helpers;
 
@@ -24,7 +32,7 @@ class PublicRelations {
 
         // Make sure the target model as the `HasPublicRelation` trait
         if (!in_array(HasPublicRelations::class, class_uses_recursive($model::class), true)) {
-            throw new RuntimeException("Calling `loadPublicRelations` on a Model/Model Collection without the `HasPublicRelation` Trait");
+            throw new RuntimeException("Calling `loadPublicRelations` on a Models/Models Collection without the `HasPublicRelation` Trait");
         }
 
         $publicRelations = $model->getPublicRelationsList();
@@ -51,7 +59,7 @@ class PublicRelations {
         return Request::input("with", []);
     }
 
-    protected static function performExpansion(Model|Collection $subject, string|array|callable $relation): void {
+    protected static function performExpansion(Model|Collection $subject, Relation|string|array|callable $relation): void {
         if (is_array($relation)) {
             foreach ($relation as $value) {
                 self::performExpansion($subject, $value);
@@ -60,48 +68,7 @@ class PublicRelations {
             return;
         }
 
-        if (is_callable($relation)) {
-            if ($subject instanceof Collection) {
-                foreach ($subject as $model) {
-                    $relation($model);
-                }
-            } else {
-                $relation($subject);
-            }
-            return;
-        }
-
-        // Relation is string
-        $tokens = explode(":", $relation);
-        // If only one token is found, we imply no action is given, and default to `load`
-        if (count($tokens) === 1) {
-            $action  = "load";
-            $request = $tokens[0];
-        } else {
-            // Otherwise, we validate the given action, and if it is not recognized, we default to `load` as well
-            switch ($tokens[0]) {
-                case "load":
-                case "append":
-                case "count":
-                    $action  = array_shift($tokens);
-                    $request = implode(":", $tokens);
-                    break;
-                default:
-                    $action  = "load";
-                    $request = implode(":", $tokens);
-            }
-        }
-
-        switch ($action) {
-            case 'append':
-                $subject->append($request);
-                break;
-            case 'load':
-                $subject->loadMissing($request);
-                break;
-            case 'count':
-                $subject->loadCount($request);
-                break;
-        }
+        $relationObject = $relation instanceof Relation ? $relation : Relation::fromLegacy($relation);
+        $relationObject->expand($subject);
     }
 }

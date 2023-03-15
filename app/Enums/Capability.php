@@ -199,6 +199,18 @@ enum Capability: string {
 
     /*
     |----------------------------------------------------------------------
+    | Inventories
+    |----------------------------------------------------------------------
+    */
+
+    /**
+     * Allow managing inventories services for Connect
+     */
+    case inventories_edit = "inventories.edit";
+
+
+    /*
+    |----------------------------------------------------------------------
     | Properties
     |----------------------------------------------------------------------
     */
@@ -330,6 +342,16 @@ enum Capability: string {
      * Allows adding and updating properties and products unavailabilities
      */
     case properties_unavailabilities_edit = "properties.unavailabilities.edit";
+
+    /**
+     * Gives read access to properties and products inventories configurations
+     */
+    case properties_inventories_view = "properties.inventories.view";
+
+    /**
+     * Allows configuring inventories connections for properties and products
+     */
+    case properties_inventories_edit = "properties.inventories.edit";
 
 
     /*

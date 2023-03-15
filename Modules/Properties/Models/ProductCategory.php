@@ -19,25 +19,25 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
-use Neo\Modules\Properties\Enums\ProductsFillStrategy;
+use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Interfaces\WithAttachments;
 use Neo\Modules\Properties\Models\Interfaces\WithImpressionsModels;
 use Neo\Modules\Properties\Models\Traits\HasImpressionsModels;
+use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @property int                           $id
- * @property int                           $external_id
- * @property int                           $type_id
+ * @property int                           $inventory_resource_id
  * @property string                        $name_en
  * @property string                        $name_fr
- * @property ProductsFillStrategy          $fill_strategy
+ * @property ProductType                   $type
  * @property int|null                      $format_id
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  *
- * @property ProductType                   $type
  * @property Format                        $format
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
@@ -46,28 +46,29 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
     use HasImpressionsModels;
     use HasRelationships;
     use HasPublicRelations;
+    use InventoryResourceModel;
 
     protected $table = "products_categories";
 
     protected $primaryKey = "id";
 
     protected $fillable = [
-        "type_id",
         "name_en",
         "name_fr",
-        "fill_strategy",
+        "type",
         "external_id",
     ];
 
     protected $casts = [
-        "fill_strategy" => ProductsFillStrategy::class,
+        "type" => ProductType::class,
     ];
 
     public string $impressions_models_pivot_table = "products_categories_impressions_models";
 
+    public InventoryResourceType $inventoryResourceType = InventoryResourceType::ProductCategory;
+
     public function getPublicRelations() {
         return [
-            "type"                => "load:product_type",
             "properties"          => "load:properties",
             "format"              => "load:format",
             "attachments"         => "load:attachments",
@@ -89,10 +90,6 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
 
     public function format(): BelongsTo {
         return $this->belongsTo(Format::class, "format_id", "id");
-    }
-
-    public function product_type(): BelongsTo {
-        return $this->belongsTo(ProductType::class, "type_id", "id");
     }
 
     public function products(): HasMany {

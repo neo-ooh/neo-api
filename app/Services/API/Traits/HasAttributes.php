@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -21,6 +21,7 @@ trait HasAttributes {
      * @param string $name
      *
      * @return mixed
+     * @throws JsonException
      */
     public function &__get(string $name) {
         // Check if a method with the specified name exists
@@ -57,6 +58,43 @@ trait HasAttributes {
     }
 
     /**
+     * Set the given attributes on the model
+     *
+     * @param array $attributes
+     * @return void
+     */
+    public function setAttributes(array $attributes) {
+        $this->attributes = [
+            ...$this->attributes,
+            ...$attributes,
+        ];
+    }
+
+    /**
+     * Set a single attribute on the model using the given key
+     *
+     * @param string $key
+     * @param        $value
+     * @return void
+     */
+    public function setAttribute(string $key, $value) {
+        $this->attributes[$key] = $value;
+    }
+
+    /**
+     * List all the set attributes of the model
+     *
+     * @return array
+     */
+    public function getAttributes(): array {
+        return $this->attributes;
+    }
+
+    public function getAttribute(string $key): mixed {
+        return $this->{$key};
+    }
+
+    /**
      */
     public function __toString(): string {
         try {
@@ -75,7 +113,7 @@ trait HasAttributes {
      * @return array
      */
     public function toArray(): array {
-        return $this->attributes;
+        return $this->getAttributes();
     }
 
     /**

@@ -16,15 +16,15 @@ use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Format;
-use Neo\Modules\Properties\Enums\ProductsFillStrategy;
+use Neo\Modules\Properties\Enums\ProductType;
 
 class UpdateProductCategoryRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name_en"       => ["required", "string"],
-            "name_fr"       => ["required", "string"],
-            "fill_strategy" => ["required", new Enum(ProductsFillStrategy::class)],
-            "format_id"     => ["nullable", new Exists(Format::class, "id")],
+            "name_en"   => ["required", "string"],
+            "name_fr"   => ["required", "string"],
+            "type"      => ["required", new Enum(ProductType::class)],
+            "format_id" => ["nullable", new Exists(Format::class, "id")],
         ];
     }
 

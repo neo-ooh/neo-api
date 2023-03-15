@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c996ddd411445741dec16afe5b37d68",
+    "content-hash": "a41f54920a631180d318bd75abd8932c",
     "packages": [
         {
             "name": "ajcastro/eager-load-pivot-relations",
@@ -1890,6 +1890,65 @@
                 "source": "https://github.com/geocoder-php/geo-plugin-provider/tree/4.3.0"
             },
             "time": "2022-07-30T10:48:32+00:00"
+        },
+        {
+            "name": "geocoder-php/geonames-provider",
+            "version": "4.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/geocoder-php/geonames-provider.git",
+                "reference": "5247f7f807ed78724e4ab6e781c4b4a22e09a8b9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/geocoder-php/geonames-provider/zipball/5247f7f807ed78724e4ab6e781c4b4a22e09a8b9",
+                "reference": "5247f7f807ed78724e4ab6e781c4b4a22e09a8b9",
+                "shasum": ""
+            },
+            "require": {
+                "geocoder-php/common-http": "^4.0",
+                "php": "^7.4 || ^8.0",
+                "willdurand/geocoder": "^4.0"
+            },
+            "provide": {
+                "geocoder-php/provider-implementation": "1.0"
+            },
+            "require-dev": {
+                "geocoder-php/provider-integration-tests": "^1.0",
+                "php-http/curl-client": "^2.2",
+                "php-http/message": "^1.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "4.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Geocoder\\Provider\\Geonames\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "William Durand",
+                    "email": "william.durand1@gmail.com"
+                }
+            ],
+            "description": "Geocoder Geonames adapter",
+            "homepage": "http://geocoder-php.org/Geocoder/",
+            "support": {
+                "source": "https://github.com/geocoder-php/geonames-provider/tree/4.4.0"
+            },
+            "time": "2022-07-30T12:09:30+00:00"
         },
         {
             "name": "geocoder-php/google-maps-provider",
@@ -6454,6 +6513,124 @@
                 }
             ],
             "time": "2022-07-30T15:51:26+00:00"
+        },
+        {
+            "name": "phpxmlrpc/phpxmlrpc",
+            "version": "4.10.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gggeek/phpxmlrpc.git",
+                "reference": "ac18e315ac200692f3b02c773036c24be0acbefa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gggeek/phpxmlrpc/zipball/ac18e315ac200692f3b02c773036c24be0acbefa",
+                "reference": "ac18e315ac200692f3b02c773036c24be0acbefa",
+                "shasum": ""
+            },
+            "require": {
+                "ext-xml": "*",
+                "php": "^5.4.0 || ^7.0 || ^8.0"
+            },
+            "conflict": {
+                "phpxmlrpc/extras": "<= 1.0.0-beta2",
+                "phpxmlrpc/jsonrpc": "<= 1.0.0-beta1"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "ext-dom": "*",
+                "ext-mbstring": "*",
+                "phpunit/phpunit": "^4.8 || ^5.0 || ^8.5.14",
+                "phpunit/phpunit-selenium": "*",
+                "yoast/phpunit-polyfills": "*"
+            },
+            "suggest": {
+                "ext-curl": "Needed for HTTPS, HTTP2 and HTTP 1.1 support, NTLM Auth etc...",
+                "ext-mbstring": "Needed to allow reception of requests/responses in character sets other than ASCII,LATIN-1,UTF-8",
+                "ext-zlib": "Needed for sending compressed requests and receiving compressed responses, if cURL is not available",
+                "phpxmlrpc/extras": "Adds more featured Server classes, including self-documenting and ajax-enabled servers",
+                "phpxmlrpc/jsonrpc": "Adds support for the JSON-RPC protocol"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpXmlRpc\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "A php library for building xmlrpc clients and servers",
+            "homepage": "https://gggeek.github.io/phpxmlrpc/",
+            "keywords": [
+                "webservices",
+                "xml-rpc",
+                "xmlrpc"
+            ],
+            "support": {
+                "issues": "https://github.com/gggeek/phpxmlrpc/issues",
+                "source": "https://github.com/gggeek/phpxmlrpc/tree/4.10.1"
+            },
+            "time": "2023-02-22T12:25:19+00:00"
+        },
+        {
+            "name": "phpxmlrpc/polyfill-xmlrpc",
+            "version": "1.0.0-rc1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/gggeek/polyfill-xmlrpc.git",
+                "reference": "05cada8f3c50b7d1a38d6283c4b46b3ff2096e42"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/gggeek/polyfill-xmlrpc/zipball/05cada8f3c50b7d1a38d6283c4b46b3ff2096e42",
+                "reference": "05cada8f3c50b7d1a38d6283c4b46b3ff2096e42",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.3.0 || ^7.0 || ^8.0",
+                "phpxmlrpc/phpxmlrpc": "^4.5.2"
+            },
+            "provide": {
+                "ext-xmlrpc": "*"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "^5.0 || ^8.5.12",
+                "phpunit/phpunit-selenium": "*",
+                "yoast/phpunit-polyfills": "*"
+            },
+            "suggest": {
+                "ext-iconv": "Required when using anything other than utf-8 as target encoding for the decoded xml",
+                "ext-xmlrpc": "Recommended for running the test suite. We can not declare it in require-dev because it is missing in php 8"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "PhpXmlRpc\\Polyfill\\XmlRpc\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "description": "A pure-php reimplementation of the API exposed by the native XML-RPC extension",
+            "keywords": [
+                "extension",
+                "php",
+                "polyfill",
+                "webservices",
+                "xmlrpc"
+            ],
+            "support": {
+                "issues": "https://github.com/gggeek/polyfill-xmlrpc/issues",
+                "source": "https://github.com/gggeek/polyfill-xmlrpc/tree/1.0.0-rc1"
+            },
+            "time": "2022-01-30T15:28:08+00:00"
         },
         {
             "name": "predis/predis",
@@ -13985,12 +14162,13 @@
     "stability-flags": {
         "edujugon/laradoo": 20,
         "grimzy/laravel-mysql-spatial": 20,
+        "phpxmlrpc/polyfill-xmlrpc": 5,
         "roave/security-advisories": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-curl": "*",
         "ext-gd": "*",
         "ext-intl": "*",

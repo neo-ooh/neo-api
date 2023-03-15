@@ -51,8 +51,8 @@ class CampaignPlannerController {
                 "address"      => $property->address,
                 "network_id"   => $property->network_id,
                 "pricelist_id" => $property->pricelist_id,
-                "translations"         => $property->translations,
-                "website"         => $property->website,
+                "translations" => $property->translations,
+                "website"      => $property->website,
                 "pictures"     => $property->pictures,
                 "has_tenants"  => $property->has_tenants,
                 "tenants"      => $property->tenants->pluck('id'),
@@ -102,7 +102,7 @@ class CampaignPlannerController {
     public function dataChunk_4(GetCampaignPlannerDataRequest $request) {
         $properties = Property::query()->has("odoo")->get(["actor_id", "pricelist_id"]);
 
-        $categories           = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
+        $categories           = ProductCategory::with(["impressions_models", "attachments"])->get();
         $fieldCategories      = FieldsCategory::query()->get();
         $fields               = Field::query()
                                      ->with(["segments.stats"])

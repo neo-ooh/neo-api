@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -29,7 +29,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterReporting;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
-use Neo\Modules\Properties\Enums\ProductsFillStrategy;
+use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Resources\Contracts\FlightPerformanceDatum;
 
 /**
@@ -103,7 +103,7 @@ class ContractFlight extends Model {
     public function getExpectedImpressionsAttribute(): int {
         return (int)$this->lines()->whereHas('product', function (Builder $query) {
             $query->whereHas("category", function (Builder $query) {
-                $query->where("fill_strategy", "=", ProductsFillStrategy::digital);
+                $query->where("type", "=", ProductType::Digital);
             });
         })->sum("impressions");
     }

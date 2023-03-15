@@ -19,7 +19,6 @@ use Neo\Documents\Exceptions\UnknownGenerationException;
 use Neo\Documents\ProgrammaticExport\ProgrammaticExport;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
-use Neo\Jobs\Odoo\PushPropertyGeolocationJob;
 use Neo\Jobs\Properties\PullOpeningHoursJob;
 use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Models\Actor;
@@ -56,30 +55,6 @@ class PropertiesController extends Controller {
 
         $expansion = $request->input("with", []);
 
-        if (in_array("weekly_traffic", $request->input("with", []), true)) {
-            $properties->loadMissing([
-                                         "traffic",
-                                         "traffic.weekly_data",
-                                     ]);
-
-            $properties->each(function (Property $p) {
-                $p->traffic->append("weekly_traffic");
-                $p->traffic->makeHidden("weekly_data");
-            });
-        }
-
-        if (in_array("rolling_weekly_traffic", $request->input("with", []), true)) {
-            $properties->loadMissing(["traffic"]);
-
-            clock()->event("Calculating rolling weekly traffic")->begin();
-            $properties->each(function ($p) {
-                $p->rolling_weekly_traffic = $p->traffic->getRollingWeeklyTraffic($p->network_id);
-            });
-            clock()->event("Calculating rolling weekly traffic")->end();
-
-            $properties->makeHidden(["weekly_data", "weekly_traffic"]);
-        }
-
         if (in_array("fields", $request->input("with", []), true)) {
             $properties->load([
                                   "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
@@ -92,7 +67,7 @@ class PropertiesController extends Controller {
                               ]);
         }
 
-        $public = array_diff($expansion, ["rolling_monthly_traffic", "weekly_traffic", "rolling_weekly_traffic", "fields", "tenants"]);
+        $public = array_diff($expansion, ["weekly_traffic", "rolling_weekly_traffic", "fields", "tenants"]);
 
         return new Response($properties->sortBy("actor.name")->values()->loadPublicRelations($public));
     }
@@ -162,7 +137,7 @@ class PropertiesController extends Controller {
         }
 
         if (Gate::allows(Capability::odoo_properties->value)) {
-            $property->load(["odoo", "products", "products.product_type"]);
+            $property->load(["products"]);
         }
 
         return new Response($property, 201);
@@ -174,10 +149,6 @@ class PropertiesController extends Controller {
         $property = Property::query()->find($propertyId);
 
         $relations = $request->input("with", []);
-
-        if (Gate::allows(Capability::odoo_properties->value)) {
-            $property->loadMissing(["odoo"]);
-        }
 
         if (!Gate::allows(Capability::properties_edit->value)) {
             // Remove properties that cannot be accessed without the capability
@@ -199,7 +170,7 @@ class PropertiesController extends Controller {
                                     "products.loop_configurations",
                                     "products_categories",
                                     "products_categories.attachments",
-                                    "products_categories.product_type"]);
+                                    "products_categories"]);
         }
 
         return new Response($property->loadPublicRelations());
@@ -237,10 +208,6 @@ class PropertiesController extends Controller {
         $property->save();
 
         PullAddressGeolocationJob::dispatch($address);
-
-        if ($property->odoo && config("app.env") === "production") {
-            PushPropertyGeolocationJob::dispatch($property->actor_id);
-        }
 
         return new Response($address);
     }

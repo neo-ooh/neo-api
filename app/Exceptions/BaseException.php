@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -16,6 +16,8 @@ use JsonException;
 use Throwable;
 
 class BaseException extends Exception {
+    public array $context = [];
+
     public function __construct(string $message = "", protected string $errorCode = "error.unknown", protected int $status = 422, ?Throwable $previous = null) {
         parent::__construct($message, $this->status, $previous);
     }
@@ -24,6 +26,7 @@ class BaseException extends Exception {
         return [
             "code"    => $this->errorCode,
             "message" => $this->message,
+            "context" => $this->context ?? [],
         ];
     }
 

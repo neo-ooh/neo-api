@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -91,7 +91,6 @@ class BroadSignClient implements APIClientInterface {
      * @throws GuzzleException
      */
     protected function call_impl__(BroadSignEndpoint $endpoint, $payload, array $headers): mixed {
-
         if (config('app.env') !== 'production') {
             Log::debug("[BroadSign] $endpoint->method@{$endpoint->getPath()}", [json_encode($payload, JSON_THROW_ON_ERROR)]);
         }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Neo\Http\Requests\ListAvailabilitiesRequest;
-use Neo\Modules\Properties\Enums\ProductsFillStrategy;
+use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Resources\Contracts\FlightType;
 
@@ -109,7 +109,7 @@ class AvailabilitiesController {
             $dates = collect();
             foreach ($datesList as $date) {
                 // Determine how many time the product can be booked at the same time
-                if ($product->category->fill_strategy === ProductsFillStrategy::digital) {
+                if ($product->category->type === ProductType::Digital) {
                     // Get the loop configuration for the current date
                     $loopConfiguration = $product->getLoopConfiguration($date);
 

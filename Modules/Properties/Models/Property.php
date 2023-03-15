@@ -19,21 +19,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
+use Neo\Enums\Capability;
+use Neo\Helpers\Relation;
 use Neo\Models\Actor;
 use Neo\Models\Address;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Network;
-use Neo\Modules\Properties\Enums\ProductsFillStrategy;
-use Neo\Modules\Properties\Models\Odoo\Property as OdooProperty;
+use Neo\Modules\Properties\Enums\ProductType;
+use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
 use Neo\Modules\Properties\Rules\AccessibleProperty;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Throwable;
 
 /**
  * Class Property
  *
  * @property int                                   $actor_id
+ * @property int                                   $inventory_resource_id
  * @property int                                   $address_id
  * @property int                                   $network_id
  * @property int|null                              $pricelist_id
@@ -54,7 +58,6 @@ use Throwable;
  * @property Collection<PropertyTranslation>       $translations
  * @property PropertyTrafficSettings               $traffic
  * @property Address|null                          $address
- * @property OdooProperty|null                     $odoo
  * @property Network|null                          $network
  * @property Collection<PropertyPicture>           $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
@@ -62,17 +65,18 @@ use Throwable;
  * @property Collection<Brand>                     $tenants
  * @property Pricelist                             $pricelist
  * @property Collection<Actor>                     $contacts
- *
  * @property Collection<Unavailability>            $unavailabilities
  *
  * @property Collection<Product>                   $products
  *
  * @property array                                 $rolling_weekly_traffic
  *
+ * @property InventoryResource                     $inventoryResource
  */
 class Property extends SecuredModel {
     use HasPublicRelations;
     use HasCreatedByUpdatedBy;
+    use InventoryResourceModel;
 
     /*
     |--------------------------------------------------------------------------
@@ -127,6 +131,7 @@ class Property extends SecuredModel {
         "actor:id,name",
     ];
 
+    public InventoryResourceType $inventoryResourceType = InventoryResourceType::Property;
 
     public function getPublicRelations(): array {
         return [
@@ -136,18 +141,40 @@ class Property extends SecuredModel {
             "demographic_values_count"  => "count:demographicValues",
             "fields"                    => ["network.properties_fields", "fields_values"],
             "fields_values"             => "load:fields_values",
+            "inventories"               => Relation::make(
+                load: ["inventory_resource", "inventory_resource"],
+                gate: Capability::properties_inventories_view
+            ),
             "locations"                 => "load:actor.own_locations",
             "locations_ids"             => "actor.own_locations:id,network_id",
             "network"                   => "load:network",
             "opening_hours"             => "opening_hours",
             "parent"                    => "load:actor.parent",
-            "pictures"                  => "pictures",
-            "pricelist"                 => ["pricelist.categories_pricings", "pricelist.products_pricings"],
-            "products"                  => "load:products",
+            "pictures"                  => Relation::make(
+                load: "pictures",
+                gate: Capability::properties_pictures_view
+            ),
+            "pricelist"                 => Relation::make(
+                load: ["pricelist.categories_pricings", "pricelist.products_pricings"],
+                gate: Capability::properties_pricelist_view
+            ),
+            "products"                  => Relation::make(
+                load: "products",
+                gate: Capability::products_view
+            ),
+            "products_ids"              => Relation::make(
+                load: "products:id",
+                gate: Capability::products_view
+            ),
             "products.unavailabilities" => ["load:products.unavailabilities.translations", "load:products.unavailabilities.products"],
-            "products_ids"              => "load:products:id",
-            "tags"                      => "load:actor.tags",
-            "tenants"                   => ["load:tenants"],
+            "tags"                      => Relation::make(
+                load: "actor.tags",
+                gate: Capability::properties_tags_view
+            ),
+            "tenants"                   => Relation::make(
+                load: "tenants",
+                gate: Capability::properties_tenants_view
+            ),
             "traffic.monthly_data"      => ["load:traffic.monthly_data"],
             "traffic.weekly_data"       => ["load:traffic.weekly_data"],
             "traffic.rolling_weekly"    => [fn(Property $property) => $property->traffic->append("rolling_weekly_traffic")],
@@ -172,7 +199,6 @@ class Property extends SecuredModel {
                 $property->products()->delete();
                 $property->opening_hours()->delete();
                 $property->tenants()->detach();
-                $property->odoo()->delete();
                 $property->contacts()->delete();
 
                 DB::commit();
@@ -207,10 +233,6 @@ class Property extends SecuredModel {
 
     public function address(): BelongsTo {
         return $this->belongsTo(Address::class, "address_id", "id");
-    }
-
-    public function odoo(): HasOne {
-        return $this->hasOne(OdooProperty::class, "property_id", "actor_id");
     }
 
     public function pictures(): HasMany {
@@ -310,7 +332,7 @@ class Property extends SecuredModel {
 
         // List products without any locations associated
         $productsWithoutLocations = $this->products()
-                                         ->whereRelation("category", "fill_strategy", "=", ProductsFillStrategy::digital)
+                                         ->whereRelation("category", "type", "=", ProductType::Digital)
                                          ->whereDoesntHave("locations")->get();
 
         if ($productsWithoutLocations->count() > 0) {

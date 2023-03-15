@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -115,7 +115,7 @@ class CampaignPlannerSavesController {
 
         $properties->makeHidden(["weekly_data", "weekly_traffic"]);
 
-        $categories = ProductCategory::with(["impressions_models", "product_type", "attachments"])->get();
+        $categories = ProductCategory::with(["impressions_models", "attachments"])->get();
         $networks   = Network::query()->with(["properties_fields"])->get();
         $brands     = Brand::query()->get();
 

@@ -54,6 +54,7 @@ class RouteServiceProvider extends ServiceProvider {
         Route::group([], module_path('Properties', '/Routes/fields.php'));
         Route::group([], module_path('Properties', '/Routes/demographics.php'));
         Route::group([], module_path('Properties', '/Routes/impressions.php'));
+        Route::group([], module_path('Properties', '//Routes/inventories.php'));
         Route::group([], module_path('Properties', '/Routes/unavailabilities.php'));
     }
 }

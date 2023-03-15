@@ -158,8 +158,6 @@ class ActorsGetter {
                         ->whereNull("parent_id")
                         ->where("id", "<>", $focus)
                         ->pluck("id");
-
-            clock($actors);
         } else {
             // List the parent's children, excluding the current focus
             $actors = static::getChildren($parent, recursive: false)

@@ -13,6 +13,7 @@ namespace Neo\Modules\Properties\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Neo\Models\Traits\HasCompositePrimaryKey;
+use Neo\Modules\Properties\Services\Resources\DayOperatingHours;
 
 /**
  * @property int    $property_id
@@ -40,4 +41,11 @@ class OpeningHours extends Model {
     ];
 
 
+    public function toInventoryResource() {
+        return new DayOperatingHours(
+            day     : $this->weekday,
+            start_at: $this->open_at->toTimeString(),
+            end_at  : $this->close_at->toTimeString()
+        );
+    }
 }

@@ -39,10 +39,10 @@ class ProductCategoriesController {
     }
 
     public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory) {
-        $productCategory->name_en       = $request->input("name_en");
-        $productCategory->name_fr       = $request->input("name_fr");
-        $productCategory->fill_strategy = $request->input("fill_strategy");
-        $productCategory->format_id     = $request->input("format_id");
+        $productCategory->name_en   = $request->input("name_en");
+        $productCategory->name_fr   = $request->input("name_fr");
+        $productCategory->type      = $request->input("type");
+        $productCategory->format_id = $request->input("format_id");
         $productCategory->save();
 
         return new Response($productCategory->loadPublicRelations());

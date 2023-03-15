@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -30,7 +30,7 @@ class APIClient implements APIClientInterface {
      * @return Response
      * @throws GuzzleException
      */
-    public function call($endpoint, $payload, array $headers = []) {
+    public function call(Endpoint $endpoint, $payload, array $headers = []): Response {
 //        $stack = new HandlerStack();
 //        $stack->setHandler(new CurlHandler());
 
@@ -38,8 +38,9 @@ class APIClient implements APIClientInterface {
         $handlerStack->unshift(new Middleware(new Profiler(resolve(Clockwork::class)->timeline())));
 
         $clientOptions = array_merge([
-            "handler" => $handlerStack,
-        ], $endpoint->options);
+                                         "handler" => $handlerStack,
+                                         //                                         "debug"   => true,
+                                     ], $endpoint->options);
 
         $client  = new Client($clientOptions);
         $request = new Request($endpoint->method, $endpoint->getUrl(), $headers);

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -71,5 +71,14 @@ class Address extends Model {
         $str .= ", {$this->city->province->country->name}";
 
         return $str;
+    }
+
+    public function toInventoryResource() {
+        return new \Neo\Modules\Properties\Services\Resources\Address(
+            line_1 : $this->line_1,
+            line_2 : $this->line_2,
+            zipcode: $this->zipcode,
+            city   : $this->city->toInventoryResource(),
+        );
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -23,18 +23,19 @@ class OpeningHoursController {
         $result = $job->handle();
 
         return new Response([
-            "success" => !!$result,
-        ]);
+                                "success" => !!$result,
+                            ]);
     }
 
     public function update(UpdateOpeningHoursRequest $request, Property $property, int $weekday) {
         OpeningHours::query()->updateOrInsert([
-            "property_id" => $property->getKey(),
-            "weekday"     => $weekday,
-        ], [
-            "open_at"  => $request->input("open_at"),
-            "close_at" => $request->input("close_at"),
-        ]);
+                                                  "property_id" => $property->getKey(),
+                                                  "weekday"     => $weekday,
+                                              ], [
+                                                  "is_closed" => $request->input("is_closed"),
+                                                  "open_at"   => $request->input("open_at"),
+                                                  "close_at"  => $request->input("close_at"),
+                                              ]);
 
 //        PushOpeningHoursJob::dispatch($property->getKey());
 

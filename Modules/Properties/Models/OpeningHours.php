@@ -17,6 +17,7 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
 /**
  * @property int    $property_id
  * @property int    $weekday 1-indexed day of the week.
+ * @property bool   $is_closed
  * @property Carbon $open_at
  * @property Carbon $close_at
  * @property Carbon $created_at
@@ -35,8 +36,9 @@ class OpeningHours extends Model {
     public $incrementing = false;
 
     protected $casts = [
-        "open_at"  => "datetime:H:i",
-        "close_at" => "datetime:H:i",
+        "is_closed" => "bool",
+        "open_at"   => "datetime:H:i",
+        "close_at"  => "datetime:H:i",
     ];
 
 

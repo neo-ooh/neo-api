@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -53,11 +53,19 @@ class CampaignsSchedulesController extends Controller {
         $schedule->campaign_id = $campaign->getKey();
         $schedule->owner_id    = Auth::id();
         // Schedule should start today, but not before the campaign start, not after the day before the end of the campaign
-        $schedule->start_date     = Carbon::today()->max($campaign->start_date)->min($campaign->end_date->clone()->subDay());
-        $schedule->start_time     = $campaign->start_time;
-        $schedule->end_date       = $schedule->start_date->clone()
-                                                         ->addDays($content->max_schedule_duration ?: 14)
-                                                         ->min($campaign->end_date);
+        $schedule->start_date = Carbon::today()->max($campaign->start_date)->min($campaign->end_date->clone()->subDay());
+        $schedule->start_time = $campaign->start_time;
+        // For the schedule duration, it is either the maximum allowed length for the schedule if there is one, or the default schedule length for the campaign, or if none of the previous value is set, the schedule will fo for the whole length of the campaign
+        if ($content->max_schedule_duration) {
+            $endDate = $schedule->start_date->clone()
+                                            ->addDays($content->max_schedule_duration);
+        } else if ($campaign->default_schedule_duration_days) {
+            $endDate = $schedule->start_date->clone()
+                                            ->addDays($campaign->default_schedule_duration_days);
+        } else {
+            $endDate = $campaign->end_date->clone();
+        }
+        $schedule->end_date       = $endDate->min($campaign->end_date);
         $schedule->end_time       = $campaign->end_time;
         $schedule->broadcast_days = $campaign->broadcast_days;
         $schedule->order          = $request->input("order");

@@ -32,8 +32,9 @@ class OpeningHoursController {
                                                   "property_id" => $property->getKey(),
                                                   "weekday"     => $weekday,
                                               ], [
-                                                  "open_at"  => $request->input("open_at"),
-                                                  "close_at" => $request->input("close_at"),
+                                                  "is_closed" => $request->input("is_closed"),
+                                                  "open_at"   => $request->input("open_at"),
+                                                  "close_at"  => $request->input("close_at"),
                                               ]);
 
 //        PushOpeningHoursJob::dispatch($property->getKey());

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -58,6 +58,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Date                 $end_time                  H:m:s
  * @property int                  $broadcast_days            Bit mask of the days of the week the campaign should run: 127 =>
  *           01111111 - all week
+ * @property int                  $default_schedule_duration_days
  *
  * @property Date                 $created_at
  * @property Date                 $updated_at
@@ -119,6 +120,7 @@ class Campaign extends BroadcastResourceModel {
         "end_date",
         "end_time",
         "broadcast_days",
+        "default_schedule_duration_days",
     ];
 
     /**

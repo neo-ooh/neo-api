@@ -42,21 +42,23 @@ class CampaignPlannerController {
                               "odoo",
                               "pictures",
                               "tenants" => fn($q) => $q->select(["id"]),
+                              "opening_hours",
                           ]);
 
         return [
             "properties" => $properties->map(fn(Property $property) => [
-                "id"           => $property->actor_id,
-                "name"         => $property->actor->name,
-                "address"      => $property->address,
-                "network_id"   => $property->network_id,
-                "pricelist_id" => $property->pricelist_id,
-                "translations" => $property->translations,
-                "website"      => $property->website,
-                "pictures"     => $property->pictures,
-                "has_tenants"  => $property->has_tenants,
-                "tenants"      => $property->tenants->pluck('id'),
-                "tags"         => $property->actor->tags,
+                "id"            => $property->actor_id,
+                "name"          => $property->actor->name,
+                "address"       => $property->address,
+                "network_id"    => $property->network_id,
+                "pricelist_id"  => $property->pricelist_id,
+                "translations"  => $property->translations,
+                "website"       => $property->website,
+                "opening_hours" => $property->opening_hours,
+                "pictures"      => $property->pictures,
+                "has_tenants"   => $property->has_tenants,
+                "tenants"       => $property->tenants->pluck('id'),
+                "tags"          => $property->actor->tags,
             ]),
         ];
     }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -37,40 +37,41 @@ class StoreCampaignRequest extends FormRequest {
      */
     public function rules(): array {
         return [
-            "parent_id"                 => ["required", "integer", new AccessibleActor()],
-            "name"                      => ["nullable", "string"],
+            "parent_id"                      => ["required", "integer", new AccessibleActor()],
+            "name"                           => ["nullable", "string"],
 
             // Contract
-            "flight_id"                 => ["integer", new Exists(ContractFlight::class, "id")],
+            "flight_id"                      => ["integer", new Exists(ContractFlight::class, "id")],
 
             // Scheduling
-            "start_date"                => ["required", "date_format:Y-m-d"],
-            "start_time"                => ["required", "date_format:H:i:s"],
-            "end_date"                  => ["required", "date_format:Y-m-d"],
-            "end_time"                  => ["required", "date_format:H:i:s"],
-            "broadcast_days"            => ["required", "integer", "max:127"],
+            "start_date"                     => ["required", "date_format:Y-m-d"],
+            "start_time"                     => ["required", "date_format:H:i:s"],
+            "end_date"                       => ["required", "date_format:Y-m-d"],
+            "end_time"                       => ["required", "date_format:H:i:s"],
+            "broadcast_days"                 => ["required", "integer", "max:127"],
 
             // Loop fit
-            "occurrences_in_loop"       => ["required", "numeric", "min:0"],
-            "priority"                  => ["required", "integer", "min:0"],
-            "static_duration_override"  => ["required", "numeric", "min:0"],
-            "dynamic_duration_override" => ["required", "numeric", "min:0"],
+            "occurrences_in_loop"            => ["required", "numeric", "min:0"],
+            "priority"                       => ["required", "integer", "min:0"],
+            "static_duration_override"       => ["required", "numeric", "min:0"],
+            "dynamic_duration_override"      => ["required", "numeric", "min:0"],
+            "default_schedule_duration_days" => ["required", "numeric", "min:0"],
 
             // Locations
-            "locations"                 => ["array"],
-            "locations.*.location_id"   => ["required", "int"],
-            "locations.*.format_id"     => ["required", "int"],
+            "locations"                      => ["array"],
+            "locations.*.location_id"        => ["required", "int"],
+            "locations.*.format_id"          => ["required", "int"],
 
             // Products
-            "products"                  => ["array"],
-            "products.*"                => ["int"],
+            "products"                       => ["array"],
+            "products.*"                     => ["int"],
 
             // Tags
-            "tags"                      => ["array"],
-            "tags.*"                    => ["int", new Exists(BroadcastTag::class, "id")],
+            "tags"                           => ["array"],
+            "tags.*"                         => ["int", new Exists(BroadcastTag::class, "id")],
 
             //
-            "with"                      => ["array", new PublicRelations(Campaign::class)],
+            "with"                           => ["array", new PublicRelations(Campaign::class)],
         ];
     }
 }

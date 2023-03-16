@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -55,7 +55,8 @@ abstract class Document {
     abstract public function format(): DocumentFormat;
 
     /**
-     * @return mixed The raw built document, ready to be shown in the browser
+     * @return mixed The raw built document. output depend on the document type
+     *               TODO: Standardize this omg
      */
     abstract public function output();
 }

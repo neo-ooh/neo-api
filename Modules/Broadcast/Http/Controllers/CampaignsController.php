@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -85,10 +85,11 @@ class CampaignsController extends Controller {
         $campaign->broadcast_days = $request->input("broadcast_days");
         $campaign->flight_id      = $request->input("flight_id");
 
-        $campaign->occurrences_in_loop       = $request->input("occurrences_in_loop");
-        $campaign->priority                  = $request->input("priority");
-        $campaign->static_duration_override  = $request->input("static_duration_override");
-        $campaign->dynamic_duration_override = $request->input("dynamic_duration_override");
+        $campaign->occurrences_in_loop            = $request->input("occurrences_in_loop");
+        $campaign->priority                       = $request->input("priority");
+        $campaign->static_duration_override       = $request->input("static_duration_override");
+        $campaign->dynamic_duration_override      = $request->input("dynamic_duration_override");
+        $campaign->default_schedule_duration_days = $request->input("default_schedule_duration_days");
 
         // List all the locations given
         /** @var \Illuminate\Support\Collection<CampaignLocation> $locations */
@@ -170,10 +171,11 @@ class CampaignsController extends Controller {
             $campaign->flight_id = $request->input("flight_id");
         }
 
-        $campaign->occurrences_in_loop       = $request->input("occurrences_in_loop");
-        $campaign->priority                  = $request->input("priority");
-        $campaign->static_duration_override  = $request->input("static_duration_override");
-        $campaign->dynamic_duration_override = $request->input("dynamic_duration_override");
+        $campaign->occurrences_in_loop            = $request->input("occurrences_in_loop");
+        $campaign->priority                       = $request->input("priority");
+        $campaign->static_duration_override       = $request->input("static_duration_override");
+        $campaign->dynamic_duration_override      = $request->input("dynamic_duration_override");
+        $campaign->default_schedule_duration_days = $request->input("default_schedule_duration_days");
 
         $campaign->save();
 

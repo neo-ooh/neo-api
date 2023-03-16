@@ -48,10 +48,11 @@ class UpdateCampaignRequest extends FormRequest {
 
             "flight_id" => ["nullable", new Exists(ContractFlight::class, "id")],
 
-            "occurrences_in_loop"       => ["required", "numeric", "min:0"],
-            "priority"                  => ["required", "integer", "min:0"],
-            "static_duration_override"  => ["required", "numeric", "min:0"],
-            "dynamic_duration_override" => ["required", "numeric", "min:0"],
+            "occurrences_in_loop"            => ["required", "numeric", "min:0"],
+            "priority"                       => ["required", "integer", "min:0"],
+            "static_duration_override"       => ["required", "numeric", "min:0"],
+            "dynamic_duration_override"      => ["required", "numeric", "min:0"],
+            "default_schedule_duration_days" => ["required", "numeric", "min:0"],
 
             "tags"   => ["array"],
             "tags.*" => ["int", new Exists(BroadcastTag::class, "id")],

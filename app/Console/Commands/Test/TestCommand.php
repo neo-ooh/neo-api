@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -11,9 +11,10 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
+use Neo\Documents\ProgrammaticExport\ProgrammaticExport;
+use Neo\Models\Property;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -21,21 +22,19 @@ class TestCommand extends Command {
     protected $description = 'Internal tests';
 
     public function handle() {
-        Schema::table("layouts", static function (Blueprint $table) {
-            $table->string("name_fr")->after("name");
-        });
+        /** @var Collection<Property> $otgProperties */
+        $otgProperties = Property::query()
+                                 ->where("network_id", "=", 3)
+                                 ->get();
 
-        $layouts = DB::table("layouts")->get();
+        /*foreach ($otgProperties as $property) {
+            $this->getOutput()->write($property->actor->name . " ");
+            $result = (new PullOpeningHoursJob($property->getKey()))->handle();
+            $this->getOutput()->writeln($result ? "OK!" : "uh");
+        }*/
 
-        foreach ($layouts as $layout) {
-            DB::table("layouts")->where("id", "=", $layout->id)
-              ->update([
-                  "name_fr" => $layout->name,
-              ]);
-        }
-
-        Schema::table("layouts", static function (Blueprint $table) {
-            $table->renameColumn("name", "name_en");
-        });
+        $doc = ProgrammaticExport::make($otgProperties->pluck("actor_id")->toArray());
+        $doc->build();
+        $doc->output(Storage::disk("local")->path("otg-export.xlsx"));
     }
 }

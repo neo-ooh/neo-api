@@ -27,12 +27,6 @@ class TestCommand extends Command {
                                  ->where("network_id", "=", 3)
                                  ->get();
 
-        /*foreach ($otgProperties as $property) {
-            $this->getOutput()->write($property->actor->name . " ");
-            $result = (new PullOpeningHoursJob($property->getKey()))->handle();
-            $this->getOutput()->writeln($result ? "OK!" : "uh");
-        }*/
-
         $doc = ProgrammaticExport::make($otgProperties->pluck("actor_id")->toArray());
         $doc->build();
         $doc->output(Storage::disk("local")->path("otg-export.xlsx"));

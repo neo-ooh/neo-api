@@ -16,6 +16,7 @@
       <schema-mapping>
         <introspection-scope>
           <node kind="schema">
+            <name qname="addirect" />
             <name qname="neo_ooh" />
             <name qname="neo_ooh_dev" />
           </node>

@@ -65,18 +65,20 @@ class Relation {
         if (count($tokens) === 1) {
             return new static(load: $tokens[0]);
         } else {
-            $action   = array_shift($tokens);
+            if (in_array($tokens[0], ["load", "append", "count"])) {
+                $action = array_shift($tokens);
+            } else {
+                $action = "load";
+            }
+
             $argument = implode(':', $tokens);
 
             // Otherwise, we validate the given action, and if it is not recognized, we default to `load` as well
-            switch ($action) {
-                case "append":
-                    return new static(append: $argument);
-                case "count":
-                    return new static(count: $argument);
-                default: // case "load":
-                    return new static(load: $argument);
-            }
+            return match ($action) {
+                "append" => new static(append: $argument),
+                "count"  => new static(count: $argument),
+                default  => new static(load: $argument),
+            };
         }
     }
 

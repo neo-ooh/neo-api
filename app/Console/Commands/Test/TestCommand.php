@@ -11,7 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Jobs\PullFullInventoryJob;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -21,8 +21,6 @@ class TestCommand extends Command {
     /**
      */
     public function handle() {
-        $product  = Product::query()->find(3136);
-        $geocoder = app('geocoder')->using("geonames");
-        dump($geocoder->reverse($product->property->address->geolocation->getLat(), $product->property->address->geolocation->getLng()));
+        (new PullFullInventoryJob(1))->handle();
     }
 }

@@ -14,6 +14,13 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up() {
+        Schema::table('products_categories', function (Blueprint $table) {
+            $table->dropForeign("odoo_products_categories_product_type_id_foreign");
+        });
+        Schema::table('products_categories', function (Blueprint $table) {
+            $table->dropColumn("type_id");
+        });
+
         Schema::table('products_types', function (Blueprint $table) {
             $table->dropIfExists();
         });

@@ -31,6 +31,8 @@ use function Ramsey\Uuid\v4;
  * @property InventoryType             $provider
  * @property string                    $name
  * @property bool                      $is_active
+ * @property bool                      $auto_pull
+ * @property bool                      $auto_push
  * @property InventoryProviderSettings $settings
  *
  * @property Carbon                    $created_at
@@ -53,12 +55,16 @@ class InventoryProvider extends Model {
         "provider",
         "name",
         "is_active",
+        "auto_pull",
+        "auto_push",
         "settings",
     ];
 
     protected $casts = [
         "provider"  => InventoryType::class,
         "is_active" => "bool",
+        "auto_pull" => "bool",
+        "auto_push" => "bool",
         "settings"  => InventoryProviderSettings::class,
     ];
 

@@ -20,6 +20,8 @@ return new class extends Migration {
             $table->string("provider", 32);
             $table->string("name", 64);
             $table->boolean("is_active")->default(true);
+            $table->boolean("auto_pull")->default(false);
+            $table->boolean("auto_push")->default(false);
             $table->json("settings");
 
 

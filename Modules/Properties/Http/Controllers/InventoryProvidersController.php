@@ -30,6 +30,10 @@ class InventoryProvidersController extends Controller {
         $provider->name     = $request->input("name");
         $provider->provider = $request->input("provider");
 
+        $provider->is_active = true;
+        $provider->auto_pull = $request->input('auto_pull');
+        $provider->auto_push = $request->input('auto_push');
+
         $provider->settings          = new InventoryProviderSettings();
         $provider->settings->api_url = $request->input("api_url");
         $provider->settings->api_key = $request->input("api_key");
@@ -55,8 +59,11 @@ class InventoryProvidersController extends Controller {
     }
 
     public function update(UpdateInventoryRequest $request, InventoryProvider $inventoryProvider) {
-        $inventoryProvider->name      = $request->input("name");
+        $inventoryProvider->name = $request->input("name");
+
         $inventoryProvider->is_active = $request->input("is_active");
+        $inventoryProvider->auto_pull = $request->input('auto_pull');
+        $inventoryProvider->auto_push = $request->input('auto_push');
 
         $inventoryProvider->settings->api_url = $request->input("api_url");
         $inventoryProvider->settings->api_key = $request->input("api_key");

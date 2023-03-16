@@ -22,6 +22,9 @@ class StoreInventoryRequest extends FormRequest {
             "name"     => ["required", "string", "min:3"],
             "provider" => ["required", new Enum(InventoryType::class)],
 
+            "auto_pull" => ["required", "boolean"],
+            "auto_push" => ["required", "boolean"],
+
             "api_url" => ["required", "string"],
             "api_key" => ["required", "string"],
 

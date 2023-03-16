@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Services\Odoo\Models;
 
 /**
  * @property int    $id
+ * @property bool   $active
  * @property string $name
  * @property int    $sequence
  * @property string $description

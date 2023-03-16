@@ -131,6 +131,10 @@ class Property extends SecuredModel {
         "actor:id,name",
     ];
 
+    protected $touches = [
+        "products",
+    ];
+
     public InventoryResourceType $inventoryResourceType = InventoryResourceType::Property;
 
     public function getPublicRelations(): array {

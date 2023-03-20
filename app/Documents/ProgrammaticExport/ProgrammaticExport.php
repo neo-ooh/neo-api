@@ -154,7 +154,7 @@ class ProgrammaticExport extends XLSXDocument {
                 $operatingHoursComponents["Total Hours"] = 168;
             }
 
-            $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic($property->network_id))->median();
+            $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic($property->network_id))->max();
 
             $propertyLines = [];
 

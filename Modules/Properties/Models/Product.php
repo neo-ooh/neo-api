@@ -103,7 +103,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     ];
 
     protected $touches = [
-        "property"
+        "property",
     ];
 
     public string $impressions_models_pivot_table = "products_impressions_models";
@@ -123,6 +123,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             "loop_configurations" => ["loop_configurations", "category.loop_configurations"],
             "pricelist"           => ["load:pricelist.categories_pricings", "load:pricelist.products_pricings"],
             "property"            => "property",
+            "unavailabilities"    => Relation::make(
+                load: ["unavailabilities.translations", "unavailabilities.products"],
+                gate: Capability::properties_unavailabilities_view
+            ),
         ];
     }
 
@@ -265,7 +269,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         /** @var LoopConfiguration|null $loopConfiguration */
         $loopConfiguration = $format->loop_configurations()->first();
 
-        $weeklyTraffic = ceil(collect($this->property->traffic->getRollingWeeklyTraffic($this->property->network_id))->sum() / 53);
+        $weeklyTraffic = ceil(collect($this->property->traffic->getRollingWeeklyTraffic())->sum() / 53);
 
         return new ProductResource(
             name                  : LocalizedString::collection([
@@ -299,6 +303,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
                                         longitude: $this->property->address->geolocation->getLng(),
                                         latitude : $this->property->address->geolocation->getLat(),
                                     ),
+            timezone              : $this->property->address?->timezone,
             operating_hours       : DayOperatingHours::collection($this->property->opening_hours->map(fn(OpeningHours $hours) => $hours->toInventoryResource())),
             weekly_traffic        : $weeklyTraffic,
             product_connect_id    : $this->getKey(),

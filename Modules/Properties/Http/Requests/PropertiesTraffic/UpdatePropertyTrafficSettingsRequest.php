@@ -13,7 +13,9 @@ namespace Neo\Modules\Properties\Http\Requests\PropertiesTraffic;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
+use Neo\Modules\Properties\Enums\TrafficFormat;
 
 class UpdatePropertyTrafficSettingsRequest extends FormRequest {
     /**
@@ -32,6 +34,7 @@ class UpdatePropertyTrafficSettingsRequest extends FormRequest {
      */
     public function rules(): array {
         return [
+            "format"         => ["required", new Enum(TrafficFormat::class)],
             "is_required"    => ["required", "boolean"],
             "start_year"     => ["required", "integer"],
             "grace_override" => ["present", "nullable", "date"],

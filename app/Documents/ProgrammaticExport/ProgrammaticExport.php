@@ -14,15 +14,15 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
-use Neo\Models\ImpressionsModel;
-use Neo\Models\OpeningHours;
-use Neo\Models\Pricelist;
-use Neo\Models\PricelistProduct;
-use Neo\Models\PricelistProductsCategory;
-use Neo\Models\Product;
-use Neo\Models\Property;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
+use Neo\Modules\Properties\Models\ImpressionsModel;
+use Neo\Modules\Properties\Models\OpeningHours;
+use Neo\Modules\Properties\Models\Pricelist;
+use Neo\Modules\Properties\Models\PricelistProduct;
+use Neo\Modules\Properties\Models\PricelistProductsCategory;
+use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Models\Property;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class ProgrammaticExport extends XLSXDocument {
@@ -131,22 +131,24 @@ class ProgrammaticExport extends XLSXDocument {
                 "Latitude"     => $property->address?->geolocation->getLat(),
             ];
 
+            $openingHours = $property->opening_hours->keyBy("weekday");
+
             $operatingHoursComponents = [
-                "Monday Open"     => $property->opening_hours->firstWhere("weekday", "=", 1)?->open_at->toTimeString('minutes') ?? "00:00",
-                "Monday Close"    => $property->opening_hours->firstWhere("weekday", "=", 1)?->close_at->toTimeString('minutes') ?? "23:59",
-                "Tuesday Open"    => $property->opening_hours->firstWhere("weekday", "=", 2)?->open_at->toTimeString('minutes') ?? "00:00",
-                "Tuesday Close"   => $property->opening_hours->firstWhere("weekday", "=", 2)?->close_at->toTimeString('minutes') ?? "23:59",
-                "Wednesday Open"  => $property->opening_hours->firstWhere("weekday", "=", 3)?->open_at->toTimeString('minutes') ?? "00:00",
-                "Wednesday Close" => $property->opening_hours->firstWhere("weekday", "=", 3)?->close_at->toTimeString('minutes') ?? "23:59",
-                "Thursday Open"   => $property->opening_hours->firstWhere("weekday", "=", 4)?->open_at->toTimeString('minutes') ?? "00:00",
-                "Thursday Close"  => $property->opening_hours->firstWhere("weekday", "=", 4)?->close_at->toTimeString('minutes') ?? "23:59",
-                "Friday Open"     => $property->opening_hours->firstWhere("weekday", "=", 5)?->open_at->toTimeString('minutes') ?? "00:00",
-                "Friday Close"    => $property->opening_hours->firstWhere("weekday", "=", 5)?->close_at->toTimeString('minutes') ?? "23:59",
-                "Saturday Open"   => $property->opening_hours->firstWhere("weekday", "=", 6)?->open_at->toTimeString('minutes') ?? "00:00",
-                "Saturday Close"  => $property->opening_hours->firstWhere("weekday", "=", 6)?->close_at->toTimeString('minutes') ?? "23:59",
-                "Sunday Open"     => $property->opening_hours->firstWhere("weekday", "=", 7)?->open_at->toTimeString('minutes') ?? "00:00",
-                "Sunday Close"    => $property->opening_hours->firstWhere("weekday", "=", 7)?->close_at->toTimeString('minutes') ?? "23:59",
-                "Total Hours"     => $property->opening_hours->map(fn(OpeningHours $hours) => $hours->open_at->diffInHours($hours->close_at, true))
+                "Monday Open"     => $openingHours->has(1) ? ($openingHours[1]->is_closed ? "-" : $openingHours[1]->open_at->toTimeString('minutes')) : "00:00",
+                "Monday Close"    => $openingHours->has(1) ? ($openingHours[1]->is_closed ? "-" : $openingHours[1]->close_at->toTimeString('minutes')) : "23:59",
+                "Tuesday Open"    => $openingHours->has(2) ? ($openingHours[2]->is_closed ? "-" : $openingHours[2]->open_at->toTimeString('minutes')) : "00:00",
+                "Tuesday Close"   => $openingHours->has(2) ? ($openingHours[2]->is_closed ? "-" : $openingHours[2]->close_at->toTimeString('minutes')) : "23:59",
+                "Wednesday Open"  => $openingHours->has(3) ? ($openingHours[3]->is_closed ? "-" : $openingHours[3]->open_at->toTimeString('minutes')) : "00:00",
+                "Wednesday Close" => $openingHours->has(3) ? ($openingHours[3]->is_closed ? "-" : $openingHours[3]->close_at->toTimeString('minutes')) : "23:59",
+                "Thursday Open"   => $openingHours->has(4) ? ($openingHours[4]->is_closed ? "-" : $openingHours[4]->open_at->toTimeString('minutes')) : "00:00",
+                "Thursday Close"  => $openingHours->has(4) ? ($openingHours[4]->is_closed ? "-" : $openingHours[4]->close_at->toTimeString('minutes')) : "23:59",
+                "Friday Open"     => $openingHours->has(5) ? ($openingHours[5]->is_closed ? "-" : $openingHours[5]->open_at->toTimeString('minutes')) : "00:00",
+                "Friday Close"    => $openingHours->has(5) ? ($openingHours[5]->is_closed ? "-" : $openingHours[5]->close_at->toTimeString('minutes')) : "23:59",
+                "Saturday Open"   => $openingHours->has(6) ? ($openingHours[6]->is_closed ? "-" : $openingHours[6]->open_at->toTimeString('minutes')) : "00:00",
+                "Saturday Close"  => $openingHours->has(6) ? ($openingHours[6]->is_closed ? "-" : $openingHours[6]->close_at->toTimeString('minutes')) : "23:59",
+                "Sunday Open"     => $openingHours->has(7) ? ($openingHours[7]->is_closed ? "-" : $openingHours[7]->open_at->toTimeString('minutes')) : "00:00",
+                "Sunday Close"    => $openingHours->has(7) ? ($openingHours[7]->is_closed ? "-" : $openingHours[7]->close_at->toTimeString('minutes')) : "23:59",
+                "Total Hours"     => $property->opening_hours->map(fn(OpeningHours $hours) => $hours->is_closed ? 0 : $hours->open_at->diffInHours($hours->close_at, true))
                                                              ->sum(),
             ];
 
@@ -154,7 +156,7 @@ class ProgrammaticExport extends XLSXDocument {
                 $operatingHoursComponents["Total Hours"] = 168;
             }
 
-            $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic($property->network_id))->max();
+            $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic())->max();
 
             $propertyLines = [];
 
@@ -179,9 +181,7 @@ class ProgrammaticExport extends XLSXDocument {
                     $singleSpotWeeklyImpressions = $el->evaluate(
                         $impressionsModel->formula,
                         array_merge([
-                                        "traffic" => $weeklyTraffic,
-                                        "faces"   => $product->quantity,
-                                        "spots"   => 1,
+                                        "traffic" => $weeklyTraffic, "faces" => $product->quantity, "spots" => 1, "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
                                     ], $impressionsModel->variables)
                     );
 
@@ -191,6 +191,13 @@ class ProgrammaticExport extends XLSXDocument {
 
                 $productScreenCount = $product->locations->flatMap(fn(Location $location) => $location->players)
                                                          ->sum("screen_count");
+
+                
+                /** @var Pricelist|null $pricelist */
+                $pricelist = $product->pricelist?->load(["categories_pricings", "products_pricings"]);
+                /** @var PricelistProduct|PricelistProductsCategory|null $pricing */
+                $pricing = $pricelist?->products_pricings->firstWhere("product_id", "=", $product->getKey())
+                    ?? $pricelist?->categories_pricings->firstWhere("products_category_id", "=", $product->category_id);
 
                 $productRows  = [];
                 $screensCount = 0;
@@ -220,13 +227,15 @@ class ProgrammaticExport extends XLSXDocument {
                             ...$addressComponents,
                             ...$operatingHoursComponents,
                             $weeklyTraffic,
+                            $pricing?->value ?? "-",
                             round($productWeeklyImpressions * $playerImpressionsShare),
                             $player->screen_count > 0 ? round(($productWeeklyImpressions * $playerImpressionsShare) / $player->screen_count) : 0,
                             $player->screen_count,
                             $location->display_type->width_px,
                             $location->display_type->height_px,
                             $location->display_type->width_px . "x" . $location->display_type->height_px,
-                            "",
+                            $loopConfiguration?->spot_length_ms / 1_000, // ms to sec
+                            $loopConfiguration?->loop_length_ms / 1_000,// ms to sec
                         ]);
                     }
 
@@ -242,6 +251,7 @@ class ProgrammaticExport extends XLSXDocument {
                         "",
                         ...$addressComponents,
                         ...$operatingHoursComponents,
+                        $pricing?->value ?? "-",
                         $weeklyTraffic,
                         round($productWeeklyImpressions * $locationImpressionsShare),
                         "",
@@ -249,17 +259,12 @@ class ProgrammaticExport extends XLSXDocument {
                         $location->display_type->width_px,
                         $location->display_type->height_px,
                         $location->display_type->width_px . "x" . $location->display_type->height_px,
-                        "",
+                        $loopConfiguration?->spot_length_ms / 1_000, // ms to sec
+                        $loopConfiguration?->loop_length_ms / 1_000,// ms to sec
                     ];
 
                     array_push($productRows, $locationRow, ...$playerRows);
                 }
-
-                /** @var Pricelist|null $pricelist */
-                $pricelist = $product->pricelist?->load(["categories_pricings", "products_pricings"]);
-                /** @var PricelistProduct|PricelistProductsCategory|null $pricing */
-                $pricing = $pricelist?->products_pricings->firstWhere("product_id", "=", $product->getKey())
-                    ?? $pricelist?->categories_pricings->firstWhere("products_category_id", "=", $product->category_id);
 
                 $productRow = [
                     "product",

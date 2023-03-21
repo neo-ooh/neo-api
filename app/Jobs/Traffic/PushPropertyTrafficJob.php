@@ -50,7 +50,7 @@ class PushPropertyTrafficJob implements ShouldQueue, ShouldBeUnique {
         }
 
 
-        $rollingWeeklyTraffic = $property->traffic->getRollingWeeklyTraffic($property->network_id);
+        $rollingWeeklyTraffic = $property->traffic->getRollingWeeklyTraffic();
 
         $config = OdooConfig::fromConfig();
         $client = $config->getClient();

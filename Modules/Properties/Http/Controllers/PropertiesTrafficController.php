@@ -31,6 +31,7 @@ class PropertiesTrafficController extends Controller {
 
     public function update(UpdatePropertyTrafficSettingsRequest $request, Property $property): Response {
         $trafficSettings                         = $property->traffic;
+        $trafficSettings->format                 = $request->input("format");
         $trafficSettings->is_required            = $request->input("is_required");
         $trafficSettings->start_year             = $request->input("start_year");
         $trafficSettings->grace_override         = $request->input("grace_override");

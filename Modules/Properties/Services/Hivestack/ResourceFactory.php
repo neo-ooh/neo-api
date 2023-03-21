@@ -63,6 +63,7 @@ class ResourceFactory {
                                                         longitude: $site->longitude,
                                                         latitude : $site->latitude
                                                     ),
+                            timezone              : $unit->timezone,
                             // TODO
                             operating_hours       : null,
                             weekly_traffic        : 0

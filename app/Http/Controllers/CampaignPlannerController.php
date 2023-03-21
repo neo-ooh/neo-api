@@ -33,13 +33,12 @@ use Neo\Modules\Properties\Models\PropertyTrafficSnapshot;
 class CampaignPlannerController {
     public function dataChunk_1(GetCampaignPlannerDataRequest $request) {
         /** @var Collection<Property> $properties */
-        $properties = Property::query()->has("odoo")->get();
+        $properties = Property::query()->where("is_sellable", "=", true)->get();
 
         $properties->load([
                               "actor.tags",
-                              "data",
+                              "translations",
                               "address",
-                              "odoo",
                               "pictures",
                               "tenants" => fn($q) => $q->select(["id"]),
                               "opening_hours",
@@ -65,7 +64,7 @@ class CampaignPlannerController {
 
     public function dataChunk_2(GetCampaignPlannerDataRequest $request) {
         /** @var Collection<Property> $properties */
-        $properties = Property::query()->has("odoo")->get();
+        $properties = Property::query()->where("is_sellable", "=", true)->get();
 
         $properties->load([
                               "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"])
@@ -82,7 +81,7 @@ class CampaignPlannerController {
 
     public function dataChunk_3(GetCampaignPlannerDataRequest $request) {
         /** @var Collection<Property> $properties */
-        $properties = Property::query()->has("odoo")->get();
+        $properties = Property::query()->where("is_sellable", "=", true)->get();
 
         $properties->load([
                               "products",
@@ -102,7 +101,7 @@ class CampaignPlannerController {
     }
 
     public function dataChunk_4(GetCampaignPlannerDataRequest $request) {
-        $properties = Property::query()->has("odoo")->get(["actor_id", "pricelist_id"]);
+        $properties = Property::query()->where("is_sellable", "=", true)->get(["actor_id", "pricelist_id"]);
 
         $categories           = ProductCategory::with(["impressions_models", "attachments"])->get();
         $fieldCategories      = FieldsCategory::query()->get();

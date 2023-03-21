@@ -91,7 +91,7 @@ class ImpressionsModelsController {
         // The formula linting throws an error if it fails
         try {
             $el = new ExpressionLanguage();
-            $el->lint($formula, ["traffic", "faces", "spots", ...$variablesNames]);
+            $el->lint($formula, ["traffic", "faces", "spots", "loopLengthMin", ...$variablesNames]);
         } catch (SyntaxError $error) {
             throw ValidationException::withMessages([
                                                         "formula" => $error->getMessage(),

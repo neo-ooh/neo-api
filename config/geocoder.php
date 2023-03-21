@@ -71,7 +71,7 @@ return [
             ],
         ],
         Geonames::class => [
-            "vdufois",
+            env("GEONAMES_USERNAME"),
         ],
     ],
 

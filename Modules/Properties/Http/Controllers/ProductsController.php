@@ -43,7 +43,7 @@ class ProductsController {
     public function update(UpdateProductRequest $request, Product $product) {
         $product->format_id = $request->input("format_id");
         $product->save();
-
+        
         return new Response($product->loadPublicRelations());
     }
 }

@@ -112,6 +112,11 @@ class ProductResource extends InventoryResource {
         public Geolocation|null         $geolocation,
 
         /**
+         * @var string The property timezone
+         */
+        public string|null              $timezone,
+
+        /**
          * @var DataCollection<DayOperatingHours> Ordered (Monday to Sunday) product's operating hours
          */
         #[DataCollectionOf(DayOperatingHours::class)]

@@ -10,7 +10,6 @@
 
 namespace Neo\Modules\Properties\Models;
 
-use ArrayIterator;
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -18,9 +17,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Cache;
+use Neo\Modules\Properties\Enums\TrafficFormat;
+use Neo\Modules\Properties\Traffic\RollingTrafficCalculator;
 
 /**
  * @package Neo\Models
+ * @property TrafficFormat                   $format
  * @property boolean                         $is_required
  * @property int                             $start_year
  * @property Date                            $grace_override
@@ -66,11 +68,17 @@ class PropertyTrafficSettings extends Model {
     public $casts = [
         "is_required"    => "boolean",
         "grace_override" => "date",
+        "format"         => TrafficFormat::class,
     ];
 
     protected $with = [];
 
-    protected $fillable = ["is_required", "start_year", "grace_override"];
+    protected $fillable = [
+        "format",
+        "is_required",
+        "start_year",
+        "grace_override",
+    ];
 
     public function property(): BelongsTo {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
@@ -130,136 +138,18 @@ class PropertyTrafficSettings extends Model {
     }
 
     public function getRollingWeeklyTrafficAttribute() {
-        return $this->getRollingWeeklyTraffic($this->property->network_id);
+        return $this->getRollingWeeklyTraffic();
     }
 
     /**
-     * This method returns an array of 53 values corresponding of the weekly traffic for the property for a year.
+     * This method returns an array of 53 values corresponding to the weekly traffic for the property for a year.
      *
-     * @param int|null $networkId
      * @return array
      */
-    public function getRollingWeeklyTraffic(int|null $networkId): array {
-        return Cache::remember($this->getRollingWeeklyTrafficCacheKey(), 3600 * 24, function () use ($networkId) {
-            if ($networkId === 1) {
-                return $this->getShoppingRollingWeeklyTraffic();
-            }
-
-            $rollingTraffic = [];
-            $trafficData    = $this->weekly_data;
-
-            /** Iterator across all years of data. Each year is an array whose indexes map the weeks  */
-            /** @var ArrayIterator $yearTrafficIt */
-            $yearTrafficIt = $trafficData->getIterator();
-
-            /** List all entries whose value is above zero */
-            $validData = $this->weekly_data->where("traffic", "!==", 0);
-
-            /** Median weekly traffic of the property */
-            $propertyMedian = $validData->count() > 0
-                ? $validData->where("traffic", "!==", 0)->pluck("traffic")->sum() / $validData->count()
-                : 0;
-
-            // Loop over each week of a year
-            // For each week, We try to do a median of all the entries for this week across all available years of information
-            for ($week = 2; $week <= 52; $week++) {
-                $yearTrafficIt->rewind();
-                $weekTraffic    = 0;
-                $weekComponents = 0;
-
-                do {
-                    $t = $yearTrafficIt->current()[$week] ?? 0;
-
-                    if ($t !== 0) {
-                        $weekTraffic += $t;
-                        ++$weekComponents;
-                    }
-
-                    $yearTrafficIt->next();
-                } while ($yearTrafficIt->valid());
-
-                // Do we have at least one entry for this week? If yes, do the median.
-                if ($weekComponents > 0) {
-                    // Append the median to the rolling weekly traffic array
-                    $rollingTraffic[$week] = round($weekTraffic / $weekComponents);
-                    continue;
-                }
-
-                // We don't have any information for this week, fallback to the placeholder value OR the property median depending on settings
-                if ($this->missing_value_strategy === 'USE_PLACEHOLDER') {
-                    $weekTraffic = $this->placeholder_value / 4;
-                } else {
-                    $weekTraffic = $propertyMedian;
-                }
-
-                // Append the fallback value to the rolling weekly traffic array
-                $rollingTraffic[$week] = round($weekTraffic);
-            }
-
-            $firstWeekMedian    = round(($rollingTraffic[2] * 2 + $rollingTraffic[52]) / 3);
-            $lastWeekMedian     = round(($rollingTraffic[2] + $rollingTraffic[52] * 2) / 3);
-            $rollingTraffic[1]  = $firstWeekMedian;
-            $rollingTraffic[53] = $lastWeekMedian;
-
-            return $rollingTraffic;
+    public function getRollingWeeklyTraffic(): array {
+        return Cache::remember($this->getRollingWeeklyTrafficCacheKey(), 3600 * 24, function () {
+            $calculator = new RollingTrafficCalculator($this);
+            return $calculator->compute();
         });
-    }
-
-    public function getShoppingRollingWeeklyTraffic(): array {
-
-        /** @var int[] $rollingTraffic */
-        $rollingTraffic = [];
-        // We select the most recent entry with a positive traffic and who is not the 53rd week because this one is tricky
-        $mostRecentDatum = $this->weekly_data->last(fn($datum) => $datum->traffic > 0 && $datum->week !== 53);
-
-        if (!$mostRecentDatum) {
-            // Return an empty array if no values at all
-            for ($week = 1; $week <= 53; $week++) {
-                $rollingTraffic[$week] = 0;
-            }
-            return $rollingTraffic;
-        }
-
-        /** @var WeeklyTrafficDatum $referenceDatum */
-        $referenceDatum = $this->weekly_data->first(
-            fn($datum) => $datum->year === $this->start_year && $datum->week === $mostRecentDatum->week
-        );
-
-        if (!$referenceDatum || $referenceDatum->traffic === 0) {
-            for ($week = 1; $week <= 53; $week++) {
-                $rollingTraffic[$week] = 0;
-            }
-            return $rollingTraffic;
-        }
-
-        $evolution = $mostRecentDatum->traffic / $referenceDatum->traffic;
-
-        for ($week = 2; $week <= 52; $week++) {
-
-            /** @var WeeklyTrafficDatum|null $mostRecentDatumForPeriod */
-            $mostRecentDatumForPeriod = $this->weekly_data->where("week", "=", $week)
-                                                          ->sortBy("year", SORT_REGULAR, "desc")
-                                                          ->first();
-
-            /** @var WeeklyTrafficDatum|null $referenceDatumForPeriod */
-            $referenceDatumForPeriod = $this->weekly_data->first(fn($datum) => $datum->year === $this->start_year && $datum->week === $week);
-
-            // If the two data are the same, directly apply the factored-down result
-            if ($mostRecentDatumForPeriod && $referenceDatumForPeriod &&
-                $mostRecentDatumForPeriod->year === $referenceDatumForPeriod->year &&
-                $mostRecentDatumForPeriod->week === $referenceDatumForPeriod->week) {
-                $rollingTraffic[$week] = round($referenceDatumForPeriod->traffic * $evolution);
-                continue;
-            }
-
-            $rollingTraffic[$week] = round(max(($referenceDatumForPeriod->traffic ?? 0) * $evolution, ($mostRecentDatumForPeriod->traffic ?? 0)));
-        }
-
-        $firstWeekMedian    = round(($rollingTraffic[2] * 2 + $rollingTraffic[52]) / 3);
-        $lastWeekMedian     = round(($rollingTraffic[2] + $rollingTraffic[52] * 2) / 3);
-        $rollingTraffic[1]  = $firstWeekMedian;
-        $rollingTraffic[53] = $lastWeekMedian;
-
-        return $rollingTraffic;
     }
 }

@@ -19,10 +19,8 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Neo\Modules\Properties\Jobs\Products\PullProductJob;
-use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\Property;
-use Neo\Modules\Properties\Services\InventoryAdapterFactory;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
@@ -33,11 +31,6 @@ class PullFullInventoryJob implements ShouldQueue {
     }
 
     public function handle(): void {
-        // Load inventory
-        $provider = InventoryProvider::findOrFail($this->inventoryId);
-
-        $inventory = InventoryAdapterFactory::make($provider);
-
         // We need to list all the products that require synchronization.
         // Those are products without any settings set for this inventory whose property has settings enabling them for a pull on this inventory
         // plus products with settings enabling them for pull on this inventory.

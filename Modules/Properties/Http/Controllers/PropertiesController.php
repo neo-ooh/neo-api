@@ -26,6 +26,7 @@ use Neo\Models\Address;
 use Neo\Models\City;
 use Neo\Models\Province;
 use Neo\Modules\Broadcast\Models\Network;
+use Neo\Modules\Properties\Enums\TrafficFormat;
 use Neo\Modules\Properties\Http\Requests\Properties\DestroyPropertyRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\DumpPropertyRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ListPropertiesByIdRequest;
@@ -122,7 +123,9 @@ class PropertiesController extends Controller {
         $property->refresh();
 
         // Create the traffic records for the property
-        $property->traffic()->create();
+        $property->traffic()->create([
+                                         "format" => TrafficFormat::MonthlyMedian->value,
+                                     ]);
         $property->translations()->createMany([
                                                   ["locale" => "fr-CA"],
                                                   ["locale" => "en-CA"],

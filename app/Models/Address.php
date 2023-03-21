@@ -26,6 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property City       $city
  * @property string     $zipcode
  * @property Point|null $geolocation
+ * @property string     $timezone
  * @property Date       $created_at
  * @property Date       $updated_at
  *

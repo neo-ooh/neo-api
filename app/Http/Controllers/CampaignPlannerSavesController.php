@@ -110,7 +110,7 @@ class CampaignPlannerSavesController {
 
 
         $properties->each(function (Property $property) {
-            $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic($property->network_id);
+            $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic();
         });
 
         $properties->makeHidden(["weekly_data", "weekly_traffic"]);

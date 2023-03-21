@@ -99,7 +99,7 @@ class HivestackAdapter extends InventoryAdapter {
      * @param Enumerable $operatingHours
      * @return string
      */
-    protected function operatingHoursToString(Enumerable $operatingHours) {
+    protected function operatingHoursToHivestackString(Enumerable $operatingHours) {
         $hoursString = "";
         for ($i = 1; $i <= 7; $i++) {
             /** @var DayOperatingHours $dayHours */
@@ -131,13 +131,13 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->longitude       = $product->geolocation->longitude;
         $unit->latitude        = $product->geolocation->latitude;
         $unit->loop_length     = $product->loop_configuration->loop_length_ms / 1_000; // ms to seconds
-        $unit->operating_hours = $this->operatingHoursToString($product->operating_hours->toCollection());
+        $unit->operating_hours = $this->operatingHoursToHivestackString($product->operating_hours->toCollection());
         $unit->screen_height   = $product->screen_height_px;
         $unit->screen_width    = $product->screen_width_px;
         $unit->spot_length     = $product->loop_configuration->spot_length_ms / 1_000; // ms to seconds
         $unit->min_spot_length = min($unit->spot_length, 5);                           // Min length : 5 seconds or spot length if shorter
         $unit->max_spot_length = $unit->spot_length;
-//        $unit->timezone = ""
+        $unit->timezone        = $product->timezone;
     }
 
     /**

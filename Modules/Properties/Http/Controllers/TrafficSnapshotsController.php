@@ -11,8 +11,8 @@
 namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Neo\Jobs\Properties\CreateTrafficSnapshotJob;
 use Neo\Modules\Properties\Http\Requests\TrafficSnapshots\RefreshSnapshotRequest;
+use Neo\Modules\Properties\Jobs\CreateTrafficSnapshotJob;
 
 class TrafficSnapshotsController {
     public function refresh(RefreshSnapshotRequest $request) {

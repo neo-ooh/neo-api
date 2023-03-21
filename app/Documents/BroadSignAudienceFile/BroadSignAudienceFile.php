@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2022 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -83,7 +83,7 @@ class BroadSignAudienceFile extends XLSXDocument {
                                   ->find($this->product->property_id);
         $this->property = $property;
 
-        $this->property->rolling_weekly_traffic = $this->property->traffic->getRollingWeeklyTraffic($this->property->network_id);
+        $this->property->rolling_weekly_traffic = $this->property->traffic->getRollingWeeklyTraffic();
 
         // Load all the frames, of the display unit, and load their loop policies as well
         $this->frames = $broadcaster->getLocationFrames($this->location->toExternalBroadcastIdResource());
@@ -175,9 +175,10 @@ class BroadSignAudienceFile extends XLSXDocument {
                 $el                = new ExpressionLanguage();
                 $impressionsPerDay = $el->evaluate($impressionsModel->formula, array_merge(
                     [
-                        "traffic" => $dailyTraffic,
-                        "faces"   => $this->product->quantity,
-                        "spots"   => 1,
+                        "traffic"       => $dailyTraffic,
+                        "faces"         => $this->product->quantity,
+                        "spots"         => 1,
+                        "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
                     ],
                     $impressionsModel->variables
                 ));

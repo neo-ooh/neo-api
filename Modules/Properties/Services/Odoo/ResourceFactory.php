@@ -71,6 +71,7 @@ class ResourceFactory {
                                                         longitude: $property->partner_longitude,
                                                         latitude : $property->partner_latitude,
                                                     ),
+                            timezone              : null,
                             operating_hours       : null,
                             weekly_traffic        : (int)ceil(($property->annual_traffic / 365) * 7)
                         )

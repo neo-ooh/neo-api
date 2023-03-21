@@ -19,6 +19,7 @@ use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDemographicValuesRequest
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\CampaignPlannerSave;
+use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Models\Brand;
 use Neo\Modules\Properties\Models\DemographicValue;
@@ -115,6 +116,9 @@ class CampaignPlannerController {
         $pricelists           = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
                                          ->with(["categories_pricings", "products_pricings"])
                                          ->get();
+        $formats              = Format::query()
+                                      ->with("loop_configurations")
+                                      ->get();
 
         return [
             "categories"            => $categories,
@@ -124,6 +128,7 @@ class CampaignPlannerController {
             "demographic_variables" => $demographicVariables,
             "brands"                => $brands,
             "pricelists"            => $pricelists,
+            "formats"               => $formats,
         ];
     }
 

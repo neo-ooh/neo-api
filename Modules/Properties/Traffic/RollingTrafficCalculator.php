@@ -42,6 +42,10 @@ class RollingTrafficCalculator {
         /** @var ArrayIterator<WeeklyTrafficDatum> $yearTrafficIt */
         $yearTrafficIt = $trafficData->groupBy("year")->getIterator();
 
+        if ($yearTrafficIt->count() === 0) {
+            return array_fill(1, 53, 0);
+        }
+
         /** List all entries whose value is above zero */
         $validData = $trafficData->where("traffic", "!==", 0);
 
@@ -49,6 +53,7 @@ class RollingTrafficCalculator {
         $propertyMedian = $validData->count() > 0
             ? $validData->where("traffic", "!==", 0)->pluck("traffic")->sum() / $validData->count()
             : 0;
+
 
         // Loop over each week of a year
         // For each week, We try to do a median of all the entries for this week across all available years of information

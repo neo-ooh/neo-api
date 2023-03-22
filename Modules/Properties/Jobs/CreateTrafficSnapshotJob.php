@@ -31,6 +31,7 @@ class CreateTrafficSnapshotJob implements ShouldQueue {
 
         /** @var Property $property */
         foreach ($properties as $property) {
+            dump($property->actor->name);
             $traffic = $property->traffic->getRollingWeeklyTraffic();
             PropertyTrafficSnapshot::query()->updateOrInsert([
                                                                  "property_id" => $property->getKey(),

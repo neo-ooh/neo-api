@@ -52,8 +52,6 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property boolean                       $is_sellable
  * @property int                           $unit_price
  * @property boolean                       $is_bonus
- * @property int                           $external_id
- * @property int                           $external_variant_id
  * @property int|null                      $linked_product_id
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at

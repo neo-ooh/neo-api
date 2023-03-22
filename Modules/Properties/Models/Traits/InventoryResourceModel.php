@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Properties\Models\Traits;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -19,7 +20,8 @@ use Neo\Modules\Properties\Models\ResourceInventorySettings;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 
 /**
- * @property InventoryResourceType $inventoryResourceType
+ * @property InventoryResourceType                 $inventoryResourceType
+ * @property Collection<ExternalInventoryResource> $external_representations
  * @mixin Model
  */
 trait InventoryResourceModel {

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -18,7 +18,8 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use JsonException;
-use Neo\Models\Product;
+use Neo\Modules\Properties\Models\ExternalInventoryResource;
+use Neo\Modules\Properties\Models\Product;
 use Neo\Resources\Contracts\CPCompiledCategory;
 use Neo\Resources\Contracts\CPCompiledFlight;
 use Neo\Resources\Contracts\CPCompiledProduct;
@@ -30,6 +31,8 @@ use Neo\Services\Odoo\OdooConfig;
 
 class SendContractFlightJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    readonly private int $odooInventoryId;
 
     public int $tries = 1;
     public int $timeout = 300;
@@ -45,6 +48,7 @@ class SendContractFlightJob implements ShouldQueue {
     protected Collection $properties;
 
     public function __construct(protected Contract $contract, protected CPCompiledFlight $flight, protected int $flightIndex) {
+        $this->odooInventoryId = 1;
     }
 
     /**
@@ -73,6 +77,7 @@ class SendContractFlightJob implements ShouldQueue {
         foreach ($compiledProductsChunks as $chunk) {
             $this->products = $this->products->merge(Product::query()
                                                             ->whereIn("id", $chunk->pluck("id")->toArray())
+                                                            ->with("external_representations")
                                                             ->get());
         }
 
@@ -94,21 +99,21 @@ class SendContractFlightJob implements ShouldQueue {
             "state"      => "draft",
             "date_start" => $this->flight->start_date,
             "date_end"   => $this->flight->end_date,
-        ], pullRecord: false);
+        ], pullRecord:   false);
 
         // Now, we loop over each compiled product, and build its orderLines
         $orderLinesToAdd = collect();
 
         /** @var CPCompiledProduct $compiledProduct */
         foreach ($compiledProducts as $compiledProduct) {
-            $dbproduct = $this->products->firstWhere("id", "=", $compiledProduct->id);
+            $dbProduct = $this->products->firstWhere("id", "=", $compiledProduct->id);
 
-            if (!$dbproduct) {
+            if (!$dbProduct) {
                 clock("Unknown product " . $compiledProduct->id);
                 continue;
             }
 
-            $orderLinesToAdd->push(...$this->buildLines($dbproduct, $compiledProduct));
+            $orderLinesToAdd->push(...$this->buildLines($dbProduct, $compiledProduct));
         }
 
         $linesBatch = $orderLinesToAdd->chunk(100);
@@ -125,22 +130,31 @@ class SendContractFlightJob implements ShouldQueue {
 
         $discountAmount = $compiledProduct->media_value > 0 ? (1 - ($compiledProduct->price / $compiledProduct->media_value)) * 100 : 0;
 
+        /** @var ExternalInventoryResource|null $externalRepresentation */
+        $externalRepresentation = $product->external_representations->firstWhere("inventory_id", "=", 1);
+
+        // Cannot send product without a representation
+        if (!$externalRepresentation) {
+            // TODO: provide some feedback for this situation; let the user know which products where skipped
+            return collect();
+        }
+
         $orderLines->push([
-            "order_id"           => $this->contract->id,
-            "name"               => $product->name_en,
-            "price_unit"         => $compiledProduct->unit_price,
-            "product_uom_qty"    => $compiledProduct->spots,
-            "customer_lead"      => 0.0,
-            "nb_screen"          => $compiledProduct->quantity,
-            "product_id"         => $product->external_variant_id,
-            "rental_start"       => $this->flight->start_date,
-            "rental_end"         => $this->flight->end_date,
-            "is_rental_line"     => 1,
-            "is_linked_line"     => 0,
-            "discount"           => $discountAmount,
-            "sequence"           => $this->flightIndex * 10,
-            "connect_impression" => $compiledProduct->impressions,
-        ]);
+                              "order_id"           => $this->contract->id,
+                              "name"               => $product->name_en,
+                              "price_unit"         => $compiledProduct->unit_price,
+                              "product_uom_qty"    => $compiledProduct->spots,
+                              "customer_lead"      => 0.0,
+                              "nb_screen"          => $compiledProduct->quantity,
+                              "product_id"         => $externalRepresentation->context["variant_id"],
+                              "rental_start"       => $this->flight->start_date,
+                              "rental_end"         => $this->flight->end_date,
+                              "is_rental_line"     => 1,
+                              "is_linked_line"     => 0,
+                              "discount"           => $discountAmount,
+                              "sequence"           => $this->flightIndex * 10,
+                              "connect_impression" => $compiledProduct->impressions,
+                          ]);
 
         if (!$product->linked_product_id) {
             return $orderLines;
@@ -153,21 +167,29 @@ class SendContractFlightJob implements ShouldQueue {
             return $orderLines;
         }
 
+        /** @var ExternalInventoryResource|null $externalRepresentation */
+        $linkedProductExternalRepresentation = $linkedProduct->external_representations->firstWhere("inventory_id", "=", 1);
+
+        // Cannot send product without a representation
+        if (!$linkedProductExternalRepresentation) {
+            return $orderLines;
+        }
+
         $orderLines->push([
-            "order_id"        => $this->contract->id,
-            "name"            => $linkedProduct->name_en,
-            "price_unit"      => 0,
-            "product_uom_qty" => $compiledProduct->spots,
-            "customer_lead"   => 0.0,
-            "nb_screen"       => $linkedProduct->quantity,
-            "product_id"      => $linkedProduct->external_variant_id,
-            "rental_start"    => $this->flight->start_date,
-            "rental_end"      => $this->flight->end_date,
-            "is_rental_line"  => 1,
-            "is_linked_line"  => 1,
-            "discount"        => 0,
-            "sequence"        => $this->flightIndex * 10,
-        ]);
+                              "order_id"        => $this->contract->id,
+                              "name"            => $linkedProduct->name_en,
+                              "price_unit"      => 0,
+                              "product_uom_qty" => $compiledProduct->spots,
+                              "customer_lead"   => 0.0,
+                              "nb_screen"       => $linkedProduct->quantity,
+                              "product_id"      => $linkedProductExternalRepresentation->context["variant_id"],
+                              "rental_start"    => $this->flight->start_date,
+                              "rental_end"      => $this->flight->end_date,
+                              "is_rental_line"  => 1,
+                              "is_linked_line"  => 1,
+                              "discount"        => 0,
+                              "sequence"        => $this->flightIndex * 10,
+                          ]);
 
         return $orderLines;
     }

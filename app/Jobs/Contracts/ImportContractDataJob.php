@@ -13,10 +13,12 @@ namespace Neo\Jobs\Contracts;
 use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use JsonException;
 use Neo\Models\Advertiser;
 use Neo\Models\Client;
@@ -127,8 +129,11 @@ class ImportContractDataJob implements ShouldQueue {
 
         $output->writeln($contract->contract_id . ": Importing {$orderLines->count()} lines in the contract...");
         $products = Product::query()
-                           ->whereIn("external_variant_id", $orderLines->pluck("product_id.0")->unique())
-                           ->with(["category"])
+                           ->whereHas("external_representations", function (Builder $query) use ($orderLines) {
+                               $query->whereIn(DB::raw("JSON_VALUE(context, '$.variant_id')"), $orderLines->pluck("product_id.0")
+                                                                                                          ->unique());
+                           })
+                           ->with(["category", "external_representations"])
                            ->get();
 
         /** @var OrderLine $orderLine */
@@ -139,8 +144,10 @@ class ImportContractDataJob implements ShouldQueue {
             }
 
             /** @var Product|null $product */
-            $product = $products->firstWhere("external_variant_id", "=", $orderLine->product_id[0]);
-
+            $product = $products->firstWhere(fn(Product $product) => $product->external_representations->where("context.variant_id", "=", $orderLine->product_id[0])
+                                                                                                       ->isNotEmpty()
+            );
+            
             if ($product === null) {
                 // Unknown product, ignore
                 continue;

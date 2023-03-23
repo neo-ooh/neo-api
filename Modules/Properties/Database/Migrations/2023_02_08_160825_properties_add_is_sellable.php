@@ -18,6 +18,19 @@ return new class extends Migration {
             $table->boolean("is_sellable")->default(true)->after("pricelist_id");
         });
 
+        $properties     = \Illuminate\Support\Facades\DB::table("properties")->get();
+        $odooProperties = \Illuminate\Support\Facades\DB::table("odoo_properties")->get();
+
+        foreach ($properties as $property) {
+            if ($odooProperties->doesntContain("property_id", "=", $property->actor_id)) {
+                \Illuminate\Support\Facades\DB::table("properties")
+                                              ->where("actor_id", "=", $property->actor_id)
+                                              ->update([
+                                                           "is_sellable" => false
+                                                       ]);
+            }
+        }
+
         Schema::table('products', static function (Blueprint $table) {
             $table->boolean("is_sellable")->default(true)->after("quantity");
         });

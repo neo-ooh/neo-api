@@ -100,10 +100,6 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         "is_bonus"    => "boolean",
     ];
 
-    protected $touches = [
-        "property",
-    ];
-
     public string $impressions_models_pivot_table = "products_impressions_models";
 
     protected function getPublicRelations() {

@@ -21,10 +21,10 @@ return new class extends Migration {
                        "name"       => "Odoo",
                        "is_active"  => true,
                        "settings"   => json_encode([
-                                                       "api_url"      => "https://odoo.neo-ooh.com/xmlrpc/2",
-                                                       "api_key"      => "dummy123",
-                                                       "api_username" => "dummy123",
-                                                       "database"     => "production",
+                                                       "api_url"      => config('modules-legacy.odoo.server-url'),
+                                                       "api_key"      => config('modules-legacy.odoo.password'),
+                                                       "api_username" => config('modules-legacy.odoo.username'),
+                                                       "database"     => config('modules-legacy.odoo.database'),
                                                    ]),
                        "updated_at" => Carbon::now(),
                    ]);

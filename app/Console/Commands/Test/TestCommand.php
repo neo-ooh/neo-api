@@ -11,8 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Jobs\Contracts\ImportContractJob;
-use Neo\Models\Contract;
+use Illuminate\Support\Facades\DB;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -111,7 +110,23 @@ class TestCommand extends Command {
 //            }
 //        }
 
-        Contract::query()->where("contract_id", "=", "NEO-150-23")->delete();
-        (new ImportContractJob("NEO-150-23", null))->handle();
+//        Contract::query()->where("contract_id", "=", "NEO-150-23")->delete();
+//        (new ImportContractJob("NEO-150-23", null))->handle();
+
+//        $roles = Role::query()->with(["capabilities"])->get();
+
+        $properties     = DB::table("properties")->get();
+        $odooProperties = DB::table("odoo_properties")->get();
+
+        foreach ($properties as $property) {
+            if ($odooProperties->doesntContain("property_id", "=", $property->actor_id)) {
+                /*\Illuminate\Support\Facades\DB::table("properties")
+                                              ->where("actor_id", "=", $property->actor_id)
+                                              ->update([
+                                                           "is_sellable" => false
+                                                       ]);*/
+                dump("stop selling $property->actor_id");
+            }
+        }
     }
 }

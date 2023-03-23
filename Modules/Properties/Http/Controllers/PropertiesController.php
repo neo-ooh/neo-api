@@ -181,11 +181,12 @@ class PropertiesController extends Controller {
 
     public function update(UpdatePropertyRequest $request, Property $property): Response {
         $property->network_id   = $request->input("network_id");
+        $property->is_sellable  = $request->input("is_sellable");
         $property->has_tenants  = $request->input("has_tenants");
         $property->pricelist_id = $request->input("pricelist_id", null);
         $property->save();
 
-        return new Response($property);
+        return new Response($property->loadPublicRelations());
     }
 
     public function updateAddress(UpdateAddressRequest $request, Property $property): Response {

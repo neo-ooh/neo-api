@@ -23,7 +23,7 @@ class MonthlyTrafficController extends Controller {
     public function store(StoreTrafficRequest $request, Property $property) {
         $values = ["traffic" => $request->input("traffic")];
 
-        if (Gate::allows(Capability::properties_edit->value) && $request->has("temporary")) {
+        if (Gate::allows(Capability::properties_traffic_manage->value) && $request->has("temporary")) {
             $values["temporary"] = $request->input("temporary");
 
             if ($values["traffic"] === null && $values["temporary"] === null) {
@@ -50,8 +50,6 @@ class MonthlyTrafficController extends Controller {
                                                                 ], $values);
 
         EstimateWeeklyTrafficFromMonthJob::dispatch($property->getKey(), $request->input("year"), $request->input("month") + 1);
-
-        $property->touch("last_review_at");
 
         return new Response($traffic, 201);
     }

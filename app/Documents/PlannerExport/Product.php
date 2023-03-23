@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 
 class Product {
     public int $id;
-    public \Neo\Models\Product $product;
+    public \Neo\Modules\Properties\Models\Product $product;
 
     public int $faces;
     public int $spots;
@@ -27,7 +27,7 @@ class Product {
 
     public Collection $products;
 
-    public function __construct(array $compiledProduct, \Neo\Models\Product $product) {
+    public function __construct(array $compiledProduct, \Neo\Modules\Properties\Models\Product $product) {
         $this->id = $compiledProduct["id"];
 
         $this->product = $product;

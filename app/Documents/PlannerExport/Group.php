@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -11,7 +11,7 @@
 namespace Neo\Documents\PlannerExport;
 
 use Illuminate\Support\Collection;
-use Neo\Models\ProductCategory;
+use Neo\Modules\Properties\Models\ProductCategory;
 
 class Group {
     public GroupDefinition|null $group;
@@ -30,8 +30,10 @@ class Group {
     public float $cpm;
     public float $cpmPrice;
 
-    public function __construct(Collection $compiledProperties,
-                                array|null $groupDefinition) {
+    public function __construct(
+        Collection $compiledProperties,
+        array|null $groupDefinition
+    ) {
         $this->group = $groupDefinition ? new GroupDefinition(
             $groupDefinition["name"],
             $groupDefinition["categories"],
@@ -46,10 +48,10 @@ class Group {
         $propertiesIds = $compiledProperties->pluck("id");
 
         // Pull all the properties for this group
-        $properties = \Neo\Models\Property::query()
-                                          ->with(["network", "address"])
-                                          ->whereIn("actor_id", $propertiesIds)
-                                          ->get();
+        $properties = \Neo\Modules\Properties\Models\Property::query()
+                                                             ->with(["network", "address"])
+                                                             ->whereIn("actor_id", $propertiesIds)
+                                                             ->get();
 
         // List all the product Ids, and pull them
         $productIdsChunks = $compiledProperties
@@ -60,9 +62,9 @@ class Group {
 
         // Eloquent `whereIn` fails silently for references above ~1000 reference values
         foreach ($productIdsChunks as $chunk) {
-            $products = $products->merge(\Neo\Models\Product::query()
-                                                            ->whereIn("id", $chunk)
-                                                            ->get());
+            $products = $products->merge(\Neo\Modules\Properties\Models\Product::query()
+                                                                               ->whereIn("id", $chunk)
+                                                                               ->get());
         }
 
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
 
 class Property {
     public int $propertyId;
-    public \Neo\Models\Property $property;
+    public \Neo\Modules\Properties\Models\Property $property;
 
     public int $faces;
     public int $traffic;
@@ -26,7 +26,7 @@ class Property {
 
     public Collection $categories;
 
-    public function __construct(array $compiledProperty, \Neo\Models\Property $property, \Illuminate\Database\Eloquent\Collection $categories, Collection $products) {
+    public function __construct(array $compiledProperty, \Neo\Modules\Properties\Models\Property $property, \Illuminate\Database\Eloquent\Collection $categories, Collection $products) {
         $this->propertyId = $compiledProperty["id"];
 
         $this->property   = $property;

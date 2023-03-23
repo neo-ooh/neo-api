@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -11,7 +11,7 @@
 namespace Neo\Documents\PlannerExport;
 
 use Illuminate\Support\Collection;
-use Neo\Models\ProductCategory;
+use Neo\Modules\Properties\Models\ProductCategory;
 
 class Category {
     public int $id;

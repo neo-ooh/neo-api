@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -41,9 +41,9 @@ class HeadlinesController extends Controller {
         $user = Auth::user()->load("capabilities");
 
         $userCapabilities = $user->capabilities;
-
+        
         $headlines = $headlines->filter(function (Headline $headline) use ($userCapabilities) {
-            return $userCapabilities->diff($headline->capabilities->pluck("id"))
+            return $userCapabilities->diff($headline->capabilities)
                                     ->count() !== $userCapabilities->count();
         });
 
@@ -69,10 +69,10 @@ class HeadlinesController extends Controller {
         // Store messages
         foreach ($messages as $message) {
             HeadlineMessage::query()->create([
-                "headline_id" => $headline->id,
-                "locale"      => $message["locale"],
-                "message"     => $message["message"],
-            ]);
+                                                 "headline_id" => $headline->id,
+                                                 "locale"      => $message["locale"],
+                                                 "message"     => $message["message"],
+                                             ]);
         }
 
         return new Response($headline->refresh()->load("messages"), 201);

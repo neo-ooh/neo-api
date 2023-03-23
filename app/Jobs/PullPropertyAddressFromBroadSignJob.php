@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -19,7 +19,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Address;
 use Neo\Models\City;
-use Neo\Models\Property;
 use Neo\Models\Province;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcastResource;
@@ -28,6 +27,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterLocations;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
+use Neo\Modules\Properties\Models\Property;
 
 class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -42,7 +42,7 @@ class PullPropertyAddressFromBroadSignJob implements ShouldQueue {
      */
     public function handle(): bool {
         // For each property, we will see if it's associated group has at leas one location.
-        // If so, we pull the adress and lat/lng from its matching external representation
+        // If so, we pull the address and lat/lng from its matching external representation
         /** @var Property|null $property */
         $property = Property::query()
                             ->with(["actor:id,name"])

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -13,8 +13,8 @@ namespace Neo\Console\Commands;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Console\Command;
-use Neo\Models\Property;
-use Neo\Models\PropertyTrafficMonthly;
+use Neo\Modules\Properties\Models\MonthlyTrafficDatum;
+use Neo\Modules\Properties\Models\Property;
 use Neo\Services\Traffic\Traffic;
 
 class PullPropertyTraffic extends Command {
@@ -80,22 +80,22 @@ class PullPropertyTraffic extends Command {
             $this->output->comment($month->format("Y-m") . " - " . $traffic);
 
             // If the traffic value is 0 and there is already a record, we ignore it
-            if ($traffic === 0 && PropertyTrafficMonthly::query()->where([
-                    "property_id" => $property->actor_id,
-                    "year"        => $start->year,
-                    "month"       => $start->month - 1
-                ])->exists()) {
+            if ($traffic === 0 && MonthlyTrafficDatum::query()->where([
+                                                                          "property_id" => $property->actor_id,
+                                                                          "year"        => $start->year,
+                                                                          "month"       => $start->month - 1,
+                                                                      ])->exists()) {
                 continue;
             }
 
             // Save the value
-            PropertyTrafficMonthly::query()->updateOrCreate([
-                "property_id" => $property->actor_id,
-                "year"        => $start->year,
-                "month"       => $start->month - 1,
-            ], [
-                "traffic" => $traffic,
-            ]);
+            MonthlyTrafficDatum::query()->updateOrCreate([
+                                                             "property_id" => $property->actor_id,
+                                                             "year"        => $start->year,
+                                                             "month"       => $start->month - 1,
+                                                         ], [
+                                                             "traffic" => $traffic,
+                                                         ]);
 
             // Wait in-between fetched or we get a 503 from Linkett
         }

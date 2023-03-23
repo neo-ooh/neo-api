@@ -18,11 +18,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
-use Neo\Models\DemographicValue;
-use Neo\Models\Field;
-use Neo\Models\FieldSegment;
-use Neo\Models\Property;
-use Neo\Models\PropertyFieldSegmentValue;
+use Neo\Modules\Properties\Models\DemographicValue;
+use Neo\Modules\Properties\Models\Field;
+use Neo\Modules\Properties\Models\FieldSegment;
+use Neo\Modules\Properties\Models\Property;
+use Neo\Modules\Properties\Models\PropertyFieldSegmentValue;
 
 class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -100,7 +100,7 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
                         fn(PropertyFieldSegmentValue $segmentValue) => $segmentValue->property_id === $propertyId && $segmentValue->fields_segment_id === $segment->getKey(),
                         default: fn() => new PropertyFieldSegmentValue([
                                                                            "property_id"       => $propertyId,
-                                                                           "fields_segment_id" => $segment->getKey()
+                                                                           "fields_segment_id" => $segment->getKey(),
                                                                        ]));
 
                     // We go the pedantic way here because `value` is a generic word and may conflict with Eloquent methods.

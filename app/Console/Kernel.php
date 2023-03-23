@@ -16,7 +16,6 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\Contracts\RefreshContracts;
-use Neo\Jobs\Odoo\SynchronizeProperties;
 use Neo\Jobs\RequestScreenshotsBursts;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
 use Neo\Jobs\Traffic\PullLatestTrafficData;
@@ -32,9 +31,6 @@ class Kernel extends ConsoleKernel {
      * @var array
      */
     protected $commands = [
-        // properties:sync
-        SynchronizeProperties::class,
-
         // contracts:update
         RefreshContracts::class,
 
@@ -72,7 +68,7 @@ class Kernel extends ConsoleKernel {
 
 
         /* -----------------
-         * "More often that hourly but not every minutes"
+         * "More often that hourly but not every minute"
          */
         /*        $schedule->call(function (NewsService $news) {
                     $news->updateRecords();

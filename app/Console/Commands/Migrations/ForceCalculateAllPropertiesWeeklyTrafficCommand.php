@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -15,7 +15,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Bus;
 use Neo\Jobs\Traffic\EstimateWeeklyTrafficFromMonthJob;
 use Neo\Jobs\Traffic\PushPropertyTrafficJob;
-use Neo\Models\Property;
+use Neo\Modules\Properties\Models\Property;
 
 class ForceCalculateAllPropertiesWeeklyTrafficCommand extends Command {
     protected $signature = 'one-off:monthlytraffic-to-weekly';

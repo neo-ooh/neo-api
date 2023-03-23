@@ -18,8 +18,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Neo\Models\OpeningHours;
-use Neo\Models\Property;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Exceptions\UnsupportedBroadcasterFunctionalityException;
 use Neo\Modules\Broadcast\Models\Location;
@@ -27,6 +25,8 @@ use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterLocations;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
+use Neo\Modules\Properties\Models\OpeningHours;
+use Neo\Modules\Properties\Models\Property;
 
 class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUniqueUntilProcessing {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -77,7 +77,7 @@ class PullOpeningHoursJob implements ShouldQueue, ShouldBeUnique, ShouldBeUnique
         } while ($broadcaster === null && $locationsIterator->valid());
 
         if (!$broadcaster) {
-            // Could not found a broadcaster supporting locations, stop here
+            // Could not find a broadcaster supporting locations, stop here
             return false;
         }
 

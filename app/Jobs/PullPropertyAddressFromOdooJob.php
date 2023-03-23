@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -10,16 +10,18 @@
 
 namespace Neo\Jobs;
 
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use JsonException;
 use Neo\Jobs\Odoo\PushPropertyGeolocationJob;
 use Neo\Models\Address;
 use Neo\Models\City;
-use Neo\Models\Property;
 use Neo\Models\Province;
+use Neo\Modules\Properties\Models\Property;
 use Neo\Services\Odoo\OdooConfig;
 
 class PullPropertyAddressFromOdooJob implements ShouldQueue {
@@ -28,6 +30,10 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
     public function __construct(protected int $property_id) {
     }
 
+    /**
+     * @throws OdooException
+     * @throws JsonException
+     */
     public function handle() {
         // We start by checking by the property do exist and that it is properly linked with Odoo.
         /** @var Property $property */
@@ -50,7 +56,7 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
 
         $address          = $property->address ?? new Address();
         $address->line_1  = $odooProperty->street;
-        $address->line_2  = $odooProperty->street2 === 0 ? null : $odooProperty->street2;
+        $address->line_2  = !$odooProperty->street2 ? null : $odooProperty->street2;
         $address->zipcode = str_replace(" ", "", $odooProperty->zip);
 
         /** @var Province $province */
@@ -60,9 +66,9 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
 
         /** @var City $city */
         $city = City::query()->firstOrCreate([
-            "name"        => $odooProperty->city,
-            "province_id" => $province->id,
-        ]);
+                                                 "name"        => $odooProperty->city,
+                                                 "province_id" => $province->id,
+                                             ]);
 
         $address->city_id = $city->id;
 
@@ -76,8 +82,8 @@ class PullPropertyAddressFromOdooJob implements ShouldQueue {
 
         if ($refreshCoordinates) {
             PullAddressGeolocationJob::withChain([
-                new PushPropertyGeolocationJob($this->property_id)
-            ])->dispatch($address);
+                                                     new PushPropertyGeolocationJob($this->property_id),
+                                                 ])->dispatch($address);
         }
     }
 }

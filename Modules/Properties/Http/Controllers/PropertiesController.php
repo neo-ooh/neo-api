@@ -137,11 +137,7 @@ class PropertiesController extends Controller {
         if (Gate::allows(Capability::properties_edit->value)) {
             $property->load(["opening_hours"]);
         }
-
-        if (Gate::allows(Capability::odoo_properties->value)) {
-            $property->load(["products"]);
-        }
-
+        
         return new Response($property, 201);
     }
 

@@ -29,6 +29,8 @@ class PullAddressGeolocationJob implements ShouldQueue {
     }
 
     public function handle(Geocoder $geocoder) {
+        clock($this->address->string_representation);
+        
         try {
             $res = $geocoder->geocode($this->address->string_representation)->get();
         } catch (Exception $e) {

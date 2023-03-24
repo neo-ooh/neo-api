@@ -32,6 +32,8 @@ class PullAddressGeolocationJob implements ShouldQueue {
         try {
             $res = $geocoder->geocode($this->address->string_representation)->get();
         } catch (Exception $e) {
+            clock("Could not geocode address:" . $this->address->string_representation);
+            clock($e);
             return;
         }
 
@@ -55,6 +57,8 @@ class PullAddressGeolocationJob implements ShouldQueue {
                                         ->reverse($coordinates->getLatitude(), $coordinates->getLongitude())
                                         ->get();
         } catch (Exception $e) {
+            clock("Could not get timezone for address:" . $this->address->string_representation);
+            clock($e);
             return;
         }
 

@@ -15,7 +15,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use InvalidArgumentException;
 use Neo\Enums\ActorType;
@@ -81,10 +80,6 @@ class ActorsController extends Controller {
         // Exclude specific actors
         if ($request->has("exclude")) {
             $actors = $actors->whereNotIn("id", $params["exclude"]);
-        }
-
-        if ($request->has("property")) {
-            $actors->load(Gate::allows(Capability::odoo_properties->value) ? "property.odoo" : "property");
         }
 
         return new Response($actors->loadPublicRelations()->sortBy("name")->values());
@@ -209,7 +204,7 @@ class ActorsController extends Controller {
         if (count($request->all()) === 0) {
             return new Response([
                                     "code" => "empty-request",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               "message" => "You must pass at lease 1 parameter when calling this route",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "message" => "You must pass at lease 1 parameter when calling this route",
                                 ], 422);
         }
 
@@ -244,7 +239,7 @@ class ActorsController extends Controller {
             if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
                 return new Response([
                                         'code' => 'actor.hierarchy-loop',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   'message' => 'Parent assignment would result in incoherent actors hierarchy',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'message' => 'Parent assignment would result in incoherent actors hierarchy',
                                         'data' => $actor,
                                     ], 403);
             }

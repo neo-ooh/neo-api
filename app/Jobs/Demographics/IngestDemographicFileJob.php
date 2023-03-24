@@ -19,8 +19,8 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Neo\Jobs\Demographics\FilesParsers\EnvironicsDefaultParser;
 use Neo\Jobs\Demographics\FilesParsers\EnvironicsPrizmParser;
-use Neo\Models\DemographicValue;
-use Neo\Models\DemographicVariable;
+use Neo\Modules\Properties\Models\DemographicValue;
+use Neo\Modules\Properties\Models\DemographicVariable;
 
 class IngestDemographicFileJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

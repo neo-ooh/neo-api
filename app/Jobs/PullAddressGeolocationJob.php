@@ -30,9 +30,10 @@ class PullAddressGeolocationJob implements ShouldQueue {
 
     public function handle(Geocoder $geocoder) {
         clock($this->address->string_representation);
-        
+
         try {
             $res = $geocoder->geocode($this->address->string_representation)->get();
+            clock($res);
         } catch (Exception $e) {
             clock("Could not geocode address:" . $this->address->string_representation);
             clock($e);

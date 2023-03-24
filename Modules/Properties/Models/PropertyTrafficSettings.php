@@ -78,6 +78,7 @@ class PropertyTrafficSettings extends Model {
         "is_required",
         "start_year",
         "grace_override",
+        "placeholder_value",
     ];
 
     public function property(): BelongsTo {

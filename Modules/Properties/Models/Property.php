@@ -28,6 +28,7 @@ use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Enums\ProductType;
+use Neo\Modules\Properties\Enums\TrafficFormat;
 use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
 use Neo\Modules\Properties\Rules\AccessibleProperty;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
@@ -349,7 +350,7 @@ class Property extends SecuredModel {
         // Check that the traffic reference year is correctly filled
         $refYearEntriesCount = $this->traffic->data()->where("year", "=", $this->traffic->start_year)->count();
 
-        if ($refYearEntriesCount < 12) {
+        if ($this->traffic->format !== TrafficFormat::DailyConstant && $refYearEntriesCount < 12) {
             $warnings["incomplete-traffic"] = [];
         }
 

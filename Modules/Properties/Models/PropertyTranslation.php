@@ -27,4 +27,10 @@ class PropertyTranslation extends Model {
     protected $table = "properties_translations";
 
     protected $primaryKey = null;
+
+    protected $fillable = [
+        "property_id",
+        "locale",
+        "description",
+    ];
 }

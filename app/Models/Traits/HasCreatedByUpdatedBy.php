@@ -26,23 +26,23 @@ trait HasCreatedByUpdatedBy {
     public static function bootHasCreatedByUpdatedBy() {
         static::creating(static function (Model $model) {
             if ($model->createdBy !== null) {
-                $model->{$model->createdBy} = Auth::id();
+                $model->{$model->createdBy} = Auth::id() ?? 1;
             }
 
             if ($model->updatedBy !== null) {
-                $model->{$model->updatedBy} = Auth::id();
+                $model->{$model->updatedBy} = Auth::id() ?? 1;
             }
         });
 
         static::updating(static function (Model $model) {
             if ($model->updatedBy !== null) {
-                $model->{$model->updatedBy} = Auth::id();
+                $model->{$model->updatedBy} = Auth::id() ?? 1;
             }
         });
 
         static::deleting(static function (Model $model) {
             if ($model->deletedBy !== null) {
-                $model->{$model->deletedBy} = Auth::id();
+                $model->{$model->deletedBy} = Auth::id() ?? 1;
             }
         });
     }

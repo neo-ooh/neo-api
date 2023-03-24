@@ -59,16 +59,18 @@ class OdooAdapter extends InventoryAdapter {
     }
 
     protected function __listAllProducts(OdooClient $client, array $filters) {
-        $pageSize = 25;
+        $pageSize = 500;
         $cursor   = 0;
 
         do {
+            dump("loading $cursor -> " . $cursor + $pageSize);
             $products = Product::all(
                 client : $client,
                 filters: $filters,
                 limit  : $pageSize,
                 offset : $cursor,
             );
+
 
             foreach ($products as $product) {
                 yield ResourceFactory::makeIdentifiableProduct($product, $client, $this->getConfig());
@@ -172,6 +174,8 @@ class OdooAdapter extends InventoryAdapter {
 
         $this->fillProduct($odooProduct, $product);
 //        $odooProduct->save();
+
+        return true;
     }
 
     /**

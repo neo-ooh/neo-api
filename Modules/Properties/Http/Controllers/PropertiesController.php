@@ -51,7 +51,6 @@ class PropertiesController extends Controller {
 
         $properties->load([
                               "address",
-                              "odoo",
                           ]);
 
         $expansion = $request->input("with", []);

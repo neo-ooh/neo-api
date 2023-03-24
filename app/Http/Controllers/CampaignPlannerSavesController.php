@@ -10,7 +10,6 @@
 
 namespace Neo\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Requests\CampaignPlannerSaves\DestroySaveRequest;
@@ -22,10 +21,6 @@ use Neo\Http\Resources\CampaignPlannerSaveExcerptResource;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\Actor;
 use Neo\Models\CampaignPlannerSave;
-use Neo\Modules\Broadcast\Models\Network;
-use Neo\Modules\Properties\Models\Brand;
-use Neo\Modules\Properties\Models\ProductCategory;
-use Neo\Modules\Properties\Models\Property;
 
 class CampaignPlannerSavesController {
     public function index(ListSavesRequest $request, Actor $actor) {
@@ -86,45 +81,5 @@ class CampaignPlannerSavesController {
         $campaignPlannerSave->delete();
 
         return new Response();
-    }
-
-    public function showWithData(Request $request, CampaignPlannerSave $campaignPlannerSave) {
-        // We return the save and the data needed by the save in one go.
-        // Extract properties IDs from the save
-        $properties = Property::query()->get();
-
-        $properties->load([
-                              "data",
-                              "address",
-                              "odoo",
-                              "fields_values",
-                              "products",
-                              "products.attachments",
-                              "products.impressions_models",
-                              "traffic",
-                              "traffic.weekly_data",
-                              "pictures",
-                              "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
-                              "tenants"       => fn($q) => $q->select(["id"]),
-                          ]);
-
-
-        $properties->each(function (Property $property) {
-            $property->rolling_weekly_traffic = $property->traffic->getRollingWeeklyTraffic();
-        });
-
-        $properties->makeHidden(["weekly_data", "weekly_traffic"]);
-
-        $categories = ProductCategory::with(["impressions_models", "attachments"])->get();
-        $networks   = Network::query()->with(["properties_fields"])->get();
-        $brands     = Brand::query()->get();
-
-        return new Response([
-                                "save"       => new CampaignPlannerSaveResource($campaignPlannerSave),
-                                "properties" => $properties,
-                                "categories" => $categories,
-                                "networks"   => $networks,
-                                "brands"     => $brands,
-                            ]);
     }
 }

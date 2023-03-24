@@ -14,13 +14,13 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
-use Neo\Modules\Properties\Enums\PricingType;
+use Neo\Modules\Properties\Enums\PriceType;
 
 class StorePricelistProductCategoryRequest extends FormRequest {
     public function rules(): array {
         return [
             "products_category_id" => ["required", "exists:products_categories,id"],
-            "pricing"              => ["required", new Enum(PricingType::class)],
+            "pricing"              => ["required", new Enum(PriceType::class)],
             "value"                => ["required", "numeric", "min:0"],
             "min"                  => ["nullable", "numeric", "min:0"],
             "max"                  => ["nullable", "numeric", "min:0", "gte:min"],

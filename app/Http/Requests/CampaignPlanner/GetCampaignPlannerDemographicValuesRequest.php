@@ -1,11 +1,11 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - GetCampaignPlannerDataRequest.php
+ * @neo/api - GetCampaignPlannerDemographicValuesRequest.php
  */
 
 namespace Neo\Http\Requests\CampaignPlanner;
@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Models\CampaignPlannerSave;
-use Neo\Models\DemographicVariable;
+use Neo\Modules\Properties\Models\DemographicVariable;
 use Vinkla\Hashids\Facades\Hashids;
 
 class GetCampaignPlannerDemographicValuesRequest extends FormRequest {

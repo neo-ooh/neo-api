@@ -77,6 +77,8 @@ class ProgrammaticExport extends XLSXDocument {
         "Loop Length (sec)",
     ];
 
+    protected ExportLevel|null $level;
+
     protected Collection $properties;
 
     protected Collection $displayTypes;
@@ -99,9 +101,14 @@ class ProgrammaticExport extends XLSXDocument {
                                                "address",
                                                "opening_hours",
                                            ])
-                                    ->findMany($data);
+                                    ->findMany($data["properties"]);
+        $this->level      = ExportLevel::tryFrom($data["level"]);
 
         return true;
+    }
+
+    protected function isLevel(ExportLevel $level): bool {
+        return $this->level === null || $this->level === $level;
     }
 
     /**
@@ -158,7 +165,7 @@ class ProgrammaticExport extends XLSXDocument {
 
             $weeklyTraffic = collect($property->traffic->getRollingWeeklyTraffic())->max();
 
-            $propertyLines = [];
+            $productsRows = [];
 
             /** @var Product $product */
             foreach ($property->products as $product) {
@@ -199,8 +206,8 @@ class ProgrammaticExport extends XLSXDocument {
                 $pricing = $pricelist?->products_pricings->firstWhere("product_id", "=", $product->getKey())
                     ?? $pricelist?->categories_pricings->firstWhere("products_category_id", "=", $product->category_id);
 
-                $productRows  = [];
-                $screensCount = 0;
+                $locationsRows = [];
+                $screensCount  = 0;
 
                 /** @var Location $location */
                 foreach ($product->locations as $location) {
@@ -211,95 +218,107 @@ class ProgrammaticExport extends XLSXDocument {
 
                     $playerRows = [];
 
-                    foreach ($location->players as $player) {
-                        $playerImpressionsShare = $locationScreenCount > 0 ? $player->screen_count / $productScreenCount : 0;
+                    if ($this->isLevel(ExportLevel::Players)) {
+                        foreach ($location->players as $player) {
+                            $playerImpressionsShare = $locationScreenCount > 0 ? $player->screen_count / $productScreenCount : 0;
 
-                        $playerRows[] = ([
-                            "player",
+                            $playerRows[] = ([
+                                "player",
+                                $property->getKey(),
+                                $property->actor->name,
+                                $product->getKey(),
+                                $product->name_en,
+                                $location->external_id,
+                                $location->internal_name,
+                                $player->external_id,
+                                $player->name,
+                                ...$addressComponents,
+                                ...$operatingHoursComponents,
+                                $weeklyTraffic,
+                                $pricing?->value ?? "-",
+                                round($productWeeklyImpressions * $playerImpressionsShare),
+                                $player->screen_count > 0 ? round(($productWeeklyImpressions * $playerImpressionsShare) / $player->screen_count) : 0,
+                                $player->screen_count,
+                                $location->display_type->width_px,
+                                $location->display_type->height_px,
+                                $location->display_type->width_px . "x" . $location->display_type->height_px,
+                                $loopConfiguration?->spot_length_ms / 1_000, // ms to sec
+                                $loopConfiguration?->loop_length_ms / 1_000,// ms to sec
+                            ]);
+                        }
+                    }
+
+                    if ($this->isLevel(ExportLevel::Locations)) {
+                        $locationRow = [
+                            "location",
                             $property->getKey(),
                             $property->actor->name,
                             $product->getKey(),
                             $product->name_en,
                             $location->external_id,
                             $location->internal_name,
-                            $player->external_id,
-                            $player->name,
+                            "",
+                            "",
                             ...$addressComponents,
                             ...$operatingHoursComponents,
-                            $weeklyTraffic,
                             $pricing?->value ?? "-",
-                            round($productWeeklyImpressions * $playerImpressionsShare),
-                            $player->screen_count > 0 ? round(($productWeeklyImpressions * $playerImpressionsShare) / $player->screen_count) : 0,
-                            $player->screen_count,
+                            $weeklyTraffic,
+                            round($productWeeklyImpressions * $locationImpressionsShare),
+                            "",
+                            $locationScreenCount,
                             $location->display_type->width_px,
                             $location->display_type->height_px,
                             $location->display_type->width_px . "x" . $location->display_type->height_px,
                             $loopConfiguration?->spot_length_ms / 1_000, // ms to sec
                             $loopConfiguration?->loop_length_ms / 1_000,// ms to sec
-                        ]);
+                        ];
+
+                        $locationsRows[] = $locationRow;
                     }
 
-                    $locationRow = [
-                        "location",
+                    array_push($locationsRows, ...$playerRows);
+                }
+
+                if ($this->isLevel(ExportLevel::Products)) {
+                    $productRow = [
+                        "product",
                         $property->getKey(),
                         $property->actor->name,
                         $product->getKey(),
                         $product->name_en,
-                        $location->external_id,
-                        $location->internal_name,
+                        "",
+                        "",
                         "",
                         "",
                         ...$addressComponents,
                         ...$operatingHoursComponents,
                         $pricing?->value ?? "-",
                         $weeklyTraffic,
-                        round($productWeeklyImpressions * $locationImpressionsShare),
+                        $productWeeklyImpressions,
                         "",
-                        $locationScreenCount,
-                        $location->display_type->width_px,
-                        $location->display_type->height_px,
-                        $location->display_type->width_px . "x" . $location->display_type->height_px,
+                        $screensCount,
+                        $product->locations->first()?->display_type->width_px,
+                        $product->locations->first()?->display_type->height_px,
+                        $product->locations->first()?->display_type->width_px . "x" . $product->locations->first()?->display_type->height_px,
                         $loopConfiguration?->spot_length_ms / 1_000, // ms to sec
                         $loopConfiguration?->loop_length_ms / 1_000,// ms to sec
                     ];
 
-                    array_push($productRows, $locationRow, ...$playerRows);
+                    $productsRows[] = $productRow;
                 }
 
-                $productRow = [
-                    "product",
-                    $property->getKey(),
-                    $property->actor->name,
-                    $product->getKey(),
-                    $product->name_en,
-                    "",
-                    "",
-                    "",
-                    "",
-                    ...$addressComponents,
-                    ...$operatingHoursComponents,
-                    $pricing?->value ?? "-",
-                    $weeklyTraffic,
-                    $productWeeklyImpressions,
-                    "",
-                    $screensCount,
-                    $product->locations->first()?->display_type->width_px,
-                    $product->locations->first()?->display_type->height_px,
-                    $product->locations->first()?->display_type->width_px . "x" . $product->locations->first()?->display_type->height_px,
-                    $loopConfiguration?->spot_length_ms / 1_000, // ms to sec
-                    $loopConfiguration?->loop_length_ms / 1_000,// ms to sec
-                ];
-
-                array_push($propertyLines, $productRow, ...$productRows);
+                array_push($productsRows, ...$locationsRows);
             }
 
-            if (count($propertyLines) > 0) {
-                array_push($lines, [
+            if ($this->isLevel(ExportLevel::Properties)) {
+                $lines[] = [
                     "property",
                     $property->getKey(),
                     $property->actor->name,
-                ], ...     $propertyLines);
+                ];
             }
+
+            array_push($lines, ...$productsRows);
         }
 
         // Print the header

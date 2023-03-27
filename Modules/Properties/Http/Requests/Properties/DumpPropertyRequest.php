@@ -17,7 +17,7 @@ use Neo\Enums\Capability;
 class DumpPropertyRequest extends FormRequest {
     public function rules(): array {
         return [
-            //
+            "level" => ["nullable", "string"],
         ];
     }
 

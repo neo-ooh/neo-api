@@ -137,7 +137,7 @@ class PropertiesController extends Controller {
         if (Gate::allows(Capability::properties_edit->value)) {
             $property->load(["opening_hours"]);
         }
-        
+
         return new Response($property, 201);
     }
 
@@ -223,7 +223,10 @@ class PropertiesController extends Controller {
      * @throws UnknownGenerationException
      */
     public function dump(DumpPropertyRequest $request, Property $property): void {
-        $doc = ProgrammaticExport::make([$property->getKey()]);
+        $doc = ProgrammaticExport::make([
+                                            "properties" => $property->getKey(),
+                                            "level"      => null,
+                                        ]);
         $doc->build();
         $doc->output();
     }
@@ -234,13 +237,16 @@ class PropertiesController extends Controller {
      * @throws UnknownGenerationException
      */
     public function dumpNetwork(DumpPropertyRequest $request, Network $network) {
-        set_time_limit(90);
-        $doc = ProgrammaticExport::make(Property::query()
-                                                ->where("network_id", "=", $network->getKey())
-                                                ->setEagerLoads([])
-                                                ->get()
-                                                ->pluck("actor_id")
-                                                ->toArray());
+        set_time_limit(120);
+        $doc = ProgrammaticExport::make([
+                                            "properties" => Property::query()
+                                                                    ->where("network_id", "=", $network->getKey())
+                                                                    ->setEagerLoads([])
+                                                                    ->get()
+                                                                    ->pluck("actor_id")
+                                                                    ->toArray(),
+                                            "level"      => $request->input("level"),
+                                        ]);
         $doc->build();
         $doc->output();
     }

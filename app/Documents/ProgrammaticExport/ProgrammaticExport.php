@@ -315,10 +315,10 @@ class ProgrammaticExport extends XLSXDocument {
                 default    => null,
             };
 
-            if ($lineStyle) {
-                $this->ws->getStyle($this->ws->getRelativeRange(count($this->columns), 1))
-                         ->applyFromArray($lineStyle);
-            }
+            /*            if ($lineStyle) {
+                            $this->ws->getStyle($this->ws->getRelativeRange(count($this->columns), 1))
+                                     ->applyFromArray($lineStyle);
+                        }*/
 
             $this->ws->printRow($line);
         }

@@ -126,9 +126,9 @@ class ProgrammaticExport extends XLSXDocument {
                 "Province"     => $property->address?->city->province->slug,
                 "Country"      => $property->address?->city->province->country->slug,
                 "Postal Code"  => implode(" ", str_split($property->address?->zipcode, 3)),
-                "Full Address" => $property->address?->string_representation,
-                "Longitude"    => $property->address?->geolocation->getLng(),
-                "Latitude"     => $property->address?->geolocation->getLat(),
+                "Full Address" => $property->address?->string_representation ?? "",
+                "Longitude"    => $property->address?->geolocation?->getLng() ?? "",
+                "Latitude"     => $property->address?->geolocation?->getLat() ?? "",
             ];
 
             $openingHours = $property->opening_hours->keyBy("weekday");
@@ -192,7 +192,7 @@ class ProgrammaticExport extends XLSXDocument {
                 $productScreenCount = $product->locations->flatMap(fn(Location $location) => $location->players)
                                                          ->sum("screen_count");
 
-                
+
                 /** @var Pricelist|null $pricelist */
                 $pricelist = $product->pricelist?->load(["categories_pricings", "products_pricings"]);
                 /** @var PricelistProduct|PricelistProductsCategory|null $pricing */

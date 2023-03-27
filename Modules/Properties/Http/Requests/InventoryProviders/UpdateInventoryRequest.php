@@ -22,8 +22,8 @@ class UpdateInventoryRequest extends FormRequest {
             "name"      => ["required", "string", "min:3"],
             "is_active" => ["required", "boolean"],
 
-            "api_url" => ["required", "string"],
-            "api_key" => ["required", "string"],
+            "auto_pull" => ["required", "boolean"],
+            "auto_push" => ["required", "boolean"],
 
             ...$this->getInventoryOptions(),
         ];
@@ -39,6 +39,9 @@ class UpdateInventoryRequest extends FormRequest {
 
         return match ($inventory->provider) {
             InventoryType::Odoo      => [
+
+                "api_url"      => ["required", "string"],
+                "api_key"      => ["required", "string"],
                 "api_username" => ["required", "string"],
                 "database"     => ["required", "string"],
             ],
@@ -46,6 +49,7 @@ class UpdateInventoryRequest extends FormRequest {
             InventoryType::Reach     => [],
             InventoryType::Vistar    => [],
             InventoryType::Atedra    => [],
+            InventoryType::Dummy     => [],
         };
     }
 }

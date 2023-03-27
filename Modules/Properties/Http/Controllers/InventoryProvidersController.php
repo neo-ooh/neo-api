@@ -34,12 +34,12 @@ class InventoryProvidersController extends Controller {
         $provider->auto_pull = $request->input('auto_pull');
         $provider->auto_push = $request->input('auto_push');
 
-        $provider->settings          = new InventoryProviderSettings();
-        $provider->settings->api_url = $request->input("api_url");
-        $provider->settings->api_key = $request->input("api_key");
+        $provider->settings = new InventoryProviderSettings();
 
         switch ($provider->provider) {
             case InventoryType::Odoo:
+                $provider->settings->api_url      = $request->input("api_url");
+                $provider->settings->api_key      = $request->input("api_key");
                 $provider->settings->api_username = $request->input("api_username");
                 $provider->settings->database     = $request->input("database");
                 break;
@@ -65,11 +65,10 @@ class InventoryProvidersController extends Controller {
         $inventoryProvider->auto_pull = $request->input('auto_pull');
         $inventoryProvider->auto_push = $request->input('auto_push');
 
-        $inventoryProvider->settings->api_url = $request->input("api_url");
-        $inventoryProvider->settings->api_key = $request->input("api_key");
-
         switch ($inventoryProvider->provider) {
             case InventoryType::Odoo:
+                $inventoryProvider->settings->api_url      = $request->input("api_url");
+                $inventoryProvider->settings->api_key      = $request->input("api_key");
                 $inventoryProvider->settings->api_username = $request->input("api_username");
                 $inventoryProvider->settings->database     = $request->input("database");
                 break;

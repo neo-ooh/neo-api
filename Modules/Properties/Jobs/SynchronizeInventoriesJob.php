@@ -16,6 +16,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\InventoryType;
 
 class SynchronizeInventoriesJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -25,7 +26,10 @@ class SynchronizeInventoriesJob implements ShouldQueue {
 
     public function handle(): void {
         // List all our enabled inventories, and trigger push and pull accordingly
-        $inventories = InventoryProvider::query()->where("is_active", "=", true)->get();
+        $inventories = InventoryProvider::query()
+                                        ->where("is_active", "=", true)
+                                        ->where("provider", "<>", InventoryType::Dummy)
+                                        ->get();
 
         /** @var InventoryProvider $inventory */
         foreach ($inventories as $inventory) {

@@ -1,36 +1,31 @@
 {
   "network-shopping": "Neo Shopping",
   "network-otg": "Neo On the Go",
-  "network-otg-indoor" :"Neo On the Go (Indoor)",
-  "network-otg-outdoor":  "Neo On the Go (Outdoor)",
+  "network-otg-indoor": "Neo On the Go (Indoor)",
+  "network-otg-outdoor": "Neo On the Go (Outdoor)",
+  "network-otg-adapt": "Neo On the Go (Adapt Media)",
   "network-fitness": "Neo Fitness",
-  "order-type-purchase":"Guaranteed Purchase",
-  "order-type-bonus":"Guaranteed Bonus",
-  "order-type-bua":"Bonus Upon Availability",
-
+  "order-type-purchase": "Guaranteed Purchase",
+  "order-type-bonus": "Guaranteed Bonus",
+  "order-type-bua": "Bonus Upon Availability",
   "email-review-schedule-subject": "Ad awaiting review",
   "email-review-schedule-title": "A scheduled ad is awaiting review",
   "email-review-schedule-body": "A scheduled ad from <strong>:scheduler</strong> for the campaign <strong>:campaign</strong > of :campaignowner is pending review.<br /><br />You can use the link below to access it directly.",
   "email-review-schedule-cta": "Access the campaign",
-
   "email-welcome-subject": "Welcome to Connect",
   "email-welcome-title": "Welcome to Connect",
   "email-welcome-body": "Welcome :name,<br />\na Connect account gives you access to Neo-OOH web-services.<br /><br />\nPlease click on the link below to complete your account configuration.",
   "email-welcome-cta": "Configure my account",
-
   "email-password-recovery-subject": "Neo-ooh web services connection",
   "email-password-recovery-title": "Neo-ooh web services",
   "email-password-recovery-body": "Click on the link below to reset you Neo account's password.",
   "email-password-recovery-cta": "Reset my password",
-
   "email-2fa-subject": "Neo-ooh web services connection",
   "email-2fa-title": "Neo-OOH authentication token",
   "email-2fa-body": "Enter the code below to confirm your connection to your Neo-ooh account.",
-
   "email-end-of-schedule-subject": "A schedule is about to end",
   "email-end-of-schedule-title": "Your schedule broadcast is coming to an end",
   "email-end-of-schedule-body": "Hi :name,<br /><br /> a schedule on your campaign <strong>:campaign</strong> is about to reach its end of broadcast on :date. You need to schedule your ad again if you want to extend its broadcast.",
   "email-end-of-schedule-cta": "Go to the campaign",
-
   "email-legals": "© :date Neo-OOH. All rights reserved."
 }

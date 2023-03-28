@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -24,7 +24,7 @@ class NetworkOrders extends Component {
 
     public const NETWORK_SUBSECTIONS = [
         Network::NEO_SHOPPING => [null],
-        Network::NEO_OTG      => ["outdoor", "indoor"],
+        Network::NEO_OTG      => ["outdoor", "indoor", "adapt"],
         Network::NEO_FITNESS  => [null],
     ];
 
@@ -45,17 +45,14 @@ class NetworkOrders extends Component {
 //        dump($this->network, $orderLines);
 
         foreach (static::NETWORK_SUBSECTIONS[$this->network] as $subsection) {
-            $sectionPurchases = collect([...$orderLines]);
+            $allLines = collect([...$orderLines]);
 
-            if ($subsection !== null) {
-                if ($subsection === 'outdoor') {
-                    $sectionPurchases = $sectionPurchases->filter(fn($line) => $line->isOutdoor());
-                }
-
-                if ($subsection === 'indoor') {
-                    $sectionPurchases = $sectionPurchases->filter(fn($line) => $line->isIndoor());
-                }
-            }
+            $sectionPurchases = match ($subsection) {
+                "indoor"  => $allLines->filter(fn(OrderLine $line) => $line->isIndoor()),
+                "outdoor" => $allLines->filter(fn(OrderLine $line) => $line->isOutdoor()),
+                "adapt"   => $allLines->filter(fn(OrderLine $line) => $line->isAdapt()),
+                default   => $allLines
+            };
 
             if (count($sectionPurchases) === 0) {
                 // If there is no order line for this network, we don't print anything
@@ -100,22 +97,22 @@ class NetworkOrders extends Component {
             $ws->getRowDimension($ws->getCursorRow())->setRowHeight(30);
 
             $ws->printRow([
-                __("contract.table-markets"),
-                __("contract.table-properties"),
-                __("contract.table-annual-traffic"),
-                __("contract.table-campaign-traffic"),
-                __("contract.table-product"),
-                __("contract.table-start-date"),
-                __("contract.table-end-date"),
-                __("contract.table-rate-per-week"),
-                __("contract.table-count-of-screens-posters"),
-                __("contract.table-count-of-weeks"),
-                __("contract.table-spots-per-loop"),
-                __("contract.table-media-value"),
-                __("contract.table-net-investment"),
-                __("contract.table-impressions"),
-                __("contract.table-cpm")
-            ]);
+                              __("contract.table-markets"),
+                              __("contract.table-properties"),
+                              __("contract.table-annual-traffic"),
+                              __("contract.table-campaign-traffic"),
+                              __("contract.table-product"),
+                              __("contract.table-start-date"),
+                              __("contract.table-end-date"),
+                              __("contract.table-rate-per-week"),
+                              __("contract.table-count-of-screens-posters"),
+                              __("contract.table-count-of-weeks"),
+                              __("contract.table-spots-per-loop"),
+                              __("contract.table-media-value"),
+                              __("contract.table-net-investment"),
+                              __("contract.table-impressions"),
+                              __("contract.table-cpm"),
+                          ]);
 
             $ws->mergeCellsRelative(2, 1);
             $ws->moveCursor(0, 1);
@@ -146,12 +143,12 @@ class NetworkOrders extends Component {
                 $ws->pushPosition();
                 $ws->moveCursor(12, 0);
                 $ws->getStyle($ws->getRelativeRange(1, count($lines)))->applyFromArray([
-                    "borders" => [
-                        "right" => [
-                            "borderStyle" => Border::BORDER_DOUBLE
-                        ]
-                    ]
-                ]);
+                                                                                           "borders" => [
+                                                                                               "right" => [
+                                                                                                   "borderStyle" => Border::BORDER_DOUBLE,
+                                                                                               ],
+                                                                                           ],
+                                                                                       ]);
 
                 $ws->popPosition();
 
@@ -182,7 +179,7 @@ class NetworkOrders extends Component {
                     $campaignTraffic = $line->traffic;
 
                     // Is the last line for the same property ?
-                    if ($lastLine && $lastLine->property_name === $line->property_name) {
+                    if ($lastLine && $lastLine->property_street === $line->property_street) {
                         // Yes, make sure we will not print anything for the current row as we will use the first row values.
                         $city            = null;
                         $property        = null;
@@ -217,22 +214,22 @@ class NetworkOrders extends Component {
                     }
 
                     $ws->printRow([
-                        $city,
-                        $property,
-                        $annualTraffic,
-                        $campaignTraffic,
-                        $line->product,
-                        $line->date_start,
-                        $line->date_end,
-                        $line->unit_price,
-                        $line->nb_screens,
-                        $line->nb_weeks,
-                        $line->quantity,
-                        $line->media_value,
-                        $line->net_investment,
-                        $line->impressions,
-                        $line->cpm,
-                    ]);
+                                      $city,
+                                      $property,
+                                      $annualTraffic,
+                                      $campaignTraffic,
+                                      $line->product,
+                                      $line->date_start,
+                                      $line->date_end,
+                                      $line->unit_price,
+                                      $line->nb_screens,
+                                      $line->nb_weeks,
+                                      $line->quantity,
+                                      $line->media_value,
+                                      $line->net_investment,
+                                      $line->impressions,
+                                      $line->cpm,
+                                  ]);
 
                     $lastLine = $line;
                 }
@@ -247,12 +244,12 @@ class NetworkOrders extends Component {
                 $ws->pushPosition();
                 $ws->moveCursor(12, 0);
                 $ws->getStyle($ws->getRelativeRange(1, 1))->applyFromArray([
-                    "borders" => [
-                        "right" => [
-                            "borderStyle" => Border::BORDER_DOUBLE
-                        ]
-                    ]
-                ]);
+                                                                               "borders" => [
+                                                                                   "right" => [
+                                                                                       "borderStyle" => Border::BORDER_DOUBLE,
+                                                                                   ],
+                                                                               ],
+                                                                           ]);
 
                 $ws->popPosition();
 
@@ -274,20 +271,20 @@ class NetworkOrders extends Component {
                                            ->sum();
 
                 $ws->printRow([
-                    $lines->unique("property_name")->sum("property_annual_traffic"),
-                    $propertiesTraffic,
-                    null,
-                    null,
-                    null,
-                    null,
-                    $lines->sum("nb_screens"),
-                    null,
-                    null,
-                    $lines->sum("media_value"),
-                    $lines->sum("net_investment"),
-                    $lines->sum("impressions"),
-                    $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
-                ]);
+                                  $lines->unique("property_name")->sum("property_annual_traffic"),
+                                  $propertiesTraffic,
+                                  null,
+                                  null,
+                                  null,
+                                  null,
+                                  $lines->sum("nb_screens"),
+                                  null,
+                                  null,
+                                  $lines->sum("media_value"),
+                                  $lines->sum("net_investment"),
+                                  $lines->sum("impressions"),
+                                  $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
+                              ]);
 
                 $statePropertiesTraffic += $propertiesTraffic;
 
@@ -305,12 +302,12 @@ class NetworkOrders extends Component {
             $ws->pushPosition();
             $ws->moveCursor(12, 0);
             $ws->getStyle($ws->getRelativeRange(1, 1))->applyFromArray([
-                "borders" => [
-                    "right" => [
-                        "borderStyle" => Border::BORDER_DOUBLE
-                    ]
-                ]
-            ]);
+                                                                           "borders" => [
+                                                                               "right" => [
+                                                                                   "borderStyle" => Border::BORDER_DOUBLE,
+                                                                               ],
+                                                                           ],
+                                                                       ]);
 
             $ws->popPosition();
 
@@ -328,20 +325,20 @@ class NetworkOrders extends Component {
             $lines = collect($markets)->flatten();
 
             $ws->printRow([
-                $lines->unique("property_name")->sum("property_annual_traffic"),
-                $statePropertiesTraffic,
-                null,
-                null,
-                null,
-                null,
-                $lines->sum("nb_screens"),
-                null,
-                null,
-                $lines->sum("media_value"),
-                $lines->sum("net_investment"),
-                $lines->sum("impressions"),
-                $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
-            ]);
+                              $lines->unique("property_name")->sum("property_annual_traffic"),
+                              $statePropertiesTraffic,
+                              null,
+                              null,
+                              null,
+                              null,
+                              $lines->sum("nb_screens"),
+                              null,
+                              null,
+                              $lines->sum("media_value"),
+                              $lines->sum("net_investment"),
+                              $lines->sum("impressions"),
+                              $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
+                          ]);
 
             $ws->popPosition();
             $ws->moveCursor(0, 1);
@@ -371,20 +368,20 @@ class NetworkOrders extends Component {
         $lines = collect($states)->flatten();
 
         $ws->printRow([
-            $lines->unique("property_name")->sum("property_annual_traffic"),
-            $networkPropertiesTraffic,
-            null,
-            null,
-            null,
-            null,
-            $lines->sum("nb_screens"),
-            null,
-            null,
-            $lines->sum("media_value"),
-            $lines->sum("net_investment"),
-            $lines->sum("impressions"),
-            $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
-        ]);
+                          $lines->unique("property_name")->sum("property_annual_traffic"),
+                          $networkPropertiesTraffic,
+                          null,
+                          null,
+                          null,
+                          null,
+                          $lines->sum("nb_screens"),
+                          null,
+                          null,
+                          $lines->sum("media_value"),
+                          $lines->sum("net_investment"),
+                          $lines->sum("impressions"),
+                          $lines->sum("impressions") > 0 ? ($lines->sum("net_investment") / $lines->sum("impressions")) * 1000 : 0,
+                      ]);
 
         $ws->popPosition();
         $ws->moveCursor(0, 1);
@@ -425,20 +422,20 @@ class NetworkOrders extends Component {
             $periodLines = collect($periodLinesArray);
 
             $ws->printRow([
-                null,
-                null,
-                null,
-                null,
-                null,
-                $periodLines->first()->date_start,
-                $periodLines->first()->date_end,
-                null,
-                null,
-                $periodLines->first()->nb_weeks,
-                $periodLines->first()->quantity,
-                $periodLines->sum("media_value"),
-                0,
-            ]);
+                              null,
+                              null,
+                              null,
+                              null,
+                              null,
+                              $periodLines->first()->date_start,
+                              $periodLines->first()->date_end,
+                              null,
+                              null,
+                              $periodLines->first()->nb_weeks,
+                              $periodLines->first()->quantity,
+                              $periodLines->sum("media_value"),
+                              0,
+                          ]);
 
         }
     }

@@ -1,4 +1,3 @@
-
 <section class="summary-purchases">
     <h1 class="detailed-purchases-title">
         {{ __("contract.order-type-$category")  }}
@@ -12,11 +11,11 @@
                 @foreach($orders->pluck("rangeLengthString")->unique() as $rangeString)
                     {{ $rangeString }}
                     @if($loop->index % 2 !== 0)
-                        </td>
-                        <td class="periods-col">
-                    @else
-                        <br />
-                    @endif
+            </td>
+            <td class="periods-col">
+                @else
+                    <br/>
+                @endif
                 @endforeach
             </td>
         </tr>
@@ -45,7 +44,7 @@
             @endif
             <tr class="{{$network}}">
                 <td>{{ __("network-$network") }}</td>
-                <td>{{ $networkOrders->groupBy('property_name')->count() }}</td>
+                <td>{{ $networkOrders->groupBy('property_street')->count() }}</td>
                 <td>{{ $networkOrders->pluck('nb_weeks')->unique()->join(" & ") }}</td>
                 <td>{{ format($networkOrders->sum('nb_screens')) }}</td>
                 <td>{{ format($networkOrders->sum('impressions')) }}</td>
@@ -59,7 +58,7 @@
         <tfoot>
         <tr>
             <td></td>
-            <td>{{ $orders->groupBy('property_name')->count() }}</td>
+            <td>{{ $orders->groupBy('property_street')->count() }}</td>
             <td>-</td>
             <td>{{ format($orders->sum('nb_screens')) }}</td>
             <td>{{ format($orders->sum('impressions')) }}</td>

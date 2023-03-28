@@ -1,33 +1,29 @@
 {
   "network-shopping": "NEO SHOPPING",
   "network-otg": "NEO ON THE GO",
-  "network-otg-indoor" :"NEO ON THE GO (Intérieur)",
-  "network-otg-outdoor":  "NEO ON THE GO (Extérieur)",
+  "network-otg-indoor": "NEO ON THE GO (Intérieur)",
+  "network-otg-outdoor": "NEO ON THE GO (Extérieur)",
+  "network-otg-adapt": "NEO ON THE GO (Adapt Media)",
   "network-fitness": "NEO FITNESS",
-  "order-type-purchase":"Achats Garantis",
-  "order-type-bonus":"Bonis Garantis",
-  "order-type-bua":"Bonis selon disponibilité",
-
+  "order-type-purchase": "Achats Garantis",
+  "order-type-bonus": "Bonis Garantis",
+  "order-type-bua": "Bonis selon disponibilité",
   "email-review-schedule-subject": "Programmation en attente de validation",
   "email-review-schedule-title": "Une programmation est en attente de validation",
   "email-review-schedule-body": "Une programmation de <strong>:scheduler</strong> pour la campagne <strong>:campaign</strong> est en attente de validation.<br /><br />Vous pouvez utiliser le lien ci-dessous pour y accèder directement.",
   "email-review-schedule-body_text": "Une programmation de :scheduler pour la campagne :campaign de :campaign-owner est en attente de validation.\n\nVous pouvez utiliser le lien ci-dessous pour y accèder directement.",
   "email-review-schedule-cta": "Accéder à la campagne",
-
   "email-welcome-subject": "Bienvenue sur Connect",
   "email-welcome-title": "Bienvenue sur Connect",
   "email-welcome-body": "Bienvenue :name<br />un compte Connect vous permet d'accéder aux services web Neo-OOH.<br /><br />Veuillez cliquer sur le lien ci-dessous pour terminer la configuration de votre compte.",
   "email-welcome-body_text": "Une programmation de :scheduler pour la campagne :campaign est en attente de validation.<br /><br />Vous pouvez utiliser le lien ci-dessous pour y accèder directement.",
   "email-welcome-cta": "Configurer mon compte",
-
   "email-password-recovery-subject": "Connexion aux services web Neo-ooh",
   "email-password-recovery-title": "Services web Neo-ooh",
   "email-password-recovery-body": "Veuillez cliquer sur le lien ci-dessous pour reinitialiser le mot de passe associé à votre compte Neo.",
   "email-password-recovery-cta": "Réinitialiser mon mot de passe",
-
   "email-2fa-subject": "Connexion aux services web Neo-ooh",
   "email-2fa-title": "Jeton d'authentification Neo-OOH",
   "email-2fa-body": "Entrez le code ci-dessous pour confirmer votre connexion à votre compte Neo-ooh.",
-
   "email-legals": "© :date Neo-OOH. Tous droits réservés."
 }

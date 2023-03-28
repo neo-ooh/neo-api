@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -14,7 +14,10 @@ use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Storage;
+use League\Csv\Exception;
+use League\Csv\InvalidArgument;
 use League\Csv\Reader;
+use League\Csv\UnableToProcessCsv;
 use Neo\Documents\Contract\PDFContract;
 use Neo\Documents\Contract\XLSXProposal;
 use Neo\Documents\Exceptions\UnknownGenerationException;
@@ -31,6 +34,9 @@ class DocumentsGenerationController extends Controller {
      * @return Response
      * @throws UnknownDocumentException
      * @throws UnknownGenerationException
+     * @throws Exception
+     * @throws InvalidArgument
+     * @throws UnableToProcessCsv
      */
     public function make(MakeDocumentRequest $request): Response {
         // Input can either be done using a file or a json object named data
@@ -63,7 +69,8 @@ class DocumentsGenerationController extends Controller {
                 $reader->setHeaderOffset(0);
 
                 // Get all records in the file
-                $format = $reader->fetchOne() ["export_in_excel"] === "True" ? 'xlsx' : 'pdf';
+                $line   = $reader->fetchOne();
+                $format = ($line["export_in_excel"] ?? null) === "True" ? 'xlsx' : 'pdf';
                 unset($reader);
 
                 if ($format === 'xlsx') {

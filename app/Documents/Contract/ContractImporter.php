@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -12,11 +12,19 @@ namespace Neo\Documents\Contract;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
+use League\Csv\Exception;
+use League\Csv\InvalidArgument;
 use League\Csv\Reader;
+use Neo\Documents\Exceptions\MissingColumnException;
 use Neo\Documents\Network;
 
 class ContractImporter {
 
+    /**
+     * @throws InvalidArgument
+     * @throws MissingColumnException
+     * @throws Exception
+     */
     public static function parse($data) {
         // Data is expected to be a CSV file
         // Read the csv file

@@ -20,7 +20,7 @@ abstract class PDFDocument extends Document {
 
     protected function __construct(array $mpdfConfiguration) {
         // before doing anything, update the max execution time to prevent timeout
-        set_time_limit(120);
+        set_time_limit(240);
 
         $this->mpdf = new Mpdf(array_merge([
                                                "fontDir" => [resource_path('fonts/')],

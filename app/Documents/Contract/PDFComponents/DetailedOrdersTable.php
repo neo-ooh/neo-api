@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -27,7 +27,7 @@ class DetailedOrdersTable extends Component {
 
     public const NETWORK_SUBSECTIONS = [
         Network::NEO_SHOPPING => [null],
-        Network::NEO_OTG      => ["outdoor", "indoor"],
+        Network::NEO_OTG      => ["outdoor", "indoor", "adapt"],
         Network::NEO_FITNESS  => [null],
     ];
 
@@ -84,18 +84,18 @@ class DetailedOrdersTable extends Component {
 
         $views = "";
 
+
         foreach (static::NETWORK_SUBSECTIONS[$this->network] as $subsection) {
-            $sectionPurchases = collect([...$purchases]);
+            $allLines = collect([...$purchases]);
 
-            if ($subsection !== null) {
-                if ($subsection === 'outdoor') {
-                    $sectionPurchases = $sectionPurchases->filter(fn(OrderLine $line) => $line->isOutdoor());
-                }
+            $sectionPurchases = match ($subsection) {
+                "indoor"  => $allLines->filter(fn(OrderLine $line) => $line->isIndoor()),
+                "outdoor" => $allLines->filter(fn(OrderLine $line) => $line->isOutdoor()),
+                "adapt"   => $allLines->filter(fn(OrderLine $line) => $line->isAdapt()),
+                default   => $allLines
+            };
 
-                if ($subsection === 'indoor') {
-                    $sectionPurchases = $sectionPurchases->filter(fn(OrderLine $line) => $line->isIndoor());
-                }
-            }
+//            dump($this->networkName(), $subsection, $sectionPurchases->count());
 
             if ($sectionPurchases->count() === 0) {
                 continue;
@@ -108,7 +108,7 @@ class DetailedOrdersTable extends Component {
                 "subsection"  => $subsection,
                 "orders"      => $sectionPurchases
                     ->sortBy(['market_order', 'property_name'])
-                    ->groupBy(['market_order', 'property_name']),
+                    ->groupBy(['market_order', 'property_street']),
                 "order"       => $this->order,
             ]);
         }

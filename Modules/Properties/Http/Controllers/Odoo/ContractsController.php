@@ -53,6 +53,7 @@ class ContractsController {
     }
 
     public function send(SendContractRequest $request, string $contractName) {
+        set_time_limit(120);
         // Validate that contract exist before doing anything
         $contract = OdooContract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
 

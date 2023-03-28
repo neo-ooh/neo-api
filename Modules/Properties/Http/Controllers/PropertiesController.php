@@ -140,32 +140,7 @@ class PropertiesController extends Controller {
         // Is this group a property ?
         /** @var Property $property */
         $property = Property::query()->find($propertyId);
-
-        $relations = $request->input("with", []);
-
-        if (!Gate::allows(Capability::properties_edit->value)) {
-            // Remove properties that cannot be accessed without the capability
-            $relations = array_diff($relations, [
-                "network",
-                "network.properties_fields",
-                "pictures",
-                "fields",
-                "opening_hours",
-                "warnings",
-            ]);
-        }
-
-        if (in_array("products", $relations, true)) {
-            $property->loadMissing(["products",
-                                    "products.impressions_models",
-                                    "products.locations",
-                                    "products.attachments",
-                                    "products.loop_configurations",
-                                    "products_categories",
-                                    "products_categories.attachments",
-                                    "products_categories"]);
-        }
-
+        
         return new Response($property->loadPublicRelations());
     }
 

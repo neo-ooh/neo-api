@@ -23,6 +23,6 @@ class ListCategoriesByIdRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::fields_edit->value);
+        return Gate::allows(Capability::fields_edit->value) || Gate::allows(Capability::properties_demographics_view->value);
     }
 }

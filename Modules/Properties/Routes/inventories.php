@@ -46,7 +46,6 @@ Route::group([
         */
 
         Route::model("inventoryResource", InventoryResource::class);
-//        Route::model("inventorySettings", ResourceInventorySettings::class);
 
         Route::   get("inventories-resources/{inventoryResource}", [InventoryResourcesController::class, "show"]);
 

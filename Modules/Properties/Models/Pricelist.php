@@ -50,6 +50,15 @@ class Pricelist extends Model {
         "products_pricings",
     ];
 
+
+    public function resolveChildRouteBinding($childType, $value, $field) {
+        return match ($childType) {
+            "pricelistProductsCategory" => $this->categories()->where("products_category_id", "=", $value)->firstOrFail(),
+            "pricelistProduct"          => $this->products()->where("product_id", "=", $value)->firstOrFail(),
+            default                     => null,
+        };
+    }
+
     public function categories(): BelongsToMany {
         return $this->belongsToMany(ProductCategory::class, "pricelists_products_categories", "pricelist_id", "products_category_id")
                     ->using(PricelistProductsCategory::class)

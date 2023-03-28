@@ -1,18 +1,18 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - properties.php
+ * @neo/api - products.php
  */
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Neo\Modules\Properties\Http\Controllers\AttachmentsController;
 use Neo\Modules\Properties\Http\Controllers\BrandsController;
 use Neo\Modules\Properties\Http\Controllers\PricelistProductsCategoriesController;
+use Neo\Modules\Properties\Http\Controllers\PricelistProductsController;
 use Neo\Modules\Properties\Http\Controllers\PricelistsController;
 use Neo\Modules\Properties\Http\Controllers\PricelistsPropertiesController;
 use Neo\Modules\Properties\Http\Controllers\ProductCategoriesController;
@@ -23,7 +23,6 @@ use Neo\Modules\Properties\Http\Controllers\PropertiesTenantsController;
 use Neo\Modules\Properties\Models\Attachment;
 use Neo\Modules\Properties\Models\Brand;
 use Neo\Modules\Properties\Models\Pricelist;
-use Neo\Modules\Properties\Models\PricelistProductsCategory;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
 use Neo\Modules\Properties\Models\ProductType;
@@ -104,13 +103,6 @@ Route::group([
         */
 
         Route::model("pricelist", Pricelist::class);
-        Route::model("pricelistProductsCategory", PricelistProductsCategory::class,
-            static function ($value) {
-                return PricelistProductsCategory::query()
-                                                ->where("products_category_id", "=", $value)
-                                                ->where("pricelist_id", "=", Request::route()?->originalParameter("pricelist"))
-                                                ->first();
-            });
 
         Route::   get("pricelists", PricelistsController::class . "@index");
         Route::  post("pricelists", PricelistsController::class . "@store");
@@ -121,9 +113,15 @@ Route::group([
 
         Route::   get("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@index");
         Route::  post("pricelists/{pricelist}/product-categories", PricelistProductsCategoriesController::class . "@store");
-        Route::   get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@show");
-        Route::   put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@update");
-        Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory}", PricelistProductsCategoriesController::class . "@destroy");
+        Route::   get("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:id}", PricelistProductsCategoriesController::class . "@show");
+        Route::   put("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:id}", PricelistProductsCategoriesController::class . "@update");
+        Route::delete("pricelists/{pricelist}/product-categories/{pricelistProductsCategory:id}", PricelistProductsCategoriesController::class . "@destroy");
+
+        Route::   get("pricelists/{pricelist}/products", [PricelistProductsController::class, "index"]);
+        Route::  post("pricelists/{pricelist}/products", [PricelistProductsController::class, "store"]);
+        Route::   get("pricelists/{pricelist}/products/{pricelistProduct:id}", [PricelistProductsController::class, "show"]);
+        Route::   put("pricelists/{pricelist}/products/{pricelistProduct:id}", [PricelistProductsController::class, "update"]);
+        Route::delete("pricelists/{pricelist}/products/{pricelistProduct:id}", [PricelistProductsController::class, "destroy"]);
 
         Route::   get("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@index");
         Route::   put("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@sync");

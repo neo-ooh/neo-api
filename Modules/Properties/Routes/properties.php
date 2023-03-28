@@ -9,6 +9,7 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Modules\Properties\Http\Controllers\AddressController;
 use Neo\Modules\Properties\Http\Controllers\GroupTrafficStatsController;
 use Neo\Modules\Properties\Http\Controllers\MonthlyTrafficController;
 use Neo\Modules\Properties\Http\Controllers\OpeningHoursController;
@@ -42,13 +43,20 @@ Route::group([
         Route::   get("properties/{propertyId}", PropertiesController::class . "@show")->whereNumber("propertyId");
         Route::   put("properties/{property}", PropertiesController::class . "@update");
         Route::   put("properties/{property}/_mark_reviewed", PropertiesController::class . "@markReviewed");
-        Route::   put("properties/{property}/address", PropertiesController::class . "@updateAddress");
         Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 
         Route::   get("properties/{property}/_dump", PropertiesController::class . "@dump");
 
         Route::   get("actors/{actor}/traffic-statistics", GroupTrafficStatsController::class . "@show");
 
+        /*
+        |----------------------------------------------------------------------
+        | Properties Translation
+        |----------------------------------------------------------------------
+        */
+
+        Route::   put("properties/{property}/address", [AddressController::class, "update"]);
+        Route::   put("properties/{property}/address/_refresh_geolocation", [AddressController::class, "refreshGeolocation"]);
 
         /*
         |----------------------------------------------------------------------

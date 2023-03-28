@@ -18,6 +18,7 @@ use Neo\Modules\Properties\Http\Requests\PricelistProducts\StorePricelistProduct
 use Neo\Modules\Properties\Http\Requests\PricelistProducts\UpdatePricelistProductRequest;
 use Neo\Modules\Properties\Models\Pricelist;
 use Neo\Modules\Properties\Models\PricelistProduct;
+use Neo\Modules\Properties\Models\Product;
 
 class PricelistProductsController {
     public function index(ListPricelistProductsRequest $request, Pricelist $pricelist) {
@@ -42,23 +43,23 @@ class PricelistProductsController {
         return new Response($categoryPricelist, 201);
     }
 
-    public function show(ShowPricelistProductRequest $request, Pricelist $pricelist, PricelistProduct $pricelistProduct) {
-        return new Response($pricelistProduct);
+    public function show(ShowPricelistProductRequest $request, Pricelist $pricelist, Product $pricelistProduct) {
+        return new Response($pricelistProduct->pricing);
     }
 
-    public function update(UpdatePricelistProductRequest $request, Pricelist $pricelist, PricelistProduct $pricelistProduct) {
-        $pricelist->products()->updateExistingPivot($pricelistProduct->product_id, [
+    public function update(UpdatePricelistProductRequest $request, Pricelist $pricelist, Product $pricelistProduct) {
+        $pricelist->products()->updateExistingPivot($pricelistProduct->getKey(), [
             "pricing" => $request->input("pricing"),
             "value"   => $request->input("value"),
             "min"     => $request->input("min", null),
             "max"     => $request->input("max", null),
         ]);
 
-        return new Response($pricelist->products()->firstWhere("id", "=", $pricelistProduct->product_id));
+        return new Response($pricelist->products()->firstWhere("id", "=", $pricelistProduct->getKey()));
     }
 
-    public function destroy(DestroyPricelistProductRequest $request, Pricelist $pricelist, PricelistProduct $pricelistProduct) {
-        $pricelist->products()->detach($pricelistProduct->product_id);
+    public function destroy(DestroyPricelistProductRequest $request, Pricelist $pricelist, Product $pricelistProduct) {
+        $pricelistProduct->pricing->delete();
 
         return new Response(["status" => "ok"]);
     }

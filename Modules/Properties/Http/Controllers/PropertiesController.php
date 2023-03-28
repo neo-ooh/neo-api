@@ -20,11 +20,7 @@ use Neo\Documents\ProgrammaticExport\ProgrammaticExport;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
 use Neo\Jobs\Properties\PullOpeningHoursJob;
-use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Models\Actor;
-use Neo\Models\Address;
-use Neo\Models\City;
-use Neo\Models\Province;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Enums\TrafficFormat;
 use Neo\Modules\Properties\Http\Requests\Properties\DestroyPropertyRequest;
@@ -35,7 +31,6 @@ use Neo\Modules\Properties\Http\Requests\Properties\ListPropertiesRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\MarkPropertyReviewedRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\StorePropertyRequest;
-use Neo\Modules\Properties\Http\Requests\Properties\UpdateAddressRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\UpdatePropertyRequest;
 use Neo\Modules\Properties\Models\Property;
 
@@ -184,33 +179,6 @@ class PropertiesController extends Controller {
         return new Response($property->loadPublicRelations());
     }
 
-    public function updateAddress(UpdateAddressRequest $request, Property $property): Response {
-        /** @var Province $province */
-        $province = Province::query()
-                            ->where("slug", "=", $request->input("province"))
-                            ->first();
-
-        /** @var City $city */
-        $city = City::query()->firstOrCreate([
-                                                 "name"        => $request->input("city"),
-                                                 "province_id" => $province->id,
-                                             ]);
-
-        $address          = $property->address ?? new Address();
-        $address->line_1  = $request->input("line_1");
-        $address->line_2  = $request->input("line_2");
-        $address->city_id = $city->id;
-        $address->zipcode = $request->input("zipcode");
-        $address->save();
-
-        $property->address()->associate($address);
-        $property->save();
-
-        PullAddressGeolocationJob::dispatch($address);
-
-        return new Response($address);
-    }
-
     public function destroy(DestroyPropertyRequest $request, Property $property): Response {
         $property->delete();
 
@@ -245,7 +213,7 @@ class PropertiesController extends Controller {
                                                                     ->get()
                                                                     ->pluck("actor_id")
                                                                     ->toArray(),
-                                            "level"      => $request->input("level"),
+                                            "level"      => $request->input("level", null),
                                         ]);
         $doc->build();
         $doc->output();

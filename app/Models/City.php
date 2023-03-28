@@ -46,6 +46,10 @@ class City extends Model {
         return $this->belongsTo(Market::class, "market_id");
     }
 
+    public function addresses() {
+        return $this->hasMany(Address::class, "city_id", "id");
+    }
+
     public function toInventoryResource() {
         return new \Neo\Modules\Properties\Services\Resources\City(
             name         : $this->name,

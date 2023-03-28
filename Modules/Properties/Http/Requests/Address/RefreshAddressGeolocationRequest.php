@@ -5,27 +5,22 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdateAddressRequest.php
+ * @neo/api - RefreshAddressGeolocationRequest.php
  */
 
-namespace Neo\Modules\Properties\Http\Requests\Properties;
+namespace Neo\Modules\Properties\Http\Requests\Address;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class UpdateAddressRequest extends FormRequest {
+class RefreshAddressGeolocationRequest extends FormRequest {
     public function authorize(): bool {
         return Gate::allows(Capability::properties_address_edit->value);
     }
 
     public function rules(): array {
         return [
-            "line_1"   => ["required", "string"],
-            "line_2"   => ["nullable", "string"],
-            "province" => ["required", "string", "exists:provinces,slug"],
-            "city"     => ["required", "string"],
-            "zipcode"  => ["required", "string"],
         ];
     }
 }

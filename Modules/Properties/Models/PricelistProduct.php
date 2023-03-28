@@ -31,6 +31,9 @@ class PricelistProduct extends Pivot {
         "pricing" => PriceType::class,
     ];
 
+    protected $relatedKey = "pricelist_id";
+    protected $foreignKey = "product_id";
+
     protected $fillable = [
         "pricelist_id",
         "product_id",

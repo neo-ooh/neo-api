@@ -170,7 +170,7 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
 
         // Product Specs
         if ($inventory->hasCapability(InventoryCapability::ProductsQuantity)) {
-            $product->quantity = $externalProduct->product->quantity;
+            $product->quantity = max(1, $externalProduct->product->quantity);
         }
 
         if ($externalProduct->product->price_type === PriceType::Unit) {

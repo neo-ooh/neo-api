@@ -58,7 +58,7 @@ class PricelistProductsCategoriesController {
     }
 
     public function destroy(DestroyPricelistProductsCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
-        $pricelist->categories()->detach($pricelistProductsCategory->products_category_id);
+        $pricelistProductsCategory->delete();
 
         return new Response(["status" => "ok"]);
     }

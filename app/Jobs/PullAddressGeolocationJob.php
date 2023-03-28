@@ -49,8 +49,11 @@ class PullAddressGeolocationJob implements ShouldQueue {
         }
 
         // We got results, take the first one and save it.
+        /** @var \Geocoder\Model\Address $result */
+        $result = $res->first();
         /** @var Coordinates $response */
-        $coordinates                = $res->first()->getCoordinates();
+        $coordinates                = $result->getCoordinates();
+        $this->address->zipcode     = str_replace(" ", "", $result->getPostalCode());
         $this->address->geolocation = new Point($coordinates->getLatitude(), $coordinates->getLongitude());
         $this->address->save();
 

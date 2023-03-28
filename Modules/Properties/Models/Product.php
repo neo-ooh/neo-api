@@ -63,7 +63,9 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
  * @property Collection<Unavailability>    $unavailabilities
+ *
  * @property Pricelist|null                $pricelist
+ * @property ProductPricing|null           $pricing
  *
  * @property Collection<number>            $enabled_inventories
  *

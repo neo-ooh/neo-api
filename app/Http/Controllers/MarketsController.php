@@ -19,8 +19,6 @@ use Neo\Models\Market;
 
 class MarketsController extends Controller {
     public function store(StoreMarketRequest $request) {
-        dump("storing");
-
         $market              = new Market();
         $market->name_fr     = $request->input("name_fr");
         $market->name_en     = $request->input("name_en");

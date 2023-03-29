@@ -14,7 +14,7 @@ use Gate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Models\Country;
+use Neo\Models\Province;
 
 class StoreMarketRequest extends FormRequest {
     public function authorize() {
@@ -23,7 +23,7 @@ class StoreMarketRequest extends FormRequest {
 
     public function rules() {
         return [
-            "province_id" => ["required", new Exists(Country::class, "id")],
+            "province_id" => ["required", new Exists(Province::class, "id")],
 
             "name_en" => ["required", "string"],
             "name_fr" => ["required", "string"],

@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Neo\Http\Requests\Cities\DestroyCityRequest;
 use Neo\Http\Requests\Cities\ListCitiesRequest;
 use Neo\Http\Requests\Cities\StoreCityRequest;
+use Neo\Http\Requests\Cities\UpdateCityRequest;
 use Neo\Jobs\PullCityGeolocationJob;
 use Neo\Models\City;
 use Neo\Models\Country;
@@ -23,7 +24,7 @@ class CitiesController extends Controller {
     public function store(StoreCityRequest $request, Country $country, Province $province): Response {
         $city              = new City();
         $city->province_id = $province->id;
-        $city->market_id   = $request->input("market_id");
+        $city->market_id   = $request->input("market_id", null);
         $city->name        = $request->input("name");
         $city->save();
 
@@ -39,9 +40,9 @@ class CitiesController extends Controller {
                                 ->get());
     }
 
-    public function update(DestroyCityRequest $request, Country $country, Province $province, City $city): Response {
+    public function update(UpdateCityRequest $request, Country $country, Province $province, City $city): Response {
+        $city->market_id = $request->input("market_id", null);
         $city->name      = $request->input("name");
-        $city->market_id = $request->input("market_id");
         $city->save();
 
         PullCityGeolocationJob::dispatch($city->getKey());

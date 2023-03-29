@@ -8,7 +8,6 @@
  * @neo/api - geocoder.php
  */
 
-use Geocoder\Provider\Chain\Chain;
 use Geocoder\Provider\Geonames\Geonames;
 use Geocoder\Provider\GoogleMaps\GoogleMaps;
 use Http\Adapter\Guzzle7\Client;
@@ -64,13 +63,11 @@ return [
     |
     */
     'providers' => [
-        Chain::class    => [
-            GoogleMaps::class => [
-                env('GOOGLE_MAPS_LOCALE', 'en'),
-                env('GOOGLE_MAPS_API_KEY'),
-            ],
+        GoogleMaps::class => [
+            env('GOOGLE_MAPS_LOCALE', 'en'),
+            env('GOOGLE_MAPS_API_KEY'),
         ],
-        Geonames::class => [
+        Geonames::class   => [
             env("GEONAMES_USERNAME"),
         ],
     ],

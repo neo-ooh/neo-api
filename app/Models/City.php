@@ -10,6 +10,8 @@
 
 namespace Neo\Models;
 
+use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
+use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string      $name
  * @property int|null    $market_id
  * @property int         $province_id
+ * @property Point       $geolocation
  *
  * @property Province    $province
  * @property Market|null $market
@@ -26,6 +29,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int         $id
  */
 class City extends Model {
+    use SpatialTrait;
+
     protected $table = "cities";
 
     protected $primaryKey = "id";
@@ -36,6 +41,12 @@ class City extends Model {
         "name",
         "market_id",
         "province_id",
+    ];
+
+    public bool $wktOptions = false;
+
+    protected array $spatialFields = [
+        "geolocation",
     ];
 
     public function province() {

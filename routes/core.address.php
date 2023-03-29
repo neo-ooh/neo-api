@@ -34,7 +34,7 @@ Route::group([
 
         // Markets
         Route::   put("markets/{market}", MarketsController::class . "@update");
-        Route::  post("countries/{country}/provinces/{province}/markets", MarketsController::class . "@store");
+        Route::  post("markets/{market}", MarketsController::class . "@store");
         Route::delete("markets/{market}", MarketsController::class . "@destroy");
 
         // Cities

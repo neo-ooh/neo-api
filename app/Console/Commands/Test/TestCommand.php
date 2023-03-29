@@ -11,7 +11,10 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Models\City;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Neo\Models\Address;
+use Neo\Models\Market;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -21,30 +24,15 @@ class TestCommand extends Command {
     /**
      */
     public function handle() {
-//        $actors = ActorsGetter::from(1344)
-//                              ->selectChildren(recursive: true)
-//                              ->getActors()
-//                              ->where("type", "===", ActorType::Property);
-//
-//        $products = Product::query()->whereIn("property_id", $actors->pluck("id"))->lazy();
-//
-//        $externalResources = [];
-//
-//        /** @var Product $product */
-//        foreach ($products as $product) {
-//            $amId = trim(explode(" - ", $product->name_en, 2)[0]);
-//
-//            $externalResources[] = [
-//                "resource_id"  => $product->inventory_resource_id,
-//                "inventory_id" => 2,
-//                "type"         => InventoryResourceType::Product,
-//                "external_id"  => $amId,
-//                "context"      => "[]",
-//            ];
-//        }
-//
-//        ExternalInventoryResource::query()->insert($externalResources);
+        $address = Address::query()->whereNotNull("geolocation")
+                          ->whereHas("city", function (Builder $query) {
+                              $query->where("market_id", "=", 45);
+                          })
+                          ->inRandomOrder()->first();
+        dump($address->city->name);
 
-        City::query()->whereDoesntHave("addresses")->delete();
+        dump(Market::query()
+                   ->whereRaw(DB::raw("ST_CONTAINS(area, ST_GEOMFROMTEXT('{$address->geolocation->toWKT()}'))"))
+                   ->first()?->name_en);
     }
 }

@@ -18,6 +18,7 @@ use Neo\Modules\Properties\Http\Requests\PricelistProductsCategories\StorePricel
 use Neo\Modules\Properties\Http\Requests\PricelistProductsCategories\UpdatePricelistProductCategoryRequest;
 use Neo\Modules\Properties\Models\Pricelist;
 use Neo\Modules\Properties\Models\PricelistProductsCategory;
+use Neo\Modules\Properties\Models\ProductCategory;
 
 class PricelistProductsCategoriesController {
     public function index(ListPricelistProductsCategoriesRequest $request, Pricelist $pricelist) {
@@ -42,23 +43,23 @@ class PricelistProductsCategoriesController {
         return new Response($categoryPricelist, 201);
     }
 
-    public function show(ShowPricelistProductsCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
-        return new Response($pricelistProductsCategory);
+    public function show(ShowPricelistProductsCategoryRequest $request, Pricelist $pricelist, ProductCategory $pricelistProductsCategory) {
+        return new Response($pricelistProductsCategory->pricing);
     }
 
-    public function update(UpdatePricelistProductCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
-        $pricelist->categories()->updateExistingPivot($pricelistProductsCategory->products_category_id, [
+    public function update(UpdatePricelistProductCategoryRequest $request, Pricelist $pricelist, ProductCategory $pricelistProductsCategory) {
+        $pricelist->categories()->updateExistingPivot($pricelistProductsCategory->getKey(), [
             "pricing" => $request->input("pricing"),
             "value"   => $request->input("value"),
             "min"     => $request->input("min", null),
             "max"     => $request->input("max", null),
         ]);
 
-        return new Response($pricelist->categories()->firstWhere("id", "=", $pricelistProductsCategory->products_category_id));
+        return new Response($pricelist->categories()->firstWhere("id", "=", $pricelistProductsCategory->getKey()));
     }
 
-    public function destroy(DestroyPricelistProductsCategoryRequest $request, Pricelist $pricelist, PricelistProductsCategory $pricelistProductsCategory) {
-        $pricelistProductsCategory->delete();
+    public function destroy(DestroyPricelistProductsCategoryRequest $request, Pricelist $pricelist, ProductCategory $pricelistProductsCategory) {
+        $pricelistProductsCategory->pricing()->delete();
 
         return new Response(["status" => "ok"]);
     }

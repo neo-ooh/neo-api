@@ -21,6 +21,7 @@ class UpdatePropertyRequest extends FormRequest {
             "is_sellable"  => ["required", "boolean"],
             "has_tenants"  => ["required", "boolean"],
             "pricelist_id" => ["nullable", "exists:pricelists,id"],
+            "website"      => ["nullable", "string"],
         ];
     }
 

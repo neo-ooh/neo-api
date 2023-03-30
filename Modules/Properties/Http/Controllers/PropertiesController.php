@@ -140,7 +140,7 @@ class PropertiesController extends Controller {
         // Is this group a property ?
         /** @var Property $property */
         $property = Property::query()->find($propertyId);
-        
+
         return new Response($property->loadPublicRelations());
     }
 
@@ -149,6 +149,7 @@ class PropertiesController extends Controller {
         $property->is_sellable  = $request->input("is_sellable");
         $property->has_tenants  = $request->input("has_tenants");
         $property->pricelist_id = $request->input("pricelist_id", null);
+        $property->website      = $request->input("website") ?? "";
         $property->save();
 
         return new Response($property->loadPublicRelations());

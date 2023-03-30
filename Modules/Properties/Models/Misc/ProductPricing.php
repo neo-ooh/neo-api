@@ -41,8 +41,9 @@ class ProductPricing {
         }
 
         return match ($pricing->pricing) {
-            PriceType::Unit => new static(PriceType::Unit, $pricing->value),
-            PriceType::CPM  => new static(PriceType::CPM, $pricing->value),
+            PriceType::Unit        => new static(PriceType::Unit, $pricing->value),
+            PriceType::UnitProduct => new static(PriceType::UnitProduct, $pricing->value),
+            PriceType::CPM         => new static(PriceType::CPM, $pricing->value),
         };
     }
 

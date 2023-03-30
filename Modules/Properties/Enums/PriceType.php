@@ -13,4 +13,5 @@ namespace Neo\Modules\Properties\Enums;
 enum PriceType: string {
     case CPM = "cpm";
     case Unit = "unit";
+    case UnitProduct = "unit-product";
 }

@@ -64,10 +64,17 @@ class ContractsFlightsExportController {
         $doc->addSheet($sheet);
         $doc->removeSheetByIndex(0);
 
+        // Print header
+        $sheet->printRow([
+                             $serviceId === "broadcaster" ? "Location Id" : "Inventory Id",
+                             $serviceId === "broadcaster" ? "Location" : "Product",
+                             "spots",
+                         ]);
+
         $builtLines = $lines->flatMap(function (ContractLine $line) use ($serviceType, $serviceId) {
             return match ($serviceType) {
-                "broadcaster" => $line->product->locations->map(fn(Location $location) => [$location->external_id, $location->name]),
-                "inventory"   => [[$line->product->external_representations->firstWhere("inventory_id", "=", $serviceId)?->external_id ?? "-", $line->product->name_en]],
+                "broadcaster" => $line->product->locations->map(fn(Location $location) => [$location->external_id, $location->name, $line->spots]),
+                "inventory"   => [[$line->product->external_representations->firstWhere("inventory_id", "=", $serviceId)?->external_id ?? "-", $line->product->name_en, $line->spots]],
             };
         });
 

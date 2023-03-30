@@ -5,21 +5,24 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ShowBroadSignExportRequest.php
+ * @neo/api - GetExportRequest.php
  */
 
 namespace Neo\Http\Requests\ContractsFlights;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Properties\Models\ProductCategory;
 
-class ShowBroadSignExportRequest extends FormRequest {
+class GetExportRequest extends FormRequest {
     public function rules(): array {
         return [
-            "category_id" => ["required", "integer", new Exists(ProductCategory::class, "id")],
+            "category_id"  => ["required", "integer", new Exists(ProductCategory::class, "id")],
+            "service_type" => ["required", "string", Rule::in(["broadcaster", "inventory"])],
+            "service_id"   => ["required", "integer"],
         ];
     }
 

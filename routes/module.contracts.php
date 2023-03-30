@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -16,7 +16,7 @@ use Neo\Http\Controllers\ClientsController;
 use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractFlightsController;
 use Neo\Http\Controllers\ContractsController;
-use Neo\Http\Controllers\ContractsFlightsBroadSignExportController;
+use Neo\Http\Controllers\ContractsFlightsExportController;
 use Neo\Http\Controllers\ContractsFlightsReservationsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Models\Advertiser;
@@ -88,8 +88,8 @@ Route::group([
 
     Route::   get("flights/{flight}", ContractFlightsController::class . "@show");
 
-    Route::   get("flights/{flight}/broadsign-exports", ContractsFlightsBroadSignExportController::class . "@index");
-    Route::   get("flights/{flight}/broadsign-exports/{network}", ContractsFlightsBroadSignExportController::class . "@show");
+    Route::   get("flights/{flight}/exports", ContractsFlightsExportController::class . "@index");
+    Route::   get("flights/{flight}/exports/{network}", ContractsFlightsExportController::class . "@show");
 
     Route::   put("flights/{flight}/reservations/_sync", ContractsFlightsReservationsController::class . "@sync");
 

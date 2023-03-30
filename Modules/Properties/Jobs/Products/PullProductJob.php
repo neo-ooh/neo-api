@@ -173,6 +173,16 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             $product->quantity = max(1, $externalProduct->product->quantity);
         }
 
+        // Product media types
+        if ($inventory->hasCapability(InventoryCapability::ProductsMediaTypes) && count($product->allowed_media_types) > 0) {
+            $product->allowed_media_types = $externalProduct->product->allowed_media_types;
+        }
+
+        // Product audio support
+        if ($inventory->hasCapability(InventoryCapability::ProductsAudioSupport) && $product->allows_audio !== null) {
+            $product->allows_audio = $externalProduct->product->allows_audio;
+        }
+
         if ($externalProduct->product->price_type === PriceType::Unit) {
             $product->unit_price = $externalProduct->product->price;
         }

@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Http\Requests\ProductCategories\ListProductCategoriesByIdsRequest;
 use Neo\Modules\Properties\Http\Requests\ProductCategories\ListProductCategoriesRequest;
 use Neo\Modules\Properties\Http\Requests\ProductCategories\ShowProductCategoryRequest;
@@ -39,10 +40,14 @@ class ProductCategoriesController {
     }
 
     public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory) {
-        $productCategory->name_en   = $request->input("name_en");
-        $productCategory->name_fr   = $request->input("name_fr");
-        $productCategory->type      = $request->input("type");
-        $productCategory->format_id = $request->input("format_id");
+        $productCategory->name_en             = $request->input("name_en");
+        $productCategory->name_fr             = $request->input("name_fr");
+        $productCategory->type                = $request->input("type");
+        $productCategory->format_id           = $request->input("format_id");
+        $productCategory->allowed_media_types = $request->has("allowed_media_types")
+            ? array_map(static fn(string $scope) => MediaType::from($scope), $request->input("allowed_media_types", []))
+            : $productCategory->allowed_media_types;
+        $productCategory->allows_audio        = $request->input("allows_audio", $productCategory->allows_audio);
         $productCategory->save();
 
         return new Response($productCategory->loadPublicRelations());

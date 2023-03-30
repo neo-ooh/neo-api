@@ -5,12 +5,12 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - CreativeType.php
+ * @neo/api - MediaType.php
  */
 
 namespace Neo\Modules\Properties\Enums;
 
-enum CreativeType: string {
+enum MediaType: string {
     case HTML = "html";
     case Image = "image";
     case Video = "video";

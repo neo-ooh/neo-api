@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -26,7 +26,7 @@ class EnumSetCast implements CastsAttributes {
 
     public function get($model, $key, $value, $attributes) {
         $e = $this->enum;
-        return array_map(static fn(string $value) => $e::from($value), explode(",", $value));
+        return array_map(static fn(string $value) => $e::from($value), array_filter(explode(",", $value), fn(string $item) => strlen($item) > 0));
     }
 
     public function set($model, $key, $value, $attributes) {

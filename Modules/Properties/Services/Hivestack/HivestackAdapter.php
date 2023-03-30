@@ -15,6 +15,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Enumerable;
 use Illuminate\Support\LazyCollection;
+use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\InventoryProvider;
@@ -41,6 +42,7 @@ class HivestackAdapter extends InventoryAdapter {
         InventoryCapability::ProductsRead,
         InventoryCapability::ProductsWrite,
         InventoryCapability::PropertiesRead,
+        InventoryCapability::ProductsMediaTypes,
     ];
 
     /**
@@ -138,6 +140,9 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->min_spot_length = min($unit->spot_length, 5);                           // Min length : 5 seconds or spot length if shorter
         $unit->max_spot_length = $unit->spot_length;
         $unit->timezone        = $product->timezone;
+        $unit->allow_image     = in_array(MediaType::Image, $product->allowed_media_types);
+        $unit->allow_video     = in_array(MediaType::Video, $product->allowed_media_types);
+        $unit->allow_html      = in_array(MediaType::HTML, $product->allowed_media_types);
     }
 
     /**

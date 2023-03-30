@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Http\Requests\Products\ListProductsByIdsRequest;
 use Neo\Modules\Properties\Http\Requests\Products\ListProductsRequest;
 use Neo\Modules\Properties\Http\Requests\Products\ShowProductRequest;
@@ -41,9 +42,13 @@ class ProductsController {
     }
 
     public function update(UpdateProductRequest $request, Product $product) {
-        $product->format_id = $request->input("format_id");
+        $product->format_id           = $request->input("format_id");
+        $product->allowed_media_types = $request->has("allowed_media_types")
+            ? array_map(static fn(string $scope) => MediaType::from($scope), $request->input("allowed_media_types", []))
+            : $product->allowed_media_types;
+        $product->allows_audio        = $request->input("allows_audio", $product->allows_audio);
         $product->save();
-        
+
         return new Response($product->loadPublicRelations());
     }
 }

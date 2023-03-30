@@ -11,16 +11,21 @@
 namespace Neo\Modules\Properties\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Rules\PublicRelations;
 
 class UpdateProductRequest extends FormRequest {
     public function rules(): array {
         return [
-            "format_id" => ["nullable", "integer", new Exists(Format::class, "id")],
+            "format_id"             => ["nullable", "integer", new Exists(Format::class, "id")],
+            "allows_audio"          => ["boolean"],
+            "allowed_media_types"   => ["array"],
+            "allowed_media_types.*" => [new Enum(MediaType::class)],
 
             "with" => ["array", new PublicRelations(Product::class)],
         ];

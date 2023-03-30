@@ -15,6 +15,8 @@ enum InventoryCapability: string {
     case ProductsRead = "products.read";
     case ProductsWrite = "products.write";
     case ProductsQuantity = "products.quantity";
+    case ProductsMediaTypes = "products.media-types";
+    case ProductsAudioSupport = "products.audio-support";
 
     // Product Categories
     case ProductCategoriesRead = "product-categories.read";

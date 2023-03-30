@@ -10,7 +10,7 @@
 
 namespace Neo\Modules\Properties\Services\Resources;
 
-use Neo\Modules\Broadcast\Enums\CreativeType;
+use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
@@ -72,11 +72,6 @@ class ProductResource extends InventoryResource {
         public LoopConfiguration|null   $loop_configuration,
 
         /**
-         * @var bool Does the product allow files with audio
-         */
-        public bool                     $allow_audio,
-
-        /**
          * @var int Screen width in pixels
          */
         public int                      $screen_width_px,
@@ -87,9 +82,14 @@ class ProductResource extends InventoryResource {
         public int                      $screen_height_px,
 
         /**
-         * @var CreativeType[]
+         * @var MediaType[]
          */
-        public array                    $allowed_creative_types,
+        public array                    $allowed_media_types,
+
+        /**
+         * @var bool Does the product allow files with audio
+         */
+        public bool                     $allows_audio,
 
         /**
          * @var InventoryResourceId|null ID of the property in which the product is, if supported

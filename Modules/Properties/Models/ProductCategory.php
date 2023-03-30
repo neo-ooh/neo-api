@@ -16,9 +16,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Casts\EnumSetCast;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
+use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Interfaces\WithAttachments;
 use Neo\Modules\Properties\Models\Interfaces\WithImpressionsModels;
@@ -35,6 +37,8 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property string                        $name_fr
  * @property ProductType                   $type
  * @property int|null                      $format_id
+ * @property MediaType[]                   $allowed_media_types
+ * @property boolean                       $allows_audio
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  *
@@ -60,7 +64,9 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
     ];
 
     protected $casts = [
-        "type" => ProductType::class,
+        "type"                => ProductType::class,
+        "allowed_media_types" => EnumSetCast::class . ":" . MediaType::class,
+        "allows_audio"        => "boolean",
     ];
 
     public string $impressions_models_pivot_table = "products_categories_impressions_models";

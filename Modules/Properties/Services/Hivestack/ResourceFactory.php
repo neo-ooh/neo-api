@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Services\Hivestack;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Client\RequestException;
+use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Services\Hivestack\Models\Site;
@@ -37,36 +38,38 @@ class ResourceFactory {
         return new IdentifiableProduct(
             resourceId: $unit->toInventoryResourceId($config->inventoryID),
             product   : new ProductResource(
-                            name                  : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: trim($unit->name))]),
-                            type                  : ProductType::Digital,
-                            category_id           : null,
-                            is_bonus              : false,
-                            linked_product_id     : null,
-                            quantity              : 1,
-                            price_type            : PriceType::CPM,
-                            price                 : $unit->floor_cpm,
-                            picture_url           : null,
-                            loop_configuration    : new LoopConfiguration(
-                                                        loop_length_ms: $unit->loop_length * 1000,
-                                                        spot_length_ms: $unit->spot_length * 1000
-                                                    ),
-                            allow_audio           : true,
-                            screen_width_px       : $unit->screen_width,
-                            screen_height_px      : $unit->screen_height,
-                            allowed_creative_types: [
-                                                        // TODO
-                                                    ],
-                            property_id           : $site->toInventoryResourceId($config->inventoryID),
-                            property_name         : trim($site->name),
-                            address               : null,
-                            geolocation           : new Geolocation(
-                                                        longitude: $site->longitude,
-                                                        latitude : $site->latitude
-                                                    ),
-                            timezone              : $unit->timezone,
+                            name               : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: trim($unit->name))]),
+                            type               : ProductType::Digital,
+                            category_id        : null,
+                            is_bonus           : false,
+                            linked_product_id  : null,
+                            quantity           : 1,
+                            price_type         : PriceType::CPM,
+                            price              : $unit->floor_cpm,
+                            picture_url        : null,
+                            loop_configuration : new LoopConfiguration(
+                                                     loop_length_ms: $unit->loop_length * 1000,
+                                                     spot_length_ms: $unit->spot_length * 1000
+                                                 ),
+                            screen_width_px    : $unit->screen_width,
+                            screen_height_px   : $unit->screen_height,
+                            allowed_media_types: array_filter([
+                                                                  $unit->allow_image ? MediaType::Image : null,
+                                                                  $unit->allow_video ? MediaType::Video : null,
+                                                                  $unit->allow_html ? MediaType::HTML : null,
+                                                              ], fn(MediaType|null $type) => $type !== null),
+                            allows_audio       : false,
+                            property_id        : $site->toInventoryResourceId($config->inventoryID),
+                            property_name      : trim($site->name),
+                            address            : null,
+                            geolocation        : new Geolocation(
+                                                     longitude: $site->longitude,
+                                                     latitude : $site->latitude
+                                                 ),
+                            timezone           : $unit->timezone,
                             // TODO
-                            operating_hours       : null,
-                            weekly_traffic        : 0
+                            operating_hours    : null,
+                            weekly_traffic     : 0
                         )
         );
     }

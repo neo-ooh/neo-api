@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Neo\Casts\EnumSetCast;
 use Neo\Enums\Capability;
 use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasPublicRelations;
@@ -24,7 +25,7 @@ use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
-use Neo\Modules\Properties\Enums\CreativeType;
+use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Interfaces\WithAttachments;
 use Neo\Modules\Properties\Models\Interfaces\WithImpressionsModels;
@@ -53,6 +54,8 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int                           $unit_price
  * @property boolean                       $is_bonus
  * @property int|null                      $linked_product_id
+ * @property MediaType[]                   $allowed_media_types
+ * @property boolean|null                  $allows_audio
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  * @property Carbon                        $deleted_at
@@ -98,8 +101,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     ];
 
     protected $casts = [
-        "is_sellable" => "boolean",
-        "is_bonus"    => "boolean",
+        "is_sellable"         => "boolean",
+        "is_bonus"            => "boolean",
+        "allowed_media_types" => EnumSetCast::class . ":" . MediaType::class,
+        "allows_audio"        => "boolean",
     ];
 
     public string $impressions_models_pivot_table = "products_impressions_models";
@@ -259,7 +264,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         /** @var Format|null $format */
         $format = $this->category->type === ProductType::Digital ? ($this->format ?? $this->category->format) : null;
 
-        /** @var Layout $layout */
+        /** @var Layout|null $layout */
         $layout = $format->layouts->first(fn(Layout $layout) => $layout->frames->count() === 1);
 
         /** @var LoopConfiguration|null $loopConfiguration */
@@ -268,42 +273,39 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         $weeklyTraffic = ceil(collect($this->property->traffic->getRollingWeeklyTraffic())->sum() / 53);
 
         return new ProductResource(
-            name                  : LocalizedString::collection([
-                                                                    new LocalizedString(locale: 'en-CA', value: trim($this->name_en)),
-                                                                    new LocalizedString(locale: 'fr-CA', value: trim($this->name_fr)),
-                                                                ]),
-            type                  : $this->category->type,
-            category_id           : $categoryId?->toInventoryResourceId(),
-            is_bonus              : $this->is_bonus,
-            linked_product_id     : $linkedProductId?->toInventoryResourceId(),
-            quantity              : $this->quantity,
-            price_type            : $pricing->getType(),
-            price                 : $pricing->getPrice(),
-            picture_url           : null,
-            loop_configuration    : $loopConfiguration ?
-                                        new \Neo\Modules\Properties\Services\Resources\LoopConfiguration(
-                                            loop_length_ms: $loopConfiguration->loop_length_ms,
-                                            spot_length_ms: $loopConfiguration->spot_length_ms,
-                                        ) : null,
-            allow_audio           : false,
-            screen_width_px       : $layout?->frames->first()->width,
-            screen_height_px      : $layout?->frames->first()->height,
-            allowed_creative_types: [
-                                        CreativeType::Image,
-                                        CreativeType::Video,
-                                    ],
-            property_id           : $propertyId?->toInventoryResourceId(),
-            property_name         : $this->property->actor->name,
-            address               : $this->property->address->toInventoryResource(),
-            geolocation           : new Geolocation(
-                                        longitude: $this->property->address->geolocation->getLng(),
-                                        latitude : $this->property->address->geolocation->getLat(),
-                                    ),
-            timezone              : $this->property->address?->timezone,
-            operating_hours       : DayOperatingHours::collection($this->property->opening_hours->map(fn(OpeningHours $hours) => $hours->toInventoryResource())),
-            weekly_traffic        : $weeklyTraffic,
-            product_connect_id    : $this->getKey(),
-            property_connect_id   : $this->property_id,
+            name               : LocalizedString::collection([
+                                                                 new LocalizedString(locale: 'en-CA', value: trim($this->name_en)),
+                                                                 new LocalizedString(locale: 'fr-CA', value: trim($this->name_fr)),
+                                                             ]),
+            type               : $this->category->type,
+            category_id        : $categoryId?->toInventoryResourceId(),
+            is_bonus           : $this->is_bonus,
+            linked_product_id  : $linkedProductId?->toInventoryResourceId(),
+            quantity           : $this->quantity,
+            price_type         : $pricing->getType(),
+            price              : $pricing->getPrice(),
+            picture_url        : null,
+            loop_configuration : $loopConfiguration ?
+                                     new \Neo\Modules\Properties\Services\Resources\LoopConfiguration(
+                                         loop_length_ms: $loopConfiguration->loop_length_ms,
+                                         spot_length_ms: $loopConfiguration->spot_length_ms,
+                                     ) : null,
+            screen_width_px    : $layout?->frames->first()->width,
+            screen_height_px   : $layout?->frames->first()->height,
+            allowed_media_types: count($this->allowed_media_types) > 0 ? $this->allowed_media_types : $this->category->allowed_media_types,
+            allows_audio       : $this->allows_audio !== null ? $this->allows_audio : $this->category->allows_audio,
+            property_id        : $propertyId?->toInventoryResourceId(),
+            property_name      : $this->property->actor->name,
+            address            : $this->property->address->toInventoryResource(),
+            geolocation        : new Geolocation(
+                                     longitude: $this->property->address->geolocation->getLng(),
+                                     latitude : $this->property->address->geolocation->getLat(),
+                                 ),
+            timezone           : $this->property->address?->timezone,
+            operating_hours    : DayOperatingHours::collection($this->property->opening_hours->map(fn(OpeningHours $hours) => $hours->toInventoryResource())),
+            weekly_traffic     : $weeklyTraffic,
+            product_connect_id : $this->getKey(),
+            property_connect_id: $this->property_id,
         );
     }
 }

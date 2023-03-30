@@ -10,7 +10,6 @@
 
 namespace Neo\Modules\Properties\Services\Odoo;
 
-use Neo\Modules\Properties\Enums\CreativeType;
 use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Services\Odoo\API\OdooClient;
 use Neo\Modules\Properties\Services\Odoo\Models\Product;
@@ -39,41 +38,38 @@ class ResourceFactory {
                                           ]
                         ),
             product   : new ProductResource(
-                            name                  : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: trim($product->name))]),
-                            type                  : $product->getType(),
-                            category_id           : new InventoryResourceId(inventory_id: $config->inventoryID, external_id: $product->categ_id[0], type: InventoryResourceType::ProductCategory, context: []),
-                            is_bonus              : $product->bonus,
-                            linked_product_id     : $product->linked_product_id ? new InventoryResourceId(
-                                                        inventory_id: $config->inventoryID,
-                                                        external_id : $product->linked_product_id[0],
-                                                        type        : InventoryResourceType::Product,
-                                                    ) : null,
-                            quantity              : $product->nb_screen,
-                            price_type            : PriceType::Unit,
-                            price                 : $product->list_price,
-                            picture_url           : null,
-                            loop_configuration    : null,
-                            allow_audio           : true,
-                            screen_width_px       : 0,
-                            screen_height_px      : 0,
-                            allowed_creative_types: [
-                                                        CreativeType::Image,
-                                                        CreativeType::Video,
-                                                    ],
-                            property_id           : new InventoryResourceId(
-                                                        inventory_id: $config->inventoryID,
-                                                        external_id : $property->getKey(),
-                                                        type        : InventoryResourceType::Property
-                                                    ),
-                            property_name         : trim($property->name),
-                            address               : $property->getAddress(),
-                            geolocation           : new Geolocation(
-                                                        longitude: $property->partner_longitude,
-                                                        latitude : $property->partner_latitude,
-                                                    ),
-                            timezone              : null,
-                            operating_hours       : null,
-                            weekly_traffic        : (int)ceil(($property->annual_traffic / 365) * 7)
+                            name               : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: trim($product->name))]),
+                            type               : $product->getType(),
+                            category_id        : new InventoryResourceId(inventory_id: $config->inventoryID, external_id: $product->categ_id[0], type: InventoryResourceType::ProductCategory, context: []),
+                            is_bonus           : $product->bonus,
+                            linked_product_id  : $product->linked_product_id ? new InventoryResourceId(
+                                                     inventory_id: $config->inventoryID,
+                                                     external_id : $product->linked_product_id[0],
+                                                     type        : InventoryResourceType::Product,
+                                                 ) : null,
+                            quantity           : $product->nb_screen,
+                            price_type         : PriceType::Unit,
+                            price              : $product->list_price,
+                            picture_url        : null,
+                            loop_configuration : null,
+                            screen_width_px    : 0,
+                            screen_height_px   : 0,
+                            allowed_media_types: [],
+                            allows_audio       : true,
+                            property_id        : new InventoryResourceId(
+                                                     inventory_id: $config->inventoryID,
+                                                     external_id : $property->getKey(),
+                                                     type        : InventoryResourceType::Property
+                                                 ),
+                            property_name      : trim($property->name),
+                            address            : $property->getAddress(),
+                            geolocation        : new Geolocation(
+                                                     longitude: $property->partner_longitude,
+                                                     latitude : $property->partner_latitude,
+                                                 ),
+                            timezone           : null,
+                            operating_hours    : null,
+                            weekly_traffic     : (int)ceil(($property->annual_traffic / 365) * 7)
                         )
         );
     }

@@ -82,7 +82,7 @@ class InventoryProvidersExternalResourcesController extends Controller {
 
                 // Get the property id for this inventory
                 /** @var Property $property */
-                $property = Property::query()->find($request->input("property_id"));
+                $property = Property::query()->where("inventory_resource_id", "=", $request->input("property_id"))->firstOrFail();
                 /** @var ExternalInventoryResource|null $representation */
                 $representation = $property->external_representations()
                                            ->where("inventory_id", "=", $inventory->getInventoryID())

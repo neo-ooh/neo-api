@@ -114,7 +114,7 @@ class InventoryProvidersExternalResourcesController extends Controller {
                                                     ->where("inventory_id", "=", $inventoryProvider->getKey())
                                                     ->where("type", "=", $type)
                                                     ->pluck("external_id");
-
+            
             $resources = $resources->filter(fn(InventoryExternalResource $resource) => $externalIds->doesntContain(null, $resource->external_id->external_id))
                                    ->values();
         }

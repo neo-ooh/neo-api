@@ -12,7 +12,9 @@ namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
+use Neo\Modules\Properties\Http\Requests\InventoryProviders\ClearInventoryCacheRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryProviders\ListInventoriesRequest;
+use Neo\Modules\Properties\Http\Requests\InventoryProviders\RemoveInventoryRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryProviders\ShowInventoryRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryProviders\StoreInventoryRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryProviders\UpdateInventoryRequest;
@@ -83,7 +85,11 @@ class InventoryProvidersController extends Controller {
         return new Response($inventoryProvider->loadPublicRelations(), 201);
     }
 
-    public function destroy(InventoryProvider $inventoryProvider) {
+    public function clearCache(ClearInventoryCacheRequest $request, InventoryProvider $inventoryProvider) {
+        $inventoryProvider->clearCache();
+    }
+
+    public function destroy(RemoveInventoryRequest $request, InventoryProvider $inventoryProvider) {
         $inventoryProvider->delete();
     }
 }

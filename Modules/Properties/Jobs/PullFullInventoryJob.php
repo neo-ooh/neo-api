@@ -107,5 +107,8 @@ class PullFullInventoryJob implements ShouldQueue {
         }
 
         $progress?->finish();
+
+        // Now, for each property, we want to import missing products
+
     }
 }

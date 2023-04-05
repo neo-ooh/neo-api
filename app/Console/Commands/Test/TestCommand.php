@@ -11,8 +11,12 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Services\Odoo\Models\Contract;
-use Neo\Services\Odoo\OdooConfig;
+use Neo\Modules\Properties\Models\ExternalInventoryResource;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Models\Property;
+use Neo\Modules\Properties\Services\InventoryAdapterFactory;
+use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
+use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -22,24 +26,16 @@ class TestCommand extends Command {
     /**
      */
     public function handle() {
-//        $inventory = InventoryProvider::find(1);
-//        $odoo      = InventoryAdapterFactory::make($inventory);
+        $inventory = InventoryProvider::find(1);
+        /** @var OdooAdapter $odoo */
+        $odoo = InventoryAdapterFactory::make($inventory);
 
-//        /** @var OdooClient $client */
-        $client = OdooConfig::fromConfig()->getClient();
+        $property = Property::query()->find(1080);
+        /** @var ExternalInventoryResource $representation */
+        $representation = $property->external_representations->firstWhere("inventory_id", "=", $odoo->getInventoryID());
 
-//        dump(Contract::get($client, 3042)->toArray());
-        $time_start = microtime(true);
-        dump($client->client->call(Contract::$slug, "action_del_lines", [[3042]])->toArray());
-
-        $time_end       = microtime(true);
-        $execution_time = ($time_end - $time_start) / 60;
-        dump($execution_time);
-
-//        $product = Product::search($odoo->getConfig()->getClient(), [
-//            ["default_code", "=", "Production"],
-//        ])->toArray();
-//
-//        dump($product);
+        dump(collect($odoo->listPropertyProducts($representation->toInventoryResourceId()))
+                 ->map(fn(IdentifiableProduct $p) => [$p->product->name[0]->value, $p->resourceId->external_id])
+                 ->toArray());
     }
 }

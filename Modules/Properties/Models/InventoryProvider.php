@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Properties\Models;
 
+use Cache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -102,5 +103,15 @@ class InventoryProvider extends Model {
      */
     public function getCapabilitiesAttribute() {
         return InventoryAdapterFactory::make($this)->getCapabilities();
+    }
+
+    public function clearCache() {
+        switch ($this->provider) {
+            case InventoryType::Odoo:
+                Cache::tags(["odoo-data"])->flush();
+                break;
+            default:
+                // nothing
+        }
     }
 }

@@ -35,6 +35,7 @@ Route::group([
         Route::  post("inventories", [InventoryProvidersController::class, "store"]);
         Route::   get("inventories/{inventoryProvider}", [InventoryProvidersController::class, "show"]);
         Route::   put("inventories/{inventoryProvider}", [InventoryProvidersController::class, "update"]);
+        Route::   put("inventories/{inventoryProvider}/_clear_cache", [InventoryProvidersController::class, "clearCache"]);
         Route::delete("inventories/{inventoryProvider}", [InventoryProvidersController::class, "destroy"]);
 
         Route::   get("inventories/{inventoryProvider}/external-resources", [InventoryProvidersExternalResourcesController::class, "index"]);

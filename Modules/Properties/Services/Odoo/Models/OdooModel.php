@@ -147,8 +147,10 @@ abstract class OdooModel implements Arrayable {
     public static function search(OdooClient $client, array $filters): Collection {
         $models = $client->get(static::$slug, $filters);
 
+        $dummy = new static($client);
+
         foreach ($models as $model) {
-            Cache::tags(["odoo-data", "odoo-" . static::$slug])->put($model->getCacheKey(), $model);
+            Cache::tags(["odoo-data", "odoo-" . static::$slug])->put($dummy->getCacheKey(), $model);
         }
 
         return $models->map(fn($record) => new static($client, $record));

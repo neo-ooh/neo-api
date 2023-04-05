@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -18,14 +18,17 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use JsonException;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
+use Neo\Modules\Properties\Services\InventoryAdapterFactory;
+use Neo\Modules\Properties\Services\Odoo\API\OdooClient;
+use Neo\Modules\Properties\Services\Odoo\Models\Campaign;
+use Neo\Modules\Properties\Services\Odoo\Models\Contract;
+use Neo\Modules\Properties\Services\Odoo\Models\Message;
+use Neo\Modules\Properties\Services\Odoo\Models\OrderLine;
+use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
 use Neo\Resources\Contracts\CPCompiledFlight;
 use Neo\Resources\Contracts\CPCompiledPlan;
-use Neo\Services\Odoo\Models\Campaign;
-use Neo\Services\Odoo\Models\Contract;
-use Neo\Services\Odoo\Models\Message;
-use Neo\Services\Odoo\Models\OrderLine;
-use Neo\Services\Odoo\OdooClient;
-use Neo\Services\Odoo\OdooConfig;
 
 class SendContractJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -34,11 +37,17 @@ class SendContractJob implements ShouldQueue {
     }
 
     /**
+     * @throws InvalidInventoryAdapterException
      * @throws OdooException
      * @throws JsonException
      */
-    public function handle(): void {
-        $client = OdooConfig::fromConfig()->getClient();
+    public function handle(): array {
+        $messages  = [];
+        $inventory = InventoryProvider::query()->find(1);
+        /** @var OdooAdapter $odoo */
+        $odoo = InventoryAdapterFactory::make($inventory);
+
+        $client = $odoo->getConfig()->getClient();
 
         // Clean up contract before insert if requested
         if ($this->clearOnSend) {
@@ -50,7 +59,9 @@ class SendContractJob implements ShouldQueue {
         // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required order lines
         /** @var CPCompiledFlight $flight */
         foreach ($this->plan->flights as $flightIndex => $flight) {
-            SendContractFlightJob::dispatchSync($this->contract, $flight, $flightIndex);
+            $flightMessages = (new SendContractFlightJob($this->contract, $flight, $flightIndex))->handle();
+
+            $messages[$flight->getFlightName($flightIndex)] = $flightMessages;
 
             $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
         }
@@ -68,7 +79,9 @@ class SendContractJob implements ShouldQueue {
             "res_id"       => $this->contract->id,
             "message_type" => "notification",
             "subtype_id"   => 2,
-        ], pullRecord: false);
+        ], pullRecord:  false);
+
+        return $messages;
     }
 
     protected function cleanupContract($client): void {
@@ -92,6 +105,7 @@ class SendContractJob implements ShouldQueue {
     }
 
     /**
+     * @param OdooClient $client
      * @throws JsonException
      */
     protected function attachPlan(OdooClient $client): void {

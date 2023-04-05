@@ -1,11 +1,11 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - CampaignPlannerSaveResource.php
+ * @neo/api - CampaignPlannerSaveExcerptResource.php
  */
 
 namespace Neo\Http\Resources;
@@ -29,7 +29,7 @@ class CampaignPlannerSaveExcerptResource extends JsonResource {
                 'name'       => $this->name,
                 'actor_id'   => $this->actor_id,
                 'data'       => [
-                    "odoo" => $this->data["odoo"] ?? null
+                    "odoo" => $this->data["odoo"] ?? null,
                 ],
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
@@ -48,6 +48,8 @@ class CampaignPlannerSaveExcerptResource extends JsonResource {
                     "actor_id" => $this->actor_id,
                 ],
             ),
+            "id"    => $this->id,
+            "uid"   => $this->uid,
         ];
     }
 }

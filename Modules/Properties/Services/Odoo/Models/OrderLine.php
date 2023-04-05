@@ -10,8 +10,6 @@
 
 namespace Neo\Modules\Properties\Services\Odoo\Models;
 
-use Neo\Services\Odoo\OdooModel;
-
 /**
  * @property int    $id
  * @property array  $order_id

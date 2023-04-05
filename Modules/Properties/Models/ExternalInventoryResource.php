@@ -14,23 +14,24 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
+use Neo\Modules\Properties\Models\StructuredColumns\InventoryRepresentationContext;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 
 /**
- * @property int                   $id
- * @property int                   $resource_id
- * @property int                   $inventory_id
- * @property InventoryResourceType $type
- * @property string                $external_id
- * @property array                 $context
+ * @property int                            $id
+ * @property int                            $resource_id
+ * @property int                            $inventory_id
+ * @property InventoryResourceType          $type
+ * @property string                         $external_id
+ * @property InventoryRepresentationContext $context
  *
- * @property Date                  $created_at
- * @property int|null              $created_by
- * @property Date                  $updated_at
- * @property int|null              $updated_by
- * @property Date|null             $deleted_at
- * @property int|null              $deleted_by
+ * @property Date                           $created_at
+ * @property int|null                       $created_by
+ * @property Date                           $updated_at
+ * @property int|null                       $updated_by
+ * @property Date|null                      $deleted_at
+ * @property int|null                       $deleted_by
  */
 class ExternalInventoryResource extends Model {
     use SoftDeletes;
@@ -49,7 +50,7 @@ class ExternalInventoryResource extends Model {
     ];
 
     protected $casts = [
-        "context" => "array",
+        "context" => InventoryRepresentationContext::class,
         "type"    => InventoryResourceType::class,
     ];
 
@@ -58,7 +59,7 @@ class ExternalInventoryResource extends Model {
             inventory_id: $this->inventory_id,
             external_id : $this->external_id,
             type        : $this->type,
-            context     : $this->context
+            context     : $this->context->toArray(),
         );
     }
 

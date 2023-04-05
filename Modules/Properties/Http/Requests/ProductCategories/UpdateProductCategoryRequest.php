@@ -30,6 +30,8 @@ class UpdateProductCategoryRequest extends FormRequest {
             "allows_audio"          => ["boolean"],
             "allowed_media_types"   => ["array"],
             "allowed_media_types.*" => [new Enum(MediaType::class)],
+
+            "production_cost" => ["numeric"],
         ];
     }
 

@@ -21,7 +21,7 @@ class CPCompiledProduct extends Data {
 
         public CPProductPricing $pricing,
         public float            $price_value,
-        
+
         public float            $unit_price,
         public float            $quantity,
         public float            $traffic,
@@ -34,9 +34,12 @@ class CPCompiledProduct extends Data {
         public array|null       $discount,
         public float            $discount_amount,
 
+        public float            $discounted_media_value,
         public float            $price,
         public float            $cpm,
 
+        public string           $production_cost,
+        public float            $production_cost_value,
 
         public bool             $ignore,
         public bool             $force,

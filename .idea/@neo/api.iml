@@ -7,6 +7,8 @@
       <sourceFolder url="file://$MODULE_DIR$/../../database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
       <sourceFolder url="file://$MODULE_DIR$/../../spec" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/../../Modules" isTestSource="false" packagePrefix="Neo\Modules\" />
+      <sourceFolder url="file://$MODULE_DIR$/../../Modules/Broadcast/" isTestSource="false" packagePrefix="Neo\Modules\Broadcast\" />
+      <sourceFolder url="file://$MODULE_DIR$/../../Modules/Properties/" isTestSource="false" packagePrefix="Neo\Modules\Properties\" />
       <excludeFolder url="file://$MODULE_DIR$/../../public" />
       <excludeFolder url="file://$MODULE_DIR$/../dataSources" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/skagarwal/google-places-api" />

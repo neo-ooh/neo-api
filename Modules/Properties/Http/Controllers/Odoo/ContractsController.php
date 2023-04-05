@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Http\Controllers\Odoo;
 
 use Carbon\Carbon;
+use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -19,14 +20,25 @@ use Neo\Exceptions\Odoo\ContractNotFoundException;
 use Neo\Jobs\Odoo\SendContractJob;
 use Neo\Modules\Properties\Http\Requests\Odoo\Contracts\SendContractRequest;
 use Neo\Modules\Properties\Http\Requests\Odoo\Contracts\ShowContractRequest;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
+use Neo\Modules\Properties\Services\InventoryAdapterFactory;
+use Neo\Modules\Properties\Services\Odoo\Models\Contract;
+use Neo\Modules\Properties\Services\Odoo\Models\Contract as OdooContract;
+use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
 use Neo\Resources\Contracts\CPCompiledPlan;
-use Neo\Services\Odoo\Models\Contract as OdooContract;
-use Neo\Services\Odoo\OdooConfig;
 
 class ContractsController {
+    /**
+     * @throws InvalidInventoryAdapterException
+     * @throws OdooException
+     */
     public function show(ShowContractRequest $request, string $contractName) {
+        $inventory = InventoryProvider::query()->find(1);
+        /** @var OdooAdapter $odoo */
+        $odoo = InventoryAdapterFactory::make($inventory);
         // Get the contract from Odoo
-        $contract = OdooContract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
+        $contract = OdooContract::findByName($odoo->getConfig()->getClient(), strtoupper($contractName));
 
         if ($contract === null) {
             throw new ContractNotFoundException($contractName);
@@ -52,10 +64,18 @@ class ContractsController {
                             ]);
     }
 
+    /**
+     * @throws InvalidInventoryAdapterException
+     * @throws OdooException
+     */
     public function send(SendContractRequest $request, string $contractName) {
         set_time_limit(120);
         // Validate that contract exist before doing anything
-        $contract = OdooContract::findByName(OdooConfig::fromConfig()->getClient(), strtoupper($contractName));
+        $inventory = InventoryProvider::query()->find(1);
+        /** @var OdooAdapter $odoo */
+        $odoo = InventoryAdapterFactory::make($inventory);
+        /** @var Contract $contract */
+        $contract = OdooContract::findByName($odoo->getConfig()->getClient(), strtoupper($contractName));
 
         if ($contract === null) {
             throw new ContractNotFoundException($contractName);
@@ -67,7 +87,7 @@ class ContractsController {
 
         $plan = CPCompiledPlan::from($request->input("plan"));
 
-        SendContractJob::dispatchSync($contract, $plan, $request->input("clearOnSend"));
+        $messages = (new SendContractJob($contract, $plan, $request->input("clearOnSend")))->handle();
 
         Log::info("connect.log", [
             "action"    => "planner.odoo.sent",
@@ -75,6 +95,6 @@ class ContractsController {
             "sales_rep" => Auth::user()->name,
         ]);
 
-        return new Response([]);
+        return new Response($messages);
     }
 }

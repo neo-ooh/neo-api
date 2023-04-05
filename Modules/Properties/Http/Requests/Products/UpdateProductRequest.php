@@ -23,9 +23,10 @@ class UpdateProductRequest extends FormRequest {
     public function rules(): array {
         return [
             "format_id"             => ["nullable", "integer", new Exists(Format::class, "id")],
-            "allows_audio"          => ["boolean"],
+            "allows_audio"          => ["nullable", "boolean"],
             "allowed_media_types"   => ["array"],
             "allowed_media_types.*" => [new Enum(MediaType::class)],
+            "production_cost"       => ["nullable", "numeric"],
 
             "with" => ["array", new PublicRelations(Product::class)],
         ];

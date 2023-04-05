@@ -56,6 +56,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int|null                      $linked_product_id
  * @property MediaType[]                   $allowed_media_types
  * @property boolean|null                  $allows_audio
+ * @property double|null                   $production_cost
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  * @property Carbon                        $deleted_at
@@ -98,6 +99,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         "unit_price",
         "is_bonus",
         "linked_product_id",
+        "production_cost",
     ];
 
     protected $casts = [

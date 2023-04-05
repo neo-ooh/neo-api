@@ -70,7 +70,7 @@ Route::group([
         | Inventory Resources Representations
         |----------------------------------------------------------------------
         */
-        Route::   get("inventories-resources/{inventoryResource}/external-representations", [InventoryResourcesExternalRepresentationsController::class, "index"]);
         Route::  post("inventories-resources/{inventoryResource}/external-representations", [InventoryResourcesExternalRepresentationsController::class, "store"]);
+        Route::   put("inventories-resources/{inventoryResource}/external-representations/{externalRepresentation:id}", [InventoryResourcesExternalRepresentationsController::class, "update"]);
         Route::delete("inventories-resources/{inventoryResource}/external-representations/{externalRepresentation:id}", [InventoryResourcesExternalRepresentationsController::class, "destroy"]);
     });

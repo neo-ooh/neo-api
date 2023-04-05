@@ -48,6 +48,7 @@ class ProductCategoriesController {
             ? array_map(static fn(string $scope) => MediaType::from($scope), $request->input("allowed_media_types", []))
             : $productCategory->allowed_media_types;
         $productCategory->allows_audio        = $request->input("allows_audio", $productCategory->allows_audio);
+        $productCategory->production_cost     = $request->input("production_cost", $productCategory->production_cost);
         $productCategory->save();
 
         return new Response($productCategory->loadPublicRelations());

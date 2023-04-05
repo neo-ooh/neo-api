@@ -11,10 +11,9 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use Neo\Models\Address;
-use Neo\Models\Market;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\InventoryAdapterFactory;
+use Neo\Modules\Properties\Services\Odoo\Models\Product;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -24,15 +23,13 @@ class TestCommand extends Command {
     /**
      */
     public function handle() {
-        $address = Address::query()->whereNotNull("geolocation")
-                          ->whereHas("city", function (Builder $query) {
-                              $query->where("market_id", "=", 45);
-                          })
-                          ->inRandomOrder()->first();
-        dump($address->city->name);
+        $inventory = InventoryProvider::find(1);
+        $odoo      = InventoryAdapterFactory::make($inventory);
 
-        dump(Market::query()
-                   ->whereRaw(DB::raw("ST_CONTAINS(area, ST_GEOMFROMTEXT('{$address->geolocation->toWKT()}'))"))
-                   ->first()?->name_en);
+        $product = Product::search($odoo->getConfig()->getClient(), [
+            ["default_code", "=", "Production"],
+        ])->toArray();
+
+        dump($product);
     }
 }

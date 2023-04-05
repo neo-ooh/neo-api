@@ -31,12 +31,13 @@ class AccessibleInventoryResource implements Rule {
 
         // Depending on the type of the resource, we use the appropriate access rule
         return match ($resource->type) {
-            InventoryResourceType::Product  =>
+            InventoryResourceType::Product         =>
             (new AccessibleProduct())->passes("product_id", Product::firstWhere("inventory_resource_id", "=", $resource->getKey())
                                                                    ->getKey()),
-            InventoryResourceType::Property =>
+            InventoryResourceType::Property        =>
             (new AccessibleProperty())->passes("property_id", Property::firstWhere("inventory_resource_id", "=", $resource->getKey())
                                                                       ->getKey()),
+            InventoryResourceType::ProductCategory => true,
         };
     }
 

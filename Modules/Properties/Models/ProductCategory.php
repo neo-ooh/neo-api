@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Casts\EnumSetCast;
+use Neo\Enums\Capability;
+use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
@@ -39,6 +41,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int|null                      $format_id
  * @property MediaType[]                   $allowed_media_types
  * @property boolean                       $allows_audio
+ * @property double                        $production_cost
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  *
@@ -61,6 +64,9 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
         "name_fr",
         "type",
         "external_id",
+        "allowed_media_types",
+        "allows_audio",
+        "production_cost",
     ];
 
     protected $casts = [
@@ -81,6 +87,10 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
             "products"            => "load:products",
             "impressions_models"  => "load:impressions_models",
             "loop_configurations" => "load:loop_configurations",
+            "inventories"         => Relation::make(
+                load: ["inventory_resource.inventories_settings", "inventory_resource.external_representations"],
+                gate: Capability::properties_inventories_view
+            ),
         ];
     }
 

@@ -133,15 +133,17 @@ class SendContractFlightJob implements ShouldQueue {
 
             $orderLinesToAdd->push(...$this->buildLines($dbProduct, $compiledProduct));
 
-            // Sum production costs
-            if (isset($productionCosts[$compiledProduct->category_id])) {
-                if (isset($productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value])) {
-                    $productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value] += 1;
+            // Register production costs
+            if ($compiledProduct->production_cost_value > 0) {
+                if (isset($productionCosts[$compiledProduct->category_id])) {
+                    if (isset($productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value])) {
+                        $productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value] += 1;
+                    } else {
+                        $productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value] = 1;
+                    }
                 } else {
-                    $productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value] = 1;
+                    $productionCosts[$compiledProduct->category_id] = [$compiledProduct->production_cost_value => 1];
                 }
-            } else {
-                $productionCosts[$compiledProduct->category_id] = [$compiledProduct->production_cost_value => 1];
             }
         }
 
@@ -158,7 +160,7 @@ class SendContractFlightJob implements ShouldQueue {
                                                 ->findMany(array_keys($productionCosts));
         $productionLines       = [];
         $flightStartPlusOneDay = Carbon::createFromFormat("Y-m-d", $this->flight->start_date)->addDay()->toDateString();
-        
+
         // Build the productions costs' lines
         foreach ($productCategories as $productCategory) {
             /** @var int|Optional $productionProductId */

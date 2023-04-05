@@ -51,7 +51,11 @@ class SendContractJob implements ShouldQueue {
 
         // Clean up contract before insert if requested
         if ($this->clearOnSend) {
-            $this->cleanupContract($client);
+            $cleanupMessages = $this->cleanupContract($client);
+
+            if (count($cleanupMessages) > 0) {
+                $messages["_General_"] = $cleanupMessages;
+            }
         }
 
         $flightsDescriptions = [];
@@ -61,7 +65,9 @@ class SendContractJob implements ShouldQueue {
         foreach ($this->plan->flights as $flightIndex => $flight) {
             $flightMessages = (new SendContractFlightJob($this->contract, $flight, $flightIndex))->handle();
 
-            $messages[$flight->getFlightName($flightIndex)] = $flightMessages;
+            if (count($flightMessages) > 0) {
+                $messages[$flight->getFlightName($flightIndex)] = $flightMessages;
+            }
 
             $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
         }
@@ -84,7 +90,9 @@ class SendContractJob implements ShouldQueue {
         return $messages;
     }
 
-    protected function cleanupContract($client): void {
+    protected function cleanupContract($client): array {
+        $messages = [];
+
         // Remove all order lines from the contract
         $response = OrderLine::delete($client, [
             ["order_id", "=", $this->contract->id],
@@ -92,6 +100,7 @@ class SendContractJob implements ShouldQueue {
 
         if ($response !== true) {
             Log::debug("Error when deleting order lines on contract " . $this->contract->name, [$response]);
+            $messages[] = "Error when deleting order lines on contract " . $this->contract->name . ": " . json_encode($response);
         }
 
         // Remove all flights from the contract
@@ -101,7 +110,10 @@ class SendContractJob implements ShouldQueue {
 
         if ($response !== true) {
             Log::debug("Error when deleting flight lines on contract " . $this->contract->name, [$response]);
+            $messages[] = "Error when deleting flight lines on contract " . $this->contract->name . ": " . json_encode($response);
         }
+
+        return $messages;
     }
 
     /**

@@ -264,7 +264,7 @@ class SendContractFlightJob implements ShouldQueue {
                               "product_uom_qty" => $compiledProduct->spots,
                               "customer_lead"   => 0.0,
                               "nb_screen"       => $linkedProduct->quantity,
-                              "product_id"      => $linkedProductExternalRepresentation->context["variant_id"],
+                              "product_id"      => $linkedProductExternalRepresentation->context->variant_id,
                               "rental_start"    => $this->flight->start_date,
                               "rental_end"      => $this->flight->end_date,
                               "is_rental_line"  => 1,

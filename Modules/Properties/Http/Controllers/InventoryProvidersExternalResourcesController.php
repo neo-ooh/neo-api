@@ -72,6 +72,7 @@ class InventoryProvidersExternalResourcesController extends Controller {
                         external_id: $resource->resourceId,
                     )
                 );
+                break;
             case "product":
                 $type = "product";
 
@@ -97,7 +98,7 @@ class InventoryProvidersExternalResourcesController extends Controller {
                                                                                    inventory_id: $inventoryProvider->getKey(),
                                                                                    external_id : $representation->external_id,
                                                                                    type        : $representation->type,
-                                                                                   context     : $representation->context
+                                                                                   context     : $representation->context->toArray()
                                                                                )))->map(
                     fn(IdentifiableProduct $resource) => new InventoryExternalResource(
                         type       : "property",

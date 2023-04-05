@@ -11,9 +11,8 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Properties\Models\InventoryProvider;
-use Neo\Modules\Properties\Services\InventoryAdapterFactory;
-use Neo\Modules\Properties\Services\Odoo\Models\Product;
+use Neo\Services\Odoo\Models\Contract;
+use Neo\Services\Odoo\OdooConfig;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -23,13 +22,24 @@ class TestCommand extends Command {
     /**
      */
     public function handle() {
-        $inventory = InventoryProvider::find(1);
-        $odoo      = InventoryAdapterFactory::make($inventory);
+//        $inventory = InventoryProvider::find(1);
+//        $odoo      = InventoryAdapterFactory::make($inventory);
 
-        $product = Product::search($odoo->getConfig()->getClient(), [
-            ["default_code", "=", "Production"],
-        ])->toArray();
+//        /** @var OdooClient $client */
+        $client = OdooConfig::fromConfig()->getClient();
 
-        dump($product);
+//        dump(Contract::get($client, 3042)->toArray());
+        $time_start = microtime(true);
+        dump($client->client->call(Contract::$slug, "action_del_lines", [[3042]])->toArray());
+
+        $time_end       = microtime(true);
+        $execution_time = ($time_end - $time_start) / 60;
+        dump($execution_time);
+
+//        $product = Product::search($odoo->getConfig()->getClient(), [
+//            ["default_code", "=", "Production"],
+//        ])->toArray();
+//
+//        dump($product);
     }
 }

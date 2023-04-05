@@ -159,4 +159,15 @@ class OdooClient {
 
         return $response;
     }
+
+    public function custom(string $model, string $method, array $arguments) {
+        $event = uniqid('', true);
+        clock()->event("[Odoo] $method@$model")->name($event)->color("cyan")->begin();
+
+        $response = $this->client->call($model, $method, [$arguments]);
+
+        clock()->event($event)->end();
+
+        return $response;
+    }
 }

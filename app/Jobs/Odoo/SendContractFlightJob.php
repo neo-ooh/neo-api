@@ -148,10 +148,10 @@ class SendContractFlightJob implements ShouldQueue {
         }
 
         $linesBatch = $orderLinesToAdd->chunk(100);
-
         // Creates all the lines
         foreach ($linesBatch as $batch) {
             OrderLine::createMany($client, $batch->toArray());
+            clock($batch->count());
         }
 
         // Add the production costs

@@ -25,7 +25,6 @@ use Neo\Modules\Properties\Services\Odoo\API\OdooClient;
 use Neo\Modules\Properties\Services\Odoo\Models\Campaign;
 use Neo\Modules\Properties\Services\Odoo\Models\Contract;
 use Neo\Modules\Properties\Services\Odoo\Models\Message;
-use Neo\Modules\Properties\Services\Odoo\Models\OrderLine;
 use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
 use Neo\Resources\Contracts\CPCompiledFlight;
 use Neo\Resources\Contracts\CPCompiledPlan;
@@ -51,7 +50,7 @@ class SendContractJob implements ShouldQueue {
 
         // Clean up contract before insert if requested
         if ($this->clearOnSend) {
-            $cleanupMessages = $this->cleanupContract($client);
+            $cleanupMessages = $this->cleanupContract($client, $this->contract);
 
             if (count($cleanupMessages) > 0) {
                 $messages["_General_"] = $cleanupMessages;
@@ -90,18 +89,11 @@ class SendContractJob implements ShouldQueue {
         return $messages;
     }
 
-    protected function cleanupContract($client): array {
+    protected function cleanupContract(OdooClient $client, Contract $contract): array {
         $messages = [];
 
         // Remove all order lines from the contract
-        $response = OrderLine::delete($client, [
-            ["order_id", "=", $this->contract->id],
-        ]);
-
-        if ($response !== true) {
-            Log::debug("Error when deleting order lines on contract " . $this->contract->name, [$response]);
-            $messages[] = "Error when deleting order lines on contract " . $this->contract->name . ": " . json_encode($response);
-        }
+        $contract->clearLines();
 
         // Remove all flights from the contract
         $response = Campaign::delete($client, [

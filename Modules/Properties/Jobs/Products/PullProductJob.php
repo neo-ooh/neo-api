@@ -40,9 +40,15 @@ use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 
 class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProcessing {
+    /**
+     * @param int                      $resourceID Inventory Resource id of the product
+     * @param int                      $inventoryID
+     * @param IdentifiableProduct|null $externalProduct
+     */
     public function __construct(
-        private readonly int $resourceID,
-        private readonly int $inventoryID
+        private readonly int                      $resourceID,
+        private readonly int                      $inventoryID,
+        private readonly IdentifiableProduct|null $externalProduct = null,
     ) {
         parent::__construct(InventoryJobType::Pull, $this->resourceID, $this->inventoryID);
     }
@@ -94,9 +100,9 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             throw new UnsupportedInventoryFunctionalityException($this->inventoryID, InventoryCapability::ProductsRead);
         }
 
-        // Get the product from the external inventory
+        // Get the product from the external inventory. If an external product was provided when dispatching the job, use that instead
         /** @var IdentifiableProduct $externalProduct */
-        $externalProduct = $inventory->getProduct($productExternalRepresentation->toInventoryResourceId());
+        $externalProduct = $this->externalProduct ?? $inventory->getProduct($productExternalRepresentation->toInventoryResourceId());
 
         // If the product has a property_id, and the property already has one for this inventory, we make sure they match.
         /** @var InventoryResourceId|null $propertyExternalId */

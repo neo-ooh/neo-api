@@ -19,22 +19,35 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
 use Neo\Modules\Properties\Jobs\Products\PushProductJob;
+use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\Property;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use Symfony\Component\Console\Output\Output;
 
 class PushFullInventoryJob implements ShouldQueue {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    protected Output|null $output = null;
+
     public function __construct(protected int $inventoryId) {
+        if (App::runningInConsole()) {
+            $this->output = new ConsoleOutput();
+        }
     }
 
     public function handle(): void {
         // We need to list all the products that require synchronization.
         // Those are products without any settings set for this inventory whose property has settings enabling them for a push on this inventory
-        // plus products with settings enabling them for push on this inventory.
+        // plus products with settings enabling them for push on this inventory. In any case, the product `updated_at` field should be set to a datetime after the last pull of the inventory
         // We list products for both situation, dedup, and run the regular push job on them.
+
+
+        $provider  = InventoryProvider::query()->findOrFail($this->inventoryId);
+        $inventory = $provider->getAdapter();
+
+        $this->output?->writeln("List properties and products push-enabled...");
 
         // Products enabled through their property
         $properties = Property::query()->whereHas("inventories_settings", function (Builder $query) {
@@ -63,7 +76,7 @@ class PushFullInventoryJob implements ShouldQueue {
                               $query->where("inventory_id", "=", $this->inventoryId)
                                     ->withoutTrashed();
                           })
-//                          ->where("updated_at", ">", Carbon::now()->subDays(3))
+                          ->when($provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
                           ->get()
             );
         }
@@ -79,17 +92,19 @@ class PushFullInventoryJob implements ShouldQueue {
                           $query->where("inventory_id", "=", $this->inventoryId)
                                 ->withoutTrashed();
                       })
-//                      ->where("updated_at", ">", Carbon::now()->subDays(3))
+                      ->when($provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
                       ->get()
         );
 
         $products = $products->unique();
-
         $products->load("property");
 
+        $this->output?->writeln("Listed {$products->count()} products");
+
+        $progress = null;
+
         if (App::runningInConsole()) {
-            $output   = new ConsoleOutput();
-            $progress = new ProgressBar($output, $products->count());
+            $progress = new ProgressBar($this->output->section(), $products->count());
             $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
             $progress->setMessage("");
             $progress->start();

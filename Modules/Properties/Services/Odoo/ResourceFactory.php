@@ -41,6 +41,7 @@ class ResourceFactory {
                             name               : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: trim($product->name))]),
                             type               : $product->getType(),
                             category_id        : new InventoryResourceId(inventory_id: $config->inventoryID, external_id: $product->categ_id[0], type: InventoryResourceType::ProductCategory, context: []),
+                            is_sellable        : $product->active,
                             is_bonus           : $product->bonus,
                             linked_product_id  : $product->linked_product_id ? new InventoryResourceId(
                                                      inventory_id: $config->inventoryID,

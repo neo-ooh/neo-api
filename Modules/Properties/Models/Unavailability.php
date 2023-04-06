@@ -52,6 +52,10 @@ class Unavailability extends Model {
         "end_date",
     ];
 
+    protected $touches = [
+        "properties",
+        "products",
+    ];
 
     public function getPublicRelations(): array {
         return [

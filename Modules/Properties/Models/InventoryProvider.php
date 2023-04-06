@@ -21,6 +21,7 @@ use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Properties\Models\StructuredColumns\InventoryProviderSettings;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
+use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
 use Neo\Modules\Properties\Services\InventoryCapability;
 use Neo\Modules\Properties\Services\InventoryType;
@@ -35,6 +36,8 @@ use function Ramsey\Uuid\v4;
  * @property bool                      $auto_pull
  * @property bool                      $auto_push
  * @property InventoryProviderSettings $settings
+ * @property Carbon|null               $last_pull_at
+ * @property Carbon|null               $last_push_at
  *
  * @property Carbon                    $created_at
  * @property int                       $created_by
@@ -62,11 +65,13 @@ class InventoryProvider extends Model {
     ];
 
     protected $casts = [
-        "provider"  => InventoryType::class,
-        "is_active" => "bool",
-        "auto_pull" => "bool",
-        "auto_push" => "bool",
-        "settings"  => InventoryProviderSettings::class,
+        "provider"     => InventoryType::class,
+        "is_active"    => "bool",
+        "auto_pull"    => "bool",
+        "auto_push"    => "bool",
+        "settings"     => InventoryProviderSettings::class,
+        "last_pull_at" => "datetime",
+        "last_push_at" => "datetime",
     ];
 
     protected $hidden = [
@@ -103,6 +108,15 @@ class InventoryProvider extends Model {
      */
     public function getCapabilitiesAttribute() {
         return InventoryAdapterFactory::make($this)->getCapabilities();
+    }
+
+    /**
+     * Make and return the adapter for this inventory
+     *
+     * @throws InvalidInventoryAdapterException
+     */
+    public function getAdapter(): InventoryAdapter {
+        return InventoryAdapterFactory::make($this);
     }
 
     public function clearCache() {

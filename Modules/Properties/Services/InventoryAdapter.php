@@ -179,7 +179,7 @@ abstract class InventoryAdapter {
      * List the products of a specific property
      *
      * @param InventoryResourceId $property
-     * @return Traversable
+     * @return Traversable<IdentifiableProduct>
      * @throws InventoryResourceNotFound
      */
     public function listPropertyProducts(InventoryResourceId $property): Traversable {

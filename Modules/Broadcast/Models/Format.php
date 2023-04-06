@@ -1,11 +1,11 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - DisplayType.php
+ * @neo/api - Format.php
  */
 
 namespace Neo\Modules\Broadcast\Models;
@@ -16,8 +16,11 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Models\ProductCategory;
 
 /**
  * Neo\Models\Formats
@@ -67,6 +70,12 @@ class Format extends Model {
         "name",
         "content_length",
     ];
+
+    protected $touches = [
+        "products",
+        "products_categories",
+    ];
+
 
     protected array $publicRelations = [
         "display_types"       => "display_types",
@@ -138,5 +147,19 @@ class Format extends Model {
      */
     public function loop_configurations(): BelongsToMany {
         return $this->belongsToMany(LoopConfiguration::class, 'format_loop_configurations', 'format_id', 'loop_configuration_id');
+    }
+
+    /**
+     * @return HasMany<ProductCategory>
+     */
+    public function products_categories(): HasMany {
+        return $this->hasMany(ProductCategory::class, "format_id", "id");
+    }
+
+    /**
+     * @return HasMany<LoopConfiguration>
+     */
+    public function product(): HasMany {
+        return $this->hasMany(Product::class, "format_id", "id");
     }
 }

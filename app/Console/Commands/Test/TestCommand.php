@@ -11,12 +11,9 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Properties\Models\ExternalInventoryResource;
-use Neo\Modules\Properties\Models\InventoryProvider;
-use Neo\Modules\Properties\Models\Property;
-use Neo\Modules\Properties\Services\InventoryAdapterFactory;
-use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
-use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
+use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
+use Neo\Modules\Properties\Jobs\PullFullInventoryJob;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -24,18 +21,11 @@ class TestCommand extends Command {
     protected $description = 'Internal tests';
 
     /**
+     * @return void
+     * @throws UnsupportedInventoryFunctionalityException
+     * @throws InvalidInventoryAdapterException
      */
     public function handle() {
-        $inventory = InventoryProvider::find(1);
-        /** @var OdooAdapter $odoo */
-        $odoo = InventoryAdapterFactory::make($inventory);
-
-        $property = Property::query()->find(1080);
-        /** @var ExternalInventoryResource $representation */
-        $representation = $property->external_representations->firstWhere("inventory_id", "=", $odoo->getInventoryID());
-
-        dump(collect($odoo->listPropertyProducts($representation->toInventoryResourceId()))
-                 ->map(fn(IdentifiableProduct $p) => [$p->product->name[0]->value, $p->resourceId->external_id])
-                 ->toArray());
+        (new PullFullInventoryJob(1))->handle();
     }
 }

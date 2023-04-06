@@ -41,6 +41,7 @@ class ResourceFactory {
                             name               : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: trim($unit->name))]),
                             type               : ProductType::Digital,
                             category_id        : null,
+                            is_sellable        : $unit->active,
                             is_bonus           : false,
                             linked_product_id  : null,
                             quantity           : 1,

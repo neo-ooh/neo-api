@@ -50,6 +50,9 @@ class Pricelist extends Model {
         "products_pricings",
     ];
 
+    protected $touches = [
+        "properties",
+    ];
 
     public function resolveChildRouteBinding($childType, $value, $field) {
         return match ($childType) {

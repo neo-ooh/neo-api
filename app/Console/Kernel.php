@@ -14,6 +14,7 @@ use DateTimeZone;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Neo\Console\Commands\PullPropertyTraffic;
+use Neo\Console\Commands\Test\TestCommand;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
 use Neo\Jobs\Contracts\RefreshContracts;
 use Neo\Jobs\RequestScreenshotsBursts;
@@ -31,6 +32,8 @@ class Kernel extends ConsoleKernel {
      * @var array
      */
     protected $commands = [
+        TestCommand::class,
+
         // contracts:update
         RefreshContracts::class,
 

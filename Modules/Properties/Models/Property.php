@@ -131,7 +131,7 @@ class Property extends SecuredModel {
     public $with = [
         "actor:id,name",
     ];
-
+    
     protected $touches = [
         "products",
     ];

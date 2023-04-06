@@ -63,7 +63,6 @@ class OdooAdapter extends InventoryAdapter {
         $cursor   = 0;
 
         do {
-            dump("loading $cursor -> " . $cursor + $pageSize);
             $products = Product::all(
                 client : $client,
                 filters: $filters,
@@ -151,6 +150,7 @@ class OdooAdapter extends InventoryAdapter {
             ProductType::Static    => 2,
             ProductType::Specialty => 3,
         };
+        $product->active            = $productResource->is_sellable;
         $product->categ_id          = $productResource->category_id->external_id;
         $product->bonus             = $productResource->is_bonus;
         $product->linked_product_id = $productResource->linked_product_id?->external_id;

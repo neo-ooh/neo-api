@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -53,12 +53,13 @@ class LoopConfiguration extends Model {
         "end_date",
     ];
 
-    public function formats(): BelongsToMany {
-        return $this->belongsToMany(ProductCategory::class, "products_categories_loop_configurations", "loop_configuration_id", "product_category_id");
-    }
+    protected $touches = [
+        "formats",
+        "products",
+    ];
 
-    public function products(): BelongsToMany {
-        return $this->belongsToMany(Product::class, "products_loop_configurations", "loop_configuration_id", "product_id");
+    public function formats(): BelongsToMany {
+        return $this->belongsToMany(Format::class, "format_loop_configurations", "loop_configuration_id", "format_id");
     }
 
     /**

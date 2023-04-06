@@ -37,6 +37,11 @@ class ProductResource extends InventoryResource {
         public InventoryResourceId|null $category_id,
 
         /**
+         * @var bool Tell if the product is sellable
+         */
+        public bool                     $is_sellable,
+
+        /**
          * @var bool Tell if the product is a bonus product.
          */
         public bool                     $is_bonus,

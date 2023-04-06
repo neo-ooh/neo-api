@@ -22,6 +22,7 @@ use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 /**
  * @property InventoryResourceType                 $inventoryResourceType
  * @property Collection<ExternalInventoryResource> $external_representations
+ * @property Collection<ResourceInventorySettings> $inventories_settings
  * @mixin Model
  */
 trait InventoryResourceModel {

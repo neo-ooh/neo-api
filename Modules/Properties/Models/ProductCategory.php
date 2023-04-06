@@ -79,6 +79,10 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
 
     public InventoryResourceType $inventoryResourceType = InventoryResourceType::ProductCategory;
 
+    public $touches = [
+        "products",
+    ];
+
     public function getPublicRelations() {
         return [
             "properties"          => "load:properties",

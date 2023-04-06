@@ -17,16 +17,33 @@ use Neo\Modules\Properties\Http\Requests\InventoryResourcesExternalRepresentatio
 use Neo\Modules\Properties\Http\Requests\InventoryResourcesExternalRepresentations\UpdateExternalRepresentationRequest;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryResource;
+use Neo\Modules\Properties\Models\ResourceInventorySettings;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 
 class InventoryResourcesExternalRepresentationsController extends Controller {
     public function store(StoreExternalRepresentationRequest $request, InventoryResource $inventoryResource): Response {
+        $inventoryId = $request->input("inventory_id");
+
         $externalRepresentation               = new ExternalInventoryResource();
         $externalRepresentation->resource_id  = $inventoryResource->getKey();
-        $externalRepresentation->inventory_id = $request->input("inventory_id");
+        $externalRepresentation->inventory_id = $inventoryId;
         $externalRepresentation->type         = $inventoryResource->type;
         $externalRepresentation->external_id  = $request->input("external_id");
         $externalRepresentation->context      = $request->input("context", []);
         $externalRepresentation->save();
+
+        if ($inventoryResource->inventories_settings->doesntContain("inventory_id", "=", $request->input("inventory_id"))
+            && $inventoryResource->type === InventoryResourceType::Property) {
+            ResourceInventorySettings::query()->insert([
+                                                           "resource_id"          => $inventoryResource->id,
+                                                           "inventory_id"         => $inventoryId,
+                                                           "is_enabled"           => true,
+                                                           "push_enabled"         => true,
+                                                           "pull_enabled"         => true,
+                                                           "auto_import_products" => true,
+                                                           "settings"             => json_encode([]),
+                                                       ]);
+        }
 
         return new Response($externalRepresentation, 201);
     }

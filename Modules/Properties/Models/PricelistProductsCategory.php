@@ -40,7 +40,15 @@ class PricelistProductsCategory extends Pivot {
         "max",
     ];
 
+    protected $touches = [
+        "product_category",
+    ];
+
     public function getRouteKeyName() {
         return "products_category_id";
+    }
+
+    public function product_category() {
+        return $this->hasOne(ProductCategory::class, "id", "products_category_id");
     }
 }

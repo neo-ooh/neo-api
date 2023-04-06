@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
@@ -40,6 +41,11 @@ class Attachment extends Model {
         "url",
     ];
 
+    protected $touches = [
+        "products",
+        "products_categories",
+    ];
+
     public static function boot() {
         parent::boot();
 
@@ -50,7 +56,21 @@ class Attachment extends Model {
 
     /*
     |--------------------------------------------------------------------------
-    | Screenshot
+    | Relations
+    |--------------------------------------------------------------------------
+    */
+
+    public function products(): BelongsToMany {
+        return $this->belongsToMany(Product::class, "products_attachments", "attachment_id", "product_id");
+    }
+
+    public function products_categories(): BelongsToMany {
+        return $this->belongsToMany(ProductCategory::class, "products_categories_attachments", "attachment_id", "product_category_id");
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | File
     |--------------------------------------------------------------------------
     */
 

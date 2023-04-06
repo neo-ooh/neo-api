@@ -32,17 +32,22 @@ class ImportProductJob implements ShouldQueue {
         /**
          * The inventory on which we are working
          */
-        private readonly int                 $inventoryID,
+        private readonly int                      $inventoryID,
 
         /**
          * @var int Connect property ID to which the product will be added
          */
-        private readonly int                 $propertyID,
+        private readonly int                      $propertyID,
 
         /**
          * @var int External ID of the about-to-be-created product
          */
-        private readonly InventoryResourceId $externalProductId,
+        private readonly InventoryResourceId      $externalProductId,
+
+        /**
+         * @var IdentifiableProduct|null The external product to import. If not provided, it will be pulled
+         */
+        private readonly IdentifiableProduct|null $externalProduct = null,
     ) {
     }
 
@@ -63,9 +68,9 @@ class ImportProductJob implements ShouldQueue {
             throw new UnsupportedInventoryFunctionalityException($this->inventoryID, InventoryCapability::ProductsRead);
         }
 
-        // Get the product from the external inventory
+        // Get the product from the external inventory, if one is already provided, use it instead
         /** @var IdentifiableProduct $externalProduct */
-        $externalProduct = $inventory->getProduct($this->externalProductId);
+        $externalProduct = $this->externalProduct ?? $inventory->getProduct($this->externalProductId);
 
         // Insert the product with the bare minimum, we'll use a `PullProduct` job to do the rest
         $product              = new Product();

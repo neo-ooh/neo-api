@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Neo\Modules\Properties\Enums\PriceType;
 
@@ -43,7 +44,18 @@ class PricelistProduct extends Pivot {
         "max",
     ];
 
+    protected $touches = [
+        "product",
+    ];
+
     public function getRouteKeyName() {
         return "product_id";
+    }
+
+    /**
+     * @return HasOne<Product>
+     */
+    public function product() {
+        return $this->hasOne(Product::class, "id", "product_id");
     }
 }

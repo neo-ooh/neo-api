@@ -180,6 +180,13 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 
     /*
     |--------------------------------------------------------------------------
+    | Accessors
+    |--------------------------------------------------------------------------
+    */
+
+
+    /*
+    |--------------------------------------------------------------------------
     | Impressions Models
     |--------------------------------------------------------------------------
     */
@@ -281,6 +288,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
                                                              ]),
             type               : $this->category->type,
             category_id        : $categoryId?->toInventoryResourceId(),
+            is_sellable        : $this->is_sellable,
             is_bonus           : $this->is_bonus,
             linked_product_id  : $linkedProductId?->toInventoryResourceId(),
             quantity           : $this->quantity,

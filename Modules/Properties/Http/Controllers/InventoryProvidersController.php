@@ -46,6 +46,9 @@ class InventoryProvidersController extends Controller {
                 $provider->settings->database     = $request->input("database");
                 break;
             case InventoryType::Hivestack:
+                $provider->settings->api_url = $request->input("api_url");
+                $provider->settings->api_key = $request->input("api_key");
+                break;
             case InventoryType::Vistar:
             case InventoryType::Atedra:
             case InventoryType::Reach:
@@ -63,18 +66,24 @@ class InventoryProvidersController extends Controller {
     public function update(UpdateInventoryRequest $request, InventoryProvider $inventoryProvider) {
         $inventoryProvider->name = $request->input("name");
 
-        $inventoryProvider->is_active = $request->input("is_active");
-        $inventoryProvider->auto_pull = $request->input('auto_pull');
-        $inventoryProvider->auto_push = $request->input('auto_push');
+        $inventoryProvider->is_active  = $request->input("is_active");
+        $inventoryProvider->allow_pull = $request->input('allow_pull');
+        $inventoryProvider->auto_pull  = $request->input('auto_pull');
+        $inventoryProvider->allow_push = $request->input('allow_push');
+        $inventoryProvider->auto_push  = $request->input('auto_push');
 
         switch ($inventoryProvider->provider) {
             case InventoryType::Odoo:
                 $inventoryProvider->settings->api_url      = $request->input("api_url");
-                $inventoryProvider->settings->api_key      = $request->input("api_key");
+                $inventoryProvider->settings->api_key      = $request->input("api_key", $inventoryProvider->settings->api_key);
                 $inventoryProvider->settings->api_username = $request->input("api_username");
                 $inventoryProvider->settings->database     = $request->input("database");
                 break;
             case InventoryType::Hivestack:
+                $inventoryProvider->settings->api_url  = $request->input("api_url");
+                $inventoryProvider->settings->api_key  = $request->input("api_key", $inventoryProvider->settings->api_key);
+                $inventoryProvider->settings->networks = $request->input("networks");
+                break;
             case InventoryType::Vistar:
             case InventoryType::Atedra:
             case InventoryType::Reach:

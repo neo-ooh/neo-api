@@ -42,6 +42,7 @@ class ProductsController {
     }
 
     public function update(UpdateProductRequest $request, Product $product) {
+        $product->is_sellable         = $request->input("is_sellable");
         $product->format_id           = $request->input("format_id");
         $product->allowed_media_types = $request->has("allowed_media_types")
             ? array_map(static fn(string $scope) => MediaType::from($scope), $request->input("allowed_media_types", []))

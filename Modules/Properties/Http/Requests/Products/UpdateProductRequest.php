@@ -22,6 +22,7 @@ use Neo\Rules\PublicRelations;
 class UpdateProductRequest extends FormRequest {
     public function rules(): array {
         return [
+            "is_sellable"           => ["required", "boolean"],
             "format_id"             => ["nullable", "integer", new Exists(Format::class, "id")],
             "allows_audio"          => ["nullable", "boolean"],
             "allowed_media_types"   => ["array"],

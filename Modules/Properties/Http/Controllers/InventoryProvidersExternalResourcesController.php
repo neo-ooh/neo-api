@@ -21,7 +21,6 @@ use Neo\Modules\Properties\Resources\InventoryExternalResource;
 use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
 use Neo\Modules\Properties\Services\InventoryCapability;
-use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 use Neo\Modules\Properties\Services\Resources\PropertyResource;
@@ -52,60 +51,47 @@ class InventoryProvidersExternalResourcesController extends Controller {
                     )
                 );
                 break;
-            case "property-product":
-                $type = "product";
-
-                // Does this inventory supports properties ?
-                if (!$inventory->hasCapability(InventoryCapability::PropertiesRead)) {
-                    return new Response([]);
-                }
-
-                $resources = Collection::make($inventory->listPropertyProducts(new InventoryResourceId(
-                                                                                   inventory_id: $inventoryProvider->getKey(),
-                                                                                   external_id : $request->input("property_id"),
-                                                                                   type        : InventoryResourceType::Property,
-                                                                                   context     : []
-                                                                               )))->map(
-                    fn(IdentifiableProduct $resource) => new InventoryExternalResource(
-                        type       : "property",
-                        name       : $resource->product->name[0]->value,
-                        external_id: $resource->resourceId,
-                    )
-                );
-                break;
             case "product":
                 $type = "product";
 
                 // Does this inventory supports properties ?
                 if (!$inventory->hasCapability(InventoryCapability::PropertiesRead)) {
-                    return new Response([]);
+                    // Get the property id for this inventory
+                    /** @var Property $property */
+                    $property = Property::query()
+                                        ->where("inventory_resource_id", "=", $request->input("property_id"))
+                                        ->firstOrFail();
+                    /** @var ExternalInventoryResource|null $representation */
+                    $representation = $property->external_representations()
+                                               ->where("inventory_id", "=", $inventory->getInventoryID())
+                                               ->withoutTrashed()
+                                               ->first();
+
+                    if (!$representation) {
+                        return new Response([]);
+                    }
+
+                    $resources = Collection::make($inventory->listPropertyProducts(new InventoryResourceId(
+                                                                                       inventory_id: $inventoryProvider->getKey(),
+                                                                                       external_id : $representation->external_id,
+                                                                                       type        : $representation->type,
+                                                                                       context     : $representation->context->toArray()
+                                                                                   )))->map(
+                        fn(IdentifiableProduct $resource) => new InventoryExternalResource(
+                            type       : "property",
+                            name       : $resource->product->name[0]->value,
+                            external_id: $resource->resourceId,
+                        )
+                    );
+                } else {
+                    $resources = Collection::make($inventory->listProducts())->map(
+                        fn(IdentifiableProduct $resource) => new InventoryExternalResource(
+                            type       : "product",
+                            name       : $resource->product->name[0]->value,
+                            external_id: $resource->resourceId,
+                        )
+                    );
                 }
-
-                // Get the property id for this inventory
-                /** @var Property $property */
-                $property = Property::query()->where("inventory_resource_id", "=", $request->input("property_id"))->firstOrFail();
-                /** @var ExternalInventoryResource|null $representation */
-                $representation = $property->external_representations()
-                                           ->where("inventory_id", "=", $inventory->getInventoryID())
-                                           ->withoutTrashed()
-                                           ->first();
-
-                if (!$representation) {
-                    return new Response([]);
-                }
-
-                $resources = Collection::make($inventory->listPropertyProducts(new InventoryResourceId(
-                                                                                   inventory_id: $inventoryProvider->getKey(),
-                                                                                   external_id : $representation->external_id,
-                                                                                   type        : $representation->type,
-                                                                                   context     : $representation->context->toArray()
-                                                                               )))->map(
-                    fn(IdentifiableProduct $resource) => new InventoryExternalResource(
-                        type       : "property",
-                        name       : $resource->product->name[0]->value,
-                        external_id: $resource->resourceId,
-                    )
-                );
         }
 
         if ($request->input("only_not_associated")) {
@@ -114,7 +100,7 @@ class InventoryProvidersExternalResourcesController extends Controller {
                                                     ->where("inventory_id", "=", $inventoryProvider->getKey())
                                                     ->where("type", "=", $type)
                                                     ->pluck("external_id");
-            
+
             $resources = $resources->filter(fn(InventoryExternalResource $resource) => $externalIds->doesntContain(null, $resource->external_id->external_id))
                                    ->values();
         }

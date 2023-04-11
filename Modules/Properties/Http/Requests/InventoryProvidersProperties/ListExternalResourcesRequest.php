@@ -17,9 +17,9 @@ use Neo\Enums\Capability;
 class ListExternalResourcesRequest extends FormRequest {
     public function rules(): array {
         return [
-            "type"                => ["required", "string", "in:property,product,property-product"],
+            "type"                => ["required", "string", "in:property,product"],
             "only_not_associated" => ["boolean"],
-            "property_id"         => ["required_if:type,product,property-product"],
+            "property_id"         => ["required_if:type,product"],
         ];
     }
 

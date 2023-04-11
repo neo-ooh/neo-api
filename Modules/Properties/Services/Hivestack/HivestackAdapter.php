@@ -125,9 +125,9 @@ class HivestackAdapter extends InventoryAdapter {
     }
 
     protected function fillUnit(Unit $unit, ProductResource $product, array $context) {
-        $unit->name            = $product->name[0]->value;
-        $unit->description     = $product->name[0]->value;
         $unit->active          = $product->is_sellable;
+        $unit->name            = $product->property_name . " - " . $product->name[0]->value;
+        $unit->description     = $product->property_name . " - " . $product->name[0]->value;
         $unit->network_id      = $context["network_id"];
         $unit->external_id     = (string)$product->product_connect_id;
         $unit->floor_cpm       = $product->price;

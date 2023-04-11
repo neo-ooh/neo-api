@@ -33,7 +33,9 @@ use function Ramsey\Uuid\v4;
  * @property InventoryType             $provider
  * @property string                    $name
  * @property bool                      $is_active
+ * @property bool                      $allow_pull
  * @property bool                      $auto_pull
+ * @property bool                      $allow_push
  * @property bool                      $auto_push
  * @property InventoryProviderSettings $settings
  * @property Carbon|null               $last_pull_at
@@ -59,7 +61,9 @@ class InventoryProvider extends Model {
         "provider",
         "name",
         "is_active",
+        "allow_pull",
         "auto_pull",
+        "allow_push",
         "auto_push",
         "settings",
     ];
@@ -67,7 +71,9 @@ class InventoryProvider extends Model {
     protected $casts = [
         "provider"     => InventoryType::class,
         "is_active"    => "bool",
+        "allow_pull"   => "bool",
         "auto_pull"    => "bool",
+        "allow_push"   => "bool",
         "auto_push"    => "bool",
         "settings"     => InventoryProviderSettings::class,
         "last_pull_at" => "datetime",
@@ -80,9 +86,12 @@ class InventoryProvider extends Model {
 
     public function getPublicRelations(): array {
         return [
-            "settings"     => new Relation(custom: fn(InventoryProvider $provider) => $provider->makeVisible("settings"), gate: Capability::inventories_edit),
-            "events"       => new Relation(load: "events", gate: Capability::inventories_edit),
             "capabilities" => new Relation(append: "capabilities", gate: Capability::properties_inventories_edit),
+            "events"       => new Relation(load: "events", gate: Capability::inventories_edit),
+            "settings"     => new Relation(
+                custom: fn(InventoryProvider $provider) => $provider->makeVisible("settings")->settings->except("api_key"),
+                gate  : Capability::inventories_edit
+            ),
         ];
     }
 

@@ -22,8 +22,10 @@ class UpdateInventoryRequest extends FormRequest {
             "name"      => ["required", "string", "min:3"],
             "is_active" => ["required", "boolean"],
 
-            "auto_pull" => ["required", "boolean"],
-            "auto_push" => ["required", "boolean"],
+            "allow_pull" => ["required", "boolean"],
+            "auto_pull"  => ["required", "boolean"],
+            "allow_push" => ["required", "boolean"],
+            "auto_push"  => ["required", "boolean"],
 
             ...$this->getInventoryOptions(),
         ];
@@ -39,13 +41,18 @@ class UpdateInventoryRequest extends FormRequest {
 
         return match ($inventory->provider) {
             InventoryType::Odoo      => [
-
                 "api_url"      => ["required", "string"],
-                "api_key"      => ["required", "string"],
+                "api_key"      => ["sometimes", "string"],
                 "api_username" => ["required", "string"],
                 "database"     => ["required", "string"],
             ],
-            InventoryType::Hivestack => [],
+            InventoryType::Hivestack => [
+                "api_url"         => ["required", "string"],
+                "api_key"         => ["sometimes", "string"],
+                "networks"        => ["nullable", "array"],
+                "networks.*.id"   => ["nullable", "string"],
+                "networks.*.name" => ["nullable", "string"],
+            ],
             InventoryType::Reach     => [],
             InventoryType::Vistar    => [],
             InventoryType::Atedra    => [],

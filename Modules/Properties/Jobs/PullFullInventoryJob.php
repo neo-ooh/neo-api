@@ -36,8 +36,8 @@ class PullFullInventoryJob implements ShouldQueue {
 
     protected Output|null $output = null;
 
-    public function __construct(protected int $inventoryId) {
-        if (App::runningInConsole()) {
+    public function __construct(protected int $inventoryId, protected bool $debug = false) {
+        if (App::runningInConsole() && $this->debug) {
             $this->output = new ConsoleOutput();
         }
     }
@@ -123,7 +123,7 @@ class PullFullInventoryJob implements ShouldQueue {
 
         $progress       = null;
         $detailsSection = null;
-        if (App::runningInConsole()) {
+        if (App::runningInConsole() && $this->debug) {
             $progress = new ProgressBar($this->output->section(), $externalProducts->count());
             $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
             $progress->setMessage("");
@@ -134,7 +134,7 @@ class PullFullInventoryJob implements ShouldQueue {
 
         /** @var IdentifiableProduct $externalProduct */
         foreach ($externalProducts as $externalProduct) {
-            if (App::runningInConsole()) {
+            if (App::runningInConsole() && $this->debug) {
                 $detailsSection?->clear();
                 $progress?->advance();
                 $progress?->setMessage($externalProduct->product->name[0]->value);

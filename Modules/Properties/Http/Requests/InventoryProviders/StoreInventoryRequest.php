@@ -43,7 +43,10 @@ class StoreInventoryRequest extends FormRequest {
                 "api_username" => ["required", "string"],
                 "database"     => ["required", "string"],
             ],
-            InventoryType::Hivestack => [],
+            InventoryType::Hivestack => [
+                "api_url" => ["required", "string"],
+                "api_key" => ["required", "string"],
+            ],
             InventoryType::Reach     => [],
             InventoryType::Vistar    => [],
             InventoryType::Atedra    => [],

@@ -33,13 +33,12 @@ class InventoryProviderSettings extends JSONDBColumn {
          * @var string|null Odoo database
          */
         public string|null $database = null,
+
+        /**
+         * @var array<{id: string, name: string}> Hivestack networks
+         */
+        public array|null  $networks = null,
     ) {
 
-    }
-
-    public function excludeProperties(): array {
-        return [
-            "api_key" => true,
-        ];
     }
 }

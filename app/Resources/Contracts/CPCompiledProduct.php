@@ -34,18 +34,19 @@ class CPCompiledProduct extends Data {
         public array|null       $discount,
         public float            $discount_amount,
 
-        public float            $discounted_media_value,
         public float            $price,
         public float            $cpm,
-
-        public string           $production_cost,
-        public float            $production_cost_value,
 
         public bool             $ignore,
         public bool             $force,
         public bool             $filteredOut,
 
-        public array            $filters
+        public array            $filters,
+
+        public float            $discounted_media_value = 0,
+
+        public string           $production_cost = 'off',
+        public float            $production_cost_value = 0,
     ) {
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -161,7 +161,7 @@ class Content extends BroadcastResourceModel {
      * @return BelongsTo
      */
     public function owner(): BelongsTo {
-        return $this->belongsTo(Actor::class, 'owner_id', 'id');
+        return $this->belongsTo(Actor::class, 'owner_id', 'id')->withTrashed();
     }
 
     /**
@@ -170,7 +170,7 @@ class Content extends BroadcastResourceModel {
      * @return BelongsTo
      */
     public function library(): BelongsTo {
-        return $this->belongsTo(Library::class, 'library_id', 'id');
+        return $this->belongsTo(Library::class, 'library_id', 'id')->withTrashed();
     }
 
     /**

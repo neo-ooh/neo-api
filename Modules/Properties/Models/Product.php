@@ -51,7 +51,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int|null                      $format_id
  * @property int                           $quantity
  * @property boolean                       $is_sellable
- * @property int                           $unit_price
+ * @property double                        $unit_price
  * @property boolean                       $is_bonus
  * @property int|null                      $linked_product_id
  * @property MediaType[]                   $allowed_media_types
@@ -251,6 +251,11 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
     }
 
     public function toResource(int $inventoryID): ProductResource {
+        $this->loadMissing([
+                               "property",
+                               "category.format",
+                               "locations",
+                           ]);
         /** @var ExternalInventoryResource|null $propertyId */
         $propertyId = $this->property->external_representations()
                                      ->withoutTrashed()
@@ -316,6 +321,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             weekly_traffic     : $weeklyTraffic,
             product_connect_id : $this->getKey(),
             property_connect_id: $this->property_id,
+            broadcastLocations : $this->locations->map(fn(Location $location) => $location->toInventoryResource())->all(),
         );
     }
 }

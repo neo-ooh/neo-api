@@ -18,6 +18,7 @@ use Neo\Modules\Properties\Services\Hivestack\API\HivestackClient;
 use Neo\Services\API\Endpoint;
 use Neo\Services\API\Traits\HasAttributes;
 use ReflectionClass;
+use Throwable;
 
 abstract class HivestackModel {
     use HasAttributes;
@@ -66,13 +67,17 @@ abstract class HivestackModel {
      * @param HivestackClient $client
      * @param                 $key
      * @return static
-     * @throws GuzzleException
-     * @throws RequestException
      */
-    public static function find(HivestackClient $client, $key) {
+    public static function find(HivestackClient $client, $key): static {
         $model = new static($client);
         $model->setAttribute($model->key, $key);
-        return $model->refresh();
+        try {
+            $model->refresh();
+        } catch (Throwable $e) {
+            clock($e);
+        } finally {
+            return $model;
+        }
     }
 
     /**
@@ -127,6 +132,12 @@ abstract class HivestackModel {
 
         return true;
     }
+
+    public function setKey($value) {
+        $this->setAttribute($this->key, $value);
+        return $this;
+    }
+
 
     public function getKey() {
         return $this->getAttribute($this->key);

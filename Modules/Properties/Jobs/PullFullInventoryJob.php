@@ -137,7 +137,7 @@ class PullFullInventoryJob implements ShouldQueue {
             if (App::runningInConsole() && $this->debug) {
                 $detailsSection?->clear();
                 $progress?->advance();
-                $progress?->setMessage($externalProduct->product->name[0]->value);
+                $progress?->setMessage($externalProduct->product->property_name . " - " . $externalProduct->product->name[0]->value);
             }
 
             // Do we already have a product with the same external ID ?

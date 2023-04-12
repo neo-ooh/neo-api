@@ -145,6 +145,12 @@ class ProductResource extends InventoryResource {
          * @var int|null ID of the property in Connect
          */
         public int|null                 $property_connect_id = null,
+
+        // Broadcast location
+        /**
+         * @var BroadcastLocation[]|null List of broadcast locations associated with the product. Only relevant for `ProductResource`s coming from Connect
+         */
+        public array|null               $broadcastLocations = null
     ) {
 
     }

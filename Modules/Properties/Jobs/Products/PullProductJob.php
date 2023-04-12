@@ -113,9 +113,10 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
 
         // Validate property ids
         if ($inventory->hasCapability(InventoryCapability::PropertiesRead)) {
-            // If the product has a property ID, but the property has not, we make register it.
+            // If the product has a property ID, but the property has not, we register it.
             // If the product doesn't have a property ID but the property has one, that's UB
-            // If the product has a property ID that is different from the one of the property, we cancel the pull
+            // If the product has a property ID that is different from the one of the property we check if another property has the same id:
+            //      if yes, we move the product, if not, we cancel the pull
             if ($propertyExternalId === null && $externalProduct->product->property_id !== null) {
                 $externalRepresentation              = ExternalInventoryResource::fromInventoryResource($externalProduct->product->property_id);
                 $externalRepresentation->resource_id = $property->inventory_resource_id;
@@ -125,7 +126,20 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             if ($propertyExternalId !== null
                 && $externalProduct->product->property_id !== null
                 && $propertyExternalId->external_id !== $externalProduct->product->property_id->external_id) {
-                throw new PropertyIDInconsistencyException($this->resourceID, $this->inventoryID, $externalProduct->product->property_id, $propertyExternalId);
+                // We want to check if another property in Connect matches the id
+                $property = Property::query()
+                                    ->whereHas("external_representations", function (Builder $query) use ($externalProduct) {
+                                        $query->where("inventory_id", "=", $this->inventoryID)
+                                              ->where("external_id", "=", $externalProduct->product->property_id->external_id);
+                                    })
+                                    ->first();
+
+                if ($property) {
+                    // We have a property, move the product
+                    $product->property_id = $property->getKey();
+                } else {
+                    throw new PropertyIDInconsistencyException($this->resourceID, $this->inventoryID, $externalProduct->product->property_id, $propertyExternalId);
+                }
             }
 
         }
@@ -215,6 +229,10 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             $product->linked_product_id = null;
         }
 
+
+        // Property
+        // First we want to make sure, the property ID
+
         $product->save();
 
         // Property Name
@@ -227,6 +245,7 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             $address->line_1 = $externalProduct->product->address->line_1;
             $address->line_2 = $externalProduct->product->address->line_2;
 
+            /** @var City|null $city */
             $city = City::query()
                         ->where("name", "=", $externalProduct->product->address->city->name)
                         ->whereHas("province", fn(Builder $query) => $query->where("slug", "=", $externalProduct->product->address->city->province_slug)

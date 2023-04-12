@@ -15,10 +15,12 @@ use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
 use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
 use Neo\Modules\Properties\Http\Requests\InventoryActions\CreateProductRequest;
+use Neo\Modules\Properties\Http\Requests\InventoryActions\DestroyExternalResourceRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryActions\ImportProductRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryActions\PullInventoryResourceRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryActions\PushInventoryResourceRequest;
 use Neo\Modules\Properties\Jobs\Products\CreateProductJob;
+use Neo\Modules\Properties\Jobs\Products\DestroyProductJob;
 use Neo\Modules\Properties\Jobs\Products\ImportProductJob;
 use Neo\Modules\Properties\Jobs\Products\PullProductJob;
 use Neo\Modules\Properties\Jobs\Products\PushProductJob;
@@ -114,8 +116,20 @@ class InventoryResourcesActionsController extends Controller {
 
         // Import the product synchronously
         $importJob = new ImportProductJob($request->input("inventory_id"), $property->getKey(), $externalID);
-        $product   = $importJob->handle();
+        $importJob->handle();
 
-        return new Response($product);
+        return new Response($importJob->getResult());
+    }
+
+    public function destroy(DestroyExternalResourceRequest $request, InventoryResource $inventoryResource) {
+        if ($inventoryResource->type !== InventoryResourceType::Product) {
+            // We don't delete products
+            return new Response([]);
+        }
+
+        $deleteJob = new DestroyProductJob($inventoryResource->getKey(), $request->input("inventory_id"));
+        $deleteJob->handle();
+
+        return new Response([]);
     }
 }

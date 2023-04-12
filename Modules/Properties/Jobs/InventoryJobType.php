@@ -14,5 +14,7 @@ enum InventoryJobType: string {
     case Pull = "pull";
     case Push = "push";
 
+    case Import = "import";
     case Create = "create";
+    case Destroy = "destroy";
 }

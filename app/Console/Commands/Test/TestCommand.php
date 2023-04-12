@@ -26,6 +26,6 @@ class TestCommand extends Command {
      * @throws InvalidInventoryAdapterException
      */
     public function handle() {
-        (new PullFullInventoryJob(1))->handle();
+        (new PullFullInventoryJob(1, debug: true))->handle();
     }
 }

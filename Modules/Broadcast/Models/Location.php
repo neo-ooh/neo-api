@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -26,6 +26,7 @@ use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Rules\AccessibleLocation;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Services\Resources\BroadcastLocation;
 
 /**
  * Neo\Models\ActorsLocations
@@ -204,6 +205,15 @@ class Location extends SecuredModel {
             broadcaster_id: $this->network->connection_id,
             external_id   : $this->external_id,
             type          : ExternalResourceType::Location,
+        );
+    }
+
+    public function toInventoryResource() {
+        return new BroadcastLocation(
+            provider   : $this->network->broadcaster_connection->broadcaster,
+            id         : $this->getKey(),
+            external_id: $this->toExternalBroadcastIdResource(),
+            name       : $this->name,
         );
     }
 }

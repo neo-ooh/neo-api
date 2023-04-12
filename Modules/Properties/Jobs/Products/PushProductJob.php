@@ -80,10 +80,21 @@ class PushProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
         // Get the product resource
         $productResource = $product->toResource($inventory->getInventoryID());
 
-        $didUpdate = $inventory->updateProduct($productExternalRepresentation->toInventoryResourceId(), $productResource);
+        $result = $inventory->updateProduct($productExternalRepresentation->toInventoryResourceId(), $productResource);
+
+        if (!$result) {
+            return ["updated" => false];
+        }
+
+        $productExternalRepresentation->external_id = $result->external_id;
+        $productExternalRepresentation->context     = $result->context;
+        $productExternalRepresentation->save();
+
+        return [
+            "updated" => $result,
+        ];
 
         // Push is complete
-        return ["updated" => $didUpdate];
     }
 
     /**

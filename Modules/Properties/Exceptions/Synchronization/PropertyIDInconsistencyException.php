@@ -15,6 +15,6 @@ use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 
 class PropertyIDInconsistencyException extends BaseException {
     public function __construct(int $productId, int $inventoryId, InventoryResourceId $productPropertyRepresentation, InventoryResourceId $propertyRepresentation) {
-        parent::__construct("On inventory #$inventoryId, product #$productId property ID is different from the its property representation: $productPropertyRepresentation->external_id vs $propertyRepresentation->external_id", "inventories.property-id-inconsistency");
+        parent::__construct("On inventory #$inventoryId, product #$productId' property_id is different from the its property's representation: $productPropertyRepresentation->external_id vs $propertyRepresentation->external_id", "inventories.property-id-inconsistency");
     }
 }

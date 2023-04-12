@@ -11,11 +11,12 @@
 namespace Neo\Modules\Properties\Jobs\Products;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
+use Neo\Modules\Properties\Jobs\InventoryJobBase;
+use Neo\Modules\Properties\Jobs\InventoryJobType;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
@@ -25,7 +26,7 @@ use Neo\Modules\Properties\Services\InventoryCapability;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 
-class ImportProductJob implements ShouldQueue {
+class ImportProductJob extends InventoryJobBase {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(
@@ -49,6 +50,7 @@ class ImportProductJob implements ShouldQueue {
          */
         private readonly IdentifiableProduct|null $externalProduct = null,
     ) {
+        parent::__construct(InventoryJobType::Import, $this->resourceId, $this->inventoryID);
     }
 
     /**
@@ -56,7 +58,7 @@ class ImportProductJob implements ShouldQueue {
      * @throws InvalidInventoryAdapterException
      * @throws UnsupportedInventoryFunctionalityException
      */
-    public function handle(): Product {
+    protected function run(): Product {
         // Load the inventory provider
         $inventoryProvider = InventoryProvider::findOrFail($this->inventoryID);
 

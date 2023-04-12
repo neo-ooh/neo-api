@@ -162,7 +162,7 @@ class OdooAdapter extends InventoryAdapter {
     /**
      * @inheritDoc
      */
-    public function updateProduct(InventoryResourceId $productId, ProductResource $product): bool {
+    public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
         $client = $this->getConfig()->getClient();
 
         // Odoo supports properties, we need to update both product and property
@@ -175,7 +175,7 @@ class OdooAdapter extends InventoryAdapter {
         $this->fillProduct($odooProduct, $product);
 //        $odooProduct->save();
 
-        return true;
+        return $productId;
     }
 
     /**

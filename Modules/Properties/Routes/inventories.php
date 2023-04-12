@@ -65,6 +65,7 @@ Route::group([
         Route::  post("inventories-resources/{inventoryResource}/_pull", [InventoryResourcesActionsController::class, "pull"]);
         Route::  post("inventories-resources/{inventoryResource}/_create", [InventoryResourcesActionsController::class, "create"]);
         Route::  post("inventories-resources/{inventoryResource}/_import_product", [InventoryResourcesActionsController::class, "importProduct"]);
+        Route::  post("inventories-resources/{inventoryResource}/_delete", [InventoryResourcesActionsController::class, "destroy"]);
 
         /*
         |----------------------------------------------------------------------

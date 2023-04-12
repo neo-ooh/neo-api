@@ -40,4 +40,12 @@ abstract class InventoryJobBase extends Job {
         $this->event->result     = (array)$exception;
         $this->event->save();
     }
+
+    public function successful(): bool {
+        return $this->event->is_success === true;
+    }
+
+    public function getResult(): array {
+        return $this->event->result;
+    }
 }

@@ -26,7 +26,9 @@ use Neo\Modules\Properties\Services\Hivestack\Models\Unit;
 use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryCapability;
 use Neo\Modules\Properties\Services\InventoryConfig;
+use Neo\Modules\Properties\Services\Resources\BroadcastLocation;
 use Neo\Modules\Properties\Services\Resources\DayOperatingHours;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 use Neo\Modules\Properties\Services\Resources\ProductResource;
@@ -117,6 +119,7 @@ class HivestackAdapter extends InventoryAdapter {
     }
 
     protected function fillSite(Site $site, ProductResource $product) {
+        $site->active      = true;
         $site->name        = $product->property_name;
         $site->description = $product->property_name;
         $site->longitude   = $product->geolocation->longitude;
@@ -124,12 +127,12 @@ class HivestackAdapter extends InventoryAdapter {
         $site->external_id = (string)$product->property_connect_id;
     }
 
-    protected function fillUnit(Unit $unit, ProductResource $product, array $context) {
+    protected function fillUnit(Unit $unit, BroadcastLocation $location, ProductResource $product, array $context) {
         $unit->active          = $product->is_sellable;
         $unit->name            = $product->property_name . " - " . $product->name[0]->value;
-        $unit->description     = $product->property_name . " - " . $product->name[0]->value;
+        $unit->description     = $location->name;
         $unit->network_id      = $context["network_id"];
-        $unit->external_id     = (string)$product->product_connect_id;
+        $unit->external_id     = $location->external_id->external_id;
         $unit->floor_cpm       = $product->price;
         $unit->longitude       = $product->geolocation->longitude;
         $unit->latitude        = $product->geolocation->latitude;
@@ -166,22 +169,34 @@ class HivestackAdapter extends InventoryAdapter {
 
         if (!$siteId) {
             // Let's create the property
-            $site         = new Site($client);
-            $site->active = true;
+            $site = new Site($client);
             $this->fillSite($site, $product);
             $site->save();
 
             $siteId = $site->getKey();
         }
 
-        // Create and fill the unit
-        $unit         = new Unit($client);
-        $unit->active = true;
-        $this->fillUnit($unit, $product, $context);
-        $unit->site_id = $siteId;
-        $unit->save();
+        // We create a unit for each broadcast location of the product
+        $unitIds = [];
 
-        return $unit->toInventoryResourceId($this->getInventoryID());
+        foreach ($product->broadcastLocations as $broadcastLocation) {
+            $unit = new Unit($client);
+            $this->fillUnit($unit, $broadcastLocation, $product, $context);
+            $unit->site_id = $siteId;
+            $unit->save();
+
+            $unitIds[$broadcastLocation->id] = $unit->getKey();
+        }
+
+        return new InventoryResourceId(
+            inventory_id: $this->getInventoryID(),
+            external_id : 'MULTIPLE',
+            type        : InventoryResourceType::Product,
+            context     : [
+                              "network_id" => $context["network_id"],
+                              "units"      => $unitIds,
+                          ]
+        );
     }
 
     /**
@@ -189,18 +204,56 @@ class HivestackAdapter extends InventoryAdapter {
      * @throws GuzzleException
      * @throws RequestException
      */
-    public function updateProduct(InventoryResourceId $productId, ProductResource $product): bool {
+    public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
         $client = $this->getConfig()->getClient();
 
-        // Hivestack has support for both products and properties, we therefore need to update both
-        $unit = Unit::find($client, (int)$productId->external_id);
-        $site = Site::find($client, $unit->site_id);
-
+        // Start by updating the site
+        $site = Site::find($client, $product->property_id->external_id) ?? new Site($client);
         $this->fillSite($site, $product);
         $site->save();
 
-        $this->fillUnit($unit, $product, $productId->context);
-        $unit->save();
+        $unitIds = [];
+
+        // For each unit ID in the context, we pull the unit to update it. If the unit does not exist, we create it and update our id/context
+        foreach ($product->broadcastLocations as $broadcastLocation) {
+            if (!isset($productId->context["units"][$broadcastLocation->id])) {
+                // No ID for this location
+                $unit = new Unit($client);
+            } else {
+                $unit = Unit::find($client, $productId->context["units"][$broadcastLocation->id]);
+            }
+
+            $this->fillUnit($unit, $broadcastLocation, $product, $productId->context);
+            $unit->site_id = $site->getKey();
+            $unit->save();
+
+            $unitIds[$broadcastLocation->id] = $unit->getKey();
+        }
+
+        // We now want to compare the list of units we just built against the one we were given.
+        // Any unit listed in the latter but missing in the former will have to be removed
+
+        $unitsToRemove = array_diff(array_values($productId->context["units"]), array_values($unitIds));
+        foreach ($unitsToRemove as $unitToRemove) {
+            $unit = new Unit($client);
+            $unit->setKey($unitToRemove);
+            $unit->delete();
+        }
+
+        $productId->context["units"] = $unitIds;
+
+        return $productId;
+    }
+
+    public function removeProduct(InventoryResourceId $productId): bool {
+        $client = $this->getConfig()->getClient();
+
+        // We have to remove all the units listed in the product's context
+        foreach ($productId->context["units"] as $locationId => $unitId) {
+            $unit = new Unit($client);
+            $unit->setKey($unitId);
+            $unit->delete();
+        }
 
         return true;
     }

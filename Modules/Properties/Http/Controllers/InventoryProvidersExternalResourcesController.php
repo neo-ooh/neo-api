@@ -22,7 +22,6 @@ use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
 use Neo\Modules\Properties\Services\InventoryCapability;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
-use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 use Neo\Modules\Properties\Services\Resources\PropertyResource;
 
 class InventoryProvidersExternalResourcesController extends Controller {
@@ -55,7 +54,7 @@ class InventoryProvidersExternalResourcesController extends Controller {
                 $type = "product";
 
                 // Does this inventory supports properties ?
-                if (!$inventory->hasCapability(InventoryCapability::PropertiesRead)) {
+                if ($inventory->hasCapability(InventoryCapability::PropertiesRead)) {
                     // Get the property id for this inventory
                     /** @var Property $property */
                     $property = Property::query()
@@ -71,18 +70,14 @@ class InventoryProvidersExternalResourcesController extends Controller {
                         return new Response([]);
                     }
 
-                    $resources = Collection::make($inventory->listPropertyProducts(new InventoryResourceId(
-                                                                                       inventory_id: $inventoryProvider->getKey(),
-                                                                                       external_id : $representation->external_id,
-                                                                                       type        : $representation->type,
-                                                                                       context     : $representation->context->toArray()
-                                                                                   )))->map(
-                        fn(IdentifiableProduct $resource) => new InventoryExternalResource(
-                            type       : "property",
-                            name       : $resource->product->name[0]->value,
-                            external_id: $resource->resourceId,
-                        )
-                    );
+                    $resources = Collection::make($inventory->listPropertyProducts($representation->toInventoryResourceId())
+                                                            ->map(
+                                                                fn(IdentifiableProduct $resource) => new InventoryExternalResource(
+                                                                    type       : "property",
+                                                                    name       : $resource->product->name[0]->value,
+                                                                    external_id: $resource->resourceId,
+                                                                )
+                                                            ));
                 } else {
                     $resources = Collection::make($inventory->listProducts())->map(
                         fn(IdentifiableProduct $resource) => new InventoryExternalResource(

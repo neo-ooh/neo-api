@@ -19,6 +19,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Neo\Enums\Capability;
+use Neo\Helpers\Relation;
 use Neo\Models\Actor;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
@@ -126,13 +128,19 @@ class Schedule extends BroadcastResourceModel {
 
     protected string $accessRule = AccessibleSchedule::class;
 
-    protected array $publicRelations = [
-        "contents" => ["contents.creatives", "contents.schedules", "contents.broadcast_tags", "contents.schedule_settings.disabled_formats_ids"],
-        "reviews"  => "reviews",
-        "owner"    => "owner",
-        "tags"     => "broadcast_tags",
-        "campaign" => ["campaign", "campaign.parent:id,name"],
-    ];
+    protected function getPublicRelations(): array {
+        return [
+            "contents"                      => ["contents.creatives", "contents.schedules", "contents.broadcast_tags", "contents.schedule_settings.disabled_formats_ids"],
+            "reviews"                       => "reviews",
+            "owner"                         => "owner",
+            "tags"                          => "broadcast_tags",
+            "campaign"                      => ["campaign", "campaign.parent:id,name"],
+            "external_representation_count" => Relation::make(
+                count: "external_representations",
+                gate : Capability::dev_tools,
+            ),
+        ];
+    }
 
     /*
     |--------------------------------------------------------------------------

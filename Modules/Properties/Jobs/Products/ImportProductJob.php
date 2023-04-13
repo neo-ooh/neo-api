@@ -50,7 +50,7 @@ class ImportProductJob extends InventoryJobBase {
          */
         private readonly IdentifiableProduct|null $externalProduct = null,
     ) {
-        parent::__construct(InventoryJobType::Import, $this->resourceId, $this->inventoryID);
+        parent::__construct(InventoryJobType::Import, 0, $this->inventoryID);
     }
 
     /**
@@ -89,6 +89,8 @@ class ImportProductJob extends InventoryJobBase {
                                                          "external_id"  => $externalProduct->resourceId->external_id,
                                                          "context"      => json_encode($externalProduct->resourceId->context),
                                                      ]);
+
+        $this->resourceId = $product->inventory_resource_id;
 
         // Trigger a pull of the product to load all remaining data
         (new PullProductJob($product->inventory_resource_id, $this->inventoryID))->handle();

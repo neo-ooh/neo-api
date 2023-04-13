@@ -11,6 +11,7 @@
 namespace Neo\Documents\BroadSignAudienceFile;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
 use Neo\Documents\DocumentFormat;
 use Neo\Documents\XLSX\XLSXDocument;
@@ -26,6 +27,7 @@ use Neo\Modules\Broadcast\Services\Resources\Frame;
 use Neo\Modules\Properties\Models\OpeningHours;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\Property;
+use Neo\Modules\Properties\Services\Resources\DayOperatingHours;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Writer\BaseWriter;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
@@ -138,23 +140,41 @@ class BroadSignAudienceFile extends XLSXDocument {
                                 ]);
         }
 
+        // Calculate how many minutes the property is open on each day
+        $openLengthsMinutes = collect();
         /**
-         * How many minutes the property is open on each day
+         * @var Collection<int, DayOperatingHours> Resolved opening hours. Default the 24 hours if missing
          */
-        $openLengthsMinutes = $this->property->opening_hours->mapWithKeys(/**
-         * @param OpeningHours $hours
-         * @return array
-         */ fn(OpeningHours $hours) => [$hours->weekday => $hours->open_at->diffInMinutes($hours->close_at, true)]);
+        $hours = collect();
+
+        for ($weekday = 1; $weekday <= 7; $weekday++) {
+            /** @var OpeningHours $dayHours */
+            $dayHours  = $this->property->opening_hours->firstWhere("day", "===", $weekday);
+            $startTime = ($dayHours ? Carbon::createFromTimeString($dayHours->open_at) : Carbon::createFromTime(0, 0))->startOfMinute();
+            $endTime   = ($dayHours ? Carbon::createFromTimeString($dayHours->close_at) : Carbon::createFromTime(23, 59))->startOfMinute();
+            $endTime->setDateFrom($startTime);
+
+            $hours[$weekday] = new DayOperatingHours(
+                day      : $weekday,
+                is_closed: $dayHours?->is_closed ?? false,
+                start_at : $startTime->format('H:i:s'),
+                end_at   : $endTime->format('H:i:s'),
+            );
+
+            $openLengthsMinutes[$weekday] = $startTime->diffInMinutes($endTime, true);
+        }
 
         // Make sure all the lengths are valid
         if ($openLengthsMinutes->some(fn($length) => $length === 0)) {
             throw new InvalidOpeningHoursException($this->property);
         }
 
+        $openDaysPerWeek = $hours->where("is_closed", "=", false)->count();
+
         // For each week
         do {
             // Get the week traffic
-            $dailyTraffic = floor($this->property->rolling_weekly_traffic[(int)strftime("%W", $datePointer->timestamp)] / 7);
+            $dailyTraffic = floor($this->property->rolling_weekly_traffic[(int)strftime("%W", $datePointer->timestamp)] / $openDaysPerWeek);
 
             // For each day of the week
             for ($i = 0; $i < 7; $i++) {
@@ -187,14 +207,6 @@ class BroadSignAudienceFile extends XLSXDocument {
                 // we divide the number of impressions by the number of display unit for the product
                 $impressionsPerDay /= $this->product->locations_count;
 
-                /** @var OpeningHours|null $hours */
-                $hours = $this->property->opening_hours->firstWhere("weekday", "=", $weekday);
-
-                // If no hours, no calculations
-                if (!$hours) {
-                    continue;
-                }
-
                 /** @var Frame $frame */
                 foreach ($this->frames as $frame) {
                     /**
@@ -223,24 +235,24 @@ class BroadSignAudienceFile extends XLSXDocument {
                                             $frame->external_id,
                                             $date->toDateString(),
                                             $date->clone()->endOfDay()->toDateString(),
-                                            $hours->open_at->startOf('minute')->format('H:m:s'),
-                                            $hours->close_at->endOf('minute')->format('H:m:s'),
-                                            $i === 0 ? 1 : 0, // Monday
-                                            $i === 1 ? 1 : 0, // Tuesday
-                                            $i === 2 ? 1 : 0, // Wednesday
-                                            $i === 3 ? 1 : 0, // Thursday
-                                            $i === 4 ? 1 : 0, // Friday
-                                            $i === 5 ? 1 : 0, // Saturday
-                                            $i === 6 ? 1 : 0, // Sunday
+                                            $hours[$weekday]->start_at,
+                                            $hours[$weekday]->end_at,
+                                            $weekday === 1 ? 1 : 0, // Monday
+                                            $weekday === 2 ? 1 : 0, // Tuesday
+                                            $weekday === 3 ? 1 : 0, // Wednesday
+                                            $weekday === 4 ? 1 : 0, // Thursday
+                                            $weekday === 5 ? 1 : 0, // Friday
+                                            $weekday === 6 ? 1 : 0, // Saturday
+                                            $weekday === 7 ? 1 : 0, // Sunday
                                             $impressionsPerHour,
                                         ]);
 
-                    // We have to set the start and end date explicitly, otherwise PHPSpreadsheet is gonna remove the leading zero fo the opening hours
+                    // We have to set the start and end date explicitly, otherwise PHPSpreadsheet is going to remove the leading zero fo the opening hours
                     $this->ws->setCellValueExplicit([5, $this->ws->getCursorRow() - 1],
-                                                    $hours->open_at->startOf('minute')->format('H:m:s'),
+                                                    $hours[$weekday]->start_at,
                                                     DataType::TYPE_STRING);
                     $this->ws->setCellValueExplicit([6, $this->ws->getCursorRow() - 1],
-                                                    $hours->close_at->endOf('minute')->format('H:m:s'),
+                                                    $hours[$weekday]->end_at,
                                                     DataType::TYPE_STRING);
                 }
             }

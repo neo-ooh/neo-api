@@ -11,8 +11,9 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
+use Neo\Documents\BroadSignAudienceFile\BroadSignAudienceFile;
+use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
-use Neo\Modules\Properties\Jobs\PullFullInventoryJob;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 
 class TestCommand extends Command {
@@ -26,6 +27,8 @@ class TestCommand extends Command {
      * @throws InvalidInventoryAdapterException
      */
     public function handle() {
-        (new PullFullInventoryJob(1, debug: true))->handle();
+//        (new PullFullInventoryJob(1, debug: true))->handle();
+        $file = BroadSignAudienceFile::make(Location::query()->firstWhere("external_id", "=", 387294643));
+        $file->build();
     }
 }

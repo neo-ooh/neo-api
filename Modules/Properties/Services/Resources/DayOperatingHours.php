@@ -18,6 +18,12 @@ class DayOperatingHours extends Data {
          * @var int 1-index day of the week
          */
         public int    $day,
+
+        /**
+         * @var bool Tell if the property is closed on this day. If true, `start_at` and `end_at` properties are irrelevant
+         */
+        public bool   $is_closed,
+
         /**
          * @var string Start operating period time in 24h format - HH:mm:ss
          */
@@ -27,6 +33,7 @@ class DayOperatingHours extends Data {
          * @var string End operating period time in 24h format - HH:mm:ss
          */
         public string $end_at,
+
     ) {
 
     }

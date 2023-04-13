@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -74,7 +74,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @throws CouldNotPromoteResourceException
      */
     protected function run(): array|null {
-        // A schedule has one or more contents which in turn fits in a layout
+        // A schedule has one or more contents which in turn fits in a layout.
         // A layout can be present in multiple formats
         // We list all the formats the schedule's contents' layouts fit in,
         // and only keep the campaign representation that match with this list
@@ -140,7 +140,9 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
             /** @var Format $representationFormat */
             $representationFormat      = Format::query()->find($representation->format_id);
-            $representationMaxDuration = $schedule->campaign->dynamic_duration_override ?: $representationFormat->content_length;
+            $representationMaxDuration = $schedule->campaign->dynamic_duration_override > PHP_FLOAT_EPSILON
+                ? $schedule->campaign->dynamic_duration_override
+                : $representationFormat->content_length;
 
             // Get the external ID for this campaign representation
             /** @var ExternalResource|null $externalCampaignResource */
@@ -191,7 +193,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
             $scheduleResource = $schedule->toResource();
 
             // Complete the schedule resource
-            // If at least one of the content has a set duration, we use the dynamic duration override if available
+            // If at least one of the content has a set duration, we add the proper duration to the resource]\
             if ($schedule->campaign->dynamic_duration_override > PHP_FLOAT_EPSILON && $contents->max("duration") > PHP_FLOAT_EPSILON) {
                 $scheduleResource->duration_msec = (int)round($schedule->campaign->dynamic_duration_override * 1000);
             } else {
@@ -303,7 +305,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
             }
 
             // Finally, attach/sync the creatives with the schedules
-            $this->attachCreativesToSchedules($broadcaster, $updatedExternalResources, $contents);
+            $this->attachContentsToSchedules($broadcaster, $updatedExternalResources, $contents);
         }
 
         // If we are working with all the representations, and no errors occured,
@@ -347,12 +349,12 @@ class PromoteScheduleJob extends BroadcastJobBase {
      * @return void
      * @throws MissingExternalCreativeException
      */
-    public function attachCreativesToSchedules(BroadcasterOperator&BroadcasterScheduling $broadcaster, array $externalRepresentations, Collection $contents): void {
+    public function attachContentsToSchedules(BroadcasterOperator&BroadcasterScheduling $broadcaster, array $externalRepresentations, Collection $contents): void {
         // To create a schedule, we need to make sure all the creatives attached to its content have been imported in the broadcaster
         $creativesExternalIds = [];
 
         foreach ($contents as $content) {
-            // For each creative, we need to check if it exist in the current broadcaster, and if not, import it
+            // For each creative, we need to check if it exists in the current broadcaster, and if not, import it
             $creatives = $content->creatives;
 
             /** @var Creative $creative */

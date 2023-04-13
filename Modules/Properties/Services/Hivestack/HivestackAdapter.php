@@ -213,6 +213,7 @@ class HivestackAdapter extends InventoryAdapter {
         $site->save();
 
         $unitIds = [];
+        clock($site, $productId);
 
         // For each unit ID in the context, we pull the unit to update it. If the unit does not exist, we create it and update our id/context
         foreach ($product->broadcastLocations as $broadcastLocation) {

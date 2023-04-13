@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -217,7 +217,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
         }
 
         if (!$hasErrors) {
-            // No error in script, `$updateResources` holds all the valid external representation for the campaign.
+            // No error in script, `$updatedResources` holds all the valid external representation for the campaign.
             // If there is other representations attached to the campaign, we remove them
             // List campaign representation not in the list of valid ones
             $validRepresentationsIds = collect($updatedResources)->pluck("id");

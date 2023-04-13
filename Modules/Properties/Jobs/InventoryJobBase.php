@@ -22,7 +22,6 @@ abstract class InventoryJobBase extends Job {
 
     protected function beforeRun(): bool {
         $this->event               = new InventoryResourceEvent();
-        $this->event->resource_id  = $this->resourceId;
         $this->event->inventory_id = $this->inventoryId;
         $this->event->event_type   = $this->type;
         $this->event->triggered_at = Carbon::now();
@@ -30,14 +29,16 @@ abstract class InventoryJobBase extends Job {
     }
 
     protected function onSuccess(mixed $result): void {
-        $this->event->is_success = true;
-        $this->event->result     = $result;
+        $this->event->resource_id = $this->resourceId;
+        $this->event->is_success  = true;
+        $this->event->result      = $result;
         $this->event->save();
     }
 
     protected function onFailure(mixed $exception): void {
-        $this->event->is_success = false;
-        $this->event->result     = (array)$exception;
+        $this->event->resource_id = $this->resourceId;
+        $this->event->is_success  = false;
+        $this->event->result      = (array)$exception;
         $this->event->save();
     }
 

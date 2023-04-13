@@ -45,9 +45,10 @@ class OpeningHours extends Model {
 
     public function toInventoryResource() {
         return new DayOperatingHours(
-            day     : $this->weekday,
-            start_at: $this->open_at->toTimeString(),
-            end_at  : $this->close_at->toTimeString()
+            day      : $this->weekday,
+            is_closed: $this->is_closed,
+            start_at : $this->open_at->toTimeString(),
+            end_at   : $this->close_at->toTimeString()
         );
     }
 }

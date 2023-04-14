@@ -1,11 +1,11 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Location.php
+ * @neo/api - DisplayUnit.php
  */
 
 namespace Neo\Modules\Broadcast\Services\BroadSign\Models;
@@ -21,7 +21,7 @@ use Neo\Modules\Broadcast\Services\Resources\Location as LocationResource;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 
 /**
- * Class ActorsLocations
+ * Class Location
  *
  * @implements ResourceCastable<LocationResource>
  *
@@ -50,10 +50,9 @@ use Neo\Services\API\Parsers\MultipleResourcesParser;
  *
  * @method static Collection<static> all(BroadSignClient $client)
  * @method static static get(BroadSignClient $client, int $displayUnitId)
- * @method static Collection<static> byReservable(BroadSignClient $client, array $params)
  * @method static Collection<static> byContainer(BroadSignClient $client, array $params)
  */
-class Location extends BroadSignModel implements ResourceCastable {
+class DisplayUnit extends BroadSignModel implements ResourceCastable {
     protected static string $unwrapKey = "display_unit";
 
     protected static function actions(): array {
@@ -87,6 +86,17 @@ class Location extends BroadSignModel implements ResourceCastable {
      */
     public static function inContainer(BroadSignClient $client, int $containerId): Collection {
         return static::byContainer($client, ["container_id" => $containerId]);
+    }
+
+    /**
+     * List display units associated with a reservable
+     *
+     * @param BroadSignClient $client
+     * @param int             $reservableId
+     * @return Collection<static>
+     */
+    public static function byReservable(BroadSignClient $client, int $reservableId): Collection {
+        return (new static($client))->callAction("byReservable", ["reservable_id" => $reservableId]);
     }
 
     /*

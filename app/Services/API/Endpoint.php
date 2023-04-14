@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -68,7 +68,7 @@ class Endpoint {
     /**
      * Tell if the value should be cached, and for how long.
      * A value of zero means no caching, other values will be used as the cache entry duration, units in seconds.
-     * Routes other that GET are never cached.
+     * Routes other than GET are never cached.
      *
      * @var int
      */

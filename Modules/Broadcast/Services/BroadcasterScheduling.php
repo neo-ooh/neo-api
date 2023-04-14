@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -12,6 +12,7 @@ namespace Neo\Modules\Broadcast\Services;
 
 use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
 use Neo\Modules\Broadcast\Services\Exceptions\CannotUpdateExternalResourceException;
+use Neo\Modules\Broadcast\Services\Exceptions\CouldNotTargetCampaignException;
 use Neo\Modules\Broadcast\Services\Resources\Campaign;
 use Neo\Modules\Broadcast\Services\Resources\CampaignSearchResult;
 use Neo\Modules\Broadcast\Services\Resources\CampaignTargeting;
@@ -73,6 +74,7 @@ interface BroadcasterScheduling {
      * @param ExternalBroadcasterResourceId $externalCampaign
      * @param CampaignTargeting             $campaignTargeting
      * @return bool
+     * @throws CouldNotTargetCampaignException
      */
     public function targetCampaign(ExternalBroadcasterResourceId $externalCampaign, CampaignTargeting $campaignTargeting): bool;
 

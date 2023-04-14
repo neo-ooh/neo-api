@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Carbon as Date;
 use Illuminate\Support\Collection;
+use Neo\Enums\Capability;
+use Neo\Helpers\Relation;
 use Neo\Models\Actor;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
@@ -143,21 +145,27 @@ class Campaign extends BroadcastResourceModel {
      */
     protected string $accessRule = AccessibleCampaign::class;
 
-    protected array $publicRelations = [
-        "status"                   => "append:status",
-        "external_representations" => "external_representations",
-        "parent"                   => "parent",
-        "creator"                  => "creator",
-        "shares"                   => "shares",
-        "schedules"                => ["schedules.owner:id,name"],
-        "expired_schedules"        => ["expired_schedules.owner:id,name"],
-        "locations"                => "locations",
-        "formats"                  => ["formats.layouts.frames"],
-        "tags"                     => "broadcast_tags",
-        "performances"             => "performances",
-        "flight"                   => "flight",
-        "contract"                 => "contract",
-    ];
+    protected function getPublicRelations() {
+        return [
+            "status"                   => "append:status",
+            "external_representations" => "external_representations",
+            "parent"                   => "parent",
+            "creator"                  => "creator",
+            "shares"                   => "shares",
+            "schedules"                => ["schedules.owner:id,name"],
+            "expired_schedules"        => ["expired_schedules.owner:id,name"],
+            "locations"                => "locations",
+            "formats"                  => ["formats.layouts.frames"],
+            "tags"                     => "broadcast_tags",
+            "performances"             => "performances",
+            "flight"                   => "flight",
+            "contract"                 => "contract",
+            "loop_configurations"      => Relation::make(
+                load: "formats.loop_configurations",
+                gate: Capability::campaigns_edit,
+            ),
+        ];
+    }
 
     protected static function boot(): void {
         parent::boot();

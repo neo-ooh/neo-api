@@ -36,7 +36,7 @@ use Neo\Modules\Broadcast\Services\BroadSign\Models\Container as BroadSignContai
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Creative as BroadSignCreative;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\DisplayType as BroadSignDisplayType;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Location as BroadSignLocation;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\DisplayUnit;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopSlot;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Player as BroadSignPlayer;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\ReservablePerformance;
@@ -46,6 +46,7 @@ use Neo\Modules\Broadcast\Services\BroadSign\Models\Schedule as BroadSignSchedul
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Skin;
 use Neo\Modules\Broadcast\Services\Exceptions\BroadcastServiceException;
 use Neo\Modules\Broadcast\Services\Exceptions\CannotUpdateExternalResourceException;
+use Neo\Modules\Broadcast\Services\Exceptions\CouldNotTargetCampaignException;
 use Neo\Modules\Broadcast\Services\Exceptions\InvalidExternalBroadcasterResourceType;
 use Neo\Modules\Broadcast\Services\Exceptions\MissingExternalResourceException;
 use Neo\Modules\Broadcast\Services\Resources\ActiveHours;
@@ -117,7 +118,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
      * @return Generator<Location>
      */
     protected function parseContainer(int $containerId, bool $recursive = true): Generator {
-        $bsLocations = BroadSignLocation::inContainer($this->getAPIClient(), $containerId);
+        $bsLocations = DisplayUnit::inContainer($this->getAPIClient(), $containerId);
 
         foreach ($bsLocations as $bsLocation) {
             yield $bsLocation->toResource();
@@ -190,8 +191,8 @@ class BroadSignAdapter extends BroadcasterOperator implements
             throw new InvalidBroadcastResource($location->type, [ExternalResourceType::Location]);
         }
 
-        /** @var BroadSignLocation|null $bsLocation */
-        $bsLocation = BroadSignLocation::get($this->getAPIClient(), $location->external_id);
+        /** @var DisplayUnit|null $bsLocation */
+        $bsLocation = DisplayUnit::get($this->getAPIClient(), $location->external_id);
 
         if (!$bsLocation) {
             throw new MissingExternalResourceException($this->getBroadcasterType(), ExternalResourceType::Location);
@@ -248,7 +249,7 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $campaign  = new BroadSignCampaign($this->getAPIClient(), ["id" => $externalCampaign->external_id]);
         $locations = $campaign->locations();
 
-        return $locations->map(fn(BroadSignLocation $location) => $location->toResource())->all();
+        return $locations->map(fn(DisplayUnit $location) => $location->toResource())->all();
     }
 
     /**
@@ -459,10 +460,21 @@ class BroadSignAdapter extends BroadcasterOperator implements
             $bsCampaign->addCriteria($tagId, 8);
         }
 
-        $bsCampaignLocations = $bsCampaign->locations();
+        $bsCampaignLocations     = $bsCampaign->locations();
+        $expectedDisplayUnitsIds = $campaignTargeting->getLocationsExternalIds();
 
-        $bsCampaign->removeLocations($bsCampaignLocations->map(fn(BroadSignLocation $location) => $location->getKey()));
+        $bsCampaign->removeLocations($bsCampaignLocations->map(fn(DisplayUnit $location) => $location->getKey()));
         $bsCampaign->addLocations($campaignTargeting->getLocationsExternalIds(), $campaignTargeting->getLocationsTagsExternalIds());
+
+        // Now that we synced our display units, we want to validate targeting was successful.
+        // We list all display units associated with the campaign and compare them with the one we expected
+        $targetedDisplayUnits = $bsCampaign->locations();
+        $missingLocations     = array_diff($expectedDisplayUnitsIds, $targetedDisplayUnits->pluck("id")->all());
+
+        if (count($missingLocations) > 0) {
+            // Some display units where not associated correctly
+            throw new CouldNotTargetCampaignException($this->getBroadcasterType(), "Error while targeting campaign. " . count($missingLocations) . " locations could not be targeted.");
+        }
 
         return true;
     }

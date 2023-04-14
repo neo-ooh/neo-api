@@ -19,30 +19,42 @@ use Neo\Models\Actor;
  * @mixin Model
  */
 trait HasCreatedByUpdatedBy {
-    protected string|null $createdBy = 'created_by';
-    protected string|null $updatedBy = 'updated_by';
-    protected string|null $deletedBy = 'deleted_by';
+    public function getCreatedByColumn(): string|null {
+        return "created_by";
+    }
+
+    public function getUpdatedByColumn(): string|null {
+        return "updated_by";
+    }
+
+    public function getDeletedByColumn(): string|null {
+        return "deleted_by";
+    }
 
     public static function bootHasCreatedByUpdatedBy() {
         static::creating(static function (Model $model) {
-            if ($model->createdBy !== null) {
-                $model->{$model->createdBy} = Auth::id() ?? 1;
+            $createdBy = $model->getCreatedByColumn();
+            if ($createdBy !== null) {
+                $model->{$createdBy} = Auth::id();
             }
 
-            if ($model->updatedBy !== null) {
-                $model->{$model->updatedBy} = Auth::id() ?? 1;
+            $updatedBy = $model->getUpdatedByColumn();
+            if ($updatedBy !== null) {
+                $model->{$updatedBy} = Auth::id();
             }
         });
 
         static::updating(static function (Model $model) {
-            if ($model->updatedBy !== null) {
-                $model->{$model->updatedBy} = Auth::id() ?? 1;
+            $updatedBy = $model->getUpdatedByColumn();
+            if ($updatedBy !== null) {
+                $model->{$updatedBy} = Auth::id();
             }
         });
 
         static::deleting(static function (Model $model) {
-            if ($model->deletedBy !== null) {
-                $model->{$model->deletedBy} = Auth::id() ?? 1;
+            $deletedBy = $model->getDeletedByColumn();
+            if ($deletedBy !== null) {
+                $model->{$deletedBy} = Auth::id();
             }
         });
     }

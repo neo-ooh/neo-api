@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -12,6 +12,9 @@ namespace Neo\Modules\Broadcast\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Neo\Models\Actor;
+use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Enums\BroadcastParameters;
@@ -28,14 +31,18 @@ use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
  * @property int                $resource_id
  * @property BroadcastJobType   $type
  * @property Carbon             $created_at
+ * @property int|null           $created_by
  * @property Carbon             $scheduled_at
  * @property int                $attempts
  * @property Carbon|null        $last_attempt_at
  * @property BroadcastJobStatus $status
  * @property array|null         $payload
  * @property array|null         $last_attempt_result
+ * @property int|null           $updated_by
  */
 class BroadcastJob extends Model {
+    use HasCreatedByUpdatedBy;
+
     protected $table = "broadcast_jobs";
 
     protected $primaryKey = "id";
@@ -60,6 +67,10 @@ class BroadcastJob extends Model {
         "payload",
     ];
 
+    public function getDeletedByColumn(): string|null {
+        return null;
+    }
+
     protected static function booted(): void {
         parent::boot();
 
@@ -68,6 +79,14 @@ class BroadcastJob extends Model {
             $job->scheduled_at = Carbon::now()->addSeconds(param(BroadcastParameters::BroadcastJobsDelaySec));
             $job->status       = BroadcastJobStatus::Pending;
         });
+    }
+
+    public function creator(): BelongsTo {
+        return $this->belongsTo(Actor::class, "created_by", "id");
+    }
+
+    public function updator(): BelongsTo {
+        return $this->belongsTo(Actor::class, "updated_by", "id");
     }
 
     public function endAttempt(BroadcastJobStatus $status, array|null $result): void {
@@ -82,7 +101,7 @@ class BroadcastJob extends Model {
                 PromoteCampaignJob::dispatch($this->resource_id, $this);
                 break;
             case BroadcastJobType::DeleteCampaign:
-                DeleteCampaignJob::dispatch($this->resource_id, $this);
+                DeleteCampaignJob::dispatch($this->resource_id, is_array($this->payload) && $this->payload["resource_id"] ? $this->payload["resource_id"] : null, $this);
                 break;
             case BroadcastJobType::PromoteSchedule:
                 PromoteScheduleJob::dispatch($this->resource_id, $this->payload["representation"] ? ExternalCampaignDefinition::from($this->payload["representation"]) : null, $this);

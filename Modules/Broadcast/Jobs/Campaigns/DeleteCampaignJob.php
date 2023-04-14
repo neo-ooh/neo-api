@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -22,11 +22,11 @@ use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 
 /**
- * @extends BroadcastJobBase<array>
+ * @extends BroadcastJobBase<array{resource_id: int|null}>
  */
 class DeleteCampaignJob extends BroadcastJobBase {
-    public function __construct(int $campaignId, BroadcastJob|null $broadcastJob = null) {
-        parent::__construct(BroadcastJobType::DeleteCampaign, $campaignId, null, $broadcastJob);
+    public function __construct(int $campaignId, int|null $resourceId = null, BroadcastJob|null $broadcastJob = null) {
+        parent::__construct(BroadcastJobType::DeleteCampaign, $campaignId, ["resource_id" => $resourceId], $broadcastJob);
     }
 
     /**
@@ -39,8 +39,14 @@ class DeleteCampaignJob extends BroadcastJobBase {
         $campaign = Campaign::withTrashed()->find($this->resourceId);
 
         // For each representation of the campaign, we remove it from its broadcaster, and mark it as deleted
-        $externalResources = $campaign->external_representations->whereNull("deleted_at");
-        $results           = [];
+        if (is_array($this->payload) && $this->payload["resource_id"]) {
+            $externalResource  = ExternalResource::query()->find($this->payload["resource_id"]);
+            $externalResources = $externalResource !== null ? [$externalResource] : [];
+        } else {
+            $externalResources = $campaign->external_representations->whereNull("deleted_at");
+        }
+
+        $results = [];
 
         /** @var ExternalResource $externalResource */
         foreach ($externalResources as $externalResource) {

@@ -156,6 +156,8 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             }
         }
 
+        $product->is_sellable = $externalProduct->product->is_sellable;
+
         // Product category and type
         if ($externalProduct->product->category_id !== null) {
             // Try to load a product category matching the given id

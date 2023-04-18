@@ -34,7 +34,7 @@ class ResourceFactory {
                             external_id : $product->getKey(),
                             type        : InventoryResourceType::Product,
                             context     : [
-                                              "variant_id" => $product->product_variant_id[0],
+                                              "variant_id" => $product->product_variant_id ? $product->product_variant_id[0] : null,
                                           ]
                         ),
             product   : new ProductResource(

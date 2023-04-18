@@ -10,7 +10,7 @@
 
 namespace Neo\Modules\Properties\Services\Resources;
 
-class IdentifiableProduct {
+class IdentifiableProduct extends InventoryResource {
     public function __construct(
         public InventoryResourceId $resourceId,
         public ProductResource     $product,

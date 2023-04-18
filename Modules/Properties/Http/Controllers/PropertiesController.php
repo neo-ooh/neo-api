@@ -138,8 +138,12 @@ class PropertiesController extends Controller {
 
     public function show(ShowPropertyRequest $request, int $propertyId): Response {
         // Is this group a property ?
-        /** @var Property $property */
+        /** @var Property|null $property */
         $property = Property::query()->find($propertyId);
+
+        if (!$property) {
+            return new Response([], 404);
+        }
 
         return new Response($property->loadPublicRelations());
     }

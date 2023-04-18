@@ -131,7 +131,7 @@ class Property extends SecuredModel {
     public $with = [
         "actor:id,name",
     ];
-    
+
     protected $touches = [
         "products",
     ];
@@ -310,6 +310,11 @@ class Property extends SecuredModel {
 
     public function getWarningsAttribute() {
         $warnings = [];
+
+        // Check opening hours are filled in
+        if ($this->opening_hours()->count() !== 7) {
+            $warnings["opening-jours"] = [];
+        }
 
         // Check fields that don't have any values
         $this->load("fields_values");

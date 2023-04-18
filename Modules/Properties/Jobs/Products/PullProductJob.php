@@ -265,9 +265,11 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             $address->city_id = $city->getKey();
             $address->zipcode = str_replace(" ", "", $externalProduct->product->address->zipcode);
 
-            $geolocation = new Point($externalProduct->product->geolocation->latitude, $externalProduct->product->geolocation->longitude);
-            if ((string)$address->geolocation !== (string)$geolocation) {
-                $address->geolocation = $geolocation;
+            if ($externalProduct->product->geolocation) {
+                $geolocation = new Point($externalProduct->product->geolocation->latitude, $externalProduct->product->geolocation->longitude);
+                if ((string)$address->geolocation !== (string)$geolocation) {
+                    $address->geolocation = $geolocation;
+                }
             }
 
             $address->save();

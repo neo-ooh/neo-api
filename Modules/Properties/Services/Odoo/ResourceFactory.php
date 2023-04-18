@@ -28,6 +28,15 @@ class ResourceFactory {
     public static function makeIdentifiableProduct(Product $product, OdooClient $client, OdooConfig $config) {
         $property = Property::get($client, $product->shopping_center_id[0]);
 
+        $geolocation = null;
+
+        if ((int)round($property->partner_longitude) !== 0 || (int)round($property->partner_latitude) !== 0) {
+            $geolocation = new Geolocation(
+                longitude: $property->partner_longitude,
+                latitude : $property->partner_latitude,
+            );
+        }
+
         return new IdentifiableProduct(
             resourceId: new InventoryResourceId(
                             inventory_id: $config->inventoryID,
@@ -64,10 +73,7 @@ class ResourceFactory {
                                                  ),
                             property_name      : trim($property->name),
                             address            : $property->getAddress(),
-                            geolocation        : new Geolocation(
-                                                     longitude: $property->partner_longitude,
-                                                     latitude : $property->partner_latitude,
-                                                 ),
+                            geolocation        : $geolocation,
                             timezone           : null,
                             operating_hours    : null,
                             weekly_traffic     : (int)ceil(($property->annual_traffic / 365) * 7)

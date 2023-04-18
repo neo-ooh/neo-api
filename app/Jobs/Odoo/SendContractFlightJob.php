@@ -221,6 +221,11 @@ class SendContractFlightJob implements ShouldQueue {
             return collect();
         }
 
+        if (!$externalRepresentation->context->variant_id) {
+            // Product has no variant id, we cannot send it to Odoo
+            return collect();
+        }
+
         $orderLines->push([
                               "order_id"           => $this->contract->id,
                               "name"               => $product->name_en,

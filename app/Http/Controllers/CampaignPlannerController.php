@@ -57,6 +57,7 @@ class CampaignPlannerController {
         return [
             "properties" => $properties->map(fn(Property $property) => [
                 "id"            => $property->actor_id,
+                "is_sellable"   => $property->is_sellable,
                 "name"          => $property->actor->name,
                 "address"       => $property->address,
                 "network_id"    => $property->network_id,

@@ -131,6 +131,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
                         foreach ($schedules as $schedule) {
                             $deleteScheduleJob = new DeleteScheduleJob($schedule->getKey(), $representation);
                             $deleteScheduleJob->handle();
+                            $schedule->refresh();
                         }
                     }
                 }
@@ -210,6 +211,7 @@ class PromoteCampaignJob extends BroadcastJobBase {
                 foreach ($schedules as $schedule) {
                     $promoteScheduleJob = new PromoteScheduleJob($schedule->getKey(), $representation);
                     $promoteScheduleJob->handle();
+                    $schedule->refresh();
                 }
             }
 
@@ -224,17 +226,10 @@ class PromoteCampaignJob extends BroadcastJobBase {
             $outdatedRepresentations = $campaign->external_representations->whereNotIn("id", $validRepresentationsIds)
                                                                           ->whereNull("deleted_at");
 
+            /** @var ExternalResource $outdatedRepresentation */
             foreach ($outdatedRepresentations as $outdatedRepresentation) {
-                /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-                $broadcaster = BroadcasterAdapterFactory::makeForNetwork($outdatedRepresentation->data->network_id);
-
-                if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
-                    // This broadcaster does not handle content scheduling
-                    continue;
-                }
-
-                $broadcaster->deleteCampaign($outdatedRepresentation->toResource());
-                $outdatedRepresentation->delete();
+                $deleteCampaignJob = new DeleteCampaignJob($this->resourceId, $outdatedRepresentation->getKey());
+                $deleteCampaignJob->handle();
             }
         }
 

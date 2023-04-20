@@ -147,22 +147,37 @@ class Campaign extends BroadcastResourceModel {
 
     protected function getPublicRelations() {
         return [
-            "status"                   => "append:status",
-            "external_representations" => "external_representations",
-            "parent"                   => "parent",
-            "creator"                  => "creator",
-            "shares"                   => "shares",
-            "schedules"                => ["schedules.owner:id,name"],
-            "expired_schedules"        => ["expired_schedules.owner:id,name"],
-            "locations"                => "locations",
-            "formats"                  => ["formats.layouts.frames"],
-            "tags"                     => "broadcast_tags",
-            "performances"             => "performances",
-            "flight"                   => "flight",
-            "contract"                 => "contract",
-            "loop_configurations"      => Relation::make(
+            "contract"                           => "contract",
+            "creator"                            => "creator",
+            "expired_schedules"                  => ["expired_schedules.owner:id,name"],
+            "external_representations"           => Relation::make(
+                load: "external_representations",
+                gate: Capability::dev_tools,
+            ),
+            "flight"                             => "flight",
+            "formats"                            => ["formats.layouts.frames"],
+            "locations"                          => "locations",
+            "loop_configurations"                => Relation::make(
                 load: "formats.loop_configurations",
                 gate: Capability::campaigns_edit,
+            ),
+            "parent"                             => "parent",
+            "performances"                       => "performances",
+            "shares"                             => "shares",
+            "schedules"                          => Relation::make(
+                load: "schedules.owner:id,name"
+            ),
+            "schedules_count"                    => Relation::make(
+                count: "schedules"
+            ),
+            "schedules_external_representations" => Relation::make(
+                load: "schedules.external_representations",
+                gate: Capability::dev_tools,
+            ),
+            "status"                             => "append:status",
+            "tags"                               => Relation::make(
+                load: "broadcast_tags",
+                gate: Capability::campaigns_tags,
             ),
         ];
     }

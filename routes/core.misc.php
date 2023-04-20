@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -9,15 +9,16 @@
  */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Http\Controllers\BatchController;
 use Neo\Http\Controllers\FoursquareController;
 use Neo\Http\Controllers\GoogleMapsController;
 use Neo\Http\Controllers\ModulesController;
 use Neo\Http\Controllers\StatsController;
 
 Route::group([
-    "middleware" => "default",
-    "prefix"     => "v1"
-], function () {
+                 "middleware" => "default",
+                 "prefix"     => "v1",
+             ], function () {
     /*
     |----------------------------------------------------------------------
     | Modules
@@ -50,4 +51,12 @@ Route::group([
     */
 
     Route::get("_third-party/foursquare/places", FoursquareController::class . "@_searchPlaces");
+
+    /*
+    |----------------------------------------------------------------------
+    | Batch
+    |----------------------------------------------------------------------
+    */
+
+    Route::post("batch", BatchController::class . "@handle");
 });

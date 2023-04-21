@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -51,7 +51,9 @@ class UpdateActorRequest extends FormRequest {
         return [
             "name"      => ["sometimes", "string"],
             "email"     => ["sometimes", "exclude_unless:is_group,false", "email", Rule::unique('actors')
-                                                                                       ->ignore($this->route('actor')->id)],
+                                                                                       ->withoutTrashed()
+                                                                                       ->ignore($this->route()
+                                                                                                     ->originalParameter('actor'))],
             "locale"    => ["sometimes", "string"],
             "password"  => ["sometimes", "string", "min:6"],
             "is_locked" => ["sometimes", "boolean"],

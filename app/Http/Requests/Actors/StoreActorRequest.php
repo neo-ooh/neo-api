@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -12,6 +12,7 @@ namespace Neo\Http\Requests\Actors;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rule;
 use Neo\Enums\Capability;
 
 class StoreActorRequest extends FormRequest {
@@ -33,7 +34,7 @@ class StoreActorRequest extends FormRequest {
         return [
             "is_group"       => ["required", "boolean"],
             "name"           => ["required", "string"],
-            "email"          => ["required_unless:is_group,true", "email", "unique:actors,email"],
+            "email"          => ["required_unless:is_group,true", "email", Rule::unique("actors", "email")->withoutTrashed()],
             "locale"         => ["required", "string"],
             "enabled"        => ["required", "boolean"],
             "parent_id"      => ["required", "numeric", "exists:actors,id"],

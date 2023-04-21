@@ -17,10 +17,14 @@ use Neo\Modules\Properties\Models\Property;
 
 class PropertiesTranslationsController extends Controller {
     public function update(UpdatePropertyTranslationRequest $request, Property $property, string $locale) {
-        $property->translations()->where("locale", "=", $locale)
-                 ->update([
-                              "description" => $request->input("description", ""),
-                          ]);
+        $property->translations()
+                 ->updateOrInsert([
+                                      "property_id" => $property->getKey(),
+                                      "locale"      => $locale,
+                                  ],
+                                  [
+                                      "description" => $request->input("description", ""),
+                                  ]);
 
         return new Response($property->translations()->where("locale", "=", $locale)->first());
     }

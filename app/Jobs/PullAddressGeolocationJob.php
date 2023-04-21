@@ -16,21 +16,24 @@ use Geocoder\Model\Coordinates;
 use Geocoder\Provider\Geonames\Model\GeonamesAddress;
 use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Neo\Models\Address;
 
-class PullAddressGeolocationJob implements ShouldQueue {
+class PullAddressGeolocationJob implements ShouldQueue, ShouldBeUnique {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public function __construct(protected Address $address) {
     }
 
-    public function handle(Geocoder $geocoder) {
-        clock($this->address->string_representation);
+    public function uniqueId() {
+        return $this->address->getKey();
+    }
 
+    public function handle(Geocoder $geocoder) {
         try {
             $res = $geocoder->geocode($this->address->string_representation)->get();
             clock($res);

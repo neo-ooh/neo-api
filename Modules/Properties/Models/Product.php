@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Casts\EnumSetCast;
 use Neo\Enums\Capability;
@@ -64,6 +65,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Property                      $property
  * @property ProductCategory               $category
  * @property Format                        $format
+ * @property ProductWarnings               $warnings
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
  * @property Collection<Unavailability>    $unavailabilities
@@ -130,6 +132,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
                 load: ["unavailabilities.translations", "unavailabilities.products"],
                 gate: Capability::properties_unavailabilities_view
             ),
+            "warnings"            => Relation::make(
+                load: "warnings",
+                gate: Capability::products_edit
+            ),
         ];
     }
 
@@ -149,6 +155,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 
     public function category(): BelongsTo {
         return $this->belongsTo(ProductCategory::class, "category_id", "id");
+    }
+
+    public function warnings(): HasOne {
+        return $this->hasOne(ProductWarnings::class, "product_id", "id");
     }
 
     public function campaigns(): BelongsToMany {

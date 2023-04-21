@@ -12,7 +12,6 @@ namespace Neo\Modules\Properties\Models;
 
 use Carbon\Carbon;
 use Carbon\Traits\Date;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -27,8 +26,6 @@ use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Network;
-use Neo\Modules\Properties\Enums\ProductType;
-use Neo\Modules\Properties\Enums\TrafficFormat;
 use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
 use Neo\Modules\Properties\Rules\AccessibleProperty;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
@@ -57,6 +54,7 @@ use Throwable;
  *
  * @property Actor                                 $actor
  * @property Collection<PropertyTranslation>       $translations
+ * @property PropertyWarnings                      $warnings
  * @property PropertyTrafficSettings               $traffic
  * @property Address|null                          $address
  * @property Network|null                          $network
@@ -143,7 +141,10 @@ class Property extends SecuredModel {
             "actor"                     => "load:actor",
             "address"                   => "load:address",
             "contacts"                  => "load:contacts",
-            "demographic_values_count"  => "count:demographicValues",
+            "demographic_values_count"  => Relation::make(
+                count: "demographicValues",
+                gate : Capability::properties_demographics_view,
+            ),
             "fields"                    => ["network.properties_fields", "fields_values"],
             "fields_values"             => "load:fields_values",
             "inventories"               => Relation::make(
@@ -167,6 +168,10 @@ class Property extends SecuredModel {
                 load: "products",
                 gate: Capability::products_view
             ),
+            "products.warnings"         => Relation::make(
+                load: "products.warnings",
+                gate: Capability::products_edit,
+            ),
             "products_ids"              => Relation::make(
                 load: "products:id",
                 gate: Capability::products_view
@@ -189,7 +194,9 @@ class Property extends SecuredModel {
                 load: ["unavailabilities.translations", "unavailabilities.products"],
                 gate: Capability::properties_unavailabilities_view
             ),
-            "warnings"                  => "append:warnings",
+            "warnings"                  => Relation::make(
+                load: "warnings"
+            ),
         ];
     }
 
@@ -229,6 +236,10 @@ class Property extends SecuredModel {
 
     public function network(): BelongsTo {
         return $this->belongsTo(Network::class, "network_id");
+    }
+
+    public function warnings(): HasOne {
+        return $this->hasOne(PropertyWarnings::class, "property_id", "actor_id");
     }
 
     public function translations(): HasMany {
@@ -306,63 +317,5 @@ class Property extends SecuredModel {
         }
 
         return $traffic->final_traffic;
-    }
-
-    public function getWarningsAttribute() {
-        $warnings = [];
-
-        // Check opening hours are filled in
-        if ($this->opening_hours()->count() !== 7) {
-            $warnings["opening-jours"] = [];
-        }
-
-        // Check fields that don't have any values
-        $this->load("fields_values");
-        $fields     = Field::query()->whereHas("networks", function (Builder $query) {
-            $query->where("id", "=", $this->network_id);
-        })
-                           ->with("segments")
-                           ->get();
-        $segmentIds = $this->fields_values->map(fn(PropertyFieldSegmentValue $value) => $value->fields_segment_id);
-
-        $missingFields = [];
-
-        /** @var Field $field */
-        foreach ($fields as $field) {
-            $missingSegments = $field->segments->whereNotIn("id", $segmentIds);
-
-            if ($missingSegments->count() > 0) {
-                $missingFields[] = [
-                    ...$field->toArray(),
-                    "segments" => $missingSegments->values(),
-                ];
-            }
-        }
-
-        if (count($missingFields) > 0) {
-            $warnings["empty-fields"] = $missingFields;
-        }
-
-        // List products without any locations associated
-        $productsWithoutLocations = $this->products()
-                                         ->whereRelation("category", "type", "=", ProductType::Digital)
-                                         ->whereDoesntHave("locations")->get();
-
-        if ($productsWithoutLocations->count() > 0) {
-            $warnings["products-without-locations"] = $productsWithoutLocations;
-        }
-
-        // Check that the traffic reference year is correctly filled
-        $refYearEntriesCount = $this->traffic->data()->where("year", "=", $this->traffic->start_year)->count();
-
-        if ($this->traffic->format !== TrafficFormat::DailyConstant && $refYearEntriesCount < 12) {
-            $warnings["incomplete-traffic"] = [];
-        }
-
-        if ($this->has_tenants && $this->tenants()->count() === 0) {
-            $warnings["empty-directory"] = [];
-        }
-
-        return $warnings;
     }
 }

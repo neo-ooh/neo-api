@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2022 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -49,6 +49,7 @@ class SchedulesDetailsViewSeeder extends Seeder {
                          ON `r`.`id` = (SELECT MAX(`schedule_reviews`.`id`)
                                           FROM `schedule_reviews`
                                          WHERE `schedule_reviews`.`schedule_id` = `s`.`id`)
+
         EOS
         );
 

@@ -47,6 +47,7 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
             return;
         }
 
+
         $fields = Field::query()->when($this->fieldId, function (Builder $query) {
             $query->where("id", "=", $this->fieldId);
         }, function (Builder $query) {
@@ -57,6 +58,7 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
                                     ->pluck("field_id"));
             $query->where("demographic_filled", "=", true);
         })->with("segments")->get();
+
 
         $segmentsIds = $fields->flatMap(fn(Field $field) => $field->segments->pluck("id"));
 
@@ -82,18 +84,24 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
         // Now loop over each fields and segments, for each property, and fill in the values;
         /** @var Field $field */
         foreach ($fields as $field) {
+//            dump($field->name_en);
 
             /** @var FieldSegment $segment */
             foreach ($field->segments as $segment) {
+//                dump("-- $segment->variable_id");
                 $segmentValues = $demoValues->where("value_id", "=", $segment->variable_id);
+//                dump($segmentValues->count());
 
                 foreach ($propertyIds as $propertyId) {
                     /** @var DemographicValue|null $demoValue */
                     $demoValue = $segmentValues->firstWhere("property_id", "=", $propertyId);
 
+//                    dump("-- -- $propertyId : " . ($demoValue?->value ?? "missing"));
+
                     if (!$demoValue) {
                         continue;
                     }
+
 
                     /** @var PropertyFieldSegmentValue $entry */
                     $entry = $propertiesValues->first(
@@ -106,6 +114,8 @@ class UpdateDemographicFieldsJob implements ShouldQueue, ShouldBeUniqueUntilProc
                     // We go the pedantic way here because `value` is a generic word and may conflict with Eloquent methods.
                     $entry->setAttribute("value", $demoValue->value);
                     $entry->setAttribute("reference_value", $demoValue->reference_value);
+
+//                    dump($entry->toArray(), $entry->isDirty());
                     $entry->save();
                 }
             }

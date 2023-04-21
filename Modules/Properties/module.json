@@ -12,6 +12,7 @@
   "requires": [],
   "migration": {
     "seeds": [
+      "Neo\\Modules\\Properties\\Database\\Seeders\\DatabaseSeeder"
     ]
   }
 }

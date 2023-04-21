@@ -43,6 +43,8 @@ class IngestDemographicFileJob implements ShouldQueue {
         // Get all entries in the field
         $entries = collect($parser->getEntries());
 
+        clock($entries);
+
         // Make sure each variable is referenced in the database
         $now       = Date::now("UTC");
         $variables = $entries->map(fn($entry) => ([

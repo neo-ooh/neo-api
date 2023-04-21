@@ -46,6 +46,7 @@ class DemographicValuesController {
         foreach ($files as [$file, $format]) {
             $tempName = tempnam(sys_get_temp_dir(), "connect_prop_demo_");
             file_put_contents($tempName, $file->getContent());
+            
             IngestDemographicFileJob::dispatchSync($property->getKey(), $tempName, $format);
         }
 

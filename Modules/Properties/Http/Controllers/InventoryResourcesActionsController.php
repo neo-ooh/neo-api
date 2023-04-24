@@ -50,7 +50,11 @@ class InventoryResourcesActionsController extends Controller {
 
             // Trigger a loop for each enabled inventory
             foreach ($inventoriesID as $inventoryID) {
-                (new PushProductJob($product->inventory_resource_id, $inventoryID))->handle();
+                if ($request->input("async", false)) {
+                    (new PushProductJob($product->inventory_resource_id, $inventoryID))->handle();
+                } else {
+                    PushProductJob::dispatch($product->inventory_resource_id, $inventoryID);
+                }
             }
         }
 
@@ -76,8 +80,12 @@ class InventoryResourcesActionsController extends Controller {
 
             // Trigger a loop for each enabled inventory
             foreach ($inventoriesID as $inventoryID) {
-                $pullJob = new PullProductJob($product->inventory_resource_id, $inventoryID);
-                $pullJob->handle();
+                if ($request->input("async", false)) {
+                    $pullJob = new PullProductJob($product->inventory_resource_id, $inventoryID);
+                    $pullJob->handle();
+                } else {
+                    PullProductJob::dispatch($product->inventory_resource_id, $inventoryID);
+                }
             }
         }
 

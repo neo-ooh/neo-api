@@ -68,9 +68,14 @@ class ContractFlight extends Model {
         "type",
     ];
 
-    protected $dates = [
-        "start_date",
-        "end_date",
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    public $casts = [
+        "start_date" => "datetime",
+        "end_date"   => "datetime",
     ];
 
     protected array $publicRelations = [

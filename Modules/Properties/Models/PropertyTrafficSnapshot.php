@@ -23,13 +23,16 @@ class PropertyTrafficSnapshot extends Model {
 
     protected $primaryKey = null;
 
-    protected $dates = [
-        "date",
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    public $casts = [
+        "date"    => "datetime",
+        "traffic" => "array",
     ];
 
     public $timestamps = false;
-
-    protected $casts = [
-        "traffic" => "array",
-    ];
 }

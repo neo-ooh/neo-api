@@ -12,8 +12,8 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Route;
 use Neo\Http\Requests\BatchRequest;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
 class BatchController extends Controller {
     public function handle(BatchRequest $request) {
@@ -21,9 +21,12 @@ class BatchController extends Controller {
         $responses = [];
 
         foreach ($requests as $request) {
-            $internalRequests = Request::create($request["uri"], $request["method"], $request["payload"] ?? []);
-            $response         = Route::dispatch($internalRequests);
-            $responses[]      = [
+            $internalRequest = Request::create($request["uri"], $request["method"], $request["payload"] ?? []);
+            $internalRequest->setJson(new ParameterBag($request["payload"] ?? []));
+            $internalRequest->headers->set("Accept", "application/json");
+
+            $response    = app()->handle($internalRequest);
+            $responses[] = [
                 "id"       => $request["id"],
                 "status"   => $response->getStatusCode(),
                 "headers"  => $response->headers->all(),

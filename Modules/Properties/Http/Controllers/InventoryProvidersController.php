@@ -32,9 +32,11 @@ class InventoryProvidersController extends Controller {
         $provider->name     = $request->input("name");
         $provider->provider = $request->input("provider");
 
-        $provider->is_active = true;
-        $provider->auto_pull = $request->input('auto_pull');
-        $provider->auto_push = $request->input('auto_push');
+        $provider->is_active  = true;
+        $provider->auto_pull  = $provider->provider === InventoryType::Dummy ? false : $request->input('auto_pull');
+        $provider->allow_pull = $provider->provider === InventoryType::Dummy ? false : $request->input('auto_pull');
+        $provider->auto_push  = $provider->provider === InventoryType::Dummy ? false : $request->input('auto_push');
+        $provider->allow_push = $provider->provider === InventoryType::Dummy ? false : $request->input('auto_push');
 
         $provider->settings = new InventoryProviderSettings();
 

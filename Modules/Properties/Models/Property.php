@@ -111,12 +111,9 @@ class Property extends SecuredModel {
      * @var array<string, string>
      */
     public $casts = [
-        "is_sellable" => "boolean",
-        "has_tenants" => "boolean",
-    ];
-
-    protected $dates = [
-        "last_review_at",
+        "is_sellable"    => "boolean",
+        "has_tenants"    => "boolean",
+        "last_review_at" => "datetime",
     ];
 
     /**
@@ -148,7 +145,7 @@ class Property extends SecuredModel {
             "fields"                    => ["network.properties_fields", "fields_values"],
             "fields_values"             => "load:fields_values",
             "inventories"               => Relation::make(
-                load: ["inventory_resource", "inventory_resource"],
+                load: ["inventory_resource.inventories_settings", "inventory_resource.external_representations"],
                 gate: Capability::properties_inventories_view
             ),
             "locations"                 => "load:actor.own_locations",

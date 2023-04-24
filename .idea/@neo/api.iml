@@ -208,6 +208,7 @@
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/phpxmlrpc/polyfill-xmlrpc" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/_laravel_idea" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/geocoder-php/geonames-provider" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/phpstan/phpdoc-parser" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

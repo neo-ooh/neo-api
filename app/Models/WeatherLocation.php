@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -42,8 +42,13 @@ class WeatherLocation extends Model {
         'selection_revert_date',
     ];
 
-    protected $dates = [
-        "selection_revert_date"
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    public $casts = [
+        "selection_revert_date" => "datetime",
     ];
 
     /**
@@ -67,7 +72,7 @@ class WeatherLocation extends Model {
         "British Columbia"        => "BC",
         "Yukon"                   => "YT",
         "Northwest Territories"   => "NT",
-        "Nunavut"                 => "NU"
+        "Nunavut"                 => "NU",
     ];
 
     /**
@@ -95,16 +100,15 @@ class WeatherLocation extends Model {
 
         [$country, $province, $city] = static::sanitizeValues($country, $province, $city, $allowIncomplete);
 
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return static::query()
                      ->firstOrCreate([
-                         "country"  => $country,
-                         "province" => $province,
-                         "city"     => $city,
-                     ], [
-                         'background_selection'  => "WEATHER",
-                         'selection_revert_date' => null,
-                     ]);
+                                         "country" => $country,
+                                                                                                                                                                                                                                                                                                                          "province" => $province,
+                                         "city"    => $city,
+                                     ], [
+                                         'background_selection'  => "WEATHER",
+                                         'selection_revert_date' => null,
+                                     ]);
     }
 
     /**

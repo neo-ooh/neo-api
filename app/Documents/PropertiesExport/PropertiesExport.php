@@ -5,10 +5,10 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ProgrammaticExport.php
+ * @neo/api - PropertiesExport.php
  */
 
-namespace Neo\Documents\ProgrammaticExport;
+namespace Neo\Documents\PropertiesExport;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -25,7 +25,7 @@ use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\Property;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
-class ProgrammaticExport extends XLSXDocument {
+class PropertiesExport extends XLSXDocument {
     protected array $columns = [
         // Row start
         "Type",
@@ -33,6 +33,7 @@ class ProgrammaticExport extends XLSXDocument {
         "Property Name",
         "Product Id",
         "Product Name",
+        "Product Type",
         "Display Unit Id",
         "Display Unit Name",
         "Player Id",
@@ -228,6 +229,7 @@ class ProgrammaticExport extends XLSXDocument {
                                 $property->actor->name,
                                 $product->getKey(),
                                 $product->name_en,
+                                $product->category->type->name,
                                 $location->external_id,
                                 $location->internal_name,
                                 $player->external_id,
@@ -255,6 +257,7 @@ class ProgrammaticExport extends XLSXDocument {
                             $property->actor->name,
                             $product->getKey(),
                             $product->name_en,
+                            $product->category->type->name,
                             $location->external_id,
                             $location->internal_name,
                             "",
@@ -286,6 +289,7 @@ class ProgrammaticExport extends XLSXDocument {
                         $property->actor->name,
                         $product->getKey(),
                         $product->name_en,
+                        $product->category->type->name,
                         "",
                         "",
                         "",

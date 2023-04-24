@@ -35,17 +35,19 @@ Route::group([
         */
 
         Route::   get("properties", PropertiesController::class . "@index");
-        Route::   get("properties/_by_id", PropertiesController::class . "@byId");
         Route::  post("properties", PropertiesController::class . "@store");
+
+        Route::   get("properties/_by_id", PropertiesController::class . "@byId");
+        Route::   get("properties/_export", [PropertiesController::class, "export"]);
         Route::   get("properties/_networkDump", PropertiesController::class . "@networkDump");
         Route::   get("properties/_need_attention", PropertiesController::class . "@needAttention");
         Route::   get("properties/_search", PropertiesController::class . "@search");
+
         Route::   get("properties/{propertyId}", PropertiesController::class . "@show")->whereNumber("propertyId");
         Route::   put("properties/{property}", PropertiesController::class . "@update");
         Route::   put("properties/{property}/_mark_reviewed", PropertiesController::class . "@markReviewed");
         Route::delete("properties/{property}", PropertiesController::class . "@destroy");
 
-        Route::   get("properties/{property}/_dump", PropertiesController::class . "@dump");
 
         Route::   get("actors/{actor}/traffic-statistics", GroupTrafficStatsController::class . "@show");
 
@@ -131,6 +133,6 @@ Route::group([
         |----------------------------------------------------------------------
         */
 
-        Route::  post("properties/{property}/opening-hours/_refresh", OpeningHoursController::class . "@refresh");
-        Route::   put("properties/{property}/opening-hours/{weekday}", OpeningHoursController::class . "@update");
+        Route::  post("properties/{property}/opening-hours/_refresh", [OpeningHoursController::class, "refresh"]);
+        Route::   put("properties/{property}/opening-hours/{weekday}", [OpeningHoursController::class, "update"]);
     });

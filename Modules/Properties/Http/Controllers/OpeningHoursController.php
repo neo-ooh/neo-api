@@ -37,8 +37,6 @@ class OpeningHoursController {
                                                   "close_at"  => $request->input("close_at"),
                                               ]);
 
-//        PushOpeningHoursJob::dispatch($property->getKey());
-
         return new Response([], 202);
     }
 }

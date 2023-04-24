@@ -8,7 +8,7 @@
  * @neo/api - ExportLevel.php
  */
 
-namespace Neo\Documents\ProgrammaticExport;
+namespace Neo\Documents\PropertiesExport;
 
 enum ExportLevel: string {
     case Properties = "properties";

@@ -229,6 +229,7 @@
       <path value="$PROJECT_DIR$/vendor/phpxmlrpc/phpxmlrpc" />
       <path value="$PROJECT_DIR$/vendor/phpxmlrpc/polyfill-xmlrpc" />
       <path value="$PROJECT_DIR$/vendor/geocoder-php/geonames-provider" />
+      <path value="$PROJECT_DIR$/vendor/phpstan/phpdoc-parser" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

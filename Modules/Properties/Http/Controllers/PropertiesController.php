@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Gate;
 use InvalidArgumentException;
 use Neo\Documents\Exceptions\UnknownGenerationException;
-use Neo\Documents\ProgrammaticExport\ProgrammaticExport;
+use Neo\Documents\PropertiesExport\PropertiesExport;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
 use Neo\Jobs\Properties\PullOpeningHoursJob;
@@ -25,6 +25,7 @@ use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Enums\TrafficFormat;
 use Neo\Modules\Properties\Http\Requests\Properties\DestroyPropertyRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\DumpPropertyRequest;
+use Neo\Modules\Properties\Http\Requests\Properties\ExportPropertiesRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ListPropertiesByIdRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ListPropertiesPendingReviewRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ListPropertiesRequest;
@@ -166,15 +167,14 @@ class PropertiesController extends Controller {
     }
 
     /**
-     * @param DumpPropertyRequest $request
-     * @param Property            $property
      * @throws UnknownGenerationException
      */
-    public function dump(DumpPropertyRequest $request, Property $property): void {
-        $doc = ProgrammaticExport::make([
-                                            "properties" => $property->getKey(),
-                                            "level"      => null,
-                                        ]);
+    public function export(ExportPropertiesRequest $request) {
+        set_time_limit(120);
+        $doc = PropertiesExport::make([
+                                          "properties" => $request->input("ids"),
+                                          "level"      => $request->input("level", null),
+                                      ]);
         $doc->build();
         $doc->output();
     }
@@ -186,15 +186,15 @@ class PropertiesController extends Controller {
      */
     public function dumpNetwork(DumpPropertyRequest $request, Network $network) {
         set_time_limit(120);
-        $doc = ProgrammaticExport::make([
-                                            "properties" => Property::query()
-                                                                    ->where("network_id", "=", $network->getKey())
-                                                                    ->setEagerLoads([])
-                                                                    ->get()
-                                                                    ->pluck("actor_id")
-                                                                    ->toArray(),
-                                            "level"      => $request->input("level", null),
-                                        ]);
+        $doc = PropertiesExport::make([
+                                          "properties" => Property::query()
+                                                                  ->where("network_id", "=", $network->getKey())
+                                                                  ->setEagerLoads([])
+                                                                  ->get()
+                                                                  ->pluck("actor_id")
+                                                                  ->toArray(),
+                                          "level"      => $request->input("level", null),
+                                      ]);
         $doc->build();
         $doc->output();
     }

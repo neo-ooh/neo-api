@@ -11,10 +11,10 @@
 namespace Neo\Modules\Properties\Jobs\Products;
 
 use Edujugon\Laradoo\Exceptions\OdooException;
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Database\Eloquent\Builder;
 use JsonException;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Models\Address;
 use Neo\Models\City;

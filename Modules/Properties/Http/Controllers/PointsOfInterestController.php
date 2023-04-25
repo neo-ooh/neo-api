@@ -10,8 +10,8 @@
 
 namespace Neo\Modules\Properties\Http\Controllers;
 
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Response;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 use Neo\Modules\Properties\Http\Requests\PointsOfInterest\DestroyPointOfInterestRequest;
 use Neo\Modules\Properties\Http\Requests\PointsOfInterest\ListPointsOfInterestRequest;
 use Neo\Modules\Properties\Http\Requests\PointsOfInterest\StoreBatchPointOfInterestRequest;

@@ -11,24 +11,26 @@
 namespace Neo\Http\Requests\Markets;
 
 use Gate;
+use GeoJson\Geometry\Polygon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Models\Province;
+use Neo\Rules\GeoJsonRule;
 
 class StoreMarketRequest extends FormRequest {
-    public function authorize() {
+    public function authorize(): bool {
         return Gate::allows(Capability::properties_markets->value);
     }
 
-    public function rules() {
+    public function rules(): array {
         return [
             "province_id" => ["required", new Exists(Province::class, "id")],
 
             "name_en" => ["required", "string"],
             "name_fr" => ["required", "string"],
 
-            "area" => ["nullable", "array"],
+            "area" => ["nullable", new GeoJsonRule(Polygon::class)],
         ];
     }
 }

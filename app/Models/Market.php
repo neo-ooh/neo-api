@@ -10,9 +10,8 @@
 
 namespace Neo\Models;
 
-use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
-use Grimzy\LaravelMysqlSpatial\Types\Polygon;
 use Illuminate\Database\Eloquent\Model;
+use MatanYadaev\EloquentSpatial\Objects\Polygon;
 
 /**
  * Class Market
@@ -28,21 +27,17 @@ use Illuminate\Database\Eloquent\Model;
  * @property int          $id
  */
 class Market extends Model {
-    use SpatialTrait;
-
     protected $table = "markets";
 
     protected $primaryKey = "id";
 
     public $timestamps = false;
 
-    protected $fillable = ["province_id", "name_en", "name_fr"];
-
-    public bool $wktOptions = false;
-
-    protected array $spatialFields = [
-        "area",
+    protected $casts = [
+        "area" => Polygon::class,
     ];
+
+    protected $fillable = ["province_id", "name_en", "name_fr"];
 
     public function province() {
         return $this->belongsTo(Province::class, "province_id");

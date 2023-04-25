@@ -11,9 +11,8 @@
 namespace Neo\Models;
 
 use Carbon\Traits\Date;
-use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Model;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 
 /**
  * Class Address
@@ -33,16 +32,12 @@ use Illuminate\Database\Eloquent\Model;
  * @property string     $string_representation Human-readable version of the address
  */
 class Address extends Model {
-    use SpatialTrait;
-
-    public bool $wktOptions = false;
-
     protected $table = "addresses";
 
     protected $primaryKey = "id";
 
-    protected array $spatialFields = [
-        "geolocation",
+    protected $casts = [
+        "geolocation" => Point::class,
     ];
 
     protected $with = [

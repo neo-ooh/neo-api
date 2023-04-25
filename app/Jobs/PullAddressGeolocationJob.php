@@ -14,13 +14,13 @@ use Exception;
 use Geocoder\Laravel\ProviderAndDumperAggregator as Geocoder;
 use Geocoder\Model\Coordinates;
 use Geocoder\Provider\Geonames\Model\GeonamesAddress;
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 use Neo\Models\Address;
 
 class PullAddressGeolocationJob implements ShouldQueue, ShouldBeUnique {

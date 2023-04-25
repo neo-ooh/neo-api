@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -11,6 +11,7 @@
 namespace Neo\Rules;
 
 use GeoJson\GeoJson;
+use GeoJson\Geometry\Geometry;
 use Illuminate\Contracts\Validation\Rule;
 use InvalidArgumentException;
 use Throwable;
@@ -28,7 +29,7 @@ class GeoJsonRule implements Rule {
     /**
      * Constructor.
      *
-     * @param string|null $geometryClass Expected geometry.
+     * @param class-string<Geometry>|null $geometryClass Expected geometry.
      */
     public function __construct(?string $geometryClass = null) {
         $this->geometryClass = $geometryClass;

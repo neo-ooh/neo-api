@@ -11,15 +11,16 @@
 namespace Neo\Console\Commands\Test;
 
 use Carbon\Carbon;
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Storage;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 use Neo\Models\Actor;
 use Neo\Modules\Properties\Enums\TrafficFormat;
 use Neo\Modules\Properties\Jobs\Products\ImportProductJob;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\Property;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
 use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
@@ -176,8 +177,13 @@ class ImportAdaptInventoryCommand extends Command {
             /** @var IdentifiableProduct $odooProduct */
             foreach ($odooProducts as $odooProduct) {
                 $this->output->writeln("Import product: {$odooProduct->product->name[0]->value}");
-                $product = (new ImportProductJob($odoo->getInventoryID(), $property->getKey(), $odooProduct->resourceId))->handle();
+                $job = new ImportProductJob($odoo->getInventoryID(), $property->getKey(), $odooProduct->resourceId);
+                $job->handle();
 
+                /**
+                 * @var Product $product
+                 */
+                $product          = $job->getResult();
                 $product->name_en = $line->id . " - " . $product->name_en;
                 $product->name_fr = $line->id . " - " . $product->name_fr;
                 $product->save();

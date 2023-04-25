@@ -10,8 +10,8 @@
 
 namespace Neo\Modules\Properties\Http\Controllers;
 
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Http\Response;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 use Neo\Http\Controllers\Controller;
 use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Models\Address;

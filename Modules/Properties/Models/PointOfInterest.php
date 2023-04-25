@@ -11,10 +11,9 @@
 namespace Neo\Modules\Properties\Models;
 
 use Carbon\Traits\Date;
-use Grimzy\LaravelMysqlSpatial\Eloquent\SpatialTrait;
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 
 /**\
  * @property int    $id
@@ -30,16 +29,12 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin Builder<PointOfInterest>
  */
 class PointOfInterest extends Model {
-    use SpatialTrait;
-
-    public bool $wktOptions = false;
-
     protected $table = "points_of_interest";
 
     protected $primaryKey = "id";
 
-    protected array $spatialFields = [
-        "position",
+    protected $casts = [
+        "position" => Point::class,
     ];
 
     protected $fillable = [

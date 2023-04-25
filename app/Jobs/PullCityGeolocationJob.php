@@ -12,13 +12,13 @@ namespace Neo\Jobs;
 
 use Geocoder\Laravel\ProviderAndDumperAggregator;
 use Geocoder\Provider\Geonames\Model\GeonamesAddress;
-use Grimzy\LaravelMysqlSpatial\Types\Point;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 use Neo\Models\City;
 
 class PullCityGeolocationJob implements ShouldQueue {

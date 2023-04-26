@@ -142,8 +142,10 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
                     throw new PropertyIDInconsistencyException($this->resourceID, $this->inventoryID, $externalProduct->product->property_id, $propertyExternalId);
                 }
             }
-
         }
+
+        clock($externalProduct->toArray());
+
         // Using the external product data, we update our own product and property.
         // Product name
         foreach ($externalProduct->product->name as $localizedName) {

@@ -10,8 +10,8 @@
 
 namespace Neo\Console\Commands\Test;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 
@@ -30,6 +30,9 @@ class TestCommand extends Command {
 //        $file = BroadSignAudienceFile::make(Location::query()->firstWhere("external_id", "=", 387294643));
 //        $file->build();
 
-        (new UpdateDemographicFieldsJob(3567))->handle();
+//        $product = Product::find(2450);
+//        dump($product->toResource(4)->toArray());
+
+        dump(Carbon::now()->subMonths(2)->format("D, d M Y H:i:s \G\M\T"));
     }
 }

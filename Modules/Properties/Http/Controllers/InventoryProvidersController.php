@@ -82,9 +82,10 @@ class InventoryProvidersController extends Controller {
                 $inventoryProvider->settings->database     = $request->input("database");
                 break;
             case InventoryType::Hivestack:
-                $inventoryProvider->settings->api_url  = $request->input("api_url");
-                $inventoryProvider->settings->api_key  = $request->input("api_key", $inventoryProvider->settings->api_key);
-                $inventoryProvider->settings->networks = $request->input("networks");
+                $inventoryProvider->settings->api_url    = $request->input("api_url");
+                $inventoryProvider->settings->api_key    = $request->input("api_key", $inventoryProvider->settings->api_key);
+                $inventoryProvider->settings->networks   = $request->input("networks");
+                $inventoryProvider->settings->mediatypes = $request->input("mediatypes");
                 break;
             case InventoryType::Vistar:
             case InventoryType::Atedra:

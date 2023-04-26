@@ -8,10 +8,6 @@
     {
       "type": "github",
       "url": "https://github.com/neo-ooh/laradoo.git"
-    },
-    {
-      "type": "github",
-      "url": "https://github.com/neo-ooh/laravel-mysql-spatial.git"
     }
   ],
   "require": {
@@ -29,7 +25,6 @@
     "edujugon/laradoo": "dev-laravel10",
     "firebase/php-jwt": "^6",
     "geocoder-php/geonames-provider": "^4.4",
-    "grimzy/laravel-mysql-spatial": "dev-laravel10",
     "guzzlehttp/guzzle": "^7.0.1",
     "hannesvdvreken/guzzle-clockwork": "4.0.0-RC1",
     "intervention/image": "^2.5",

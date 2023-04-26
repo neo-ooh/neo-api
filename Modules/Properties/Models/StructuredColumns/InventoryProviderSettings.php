@@ -38,6 +38,11 @@ class InventoryProviderSettings extends JSONDBColumn {
          * @var array<{id: string, name: string}> Hivestack networks
          */
         public array|null  $networks = null,
+
+        /**
+         * @var array<{id: string, name: string}> Hivestack media types
+         */
+        public array|null  $mediatypes = null,
     ) {
 
     }

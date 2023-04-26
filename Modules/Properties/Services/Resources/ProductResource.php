@@ -132,6 +132,8 @@ class ProductResource extends InventoryResource {
          */
         public int                      $weekly_traffic,
 
+        public array|null               $weekdays_spot_impressions,
+
         // -- Players ?
         // -- Media types
 
@@ -150,7 +152,7 @@ class ProductResource extends InventoryResource {
         /**
          * @var BroadcastLocation[]|null List of broadcast locations associated with the product. Only relevant for `ProductResource`s coming from Connect
          */
-        public array|null               $broadcastLocations = null
+        public array|null               $broadcastLocations = null,
     ) {
 
     }

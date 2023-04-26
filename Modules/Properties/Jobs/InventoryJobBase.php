@@ -17,13 +17,13 @@ use Neo\Modules\Properties\Models\InventoryResourceEvent;
 abstract class InventoryJobBase extends Job {
     private InventoryResourceEvent $event;
 
-    public function __construct(private readonly InventoryJobType $type, protected int $resourceId, protected int $inventoryId) {
+    public function __construct(protected InventoryJobType $type, protected int $resourceId, protected int $inventoryId) {
     }
 
     protected function beforeRun(): bool {
         $this->event               = new InventoryResourceEvent();
         $this->event->inventory_id = $this->inventoryId;
-        $this->event->event_type   = $this->type;
+        $this->event->event_type   = $this->type->value;
         $this->event->triggered_at = Carbon::now();
         return true;
     }

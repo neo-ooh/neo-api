@@ -10,8 +10,12 @@
 
 namespace Neo\Modules\Properties\Services\Hivestack\Models;
 
+use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
+use Neo\Services\API\Endpoint;
 
 /**
  * @property int      $unit_id
@@ -47,7 +51,8 @@ use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
  * @property int      $min_seconds_between_creative_category_plays
  *
  * @property int      $physical_screen_height_cm
- * @property int      $physical_screen_widtg_cm
+ * @property int      $physical_screen_width_cm
+ * @property int      $physical_unit_count
  *
  * @property int      $screen_height   required - pixels
  * @property int      $screen_width    required - pixels
@@ -63,8 +68,10 @@ use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
  * @property boolean  $available_for_open_exchange
  * @property boolean  $available_for_store_front
  * @property string[] $blacklist_unique_advertiser_ids
- * @property boolean  enable_strict_iab_blacklisting
- * @property boolean  enable_strict_iab_frequency_capping
+ * @property boolean  $enable_strict_iab_blacklisting
+ * @property boolean  $enable_strict_iab_frequency_capping
+ *
+ * @property int      $weekly_traffic
  *
  * @property string   $created_on_utc
  * @property string   $modified_on_utc
@@ -78,8 +85,31 @@ class Unit extends HivestackModel {
             external_id : $this->unit_id,
             type        : InventoryResourceType::Product,
             context     : [
-                              "network_id" => $this->network_id,
+                              "network_id"    => $this->network_id,
+                              "media_type_id" => $this->mediatype_id,
+                              "external_id"   => $this->external_id,
                           ],
+        );
+    }
+
+    /**
+     * @param array $impressionsPerDay
+     * @return Response
+     * @throws GuzzleException
+     * @throws RequestException
+     */
+    public function fillImpressions(array $impressionsPerDay) {
+        $multipliers = [];
+        foreach (str_split($this->operating_hours, 1) as $i => $isOpen) {
+            $day           = (int)floor($i / 24) + 1; // 24hrs per day, 1 or zero if each hour is open or not
+            $multipliers[] = $impressionsPerDay[$day] * (int)$isOpen;
+        }
+
+        return $this->client->call(
+            new Endpoint("POST", "units/" . $this->getKey() . "/impressions"),
+            [
+                "hourly_impressions" => implode(",", $multipliers),
+            ]
         );
     }
 }

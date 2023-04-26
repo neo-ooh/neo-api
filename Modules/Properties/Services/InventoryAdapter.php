@@ -90,7 +90,7 @@ abstract class InventoryAdapter {
      * List all products available in this inventory
      *
      * @param Carbon|null $ifModifiedSince Limit returned products to ones that have been changed since the given date
-     * @return Traversable
+     * @return Traversable<IdentifiableProduct>
      */
     public function listProducts(Carbon|null $ifModifiedSince = null): Traversable {
         throw new InventoryMethodNotSupportedException($this->getInventoryID(), $this->getInventoryType(), "listProducts");

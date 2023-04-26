@@ -135,8 +135,8 @@ class PropertiesExport extends XLSXDocument {
                 "Country"      => $property->address?->city->province->country->slug,
                 "Postal Code"  => implode(" ", str_split($property->address?->zipcode, 3)),
                 "Full Address" => $property->address?->string_representation ?? "",
-                "Longitude"    => $property->address?->geolocation?->getLng() ?? "",
-                "Latitude"     => $property->address?->geolocation?->getLat() ?? "",
+                "Longitude"    => $property->address?->geolocation?->getCoordinates()[0] ?? "",
+                "Latitude"     => $property->address?->geolocation?->getCoordinates()[1] ?? "",
             ];
 
             $openingHours = $property->opening_hours->keyBy("weekday");

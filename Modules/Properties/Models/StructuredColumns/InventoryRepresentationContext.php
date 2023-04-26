@@ -31,6 +31,11 @@ class InventoryRepresentationContext extends JSONDBColumn {
         public int|Optional   $network_id,
 
         /**
+         * @var int|Optional Hivestack's units media type id
+         */
+        public int|Optional   $media_type_id,
+
+        /**
          * @var array|Optional Hivestack units ids for products
          */
         public array|Optional $units,

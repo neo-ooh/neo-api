@@ -10,8 +10,6 @@
 
 namespace Neo\Modules\Properties\Services\Hivestack;
 
-use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\RequestException;
 use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
@@ -29,48 +27,48 @@ class ResourceFactory {
      * @param Unit            $unit
      * @param HivestackConfig $config
      * @return IdentifiableProduct
-     * @throws GuzzleException
-     * @throws RequestException
      */
     public static function makeIdentifiableProduct(Unit $unit, HivestackConfig $config): IdentifiableProduct {
-        $site = Site::find($config->getClient(), $unit->site_id);
+        $site     = Site::find($config->getClient(), $unit->site_id);
+        $unitName = static::trimStart(trim($unit->name), trim($site->name) . " - ");
 
         return new IdentifiableProduct(
             resourceId: $unit->toInventoryResourceId($config->inventoryID),
             product   : new ProductResource(
-                            name               : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: trim($unit->name))]),
-                            type               : ProductType::Digital,
-                            category_id        : null,
-                            is_sellable        : $unit->active,
-                            is_bonus           : false,
-                            linked_product_id  : null,
-                            quantity           : 1,
-                            price_type         : PriceType::CPM,
-                            price              : $unit->floor_cpm,
-                            picture_url        : null,
-                            loop_configuration : new LoopConfiguration(
-                                                     loop_length_ms: $unit->loop_length * 1000,
-                                                     spot_length_ms: $unit->spot_length * 1000
-                                                 ),
-                            screen_width_px    : $unit->screen_width,
-                            screen_height_px   : $unit->screen_height,
-                            allowed_media_types: array_filter([
-                                                                  $unit->allow_image ? MediaType::Image : null,
-                                                                  $unit->allow_video ? MediaType::Video : null,
-                                                                  $unit->allow_html ? MediaType::HTML : null,
-                                                              ], fn(MediaType|null $type) => $type !== null),
-                            allows_audio       : false,
-                            property_id        : $site->toInventoryResourceId($config->inventoryID),
-                            property_name      : trim($site->name),
-                            address            : null,
-                            geolocation        : new Geolocation(
-                                                     longitude: $site->longitude,
-                                                     latitude : $site->latitude
-                                                 ),
-                            timezone           : $unit->timezone,
+                            name                     : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: $unitName)]),
+                            type                     : ProductType::Digital,
+                            category_id              : null,
+                            is_sellable              : $unit->active,
+                            is_bonus                 : false,
+                            linked_product_id        : null,
+                            quantity                 : 1,
+                            price_type               : PriceType::CPM,
+                            price                    : $unit->floor_cpm,
+                            picture_url              : null,
+                            loop_configuration       : new LoopConfiguration(
+                                                           loop_length_ms: $unit->loop_length * 1000,
+                                                           spot_length_ms: $unit->spot_length * 1000
+                                                       ),
+                            screen_width_px          : $unit->screen_width,
+                            screen_height_px         : $unit->screen_height,
+                            allowed_media_types      : array_filter([
+                                                                        $unit->allow_image ? MediaType::Image : null,
+                                                                        $unit->allow_video ? MediaType::Video : null,
+                                                                        $unit->allow_html ? MediaType::HTML : null,
+                                                                    ], fn(MediaType|null $type) => $type !== null),
+                            allows_audio             : false,
+                            property_id              : $site->toInventoryResourceId($config->inventoryID),
+                            property_name            : trim($site->name),
+                            address                  : null,
+                            geolocation              : new Geolocation(
+                                                           longitude: $site->longitude,
+                                                           latitude : $site->latitude
+                                                       ),
+                            timezone                 : $unit->timezone,
                             // TODO
-                            operating_hours    : null,
-                            weekly_traffic     : 0
+                            operating_hours          : null,
+                            weekly_traffic           : 0,
+                            weekdays_spot_impressions: null,
                         )
         );
     }
@@ -85,5 +83,22 @@ class ResourceFactory {
             property_id  : $site->toInventoryResourceId($config->inventoryID),
             property_name: $site->name,
         );
+    }
+
+    /**
+     * @param string    $str           Original string
+     * @param string    $needle        String to trim from the beginning of $str
+     * @param bool|true $caseSensitive Perform case-sensitive matching, defaults to true
+     * @return string Trimmed string
+     *
+     * @author Bas
+     * @link   https://stackoverflow.com/a/32739088
+     */
+    protected static function trimStart($str, $needle, $caseSensitive = true) {
+        $strPosFunction = $caseSensitive ? "strpos" : "stripos";
+        if ($strPosFunction($str, $needle) === 0) {
+            $str = substr($str, strlen($needle));
+        }
+        return $str;
     }
 }

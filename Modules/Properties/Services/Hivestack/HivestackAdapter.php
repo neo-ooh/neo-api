@@ -33,6 +33,7 @@ use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 use Neo\Modules\Properties\Services\Resources\ProductResource;
 use Neo\Modules\Properties\Services\Resources\PropertyResource;
+use RuntimeException;
 use Traversable;
 
 /**
@@ -92,9 +93,16 @@ class HivestackAdapter extends InventoryAdapter {
      * @throws RequestException
      */
     public function getProduct(InventoryResourceId $productId): IdentifiableProduct {
-        $product = Unit::find($this->getConfig()->getClient(), $productId->external_id);
+        $unitID = array_values($productId->context["units"] ?? [])[0] ?? null;
 
-        return ResourceFactory::makeIdentifiableProduct($product, $this->config);
+        if (!$unitID) {
+            throw new RuntimeException("Product has invalid context: No unit id could be found");
+        }
+
+
+        $unit = Unit::find($this->getConfig()->getClient(), $unitID);
+
+        return ResourceFactory::makeIdentifiableProduct($unit, $this->config);
     }
 
     /**
@@ -120,33 +128,36 @@ class HivestackAdapter extends InventoryAdapter {
 
     protected function fillSite(Site $site, ProductResource $product) {
         $site->active      = true;
-        $site->name        = $product->property_name;
-        $site->description = $product->property_name;
+        $site->name        = trim($product->property_name);
+        $site->description = trim($product->property_name);
         $site->longitude   = $product->geolocation->longitude;
         $site->latitude    = $product->geolocation->latitude;
-        $site->external_id = (string)$product->property_connect_id;
+        $site->external_id = "connect:" . $product->property_connect_id . " - " . $product->property_name;
     }
 
     protected function fillUnit(Unit $unit, BroadcastLocation $location, ProductResource $product, array $context) {
-        $unit->active          = $product->is_sellable;
-        $unit->name            = $product->property_name . " - " . $product->name[0]->value;
-        $unit->description     = $location->name;
-        $unit->network_id      = $context["network_id"];
-        $unit->external_id     = $location->external_id->external_id;
-        $unit->floor_cpm       = $product->price;
-        $unit->longitude       = $product->geolocation->longitude;
-        $unit->latitude        = $product->geolocation->latitude;
-        $unit->loop_length     = $product->loop_configuration->loop_length_ms / 1_000; // ms to seconds
-        $unit->operating_hours = $this->operatingHoursToHivestackString($product->operating_hours->toCollection());
-        $unit->screen_height   = $product->screen_height_px;
-        $unit->screen_width    = $product->screen_width_px;
-        $unit->spot_length     = $product->loop_configuration->spot_length_ms / 1_000; // ms to seconds
-        $unit->min_spot_length = min($unit->spot_length, 5);                           // Min length : 5 seconds or spot length if shorter
-        $unit->max_spot_length = $unit->spot_length;
-        $unit->timezone        = $product->timezone;
-        $unit->allow_image     = in_array(MediaType::Image, $product->allowed_media_types);
-        $unit->allow_video     = in_array(MediaType::Video, $product->allowed_media_types);
-        $unit->allow_html      = in_array(MediaType::HTML, $product->allowed_media_types);
+        $unit->active                         = $product->is_sellable;
+        $unit->name                           = trim($product->property_name) . " - " . trim($product->name[0]->value);
+        $unit->description                    = $location->name;
+        $unit->network_id                     = $context["network_id"];
+        $unit->external_id                    = $location->external_id->external_id . "-" . $location->id;
+        $unit->floor_cpm                      = $product->price;
+        $unit->longitude                      = $product->geolocation->longitude;
+        $unit->latitude                       = $product->geolocation->latitude;
+        $unit->loop_length                    = $product->loop_configuration->loop_length_ms / 1_000; // ms to seconds
+        $unit->operating_hours                = $this->operatingHoursToHivestackString($product->operating_hours->toCollection());
+        $unit->screen_height                  = $product->screen_height_px;
+        $unit->screen_width                   = $product->screen_width_px;
+        $unit->spot_length                    = $product->loop_configuration->spot_length_ms / 1_000; // ms to seconds
+        $unit->min_spot_length                = min($unit->spot_length, 5);                           // Min length : 5 seconds or spot length if shorter
+        $unit->max_spot_length                = $unit->spot_length;
+        $unit->timezone                       = $product->timezone;
+        $unit->allow_image                    = in_array(MediaType::Image, $product->allowed_media_types);
+        $unit->allow_video                    = in_array(MediaType::Video, $product->allowed_media_types);
+        $unit->allow_html                     = in_array(MediaType::HTML, $product->allowed_media_types);
+        $unit->enable_strict_iab_blacklisting = true;
+        $unit->weekly_traffic                 = $product->weekly_traffic;
+        $unit->physical_unit_count            = $location->screen_count;
     }
 
     /**
@@ -184,6 +195,8 @@ class HivestackAdapter extends InventoryAdapter {
             $this->fillUnit($unit, $broadcastLocation, $product, $context);
             $unit->site_id = $siteId;
             $unit->save();
+
+            $unit->fillImpressions($product->weekdays_spot_impressions);
 
             $unitIds[$broadcastLocation->id] = $unit->getKey();
         }
@@ -227,6 +240,8 @@ class HivestackAdapter extends InventoryAdapter {
             $this->fillUnit($unit, $broadcastLocation, $product, $productId->context);
             $unit->site_id = $site->getKey();
             $unit->save();
+
+            clock($unit->fillImpressions($product->weekdays_spot_impressions));
 
             $unitIds[$broadcastLocation->id] = $unit->getKey();
         }

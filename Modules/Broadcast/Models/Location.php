@@ -210,10 +210,11 @@ class Location extends SecuredModel {
 
     public function toInventoryResource() {
         return new BroadcastLocation(
-            provider   : $this->network->broadcaster_connection->broadcaster,
-            id         : $this->getKey(),
-            external_id: $this->toExternalBroadcastIdResource(),
-            name       : $this->name,
+            provider    : $this->network->broadcaster_connection->broadcaster,
+            id          : $this->getKey(),
+            external_id : $this->toExternalBroadcastIdResource(),
+            name        : $this->name,
+            screen_count: $this->players->sum("screen_count"),
         );
     }
 }

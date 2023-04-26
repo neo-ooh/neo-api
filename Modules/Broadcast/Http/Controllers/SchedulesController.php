@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -396,15 +396,21 @@ class SchedulesController extends Controller {
     public function destroy(DestroyScheduleRequest $request, Schedule $schedule): Response {
         $schedules = collect([$schedule]);
 
+
         if ($schedule->batch_id !== null && $request->input("delete_batch", false)) {
             $schedules = Schedule::query()->where("batch_id", "=", $schedule->batch_id)->get();
         }
 
         /** @var Schedule $s */
         foreach ($schedules as $s) {
-            // If a schedule has not be reviewed, we want to completely remove it
+            // If a schedule has not been reviewed, we want to completely remove it
             if ($s->status === ScheduleStatus::Draft || $s->status === ScheduleStatus::Pending) {
                 $s->forceDelete();
+                continue;
+            }
+
+            if ($s->status === ScheduleStatus::Rejected) {
+                $s->delete();
                 continue;
             }
 
@@ -437,4 +443,3 @@ class SchedulesController extends Controller {
         return new Response($schedule);
     }
 }
-

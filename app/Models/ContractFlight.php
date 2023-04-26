@@ -175,8 +175,8 @@ class ContractFlight extends Model {
                             $reservationsNetworks = [];
                             foreach ($reservations as $reservation) {
                                 foreach ($networks as $network) {
-                                    if (str_contains($reservation->original_name, "_{$network->slug}_") ||
-                                        str_contains($reservation->original_name, "-{$network->slug}-")) {
+                                    if (stripos($reservation->original_name, "_{$network->slug}_") !== false ||
+                                        stripos($reservation->original_name, "-{$network->slug}-") !== false) {
                                         $reservationsNetworks[$reservation->external_id] = $network->getKey();
                                         break;
                                     }

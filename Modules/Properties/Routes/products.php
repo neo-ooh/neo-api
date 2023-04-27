@@ -92,8 +92,9 @@ Route::group([
         Route::  post("brands/{brand}/_merge", BrandsController::class . "@merge");
         Route::delete("brands/{brand}", BrandsController::class . "@destroy");
 
-        Route::   get("properties/{property}/tenants", PropertiesTenantsController::class . "@index");
-        Route::  post("properties/{property}/tenants", PropertiesTenantsController::class . "@sync");
+        Route::   get("properties/{property}/tenants", [PropertiesTenantsController::class, "index"]);
+        Route::  post("properties/{property}/tenants", [PropertiesTenantsController::class, "sync"]);
+        Route::   put("properties/{property}/tenants", [PropertiesTenantsController::class, "import"]);
 
 
         /*

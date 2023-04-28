@@ -11,8 +11,10 @@
 namespace Neo\Modules\Broadcast\Jobs\Networks;
 
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Neo\Jobs\Job;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\DisplayType;
@@ -77,103 +79,107 @@ class SynchronizeNetworkJob extends Job {
         // Now, parse each location
         /** @var LocationResource $externalLocation */
         foreach ($externalLocations as $externalLocation) {
-            $log->clear();
-            $locationLine->writeln("<info>[Location #$externalLocation->external_id - $externalLocation->name]</info>");
+            try {
+                $log->clear();
+                $locationLine->writeln("<info>[Location #$externalLocation->external_id - $externalLocation->name]</info>");
 
-            // Get the display type of the location
-            $log->writeln("<comment>Getting display type...</comment>");
-            $displayType = $this->getDisplayType($broadcaster, $externalLocation->external_display_type_id);
+                // Get the display type of the location
+                $log->writeln("<comment>Getting display type...</comment>");
+                $displayType = $this->getDisplayType($broadcaster, $externalLocation->external_display_type_id);
 
-            if (!$displayType) {
-                // Could not find a display type, ignore
-                $locationLine->writeln("<comment>No display type available, ignoring location</comment>");
-                continue;
-            }
-
-            // Get the container ID for the location
-            if ($broadcaster->hasCapability(BroadcasterCapability::Containers)) {
-                $log->writeln("<comment>Persist containers...</comment>");
-                $containerId = $this->persistContainersHierarchy($broadcaster, $externalLocation->container_id);
-            } else {
-                $containerId = null;
-            }
-
-            // If the location is deactivated, and it does not exist in Connect, short-circuit here and prevent its creation
-            if (!$externalLocation->enabled && Location::query()->where("network_id", "=", $broadcaster->getNetworkId())
-                                                       ->where("external_id", "=", $externalLocation->external_id)
-                                                       ->doesntExist()) {
-                $locationLine->writeln("<comment>Location is not enabled and is not in Connect. Ignore.</comment>");
-                continue;
-            }
-
-            $log->writeln("<comment>Persist location...</comment>");
-
-            // Insert the location in the DB
-            /** @var Location $location */
-            $location = Location::withTrashed()->updateOrCreate([
-                                                                    "network_id" => $broadcaster->getNetworkId(),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                        "external_id" => (string)$externalLocation->external_id,
-                                                                ], [
-                                                                    "display_type_id" => $displayType->getKey(),
-                                                                    "internal_name"   => $externalLocation->name,
-                                                                    "name"            => $externalLocation->name,
-                                                                    "container_id"    => $containerId,
-                                                                ]);
-
-            if ($externalLocation->enabled && $location->trashed()) {
-                $location->restore();
-            } else if (!$externalLocation->enabled && !$location->trashed()) {
-                $location->delete();
-            }
-
-            $locations[] = $location->getKey();
-
-            // List players for this location
-            $externalLocationPlayers = $externalPlayers->filter(fn(PlayerResource $player) => $player->location_id->external_id === $externalLocation->external_id);
-
-            // Some broadcaster may simply stop returning deleted players, so we keep a list of the players we found, and delete the other one at the end
-            $players = [];
-
-            $log->writeln("<comment>Synchronize players... </comment>");
-
-            /** @var PlayerResource $externalPlayer */
-            foreach ($externalLocationPlayers as $externalPlayer) {
-                // If the player is deactivated and not in the DB, ignore it
-                if (!$externalPlayer->enabled && Player::query()
-                                                       ->where("network_id", "=", $broadcaster->getNetworkId())
-                                                       ->where("external_id", "=", $externalPlayer->external_id)
-                                                       ->doesntExist()) {
+                if (!$displayType) {
+                    // Could not find a display type, ignore
+                    $locationLine->writeln("<comment>No display type available, ignoring location</comment>");
                     continue;
                 }
 
-                $log->writeln("<comment>  Player #$externalPlayer->external_id - $externalPlayer->name</comment>");
-                /** @var Player $player */
-                $player = Player::query()->updateOrCreate([
-                                                              "network_id" => $broadcaster->getNetworkId(),
-                                                                                                                                                                                                                                                                                                                                                                                                                                                  "external_id" => $externalPlayer->external_id,
-                                                          ], [
-                                                              "location_id"  => $location->id,
-                                                              "name"         => $externalPlayer->name,
-                                                              "screen_count" => $externalPlayer->screen_count,
-                                                          ]);
-
-                // Make sure the player is trashed/not-trashed according to the external player enabled status
-                if ($externalPlayer->enabled && $player->trashed()) {
-                    $player->restore();
-                } else if (!$externalPlayer->enabled && !$player->trashed()) {
-                    $player->delete();
+                // Get the container ID for the location
+                if ($broadcaster->hasCapability(BroadcasterCapability::Containers)) {
+                    $log->writeln("<comment>Persist containers...</comment>");
+                    $containerId = $this->persistContainersHierarchy($broadcaster, $externalLocation->container_id);
+                } else {
+                    $containerId = null;
                 }
 
-                $players[] = $player->id;
+                // If the location is deactivated, and it does not exist in Connect, short-circuit here and prevent its creation
+                if (!$externalLocation->enabled && Location::query()->where("network_id", "=", $broadcaster->getNetworkId())
+                                                           ->where("external_id", "=", $externalLocation->external_id)
+                                                           ->doesntExist()) {
+                    $locationLine->writeln("<comment>Location is not enabled and is not in Connect. Ignore.</comment>");
+                    continue;
+                }
+
+                $log->writeln("<comment>Persist location...</comment>");
+
+                // Insert the location in the DB
+                /** @var Location $location */
+                $location = Location::withTrashed()->updateOrCreate([
+                                                                        "network_id" => $broadcaster->getNetworkId(),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                               "external_id" => (string)$externalLocation->external_id,
+                                                                    ], [
+                                                                        "display_type_id" => $displayType->getKey(),
+                                                                        "internal_name"   => $externalLocation->name,
+                                                                        "name"            => $externalLocation->name,
+                                                                        "container_id"    => $containerId,
+                                                                    ]);
+
+                if ($externalLocation->enabled && $location->trashed()) {
+                    $location->restore();
+                } else if (!$externalLocation->enabled && !$location->trashed()) {
+                    $location->delete();
+                }
+
+                $locations[] = $location->getKey();
+
+                // List players for this location
+                $externalLocationPlayers = $externalPlayers->filter(fn(PlayerResource $player) => $player->location_id->external_id === $externalLocation->external_id);
+
+                // Some broadcaster may simply stop returning deleted players, so we keep a list of the players we found, and delete the other one at the end
+                $players = [];
+
+                $log->writeln("<comment>Synchronize players... </comment>");
+
+                /** @var PlayerResource $externalPlayer */
+                foreach ($externalLocationPlayers as $externalPlayer) {
+                    // If the player is deactivated and not in the DB, ignore it
+                    if (!$externalPlayer->enabled && Player::query()
+                                                           ->where("network_id", "=", $broadcaster->getNetworkId())
+                                                           ->where("external_id", "=", $externalPlayer->external_id)
+                                                           ->doesntExist()) {
+                        continue;
+                    }
+
+                    $log->writeln("<comment>  Player #$externalPlayer->external_id - $externalPlayer->name</comment>");
+                    /** @var Player $player */
+                    $player = Player::query()->updateOrCreate([
+                                                                  "network_id" => $broadcaster->getNetworkId(),
+                                                                                                                                                                                                                                                                                                                                                                                                                                                         "external_id" => $externalPlayer->external_id,
+                                                              ], [
+                                                                  "location_id"  => $location->id,
+                                                                  "name"         => $externalPlayer->name,
+                                                                  "screen_count" => $externalPlayer->screen_count,
+                                                              ]);
+
+                    // Make sure the player is trashed/not-trashed according to the external player enabled status
+                    if ($externalPlayer->enabled && $player->trashed()) {
+                        $player->restore();
+                    } else if (!$externalPlayer->enabled && !$player->trashed()) {
+                        $player->delete();
+                    }
+
+                    $players[] = $player->id;
+                }
+
+                $log->writeln("<comment>Clean up players...</comment>");
+
+                // Delete players attached to the location that weren't found
+                Player::query()
+                      ->where("location_id", "=", $location->getKey())
+                      ->whereNotIn("id", $players)
+                      ->delete();
+            } catch (Exception $e) {
+                Log::error((string)$e);
             }
-
-            $log->writeln("<comment>Clean up players...</comment>");
-
-            // Delete players attached to the location that weren't found
-            Player::query()
-                  ->where("location_id", "=", $location->getKey())
-                  ->whereNotIn("id", $players)
-                  ->delete();
         }
 
         $locationLine->overwrite("<info>Clean up locations...</info>");

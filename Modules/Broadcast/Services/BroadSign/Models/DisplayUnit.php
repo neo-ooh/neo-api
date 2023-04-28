@@ -38,7 +38,7 @@ use Neo\Services\API\Parsers\MultipleResourcesParser;
  * @property string $address
  * @property string $external_id
  * @property bool   $enforce_screen_controls
- * @property int    $geolocation
+ * @property string $geolocation
  * @property bool   $export_enabled
  * @property int    $export_first_enabled_tm
  * @property int    $export_first_enabled_by_user_id
@@ -128,7 +128,7 @@ class DisplayUnit extends BroadSignModel implements ResourceCastable {
             $zipcode  = null;
         }
 
-        [$lng, $lat] = explode(",", substr($this->geolocation, 1, -1));
+        [$lng, $lat] = strlen($this->geolocation) > 0 ? explode(",", substr($this->geolocation, 1, -1)) : [0, 0];
 
         return new LocationResource(
             broadcaster_id          : $this->getBroadcasterId(),

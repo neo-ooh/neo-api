@@ -58,6 +58,7 @@
     "vinkla/hashids": "^11.0.0"
   },
   "require-dev": {
+    "enlightn/enlightn": "^2.3",
     "fakerphp/faker": "^1.9.1",
     "jetbrains/phpstorm-attributes": "^1.0",
     "mockery/mockery": "^1.4.2",

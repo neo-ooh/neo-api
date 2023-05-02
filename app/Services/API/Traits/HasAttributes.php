@@ -10,12 +10,21 @@
 
 namespace Neo\Services\API\Traits;
 
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 use JsonException;
+use Spatie\LaravelData\Data;
 
 trait HasAttributes {
     protected array $attributes = [];
 
+    /**
+     * @var array<class-string<Data>>
+     */
+    protected array $casts = [];
+
     protected bool $dirty = false;
+
 
     /**
      * @param string $name
@@ -48,12 +57,36 @@ trait HasAttributes {
         return isset($this->attributes[$name]);
     }
 
+    protected function castAttributeForSet(string $attr, $value) {
+        if (key_exists($attr, $this->casts)) {
+            $caster = $this->casts[$attr];
+
+            if (is_iterable($value)) {
+                if ($value instanceof Collection) {
+                    $values = $value->all();
+                } else {
+                    $values = (array)$value;
+                }
+
+                if (array_is_list($values)) {
+                    return collect($value)->map(function ($v) use ($caster) {
+                        return $caster::from($v);
+                    });
+                }
+            }
+
+            return $caster::from($value);
+        }
+
+        return $value;
+    }
+
     /**
-     * @param string $name
+     * @param string $attr
      * @param        $value
      */
-    public function __set(string $name, $value) {
-        $this->attributes[$name] = $value;
+    public function __set(string $attr, $value) {
+        $this->attributes[$attr] = $this->castAttributeForSet($attr, $value);
         $this->dirty             = true;
     }
 
@@ -66,19 +99,19 @@ trait HasAttributes {
     public function setAttributes(array $attributes) {
         $this->attributes = [
             ...$this->attributes,
-            ...$attributes,
+            ...Arr::map($attributes, fn($v, string $k) => $this->castAttributeForSet($k, $v)),
         ];
     }
 
     /**
      * Set a single attribute on the model using the given key
      *
-     * @param string $key
+     * @param string $attr
      * @param        $value
      * @return void
      */
-    public function setAttribute(string $key, $value) {
-        $this->attributes[$key] = $value;
+    public function setAttribute(string $attr, $value): void {
+        $this->attributes[$attr] = $this->castAttributeForSet($attr, $value);
     }
 
     /**
@@ -113,7 +146,7 @@ trait HasAttributes {
      * @return array
      */
     public function toArray(): array {
-        return $this->getAttributes();
+        return collect($this->getAttributes())->toArray();
     }
 
     /**

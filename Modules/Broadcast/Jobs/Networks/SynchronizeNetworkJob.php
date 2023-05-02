@@ -36,7 +36,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Throwable;
 
 /**
- * Synchronize a network' locations and players with its broadcaster
+ * Synchronize a network's locations and players with its broadcaster
  *
  * @extends Job<null>
  */

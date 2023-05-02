@@ -45,27 +45,7 @@ class PropertiesController extends Controller {
 
         $properties = $query->get();
 
-        $properties->load([
-                              "address",
-                          ]);
-
-        $expansion = $request->input("with", []);
-
-        if (in_array("fields", $request->input("with", []), true)) {
-            $properties->load([
-                                  "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value"]),
-                              ]);
-        }
-
-        if (in_array("tenants", $request->input("with", []), true)) {
-            $properties->load([
-                                  "tenants" => fn($q) => $q->select(["id"]),
-                              ]);
-        }
-
-        $public = array_diff($expansion, ["weekly_traffic", "rolling_weekly_traffic", "fields", "tenants"]);
-
-        return new Response($properties->sortBy("actor.name")->values()->loadPublicRelations($public));
+        return new Response($properties->sortBy("actor.name")->values()->loadPublicRelations());
     }
 
     public function byId(ListPropertiesByIdRequest $request) {

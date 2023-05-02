@@ -18,5 +18,8 @@
     "psr-4": {
       "Neo\\Modules\\Properties\\": ""
     }
+  },
+  "require": {
+    "ext-intl": "*"
   }
 }

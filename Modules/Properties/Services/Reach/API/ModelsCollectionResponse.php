@@ -5,22 +5,19 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Address.php
+ * @neo/api - ModelsCollectionResponse.php
  */
 
-namespace Neo\Modules\Properties\Services\Resources;
+namespace Neo\Modules\Properties\Services\Reach\API;
 
 use Spatie\LaravelData\Data;
 
-class Address extends Data {
+class ModelsCollectionResponse extends Data {
     public function __construct(
-        public string $line_1,
-        public string $line_2,
-
-        public City   $city,
-
-        public string $zipcode,
-        public string $full,
+        public int         $count,
+        public string|null $next,
+        public string|null $previous,
+        public array       $results,
     ) {
     }
 }

@@ -37,6 +37,7 @@ class HivestackClient extends APIClient {
         $response = parent::call($endpoint, $payload, [
             ...$this->getAuthHeader(),
             "Accept" => "application/json",
+            ...$headers,
         ]);
 
         if (!$response->successful()) {

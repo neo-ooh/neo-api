@@ -5,22 +5,19 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Address.php
+ * @neo/api - ScreenVenueType.php
  */
 
-namespace Neo\Modules\Properties\Services\Resources;
+namespace Neo\Modules\Properties\Services\Reach\Models\Attributes;
 
 use Spatie\LaravelData\Data;
+use Spatie\LaravelData\Optional;
 
-class Address extends Data {
+class ScreenVenueType extends Data {
     public function __construct(
-        public string $line_1,
-        public string $line_2,
-
-        public City   $city,
-
-        public string $zipcode,
-        public string $full,
+        public int             $id,
+        public string|Optional $name,
+        public int|Optional    $enumeration_id,
     ) {
     }
 }

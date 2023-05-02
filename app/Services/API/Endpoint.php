@@ -90,7 +90,7 @@ class Endpoint {
     }
 
     public function __toString(): string {
-        return "$this->method@{$this->getPath()}";
+        return "$this->method@{$this->getUrl()}";
     }
 
     /*
@@ -175,7 +175,10 @@ class Endpoint {
     }
 
     public function getUrl(): string {
-        return $this->base . $this->getPath();
+        $base = str_ends_with($this->base, "/") ? $this->base : $this->base . "/";
+        $path = $this->getPath();
+        $path = str_starts_with($this->getPath(), "/") ? substr($path, 1) : $path;
+        return $base . $path;
     }
 
 }

@@ -87,7 +87,7 @@ abstract class XLSXDocument extends Document {
             DocumentFormat::CSV  => new Csv($this->spreadsheet),
             default              => throw new UnsupportedDocumentFormatException($this->format(), [DocumentFormat::XLSX, DocumentFormat::CSV])
         };
-
+        
         $this->customizeOutput($writer);
 
         header("access-control-allow-origin: *");

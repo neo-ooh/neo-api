@@ -39,6 +39,16 @@ class InventoryRepresentationContext extends JSONDBColumn {
          * @var array|Optional Hivestack units ids for products
          */
         public array|Optional $units,
+
+        /**
+         * @var array|Optional Reach venue type id
+         */
+        public int|Optional   $venue_type_id,
+
+        /**
+         * @var array|Optional Reach screens ids for products
+         */
+        public array|Optional $screens,
     ) {
     }
 }

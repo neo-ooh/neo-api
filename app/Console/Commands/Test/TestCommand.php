@@ -10,10 +10,13 @@
 
 namespace Neo\Console\Commands\Test;
 
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
+use Neo\Modules\Properties\Jobs\Products\DestroyProductJob;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
+use Neo\Modules\Properties\Services\Reach\ReachAdapter;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -33,6 +36,16 @@ class TestCommand extends Command {
 //        $product = Product::find(2450);
 //        dump($product->toResource(4)->toArray());
 
-        dump(Carbon::now()->subMonths(2)->format("D, d M Y H:i:s \G\M\T"));
+//        dump(Carbon::now()->subMonths(2)->format("D, d M Y H:i:s \G\M\T"));
+        $provider = InventoryProvider::query()->find(5);
+        /** @var ReachAdapter $inventory */
+        $inventory = $provider->getAdapter();
+
+        $product = Product::query()->find(2450);
+//        $job = new CreateProductJob($product->inventory_resource_id, $inventory->getInventoryID(), []);
+//        $job = new PushProductJob($product->inventory_resource_id, $inventory->getInventoryID());
+        $job = new DestroyProductJob($product->inventory_resource_id, $inventory->getInventoryID());
+        $job->handle();
+        dump($job->getResult());
     }
 }

@@ -12,6 +12,7 @@ use Neo\Modules\Properties\Services\Dummy\DummyAdapter;
 use Neo\Modules\Properties\Services\Hivestack\HivestackAdapter;
 use Neo\Modules\Properties\Services\InventoryType;
 use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
+use Neo\Modules\Properties\Services\Reach\ReachAdapter;
 
 return [
     'name' => 'Properties',
@@ -19,6 +20,8 @@ return [
     "adapters" => [
         InventoryType::Odoo->value      => OdooAdapter::class,
         InventoryType::Hivestack->value => HivestackAdapter::class,
-        InventoryType::Dummy->value     => DummyAdapter::class,
+        InventoryType::Reach->value     => ReachAdapter::class,
+
+        InventoryType::Dummy->value => DummyAdapter::class,
     ],
 ];

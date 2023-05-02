@@ -11,6 +11,8 @@
 namespace Neo\Modules\Properties\Services;
 
 use Carbon\Carbon;
+use Illuminate\Cache\TaggedCache;
+use Illuminate\Support\Facades\Cache;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\InventoryMethodNotSupportedException;
 use Neo\Modules\Properties\Services\Exceptions\InventoryResourceNotFound;
@@ -78,6 +80,13 @@ abstract class InventoryAdapter {
      */
     public function getCapabilities() {
         return $this->capabilities;
+    }
+
+    /**
+     * @return TaggedCache Get a cache instance for this inventory to cache stuff
+     */
+    public function getCache(): TaggedCache {
+        return Cache::tags([$this->getInventoryType()->value . "-data", "inventory-{$this->getInventoryID()}"]);
     }
 
     /*

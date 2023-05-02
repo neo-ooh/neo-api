@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - MatchHivestackUnitsToProductsCommand.php
+ * @neo/api - MatchReachScreensToProductsCommand.php
  */
 
 namespace Neo\Modules\Properties\Console\Commands;
@@ -15,39 +15,50 @@ use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
-use Neo\Modules\Properties\Services\InventoryAdapter;
+use Neo\Modules\Properties\Services\InventoryType;
+use Neo\Modules\Properties\Services\Reach\ReachAdapter;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 
-class MatchHivestackUnitsToProductsCommand extends Command {
-    protected $signature = 'hivestack:match-units-to-products {inventory}';
+class MatchReachScreensToProductsCommand extends Command {
+    protected $signature = 'reach:match-screens-to-products {inventory}';
 
+    protected $description = 'Match Reach screens';
 
     public function handle(): void {
         $inventoryId = $this->argument("inventory");
 
-        $provider = InventoryProvider::query()->find($inventoryId);
-        /** @var InventoryAdapter $inventory */
+        $provider = InventoryProvider::query()->findOrFail($inventoryId);
+        /** @var ReachAdapter $inventory */
         $inventory = $provider->getAdapter();
 
-        $products = $inventory->listProducts();
+        if ($inventory->getInventoryType() !== InventoryType::Reach) {
+            $this->output->error("Bad Inventory ID");
+            return;
+        }
+
+        $screens = $inventory->listProducts();
 
         $notMatched = [];
 
-        /** @var IdentifiableProduct $unit */
-        foreach ($products as $unit) {
+        /** @var IdentifiableProduct $screen */
+        foreach ($screens as $screen) {
+
             // Ignore disabled products
-            if (!$unit->product->is_sellable) {
+            if (!$screen->product->is_sellable) {
                 continue;
             }
 
-            $this->output->write("#" . $unit->resourceId->external_id . " " . $unit->product->name[0]->value);
+            $this->output->write("#" . $screen->resourceId->external_id . " " . $screen->product->name[0]->value);
 
-            $location = Location::query()->where("external_id", "=", trim($unit->resourceId->context["external_id"]))->first();
+            // Find the location this screen is representing
+            $locationExternalId = $screen->resourceId->context["location_external_id"];
+
+            $location = Location::query()->where("external_id", "=", $locationExternalId)->first();
 
             if (!$location) {
                 $this->output->writeln(": No location found.");
-                $notMatched[] = $unit->resourceId->external_id . ":" . $unit->product->name[0]->value;
+                $notMatched[] = $screen->resourceId->external_id . ":" . $screen->product->name[0]->value;
                 continue;
             }
 
@@ -55,8 +66,8 @@ class MatchHivestackUnitsToProductsCommand extends Command {
 
             $products = $location->products->where("is_bonus", "=", false);
             if ($products->count() === 0) {
-                $this->output->writeln(": No products found for location.");
-                $notMatched[] = $unit->resourceId->external_id . ":" . $unit->product->name[0]->value;
+                $this->output->writeln(": No products found for screen.");
+                $notMatched[] = $screen->resourceId->external_id . ":" . $screen->product->name[0]->value;
                 continue;
             }
 
@@ -73,8 +84,10 @@ class MatchHivestackUnitsToProductsCommand extends Command {
 
             if ($representation) {
                 // Representation already exist, append current ID
-                if (is_array($representation->context->units)) {
-                    $representation->context->units[$location->getKey()] = $unit->resourceId->external_id;
+                if (is_array($representation->context->screens)) {
+                    $representation->context->screens[$location->getKey()] = $screen->resourceId->external_id;
+                } else {
+                    $representation->context->screens = [$location->getKey() => $screen->resourceId->external_id];
                 }
             } else {
                 $representation = new ExternalInventoryResource([
@@ -83,10 +96,9 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                     "type"         => InventoryResourceType::Product,
                                                                     "external_id"  => "MULTIPLE",
                                                                     "context"      => [
-                                                                        "network_id"    => $unit->resourceId->context["network_id"],
-                                                                        "media_type_id" => $unit->resourceId->context["media_type_id"],
-                                                                        "units"         => [
-                                                                            $location->getKey() => $unit->resourceId->external_id,
+                                                                        "venue_type_id" => $screen->resourceId->context["venue_type_id"],
+                                                                        "screens"       => [
+                                                                            $location->getKey() => $screen->resourceId->external_id,
                                                                         ],
                                                                     ],
                                                                 ]);
@@ -94,23 +106,11 @@ class MatchHivestackUnitsToProductsCommand extends Command {
 
             $representation->save();
 
-            // We also want to validate that the property has a representation as well
-            $propertyRepresentation = $product->property->external_representations()
-                                                        ->firstWhere("inventory_id", "=", $inventoryId);
-
-            if (!$propertyRepresentation) {
-                // Add it
-                $propertyRepresentation              = ExternalInventoryResource::fromInventoryResource($unit->product->property_id);
-                $propertyRepresentation->resource_id = $product->property->inventory_resource_id;
-                $propertyRepresentation->save();
-            }
-
-            // Set up inventory for auto push
             $inventorySettings               = $product->property->inventories_settings()
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                     "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                      "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,
@@ -123,8 +123,8 @@ class MatchHivestackUnitsToProductsCommand extends Command {
             $this->output->writeln(": Associated to " . $product->property->actor->name . " - " . $product->name_en);
         }
 
-        foreach ($notMatched as $unitName) {
-            $this->output->warning($unitName);
+        foreach ($notMatched as $screenName) {
+            $this->output->warning($screenName);
         }
     }
 }

@@ -24,6 +24,7 @@ class InventoryProviderSettings extends JSONDBColumn {
          */
         public string|null $api_key = null,
 
+        // Odoo
         /**
          * @var string|null Odoo API Auth username
          */
@@ -34,15 +35,38 @@ class InventoryProviderSettings extends JSONDBColumn {
          */
         public string|null $database = null,
 
+
+        // Hivestack
         /**
-         * @var array<{id: string, name: string}> Hivestack networks
+         * @var array{id: string, name: string} Hivestack networks
          */
         public array|null  $networks = null,
 
         /**
-         * @var array<{id: string, name: string}> Hivestack media types
+         * @var array{id: string, name: string} Hivestack media types
          */
         public array|null  $mediatypes = null,
+
+        // Reach
+        /**
+         * @var string|null Reach publisher ID
+         */
+        public string|null $publisher_id = null,
+
+        /**
+         * @var string|null Reach client ID
+         */
+        public string|null $client_id = null,
+
+        /**
+         * @var string|null Reach Authentication URL
+         */
+        public string|null $auth_url = null,
+
+        /**
+         * @var array{id: string, name: string}|null Reach Venue Types
+         */
+        public array|null  $venue_types = null,
     ) {
 
     }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -94,7 +94,7 @@ abstract class APIModel implements JsonSerializable, Arrayable {
     public function save(): self {
         $properties = array_filter($this->attributes,
             static fn($key) => in_array($key, static::$updatable, true),
-            ARRAY_FILTER_USE_KEY);
+                                   ARRAY_FILTER_USE_KEY);
         $this->callAction("update", $properties);
 
         $this->dirty = false;

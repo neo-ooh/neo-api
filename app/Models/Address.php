@@ -12,24 +12,26 @@ namespace Neo\Models;
 
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use MatanYadaev\EloquentSpatial\Objects\Point;
+use Neo\Modules\Properties\Services\Resources\Address as AddressResource;
 
 /**
  * Class Address
  *
  * @package Neo\Models
- * @property int        $id
- * @property string     $line_1
- * @property string     $line_2
- * @property int        $city_id
- * @property City       $city
- * @property string     $zipcode
- * @property Point|null $geolocation
- * @property string     $timezone
- * @property Date       $created_at
- * @property Date       $updated_at
+ * @property int         $id
+ * @property string      $line_1
+ * @property string|null $line_2
+ * @property int         $city_id
+ * @property City        $city
+ * @property string      $zipcode
+ * @property Point|null  $geolocation
+ * @property string      $timezone
+ * @property Date        $created_at
+ * @property Date        $updated_at
  *
- * @property string     $string_representation Human-readable version of the address
+ * @property string      $string_representation Human-readable version of the address
  */
 class Address extends Model {
     protected $table = "addresses";
@@ -51,7 +53,7 @@ class Address extends Model {
         "string_representation",
     ];
 
-    public function city() {
+    public function city(): BelongsTo {
         return $this->belongsTo(City::class, "city_id");
     }
 
@@ -69,12 +71,13 @@ class Address extends Model {
         return $str;
     }
 
-    public function toInventoryResource() {
-        return new \Neo\Modules\Properties\Services\Resources\Address(
+    public function toInventoryResource(): AddressResource {
+        return new AddressResource(
             line_1 : $this->line_1,
             line_2 : $this->line_2,
-            zipcode: $this->zipcode,
             city   : $this->city->toInventoryResource(),
+            zipcode: $this->zipcode,
+            full   : $this->getStringRepresentationAttribute(),
         );
     }
 }

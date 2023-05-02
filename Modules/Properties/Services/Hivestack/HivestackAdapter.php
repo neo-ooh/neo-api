@@ -67,7 +67,7 @@ class HivestackAdapter extends InventoryAdapter {
     public function listProducts(?Carbon $ifModifiedSince = null): Traversable {
         $client = $this->getConfig()->getClient();
 
-        return LazyCollection::make(function () use ($ifModifiedSince, $client) {
+        return LazyCollection::make(function () use ($client) {
             $pageSize = 100;
             $cursor   = 0;
 
@@ -89,8 +89,8 @@ class HivestackAdapter extends InventoryAdapter {
 
     /**
      * @inheritDoc
-     * @throws GuzzleException
-     * @throws RequestException
+     * @param InventoryResourceId $productId
+     * @return IdentifiableProduct
      */
     public function getProduct(InventoryResourceId $productId): IdentifiableProduct {
         $unitID = array_values($productId->context["units"] ?? [])[0] ?? null;
@@ -99,10 +99,8 @@ class HivestackAdapter extends InventoryAdapter {
             throw new RuntimeException("Product has invalid context: No unit id could be found");
         }
 
-
         $unit = Unit::find($this->getConfig()->getClient(), $unitID);
-
-        return ResourceFactory::makeIdentifiableProduct($unit, $this->config);
+        return ResourceFactory::makeIdentifiableProduct($unit, $this->getConfig());
     }
 
     /**
@@ -111,7 +109,7 @@ class HivestackAdapter extends InventoryAdapter {
      * @param Enumerable $operatingHours
      * @return string
      */
-    protected function operatingHoursToHivestackString(Enumerable $operatingHours) {
+    protected function operatingHoursToHivestackString(Enumerable $operatingHours): string {
         $hoursString = "";
         for ($i = 1; $i <= 7; $i++) {
             /** @var DayOperatingHours $dayHours */
@@ -126,7 +124,7 @@ class HivestackAdapter extends InventoryAdapter {
         return $hoursString;
     }
 
-    protected function fillSite(Site $site, ProductResource $product) {
+    protected function fillSite(Site $site, ProductResource $product): void {
         $site->active      = true;
         $site->name        = trim($product->property_name);
         $site->description = trim($product->property_name);
@@ -135,7 +133,7 @@ class HivestackAdapter extends InventoryAdapter {
         $site->external_id = "connect:" . $product->property_connect_id . " - " . $product->property_name;
     }
 
-    protected function fillUnit(Unit $unit, BroadcastLocation $location, ProductResource $product, array $context) {
+    protected function fillUnit(Unit $unit, BroadcastLocation $location, ProductResource $product, array $context): void {
         $unit->active                         = $product->is_sellable;
         $unit->name                           = trim($product->property_name) . " - " . trim($product->name[0]->value);
         $unit->description                    = $location->name;
@@ -196,7 +194,8 @@ class HivestackAdapter extends InventoryAdapter {
             $unit->site_id = $siteId;
             $unit->save();
 
-            $unit->fillImpressions($product->weekdays_spot_impressions);
+//            Filling impressions through the API is not for users, lol
+//            $unit->fillImpressions($product->weekdays_spot_impressions);
 
             $unitIds[$broadcastLocation->id] = $unit->getKey();
         }
@@ -226,7 +225,6 @@ class HivestackAdapter extends InventoryAdapter {
         $site->save();
 
         $unitIds = [];
-        clock($site, $productId);
 
         // For each unit ID in the context, we pull the unit to update it. If the unit does not exist, we create it and update our id/context
         foreach ($product->broadcastLocations as $broadcastLocation) {
@@ -240,8 +238,8 @@ class HivestackAdapter extends InventoryAdapter {
             $this->fillUnit($unit, $broadcastLocation, $product, $productId->context);
             $unit->site_id = $site->getKey();
             $unit->save();
-
-            clock($unit->fillImpressions($product->weekdays_spot_impressions));
+//            Filling impressions through the API is not for users, lol
+//            $unit->fillImpressions($product->weekdays_spot_impressions);
 
             $unitIds[$broadcastLocation->id] = $unit->getKey();
         }
@@ -261,11 +259,15 @@ class HivestackAdapter extends InventoryAdapter {
         return $productId;
     }
 
+    /**
+     * @throws RequestException
+     * @throws GuzzleException
+     */
     public function removeProduct(InventoryResourceId $productId): bool {
         $client = $this->getConfig()->getClient();
 
         // We have to remove all the units listed in the product's context
-        foreach ($productId->context["units"] as $locationId => $unitId) {
+        foreach ($productId->context["units"] as $unitId) {
             $unit = new Unit($client);
             $unit->setKey($unitId);
             $unit->delete();

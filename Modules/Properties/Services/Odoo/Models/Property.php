@@ -61,14 +61,25 @@ class Property extends OdooModel {
             return null;
         }
 
+        $str = trim($this->street);
+        if ($this->street2 && $this->street2 !== '') {
+            $str .= ", " . trim($this->street2);
+        }
+
+        $province = $this->province();
+
+        $str .= ", " . trim($this->city) . " " . trim($province->code) . " " . trim($this->zip);
+        $str .= ", CA";
+
         return new Address(
             line_1 : trim($this->street),
             line_2 : trim($this->street2),
             city   : new City(
                          name         : trim($this->city),
-                         province_slug: strtoupper(trim($this->province()->code)),
+                         province_slug: strtoupper(trim($province->code)),
                      ),
             zipcode: $this->zip,
+            full   : $str
         );
     }
 }

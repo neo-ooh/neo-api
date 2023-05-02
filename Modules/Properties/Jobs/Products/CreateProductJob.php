@@ -57,7 +57,7 @@ class CreateProductJob extends InventoryJobBase implements ShouldBeUniqueUntilPr
 
         if (!$inventory->hasCapability(InventoryCapability::ProductsWrite)) {
             // Inventory does not support reading products, stop here.
-            throw new UnsupportedInventoryFunctionalityException($this->inventoryID, InventoryCapability::ProductsRead);
+            throw new UnsupportedInventoryFunctionalityException($this->inventoryID, InventoryCapability::ProductsWrite);
         }
 
         // Get the product resource

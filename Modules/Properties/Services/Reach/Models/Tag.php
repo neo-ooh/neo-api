@@ -5,14 +5,15 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - MediaType.php
+ * @neo/api - Tag.php
  */
 
-namespace Neo\Modules\Properties\Enums;
+namespace Neo\Modules\Properties\Services\Reach\Models;
 
-enum MediaType: string {
-    case HTML = "html";
-    case Image = "image";
-    case Video = "video";
-    case Audio = "audio";
+/**
+ * @property int    $id
+ * @property string $name
+ */
+class Tag extends ReachModel {
+    public string $key = "id";
 }

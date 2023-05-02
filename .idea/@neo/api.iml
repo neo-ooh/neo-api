@@ -208,6 +208,9 @@
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/phpstan/phpdoc-parser" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/matanyadaev/laravel-eloquent-spatial" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/phayes/geophp" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/enlightn/enlightn" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/enlightn/security-checker" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/yaml" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

@@ -5,22 +5,17 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - Address.php
+ * @neo/api - ScreenBidFloor.php
  */
 
-namespace Neo\Modules\Properties\Services\Resources;
+namespace Neo\Modules\Properties\Services\Reach\Models\Attributes;
 
 use Spatie\LaravelData\Data;
 
-class Address extends Data {
+class ScreenBidFloor extends Data {
     public function __construct(
-        public string $line_1,
-        public string $line_2,
-
-        public City   $city,
-
-        public string $zipcode,
-        public string $full,
+        public float          $floor,
+        public ScreenCurrency $currency,
     ) {
     }
 }

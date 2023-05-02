@@ -132,6 +132,9 @@ class ProductResource extends InventoryResource {
          */
         public int                      $weekly_traffic,
 
+        /**
+         * @var array<int, float>|null 1-indexed amount of impressions generated on each play for each day of the week
+         */
         public array|null               $weekdays_spot_impressions,
 
         // -- Players ?

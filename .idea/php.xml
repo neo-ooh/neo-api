@@ -229,6 +229,9 @@
       <path value="$PROJECT_DIR$/vendor/matanyadaev/laravel-eloquent-spatial" />
       <path value="$PROJECT_DIR$/vendor/phayes/geophp" />
       <path value="$PROJECT_DIR$/vendor/jmikola/geojson" />
+      <path value="$PROJECT_DIR$/vendor/enlightn/enlightn" />
+      <path value="$PROJECT_DIR$/vendor/enlightn/security-checker" />
+      <path value="$PROJECT_DIR$/vendor/symfony/yaml" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.1">

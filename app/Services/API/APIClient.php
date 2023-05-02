@@ -10,12 +10,10 @@
 
 namespace Neo\Services\API;
 
-use Clockwork\Clockwork;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Handler\CurlHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Profiling\Clockwork\Profiler;
-use GuzzleHttp\Profiling\Middleware;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Client\Response;
@@ -30,34 +28,35 @@ class APIClient implements APIClientInterface {
      * @return Response
      * @throws GuzzleException
      */
-    public function call(Endpoint $endpoint, $payload, array $headers = []): Response {
-//        $stack = new HandlerStack();
-//        $stack->setHandler(new CurlHandler());
+    public function call(Endpoint $endpoint, mixed $payload, array $headers = []): Response {
+        $stack = new HandlerStack();
+        $stack->setHandler(new CurlHandler());
 
-        $handlerStack = HandlerStack::create();
-        $handlerStack->unshift(new Middleware(new Profiler(resolve(Clockwork::class)->timeline())));
+        $contentType = $headers["Content-Type"] ?? "application/json";
+
+//        dump($endpoint->options);
+//        dump($endpoint->getUrl());
+//        dump($endpoint->method);
+//        dump($headers);
+//        dump($payload);
 
         $clientOptions = array_merge([
-                                         "handler" => $handlerStack,
-                                         //                                         "debug"   => true,
+//                                         "debug" => true,
                                      ], $endpoint->options);
 
         $client  = new Client($clientOptions);
         $request = new Request($endpoint->method, $endpoint->getUrl(), $headers);
 
-        // Create a middleware that echoes parts of the request.
-//        $tapMiddleware = Middleware::tap(function ($request) {
-//            (new ConsoleOutput())->write($request->getBody());
-//        });
-
-        $options = [/*'handler' => $tapMiddleware($stack), 'debug' => true*/];
+        $options = [];
 
         if ($endpoint->format === 'multipart') {
             $options[RequestOptions::MULTIPART] = $payload;
         } else if ($request->getMethod() === "GET") {
             $options[RequestOptions::QUERY] = $payload;
-        } else {
+        } else if ($contentType === "application/json") {
             $options[RequestOptions::JSON] = $payload;
+        } else {
+            $options[RequestOptions::BODY] = $payload;
         }
 
         return new Response($client->send($request, $options));

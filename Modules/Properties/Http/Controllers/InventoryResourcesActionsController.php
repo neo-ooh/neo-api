@@ -13,7 +13,6 @@ namespace Neo\Modules\Properties\Http\Controllers;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Neo\Http\Controllers\Controller;
-use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
 use Neo\Modules\Properties\Http\Requests\InventoryActions\CreateProductRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryActions\DestroyExternalResourceRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryActions\ImportProductRequest;
@@ -27,7 +26,6 @@ use Neo\Modules\Properties\Jobs\Products\PushProductJob;
 use Neo\Modules\Properties\Models\InventoryResource;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\Property;
-use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 
@@ -93,7 +91,7 @@ class InventoryResourcesActionsController extends Controller {
     }
 
     public function create(CreateProductRequest $request, InventoryResource $inventoryResource) {
-        // Only produtcs can be created, make sure we're not trying to do something stupid
+        // Only products can be created, make sure we're not trying to do something stupid
         if ($inventoryResource->type !== InventoryResourceType::Product) {
             return new Response([]);
         }
@@ -108,8 +106,6 @@ class InventoryResourcesActionsController extends Controller {
      * @param ImportProductRequest $request
      * @param InventoryResource    $inventoryResource
      * @return Response
-     * @throws InvalidInventoryAdapterException
-     * @throws UnsupportedInventoryFunctionalityException
      */
     public function importProduct(ImportProductRequest $request, InventoryResource $inventoryResource) {
         $externalID = new InventoryResourceId(
@@ -131,7 +127,7 @@ class InventoryResourcesActionsController extends Controller {
 
     public function destroy(DestroyExternalResourceRequest $request, InventoryResource $inventoryResource) {
         if ($inventoryResource->type !== InventoryResourceType::Product) {
-            // We don't delete products
+            // We only delete products
             return new Response([]);
         }
 

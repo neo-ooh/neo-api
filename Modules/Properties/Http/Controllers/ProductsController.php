@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Modules\Properties\Enums\MediaType;
+use Neo\Modules\Properties\Http\Requests\Products\DestroyProductRequest;
 use Neo\Modules\Properties\Http\Requests\Products\ListProductsByIdsRequest;
 use Neo\Modules\Properties\Http\Requests\Products\ListProductsRequest;
 use Neo\Modules\Properties\Http\Requests\Products\ShowProductRequest;
@@ -52,5 +53,11 @@ class ProductsController {
         $product->save();
 
         return new Response($product->loadPublicRelations());
+    }
+
+    public function destroy(DestroyProductRequest $request, Product $product) {
+        $product->delete();
+
+        return new Response([], 202);
     }
 }

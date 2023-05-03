@@ -35,6 +35,10 @@ trait InventoryResourceModel {
 
             $model->inventory_resource_id = $resource->getKey();
         });
+
+        static::deleting(static function (Model $model) {
+            $model->external_representations()->delete();
+        });
     }
 
     /**

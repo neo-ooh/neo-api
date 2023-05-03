@@ -34,6 +34,6 @@ class UpdateProductRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Capability::products_view->value;
+        return Capability::products_edit->value;
     }
 }

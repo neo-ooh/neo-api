@@ -25,7 +25,6 @@ use Neo\Modules\Properties\Models\Brand;
 use Neo\Modules\Properties\Models\Pricelist;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
-use Neo\Modules\Properties\Models\ProductType;
 
 Route::group([
                  "middleware" => "default",
@@ -41,7 +40,6 @@ Route::group([
 
         Route::model("product", Product::class);
         Route::model("productCategory", ProductCategory::class);
-        Route::model("productType", ProductType::class);
 
         Route::   get("product-types", ProductTypesController::class . "@index");
         Route::   get("product-types/_by_id", ProductTypesController::class . "@byIds");
@@ -52,10 +50,11 @@ Route::group([
         Route::   get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
         Route::   put("product-categories/{productCategory}", ProductCategoriesController::class . "@update");
 
-        Route::   get("products", ProductsController::class . "@index");
-        Route::   get("products/_by_id", ProductsController::class . "@byIds");
-        Route::   get("products/{product}", ProductsController::class . "@show");
-        Route::   put("products/{product}", ProductsController::class . "@update");
+        Route::   get("products", [ProductsController::class, "index"]);
+        Route::   get("products/_by_id", [ProductsController::class, "byIds"]);
+        Route::   get("products/{product}", [ProductsController::class, "show"]);
+        Route::   put("products/{product}", [ProductsController::class, "update"]);
+        Route::delete("products/{product}", [ProductsController::class, "destroy"]);
 
         Route::   put("products/{product}/locations", ProductsLocationsController::class . "@sync");
 

@@ -113,8 +113,13 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
         if (count($scheduleRepresentations) === 0) {
             // Since no representation could be found, we cannot do anything.
-            // Still, perform a cleanup before stopping
-            $this->cleanUpExternalRepresentations($schedule, []);
+            // If a specific campaign definition was given, we do want to perform a cleanup on it though.
+            if ($useSpecificRepresentation) {
+                $deleteJob = new DeleteScheduleJob($this->resourceId, $campaignRepresentations[0]);
+                $deleteJob->handle();
+            } else {
+                $this->cleanUpExternalRepresentations($schedule, []);
+            }
 
             return [
                 "error"                    => true,

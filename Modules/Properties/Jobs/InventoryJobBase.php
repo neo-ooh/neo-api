@@ -18,13 +18,16 @@ abstract class InventoryJobBase extends Job {
     private InventoryResourceEvent $event;
 
     public function __construct(protected InventoryJobType $type, protected int $resourceId, protected int $inventoryId) {
+        clock($this->type);
     }
 
     protected function beforeRun(): bool {
+        clock("before before run");
         $this->event               = new InventoryResourceEvent();
         $this->event->inventory_id = $this->inventoryId;
         $this->event->event_type   = $this->type->value;
         $this->event->triggered_at = Carbon::now();
+        clock("before run");
         return true;
     }
 

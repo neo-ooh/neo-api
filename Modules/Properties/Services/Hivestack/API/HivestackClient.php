@@ -19,6 +19,7 @@ use Neo\Services\API\Endpoint;
 
 class HivestackClient extends APIClient {
     public function __construct(protected HivestackConfig $config) {
+        parent::__construct();
     }
 
     protected function getAuthHeader(): array {

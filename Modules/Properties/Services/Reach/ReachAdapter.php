@@ -77,7 +77,7 @@ class ReachAdapter extends InventoryAdapter {
     }
 
     public function getProduct(InventoryResourceId $productId): IdentifiableProduct {
-        $screenId = array_values($productId->context["screens"] ?? [])[0] ?? null;
+        $screenId = array_values($productId->context["screens"] ?? [])[0]["id"] ?? null;
 
         if (!$screenId) {
             throw new RuntimeException("Product has invalid context: No screen id could be found");
@@ -96,7 +96,6 @@ class ReachAdapter extends InventoryAdapter {
             function () use ($height, $width) {
                 /** @var Resolution $resolution */
                 foreach (Resolution::all($this->getConfig()->getClient()) as $resolution) {
-                    dump("found $resolution->id: $resolution->width x $resolution->height");
                     if ($resolution->width === $width && $resolution->height === $height) {
                         return $resolution;
                     }
@@ -120,7 +119,7 @@ class ReachAdapter extends InventoryAdapter {
              * @throws GuzzleException
              */
             function () use ($v, $h, $height, $width) {
-                /** @var Resolution $aspectRatio */
+                /** @var AspectRatio $aspectRatio */
                 foreach (AspectRatio::all($this->getConfig()->getClient()) as $aspectRatio) {
                     if ($aspectRatio->horizontal === $h && $aspectRatio->vertical === $v) {
                         return $aspectRatio;
@@ -170,7 +169,7 @@ class ReachAdapter extends InventoryAdapter {
                                                      in_array(MediaType::HTML, $product->allowed_media_types) ? NamedIdentityAttribute::from(["id" => 4]) : null,
                                                  ])->where(null, "!==", null);
         $screen->allows_motion         = true;
-        $screen->screen_img_url        = null;
+        $screen->screen_img_url        = $screen->screen_img_url ?? null;
         $screen->min_ad_duration       = min($product->loop_configuration->spot_length_ms / 1_000, 5);
         $screen->max_ad_duration       = $product->loop_configuration->spot_length_ms / 1_000;
 //        Not taken into account in the API
@@ -221,7 +220,7 @@ class ReachAdapter extends InventoryAdapter {
                                              ->all());
             }
 
-            $screenIds[$broadcastLocation->id] = $screen->getKey();
+            $screenIds[$broadcastLocation->id] = ["id" => $screen->getKey(), "name" => $screen->name];
         }
 
         return new InventoryResourceId(
@@ -245,13 +244,13 @@ class ReachAdapter extends InventoryAdapter {
         $screenIds = [];
 
         $screensCount = collect($product->broadcastLocations)->sum("screen_count");
-        // For each screen ID in the context, we pull the screen to update it. If the screen does not exist, we create it and update our id/context
+        // For each location, we pull the screen to update it. If the screen does not exist, we create it and update our id/context
         foreach ($product->broadcastLocations as $broadcastLocation) {
             if (!isset($productId->context["screens"][$broadcastLocation->id])) {
                 // No ID for this location
                 $screen = new Screen($client);
             } else {
-                $screen = Screen::find($client, $productId->context["screens"][$broadcastLocation->id]);
+                $screen = Screen::find($client, $productId->context["screens"][$broadcastLocation->id]["id"]);
             }
 
             $this->fillScreen($screen, $broadcastLocation, $product, $productId->context);
@@ -264,13 +263,19 @@ class ReachAdapter extends InventoryAdapter {
                                              ->all());
             }
 
-            $screenIds[$broadcastLocation->id] = $screen->getKey();
+            $screenIds[$broadcastLocation->id] = ["id" => $screen->getKey(), "name" => $screen->name];
         }
 
         // We now want to compare the list of screens we just built against the one we were given.
         // Any screen listed in the latter but missing in the former will have to be removed
-
-        $screensToRemove = array_diff(array_values($productId->context["screens"]), array_values($screenIds));
+        $screensToRemove = array_diff(collect($productId->context["screens"])
+                                          ->pluck("id")
+                                          ->values()
+                                          ->all(),
+                                      collect($screenIds)
+                                          ->pluck("id")
+                                          ->values()
+                                          ->all());
         foreach ($screensToRemove as $screenToRemove) {
             $screen = new Screen($client);
             $screen->setKey($screenToRemove);
@@ -290,7 +295,7 @@ class ReachAdapter extends InventoryAdapter {
         $client = $this->getConfig()->getClient();
 
         // We have to remove all the screens listed in the product's context
-        foreach ($productId->context["screens"] as $screenId) {
+        foreach ($productId->context["screens"] as ["id" => $screenId]) {
             $screen = new Screen($client);
             $screen->setKey($screenId);
             $screen->delete();

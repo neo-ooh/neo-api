@@ -5,45 +5,34 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - BroadcastLocation.php
+ * @neo/api - BroadcastPlayer.php
  */
 
 namespace Neo\Modules\Properties\Services\Resources;
 
-use Neo\Modules\Broadcast\Services\BroadcasterType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
-use Spatie\LaravelData\Attributes\DataCollectionOf;
-use Spatie\LaravelData\DataCollection;
 
-class BroadcastLocation extends InventoryResource {
+class BroadcastPlayer extends InventoryResource {
     public function __construct(
         /**
-         * Broadcaster type of the location
-         */
-        public BroadcasterType               $provider,
-
-        /**
-         * @var int Connect ID of the location
+         * @var int Connect ID of the player
          */
         public int                           $id,
 
         /**
-         * @var ExternalBroadcasterResourceId Id of the location inside its broadcaster
+         * @var ExternalBroadcasterResourceId Id of the player inside its broadcaster
          */
         public ExternalBroadcasterResourceId $external_id,
 
         /**
-         * @var string Name of the location
+         * @var string Name of the player
          */
         public string                        $name,
 
         /**
-         * @var int Number of screens of the location
+         * @var int Number of screens on the player
          */
         public int                           $screen_count,
-
-        #[DataCollectionOf(BroadcastPlayer::class)]
-        public DataCollection                $players,
     ) {
 
     }

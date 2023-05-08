@@ -19,6 +19,7 @@ use Neo\Services\API\Endpoint;
 
 class ReachClient extends APIClient {
     public function __construct(protected ReachConfig $config) {
+        parent::__construct();
     }
 
     protected function getAuthToken() {
@@ -68,7 +69,7 @@ class ReachClient extends APIClient {
             "Accept" => "application/json",
             ...$headers,
         ]);
-        
+
         if (!$response->successful()) {
             $response->throw();
         }

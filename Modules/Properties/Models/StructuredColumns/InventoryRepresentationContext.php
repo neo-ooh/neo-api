@@ -18,37 +18,47 @@ class InventoryRepresentationContext extends JSONDBColumn {
         /**
          * @var int|Optional Odoo's products variant id to use in contracts
          */
-        public int|Optional   $variant_id,
+        public int|Optional        $variant_id,
 
         /**
          * @var int|Optional Odoo's product categories production product
          */
-        public int|Optional   $production_product_id,
+        public int|Optional        $production_product_id,
 
         /**
-         * @var int|Optional Hivestack's units network id
+         * @var int|Optional Hivestack|Vistar units network id
          */
-        public int|Optional   $network_id,
+        public int|string|Optional $network_id,
 
         /**
          * @var int|Optional Hivestack's units media type id
          */
-        public int|Optional   $media_type_id,
+        public int|Optional        $media_type_id,
 
         /**
-         * @var array|Optional Hivestack units ids for products
+         * @var array{id: string, name: string}|Optional Hivestack units ids for products
          */
-        public array|Optional $units,
+        public array|Optional      $units,
 
         /**
          * @var array|Optional Reach venue type id
          */
-        public int|Optional   $venue_type_id,
+        public int|Optional        $venue_type_id,
 
         /**
-         * @var array|Optional Reach screens ids for products
+         * @var array{id: string, name: string}|Optional Reach screens ids for products
          */
-        public array|Optional $screens,
+        public array|Optional      $screens,
+
+        /**
+         * @var array|Optional Vistar venue type
+         */
+        public string|Optional     $venue_type,
+
+        /**
+         * @var array{id: string, name: string}|Optional Vistar venue ids for products
+         */
+        public array|Optional      $venues,
     ) {
     }
 }

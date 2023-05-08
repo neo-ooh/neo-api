@@ -197,7 +197,7 @@ class HivestackAdapter extends InventoryAdapter {
 //            Filling impressions through the API is not for users, lol
 //            $unit->fillImpressions($product->weekdays_spot_impressions);
 
-            $unitIds[$broadcastLocation->id] = $unit->getKey();
+            $unitIds[$broadcastLocation->id] = ["id" => $unit->getKey(), "name" => $unit->name];
         }
 
         return new InventoryResourceId(
@@ -226,13 +226,13 @@ class HivestackAdapter extends InventoryAdapter {
 
         $unitIds = [];
 
-        // For each unit ID in the context, we pull the unit to update it. If the unit does not exist, we create it and update our id/context
+        // For each broadcast location, we pull the unit to update it. If the unit does not exist, we create it and update our id/context
         foreach ($product->broadcastLocations as $broadcastLocation) {
-            if (!isset($productId->context["units"][$broadcastLocation->id])) {
+            if (!isset($productId->context["units"][$broadcastLocation->id]["id"])) {
                 // No ID for this location
                 $unit = new Unit($client);
             } else {
-                $unit = Unit::find($client, $productId->context["units"][$broadcastLocation->id]);
+                $unit = Unit::find($client, $productId->context["units"][$broadcastLocation->id]["id"]);
             }
 
             $this->fillUnit($unit, $broadcastLocation, $product, $productId->context);
@@ -241,13 +241,18 @@ class HivestackAdapter extends InventoryAdapter {
 //            Filling impressions through the API is not for users, lol
 //            $unit->fillImpressions($product->weekdays_spot_impressions);
 
-            $unitIds[$broadcastLocation->id] = $unit->getKey();
+            $unitIds[$broadcastLocation->id] = ["id" => $unit->getKey(), "name" => $unit->name];
         }
 
         // We now want to compare the list of units we just built against the one we were given.
         // Any unit listed in the latter but missing in the former will have to be removed
-
-        $unitsToRemove = array_diff(array_values($productId->context["units"]), array_values($unitIds));
+        $unitsToRemove = array_diff(collect($productId->context["units"])
+                                        ->map(fn(array $unit) => $unit["id"])
+                                        ->values(),
+                                    collect($unitIds)
+                                        ->map(fn(array $unit) => $unit["id"])
+                                        ->values()
+                                        ->all());
         foreach ($unitsToRemove as $unitToRemove) {
             $unit = new Unit($client);
             $unit->setKey($unitToRemove);
@@ -267,7 +272,7 @@ class HivestackAdapter extends InventoryAdapter {
         $client = $this->getConfig()->getClient();
 
         // We have to remove all the units listed in the product's context
-        foreach ($productId->context["units"] as $unitId) {
+        foreach ($productId->context["units"] as ["id" => $unitId]) {
             $unit = new Unit($client);
             $unit->setKey($unitId);
             $unit->delete();

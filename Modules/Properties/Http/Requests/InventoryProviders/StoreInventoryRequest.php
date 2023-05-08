@@ -55,7 +55,11 @@ class StoreInventoryRequest extends FormRequest {
                 "publisher_id" => ["required", "string"],
                 "client_id"    => ["required", "string"],
             ],
-            InventoryType::Vistar    => [],
+            InventoryType::Vistar    => [
+                "api_url"      => ["required", "string"],
+                "api_key"      => ["required", "string"],
+                "api_username" => ["required", "string"],
+            ],
             InventoryType::Atedra    => [],
             InventoryType::Dummy     => [],
         };

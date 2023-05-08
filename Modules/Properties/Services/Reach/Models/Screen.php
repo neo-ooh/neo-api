@@ -104,7 +104,7 @@ class Screen extends ReachModel {
         "allowed_ad_types"      => NamedIdentityAttribute::class,
         "aspect_ratio"          => ScreenAspectRatio::class,
         "audience_data_sources" => NamedIdentityAttribute::class,
-        "bid_floor"             => ScreenBidFloor::class,
+        "bid_floors"            => ScreenBidFloor::class,
         "publisher"             => ScreenPublisher::class,
         "resolution"            => ScreenResolution::class,
         "tags"                  => NamedIdentityAttribute::class,
@@ -117,12 +117,14 @@ class Screen extends ReachModel {
             inventory_id: $inventoryId,
             external_id : $this->getKey(),
             type        : InventoryResourceType::Product,
-            context     : [],
+            context     : [
+                              "venue_type_id"        => $this->venue_types[0]->id ?? 0,
+                              "location_external_id" => explode(":", $this->device_id)[1],
+                          ],
         );
     }
 
     public function fillImpressions(array $weekdaysSpotImpressions) {
-        dump($weekdaysSpotImpressions);
         // First, build a csv
         $csv = "";
         // Headers

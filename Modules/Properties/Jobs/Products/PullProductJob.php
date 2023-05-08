@@ -10,10 +10,8 @@
 
 namespace Neo\Modules\Properties\Jobs\Products;
 
-use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Database\Eloquent\Builder;
-use JsonException;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Models\Address;
@@ -23,7 +21,6 @@ use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Exceptions\Synchronization\MissingExternalInventoryResourceException;
 use Neo\Modules\Properties\Exceptions\Synchronization\PropertyIDInconsistencyException;
-use Neo\Modules\Properties\Exceptions\Synchronization\PullNotAllowedException;
 use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
 use Neo\Modules\Properties\Jobs\InventoryJobBase;
 use Neo\Modules\Properties\Jobs\InventoryJobType;
@@ -59,12 +56,10 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
     }
 
     /**
+     * @return mixed
      * @throws InvalidInventoryAdapterException
-     * @throws OdooException
-     * @throws PullNotAllowedException
-     * @throws JsonException
-     * @throws PropertyIDInconsistencyException
      * @throws MissingExternalInventoryResourceException
+     * @throws PropertyIDInconsistencyException
      * @throws UnsupportedInventoryFunctionalityException
      */
     public function run(): mixed {
@@ -143,8 +138,6 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
                 }
             }
         }
-
-        clock($externalProduct->toArray());
 
         // Using the external product data, we update our own product and property.
         // Product name

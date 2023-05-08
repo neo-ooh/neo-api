@@ -139,7 +139,6 @@ class ImportAdaptInventoryCommand extends Command {
                                              "format"            => TrafficFormat::DailyConstant->value,
                                              "placeholder_value" => $line->getDailyTraffic(),
                                          ]);
-            dump($line->getDailyTraffic());
             $property->translations()->insert([
                                                   [
                                                       "property_id" => $property->getKey(),

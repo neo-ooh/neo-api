@@ -20,7 +20,7 @@ class PushInventoryResourceRequest extends FormRequest {
     public function rules(): array {
         return [
             "inventory_id" => ["nullable", "integer", new Exists(InventoryProvider::class, "id")],
-            "async"        => ["sometimes", "boolean"],
+            "sync"         => ["sometimes", "boolean"],
         ];
     }
 

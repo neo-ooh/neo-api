@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - MatchReachScreensToProductsCommand.php
+ * @neo/api - MatchVistarVenuesToProductsCommand.php
  */
 
 namespace Neo\Modules\Properties\Console\Commands;
@@ -21,10 +21,10 @@ use Neo\Modules\Properties\Services\Reach\ReachAdapter;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 
-class MatchReachScreensToProductsCommand extends Command {
-    protected $signature = 'reach:match-screens-to-products {inventory}';
+class MatchVistarVenuesToProductsCommand extends Command {
+    protected $signature = 'vistar:match-venues-to-products {inventory}';
 
-    protected $description = 'Match Reach screens';
+    protected $description = 'Match Vistar venues';
 
     /**
      * @throws InvalidInventoryAdapterException

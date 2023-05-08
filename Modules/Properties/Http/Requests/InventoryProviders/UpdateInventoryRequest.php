@@ -67,7 +67,17 @@ class UpdateInventoryRequest extends FormRequest {
                 "venue_types.*.id"   => ["nullable", "string"],
                 "venue_types.*.name" => ["nullable", "string"],
             ],
-            InventoryType::Vistar    => [],
+            InventoryType::Vistar    => [
+                "api_url"            => ["required", "string"],
+                "api_key"            => ["sometimes", "string"],
+                "api_username"       => ["required", "string"],
+                "networks"           => ["nullable", "array"],
+                "networks.*.id"      => ["nullable", "string"],
+                "networks.*.name"    => ["nullable", "string"],
+                "venue_types"        => ["nullable", "array"],
+                "venue_types.*.id"   => ["nullable", "string"],
+                "venue_types.*.name" => ["nullable", "string"],
+            ],
             InventoryType::Atedra    => [],
             InventoryType::Dummy     => [],
         };

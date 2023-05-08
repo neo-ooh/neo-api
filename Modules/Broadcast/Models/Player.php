@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
+use Neo\Modules\Properties\Services\Resources\BroadcastPlayer;
 
 /**
  * Class Player
@@ -85,6 +86,15 @@ class Player extends Model {
             broadcaster_id: $this->network->connection_id,
             external_id   : $this->external_id,
             type          : ExternalResourceType::Player,
+        );
+    }
+
+    public function toInventoryResource(): BroadcastPlayer {
+        return new BroadcastPlayer(
+            id          : $this->getKey(),
+            external_id : $this->toExternalBroadcastIdResource(),
+            name        : $this->name,
+            screen_count: $this->screen_count,
         );
     }
 }

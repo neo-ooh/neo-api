@@ -19,6 +19,27 @@ use GuzzleHttp\RequestOptions;
 use Illuminate\Http\Client\Response;
 
 class APIClient implements APIClientInterface {
+    protected Client|null $_client = null;
+
+    public function __construct() {
+        $this->connect();
+    }
+
+    protected function connect() {
+        if ($this->_client !== null) {
+            return;
+        }
+
+        $stack = HandlerStack::create(new CurlHandler());
+
+        $clientOptions = [
+//            "debug"   => true,
+"handler" => $stack,
+        ];
+
+        $this->_client = new Client($clientOptions);
+    }
+
     /**
      * Execute a call to the given endpoint using with given body and headers
      *
@@ -29,10 +50,8 @@ class APIClient implements APIClientInterface {
      * @throws GuzzleException
      */
     public function call(Endpoint $endpoint, mixed $payload, array $headers = []): Response {
-        $stack = new HandlerStack();
-        $stack->setHandler(new CurlHandler());
-
-        $contentType = $headers["Content-Type"] ?? "application/json";
+        // Make sure we are connected
+        $this->connect();
 
 //        dump($endpoint->options);
 //        dump($endpoint->getUrl());
@@ -40,25 +59,24 @@ class APIClient implements APIClientInterface {
 //        dump($headers);
 //        dump($payload);
 
-        $clientOptions = array_merge([
-//                                         "debug" => true,
-                                     ], $endpoint->options);
-
-        $client  = new Client($clientOptions);
-        $request = new Request($endpoint->method, $endpoint->getUrl(), $headers);
-
-        $options = [];
+        $request     = new Request($endpoint->method, $endpoint->getUrl(), $headers);
+        $contentType = $headers["Content-Type"] ?? "application/json";
+        $options     = [...$endpoint->options];
 
         if ($endpoint->format === 'multipart') {
             $options[RequestOptions::MULTIPART] = $payload;
         } else if ($request->getMethod() === "GET") {
             $options[RequestOptions::QUERY] = $payload;
-        } else if ($contentType === "application/json") {
+        } else if ($endpoint->format === 'json' || $contentType === "application/json") {
             $options[RequestOptions::JSON] = $payload;
         } else {
             $options[RequestOptions::BODY] = $payload;
         }
 
-        return new Response($client->send($request, $options));
+        return new Response($this->_client->send($request, $options));
+    }
+
+    public function __serialize(): array {
+        return collect(get_object_vars($this))->filter(fn($v, string $key) => $key !== "_client")->all();
     }
 }

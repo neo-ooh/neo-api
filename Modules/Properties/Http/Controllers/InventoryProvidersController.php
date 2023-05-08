@@ -60,6 +60,10 @@ class InventoryProvidersController extends Controller {
                 $provider->settings->client_id    = $request->input("client_id");
                 break;
             case InventoryType::Vistar:
+                $provider->settings->api_url      = $request->input("api_url");
+                $provider->settings->api_key      = $request->input("api_key");
+                $provider->settings->api_username = $request->input("api_username");
+                break;
             case InventoryType::Atedra:
             case InventoryType::Dummy:
         }
@@ -104,6 +108,11 @@ class InventoryProvidersController extends Controller {
                 $inventoryProvider->settings->client_id    = $request->input("client_id");
                 $inventoryProvider->settings->venue_types  = $request->input("venue_types");
             case InventoryType::Vistar:
+                $inventoryProvider->settings->api_url      = $request->input("api_url");
+                $inventoryProvider->settings->api_key      = $request->input("api_key", $inventoryProvider->settings->api_key);
+                $inventoryProvider->settings->api_username = $request->input("api_username");
+                $inventoryProvider->settings->networks     = $request->input("networks");
+                $inventoryProvider->settings->venue_types  = $request->input("venue_types");
             case InventoryType::Atedra:
         }
 

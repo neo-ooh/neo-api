@@ -38,7 +38,7 @@ class InventoryProviderSettings extends JSONDBColumn {
 
         // Hivestack
         /**
-         * @var array{id: string, name: string} Hivestack networks
+         * @var array{id: string, name: string} Hivestack|Vistar networks
          */
         public array|null  $networks = null,
 
@@ -64,7 +64,7 @@ class InventoryProviderSettings extends JSONDBColumn {
         public string|null $auth_url = null,
 
         /**
-         * @var array{id: string, name: string}|null Reach Venue Types
+         * @var array{id: string, name: string}|null Reach|Vistar Venue Types
          */
         public array|null  $venue_types = null,
     ) {

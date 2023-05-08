@@ -74,7 +74,15 @@ class MatchHivestackUnitsToProductsCommand extends Command {
             if ($representation) {
                 // Representation already exist, append current ID
                 if (is_array($representation->context->units)) {
-                    $representation->context->units[$location->getKey()] = $unit->resourceId->external_id;
+                    $representation->context->units[$location->getKey()] = [
+                        "id"   => $unit->resourceId->external_id,
+                        "name" => $unit->product->name[0]->value,
+                    ];
+                } else {
+                    $representation->context->units = [$location->getKey() => [
+                        "id"   => $unit->resourceId->external_id,
+                        "name" => $unit->product->name[0]->value,
+                    ]];
                 }
             } else {
                 $representation = new ExternalInventoryResource([
@@ -86,7 +94,10 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                         "network_id"    => $unit->resourceId->context["network_id"],
                                                                         "media_type_id" => $unit->resourceId->context["media_type_id"],
                                                                         "units"         => [
-                                                                            $location->getKey() => $unit->resourceId->external_id,
+                                                                            $location->getKey() => [
+                                                                                "id"   => $unit->resourceId->external_id,
+                                                                                "name" => $unit->product->name[0]->value,
+                                                                            ],
                                                                         ],
                                                                     ],
                                                                 ]);
@@ -110,7 +121,7 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                     "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                                               "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,

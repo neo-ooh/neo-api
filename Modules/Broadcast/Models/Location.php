@@ -27,6 +27,7 @@ use Neo\Modules\Broadcast\Rules\AccessibleLocation;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Services\Resources\BroadcastLocation;
+use Neo\Modules\Properties\Services\Resources\BroadcastPlayer;
 
 /**
  * Neo\Models\ActorsLocations
@@ -215,6 +216,7 @@ class Location extends SecuredModel {
             external_id : $this->toExternalBroadcastIdResource(),
             name        : $this->name,
             screen_count: $this->players->sum("screen_count"),
+            players     : BroadcastPlayer::collection($this->players->map(fn(Player $player) => $player->toInventoryResource())),
         );
     }
 }

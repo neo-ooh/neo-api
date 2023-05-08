@@ -97,6 +97,8 @@ class Contract extends Model {
     }
 
     protected static function boot() {
+        parent::boot();
+        
         static::deleting(function (Contract $contract) {
             foreach ($contract->bursts as $burst) {
                 $burst->delete();

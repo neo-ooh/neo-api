@@ -243,11 +243,11 @@ class SynchronizeNetworkJob extends Job {
         // Persist or update the container in the DB
         $container = NetworkContainer::query()->firstOrCreate([
                                                                   "network_id"  => $broadcaster->getNetworkId(),
-                                                                  "parent_id"   => $parentId,
-                                                                  "name"        => $externalContainer->name,
                                                                   "external_id" => $externalContainer->external_id,
                                                               ],
                                                               [
+                                                                  "parent_id"  => $parentId,
+                                                                  "name"       => $externalContainer->name,
                                                                   "created_at" => Date::now(),
                                                               ]);
 

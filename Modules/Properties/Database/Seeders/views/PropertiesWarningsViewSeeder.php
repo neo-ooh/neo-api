@@ -57,7 +57,7 @@ class PropertiesWarningsViewSeeder extends Seeder {
                                                               AND `ptm`.`year` = `pts`.`start_year`) < 12,
                    TRUE,
                    FALSE
-             )            AS `incomplete-traffic`
+             )            AS `incomplete_traffic`
         FROM `properties` `p`
            JOIN `property_traffic_settings` `pts` ON `p`.`actor_id` = `pts`.`property_id`;        
         EOS

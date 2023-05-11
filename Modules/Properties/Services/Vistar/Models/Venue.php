@@ -21,8 +21,8 @@ use Neo\Modules\Properties\Services\Vistar\Models\Attributes\VenueOperatingMinut
  * @property string           $name
  * @property string           $partner_venue_id
  * @property int              $cpm_floor_cents
- * @property int              $longitude
- * @property int              $latitude
+ * @property float            $longitude
+ * @property float            $latitude
  * @property array            $advertiser_restrictions
  * @property array            $creative_category_restrictions
  * @property string           $address

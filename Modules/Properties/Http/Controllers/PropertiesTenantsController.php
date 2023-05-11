@@ -21,6 +21,13 @@ use Neo\Modules\Properties\Models\Brand;
 use Neo\Modules\Properties\Models\Property;
 use Normalizer;
 
+function normalizeStr(string $str): string {
+    $str = strtolower($str);
+    $str = Normalizer::normalize($str, Normalizer::NFD);
+    $str = preg_replace("/[\u{0300}-\u{036f}]/", "", $str);
+    return preg_replace("/[^\w\s]/i", "", $str);
+}
+
 class PropertiesTenantsController {
     public function index(ListTenantsRequest $request, Property $property): Response {
         return new Response($property->tenants);
@@ -36,12 +43,6 @@ class PropertiesTenantsController {
     }
 
     public function import(ImportTenantsRequest $request, Property $property) {
-        function normalizeStr(string $str): string {
-            $str = strtolower($str);
-            $str = Normalizer::normalize($str, Normalizer::NFD);
-            $str = preg_replace("/[\u{0300}-\u{036f}]/", "", $str);
-            return preg_replace("/[^\w\s]/i", "", $str);
-        }
 
         /** @var Collection<array{name: string, normalized_name: string}> $normalizedTenants */
         $normalizedTenants = collect($request->input("tenants", []))

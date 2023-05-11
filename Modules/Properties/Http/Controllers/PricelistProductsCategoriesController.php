@@ -59,7 +59,7 @@ class PricelistProductsCategoriesController {
     }
 
     public function destroy(DestroyPricelistProductsCategoryRequest $request, Pricelist $pricelist, ProductCategory $pricelistProductsCategory) {
-        $pricelistProductsCategory->pricing()->delete();
+        $pricelistProductsCategory->pricing->delete();
 
         return new Response(["status" => "ok"]);
     }

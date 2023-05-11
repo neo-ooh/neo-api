@@ -11,7 +11,10 @@
 namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use MatanYadaev\EloquentSpatial\Objects\Point;
+use Neo\Modules\Properties\Services\Resources\City as CityResource;
 
 /**
  * Class City
@@ -43,21 +46,33 @@ class City extends Model {
         "market_id",
         "province_id",
     ];
-    
-    public function province() {
+
+    /**
+     * @return BelongsTo
+     */
+    public function province(): BelongsTo {
         return $this->belongsTo(Province::class, "province_id");
     }
 
-    public function market() {
+    /**
+     * @return BelongsTo
+     */
+    public function market(): BelongsTo {
         return $this->belongsTo(Market::class, "market_id");
     }
 
-    public function addresses() {
+    /**
+     * @return HasMany
+     */
+    public function addresses(): HasMany {
         return $this->hasMany(Address::class, "city_id", "id");
     }
 
-    public function toInventoryResource() {
-        return new \Neo\Modules\Properties\Services\Resources\City(
+    /**
+     * @return CityResource
+     */
+    public function toInventoryResource(): CityResource {
+        return new CityResource(
             name         : $this->name,
             province_slug: strtoupper($this->province->slug),
         );

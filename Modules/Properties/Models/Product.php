@@ -72,7 +72,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @property Collection<Unavailability>    $unavailabilities
  *
  * @property Pricelist|null                $pricelist
- * @property ProductPricing|null           $pricing
+ * @property PricelistProduct|null         $pricing
  *
  * @property Collection<number>            $enabled_inventories
  *

@@ -98,7 +98,7 @@ class FieldsController {
         }
 
         $field->load(["category", "networks:id"]);
-        $field->network_ids = $field->networks->map(fn($n) => $n->id);
+        $field->network_ids = $field->networks->map(fn(Network $n) => $n->id);
         $field->makeHidden("networks");
 
         return new Response($field);

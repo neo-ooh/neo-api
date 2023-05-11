@@ -47,6 +47,11 @@ class PointsOfInterestController {
         return new Response($poi, 201);
     }
 
+    /**
+     * @param StoreBatchPointOfInterestRequest $request
+     * @param Brand                            $brand
+     * @return Response
+     */
     public function storeBatch(StoreBatchPointOfInterestRequest $request, Brand $brand) {
         $inputs = collect($request->input("pois"));
 
@@ -58,6 +63,7 @@ class PointsOfInterestController {
 
         // For each input, we apply the same steps as the one we do for storing a single POI.
         foreach ($inputs as $input) {
+            /** @var PointOfInterest|null $poi */
             $poi = null;
 
             if (array_key_exists("external_id", $input)) {
@@ -65,7 +71,6 @@ class PointsOfInterestController {
             }
 
             if (!$poi) {
-                /** @var PointOfInterest $poi */
                 $poi = new PointOfInterest();
             }
 

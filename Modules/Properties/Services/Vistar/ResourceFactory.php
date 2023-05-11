@@ -13,7 +13,6 @@ namespace Neo\Modules\Properties\Services\Vistar;
 use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
-use Neo\Modules\Properties\Services\Reach\Models\Screen;
 use Neo\Modules\Properties\Services\Resources\Geolocation;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 use Neo\Modules\Properties\Services\Resources\LocalizedString;
@@ -22,7 +21,7 @@ use Neo\Modules\Properties\Services\Vistar\Models\Venue;
 
 class ResourceFactory {
     /**
-     * @param Screen       $screen
+     * @param Venue        $venue
      * @param VistarConfig $config
      * @return IdentifiableProduct
      */

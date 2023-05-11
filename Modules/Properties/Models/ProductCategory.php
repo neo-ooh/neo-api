@@ -48,6 +48,8 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Format                        $format
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
+ *
+ * @property PricelistProductsCategory     $pricing
  */
 class ProductCategory extends Model implements WithImpressionsModels, WithAttachments {
     use HasImpressionsModels;

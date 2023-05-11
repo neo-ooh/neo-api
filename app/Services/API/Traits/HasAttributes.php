@@ -21,7 +21,7 @@ trait HasAttributes {
     protected array $attributes = [];
 
     /**
-     * @var array<class-string<Data>>
+     * @var array<string, class-string>
      */
     protected array $casts = [];
 

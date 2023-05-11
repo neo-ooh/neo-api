@@ -41,7 +41,7 @@ class ImportProductJob extends InventoryJobBase {
         private readonly int                      $propertyID,
 
         /**
-         * @var int External ID of the about-to-be-created product
+         * @var InventoryResourceId External ID of the about-to-be-created product
          */
         private readonly InventoryResourceId      $externalProductId,
 

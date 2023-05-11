@@ -113,9 +113,9 @@ class PlaceExchangeAdapter extends InventoryAdapter {
                               banner: in_array(MediaType::Image, $product->allowed_media_types),
                               video : in_array(MediaType::Video, $product->allowed_media_types),
                           ),
-            category_id : $adUnit->asset?->category ?? null,
-            image_url   : $adUnit->asset?->image_url ?? "",
-            mimes       : $adUnit->asset?->mimes ?? [],
+            category_id : $adUnit->asset->category ?? null,
+            image_url   : $adUnit->asset->image_url ?? "",
+            mimes       : $adUnit->asset->mimes ?? [],
             name        : $name,
             screen_count: $player->screen_count,
             size        : 5, // TODO: Screen size

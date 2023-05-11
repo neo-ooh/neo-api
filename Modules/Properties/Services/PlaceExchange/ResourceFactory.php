@@ -15,8 +15,6 @@ use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\AdUnit;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitStatus;
-use Neo\Modules\Properties\Services\Reach\Models\Screen;
-use Neo\Modules\Properties\Services\Reach\ReachConfig;
 use Neo\Modules\Properties\Services\Resources\Address;
 use Neo\Modules\Properties\Services\Resources\City;
 use Neo\Modules\Properties\Services\Resources\Geolocation;
@@ -27,8 +25,8 @@ use Neo\Modules\Properties\Services\Resources\ProductResource;
 
 class ResourceFactory {
     /**
-     * @param Screen      $screen
-     * @param ReachConfig $config
+     * @param AdUnit              $adUnit
+     * @param PlaceExchangeConfig $config
      * @return IdentifiableProduct
      */
     public static function makeIdentifiableProduct(AdUnit $adUnit, PlaceExchangeConfig $config): IdentifiableProduct {

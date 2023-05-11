@@ -46,6 +46,6 @@ class InventoryAdapterDelegate {
             $this->inventories = InventoryProvider::query()->get();
         }
 
-        return $this->inventories->firstWhere("id", "=", $inventoryID)?->provider ?? null;
+        return $this->inventories->firstWhere("id", "=", $inventoryID)->provider ?? null;
     }
 }

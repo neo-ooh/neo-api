@@ -41,7 +41,7 @@ class InventoryRepresentationContext extends JSONDBColumn {
         public array|Optional      $units,
 
         /**
-         * @var array|Optional Reach venue type id
+         * @var int|Optional Reach venue type id
          */
         public int|Optional        $venue_type_id,
 
@@ -51,7 +51,7 @@ class InventoryRepresentationContext extends JSONDBColumn {
         public array|Optional      $screens,
 
         /**
-         * @var array|Optional Vistar venue type
+         * @var string|Optional Vistar venue type
          */
         public string|Optional     $venue_type,
 

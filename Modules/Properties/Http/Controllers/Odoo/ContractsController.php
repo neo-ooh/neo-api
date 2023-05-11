@@ -74,7 +74,7 @@ class ContractsController {
         $inventory = InventoryProvider::query()->find(1);
         /** @var OdooAdapter $odoo */
         $odoo = InventoryAdapterFactory::make($inventory);
-        /** @var Contract $contract */
+        /** @var Contract|null $contract */
         $contract = OdooContract::findByName($odoo->getConfig()->getClient(), strtoupper($contractName));
 
         if ($contract === null) {

@@ -16,12 +16,12 @@ class AdUnitAsset extends Data {
     /**
      * @param string                  $aspect_ratio
      * @param AdUnitAssetCapabilities $capability
-     * @param string                  $category
+     * @param int|null                $category_id
      * @param string                  $image_url
      * @param string[]                $mimes
      * @param string                  $name
      * @param string                  $screen_count
-     * @param int                     $size
+     * @param float                   $size
      * @param string                  $type
      */
     public function __construct(

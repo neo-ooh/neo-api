@@ -15,7 +15,7 @@ use Neo\Models\Utils\JSONDBColumn;
 class InventoryProviderSettings extends JSONDBColumn {
     public function __construct(
         /**
-         * @var int|null Inventory provider API URL
+         * @var string|null Inventory provider API URL
          */
         public string|null $api_url = null,
 

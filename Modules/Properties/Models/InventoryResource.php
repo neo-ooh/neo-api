@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Properties\Models;
 
+use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Neo\Models\SecuredModel;
@@ -86,11 +87,12 @@ class InventoryResource extends SecuredModel {
      */
     public function getEnabledInventoriesAttribute() {
         return match ($this->type) {
-            InventoryResourceType::Property => $this->inventories_settings()
-                                                    ->where("is_enabled", "=", true)
-                                                    ->pluck("inventory_id"),
-            InventoryResourceType::Product  => Product::query()
-                                                      ->firstWhere("inventory_resource_id", "=", $this->id)->enabled_inventories,
+            InventoryResourceType::Property        => $this->inventories_settings()
+                                                           ->where("is_enabled", "=", true)
+                                                           ->pluck("inventory_id"),
+            InventoryResourceType::Product         => Product::query()
+                                                             ->firstWhere("inventory_resource_id", "=", $this->id)->enabled_inventories,
+            InventoryResourceType::ProductCategory => throw new Exception('To be implemented'),
         };
     }
 
@@ -100,15 +102,16 @@ class InventoryResource extends SecuredModel {
      * For ID for a specific product, this method will just return a collection with one value, for ID for property,
      * this method will list all the products of the property
      *
-     * @return void
+     * @throws Exception
      */
     public function getProductsAttribute() {
         return match ($this->type) {
-            InventoryResourceType::Property => Property::query()
-                                                       ->firstWhere("inventory_resource_id", "=", $this->id)?->products ?? new Collection(),
-            InventoryResourceType::Product  => Collection::make([Product::query()
-                                                                        ->where("inventory_resource_id", "=", $this->id)
-                                                                        ->first()]),
+            InventoryResourceType::Property        => Property::query()
+                                                              ->firstWhere("inventory_resource_id", "=", $this->id)->products ?? new Collection(),
+            InventoryResourceType::Product         => Collection::make([Product::query()
+                                                                               ->where("inventory_resource_id", "=", $this->id)
+                                                                               ->first()]),
+            InventoryResourceType::ProductCategory => throw new Exception('To be implemented'),
         };
     }
 }

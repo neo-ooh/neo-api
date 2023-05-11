@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
 class DestroyProductRequest extends FormRequest {
@@ -20,6 +21,6 @@ class DestroyProductRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Capability::products_edit->value;
+        return Gate::allows(Capability::products_edit->value);
     }
 }

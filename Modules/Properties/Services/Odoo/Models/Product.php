@@ -11,22 +11,22 @@
 namespace Neo\Modules\Properties\Services\Odoo\Models;
 
 /**
- * @property int    $id
- * @property bool   $active
- * @property string $name
- * @property int    $sequence
- * @property string $description
- * @property bool   $bonus
- * @property mixed  $product_type_id
- * @property mixed  $categ_id
- * @property int    $nb_screen
- * @property int    $nb_spots
- * @property int    $nb_extra_spots
- * @property int    $message_duration
- * @property int    $list_price
- * @property array  $product_variant_id
- * @property array  $linked_product_id
- * @property array  $shopping_center_id
+ * @property int                      $id
+ * @property bool                     $active
+ * @property string                   $name
+ * @property int                      $sequence
+ * @property string                   $description
+ * @property bool                     $bonus
+ * @property array{0: int, 1: string} $product_type_id
+ * @property array{0: int, 1: string} $categ_id
+ * @property int                      $nb_screen
+ * @property int                      $nb_spots
+ * @property int                      $nb_extra_spots
+ * @property int                      $message_duration
+ * @property int                      $list_price
+ * @property array                    $product_variant_id
+ * @property array                    $linked_product_id
+ * @property array                    $shopping_center_id
  */
 class Product extends OdooModel {
     public static string $slug = "product.template";

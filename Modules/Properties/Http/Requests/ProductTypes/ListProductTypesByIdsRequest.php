@@ -23,6 +23,6 @@ class ListProductTypesByIdsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::c->value);
+        return Gate::allows(Capability::properties_products->value);
     }
 }

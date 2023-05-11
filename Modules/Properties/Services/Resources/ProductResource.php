@@ -158,7 +158,7 @@ class ProductResource extends InventoryResource {
         public array|null               $broadcastLocations = null,
 
         /**
-         * @var InventoryResourceId|null
+         * @var InventoryResourceId[]|null
          */
         public array|null               $externalRepresentations = null,
     ) {

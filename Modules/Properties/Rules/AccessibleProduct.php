@@ -20,8 +20,6 @@ use Neo\Modules\Properties\Models\Product;
 class AccessibleProduct implements Rule, ImplicitRule {
     /**
      * Create a new rule instance.
-     *
-     * @param bool $allow_self
      */
     public function __construct() {
     }

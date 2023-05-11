@@ -141,7 +141,7 @@ class OdooAdapter extends InventoryAdapter {
         $property->city     = $productResource->address->city->name;
         $property->state_id = $province->getKey();
 //        $property->country_id = 38; // Canada
-        $property->annual_traffic = $productResource->weekly_traffic * (365 / 7);
+        $property->annual_traffic = (int)round($productResource->weekly_traffic * (365 / 7));
     }
 
     public function fillProduct(Product $product, ProductResource $productResource) {
@@ -156,7 +156,7 @@ class OdooAdapter extends InventoryAdapter {
         $product->linked_product_id = $productResource->linked_product_id?->external_id;
         $product->list_price        = $productResource->price_type === PriceType::Unit ? $productResource->price : ($product->list_price ?? 0);
         $product->nb_screen         = $productResource->quantity;
-        $product->nb_spots          = round($productResource->loop_configuration->loop_length_ms / $productResource->loop_configuration->spot_length_ms);
+        $product->nb_spots          = (int)round($productResource->loop_configuration->loop_length_ms / $productResource->loop_configuration->spot_length_ms);
     }
 
     /**

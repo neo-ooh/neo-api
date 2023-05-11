@@ -112,7 +112,7 @@ class HivestackAdapter extends InventoryAdapter {
     protected function operatingHoursToHivestackString(Enumerable $operatingHours): string {
         $hoursString = "";
         for ($i = 1; $i <= 7; $i++) {
-            /** @var DayOperatingHours $dayHours */
+            /** @var DayOperatingHours|null $dayHours */
             $dayHours  = $operatingHours->firstWhere("day", "===", $i);
             $startHour = ($dayHours ? Carbon::createFromTimeString($dayHours->start_at) : Carbon::createFromTime())->hour;
             $endHour   = ($dayHours ? Carbon::createFromTimeString($dayHours->end_at) : Carbon::createFromTime())->hour;

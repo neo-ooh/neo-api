@@ -63,7 +63,9 @@ class RollingTrafficCalculator {
             $weekComponents = 0;
 
             do {
-                $t = $yearTrafficIt->current()->firstWhere("week", "===", $week)?->traffic ?? 0;
+                /** @var WeeklyTrafficDatum|null $weekTrafficDatum */
+                $weekTrafficDatum = $yearTrafficIt->current()->firstWhere("week", "===", $week);
+                $t                = $weekTrafficDatum->traffic ?? 0;
 
                 if ($t !== 0) {
                     $weekTraffic += $t;
@@ -104,7 +106,8 @@ class RollingTrafficCalculator {
         /** @var int[] $rollingTraffic */
         $rollingTraffic = [];
         // We select the most recent entry with a positive traffic and who is not the 53rd week because this one is tricky
-        $mostRecentDatum = $this->traffic->weekly_data->last(fn($datum) => $datum->traffic > 0 && $datum->week !== 53);
+        /** @var WeeklyTrafficDatum|null $mostRecentDatum */
+        $mostRecentDatum = $this->traffic->weekly_data->last(fn(WeeklyTrafficDatum $datum) => $datum->traffic > 0 && $datum->week !== 53);
 
         if (!$mostRecentDatum) {
             // Return an empty array if no values at all
@@ -114,9 +117,9 @@ class RollingTrafficCalculator {
             return $rollingTraffic;
         }
 
-        /** @var WeeklyTrafficDatum $referenceDatum */
+        /** @var WeeklyTrafficDatum|null $referenceDatum */
         $referenceDatum = $this->traffic->weekly_data->first(
-            fn($datum) => $datum->year === $this->traffic->start_year && $datum->week === $mostRecentDatum->week
+            fn(WeeklyTrafficDatum $datum) => $datum->year === $this->traffic->start_year && $datum->week === $mostRecentDatum->week
         );
 
         if (!$referenceDatum || $referenceDatum->traffic === 0) {

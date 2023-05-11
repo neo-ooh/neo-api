@@ -70,14 +70,14 @@ class InventoryProvidersExternalResourcesController extends Controller {
                         return new Response([]);
                     }
 
-                    $resources = Collection::make($inventory->listPropertyProducts($representation->toInventoryResourceId())
-                                                            ->map(
-                                                                fn(IdentifiableProduct $resource) => new InventoryExternalResource(
-                                                                    type       : "property",
-                                                                    name       : $resource->product->name[0]->value,
-                                                                    external_id: $resource->resourceId,
-                                                                )
-                                                            ));
+                    $resources = Collection::make($inventory->listPropertyProducts($representation->toInventoryResourceId()))
+                                           ->map(
+                                               fn(IdentifiableProduct $resource) => new InventoryExternalResource(
+                                                   type       : "property",
+                                                   name       : $resource->product->name[0]->value,
+                                                   external_id: $resource->resourceId,
+                                               )
+                                           );
                 } else {
                     $resources = Collection::make($inventory->listProducts())->map(
                         fn(IdentifiableProduct $resource) => new InventoryExternalResource(

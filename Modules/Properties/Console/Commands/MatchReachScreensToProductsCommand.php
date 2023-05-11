@@ -85,7 +85,7 @@ class MatchReachScreensToProductsCommand extends Command {
             $product = $products->first();
 
             // Does this product already has an external representation for this inventory ?
-            /** @var ExternalInventoryResource $representation */
+            /** @var ExternalInventoryResource|null $representation */
             $representation = $product->external_representations()->firstWhere("inventory_id", "=", $inventoryId);
 
             if ($representation) {

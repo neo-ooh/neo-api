@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 
-/**\
+/**
  * @property int    $id
  * @property int    $brand_id
  * @property string $external_id

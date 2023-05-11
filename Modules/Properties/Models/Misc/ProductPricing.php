@@ -23,7 +23,11 @@ class ProductPricing {
     ) {
     }
 
-    public static function make(Product $product) {
+    /**
+     * @param Product $product
+     * @return static
+     */
+    public static function make(Product $product): static {
         /** @var Pricelist|null $pricelist */
         $pricelist = $product->pricelist;
 
@@ -33,8 +37,7 @@ class ProductPricing {
 
         /** @var PricelistProduct|PricelistProductsCategory|null $pricing */
         $pricing = ($pricelist->products()->firstWhere("id", "=", $product->getKey())
-            ?? $pricelist->categories()->firstWhere("id", "=", $product->category_id))
-            ?->pricing;
+            ?? $pricelist->categories()->firstWhere("id", "=", $product->category_id))?->pricing;
 
         if (!$pricing) {
             return new static(PriceType::Unit, $product->unit_price);

@@ -138,7 +138,7 @@ abstract class InventoryAdapter {
      *
      * @param InventoryResourceId $productId
      * @param ProductResource     $product
-     * @return bool
+     * @return InventoryResourceId|false
      */
     public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
         throw new InventoryMethodNotSupportedException($this->getInventoryID(), $this->getInventoryType(), "updateProduct");

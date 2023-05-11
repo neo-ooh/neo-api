@@ -54,7 +54,7 @@ class InventoryProviderSettings extends JSONDBColumn {
         public string|null $publisher_id = null,
 
         /**
-         * @var string|null Reach client ID
+         * @var string|null Reach client ID|PlaceExchange org ID
          */
         public string|null $client_id = null,
 
@@ -64,7 +64,7 @@ class InventoryProviderSettings extends JSONDBColumn {
         public string|null $auth_url = null,
 
         /**
-         * @var array{id: string, name: string}|null Reach|Vistar Venue Types
+         * @var array{id: string, name: string}|null Reach|Vistar|Place Exchange Venue Types
          */
         public array|null  $venue_types = null,
     ) {

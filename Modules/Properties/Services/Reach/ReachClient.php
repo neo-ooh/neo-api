@@ -71,6 +71,7 @@ class ReachClient extends APIClient {
         ]);
 
         if (!$response->successful()) {
+            dump($response->body());
             $response->throw();
         }
 

@@ -34,6 +34,11 @@ class DayOperatingHours extends Data {
          */
         public string $end_at,
 
+        /**
+         * @var int How many minutes this place if open for a day
+         */
+        public int    $open_length_min,
+
     ) {
 
     }

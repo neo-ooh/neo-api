@@ -32,8 +32,9 @@ class InventoryAdapterFactory {
             throw new InvalidInventoryAdapterException($provider->provider->value);
         }
 
-        $config = $adapter::buildConfig($provider);
+        $config   = $adapter::buildConfig($provider);
+        $delegate = new InventoryAdapterDelegate($provider);
 
-        return new $adapter($config);
+        return new $adapter($config, $delegate);
     }
 }

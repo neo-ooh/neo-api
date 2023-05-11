@@ -14,9 +14,8 @@ enum InventoryType: string {
     case Odoo = "odoo";
     case Hivestack = "hivestack";
     case Vistar = "vistar";
-    case Atedra = "atedra";
     case Reach = "reach";
-
+    case PlaceExchange = "place-exchange";
 
     case Dummy = "dummy";
 }

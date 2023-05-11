@@ -5,16 +5,16 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - VistarConfig.php
+ * @neo/api - PlaceExchangeConfig.php
  */
 
-namespace Neo\Modules\Properties\Services\Vistar;
+namespace Neo\Modules\Properties\Services\PlaceExchange;
 
 use Neo\Modules\Properties\Services\InventoryConfig;
 use Neo\Modules\Properties\Services\InventoryType;
 
-class VistarConfig extends InventoryConfig {
-    public InventoryType $type = InventoryType::Vistar;
+class PlaceExchangeConfig extends InventoryConfig {
+    public InventoryType $type = InventoryType::PlaceExchange;
 
     public function __construct(
         public string $name,
@@ -23,10 +23,11 @@ class VistarConfig extends InventoryConfig {
         public string $api_url,
         public string $api_username,
         public string $api_key,
+        public string $org_id,
     ) {
     }
 
     public function getClient() {
-        return new VistarClient($this);
+        return new PlaceExchangeClient($this);
     }
 }

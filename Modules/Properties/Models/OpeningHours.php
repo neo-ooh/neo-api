@@ -42,13 +42,22 @@ class OpeningHours extends Model {
         "close_at"  => "datetime:H:i",
     ];
 
+    protected $fillable = [
+        "property_id",
+        "weekday",
+        "is_closed",
+        "open_at",
+        "close_at",
+    ];
+
 
     public function toInventoryResource() {
         return new DayOperatingHours(
-            day      : $this->weekday,
-            is_closed: $this->is_closed,
-            start_at : $this->open_at->toTimeString(),
-            end_at   : $this->close_at->toTimeString()
+            day            : $this->weekday,
+            is_closed      : $this->is_closed,
+            start_at       : $this->open_at->toTimeString(),
+            end_at         : $this->close_at->toTimeString(),
+            open_length_min: $this->is_closed ? 0 : $this->open_at->diffInMinutes(date: $this->close_at->setDateFrom($this->open_at), absolute: true),
         );
     }
 }

@@ -1,8 +1,16 @@
 <?php
+/*
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - aspectRatio.php
+ */
 
 if (!function_exists("aspect_ratio")) {
     /**
-     * @param float $val Division result of the width and height we are trying to find the aspect ratio
+     * @param float $val Division result of the width and height we are trying to find the aspect ratio (width/height)
      * @param int   $lim Maximum accepted value for the returned aspect ratio
      * @return int[]
      * @author ccpizza
@@ -10,7 +18,7 @@ if (!function_exists("aspect_ratio")) {
      * @note   ccpizza answer has been converted to PHP
      *
      */
-    function aspect_ratio(float $val, int $lim = 12): array {
+    function aspect_ratio(float $val, int $lim = 16): array {
         $lower = [0, 1];
         $upper = [1, 0];
 

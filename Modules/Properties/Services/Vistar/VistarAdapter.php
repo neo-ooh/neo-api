@@ -198,6 +198,7 @@ class VistarAdapter extends InventoryAdapter {
                                          ->pluck("id")
                                          ->values()
                                          ->all());
+        
         foreach ($venuesToRemove as $venueToRemove) {
             $venue = new Venue($client);
             $venue->setKey($venueToRemove);

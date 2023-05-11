@@ -11,7 +11,7 @@
 namespace Neo\Modules\Properties\Console\Commands;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
@@ -56,15 +56,17 @@ class MatchReachScreensToProductsCommand extends Command {
             $this->output->write("#" . $screen->resourceId->external_id . " " . $screen->product->name[0]->value);
 
             // Find the location this screen is representing
-            $locationExternalId = $screen->resourceId->context["location_external_id"];
+            $playerExternalId = $screen->resourceId->context["player_external_id"];
 
-            $location = Location::query()->where("external_id", "=", $locationExternalId)->first();
+            $player = Player::query()->where("external_id", "=", $playerExternalId)->first();
 
-            if (!$location) {
-                $this->output->writeln(": No location found.");
+            if (!$player) {
+                $this->output->writeln(": No player found.");
                 $notMatched[] = $screen->resourceId->external_id . ":" . $screen->product->name[0]->value;
                 continue;
             }
+
+            $location = $player->location;
 
             $location->load("products.property");
 
@@ -89,12 +91,12 @@ class MatchReachScreensToProductsCommand extends Command {
             if ($representation) {
                 // Representation already exist, append current ID
                 if (is_array($representation->context->screens)) {
-                    $representation->context->screens[$location->getKey()] = [
+                    $representation->context->screens[$player->getKey()] = [
                         "id"   => $screen->resourceId->external_id,
                         "name" => $screen->product->name[0]->value,
                     ];
                 } else {
-                    $representation->context->screens = [$location->getKey() => [
+                    $representation->context->screens = [$player->getKey() => [
                         "id"   => $screen->resourceId->external_id,
                         "name" => $screen->product->name[0]->value,
                     ]];
@@ -108,7 +110,7 @@ class MatchReachScreensToProductsCommand extends Command {
                                                                     "context"      => [
                                                                         "venue_type_id" => $screen->resourceId->context["venue_type_id"],
                                                                         "screens"       => [
-                                                                            $location->getKey() => [
+                                                                            $player->getKey() => [
                                                                                 "id"   => $screen->resourceId->external_id,
                                                                                 "name" => $screen->product->name[0]->value,
                                                                             ],
@@ -123,7 +125,7 @@ class MatchReachScreensToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                                          "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                             "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,

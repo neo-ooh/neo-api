@@ -33,6 +33,7 @@ use Neo\Modules\Properties\Services\Reach\Models\Attributes\ScreenVenueType;
 use Neo\Modules\Properties\Services\Reach\Models\Resolution;
 use Neo\Modules\Properties\Services\Reach\Models\Screen;
 use Neo\Modules\Properties\Services\Resources\BroadcastLocation;
+use Neo\Modules\Properties\Services\Resources\BroadcastPlayer;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
@@ -136,15 +137,17 @@ class ReachAdapter extends InventoryAdapter {
             });
     }
 
-    protected function fillScreen(Screen $screen, BroadcastLocation $location, ProductResource $product, array $context): void {
+    protected function fillScreen(Screen $screen, BroadcastLocation $location, BroadcastPlayer $player, ProductResource $product, array $context): void {
+        // Screen specs
         $resolution  = $this->findResolution($product->screen_width_px, $product->screen_height_px);
         $aspectRatio = $this->findAspectRatio($product->screen_width_px, $product->screen_height_px);
 
+        // Impressions
         $productScreensCount = collect($product->broadcastLocations)->sum("screen_count");
-        $impressionsShare    = $location->screen_count / $productScreensCount;
+        $impressionsShare    = $player->screen_count / $productScreensCount;
 
-        $screen->device_id             = $location->provider->value . ".com:" . $location->external_id->external_id;
-        $screen->name                  = trim($product->property_name) . " - " . trim($product->name[0]->value);
+        $screen->device_id             = $location->provider->value . ".com-test:" . $player->external_id->external_id; // TODO: Remove `-test`
+        $screen->name                  = trim($product->property_name) . " - " . trim($product->name[0]->value) . " - " . trim($player->name);
         $screen->publisher             = ScreenPublisher::from(["id" => $this->config->publisher_id]);
         $screen->is_active             = $product->is_sellable;
         $screen->resolution            = ScreenResolution::from(["id" => $resolution->getKey()]);
@@ -185,6 +188,9 @@ class ReachAdapter extends InventoryAdapter {
         $screen->bearing                      = null;
         $screen->internal_publisher_screen_id = "connect:" . $product->product_connect_id;
         $screen->ox_enabled                   = true;
+
+//        $screen->hivestack_id = $hivestackId;
+        $screen->vistar_id = $player->external_id->external_id;
     }
 
     /**
@@ -209,18 +215,21 @@ class ReachAdapter extends InventoryAdapter {
         $screensCount = collect($product->broadcastLocations)->sum("screen_count");
 
         foreach ($product->broadcastLocations as $broadcastLocation) {
-            $screen = new Screen($client);
-            $this->fillScreen($screen, $broadcastLocation, $product, $context);
-            $screen->save();
+            /** @var BroadcastPlayer $broadcastPlayer */
+            foreach ($broadcastLocation->players as $broadcastPlayer) {
+                $screen = new Screen($client);
+                $this->fillScreen($screen, $broadcastLocation, $broadcastPlayer, $product, $context);
+                $screen->save();
 
-            if ($product->weekdays_spot_impressions) {
-                $impressionsShare = $broadcastLocation->screen_count / $screensCount;
-                $screen->fillImpressions(collect($product->weekdays_spot_impressions)
-                                             ->map(fn($v) => $v * $impressionsShare)
-                                             ->all());
+                if ($product->weekdays_spot_impressions) {
+                    $impressionsShare = $broadcastPlayer->screen_count / $screensCount;
+                    $screen->fillImpressions(collect($product->weekdays_spot_impressions)
+                                                 ->map(fn($v) => $v * $impressionsShare)
+                                                 ->all());
+                }
+
+                $screenIds[$broadcastPlayer->id] = ["id" => $screen->getKey(), "name" => $screen->name];
             }
-
-            $screenIds[$broadcastLocation->id] = ["id" => $screen->getKey(), "name" => $screen->name];
         }
 
         return new InventoryResourceId(
@@ -246,24 +255,28 @@ class ReachAdapter extends InventoryAdapter {
         $screensCount = collect($product->broadcastLocations)->sum("screen_count");
         // For each location, we pull the screen to update it. If the screen does not exist, we create it and update our id/context
         foreach ($product->broadcastLocations as $broadcastLocation) {
-            if (!isset($productId->context["screens"][$broadcastLocation->id])) {
-                // No ID for this location
-                $screen = new Screen($client);
-            } else {
-                $screen = Screen::find($client, $productId->context["screens"][$broadcastLocation->id]["id"]);
+            /** @var BroadcastPlayer $broadcastPlayer */
+            foreach ($broadcastLocation->players as $broadcastPlayer) {
+                if (!isset($productId->context["screens"][$broadcastPlayer->id])) {
+                    // No ID for this location
+                    $screen = new Screen($client);
+                } else {
+                    $screen = Screen::find($client, $productId->context["screens"][$broadcastPlayer->id]["id"]);
+                }
+
+                $this->fillScreen($screen, $broadcastLocation, $broadcastPlayer, $product, $productId->context);
+                clock($screen);
+                $screen->save();
+
+                if ($product->weekdays_spot_impressions) {
+                    $impressionsShare = $broadcastPlayer->screen_count / $screensCount;
+                    $screen->fillImpressions(collect($product->weekdays_spot_impressions)
+                                                 ->map(fn($v) => $v * $impressionsShare)
+                                                 ->all());
+                }
+
+                $screenIds[$broadcastPlayer->id] = ["id" => $screen->getKey(), "name" => $screen->name];
             }
-
-            $this->fillScreen($screen, $broadcastLocation, $product, $productId->context);
-            $screen->save();
-
-            if ($product->weekdays_spot_impressions) {
-                $impressionsShare = $broadcastLocation->screen_count / $screensCount;
-                $screen->fillImpressions(collect($product->weekdays_spot_impressions)
-                                             ->map(fn($v) => $v * $impressionsShare)
-                                             ->all());
-            }
-
-            $screenIds[$broadcastLocation->id] = ["id" => $screen->getKey(), "name" => $screen->name];
         }
 
         // We now want to compare the list of screens we just built against the one we were given.
@@ -276,6 +289,7 @@ class ReachAdapter extends InventoryAdapter {
                                           ->pluck("id")
                                           ->values()
                                           ->all());
+
         foreach ($screensToRemove as $screenToRemove) {
             $screen = new Screen($client);
             $screen->setKey($screenToRemove);

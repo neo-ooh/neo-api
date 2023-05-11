@@ -147,7 +147,7 @@ class ImportContractDataJob implements ShouldQueue {
             $product = $products->firstWhere(fn(Product $product) => $product->external_representations->where("context.variant_id", "=", $orderLine->product_id[0])
                                                                                                        ->isNotEmpty()
             );
-            
+
             if ($product === null) {
                 // Unknown product, ignore
                 continue;

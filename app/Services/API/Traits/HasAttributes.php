@@ -10,6 +10,8 @@
 
 namespace Neo\Services\API\Traits;
 
+use BackedEnum;
+use Illuminate\Database\Eloquent\InvalidCastException;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use JsonException;
@@ -58,27 +60,36 @@ trait HasAttributes {
     }
 
     protected function castAttributeForSet(string $attr, $value) {
-        if (key_exists($attr, $this->casts)) {
-            $caster = $this->casts[$attr];
+        if (!key_exists($attr, $this->casts)) {
+            return $value;
+        }
 
-            if (is_iterable($value)) {
-                if ($value instanceof Collection) {
-                    $values = $value->all();
-                } else {
-                    $values = (array)$value;
-                }
+        $caster = $this->casts[$attr];
 
-                if (array_is_list($values)) {
-                    return collect($value)->map(function ($v) use ($caster) {
-                        return $caster::from($v);
-                    });
-                }
+        if (is_a($value, $caster, allow_string: true)) {
+            return $value;
+        }
+
+        if (is_null($value)) {
+            return null;
+        } else if (is_subclass_of($caster, BackedEnum::class)) {
+            return $caster::from($value);
+        } else if (is_subclass_of($caster, Data::class)) {
+            if ($value instanceof Collection) {
+                $values = $value->all();
+            } else {
+                $values = (array)$value;
             }
 
+            if (array_is_list($values)) {
+                return collect($value)->map(function ($v) use ($caster) {
+                    return $caster::from($v);
+                });
+            }
             return $caster::from($value);
         }
 
-        return $value;
+        throw new InvalidCastException($this, $attr, $caster);
     }
 
     /**

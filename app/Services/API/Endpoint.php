@@ -168,16 +168,27 @@ class Endpoint {
     |--------------------------------------------------------------------------
     */
 
-    public function getPath(): string {
+    protected function fillInParameters(string $str): string {
         $parameters = array_map(static fn($key) => '/{' . $key . '}/', array_keys($this->urlParameters));
         $values     = array_map("rawurlencode", array_values($this->urlParameters));
-        return preg_replace($parameters, $values, $this->path);
+        return preg_replace($parameters, $values, $str);
+    }
+
+    public function getPath(): string {
+        return $this->fillInParameters($this->path);
+    }
+
+    public function getBase() {
+        return $this->fillInParameters($this->base);
     }
 
     public function getUrl(): string {
-        $base = str_ends_with($this->base, "/") ? $this->base : $this->base . "/";
+        $base = $this->getBase();
+        $base = str_ends_with($base, "/") ? $base : $base . "/";
+
         $path = $this->getPath();
         $path = str_starts_with($this->getPath(), "/") ? substr($path, 1) : $path;
+
         return $base . $path;
     }
 

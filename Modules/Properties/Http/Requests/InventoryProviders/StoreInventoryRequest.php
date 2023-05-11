@@ -37,17 +37,28 @@ class StoreInventoryRequest extends FormRequest {
         $inventoryType = InventoryType::from($this->input("provider"));
 
         return match ($inventoryType) {
-            InventoryType::Odoo      => [
+            InventoryType::Odoo          => [
                 "api_url"      => ["required", "string"],
                 "api_key"      => ["required", "string"],
                 "api_username" => ["required", "string"],
                 "database"     => ["required", "string"],
             ],
-            InventoryType::Hivestack => [
+            InventoryType::Hivestack     => [
                 "api_url" => ["required", "string"],
                 "api_key" => ["required", "string"],
             ],
-            InventoryType::Reach     => [
+            InventoryType::PlaceExchange => [
+                "api_url"      => ["required", "string"],
+                "api_key"      => ["required", "string"],
+                "api_username" => ["required", "string"],
+                "client_id"    => ["required", "string"],
+            ],
+            InventoryType::Vistar        => [
+                "api_url"      => ["required", "string"],
+                "api_key"      => ["required", "string"],
+                "api_username" => ["required", "string"],
+            ],
+            InventoryType::Reach         => [
                 "api_url"      => ["required", "string"],
                 "auth_url"     => ["required", "string"],
                 "api_key"      => ["required", "string"],
@@ -55,13 +66,7 @@ class StoreInventoryRequest extends FormRequest {
                 "publisher_id" => ["required", "string"],
                 "client_id"    => ["required", "string"],
             ],
-            InventoryType::Vistar    => [
-                "api_url"      => ["required", "string"],
-                "api_key"      => ["required", "string"],
-                "api_username" => ["required", "string"],
-            ],
-            InventoryType::Atedra    => [],
-            InventoryType::Dummy     => [],
+            InventoryType::Dummy         => [],
         };
     }
 }

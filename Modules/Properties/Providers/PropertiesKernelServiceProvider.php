@@ -14,6 +14,7 @@ use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
 use Neo\Modules\Properties\Console\Commands\MatchHivestackUnitsToProductsCommand;
 use Neo\Modules\Properties\Console\Commands\MatchReachScreensToProductsCommand;
+use Neo\Modules\Properties\Console\Commands\MatchVistarVenuesToProductsCommand;
 use Neo\Modules\Properties\Jobs\SynchronizeInventoriesJob;
 
 class PropertiesKernelServiceProvider extends ServiceProvider {
@@ -21,6 +22,7 @@ class PropertiesKernelServiceProvider extends ServiceProvider {
         $this->commands(
             MatchHivestackUnitsToProductsCommand::class,
             MatchReachScreensToProductsCommand::class,
+            MatchVistarVenuesToProductsCommand::class,
         );
     }
 

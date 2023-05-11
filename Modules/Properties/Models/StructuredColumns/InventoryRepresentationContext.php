@@ -36,7 +36,7 @@ class InventoryRepresentationContext extends JSONDBColumn {
         public int|Optional        $media_type_id,
 
         /**
-         * @var array{id: string, name: string}|Optional Hivestack units ids for products
+         * @var array{id: string, name: string}|Optional Hivestack|PlaceExchange units ids for products
          */
         public array|Optional      $units,
 

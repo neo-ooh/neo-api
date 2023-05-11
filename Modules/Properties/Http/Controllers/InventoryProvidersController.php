@@ -51,6 +51,12 @@ class InventoryProvidersController extends Controller {
                 $provider->settings->api_url = $request->input("api_url");
                 $provider->settings->api_key = $request->input("api_key");
                 break;
+            case InventoryType::PlaceExchange:
+                $provider->settings->api_url      = $request->input("api_url");
+                $provider->settings->api_key      = $request->input("api_key");
+                $provider->settings->api_username = $request->input("api_username");
+                $provider->settings->client_id    = $request->input("client_id");
+                break;
             case InventoryType::Reach:
                 $provider->settings->auth_url     = $request->input("auth_url");
                 $provider->settings->api_url      = $request->input("api_url");
@@ -64,7 +70,6 @@ class InventoryProvidersController extends Controller {
                 $provider->settings->api_key      = $request->input("api_key");
                 $provider->settings->api_username = $request->input("api_username");
                 break;
-            case InventoryType::Atedra:
             case InventoryType::Dummy:
         }
 
@@ -99,6 +104,13 @@ class InventoryProvidersController extends Controller {
                 $inventoryProvider->settings->networks   = $request->input("networks");
                 $inventoryProvider->settings->mediatypes = $request->input("mediatypes");
                 break;
+            case InventoryType::PlaceExchange:
+                $inventoryProvider->settings->api_url      = $request->input("api_url");
+                $inventoryProvider->settings->api_key      = $request->input("api_key", $inventoryProvider->settings->api_key);
+                $inventoryProvider->settings->api_username = $request->input("api_username");
+                $inventoryProvider->settings->client_id    = $request->input("client_id");
+                $inventoryProvider->settings->networks     = $request->input("networks");
+                $inventoryProvider->settings->venue_types  = $request->input("venue_types");
             case InventoryType::Reach:
                 $inventoryProvider->settings->auth_url     = $request->input("auth_url");
                 $inventoryProvider->settings->api_url      = $request->input("api_url");
@@ -113,7 +125,6 @@ class InventoryProvidersController extends Controller {
                 $inventoryProvider->settings->api_username = $request->input("api_username");
                 $inventoryProvider->settings->networks     = $request->input("networks");
                 $inventoryProvider->settings->venue_types  = $request->input("venue_types");
-            case InventoryType::Atedra:
         }
 
         $inventoryProvider->save();

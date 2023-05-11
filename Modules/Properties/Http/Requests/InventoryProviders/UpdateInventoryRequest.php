@@ -40,13 +40,13 @@ class UpdateInventoryRequest extends FormRequest {
         $inventory = InventoryProvider::query()->findOrFail($this->route()->originalParameter("inventoryProvider"));
 
         return match ($inventory->provider) {
-            InventoryType::Odoo      => [
+            InventoryType::Odoo          => [
                 "api_url"      => ["required", "string"],
                 "api_key"      => ["sometimes", "string"],
                 "api_username" => ["required", "string"],
                 "database"     => ["required", "string"],
             ],
-            InventoryType::Hivestack => [
+            InventoryType::Hivestack     => [
                 "api_url"           => ["required", "string"],
                 "api_key"           => ["sometimes", "string"],
                 "networks"          => ["nullable", "array"],
@@ -56,7 +56,19 @@ class UpdateInventoryRequest extends FormRequest {
                 "mediatypes.*.id"   => ["nullable", "string"],
                 "mediatypes.*.name" => ["nullable", "string"],
             ],
-            InventoryType::Reach     => [
+            InventoryType::PlaceExchange => [
+                "api_url"            => ["required", "string"],
+                "api_key"            => ["sometimes", "string"],
+                "api_username"       => ["required", "string"],
+                "client_id"          => ["required", "string"],
+                "networks"           => ["nullable", "array"],
+                "networks.*.id"      => ["nullable", "string"],
+                "networks.*.name"    => ["nullable", "string"],
+                "venue_types"        => ["nullable", "array"],
+                "venue_types.*.id"   => ["nullable", "string"],
+                "venue_types.*.name" => ["nullable", "string"],
+            ],
+            InventoryType::Reach         => [
                 "auth_url"           => ["required", "string"],
                 "api_url"            => ["required", "string"],
                 "api_key"            => ["sometimes", "string"],
@@ -67,7 +79,7 @@ class UpdateInventoryRequest extends FormRequest {
                 "venue_types.*.id"   => ["nullable", "string"],
                 "venue_types.*.name" => ["nullable", "string"],
             ],
-            InventoryType::Vistar    => [
+            InventoryType::Vistar        => [
                 "api_url"            => ["required", "string"],
                 "api_key"            => ["sometimes", "string"],
                 "api_username"       => ["required", "string"],
@@ -78,8 +90,7 @@ class UpdateInventoryRequest extends FormRequest {
                 "venue_types.*.id"   => ["nullable", "string"],
                 "venue_types.*.name" => ["nullable", "string"],
             ],
-            InventoryType::Atedra    => [],
-            InventoryType::Dummy     => [],
+            InventoryType::Dummy         => [],
         };
     }
 }

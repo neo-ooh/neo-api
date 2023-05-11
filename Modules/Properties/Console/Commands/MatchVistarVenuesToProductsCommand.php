@@ -11,7 +11,7 @@
 namespace Neo\Modules\Properties\Console\Commands;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
@@ -36,42 +36,44 @@ class MatchVistarVenuesToProductsCommand extends Command {
         /** @var ReachAdapter $inventory */
         $inventory = $provider->getAdapter();
 
-        if ($inventory->getInventoryType() !== InventoryType::Reach) {
+        if ($inventory->getInventoryType() !== InventoryType::Vistar) {
             $this->output->error("Bad Inventory ID");
             return;
         }
 
-        $screens = $inventory->listProducts();
+        $venues = $inventory->listProducts();
 
         $notMatched = [];
 
-        /** @var IdentifiableProduct $screen */
-        foreach ($screens as $screen) {
+        /** @var IdentifiableProduct $venue */
+        foreach ($venues as $venue) {
 
             // Ignore disabled products
-            if (!$screen->product->is_sellable) {
+            if (!$venue->product->is_sellable) {
                 continue;
             }
 
-            $this->output->write("#" . $screen->resourceId->external_id . " " . $screen->product->name[0]->value);
+            $this->output->write("#" . $venue->resourceId->external_id . " " . $venue->product->name[0]->value);
 
-            // Find the location this screen is representing
-            $locationExternalId = $screen->resourceId->context["location_external_id"];
+            // Find the location this venue is representing
+            $playerExternalId = $venue->resourceId->context["player_external_id"];
 
-            $location = Location::query()->where("external_id", "=", $locationExternalId)->first();
+            $player = Player::query()->where("external_id", "=", $playerExternalId)->first();
 
-            if (!$location) {
-                $this->output->writeln(": No location found.");
-                $notMatched[] = $screen->resourceId->external_id . ":" . $screen->product->name[0]->value;
+            if (!$player) {
+                $this->output->writeln(": No player found.");
+                $notMatched[] = $venue->resourceId->external_id . ":" . $venue->product->name[0]->value;
                 continue;
             }
+
+            $location = $player->location;
 
             $location->load("products.property");
 
             $products = $location->products->where("is_bonus", "=", false);
             if ($products->count() === 0) {
-                $this->output->writeln(": No products found for screen.");
-                $notMatched[] = $screen->resourceId->external_id . ":" . $screen->product->name[0]->value;
+                $this->output->writeln(": No products found for venue.");
+                $notMatched[] = $venue->resourceId->external_id . ":" . $venue->product->name[0]->value;
                 continue;
             }
 
@@ -88,15 +90,15 @@ class MatchVistarVenuesToProductsCommand extends Command {
 
             if ($representation) {
                 // Representation already exist, append current ID
-                if (is_array($representation->context->screens)) {
-                    $representation->context->screens[$location->getKey()] = [
-                        "id"   => $screen->resourceId->external_id,
-                        "name" => $screen->product->name[0]->value,
+                if (is_array($representation->context->venues)) {
+                    $representation->context->venues[$player->getKey()] = [
+                        "id"   => $venue->resourceId->external_id,
+                        "name" => $venue->product->name[0]->value,
                     ];
                 } else {
-                    $representation->context->screens = [$location->getKey() => [
-                        "id"   => $screen->resourceId->external_id,
-                        "name" => $screen->product->name[0]->value,
+                    $representation->context->venues = [$player->getKey() => [
+                        "id"   => $venue->resourceId->external_id,
+                        "name" => $venue->product->name[0]->value,
                     ]];
                 }
             } else {
@@ -106,11 +108,12 @@ class MatchVistarVenuesToProductsCommand extends Command {
                                                                     "type"         => InventoryResourceType::Product,
                                                                     "external_id"  => "MULTIPLE",
                                                                     "context"      => [
-                                                                        "venue_type_id" => $screen->resourceId->context["venue_type_id"],
-                                                                        "screens"       => [
-                                                                            $location->getKey() => [
-                                                                                "id"   => $screen->resourceId->external_id,
-                                                                                "name" => $screen->product->name[0]->value,
+                                                                        "network_id" => $venue->resourceId->context["network_id"],
+                                                                        "venue_type" => $venue->resourceId->context["venue_type"],
+                                                                        "venues"     => [
+                                                                            $player->getKey() => [
+                                                                                "id"   => $venue->resourceId->external_id,
+                                                                                "name" => $venue->product->name[0]->value,
                                                                             ],
                                                                         ],
                                                                     ],
@@ -123,7 +126,7 @@ class MatchVistarVenuesToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                                          "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                                   "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,

@@ -26,9 +26,13 @@ class UpdateAddressRequest extends FormRequest {
             "province" => ["required", "string", "exists:provinces,slug"],
             "city"     => ["required", "string"],
             "zipcode"  => ["nullable", "string"],
+            "timezone" => ["nullable", "timezone"],
 
             "longitude" => ["nullable", "numeric"],
             "latitude"  => ["nullable", "numeric"],
+
+            "refresh_geo" => ["nullable", "boolean"],
         ];
     }
+
 }

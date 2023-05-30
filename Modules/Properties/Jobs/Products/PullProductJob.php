@@ -13,7 +13,6 @@ namespace Neo\Modules\Properties\Jobs\Products;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Database\Eloquent\Builder;
 use MatanYadaev\EloquentSpatial\Objects\Point;
-use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Models\Address;
 use Neo\Models\City;
 use Neo\Models\Province;
@@ -269,10 +268,6 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             }
 
             $address->save();
-
-            if (!$externalProduct->product->geolocation) {
-                PullAddressGeolocationJob::dispatch($address);
-            }
 
             $property->address_id = $address->getKey();
         }

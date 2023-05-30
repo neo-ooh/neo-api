@@ -14,6 +14,7 @@ use Neo\Http\Controllers\FoursquareController;
 use Neo\Http\Controllers\GoogleMapsController;
 use Neo\Http\Controllers\ModulesController;
 use Neo\Http\Controllers\StatsController;
+use Neo\Http\Controllers\TimezonesController;
 
 Route::group([
                  "middleware" => "default",
@@ -35,6 +36,14 @@ Route::group([
     */
 
     Route::get("stats", StatsController::class . "@index");
+
+    /*
+    |----------------------------------------------------------------------
+    | Timezones
+    |----------------------------------------------------------------------
+    */
+
+    Route::get("timezones", [TimezonesController::class, "index"]);
 
     /*
     |--------------------------------------------------------------------------

@@ -58,7 +58,6 @@ Route::group([
         */
 
         Route::   put("properties/{property}/address", [AddressController::class, "update"]);
-        Route::   put("properties/{property}/address/_refresh_geolocation", [AddressController::class, "refreshGeolocation"]);
 
         /*
         |----------------------------------------------------------------------

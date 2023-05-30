@@ -17,7 +17,6 @@ use Neo\Jobs\PullAddressGeolocationJob;
 use Neo\Models\Address;
 use Neo\Models\City;
 use Neo\Models\Province;
-use Neo\Modules\Properties\Http\Requests\Address\RefreshAddressGeolocationRequest;
 use Neo\Modules\Properties\Http\Requests\Address\UpdateAddressRequest;
 use Neo\Modules\Properties\Models\Property;
 
@@ -34,16 +33,15 @@ class AddressController extends Controller {
                                                  "province_id" => $province->id,
                                              ]);
 
-        $address          = $property->address ?? new Address();
-        $address->line_1  = trim($request->input("line_1"));
-        $address->line_2  = trim($request->input("line_2"));
-        $address->city_id = $city->id;
-        $address->zipcode = trim($request->input("zipcode", $address->zipcode ?? ""));
+        $address           = $property->address ?? new Address();
+        $address->line_1   = trim($request->input("line_1"));
+        $address->line_2   = trim($request->input("line_2"));
+        $address->city_id  = $city->id;
+        $address->zipcode  = trim($request->input("zipcode", $address->zipcode ?? ""));
+        $address->timezone = $request->input("timezone", $address->timezone);
 
         if ($request->has("longitude") && $request->has("latitude")) {
             $address->geolocation = new Point($request->input("latitude"), $request->input("longitude"));
-        } else {
-            $address->geolocation = null;
         }
 
         $address->save();
@@ -51,14 +49,10 @@ class AddressController extends Controller {
         $property->address()->associate($address);
         $property->save();
 
-        PullAddressGeolocationJob::dispatch($address);
+        if ($request->input("refresh_geo")) {
+            PullAddressGeolocationJob::dispatchSync($address);
+        }
 
         return new Response($address);
-    }
-
-    public function refreshGeolocation(RefreshAddressGeolocationRequest $request, Address $address) {
-        PullAddressGeolocationJob::dispatchSync($address);
-
-        return new Response($address->refresh());
     }
 }

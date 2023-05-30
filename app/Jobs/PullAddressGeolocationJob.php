@@ -34,6 +34,18 @@ class PullAddressGeolocationJob implements ShouldQueue, ShouldBeUnique {
     }
 
     public function handle(Geocoder $geocoder) {
+        $this->findGeolocation($geocoder);
+
+        $this->findTimezone($geocoder);
+
+        $this->address->save();
+    }
+
+    /**
+     * @param Geocoder $geocoder
+     * @return void
+     */
+    protected function findGeolocation(Geocoder $geocoder): void {
         try {
             $res = $geocoder->geocode($this->address->string_representation)->get();
             clock($res);
@@ -44,42 +56,46 @@ class PullAddressGeolocationJob implements ShouldQueue, ShouldBeUnique {
         }
 
         if ($res->isEmpty()) {
-            // No geolocation found for address. clean up and end.
-            $this->address->geolocation = null;
-            $this->address->timezone    = "";
-            $this->address->save();
+            // No geolocation could be found for address
             return;
         }
 
         // We got results, take the first one and save it.
         /** @var \Geocoder\Model\Address $result */
         $result = $res->first();
+
         /** @var Coordinates $response */
         $coordinates                = $result->getCoordinates();
         $this->address->zipcode     = str_replace(" ", "", $result->getPostalCode());
         $this->address->geolocation = new Point($coordinates->getLatitude(), $coordinates->getLongitude());
-        $this->address->save();
+    }
+
+    protected function findTimezone(Geocoder $geocoder) {
+        if (!$this->address->geolocation) {
+            return;
+        }
 
         try {
             // Now fetch the timezone of the address
-            $geoNameResponse = $geocoder->using("geonames")
-                                        ->reverse($coordinates->getLatitude(), $coordinates->getLongitude())
-                                        ->get();
+            [$lng, $lat] = [$this->address->geolocation->longitude, $this->address->geolocation->latitude];
+
+            $responses = $geocoder->using("geonames")
+                                  ->reverse($lat, $lng)
+                                  ->get();
         } catch (Exception $e) {
             clock("Could not get timezone for address:" . $this->address->string_representation);
             clock($e);
             return;
         }
 
-        if ($geoNameResponse->isEmpty()) {
-            $this->address->timezone = "";
-            $this->address->save();
+        if ($responses->isEmpty()) {
             return;
         }
 
-        /** @var GeonamesAddress $timezone */
-        $timezone                = $geoNameResponse->first();
-        $this->address->timezone = $timezone->getTimezone();
+        /** @var GeonamesAddress $geoNameResponse */
+        $geoNameResponse         = $responses->first();
+        $this->address->timezone = $geoNameResponse->getTimezone();
+
         $this->address->save();
     }
 }

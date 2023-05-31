@@ -109,7 +109,6 @@ class MatchVistarVenuesToProductsCommand extends Command {
                                                                     "external_id"  => "MULTIPLE",
                                                                     "context"      => [
                                                                         "network_id" => $venue->resourceId->context["network_id"],
-                                                                        "venue_type" => $venue->resourceId->context["venue_type"],
                                                                         "venues"     => [
                                                                             $player->getKey() => [
                                                                                 "id"   => $venue->resourceId->external_id,
@@ -126,7 +125,7 @@ class MatchVistarVenuesToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                                                   "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                             "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,

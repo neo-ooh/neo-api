@@ -17,8 +17,10 @@ use Neo\Modules\Properties\Services\PlaceExchange\Models\AdUnit;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitStatus;
 use Neo\Modules\Properties\Services\Resources\Address;
 use Neo\Modules\Properties\Services\Resources\City;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\Geolocation;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
+use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 use Neo\Modules\Properties\Services\Resources\LocalizedString;
 use Neo\Modules\Properties\Services\Resources\LoopConfiguration;
 use Neo\Modules\Properties\Services\Resources\ProductResource;
@@ -56,6 +58,12 @@ class ResourceFactory {
                             allows_audio             : $adUnit->asset->capability->audio,
                             property_id              : null,
                             property_name            : $adUnit->venue->name,
+                            property_type            : $adUnit->venue?->openooh_category ? new InventoryResourceId(
+                                                           inventory_id: $config->inventoryID,
+                                                           external_id : $adUnit->venue->openooh_category,
+                                                           type        : InventoryResourceType::PropertyType,
+                                                           context     : []
+                                                       ) : null,
                             address                  : new Address(
                                                            line_1 : "",
                                                            line_2 : "",

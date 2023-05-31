@@ -15,8 +15,10 @@ use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Services\Hivestack\Models\Site;
 use Neo\Modules\Properties\Services\Hivestack\Models\Unit;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\Geolocation;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
+use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 use Neo\Modules\Properties\Services\Resources\LocalizedString;
 use Neo\Modules\Properties\Services\Resources\LoopConfiguration;
 use Neo\Modules\Properties\Services\Resources\ProductResource;
@@ -59,6 +61,12 @@ class ResourceFactory {
                             allows_audio             : false,
                             property_id              : $site->toInventoryResourceId($config->inventoryID),
                             property_name            : trim($site->name),
+                            property_type            : $unit->mediatype_id ? new InventoryResourceId(
+                                                           inventory_id: $config->inventoryID,
+                                                           external_id : $unit->mediatype_id,
+                                                           type        : InventoryResourceType::PropertyType,
+                                                           context     : []
+                                                       ) : null,
                             address                  : null,
                             geolocation              : new Geolocation(
                                                            longitude: $site->longitude,

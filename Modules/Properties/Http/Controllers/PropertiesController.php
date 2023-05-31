@@ -135,6 +135,7 @@ class PropertiesController extends Controller {
         $property->has_tenants  = $request->input("has_tenants");
         $property->pricelist_id = $request->input("pricelist_id", null);
         $property->website      = $request->input("website") ?? "";
+        $property->type_id      = $request->input("type_id");
         $property->save();
 
         return new Response($property->loadPublicRelations());

@@ -91,9 +91,8 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                     "type"         => InventoryResourceType::Product,
                                                                     "external_id"  => "MULTIPLE",
                                                                     "context"      => [
-                                                                        "network_id"    => $unit->resourceId->context["network_id"],
-                                                                        "media_type_id" => $unit->resourceId->context["media_type_id"],
-                                                                        "units"         => [
+                                                                        "network_id" => $unit->resourceId->context["network_id"],
+                                                                        "units"      => [
                                                                             $location->getKey() => [
                                                                                 "id"   => $unit->resourceId->external_id,
                                                                                 "name" => $unit->product->name[0]->value,
@@ -121,7 +120,7 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                                                               "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                                      "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,

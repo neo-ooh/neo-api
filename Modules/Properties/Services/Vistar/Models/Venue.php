@@ -64,7 +64,6 @@ class Venue extends VistarModel {
             type        : InventoryResourceType::Product,
             context     : [
                               "player_external_id" => $this->registration_id,
-                              "venue_type"         => $this->venue_type,
                               "network_id"         => $this->network_id,
                           ],
         );

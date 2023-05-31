@@ -72,6 +72,7 @@ class ResourceFactory {
                                                            type        : InventoryResourceType::Property
                                                        ),
                             property_name            : trim($property->name),
+                            property_type            : null,
                             address                  : $property->getAddress(),
                             geolocation              : $geolocation,
                             timezone                 : null,

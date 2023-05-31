@@ -13,8 +13,10 @@ namespace Neo\Modules\Properties\Services\Vistar;
 use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\Geolocation;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
+use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 use Neo\Modules\Properties\Services\Resources\LocalizedString;
 use Neo\Modules\Properties\Services\Resources\ProductResource;
 use Neo\Modules\Properties\Services\Vistar\Models\Venue;
@@ -60,6 +62,12 @@ class ResourceFactory {
                             allows_audio             : false,
                             property_id              : null,
                             property_name            : "",
+                            property_type            : $venue->venue_type ? new InventoryResourceId(
+                                                           inventory_id: $config->inventoryID,
+                                                           external_id : $venue->venue_type,
+                                                           type        : InventoryResourceType::PropertyType,
+                                                           context     : []
+                                                       ) : null,
                             address                  : null, //TODO: Address parsing
                             geolocation              : new Geolocation(
                                                            longitude: $venue->longitude,

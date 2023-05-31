@@ -107,6 +107,11 @@ class ProductResource extends InventoryResource {
         public string                   $property_name,
 
         /**
+         * @var InventoryResourceId|null External ID of the property type, if available
+         */
+        public InventoryResourceId|null $property_type,
+
+        /**
          * @var Address The property location
          */
         public Address|null             $address,

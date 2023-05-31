@@ -26,14 +26,9 @@ class InventoryRepresentationContext extends JSONDBColumn {
         public int|Optional        $production_product_id,
 
         /**
-         * @var int|Optional Hivestack|Vistar units network id
+         * @var int|Optional Hivestack|Vistar|PlaceExchange units network id
          */
         public int|string|Optional $network_id,
-
-        /**
-         * @var int|Optional Hivestack's units media type id
-         */
-        public int|Optional        $media_type_id,
 
         /**
          * @var array{id: string, name: string}|Optional Hivestack|PlaceExchange units ids for products
@@ -41,19 +36,9 @@ class InventoryRepresentationContext extends JSONDBColumn {
         public array|Optional      $units,
 
         /**
-         * @var int|Optional Reach venue type id
-         */
-        public int|Optional        $venue_type_id,
-
-        /**
          * @var array{id: string, name: string}|Optional Reach screens ids for products
          */
         public array|Optional      $screens,
-
-        /**
-         * @var string|Optional Vistar venue type
-         */
-        public string|Optional     $venue_type,
 
         /**
          * @var array{id: string, name: string}|Optional Vistar venue ids for products

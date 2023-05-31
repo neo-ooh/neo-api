@@ -158,7 +158,7 @@ class ReachAdapter extends InventoryAdapter {
         $screen->longitude             = $product->geolocation->longitude;
         $screen->latitude              = $product->geolocation->latitude;
         $screen->address               = $product->address->full;
-        $screen->venue_types           = collect($context["venue_type_id"])
+        $screen->venue_types           = ($product->property_type ? collect($product->property_type->external_id) : collect())
             ->map(fn($venueTypeId) => ScreenVenueType::from(["id" => $venueTypeId]));
         $screen->demography_type       = "basic";
         $screen->total                 = 0;

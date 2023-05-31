@@ -19,6 +19,7 @@ use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\IncompatibleResourceAndInventoryException;
+use Neo\Modules\Properties\Services\Exceptions\IncompleteResourceException;
 use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryCapability;
 use Neo\Modules\Properties\Services\InventoryConfig;
@@ -26,6 +27,7 @@ use Neo\Modules\Properties\Services\PlaceExchange\Models\AdUnit;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitAsset;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitAssetCapabilities;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitAuction;
+use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitLocation;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitMeasurement;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitPlanning;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitRestrictions;
@@ -126,14 +128,17 @@ class PlaceExchangeAdapter extends InventoryAdapter {
             bidfloor   : $product->price,
             bidfloorcur: "USD",
         );
-        $adUnit->eids             = []; // TODO: Fill in braodsign ID
+        $adUnit->eids             = []; // TODO: Fill in BroadSign ID
         $adUnit->integration_type = 3;
         $adUnit->keywords         = $adUnit->keywords ?? [];
-        $adUnit->location         = [
-            "lat"                 => $product->geolocation->latitude,
-            "lon"                 => $product->geolocation->longitude,
-            "horizontal_accuracy" => 0,
-        ];
+        $adUnit->location         = $adUnit->location ?? AdUnitLocation::from([
+                                                                                  "lat"                 => $product->geolocation->latitude,
+                                                                                  "lon"                 => $product->geolocation->longitude,
+                                                                                  "horizontal_accuracy" => 0,
+                                                                                  "dma_code"            => null,
+                                                                              ]);
+        $adUnit->location->lat    = $product->geolocation->latitude;
+        $adUnit->location->lon    = $product->geolocation->longitude;
 
         $impressionsPerPlay = collect($product->weekdays_spot_impressions)->sum() / 7;
         $impressionsPerWeek = collect($product->weekdays_spot_impressions)
@@ -170,14 +175,25 @@ class PlaceExchangeAdapter extends InventoryAdapter {
         $adUnit->venue           = new AdUnitVenue(
             address         : $product->address->full,
             name            : $product->property_name,
-            openooh_category: $context["venue_type_id"],
+            openooh_category: $product->property_type?->external_id,
         );
     }
 
+    /**
+     * @throws IncompatibleResourceAndInventoryException
+     * @throws RequestException
+     * @throws GuzzleException
+     * @throws APIAuthenticationError
+     * @throws IncompleteResourceException
+     */
     public function createProduct(ProductResource $product, array $context): InventoryResourceId|null {
         // First, validate the product is compatible with Reach
         if ($product->type !== ProductType::Digital || $product->price_type !== PriceType::CPM) {
             throw new IncompatibleResourceAndInventoryException(0, $this->getInventoryID(), $this->getInventoryType());
+        }
+
+        if (!$product->property_type) {
+            throw new IncompleteResourceException($product->product_connect_id ?? 0, "property_type", $this->getInventoryID(), $this->getInventoryType());
         }
 
         /** @var PlaceExchangeClient $client */
@@ -228,8 +244,13 @@ class PlaceExchangeAdapter extends InventoryAdapter {
      * @throws APIAuthenticationError
      * @throws GuzzleException
      * @throws RequestException
+     * @throws IncompleteResourceException
      */
     public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
+        if (!$product->property_type) {
+            throw new IncompleteResourceException($product->product_connect_id ?? 0, "property_type", $this->getInventoryID(), $this->getInventoryType());
+        }
+
         $client = $this->getConfig()->getClient();
 
         $adUnitsIds = [];

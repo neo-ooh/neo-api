@@ -42,6 +42,7 @@ class HivestackClient extends APIClient {
         ]);
 
         if (!$response->successful()) {
+            dump($response->json());
             $response->throw();
         }
 

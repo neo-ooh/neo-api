@@ -118,7 +118,6 @@ class Screen extends ReachModel {
             external_id : $this->getKey(),
             type        : InventoryResourceType::Product,
             context     : [
-                              "venue_type_id"      => $this->venue_types[0]->id ?? 0,
                               "player_external_id" => explode(":", $this->device_id)[1],
                           ],
         );

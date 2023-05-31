@@ -12,8 +12,7 @@ namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
 use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
-use Neo\Modules\Properties\Jobs\Products\CreateProductJob;
-use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Jobs\Products\PushProductJob;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 
@@ -35,9 +34,15 @@ class TestCommand extends Command {
 //        $product = Product::find(2450);
 //        dump($product->toResource(4)->toArray());
 
+        $product = Product::find(357);
+//        $job     = new CreateProductJob($product->inventory_resource_id, 8, [
+//            "network_id" => "8fe95058-b1bf-4771-aa47-8ce2637a61db",
+//        ]);
+//        $job->handle();
+
 //        dump(Carbon::now()->subMonths(2)->format("D, d M Y H:i:s \G\M\T"));
-        $provider  = InventoryProvider::query()->find(5);
-        $inventory = $provider->getAdapter();
+//        $provider  = InventoryProvider::query()->find(5);
+//        $inventory = $provider->getAdapter();
 
         /*        $adUnit = $inventory->getProduct(new InventoryResourceId(
                                                      8, "MULTIPLE", InventoryResourceType::Product, [
@@ -53,13 +58,13 @@ class TestCommand extends Command {
 //        $adUnit = AdUnit::find($inventory->getConfig()->getClient(), "Fay Mart - 3395 Howard Ave, Windsor (SoC) - 1");
 //        dump($adUnit);
 
-        $product = Product::query()->find(2450);
-        $job     = new CreateProductJob($product->inventory_resource_id, $inventory->getInventoryID(), [
+//        $product = Product::query()->find(2450);
+//        $job     = new CreateProductJob($product->inventory_resource_id, $inventory->getInventoryID(), [
 //            "network_id"  => "8fe95058-b1bf-4771-aa47-8ce2637a61db",
 //            "category_id" => "3",
-"venue_type_id" => 55,
-        ]);
-//        $job = new PushProductJob($product->inventory_resource_id, $inventory->getInventoryID());
+//"venue_type_id" => 55,
+//        ]);
+        $job = new PushProductJob($product->inventory_resource_id, 8);
 //        $job = new PullProductJob($product->inventory_resource_id, $inventory->getInventoryID());
 //        $job = new DestroyProductJob($product->inventory_resource_id, $inventory->getInventoryID());
         $job->handle();

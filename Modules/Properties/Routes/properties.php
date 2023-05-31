@@ -19,6 +19,7 @@ use Neo\Modules\Properties\Http\Controllers\PropertiesStatisticsController;
 use Neo\Modules\Properties\Http\Controllers\PropertiesTrafficController;
 use Neo\Modules\Properties\Http\Controllers\PropertiesTranslationsController;
 use Neo\Modules\Properties\Http\Controllers\PropertyPicturesController;
+use Neo\Modules\Properties\Http\Controllers\PropertyTypesController;
 use Neo\Modules\Properties\Http\Controllers\TrafficSnapshotsController;
 use Neo\Modules\Properties\Http\Controllers\TrafficSourcesController;
 use Neo\Modules\Properties\Models\TrafficSource;
@@ -53,7 +54,7 @@ Route::group([
 
         /*
         |----------------------------------------------------------------------
-        | Properties Translation
+        | Property address
         |----------------------------------------------------------------------
         */
 
@@ -134,4 +135,16 @@ Route::group([
 
         Route::  post("properties/{property}/opening-hours/_refresh", [OpeningHoursController::class, "refresh"]);
         Route::   put("properties/{property}/opening-hours/{weekday}", [OpeningHoursController::class, "update"]);
+
+        /*
+        |----------------------------------------------------------------------
+        | Property types
+        |----------------------------------------------------------------------
+        */
+
+        Route::   get("property-types", [PropertyTypesController::class, "index"]);
+        Route::  post("property-types", [PropertyTypesController::class, "store"]);
+        Route::   get("property-types/{propertyType}", [PropertyTypesController::class, "show"]);
+        Route::   put("property-types/{propertyType}", [PropertyTypesController::class, "update"]);
+        Route::delete("property-types/{propertyType}", [PropertyTypesController::class, "destroy"]);
     });

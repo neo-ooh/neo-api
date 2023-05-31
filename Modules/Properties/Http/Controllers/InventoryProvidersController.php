@@ -99,10 +99,9 @@ class InventoryProvidersController extends Controller {
                 $inventoryProvider->settings->database     = $request->input("database");
                 break;
             case InventoryType::Hivestack:
-                $inventoryProvider->settings->api_url    = $request->input("api_url");
-                $inventoryProvider->settings->api_key    = $request->input("api_key", $inventoryProvider->settings->api_key);
-                $inventoryProvider->settings->networks   = $request->input("networks");
-                $inventoryProvider->settings->mediatypes = $request->input("mediatypes");
+                $inventoryProvider->settings->api_url  = $request->input("api_url");
+                $inventoryProvider->settings->api_key  = $request->input("api_key", $inventoryProvider->settings->api_key);
+                $inventoryProvider->settings->networks = $request->input("networks");
                 break;
             case InventoryType::PlaceExchange:
                 $inventoryProvider->settings->api_url      = $request->input("api_url");
@@ -110,7 +109,6 @@ class InventoryProvidersController extends Controller {
                 $inventoryProvider->settings->api_username = $request->input("api_username");
                 $inventoryProvider->settings->client_id    = $request->input("client_id");
                 $inventoryProvider->settings->networks     = $request->input("networks");
-                $inventoryProvider->settings->venue_types  = $request->input("venue_types");
             case InventoryType::Reach:
                 $inventoryProvider->settings->auth_url     = $request->input("auth_url");
                 $inventoryProvider->settings->api_url      = $request->input("api_url");
@@ -118,13 +116,11 @@ class InventoryProvidersController extends Controller {
                 $inventoryProvider->settings->api_username = $request->input("api_username");
                 $inventoryProvider->settings->publisher_id = $request->input("publisher_id");
                 $inventoryProvider->settings->client_id    = $request->input("client_id");
-                $inventoryProvider->settings->venue_types  = $request->input("venue_types");
             case InventoryType::Vistar:
                 $inventoryProvider->settings->api_url      = $request->input("api_url");
                 $inventoryProvider->settings->api_key      = $request->input("api_key", $inventoryProvider->settings->api_key);
                 $inventoryProvider->settings->api_username = $request->input("api_username");
                 $inventoryProvider->settings->networks     = $request->input("networks");
-                $inventoryProvider->settings->venue_types  = $request->input("venue_types");
         }
 
         $inventoryProvider->save();

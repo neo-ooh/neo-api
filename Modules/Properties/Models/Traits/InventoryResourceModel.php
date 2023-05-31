@@ -33,7 +33,7 @@ trait InventoryResourceModel {
                                                       "type" => $model->inventoryResourceType->value,
                                                   ]);
 
-            $model->inventory_resource_id = $resource->getKey();
+            $model->{$model->getInventoryKeyName()} = $resource->getKey();
         });
 
         static::deleting(static function (Model $model) {
@@ -41,24 +41,28 @@ trait InventoryResourceModel {
         });
     }
 
+    protected function getInventoryKeyName() {
+        return $this->inventoryKey ?? "inventory_resource_id";
+    }
+
     /**
      * @return HasOne<InventoryResource>
      */
     public function inventory_resource(): HasOne {
-        return $this->hasOne(InventoryResource::class, "id", "inventory_resource_id");
+        return $this->hasOne(InventoryResource::class, "id", $this->getInventoryKeyName());
     }
 
     /**
      * @return HasMany<ResourceInventorySettings>
      */
     public function inventories_settings(): HasMany {
-        return $this->hasMany(ResourceInventorySettings::class, "resource_id", "inventory_resource_id");
+        return $this->hasMany(ResourceInventorySettings::class, "resource_id", $this->getInventoryKeyName());
     }
 
     /**
      * @return HasMany<ExternalInventoryResource>
      */
     public function external_representations(): HasMany {
-        return $this->hasMany(ExternalInventoryResource::class, "resource_id", "inventory_resource_id");
+        return $this->hasMany(ExternalInventoryResource::class, "resource_id", $this->getInventoryKeyName());
     }
 }

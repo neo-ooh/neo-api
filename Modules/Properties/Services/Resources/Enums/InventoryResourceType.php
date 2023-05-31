@@ -14,4 +14,6 @@ enum InventoryResourceType: string {
     case ProductCategory = "product-category";
     case Product = "product";
     case Property = "property";
+
+    case PropertyType = "property-type";
 }

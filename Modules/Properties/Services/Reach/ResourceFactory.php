@@ -15,8 +15,10 @@ use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Services\Reach\Models\Attributes\NamedIdentityAttribute;
 use Neo\Modules\Properties\Services\Reach\Models\Screen;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\Geolocation;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
+use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 use Neo\Modules\Properties\Services\Resources\LocalizedString;
 use Neo\Modules\Properties\Services\Resources\ProductResource;
 
@@ -52,6 +54,12 @@ class ResourceFactory {
                             allows_audio             : $screen->is_audio,
                             property_id              : null,
                             property_name            : "",
+                            property_type            : $screen->venue_types->isNotEmpty() ? new InventoryResourceId(
+                                                           inventory_id: $config->inventoryID,
+                                                           external_id : $screen->venue_types->first()->id,
+                                                           type        : InventoryResourceType::PropertyType,
+                                                           context     : []
+                                                       ) : null,
                             address                  : null, //TODO: Address parsing
                             geolocation              : new Geolocation(
                                                            longitude: $screen->longitude,

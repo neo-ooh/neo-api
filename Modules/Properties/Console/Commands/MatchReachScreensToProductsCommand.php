@@ -108,8 +108,7 @@ class MatchReachScreensToProductsCommand extends Command {
                                                                     "type"         => InventoryResourceType::Product,
                                                                     "external_id"  => "MULTIPLE",
                                                                     "context"      => [
-                                                                        "venue_type_id" => $screen->resourceId->context["venue_type_id"],
-                                                                        "screens"       => [
+                                                                        "screens" => [
                                                                             $player->getKey() => [
                                                                                 "id"   => $screen->resourceId->external_id,
                                                                                 "name" => $screen->product->name[0]->value,
@@ -125,7 +124,7 @@ class MatchReachScreensToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                                             "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                    "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,

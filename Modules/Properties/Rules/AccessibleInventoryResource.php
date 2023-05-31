@@ -11,6 +11,8 @@
 namespace Neo\Modules\Properties\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\Gate;
+use Neo\Enums\Capability;
 use Neo\Modules\Properties\Models\InventoryResource;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\Property;
@@ -38,6 +40,7 @@ class AccessibleInventoryResource implements Rule {
             (new AccessibleProperty())->passes("property_id", Property::firstWhere("inventory_resource_id", "=", $resource->getKey())
                                                                       ->getKey()),
             InventoryResourceType::ProductCategory => true,
+            InventoryResourceType::PropertyType    => Gate::allows(Capability::property_types_edit->value),
         };
     }
 

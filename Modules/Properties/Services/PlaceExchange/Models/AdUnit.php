@@ -74,8 +74,7 @@ class AdUnit extends PlaceExchangeModel {
             external_id : $this->getKey(),
             type        : InventoryResourceType::Product,
             context     : [
-                              "network_id"    => $this->network_id,
-                              "venue_type_id" => $this->venue->openooh_category ? (int)$this->venue->openooh_category : 0,
+                              "network_id" => $this->network_id,
                           ],
         );
     }

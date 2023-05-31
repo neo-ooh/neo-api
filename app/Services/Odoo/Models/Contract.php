@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -11,6 +11,7 @@
 namespace Neo\Services\Odoo\Models;
 
 use Edujugon\Laradoo\Exceptions\OdooException;
+use Illuminate\Support\Collection;
 use JsonException;
 use Neo\Services\Odoo\OdooClient;
 use Neo\Services\Odoo\OdooModel;
@@ -96,14 +97,14 @@ class Contract extends OdooModel {
 
             "type"  => 'binary',
             "datas" => $data,
-        ], pullRecord: false);
+        ], pullRecord:            false);
     }
 
     /**
      * Delete attachment for the contract using the given name
      *
      * @param string $attachmentName
-     * @return \Illuminate\Support\Collection|string|true
+     * @return Collection|string|true
      */
     public function removeAttachment(string $attachmentName) {
         return Attachment::delete($this->client, [
@@ -113,4 +114,3 @@ class Contract extends OdooModel {
         ]);
     }
 }
-

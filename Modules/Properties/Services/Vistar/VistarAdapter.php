@@ -79,11 +79,11 @@ class VistarAdapter extends InventoryAdapter {
         return ResourceFactory::makeIdentifiableProduct($venue, $this->getConfig());
     }
 
-    protected function fillVenue(Venue $venue, BroadcastPlayer $player, ProductResource $product, array $context, float $impressionsShare) {
+    protected function fillVenue(Venue $venue, BroadcastPlayer $player, ProductResource $product, array $context, float $impressionsShare): void {
         $impressionsPerPlay = (collect($product->weekdays_spot_impressions)->sum() / 7) * $impressionsShare;
 
         $venue->name             = "[TEST] " . trim($player->name);  // TODO: Remove `[TEST]`
-        $venue->venue_type       = $context["venue_type"] ?? null;
+        $venue->venue_type       = $product->property_type?->external_id;
         $venue->network_id       = $context["network_id"];
         $venue->partner_venue_id = "connect_" . $product->property_connect_id . "_" . $product->product_connect_id . "_" . $player->external_id->external_id;
         $venue->activation_date  = $venue->activation_date ?? null;
@@ -198,7 +198,7 @@ class VistarAdapter extends InventoryAdapter {
                                          ->pluck("id")
                                          ->values()
                                          ->all());
-        
+
         foreach ($venuesToRemove as $venueToRemove) {
             $venue = new Venue($client);
             $venue->setKey($venueToRemove);

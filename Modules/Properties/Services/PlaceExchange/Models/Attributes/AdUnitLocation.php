@@ -15,7 +15,7 @@ use Spatie\LaravelData\Optional;
 
 class AdUnitLocation extends Data {
     public function __construct(
-        public float|null          $altitude,
+        public float|null|Optional $altitude,
         public float|null|Optional $bearing,
         public string|Optional     $city,
         public string|Optional     $country,

@@ -42,11 +42,6 @@ class InventoryProviderSettings extends JSONDBColumn {
          */
         public array|null  $networks = null,
 
-        /**
-         * @var array{id: string, name: string} Hivestack media types
-         */
-        public array|null  $mediatypes = null,
-
         // Reach
         /**
          * @var string|null Reach publisher ID
@@ -62,11 +57,6 @@ class InventoryProviderSettings extends JSONDBColumn {
          * @var string|null Reach Authentication URL
          */
         public string|null $auth_url = null,
-
-        /**
-         * @var array{id: string, name: string}|null Reach|Vistar|Place Exchange Venue Types
-         */
-        public array|null  $venue_types = null,
     ) {
 
     }

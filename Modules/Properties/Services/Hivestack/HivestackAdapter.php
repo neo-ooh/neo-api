@@ -93,7 +93,7 @@ class HivestackAdapter extends InventoryAdapter {
      * @return IdentifiableProduct
      */
     public function getProduct(InventoryResourceId $productId): IdentifiableProduct {
-        $unitID = array_values($productId->context["units"] ?? [])[0] ?? null;
+        $unitID = array_values($productId->context["units"] ?? [])[0]["id"] ?? null;
 
         if (!$unitID) {
             throw new RuntimeException("Product has invalid context: No unit id could be found");
@@ -138,6 +138,7 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->name                           = trim($product->property_name) . " - " . trim($product->name[0]->value);
         $unit->description                    = $location->name;
         $unit->network_id                     = $context["network_id"];
+        $unit->mediatype_id                   = $product->property_type ? (int)$product->property_type->external_id : null;
         $unit->external_id                    = $location->external_id->external_id . "-" . $location->id;
         $unit->floor_cpm                      = $product->price;
         $unit->longitude                      = $product->geolocation->longitude;
@@ -298,7 +299,12 @@ class HivestackAdapter extends InventoryAdapter {
                     offset: $cursor,
                 );
 
+                /** @var Site $site */
                 foreach ($sites as $site) {
+                    if (!$site->active) {
+                        continue;
+                    }
+
                     yield ResourceFactory::makeIdentifiableProperty($site, $this->getConfig());
                 }
 

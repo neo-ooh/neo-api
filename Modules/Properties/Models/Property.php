@@ -39,6 +39,7 @@ use Throwable;
  * @property int                                   $address_id
  * @property int                                   $network_id
  * @property int|null                              $pricelist_id
+ * @property int|null                              $type_id
  * @property boolean                               $is_sellable
  * @property boolean                               $has_tenants
  * @property string                                $website
@@ -56,6 +57,7 @@ use Throwable;
  * @property Collection<PropertyTranslation>       $translations
  * @property PropertyWarnings                      $warnings
  * @property PropertyTrafficSettings               $traffic
+ * @property PropertyType|null                     $type
  * @property Address|null                          $address
  * @property Network|null                          $network
  * @property Collection<PropertyPicture>           $pictures
@@ -178,6 +180,9 @@ class Property extends SecuredModel {
                 load: "actor.tags",
                 gate: Capability::properties_tags_view
             ),
+            "type"                      => Relation::make(
+                load: "type"
+            ),
             "tenants"                   => Relation::make(
                 load: "tenants",
                 gate: Capability::properties_tenants_view
@@ -245,6 +250,10 @@ class Property extends SecuredModel {
 
     public function traffic(): HasOne {
         return $this->hasOne(PropertyTrafficSettings::class, "property_id", "actor_id");
+    }
+
+    public function type(): BelongsTo {
+        return $this->belongsTo(PropertyType::class, "type_id", "id");
     }
 
     public function address(): BelongsTo {

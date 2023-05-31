@@ -17,7 +17,7 @@ class Product {
     public \Neo\Modules\Properties\Models\Product $product;
 
     public int $faces;
-    public int $spots;
+    public float $spots;
     public int $impressions;
     public float $mediaValue;
     public float $unitPrice;

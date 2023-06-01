@@ -24,6 +24,6 @@ class ShowPropertyTypeRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::property_types_edit->value);
+        return Gate::allows(Capability::properties_types_edit->value);
     }
 }

@@ -117,19 +117,9 @@ enum Capability: string {
     case properties_edit = "properties.edit";
 
     /**
-     * Allow user to fill in traffic information for accessible properties.
-     */
-    case properties_traffic = "properties.traffic";
-
-    /**
      * Allow user to change markets and cities in them
      */
     case properties_markets = "properties.markets";
-
-    /**
-     * Allows the user to view the products of properties
-     */
-    case properties_products = "properties.products";
 
     /**
      * Allow user to setup traffic sources
@@ -150,11 +140,6 @@ enum Capability: string {
      * Allows the user to access other users plans in the planner
      */
     case planner_fullaccess = "planning.fullaccess";
-
-    /**
-     * Allow user to setup and edit odoo properties and products
-     */
-    case odoo_properties = "odoo.properties";
 
     /**
      * Allow user to send properties list made using the planning to Odoo
@@ -360,7 +345,7 @@ enum Capability: string {
     |----------------------------------------------------------------------
     */
 
-    case property_types_edit = "property.types.edit";
+    case properties_types_edit = "properties.types.edit";
 
 
     /*

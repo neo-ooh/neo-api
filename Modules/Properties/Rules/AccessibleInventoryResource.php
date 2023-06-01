@@ -40,7 +40,7 @@ class AccessibleInventoryResource implements Rule {
             (new AccessibleProperty())->passes("property_id", Property::firstWhere("inventory_resource_id", "=", $resource->getKey())
                                                                       ->getKey()),
             InventoryResourceType::ProductCategory => true,
-            InventoryResourceType::PropertyType    => Gate::allows(Capability::property_types_edit->value),
+            InventoryResourceType::PropertyType    => Gate::allows(Capability::properties_types_edit->value),
         };
     }
 

@@ -211,6 +211,9 @@
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/enlightn/enlightn" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/enlightn/security-checker" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/yaml" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/league/flysystem-local" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/mpdf/psr-log-aware-trait" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/polyfill-php83" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

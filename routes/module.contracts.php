@@ -56,9 +56,9 @@ Route::group([
 
     Route::model("client", Client::class);
 
-    Route::get("clients", ClientsController::class . "@index");
-    Route::get("clients/_by_id", ClientsController::class . "@byId");
-    Route::get("clients/{client}", ClientsController::class . "@show");
+    Route::get("clients", [ClientsController::class, "index"]);
+    Route::get("clients/_by_id", [ClientsController::class, "byId"]);
+    Route::get("clients/{client}", [ClientsController::class, "show"]);
 
 
     /*

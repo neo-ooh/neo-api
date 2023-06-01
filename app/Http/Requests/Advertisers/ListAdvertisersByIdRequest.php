@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -25,6 +25,6 @@ class ListAdvertisersByIdRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::contracts_edit->value);
+        return Gate::allows(Capability::advertiser_edit->value) || Gate::allows(Capability::contracts_edit->value);
     }
 }

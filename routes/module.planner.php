@@ -65,11 +65,11 @@ Route::group([
 
     Route::model('poi', PointOfInterest::class);
 
-    Route::   get("brands/{brand}/pois", [PointsOfInterestController::class, "@index"]);
-    Route::  post("brands/{brand}/pois", [PointsOfInterestController::class, "@store"]);
+    Route::   get("brands/{brand}/pois", [PointsOfInterestController::class, "index"]);
+    Route::  post("brands/{brand}/pois", [PointsOfInterestController::class, "store"]);
     Route::  post("brands/{brand}/pois/_batch", [PointsOfInterestController::class, "storeBatch"]);
-    Route::   put("brands/{brand}/pois/{poi}", [PointsOfInterestController::class, "@update"]);
-    Route::delete("brands/{brand}/pois/{poi}", [PointsOfInterestController::class, "@destroy"]);
+    Route::   put("brands/{brand}/pois/{poi}", [PointsOfInterestController::class, "update"]);
+    Route::delete("brands/{brand}/pois/{poi}", [PointsOfInterestController::class, "destroy"]);
 
 });
 

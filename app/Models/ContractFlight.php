@@ -31,6 +31,7 @@ use Neo\Modules\Broadcast\Services\BroadcasterReporting;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Resources\Contracts\FlightPerformanceDatum;
+use Neo\Resources\Contracts\FlightType;
 
 /**
  * @property-read int                                $id
@@ -39,7 +40,7 @@ use Neo\Resources\Contracts\FlightPerformanceDatum;
  * @property string                                  $name
  * @property Carbon                                  $start_date
  * @property Carbon                                  $end_date
- * @property string                                  $type
+ * @property FlightType                              $type
  * @property-read Carbon                             $created_at
  * @property-read Carbon                             $updated_at
  *

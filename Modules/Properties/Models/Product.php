@@ -58,7 +58,10 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @property int|null                      $linked_product_id
  * @property MediaType[]                   $allowed_media_types
  * @property boolean|null                  $allows_audio
+ * @property boolean                       $allows_motion
  * @property double|null                   $production_cost
+ * @property double                        $screen_size_in
+ * @property int|null                      $screen_type_id
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  * @property Carbon                        $deleted_at
@@ -70,6 +73,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
  * @property Collection<Unavailability>    $unavailabilities
+ * @property ScreenType                    $screenType
  *
  * @property Pricelist|null                $pricelist
  * @property PricelistProduct|null         $pricing
@@ -110,6 +114,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         "is_bonus"            => "boolean",
         "allowed_media_types" => EnumSetCast::class . ":" . MediaType::class,
         "allows_audio"        => "boolean",
+        "allows_motion"       => "boolean",
     ];
 
     public string $impressions_models_pivot_table = "products_impressions_models";
@@ -129,6 +134,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             "loop_configurations" => ["loop_configurations", "category.loop_configurations"],
             "pricelist"           => ["load:pricelist.categories_pricings", "load:pricelist.products_pricings"],
             "property"            => "property",
+            "screen_type"         => ["screen_type", "category.screen_type"],
             "unavailabilities"    => Relation::make(
                 load: ["unavailabilities.translations", "unavailabilities.products"],
                 gate: Capability::properties_unavailabilities_view
@@ -196,6 +202,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 
     public function unavailabilities(): BelongsToMany {
         return $this->belongsToMany(Unavailability::class, "products_unavailabilities", "product_id", "unavailability_id");
+    }
+
+    public function screen_type(): BelongsTo {
+        return $this->belongsTo(ScreenType::class, "screen_type_id", "id");
     }
 
     /*
@@ -272,9 +282,9 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         $spotImpressionsPerHour = $el->evaluate($impressionsModel->formula, array_merge(
             [
                 "traffic" => $hourTraffic,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "faces" => $this->quantity,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "spots" => 1,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "faces" => $this->quantity,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "spots" => 1,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
             ], $impressionsModel->variables));
 
         $spotImpressionsPerPlay = [];

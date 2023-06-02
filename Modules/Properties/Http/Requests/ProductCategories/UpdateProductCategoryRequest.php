@@ -18,6 +18,7 @@ use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\ProductType;
+use Neo\Modules\Properties\Models\ScreenType;
 
 class UpdateProductCategoryRequest extends FormRequest {
     public function rules(): array {
@@ -26,10 +27,15 @@ class UpdateProductCategoryRequest extends FormRequest {
             "name_fr" => ["required", "string"],
             "type"    => ["required", new Enum(ProductType::class)],
 
-            "format_id"             => ["nullable", new Exists(Format::class, "id")],
-            "allows_audio"          => ["boolean"],
+            "format_id" => ["nullable", new Exists(Format::class, "id")],
+
             "allowed_media_types"   => ["array"],
             "allowed_media_types.*" => [new Enum(MediaType::class)],
+            "allows_audio"          => ["boolean"],
+            "allows_motion"         => ["boolean"],
+
+            "screen_size_in" => ["nullable", "nullable"],
+            "screen_type_id" => ["nullable", new Exists(ScreenType::class, "id")],
 
             "production_cost" => ["numeric"],
         ];

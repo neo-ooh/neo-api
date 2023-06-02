@@ -18,8 +18,8 @@ use Neo\Modules\Properties\Http\Controllers\PricelistsPropertiesController;
 use Neo\Modules\Properties\Http\Controllers\ProductCategoriesController;
 use Neo\Modules\Properties\Http\Controllers\ProductsController;
 use Neo\Modules\Properties\Http\Controllers\ProductsLocationsController;
-use Neo\Modules\Properties\Http\Controllers\ProductTypesController;
 use Neo\Modules\Properties\Http\Controllers\PropertiesTenantsController;
+use Neo\Modules\Properties\Http\Controllers\ScreenTypesController;
 use Neo\Modules\Properties\Models\Attachment;
 use Neo\Modules\Properties\Models\Brand;
 use Neo\Modules\Properties\Models\Pricelist;
@@ -40,11 +40,7 @@ Route::group([
 
         Route::model("product", Product::class);
         Route::model("productCategory", ProductCategory::class);
-
-        Route::   get("product-types", ProductTypesController::class . "@index");
-        Route::   get("product-types/_by_id", ProductTypesController::class . "@byIds");
-        Route::   put("product-types/{productType}", ProductTypesController::class . "@update");
-
+        
         Route::   get("product-categories", ProductCategoriesController::class . "@index");
         Route::   get("product-categories/_by_id", ProductCategoriesController::class . "@byIds");
         Route::   get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
@@ -125,4 +121,17 @@ Route::group([
 
         Route::   get("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@index");
         Route::   put("pricelists/{pricelist}/properties", PricelistsPropertiesController::class . "@sync");
+
+
+        /*
+        |----------------------------------------------------------------------
+        | Screen Types
+        |----------------------------------------------------------------------
+        */
+
+        Route::   get("screen-types", [ScreenTypesController::class, "index"]);
+        Route::  post("screen-types", [ScreenTypesController::class, "store"]);
+        Route::   get("screen-types/{screenType}", [ScreenTypesController::class, "show"]);
+        Route::   put("screen-types/{screenType}", [ScreenTypesController::class, "update"]);
+        Route::delete("screen-types/{screenType}", [ScreenTypesController::class, "destroy"]);
     });

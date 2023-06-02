@@ -43,13 +43,22 @@ class ProductsController {
     }
 
     public function update(UpdateProductRequest $request, Product $product) {
-        $product->is_sellable         = $request->input("is_sellable");
-        $product->format_id           = $request->input("format_id");
+        $product->is_sellable = $request->input("is_sellable");
+
+        $product->format_id = $request->input("format_id");
+
         $product->allowed_media_types = $request->has("allowed_media_types")
             ? array_map(static fn(string $scope) => MediaType::from($scope), $request->input("allowed_media_types", []))
             : $product->allowed_media_types;
         $product->allows_audio        = $request->input("allows_audio", $product->allows_audio);
-        $product->production_cost     = $request->input("production_cost", $product->production_cost);
+        $product->allows_motion       = $request->input("allows_motion", $product->allows_motion);
+
+        $product->screen_size_in = $request->input("screen_size_in", $product->screen_size_in);
+        $product->screen_type_id = $request->input("screen_type_id", $product->screen_type_id);
+
+
+        $product->production_cost = $request->input("production_cost", $product->production_cost);
+
         $product->save();
 
         return new Response($product->loadPublicRelations());

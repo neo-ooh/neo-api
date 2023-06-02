@@ -40,15 +40,22 @@ class ProductCategoriesController {
     }
 
     public function update(UpdateProductCategoryRequest $request, ProductCategory $productCategory) {
-        $productCategory->name_en             = $request->input("name_en");
-        $productCategory->name_fr             = $request->input("name_fr");
-        $productCategory->type                = $request->input("type");
-        $productCategory->format_id           = $request->input("format_id");
+        $productCategory->name_en = $request->input("name_en");
+        $productCategory->name_fr = $request->input("name_fr");
+        $productCategory->type    = $request->input("type");
+
+        $productCategory->format_id = $request->input("format_id");
+
         $productCategory->allowed_media_types = $request->has("allowed_media_types")
             ? array_map(static fn(string $scope) => MediaType::from($scope), $request->input("allowed_media_types", []))
             : $productCategory->allowed_media_types;
         $productCategory->allows_audio        = $request->input("allows_audio", $productCategory->allows_audio);
-        $productCategory->production_cost     = $request->input("production_cost", $productCategory->production_cost);
+        $productCategory->allows_motion       = $request->input("allows_motion", $productCategory->allows_motion);
+
+        $productCategory->screen_size_in = $request->input("screen_size_in", $productCategory->screen_size_in);
+        $productCategory->screen_type_id = $request->input("screen_type_id", $productCategory->screen_type_id);
+
+        $productCategory->production_cost = $request->input("production_cost", $productCategory->production_cost);
         $productCategory->save();
 
         return new Response($productCategory->loadPublicRelations());

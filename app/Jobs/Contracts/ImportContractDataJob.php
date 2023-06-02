@@ -154,12 +154,12 @@ class ImportContractDataJob implements ShouldQueue {
             }
 
             // Infer order line type
-            $type = 'guaranteed';
+            $type = FlightType::Guaranteed;
 
             if ($product->is_bonus) {
-                $type = 'bua';
+                $type = FlightType::BUA;
             } else if ($orderLine->discount > 99.9) {
-                $type = 'bonus';
+                $type = FlightType::Bonus;
             }
 
             /** @var ContractFlight|null $flight */

@@ -338,14 +338,15 @@ enum Capability: string {
      */
     case properties_inventories_edit = "properties.inventories.edit";
 
-
-    /*
-    |----------------------------------------------------------------------
-    | Properties Types
-    |----------------------------------------------------------------------
-    */
-
+    /**
+     * Allows editing property types
+     */
     case properties_types_edit = "properties.types.edit";
+
+    /**
+     * Allows editing screen types
+     */
+    case screen_types_edit = "screens.types.edit";
 
 
     /*

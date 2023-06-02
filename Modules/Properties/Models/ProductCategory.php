@@ -41,13 +41,17 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int|null                      $format_id
  * @property MediaType[]                   $allowed_media_types
  * @property boolean                       $allows_audio
+ * @property boolean                       $allows_motion
  * @property double                        $production_cost
+ * @property double                        $screen_size_in
+ * @property int|null                      $screen_type_id
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  *
  * @property Format                        $format
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
+ * @property ScreenType                    $screenType
  *
  * @property PricelistProductsCategory     $pricing
  */
@@ -75,6 +79,7 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
         "type"                => ProductType::class,
         "allowed_media_types" => EnumSetCast::class . ":" . MediaType::class,
         "allows_audio"        => "boolean",
+        "allows_motion"       => "boolean",
     ];
 
     public string $impressions_models_pivot_table = "products_categories_impressions_models";
@@ -93,6 +98,7 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
             "products"            => "load:products",
             "impressions_models"  => "load:impressions_models",
             "loop_configurations" => "load:loop_configurations",
+            "screen_type"         => "screen_type",
             "inventories"         => Relation::make(
                 load: ["inventory_resource.inventories_settings", "inventory_resource.external_representations"],
                 gate: Capability::properties_inventories_view
@@ -124,5 +130,9 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
 
     public function loop_configurations(): HasManyDeep {
         return $this->hasManyDeepFromRelations([$this->format(), (new Format())->loop_configurations()]);
+    }
+
+    public function screen_type(): BelongsTo {
+        return $this->belongsTo(ScreenType::class, "screen_type_id", "id");
     }
 }

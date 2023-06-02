@@ -17,17 +17,24 @@ use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Models\ScreenType;
 use Neo\Rules\PublicRelations;
 
 class UpdateProductRequest extends FormRequest {
     public function rules(): array {
         return [
-            "is_sellable"           => ["required", "boolean"],
-            "format_id"             => ["nullable", "integer", new Exists(Format::class, "id")],
-            "allows_audio"          => ["nullable", "boolean"],
+            "is_sellable" => ["required", "boolean"],
+            "format_id"   => ["nullable", "integer", new Exists(Format::class, "id")],
+
             "allowed_media_types"   => ["array"],
             "allowed_media_types.*" => [new Enum(MediaType::class)],
-            "production_cost"       => ["nullable", "numeric"],
+            "allows_audio"          => ["nullable", "boolean"],
+            "allows_motion"         => ["nullable", "boolean"],
+
+            "screen_size_in" => ["nullable", "nullable"],
+            "screen_type_id" => ["nullable", new Exists(ScreenType::class, "id")],
+
+            "production_cost" => ["nullable", "numeric"],
 
             "with" => ["array", new PublicRelations(Product::class)],
         ];

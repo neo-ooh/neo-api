@@ -17,6 +17,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class BatchController extends Controller {
     public function handle(BatchRequest $request) {
+        set_time_limit(0);
+        
         $requests  = $request->input("requests");
         $responses = [];
 

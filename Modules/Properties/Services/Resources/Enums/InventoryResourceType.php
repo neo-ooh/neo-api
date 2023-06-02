@@ -16,4 +16,5 @@ enum InventoryResourceType: string {
     case Property = "property";
 
     case PropertyType = "property-type";
+    case ScreenType = "screen-type";
 }

@@ -49,6 +49,10 @@ class ReachAdapter extends InventoryAdapter {
         InventoryCapability::ProductsRead,
         InventoryCapability::ProductsWrite,
         InventoryCapability::ProductsAudioSupport,
+        InventoryCapability::ProductsMotionSupport,
+        InventoryCapability::ProductsScreenSize,
+        InventoryCapability::ProductsScreenType,
+        InventoryCapability::PropertiesType,
     ];
 
     /**
@@ -151,6 +155,8 @@ class ReachAdapter extends InventoryAdapter {
         $screen->publisher             = ScreenPublisher::from(["id" => $this->config->publisher_id]);
         $screen->is_active             = $product->is_sellable;
         $screen->resolution            = ScreenResolution::from(["id" => $resolution->getKey()]);
+        $screen->diagonal_size         = $product->screen_size_in;
+        $screen->diagonal_size_units   = "inches";
         $screen->aspect_ratio          = ScreenAspectRatio::from(["id" => $aspectRatio->getKey()]);
         $screen->connectivity          = 1;
         $screen->is_audio              = false;
@@ -171,7 +177,8 @@ class ReachAdapter extends InventoryAdapter {
                                                      in_array(MediaType::Audio, $product->allowed_media_types) ? NamedIdentityAttribute::from(["id" => 3]) : null,
                                                      in_array(MediaType::HTML, $product->allowed_media_types) ? NamedIdentityAttribute::from(["id" => 4]) : null,
                                                  ])->where(null, "!==", null);
-        $screen->allows_motion         = true;
+        $screen->allows_motion         = $product->allows_motion;
+        $screen->screen_type           = $product->screen_type ? NamedIdentityAttribute::from(["id" => $product->screen_type->external_id]) : null;
         $screen->screen_img_url        = $screen->screen_img_url ?? null;
         $screen->min_ad_duration       = min($product->loop_configuration->spot_length_ms / 1_000, 5);
         $screen->max_ad_duration       = $product->loop_configuration->spot_length_ms / 1_000;

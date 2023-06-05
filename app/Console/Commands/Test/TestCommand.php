@@ -10,10 +10,11 @@
 
 namespace Neo\Console\Commands\Test;
 
+use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Neo\Enums\ActorType;
-use Neo\Models\Actor;
-use Neo\Models\Utils\ActorsGetter;
+use Illuminate\Database\Eloquent\Builder;
+use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
+use Neo\Modules\Broadcast\Models\BroadcastJob;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -24,17 +25,12 @@ class TestCommand extends Command {
      * @return void
      */
     public function handle() {
-        $parentId = 1345;
-        $typeId   = 10316;
+        $jobs = BroadcastJob::query()->where(function (Builder $query) {
+            $query->where("status", "=", BroadcastJobStatus::Pending)
+                  ->orWhere("status", "=", BroadcastJobStatus::PendingRetry);
+        })->where("scheduled_at", "<=", Carbon::now())
+                            ->get();
 
-        $actors = ActorsGetter::from($parentId)
-                              ->selectChildren(true)
-                              ->getActors()
-                              ->filter(fn(Actor $actor) => $actor->type === ActorType::Property)
-                              ->load("property");
-        $actors->each(function (Actor $actor) use ($typeId) {
-            $actor->property->type()->associate($typeId);
-            $actor->property->save();
-        });
+        dump($jobs->count());
     }
 }

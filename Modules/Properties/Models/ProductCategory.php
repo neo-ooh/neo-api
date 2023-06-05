@@ -51,7 +51,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Format                        $format
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
- * @property ScreenType                    $screenType
+ * @property ScreenType                    $screen_type
  *
  * @property PricelistProductsCategory     $pricing
  */

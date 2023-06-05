@@ -37,7 +37,7 @@ use Neo\Services\API\Endpoint;
  *
  * @property ScreenResolution                   $resolution
  * @property ScreenAspectRatio                  $aspect_ratio
- * @property array                              $screen_types
+ * @property NamedIdentityAttribute|null        $screen_type
  * @property float|null                         $diagonal_size
  * @property string                             $diagonal_size_units
  *
@@ -107,6 +107,7 @@ class Screen extends ReachModel {
         "bid_floors"            => ScreenBidFloor::class,
         "publisher"             => ScreenPublisher::class,
         "resolution"            => ScreenResolution::class,
+        "screen_type"           => NamedIdentityAttribute::class,
         "tags"                  => NamedIdentityAttribute::class,
         "time_zone"             => NamedIdentityAttribute::class,
         "venue_types"           => ScreenVenueType::class,

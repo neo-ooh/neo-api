@@ -28,6 +28,8 @@ use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
 use Neo\Modules\Properties\Models\Property;
+use Neo\Modules\Properties\Models\PropertyType;
+use Neo\Modules\Properties\Models\ScreenType;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
@@ -200,6 +202,26 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             $product->allows_audio = $externalProduct->product->allows_audio;
         }
 
+        // Product audio support
+        if ($inventory->hasCapability(InventoryCapability::ProductsMotionSupport) && $product->allows_motion !== null) {
+            $product->allows_motion = $externalProduct->product->allows_motion;
+        }
+
+        // Product screen size support
+        if ($inventory->hasCapability(InventoryCapability::ProductsScreenSize) && $product->screen_size_in !== null) {
+            $product->screen_size_in = $externalProduct->product->screen_size_in;
+        }
+
+        // Product screen type support
+        if ($inventory->hasCapability(InventoryCapability::ProductsScreenType) && $product->screen_type_id !== null) {
+            /** @var ScreenType|null $propertyType */
+            $propertyType = ScreenType::query()->whereHas("external_representations", function (Builder $query) use ($inventory) {
+                $query->where("inventory_id", "=", $inventory->getInventoryID());
+            })->first();
+
+            $product->screen_type_id = $propertyType->getKey() ?? $product->screen_type_id;
+        }
+
         if ($externalProduct->product->price_type === PriceType::Unit) {
             $product->unit_price = $externalProduct->product->price;
         }
@@ -270,6 +292,18 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             $address->save();
 
             $property->address_id = $address->getKey();
+        }
+
+        // Property type
+        if ($inventory->hasCapability(InventoryCapability::PropertiesType)) {
+            /** @var PropertyType|null $propertyType */
+            $propertyType = PropertyType::query()
+                                        ->whereHas("external_representations", function (Builder $query) use ($inventory) {
+                                            $query->where("inventory_id", "=", $inventory->getInventoryID());
+                                        })
+                                        ->first();
+
+            $property->type_id = $propertyType->getKey() ?? $property->type_id;
         }
 
         $property->save();

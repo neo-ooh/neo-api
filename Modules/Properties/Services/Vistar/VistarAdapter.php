@@ -42,6 +42,7 @@ class VistarAdapter extends InventoryAdapter {
     protected array $capabilities = [
         InventoryCapability::ProductsRead,
         InventoryCapability::ProductsWrite,
+        InventoryCapability::PropertiesType,
     ];
 
     /**

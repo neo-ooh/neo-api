@@ -46,6 +46,8 @@ class HivestackAdapter extends InventoryAdapter {
         InventoryCapability::ProductsWrite,
         InventoryCapability::PropertiesRead,
         InventoryCapability::ProductsMediaTypes,
+        InventoryCapability::ProductsScreenSize,
+        InventoryCapability::PropertiesType,
     ];
 
     /**
@@ -134,6 +136,7 @@ class HivestackAdapter extends InventoryAdapter {
     }
 
     protected function fillUnit(Unit $unit, BroadcastLocation $location, ProductResource $product, array $context): void {
+        $aspectRatio                          = $product->screen_width_px / $product->screen_height_px;
         $unit->active                         = $product->is_sellable;
         $unit->name                           = trim($product->property_name) . " - " . trim($product->name[0]->value);
         $unit->description                    = $location->name;
@@ -147,8 +150,11 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->operating_hours                = $this->operatingHoursToHivestackString($product->operating_hours->toCollection());
         $unit->screen_height                  = $product->screen_height_px;
         $unit->screen_width                   = $product->screen_width_px;
-        $unit->spot_length                    = $product->loop_configuration->spot_length_ms / 1_000; // ms to seconds
-        $unit->min_spot_length                = min($unit->spot_length, 5);                           // Min length : 5 seconds or spot length if shorter
+        $physicalHeightIn                     = $product->screen_size_in ? $product->screen_size_in / sqrt(($aspectRatio * $aspectRatio) + 1) : null;
+        $unit->physical_screen_height_cm      = $physicalHeightIn ? $physicalHeightIn * 2.54 : 0;                          // in to cm
+        $unit->physical_screen_width_cm       = $physicalHeightIn ? $physicalHeightIn * $aspectRatio * 2.54 : 0;           // in to cm
+        $unit->spot_length                    = $product->loop_configuration->spot_length_ms / 1_000;                      // ms to seconds
+        $unit->min_spot_length                = min($unit->spot_length, 5);                                                // Min length : 5 seconds or spot length if shorter
         $unit->max_spot_length                = $unit->spot_length;
         $unit->timezone                       = $product->timezone;
         $unit->allow_image                    = in_array(MediaType::Image, $product->allowed_media_types);

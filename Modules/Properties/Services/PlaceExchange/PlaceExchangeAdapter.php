@@ -52,6 +52,8 @@ class PlaceExchangeAdapter extends InventoryAdapter {
     protected array $capabilities = [
         InventoryCapability::ProductsRead,
         InventoryCapability::ProductsWrite,
+        InventoryCapability::ProductsScreenSize,
+        InventoryCapability::PropertiesType,
     ];
 
     /**
@@ -120,7 +122,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
             mimes       : $adUnit->asset->mimes ?? [],
             name        : $name,
             screen_count: $player->screen_count,
-            size        : 5, // TODO: Screen size
+            size        : $product->screen_size_in ?? 5,
             type        : "digital",
         );
         $adUnit->auction          = new AdUnitAuction(

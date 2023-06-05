@@ -87,6 +87,16 @@ class ProductResource extends InventoryResource {
         public int                      $screen_height_px,
 
         /**
+         * @var float Screen diagonal size in inches
+         */
+        public float|null               $screen_size_in,
+
+        /**
+         * @var InventoryResourceId|null External Id of the screen type
+         */
+        public InventoryResourceId|null $screen_type,
+
+        /**
          * @var MediaType[]
          */
         public array                    $allowed_media_types,
@@ -95,6 +105,11 @@ class ProductResource extends InventoryResource {
          * @var bool Does the product allow files with audio
          */
         public bool                     $allows_audio,
+
+        /**
+         * @var bool Does the product allow motion
+         */
+        public bool                     $allows_motion,
 
         /**
          * @var InventoryResourceId|null ID of the property in which the product is, if supported

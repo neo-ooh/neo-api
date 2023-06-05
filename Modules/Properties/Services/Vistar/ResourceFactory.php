@@ -55,11 +55,14 @@ class ResourceFactory {
                             loop_configuration       : null,
                             screen_width_px          : $venue->width_px,
                             screen_height_px         : $venue->height_px,
+                            screen_size_in           : null,
+                            screen_type              : null,
                             allowed_media_types      : array_filter([
                                                                         $venue->static_supported ? MediaType::Image : null,
                                                                         $venue->video_supported ? MediaType::Video : null,
                                                                     ], fn(MediaType|null $type) => $type !== null),
                             allows_audio             : false,
+                            allows_motion            : true,
                             property_id              : null,
                             property_name            : "",
                             property_type            : $venue->venue_type ? new InventoryResourceId(

@@ -45,6 +45,13 @@ class ResourceFactory {
                             loop_configuration       : null,
                             screen_width_px          : $screen->resolution->width,
                             screen_height_px         : $screen->resolution->height,
+                            screen_size_in           : $screen->diagonal_size,
+                            screen_type              : $screen->screen_type ? new InventoryResourceId(
+                                                           inventory_id: $config->inventoryID,
+                                                           external_id : $screen->screen_type->id,
+                                                           type        : InventoryResourceType::ScreenType,
+                                                           context     : []
+                                                       ) : null,
                             allowed_media_types      : $screen->allowed_ad_types->map(fn(NamedIdentityAttribute $adType) => match ($adType->id) {
                                                            1 => MediaType::Image,
                                                            2 => MediaType::Video,
@@ -52,6 +59,7 @@ class ResourceFactory {
                                                            4 => MediaType::HTML,
                                                        })->all(),
                             allows_audio             : $screen->is_audio,
+                            allows_motion            : $screen->allows_motion,
                             property_id              : null,
                             property_name            : "",
                             property_type            : $screen->venue_types->isNotEmpty() ? new InventoryResourceId(

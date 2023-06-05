@@ -60,7 +60,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @property boolean|null                  $allows_audio
  * @property boolean                       $allows_motion
  * @property double|null                   $production_cost
- * @property double                        $screen_size_in
+ * @property double|null                   $screen_size_in
  * @property int|null                      $screen_type_id
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
@@ -73,7 +73,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
  * @property Collection<Unavailability>    $unavailabilities
- * @property ScreenType                    $screenType
+ * @property ScreenType                    $screen_type
  *
  * @property Pricelist|null                $pricelist
  * @property PricelistProduct|null         $pricing
@@ -282,9 +282,9 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         $spotImpressionsPerHour = $el->evaluate($impressionsModel->formula, array_merge(
             [
                 "traffic" => $hourTraffic,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "faces" => $this->quantity,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "spots" => 1,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "faces" => $this->quantity,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "spots" => 1,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
             ], $impressionsModel->variables));
 
         $spotImpressionsPerPlay = [];
@@ -400,8 +400,13 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
                                            ) : null,
             screen_width_px          : $layout?->frames->first()->width,
             screen_height_px         : $layout?->frames->first()->height,
+            screen_size_in           : $this->screen_size_in ?? $this->category->screen_size_in,
+            screen_type              : ($this->screen_type ?? $this->category->screen_type)?->external_representations
+                                           ->firstWhere("inventory_id", "=", $inventoryID)
+                                           ?->toInventoryResourceId(),
             allowed_media_types      : count($this->allowed_media_types) > 0 ? $this->allowed_media_types : $this->category->allowed_media_types,
             allows_audio             : $this->allows_audio !== null ? $this->allows_audio : $this->category->allows_audio,
+            allows_motion            : $this->allows_motion !== null ? $this->allows_motion : $this->category->allows_motion,
             property_id              : $propertyId?->toInventoryResourceId(),
             property_name            : $this->property->actor->name,
             property_type            : $this->property->type?->external_representations->firstWhere("inventory_id", "=", $inventoryID)

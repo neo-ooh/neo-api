@@ -53,12 +53,15 @@ class ResourceFactory {
                                                        ),
                             screen_width_px          : $unit->screen_width,
                             screen_height_px         : $unit->screen_height,
+                            screen_size_in           : $unit->physical_screen_height_cm > 0 && $unit->physical_screen_width_cm > 0 ? hypot($unit->physical_screen_width_cm, $unit->physical_screen_height_cm) / 2.54 : null,
+                            screen_type              : null,
                             allowed_media_types      : array_filter([
                                                                         $unit->allow_image ? MediaType::Image : null,
                                                                         $unit->allow_video ? MediaType::Video : null,
                                                                         $unit->allow_html ? MediaType::HTML : null,
                                                                     ], fn(MediaType|null $type) => $type !== null),
                             allows_audio             : false,
+                            allows_motion            : true,
                             property_id              : $site->toInventoryResourceId($config->inventoryID),
                             property_name            : trim($site->name),
                             property_type            : $unit->mediatype_id ? new InventoryResourceId(

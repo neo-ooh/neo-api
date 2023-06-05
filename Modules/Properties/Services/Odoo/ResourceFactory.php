@@ -64,8 +64,11 @@ class ResourceFactory {
                             loop_configuration       : null,
                             screen_width_px          : 0,
                             screen_height_px         : 0,
+                            screen_size_in           : null,
+                            screen_type              : null,
                             allowed_media_types      : [],
                             allows_audio             : true,
+                            allows_motion            : true,
                             property_id              : new InventoryResourceId(
                                                            inventory_id: $config->inventoryID,
                                                            external_id : $property->getKey(),

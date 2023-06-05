@@ -51,11 +51,14 @@ class ResourceFactory {
                                                        ),
                             screen_width_px          : $adUnit->slot->w,
                             screen_height_px         : $adUnit->slot->h,
+                            screen_size_in           : $adUnit->asset->size,
+                            screen_type              : null,
                             allowed_media_types      : array_filter([
                                                                         $adUnit->asset->capability->video ? MediaType::Video : null,
                                                                         $adUnit->asset->capability->banner ? MediaType::Image : null,
                                                                     ], fn(MediaType|null $type) => $type !== null),
                             allows_audio             : $adUnit->asset->capability->audio,
+                            allows_motion            : true,
                             property_id              : null,
                             property_name            : $adUnit->venue->name,
                             property_type            : $adUnit->venue?->openooh_category ? new InventoryResourceId(

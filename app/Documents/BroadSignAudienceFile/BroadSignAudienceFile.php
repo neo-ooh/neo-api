@@ -120,7 +120,7 @@ class BroadSignAudienceFile extends XLSXDocument {
         // Define how many days should be generated. Here: a month
         $endBoundary = $datePointer->clone()->addMonth();
 
-        // Dump a failover row for every frame
+        // Dump a fail-over row for every frame
         foreach ($this->frames as $frame) {
             $this->ws->printRow([
                                     $this->location->external_id,
@@ -148,17 +148,19 @@ class BroadSignAudienceFile extends XLSXDocument {
         $hours = collect();
 
         for ($weekday = 1; $weekday <= 7; $weekday++) {
-            /** @var OpeningHours $dayHours */
+            /** @var OpeningHours|null $dayHours */
             $dayHours  = $this->property->opening_hours->firstWhere("day", "===", $weekday);
             $startTime = ($dayHours ? Carbon::createFromTimeString($dayHours->open_at) : Carbon::createFromTime(0, 0))->startOfMinute();
             $endTime   = ($dayHours ? Carbon::createFromTimeString($dayHours->close_at) : Carbon::createFromTime(23, 59))->startOfMinute();
             $endTime->setDateFrom($startTime);
+            $isClosed = $dayHours?->is_closed ?? false;
 
             $hours[$weekday] = new DayOperatingHours(
-                day      : $weekday,
-                is_closed: $dayHours?->is_closed ?? false,
-                start_at : $startTime->format('H:i:s'),
-                end_at   : $endTime->format('H:i:s'),
+                day            : $weekday,
+                is_closed      : $isClosed,
+                start_at       : $startTime->format('H:i:s'),
+                end_at         : $endTime->format('H:i:s'),
+                open_length_min: $isClosed ? 0 : $startTime->diffInMinutes($endTime, absolute: true),
             );
 
             $openLengthsMinutes[$weekday] = $startTime->diffInMinutes($endTime, true);
@@ -216,7 +218,7 @@ class BroadSignAudienceFile extends XLSXDocument {
                     $loopsPerDay = $openLengthsMinutes[$weekday] * 60_000 / $loopConfiguration->loop_length_ms;
 
                     /**
-                     * How many impressions a single play of an ad is gonna generate
+                     * How many impressions a single play of an ad is going to generate
                      */
                     $impressionsPerPlay = $impressionsPerDay / $loopsPerDay;
 
@@ -274,7 +276,7 @@ class BroadSignAudienceFile extends XLSXDocument {
         return "AudienceFile-{$this->location->external_id}";
     }
 
-    public function customizeOutput(BaseWriter $writer) {
+    public function customizeOutput(BaseWriter $writer): void {
         $writer->setPreCalculateFormulas(false);
 
         // Writer is actually a Csv writer as we export only to csv

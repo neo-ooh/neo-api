@@ -16,13 +16,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Neo\Models\Branding
  *
- * @property int    $id
- * @property int    $parent_id
- * @property bool   $parent_is_group
- * @property int    $direct_children_count
- * @property bool   $is_property
- * @property string $path_names
- * @property string $path_ids
+ * @property int  $id
+ * @property int  $parent_id
+ * @property bool $parent_is_group
+ * @property bool $is_property
  *
  * @mixin Builder
  */

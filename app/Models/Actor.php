@@ -170,9 +170,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         "parent_id",
         "parent_is_group",
         "is_property",
-        "direct_children_count",
-        "path_names",
-        "path_ids",
         "type",
     ];
 
@@ -187,6 +184,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return [
             "logo"          => "load:logo",
             "locations_ids" => "load:own_locations:id",
+            "ancestors_ids" => "ancestors_ids",
         ];
     }
 
@@ -409,16 +407,13 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
         return $this->details->is_property;
     }
 
-    public function getDirectChildrenCountAttribute(): int {
-        return $this->details->direct_children_count;
-    }
-
-    public function getPathNamesAttribute(): string {
-        return $this->details->path_names;
-    }
-
     public function getPathIdsAttribute(): string {
         return $this->details->path_ids;
+    }
+
+    public function ancestors_ids() {
+        return $this->hasMany(ActorClosure::class, "descendant_id", "id")
+                    ->orderBy("depth");
     }
 
     /*

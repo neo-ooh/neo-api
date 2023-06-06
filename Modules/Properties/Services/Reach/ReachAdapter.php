@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Services\Reach;
 
 use Carbon\Carbon;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
@@ -70,6 +71,18 @@ class ReachAdapter extends InventoryAdapter {
             publisher_id : $provider->settings->publisher_id,
             client_id    : $provider->settings->client_id,
         );
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function validateConfiguration(): bool|string {
+        try {
+            Screen::all($this->getConfig()->getClient(), null, 1)->first();
+            return true;
+        } catch (Exception $e) {
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -156,7 +169,7 @@ class ReachAdapter extends InventoryAdapter {
         $screen->is_active             = $product->is_sellable;
         $screen->resolution            = ScreenResolution::from(["id" => $resolution->getKey()]);
         $screen->diagonal_size         = $product->screen_size_in;
-        $screen->diagonal_size_units   = "inches";
+        $screen->diagonal_size_units   = $product->screen_size_in ? "inches" : "";
         $screen->aspect_ratio          = ScreenAspectRatio::from(["id" => $aspectRatio->getKey()]);
         $screen->connectivity          = 1;
         $screen->is_audio              = false;

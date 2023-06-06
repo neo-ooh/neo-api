@@ -11,8 +11,8 @@
 namespace Neo\Modules\Properties\Services\Hivestack\API;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
+use Neo\Modules\Properties\Services\Exceptions\RequestException;
 use Neo\Modules\Properties\Services\Hivestack\HivestackConfig;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\Endpoint;
@@ -29,8 +29,12 @@ class HivestackClient extends APIClient {
     }
 
     /**
-     * @throws RequestException
+     * @param Endpoint $endpoint
+     * @param mixed    $payload
+     * @param array    $headers
+     * @return Response
      * @throws GuzzleException
+     * @throws RequestException
      */
     public function call(Endpoint $endpoint, mixed $payload, array $headers = []): Response {
         $endpoint->base = $this->config->api_url;
@@ -42,8 +46,7 @@ class HivestackClient extends APIClient {
         ]);
 
         if (!$response->successful()) {
-            dump($response->json());
-            $response->throw();
+            throw new RequestException($response);
         }
 
         return $response;

@@ -71,6 +71,14 @@ class PlaceExchangeAdapter extends InventoryAdapter {
         );
     }
 
+    public function validateConfiguration(): bool|string {
+        try {
+            return $this->getConfig()->getClient()->login();
+        } catch (APIAuthenticationError $e) {
+            return $e->getMessage();
+        }
+    }
+
     /**
      * @param Carbon|null $ifModifiedSince
      * @return Traversable

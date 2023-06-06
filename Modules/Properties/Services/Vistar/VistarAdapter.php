@@ -59,6 +59,14 @@ class VistarAdapter extends InventoryAdapter {
         );
     }
 
+    public function validateConfiguration(): bool|string {
+        try {
+            return $this->getConfig()->getClient()->login();
+        } catch (APIAuthenticationError $e) {
+            return $e->getMessage();
+        }
+    }
+
     public function listProducts(?Carbon $ifModifiedSince = null): Traversable {
         return LazyCollection::make(function () {
             $venues = Venue::all($this->getConfig()->getClient());

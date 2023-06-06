@@ -58,6 +58,18 @@ class OdooAdapter extends InventoryAdapter {
         );
     }
 
+    /**
+     * @return bool|string
+     */
+    public function validateConfiguration(): bool|string {
+        try {
+            $this->getConfig()->getClient();
+            return true;
+        } catch (OdooException $e) {
+            return $e->getMessage();
+        }
+    }
+
     protected function __listAllProducts(OdooClient $client, array $filters) {
         $pageSize = 500;
         $cursor   = 0;

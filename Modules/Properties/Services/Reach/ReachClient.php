@@ -11,9 +11,9 @@
 namespace Neo\Modules\Properties\Services\Reach;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
+use Neo\Modules\Properties\Services\Exceptions\RequestException;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\Endpoint;
 
@@ -42,7 +42,7 @@ class ReachClient extends APIClient {
                                                  ]);
 
                         if ($response->failed()) {
-                            $response->throw();
+                            throw new RequestException($response);
                         }
 
                         return $response->json("access_token");
@@ -71,8 +71,7 @@ class ReachClient extends APIClient {
         ]);
 
         if (!$response->successful()) {
-            dump($response->body());
-            $response->throw();
+            throw new RequestException($response);
         }
 
         return $response;

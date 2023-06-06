@@ -18,8 +18,10 @@ use Neo\Modules\Properties\Http\Requests\InventoryProviders\RemoveInventoryReque
 use Neo\Modules\Properties\Http\Requests\InventoryProviders\ShowInventoryRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryProviders\StoreInventoryRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryProviders\UpdateInventoryRequest;
+use Neo\Modules\Properties\Http\Requests\InventoryProviders\ValidateInventoryConfigurationCacheRequest;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\StructuredColumns\InventoryProviderSettings;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 use Neo\Modules\Properties\Services\InventoryType;
 
 class InventoryProvidersController extends Controller {
@@ -130,6 +132,18 @@ class InventoryProvidersController extends Controller {
 
     public function clearCache(ClearInventoryCacheRequest $request, InventoryProvider $inventoryProvider) {
         $inventoryProvider->clearCache();
+    }
+
+    /**
+     * @param ValidateInventoryConfigurationCacheRequest $request
+     * @param InventoryProvider                          $inventoryProvider
+     * @return Response
+     * @throws InvalidInventoryAdapterException
+     */
+    public function validateConfiguration(ValidateInventoryConfigurationCacheRequest $request, InventoryProvider $inventoryProvider) {
+        return new Response([
+                                "status" => $inventoryProvider->getAdapter()->validateConfiguration(),
+                            ]);
     }
 
     public function destroy(RemoveInventoryRequest $request, InventoryProvider $inventoryProvider) {

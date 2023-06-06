@@ -30,4 +30,8 @@ class DummyAdapter extends InventoryAdapter {
             inventoryUUID: $provider->uuid,
         );
     }
+
+    public function validateConfiguration(): bool|string {
+        return true;
+    }
 }

@@ -11,8 +11,8 @@
 namespace Neo\Modules\Properties\Services\Vistar;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
+use Neo\Modules\Properties\Services\Exceptions\RequestException;
 use Neo\Services\API\APIAuthenticationError;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\Endpoint;
@@ -32,7 +32,7 @@ class VistarClient extends APIClient {
      * @throws GuzzleException
      * @throws APIAuthenticationError
      */
-    protected function login(): bool {
+    public function login(): bool {
         $authEndpoint       = Endpoint::post("/session");
         $authEndpoint->base = $this->config->api_url;
 
@@ -55,9 +55,13 @@ class VistarClient extends APIClient {
     }
 
     /**
-     * @throws RequestException
-     * @throws GuzzleException
+     * @param Endpoint $endpoint
+     * @param mixed    $payload
+     * @param array    $headers
+     * @return Response
      * @throws APIAuthenticationError
+     * @throws GuzzleException
+     * @throws RequestException
      */
     public function call(Endpoint $endpoint, mixed $payload, array $headers = []): Response {
         if (strlen($endpoint->base) === 0) {
@@ -75,7 +79,7 @@ class VistarClient extends APIClient {
         ]);
 
         if (!$response->successful()) {
-            $response->throw();
+            throw new RequestException($response);
         }
 
         return $response;

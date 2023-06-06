@@ -90,6 +90,19 @@ abstract class InventoryAdapter {
 
     /*
     |--------------------------------------------------------------------------
+    | Authentication
+    |--------------------------------------------------------------------------
+    */
+
+    /**
+     * Validate inventory configuration, including authentication
+     *
+     * @return true|string
+     */
+    abstract public function validateConfiguration(): bool|string;
+
+    /*
+    |--------------------------------------------------------------------------
     | Products - Read
     |--------------------------------------------------------------------------
     */

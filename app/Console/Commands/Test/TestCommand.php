@@ -10,11 +10,10 @@
 
 namespace Neo\Console\Commands\Test;
 
-use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
-use Neo\Modules\Broadcast\Models\BroadcastJob;
+use Illuminate\Support\Carbon;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -23,14 +22,10 @@ class TestCommand extends Command {
 
     /**
      * @return void
+     * @throws InvalidInventoryAdapterException
      */
     public function handle() {
-        $jobs = BroadcastJob::query()->where(function (Builder $query) {
-            $query->where("status", "=", BroadcastJobStatus::Pending)
-                  ->orWhere("status", "=", BroadcastJobStatus::PendingRetry);
-        })->where("scheduled_at", "<=", Carbon::now())
-                            ->get();
-
-        dump($jobs->count());
+        $inventory = InventoryProvider::find(4);
+        dump($inventory->getAdapter()->listProducts(Carbon::now()->subWeek())->first());
     }
 }

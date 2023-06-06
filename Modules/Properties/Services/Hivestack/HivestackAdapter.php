@@ -21,6 +21,7 @@ use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\IncompatibleResourceAndInventoryException;
 use Neo\Modules\Properties\Services\Hivestack\API\HivestackClient;
+use Neo\Modules\Properties\Services\Hivestack\Models\Language;
 use Neo\Modules\Properties\Services\Hivestack\Models\Site;
 use Neo\Modules\Properties\Services\Hivestack\Models\Unit;
 use Neo\Modules\Properties\Services\InventoryAdapter;
@@ -61,6 +62,17 @@ class HivestackAdapter extends InventoryAdapter {
             api_url      : $provider->settings->api_url,
             api_key      : $provider->settings->api_key
         );
+    }
+
+    public function validateConfiguration(): bool|string {
+        try {
+            Language::all($this->getConfig()->getClient());
+            return true;
+        } catch (GuzzleException $e) {
+            return $e->getMessage();
+        } catch (RequestException $e) {
+            return $e->getMessage();
+        }
     }
 
     /**
@@ -151,10 +163,10 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->screen_height                  = $product->screen_height_px;
         $unit->screen_width                   = $product->screen_width_px;
         $physicalHeightIn                     = $product->screen_size_in ? $product->screen_size_in / sqrt(($aspectRatio * $aspectRatio) + 1) : null;
-        $unit->physical_screen_height_cm      = $physicalHeightIn ? $physicalHeightIn * 2.54 : 0;                          // in to cm
-        $unit->physical_screen_width_cm       = $physicalHeightIn ? $physicalHeightIn * $aspectRatio * 2.54 : 0;           // in to cm
-        $unit->spot_length                    = $product->loop_configuration->spot_length_ms / 1_000;                      // ms to seconds
-        $unit->min_spot_length                = min($unit->spot_length, 5);                                                // Min length : 5 seconds or spot length if shorter
+        $unit->physical_screen_height_cm      = $physicalHeightIn ? (int)($physicalHeightIn * 2.54) : 0;                          // in to cm
+        $unit->physical_screen_width_cm       = $physicalHeightIn ? (int)($physicalHeightIn * $aspectRatio * 2.54) : 0;           // in to cm
+        $unit->spot_length                    = $product->loop_configuration->spot_length_ms / 1_000;                             // ms to seconds
+        $unit->min_spot_length                = min($unit->spot_length, 5);                                                       // Min length : 5 seconds or spot length if shorter
         $unit->max_spot_length                = $unit->spot_length;
         $unit->timezone                       = $product->timezone;
         $unit->allow_image                    = in_array(MediaType::Image, $product->allowed_media_types);
@@ -163,6 +175,25 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->enable_strict_iab_blacklisting = true;
         $unit->weekly_traffic                 = $product->weekly_traffic;
         $unit->physical_unit_count            = $location->screen_count;
+    }
+
+    /**
+     * Find a site on the inventory by its external ID
+     *
+     * @param string $externalId
+     * @return Site|null
+     * @throws GuzzleException
+     * @throws RequestException
+     */
+    protected function findSiteByExternalId(string $externalId): Site|null {
+        /** @var Site $site */
+        foreach (Site::all($this->getConfig()->getClient()) as $site) {
+            if ($site->external_id === $externalId) {
+                return $site;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -180,12 +211,14 @@ class HivestackAdapter extends InventoryAdapter {
         /** @var HivestackClient $client */
         $client = $this->getConfig()->getClient();
         // Hivestack has support for property, so we need to validate that first.
-        // If the product resource come with a unit ID, we're good, otherwise we'll have to create it
+        // If the product resource come with a unit ID, we're good, otherwise we'll check if a site already exist with the property id. If not, we'll create it
         $siteId = (int)$product->property_id?->external_id;
 
         if (!$siteId) {
-            // Let's create the property
-            $site = new Site($client);
+            $propertyExternalId = "connect:" . $product->property_connect_id . " - " . $product->property_name;
+            
+            // Let's find or create the property
+            $site = $this->findSiteByExternalId($propertyExternalId) ?? new Site($client);
             $this->fillSite($site, $product);
             $site->save();
 

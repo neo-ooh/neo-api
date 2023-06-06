@@ -728,6 +728,13 @@ class BroadSignAdapter extends BroadcasterOperator implements
             $bundleContent->create();
         }
 
+        // Finally, list bundle contents to validate our association where successful
+        $bundleContents      = BundleContent::byBundle($this->getAPIClient(), (int)$externalBundle->external_id);
+        $activeContentsCount = $bundleContents->where("active", "=", true)->count();
+        
+        if ($activeContentsCount !== count($creatives)) {
+            throw new BroadcastServiceException($this->getBroadcasterType(), "Could not correctly sync creatives with bundle: Found $activeContentsCount ad copies attached to bundle, " . count($creatives) . " expected.");
+        }
     }
 
     /**

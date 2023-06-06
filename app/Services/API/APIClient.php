@@ -33,8 +33,8 @@ class APIClient implements APIClientInterface {
         $stack = HandlerStack::create(new CurlHandler());
 
         $clientOptions = [
-//            "debug"   => true,
-"handler" => $stack,
+            "debug"   => false,
+            "handler" => $stack,
         ];
 
         $this->_client = new Client($clientOptions);

@@ -11,9 +11,9 @@
 namespace Neo\Modules\Properties\Services\Hivestack\Models;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Neo\Modules\Properties\Services\Exceptions\RequestException;
 use Neo\Modules\Properties\Services\Hivestack\API\HivestackClient;
 use Neo\Services\API\Endpoint;
 use Neo\Services\API\Traits\HasAttributes;
@@ -66,17 +66,17 @@ abstract class HivestackModel {
      *
      * @param HivestackClient $client
      * @param                 $key
-     * @return static
+     * @return static|null
      */
-    public static function find(HivestackClient $client, $key): static {
+    public static function find(HivestackClient $client, $key): static|null {
         $model = new static($client);
         $model->setAttribute($model->key, $key);
         try {
             $model->refresh();
+            return $model;
         } catch (Throwable $e) {
             clock($e);
-        } finally {
-            return $model;
+            return null;
         }
     }
 
@@ -104,8 +104,9 @@ abstract class HivestackModel {
     }
 
     /**
-     * @throws RequestException
+     * @return bool
      * @throws GuzzleException
+     * @throws RequestException
      */
     public function save(): bool {
         // If the model key is missing or null, we want to create the model
@@ -122,8 +123,9 @@ abstract class HivestackModel {
     }
 
     /**
-     * @throws RequestException
+     * @return bool
      * @throws GuzzleException
+     * @throws RequestException
      */
     public function delete(): bool {
         $endpoint = new Endpoint("DELETE", $this->getEndpointName() . "/" . $this->getKey());
@@ -133,7 +135,7 @@ abstract class HivestackModel {
         return true;
     }
 
-    public function setKey($value) {
+    public function setKey($value): static {
         $this->setAttribute($this->key, $value);
         return $this;
     }
@@ -147,7 +149,7 @@ abstract class HivestackModel {
 
     }
 
-    protected function getEndpointName() {
+    protected function getEndpointName(): string {
         if (isset($this->endpoint)) {
             return $this->endpoint;
         }

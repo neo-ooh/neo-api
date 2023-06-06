@@ -12,7 +12,6 @@ namespace Neo\Modules\Properties\Services\PlaceExchange;
 
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\LazyCollection;
 use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\PriceType;
@@ -20,6 +19,7 @@ use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\IncompatibleResourceAndInventoryException;
 use Neo\Modules\Properties\Services\Exceptions\IncompleteResourceException;
+use Neo\Modules\Properties\Services\Exceptions\RequestException;
 use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryCapability;
 use Neo\Modules\Properties\Services\InventoryConfig;
@@ -71,6 +71,10 @@ class PlaceExchangeAdapter extends InventoryAdapter {
         );
     }
 
+    /**
+     * @return bool|string
+     * @throws GuzzleException
+     */
     public function validateConfiguration(): bool|string {
         try {
             return $this->getConfig()->getClient()->login();
@@ -190,11 +194,14 @@ class PlaceExchangeAdapter extends InventoryAdapter {
     }
 
     /**
-     * @throws IncompatibleResourceAndInventoryException
-     * @throws RequestException
-     * @throws GuzzleException
+     * @param ProductResource $product
+     * @param array           $context
+     * @return InventoryResourceId|null
      * @throws APIAuthenticationError
+     * @throws GuzzleException
+     * @throws IncompatibleResourceAndInventoryException
      * @throws IncompleteResourceException
+     * @throws RequestException
      */
     public function createProduct(ProductResource $product, array $context): InventoryResourceId|null {
         // First, validate the product is compatible with Reach
@@ -229,8 +236,15 @@ class PlaceExchangeAdapter extends InventoryAdapter {
                 );
                 $adUnit->status = $product->is_sellable ? AdUnitStatus::Live : AdUnitStatus::Decommissioned;
                 $adUnit->create();
-                $this->fillAdUnit($adUnit, $broadcastPlayer, $product, $context, $impressionsShare);
-                $adUnit->save();
+
+                try {
+                    $this->fillAdUnit($adUnit, $broadcastPlayer, $product, $context, $impressionsShare);
+                    $adUnit->save();
+                } catch (RequestException $e) {
+                    // In case of an error when filling the ad unit, delete it. Otherwise, the incomplete unit would be left dangling
+                    $adUnit->delete();
+                    throw $e;
+                }
 
                 $adUnitsIds[$broadcastPlayer->id] = ["id" => $adUnit->getKey(), "name" => $adUnit->name];
             }
@@ -253,8 +267,8 @@ class PlaceExchangeAdapter extends InventoryAdapter {
      * @return InventoryResourceId|false
      * @throws APIAuthenticationError
      * @throws GuzzleException
-     * @throws RequestException
      * @throws IncompleteResourceException
+     * @throws RequestException
      */
     public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
         if (!$product->property_type) {

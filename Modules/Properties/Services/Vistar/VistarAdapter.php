@@ -59,6 +59,10 @@ class VistarAdapter extends InventoryAdapter {
         );
     }
 
+    /**
+     * @return bool|string
+     * @throws GuzzleException
+     */
     public function validateConfiguration(): bool|string {
         try {
             return $this->getConfig()->getClient()->login();

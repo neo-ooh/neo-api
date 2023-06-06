@@ -24,7 +24,7 @@ class PlaceExchangeClient extends APIClient {
         parent::__construct();
     }
 
-    public function isLoggedIn() {
+    public function isLoggedIn(): bool {
         return $this->accessToken !== null;
     }
 

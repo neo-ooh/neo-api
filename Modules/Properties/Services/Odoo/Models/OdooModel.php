@@ -17,6 +17,7 @@ use Illuminate\Support\Collection;
 use JsonException;
 use Neo\Modules\Properties\Services\Odoo\API\OdooClient;
 use Neo\Services\API\Traits\HasAttributes;
+use Psr\SimpleCache\InvalidArgumentException;
 
 abstract class OdooModel implements Arrayable {
 
@@ -83,7 +84,7 @@ abstract class OdooModel implements Arrayable {
         return $this->{static::$key};
     }
 
-    protected static function makeCacheKey(int $id) {
+    protected static function makeCacheKey(int $id): string {
         return "odoo-" . static::$slug . "-" . $id;
     }
 
@@ -91,7 +92,10 @@ abstract class OdooModel implements Arrayable {
         return static::makeCacheKey($this->getKey());
     }
 
-    public function invalidate() {
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function invalidate(): void {
         Cache::tags(['odoo-data'])->delete($this->getCacheKey());
     }
 
@@ -100,6 +104,7 @@ abstract class OdooModel implements Arrayable {
      *
      * @param OdooClient $client
      * @param array      $filters
+     * @param array      $fields
      * @param int|null   $limit
      * @param int        $offset
      * @return Collection
@@ -182,7 +187,7 @@ abstract class OdooModel implements Arrayable {
      * @return static|null
      * @throws JsonException
      */
-    public static function get(OdooClient $client, $id): static|null {
+    public static function get(OdooClient $client, mixed $id): static|null {
         $response = Cache::tags(["odoo-data", "odoo-" . static::$slug])
                          ->remember(static::makeCacheKey($id), 3600 * 6, function () use ($id, $client) {
                              return $client->getById(static::$slug, $id, static::$fields);
@@ -213,6 +218,7 @@ abstract class OdooModel implements Arrayable {
      *
      * @param array $fields
      * @return bool
+     * @throws InvalidArgumentException
      */
     public function update(array $fields): bool {
         $values  = collect($fields)->mapWithKeys(fn($k) => [$k => $this->{$k}]);
@@ -255,7 +261,7 @@ abstract class OdooModel implements Arrayable {
      * @param array      $where
      * @return Collection|string|true
      */
-    public static function delete(OdooClient $client, array $where) {
+    public static function delete(OdooClient $client, array $where): bool|string|Collection {
         $response = $client->delete(static::$slug, $where);
         Cache::tags(["odoo-" . static::$slug])->flush();
         return $response;
@@ -263,8 +269,9 @@ abstract class OdooModel implements Arrayable {
 
     /**
      * @return Collection|string|true
+     * @throws InvalidArgumentException
      */
-    public function remove() {
+    public function remove(): bool|string|Collection {
         $response = $this->client->delete(static::$slug, [[static::$key, "=", $this->getKey()]]);
         $this->invalidate();
         return $response;

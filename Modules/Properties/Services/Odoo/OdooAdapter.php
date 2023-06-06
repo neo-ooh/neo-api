@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Services\Odoo;
 
 use Carbon\Carbon;
 use Edujugon\Laradoo\Exceptions\OdooException;
+use Generator;
 use Illuminate\Support\LazyCollection;
 use JsonException;
 use Neo\Modules\Properties\Enums\PriceType;
@@ -70,7 +71,14 @@ class OdooAdapter extends InventoryAdapter {
         }
     }
 
-    protected function __listAllProducts(OdooClient $client, array $filters) {
+    /**
+     * @param OdooClient $client
+     * @param array      $filters
+     * @return Generator
+     * @throws JsonException
+     * @throws OdooException
+     */
+    protected function __listAllProducts(OdooClient $client, array $filters): Generator {
         $pageSize = 500;
         $cursor   = 0;
 
@@ -141,7 +149,13 @@ class OdooAdapter extends InventoryAdapter {
         );
     }
 
-    public function fillProperty(Property $property, ProductResource $productResource) {
+    /**
+     * @param Property        $property
+     * @param ProductResource $productResource
+     * @return void
+     * @throws OdooException
+     */
+    public function fillProperty(Property $property, ProductResource $productResource): void {
         /** @var Province $province */
         $province = Province::findBy($this->getConfig()
                                           ->getClient(), "code", strtoupper($productResource->address->city->province_slug))[0];
@@ -156,7 +170,12 @@ class OdooAdapter extends InventoryAdapter {
         $property->annual_traffic = (int)round($productResource->weekly_traffic * (365 / 7));
     }
 
-    public function fillProduct(Product $product, ProductResource $productResource) {
+    /**
+     * @param Product         $product
+     * @param ProductResource $productResource
+     * @return void
+     */
+    public function fillProduct(Product $product, ProductResource $productResource): void {
         $product->product_type_id   = match ($productResource->type) {
             ProductType::Digital   => 1,
             ProductType::Static    => 2,
@@ -173,6 +192,11 @@ class OdooAdapter extends InventoryAdapter {
 
     /**
      * @inheritDoc
+     * @param InventoryResourceId $productId
+     * @param ProductResource     $product
+     * @return InventoryResourceId|false
+     * @throws JsonException
+     * @throws OdooException
      */
     public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
         $client = $this->getConfig()->getClient();

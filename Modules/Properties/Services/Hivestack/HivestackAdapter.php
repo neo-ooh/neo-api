@@ -12,7 +12,6 @@ namespace Neo\Modules\Properties\Services\Hivestack;
 
 use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Enumerable;
 use Illuminate\Support\LazyCollection;
 use Neo\Modules\Properties\Enums\MediaType;
@@ -20,6 +19,7 @@ use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\IncompatibleResourceAndInventoryException;
+use Neo\Modules\Properties\Services\Exceptions\RequestException;
 use Neo\Modules\Properties\Services\Hivestack\API\HivestackClient;
 use Neo\Modules\Properties\Services\Hivestack\Models\Language;
 use Neo\Modules\Properties\Services\Hivestack\Models\Site;
@@ -64,6 +64,9 @@ class HivestackAdapter extends InventoryAdapter {
         );
     }
 
+    /**
+     * @return bool|string
+     */
     public function validateConfiguration(): bool|string {
         try {
             Language::all($this->getConfig()->getClient());
@@ -198,9 +201,12 @@ class HivestackAdapter extends InventoryAdapter {
 
     /**
      * @inheritDoc
-     * @throws RequestException
+     * @param ProductResource $product
+     * @param array           $context
+     * @return InventoryResourceId|null
      * @throws GuzzleException
      * @throws IncompatibleResourceAndInventoryException
+     * @throws RequestException
      */
     public function createProduct(ProductResource $product, array $context): InventoryResourceId|null {
         // First, validate this product is compatible with hivestack
@@ -216,7 +222,7 @@ class HivestackAdapter extends InventoryAdapter {
 
         if (!$siteId) {
             $propertyExternalId = "connect:" . $product->property_connect_id . " - " . $product->property_name;
-            
+
             // Let's find or create the property
             $site = $this->findSiteByExternalId($propertyExternalId) ?? new Site($client);
             $this->fillSite($site, $product);
@@ -253,6 +259,9 @@ class HivestackAdapter extends InventoryAdapter {
 
     /**
      * @inheritDoc
+     * @param InventoryResourceId $productId
+     * @param ProductResource     $product
+     * @return InventoryResourceId|false
      * @throws GuzzleException
      * @throws RequestException
      */
@@ -305,8 +314,10 @@ class HivestackAdapter extends InventoryAdapter {
     }
 
     /**
-     * @throws RequestException
+     * @param InventoryResourceId $productId
+     * @return bool
      * @throws GuzzleException
+     * @throws RequestException
      */
     public function removeProduct(InventoryResourceId $productId): bool {
         $client = $this->getConfig()->getClient();
@@ -327,7 +338,7 @@ class HivestackAdapter extends InventoryAdapter {
     public function listProperties(?Carbon $ifModifiedSince = null): Traversable {
         $client = $this->getConfig()->getClient();
 
-        return LazyCollection::make(function () use ($ifModifiedSince, $client) {
+        return LazyCollection::make(function () use ($client) {
             $pageSize = 100;
             $cursor   = 0;
 

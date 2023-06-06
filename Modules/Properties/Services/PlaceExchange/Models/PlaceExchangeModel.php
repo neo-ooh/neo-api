@@ -11,11 +11,11 @@
 namespace Neo\Modules\Properties\Services\PlaceExchange\Models;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Enumerable;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
+use Neo\Modules\Properties\Services\Exceptions\RequestException;
 use Neo\Modules\Properties\Services\PlaceExchange\PlaceExchangeClient;
 use Neo\Services\API\APIAuthenticationError;
 use Neo\Services\API\Endpoint;
@@ -38,6 +38,7 @@ abstract class PlaceExchangeModel {
 
     /**
      * @return bool
+     * @throws APIAuthenticationError
      * @throws GuzzleException
      * @throws RequestException
      */
@@ -56,6 +57,7 @@ abstract class PlaceExchangeModel {
      * Reload the model from the API
      *
      * @return $this
+     * @throws APIAuthenticationError
      * @throws GuzzleException
      * @throws RequestException
      */
@@ -123,8 +125,11 @@ abstract class PlaceExchangeModel {
      * Because PlaceExchange uses the unit NAME as id in the URL, we need to allow passing a key to the save function in case we
      * are changing the name of the unit
      *
+     * @param string|null $key
+     * @return bool
+     * @throws APIAuthenticationError
+     * @throws GuzzleException
      * @throws RequestException
-     * @throws GuzzleException|APIAuthenticationError
      */
     public function save(string|null $key = null): bool {
         // If the model key is missing or null, we want to create the model
@@ -154,7 +159,7 @@ abstract class PlaceExchangeModel {
         return true;
     }
 
-    public function setKey($value) {
+    public function setKey($value): static {
         $this->setAttribute($this->key, $value);
         return $this;
     }
@@ -168,7 +173,7 @@ abstract class PlaceExchangeModel {
 
     }
 
-    protected function getEndpointName() {
+    protected function getEndpointName(): string {
         if (isset($this->endpoint)) {
             return $this->endpoint;
         }

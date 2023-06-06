@@ -41,8 +41,7 @@ abstract class InventoryJobBase extends Job {
     protected function onFailure(mixed $exception): void {
         $this->event->resource_id = $this->resourceId;
         $this->event->is_success  = false;
-        dump($exception);
-        $this->event->result = (array)$exception;
+        $this->event->result      = (array)$exception;
         $this->event->save();
     }
 

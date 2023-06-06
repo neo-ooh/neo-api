@@ -39,14 +39,16 @@ class HivestackClient extends APIClient {
     public function call(Endpoint $endpoint, mixed $payload, array $headers = []): Response {
         $endpoint->base = $this->config->api_url;
 
-        $response = parent::call($endpoint, $payload, [
+        $requestHeader = [
             ...$this->getAuthHeader(),
             "Accept" => "application/json",
             ...$headers,
-        ]);
+        ];
+
+        $response = parent::call($endpoint, $payload, $requestHeader);
 
         if (!$response->successful()) {
-            throw new RequestException($response);
+            throw new RequestException($endpoint->toRequest($payload, $headers), $response);
         }
 
         return $response;

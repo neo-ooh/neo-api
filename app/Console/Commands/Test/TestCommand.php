@@ -11,9 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
-use Neo\Modules\Properties\Models\InventoryProvider;
-use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
+use Neo\Modules\Broadcast\Models\Schedule;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -22,10 +20,9 @@ class TestCommand extends Command {
 
     /**
      * @return void
-     * @throws InvalidInventoryAdapterException
      */
     public function handle() {
-        $inventory = InventoryProvider::find(4);
-        dump($inventory->getAdapter()->listProducts(Carbon::now()->subWeek())->first());
+        $schedule = Schedule::find(24443);
+        dump($schedule->contents()->wherePivotNotNull("deleted_at")->get());
     }
 }

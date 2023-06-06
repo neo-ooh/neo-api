@@ -70,14 +70,16 @@ class PlaceExchangeClient extends APIClient {
             $this->login();
         }
 
-        $response = parent::call($endpoint, $payload, [
+        $requestHeaders = [
             "Authorization" => "Bearer " . $this->accessToken,
             "Accept"        => "application/json",
             ...$headers,
-        ]);
+        ];
+
+        $response = parent::call($endpoint, $payload, $requestHeaders);
 
         if (!$response->successful()) {
-            throw new RequestException($response);
+            throw new RequestException($endpoint->toRequest($payload, $headers), $response);
         }
 
         return $response;

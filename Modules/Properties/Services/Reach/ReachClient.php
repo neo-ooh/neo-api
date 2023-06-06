@@ -22,13 +22,25 @@ class ReachClient extends APIClient {
         parent::__construct();
     }
 
+    /**
+     * @throws GuzzleException
+     * @throws RequestException
+     */
     protected function getAuthToken() {
         return Cache::tags(["reach-data", "inventory-{$this->config->inventoryID}"])
-                    ->remember("reach-{$this->config->inventoryID}-token", 280, function () {
+                    ->remember(/**
+                     * @throws GuzzleException
+                     * @throws RequestException
+                     */ "reach-{$this->config->inventoryID}-token", 280, function () {
                         $authEndpoint       = new Endpoint("POST", "/oauth/token");
                         $authEndpoint->base = $this->config->auth_url;
 
-                        $response = parent::call($authEndpoint, [
+                        $requestHeader = [
+                            "Accept"       => "application/json",
+                            "Content-type" => "application/json",
+                        ];
+
+                        $requestPayload = [
                             'client_id'  => $this->config->client_id,
                             'username'   => $this->config->api_username,
                             'password'   => $this->config->api_key,
@@ -36,19 +48,23 @@ class ReachClient extends APIClient {
                             'realm'      => 'Username-Password-Authentication',
                             'audience'   => 'https://platform.broadsign.com/',
                             'grant_type' => 'http://auth0.com/oauth/grant-type/password-realm',
-                        ],                       [
-                                                     "Accept"       => "application/json",
-                                                     "Content-type" => "application/json",
-                                                 ]);
+                        ];
+
+                        $response = parent::call($authEndpoint, $requestPayload, $requestHeader);
 
                         if ($response->failed()) {
-                            throw new RequestException($response);
+                            throw new RequestException($authEndpoint->toRequest($requestPayload, $requestHeader), $response);
                         }
 
                         return $response->json("access_token");
                     });
     }
 
+    /**
+     * @return array
+     * @throws GuzzleException
+     * @throws RequestException
+     */
     protected function getAuthHeader(): array {
         return [
             "Authorization" => "Bearer " . $this->getAuthToken(),
@@ -64,14 +80,16 @@ class ReachClient extends APIClient {
             $endpoint->base = $this->config->api_url;
         }
 
-        $response = parent::call($endpoint, $payload, [
+        $requestHeader = [
             ...$this->getAuthHeader(),
             "Accept" => "application/json",
             ...$headers,
-        ]);
+        ];
+
+        $response = parent::call($endpoint, $payload, $requestHeader);
 
         if (!$response->successful()) {
-            throw new RequestException($response);
+            throw new RequestException($endpoint->toRequest($payload, $headers), $response);
         }
 
         return $response;

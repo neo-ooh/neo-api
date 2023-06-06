@@ -336,7 +336,6 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 
         // We have to remove all the units listed in the product's context
         foreach ($productId->context["units"] as ["id" => $adUnitId]) {
-
             $adUnit         = AdUnit::find($client, $adUnitId);
             $adUnitKey      = $adUnit->name;
             $adUnit->name   .= "_disabled-" . time();

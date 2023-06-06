@@ -72,14 +72,16 @@ class VistarClient extends APIClient {
             $this->login();
         }
 
-        $response = parent::call($endpoint, $payload, [
+        $requestHeaders = [
             "Accept" => "application/json",
             "Cookie" => $this->authCookie,
             ...$headers,
-        ]);
+        ];
+
+        $response = parent::call($endpoint, $payload, $requestHeaders);
 
         if (!$response->successful()) {
-            throw new RequestException($response);
+            throw new RequestException($endpoint->toRequest($payload, $requestHeaders), $response);
         }
 
         return $response;

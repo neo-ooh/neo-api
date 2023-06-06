@@ -10,6 +10,7 @@
 
 namespace Neo\Services\API;
 
+use GuzzleHttp\Psr7\Request;
 use Neo\Services\API\Parsers\ResponseParser;
 
 /**
@@ -192,4 +193,17 @@ class Endpoint {
         return $base . $path;
     }
 
+    /**
+     * @param mixed $payload
+     * @param array $headers
+     * @return Request
+     */
+    public function toRequest(mixed $payload, array $headers = []): Request {
+        if (is_array($payload) || is_scalar($payload)) {
+            $body = json_encode($payload);
+        } else {
+            $body = "[not serializable]";
+        }
+        return new Request($this->method, $this->getUrl(), $headers, $body);
+    }
 }

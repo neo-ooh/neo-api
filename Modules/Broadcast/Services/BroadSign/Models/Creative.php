@@ -272,7 +272,7 @@ class Creative extends BroadSignModel {
         exec($curl_command, $output, $exit_code);
 
         if ($exit_code !== 0 || (int)$output[1] !== 200) {
-            throw new RuntimeException("Error while executing cURL request: `$curl_command`; Error:" . implode(", ", $output));
+            throw new RuntimeException("[cURL request]\n$curl_command\n\n[Response]\n" . implode(", ", $output));
         }
 
         $responseBody = json_decode($output[0], true, 512, JSON_THROW_ON_ERROR)[$endpoint->unwrapKey];

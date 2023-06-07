@@ -31,6 +31,7 @@ use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
+use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Library;
 use Symfony\Component\Mailer\Exception\TransportException;
@@ -44,8 +45,14 @@ class ActorsController extends Controller {
     public function index(ListActorsRequest $request): Response {
         $params = $request->validated();
 
-        /** @var Collection $actors */
-        $actors = Auth::user()?->getAccessibleActors() ?? new Collection();
+        if ($request->input("parent_id")) {
+            $actors = ActorsGetter::from($request->input("parent_id"))
+                                  ->selectChildren(recursive: true)
+                                  ->getActors();
+        } else {
+            /** @var Collection $actors */
+            $actors = Auth::user()?->getAccessibleActors() ?? new Collection();
+        }
 
         if ($request->input("withself", false)) {
             $actors = $actors->push(Auth::user());
@@ -62,13 +69,10 @@ class ActorsController extends Controller {
         if ($request->has("capabilities")) {
             $actors->load(["capabilities"]);
 
-            $actors = $actors->filter(fn(Actor $actor) => array_any($request->input("capabilities"), static fn(string $capSlug) => $actor->hasCapability(Capability::from($capSlug))
-            )
-            );
+            $actors = $actors->filter(fn(Actor $actor) => array_any($request->input("capabilities"), static fn(string $capSlug) => $actor->hasCapability(Capability::from($capSlug))));
 
             $actors->makeHidden(["capabilities"]);
         }
-
 
         // Legacy filters; Deprecated
 
@@ -204,7 +208,7 @@ class ActorsController extends Controller {
         if (count($request->all()) === 0) {
             return new Response([
                                     "code" => "empty-request",
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      "message" => "You must pass at lease 1 parameter when calling this route",
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "message" => "You must pass at lease 1 parameter when calling this route",
                                 ], 422);
         }
 
@@ -239,7 +243,7 @@ class ActorsController extends Controller {
             if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
                 return new Response([
                                         'code' => 'actor.hierarchy-loop',
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          'message' => 'Parent assignment would result in incoherent actors hierarchy',
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            'message' => 'Parent assignment would result in incoherent actors hierarchy',
                                         'data' => $actor,
                                     ], 403);
             }

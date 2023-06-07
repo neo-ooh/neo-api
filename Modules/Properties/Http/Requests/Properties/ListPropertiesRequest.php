@@ -15,11 +15,13 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Network;
+use Neo\Rules\AccessibleActor;
 
 class ListPropertiesRequest extends FormRequest {
     public function rules(): array {
         return [
             "network_id" => ["integer", new Exists(Network::class, "id")],
+            "parent_id"  => ["sometimes", "integer", new AccessibleActor(true)],
 
             "with" => ["sometimes", "array"],
         ];

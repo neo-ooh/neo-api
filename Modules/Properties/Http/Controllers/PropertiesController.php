@@ -21,6 +21,7 @@ use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
 use Neo\Jobs\Properties\PullOpeningHoursJob;
 use Neo\Models\Actor;
+use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Enums\TrafficFormat;
 use Neo\Modules\Properties\Http\Requests\Properties\DestroyPropertyRequest;
@@ -37,7 +38,17 @@ use Neo\Modules\Properties\Models\Property;
 
 class PropertiesController extends Controller {
     public function index(ListPropertiesRequest $request) {
-        $query = Property::query();
+        if ($request->input("parent_id")) {
+            $actors = ActorsGetter::from($request->input("parent_id"))
+                                  ->selectChildren(recursive: true)
+                                  ->getActors();
+        } else {
+            $actors = Auth::user()->getAccessibleActors();
+        }
+
+        $actorIds = $actors->where("is_property", "=", true)->pluck("id");
+
+        $query = Property::query()->whereIn("actor_id", $actorIds);
 
         if ($request->has("network_id")) {
             $query->where("network_id", "=", $request->input("network_id"));

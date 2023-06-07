@@ -80,7 +80,6 @@ class Unit extends HivestackModel {
     public string $key = "unit_id";
 
     public function toInventoryResourceId(int $inventoryId): InventoryResourceId {
-        dump($this->getAttributes());
         return new InventoryResourceId(
             inventory_id: $inventoryId,
             external_id : $this->unit_id,

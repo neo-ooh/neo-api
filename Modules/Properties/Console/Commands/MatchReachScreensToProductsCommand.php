@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Console\Commands;
 
 use Illuminate\Console\Command;
+use Neo\Documents\XLSX\Worksheet;
 use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
@@ -20,6 +21,8 @@ use Neo\Modules\Properties\Services\InventoryType;
 use Neo\Modules\Properties\Services\Reach\ReachAdapter;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class MatchReachScreensToProductsCommand extends Command {
     protected $signature = 'reach:match-screens-to-products {inventory}';
@@ -124,7 +127,7 @@ class MatchReachScreensToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                                    "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                                               "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,
@@ -137,8 +140,19 @@ class MatchReachScreensToProductsCommand extends Command {
             $this->output->writeln(": Associated to " . $product->property->actor->name . " - " . $product->name_en);
         }
 
-        foreach ($notMatched as $screenName) {
-            $this->output->warning($screenName);
+        $spreadsheet = new Spreadsheet();
+        $worksheet   = new Worksheet(null, 'Worksheet 1');
+        $spreadsheet->addSheet($worksheet);
+        $spreadsheet->removeSheetByIndex(0);
+
+        foreach ($notMatched as $unitName) {
+            $this->output->warning($unitName);
+            $worksheet->printRow([$unitName]);
         }
+
+        $filename = storage_path("reach-missing.xlsx");
+        $writer   = new Xlsx($spreadsheet);
+        $writer->save($filename);
+        dump($filename);
     }
 }

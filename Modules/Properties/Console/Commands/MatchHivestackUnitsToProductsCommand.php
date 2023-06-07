@@ -11,18 +11,27 @@
 namespace Neo\Modules\Properties\Console\Commands;
 
 use Illuminate\Console\Command;
+use Neo\Documents\XLSX\Worksheet;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Exception;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class MatchHivestackUnitsToProductsCommand extends Command {
     protected $signature = 'hivestack:match-units-to-products {inventory}';
 
 
+    /**
+     * @throws InvalidInventoryAdapterException
+     * @throws Exception
+     */
     public function handle(): void {
         $inventoryId = $this->argument("inventory");
 
@@ -102,7 +111,7 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                 ]);
             }
 
-            $representation->save();
+//            $representation->save();
 
             // We also want to validate that the property has a representation as well
             $propertyRepresentation = $product->property->external_representations()
@@ -112,7 +121,7 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                 // Add it
                 $propertyRepresentation              = ExternalInventoryResource::fromInventoryResource($unit->product->property_id);
                 $propertyRepresentation->resource_id = $product->property->inventory_resource_id;
-                $propertyRepresentation->save();
+//                $propertyRepresentation->save();
             }
 
             // Set up inventory for auto push
@@ -120,7 +129,7 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                                                      "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                                                              "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,
@@ -133,8 +142,19 @@ class MatchHivestackUnitsToProductsCommand extends Command {
             $this->output->writeln(": Associated to " . $product->property->actor->name . " - " . $product->name_en);
         }
 
+        $spreadsheet = new Spreadsheet();
+        $worksheet   = new Worksheet(null, 'Worksheet 1');
+        $spreadsheet->addSheet($worksheet);
+        $spreadsheet->removeSheetByIndex(0);
+
         foreach ($notMatched as $unitName) {
             $this->output->warning($unitName);
+            $worksheet->printRow([$unitName]);
         }
+
+        $filepath = storage_path("hivestack-missing.xlsx");
+        $writer   = new Xlsx($spreadsheet);
+        $writer->save($filepath);
+        dump($filepath);
     }
 }

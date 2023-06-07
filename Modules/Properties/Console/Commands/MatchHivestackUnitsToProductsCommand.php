@@ -111,7 +111,7 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                 ]);
             }
 
-//            $representation->save();
+            $representation->save();
 
             // We also want to validate that the property has a representation as well
             $propertyRepresentation = $product->property->external_representations()
@@ -121,7 +121,7 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                 // Add it
                 $propertyRepresentation              = ExternalInventoryResource::fromInventoryResource($unit->product->property_id);
                 $propertyRepresentation->resource_id = $product->property->inventory_resource_id;
-//                $propertyRepresentation->save();
+                $propertyRepresentation->save();
             }
 
             // Set up inventory for auto push
@@ -129,7 +129,7 @@ class MatchHivestackUnitsToProductsCommand extends Command {
                                                                  ->where("inventory_id", "=", $inventoryId)
                                                                  ->firstOrCreate([
                                                                                      "resource_id" => $product->property->inventory_resource_id,
-                                                                                                                                                                                                                                                                                                                                                              "inventory_id" => $inventoryId,
+                                                                                                                                                                                                                                                                                                                                                                 "inventory_id" => $inventoryId,
                                                                                  ], [
                                                                                      "is_enabled"   => true,
                                                                                      "push_enabled" => true,

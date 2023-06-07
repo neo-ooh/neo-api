@@ -15,7 +15,12 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::table('properties', function (Blueprint $table) {
-            $table->foreignId("type_id")->nullable()->after("pricelist_id")->constrained("property_types", "id");
+            $table->foreignId("type_id")
+                  ->nullable()
+                  ->after("pricelist_id")
+                  ->constrained("property_types", "id")
+                  ->cascadeOnUpdate()
+                  ->nullOnDelete();
         });
     }
 };

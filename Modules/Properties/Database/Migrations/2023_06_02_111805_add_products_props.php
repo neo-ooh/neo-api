@@ -17,7 +17,11 @@ return new class extends Migration {
         Schema::table('products', function (Blueprint $table) {
             $table->boolean("allows_motion")->after("allows_audio")->nullable()->default(null);
             $table->unsignedDouble("screen_size_in")->nullable()->after("production_cost");
-            $table->foreignId("screen_type_id")->nullable()->after("screen_size_in")->constrained("screen_types", "id");
+            $table->foreignId("screen_type_id")->nullable()
+                  ->after("screen_size_in")
+                  ->constrained("screen_types", "id")
+                  ->cascadeOnUpdate()
+                  ->nullOnDelete();
         });
     }
 };

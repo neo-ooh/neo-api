@@ -98,6 +98,15 @@ class ScreenType extends Model {
         ];
     }
 
+    public static function boot(): void {
+        parent::boot();
+
+        static::deleting(function (ScreenType $screenType) {
+            $screenType->product_categories()->update(["screen_type_id" => null]);
+            $screenType->products()->update(["screen_type_id" => null]);
+        });
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relations

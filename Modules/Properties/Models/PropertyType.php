@@ -94,6 +94,14 @@ class PropertyType extends Model {
         ];
     }
 
+    public static function boot(): void {
+        parent::boot();
+
+        static::deleting(function (PropertyType $propertyType) {
+            $propertyType->properties()->update(["type_id" => null]);
+        });
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relations

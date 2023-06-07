@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
+use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\DestroyCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\ListCampaignsByIdsRequest;
@@ -41,8 +42,17 @@ class CampaignsController extends Controller {
      * @noinspection PhpUnusedParameterInspection
      */
     public function index(ListCampaignsRequest $request): Response {
-        /** @var Collection<Campaign> $libraries */
-        $campaigns = Campaign::query()->whereIn("parent_id", Auth::user()?->getAccessibleActors(ids: true))->get();
+        if ($request->input("parent_id")) {
+            $actorIds = ActorsGetter::from($request->input("parent_id"))
+                                    ->selectFocus()
+                                    ->selectChildren(recursive: true)
+                                    ->getSelection();
+        } else {
+            $actorIds = Auth::user()?->getAccessibleActors(ids: true);
+        }
+
+        /** @var Collection<Campaign> $campaigns */
+        $campaigns = Campaign::query()->whereIn("parent_id", $actorIds)->get();
 
         if ($request->has("layout_id")) {
             $campaigns->load("layouts");

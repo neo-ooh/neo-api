@@ -30,12 +30,14 @@ use Neo\Modules\Properties\Models\ProductCategory;
  * @property int                           $network_id
  * @property string                        $name
  * @property int                           $content_length seconds
+ * @property int|null                      $main_layout_id
  *
  * @property Carbon                        $created_at
  * @property Carbon                        $updated_at
  * @property Carbon|null                   $deleted_at
  *
  * @property Collection<Layout>            $layouts
+ * @property Layout|null                   $main_layout
  * @property Collection<DisplayType>       $display_types
  * @property Collection<BroadcastTag>      $broadcast_tags
  * @property Collection<LoopConfiguration> $loop_configurations
@@ -133,6 +135,10 @@ class Format extends Model {
                     ->orderBy("name_fr");
     }
 
+    public function main_layout(): BelongsTo {
+        return $this->belongsTo(Layout::class, "main_layout_id", "id");
+    }
+
     /**
      * @return BelongsToMany<BroadcastTag>
      */
@@ -159,7 +165,7 @@ class Format extends Model {
     /**
      * @return HasMany<LoopConfiguration>
      */
-    public function product(): HasMany {
+    public function products(): HasMany {
         return $this->hasMany(Product::class, "format_id", "id");
     }
 }

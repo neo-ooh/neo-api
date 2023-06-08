@@ -94,6 +94,14 @@ class FormatsController extends Controller {
     public function update(UpdateFormatRequest $request, Format $format): Response {
         $format->name           = $request->input("name");
         $format->content_length = $request->input("content_length");
+
+        // Validate the given main layout is actually attached to the format
+        $mainLayoutId = $request->input("main_layout_id");
+        if ($mainLayoutId !== null) {
+            $mainLayoutId = $format->layouts()->where("id", "=", $mainLayoutId)->exists() ? $mainLayoutId : null;
+        }
+
+        $format->main_layout_id = $mainLayoutId;
         $format->save();
 
         $format->broadcast_tags()->sync($request->input("tags"));

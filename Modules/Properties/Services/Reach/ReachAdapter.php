@@ -163,7 +163,7 @@ class ReachAdapter extends InventoryAdapter {
         $productScreensCount = collect($product->broadcastLocations)->sum("screen_count");
         $impressionsShare    = $player->screen_count / $productScreensCount;
 
-        $screen->device_id             = $location->provider->value . ".com-test:" . $player->external_id->external_id; // TODO: Remove `-test`
+        $screen->device_id             = $location->provider->value . ".com:" . $player->external_id->external_id;
         $screen->name                  = trim($product->property_name) . " - " . trim($product->name[0]->value) . " - " . trim($player->name);
         $screen->publisher             = ScreenPublisher::from(["id" => $this->config->publisher_id]);
         $screen->is_active             = $product->is_sellable;
@@ -204,7 +204,7 @@ class ReachAdapter extends InventoryAdapter {
                                                                 currency: ScreenCurrency::from(["id" => 9]),
                                                             ),
                                                         ]);
-        $screen->average_weekly_impressions   = collect($product->weekdays_spot_impressions)->sum() * ($product->loop_configuration->loop_length_ms / $product->loop_configuration->spot_length_ms) * $impressionsShare;
+        $screen->average_weekly_impressions   = round(collect($product->weekdays_spot_impressions)->sum() * ($product->loop_configuration->loop_length_ms / $product->loop_configuration->spot_length_ms) * $impressionsShare);
         $screen->bearing                      = null;
         $screen->internal_publisher_screen_id = "connect:" . $product->product_connect_id;
         $screen->ox_enabled                   = true;

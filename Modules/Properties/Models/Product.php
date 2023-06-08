@@ -372,7 +372,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         $format = $this->category->type === ProductType::Digital ? ($this->format ?? $this->category->format) : null;
 
         /** @var Layout|null $layout */
-        $layout = $format->layouts->first(fn(Layout $layout) => $layout->frames->count() === 1);
+        $layout = $format->main_layout ?? $format->layouts->first(fn(Layout $layout) => $layout->frames->count() === 1);
 
         $loopConfiguration = $this->getLoopConfiguration(Carbon::now());
 

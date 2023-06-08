@@ -107,7 +107,9 @@ class FormatsController extends Controller {
         $format->broadcast_tags()->sync($request->input("tags"));
 
         // Detach loop configuration that don't match the format anymore if the content length changed
-        $format->loop_configurations()->where("spot_length_ms", "<>", "spot_length_ms")->detach();
+        $format->loop_configurations()->detach($format->loop_configurations()
+                                                      ->where("spot_length_ms", "<>", $format->content_length * 1000)
+                                                      ->pluck("id"));
 
         return new Response($format->loadPublicRelations());
     }

@@ -25,6 +25,7 @@ class ListPropertyTypesRequest extends FormRequest {
 
     public function authorize(): bool {
         return Gate::allows(Capability::properties_types_edit->value)
-            || Gate::allows(Capability::properties_view->value);
+            || Gate::allows(Capability::properties_view->value)
+            || Gate::allows(Capability::products_edit->value);
     }
 }

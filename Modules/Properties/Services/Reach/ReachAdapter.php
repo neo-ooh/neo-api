@@ -189,7 +189,7 @@ class ReachAdapter extends InventoryAdapter {
                                                      in_array(MediaType::Video, $product->allowed_media_types) ? NamedIdentityAttribute::from(["id" => 2]) : null,
                                                      in_array(MediaType::Audio, $product->allowed_media_types) ? NamedIdentityAttribute::from(["id" => 3]) : null,
                                                      in_array(MediaType::HTML, $product->allowed_media_types) ? NamedIdentityAttribute::from(["id" => 4]) : null,
-                                                 ])->where(null, "!==", null);
+                                                 ])->where(null, "!==", null)->values();
         $screen->allows_motion         = $product->allows_motion;
         $screen->screen_type           = $product->screen_type ? NamedIdentityAttribute::from(["id" => $product->screen_type->external_id]) : null;
         $screen->screen_img_url        = $screen->screen_img_url ?? null;

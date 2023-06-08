@@ -51,6 +51,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @property string                        $name_en
  * @property string                        $name_fr
  * @property int|null                      $format_id
+ * @property int|null                      $site_type_id
  * @property int                           $quantity
  * @property boolean                       $is_sellable
  * @property double                        $unit_price
@@ -69,6 +70,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @property Property                      $property
  * @property ProductCategory               $category
  * @property Format                        $format
+ * @property PropertyType                  $site_type
  * @property ProductWarnings               $warnings
  * @property Collection<ImpressionsModel>  $impressions_models
  * @property Collection<LoopConfiguration> $loop_configurations
@@ -135,6 +137,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             "pricelist"           => ["load:pricelist.categories_pricings", "load:pricelist.products_pricings"],
             "property"            => "property",
             "screen_type"         => ["screen_type", "category.screen_type"],
+            "site_type"           => ["site_type", "property.type"],
             "unavailabilities"    => Relation::make(
                 load: ["unavailabilities.translations", "unavailabilities.products"],
                 gate: Capability::properties_unavailabilities_view
@@ -167,6 +170,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 
     public function format(): BelongsTo {
         return $this->belongsTo(Format::class, "format_id", "id");
+    }
+
+    public function site_type(): BelongsTo {
+        return $this->belongsTo(PropertyType::class, "site_type_id", "id");
     }
 
     public function category(): BelongsTo {
@@ -282,9 +289,9 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         $spotImpressionsPerHour = $el->evaluate($impressionsModel->formula, array_merge(
             [
                 "traffic" => $hourTraffic,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "faces" => $this->quantity,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "spots" => 1,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "faces" => $this->quantity,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "spots" => 1,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
             ], $impressionsModel->variables));
 
         $spotImpressionsPerPlay = [];
@@ -409,8 +416,8 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             allows_motion            : $this->allows_motion !== null ? $this->allows_motion : $this->category->allows_motion,
             property_id              : $propertyId?->toInventoryResourceId(),
             property_name            : $this->property->actor->name,
-            property_type            : $this->property->type?->external_representations->firstWhere("inventory_id", "=", $inventoryID)
-                                                                                       ?->toInventoryResourceId(),
+            property_type            : ($this->site_type ?? $this->property->type)?->external_representations->firstWhere("inventory_id", "=", $inventoryID)
+                                                                                                             ?->toInventoryResourceId(),
             address                  : $this->property->address->toInventoryResource(),
             geolocation              : new Geolocation(
                                            longitude: $this->property->address->geolocation->getCoordinates()[0],

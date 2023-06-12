@@ -205,7 +205,7 @@ class ReachAdapter extends InventoryAdapter {
                                                             ),
                                                         ]);
         $weeklyImpressions                    = collect($product->weekdays_spot_impressions)
-            ->map(fn($spotImpressions, $i) => ($product->operating_hours[$i - 1]?->open_length_min / ($product->loop_configuration->loop_length_ms / 60_000 /*ms to min*/)) * $product->loop_configuration->spotsCount()
+            ->map(fn($spotImpressions, $i) => $spotImpressions * ($product->operating_hours[$i - 1]?->open_length_min / ($product->loop_configuration->loop_length_ms / 60_000 /*ms to min*/)) * $product->loop_configuration->spotsCount()
             )
             ->sum();
         $screen->average_weekly_impressions   = round($weeklyImpressions * $impressionsShare);

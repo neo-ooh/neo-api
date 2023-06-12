@@ -163,7 +163,7 @@ class ReachAdapter extends InventoryAdapter {
         $productScreensCount = collect($product->broadcastLocations)->sum("screen_count");
         $impressionsShare    = $player->screen_count / $productScreensCount;
 
-        $screen->device_id             = $location->provider->value . ".com-test:" . $player->external_id->external_id;
+        $screen->device_id             = $location->provider->value . ".com:" . $player->external_id->external_id;
         $screen->name                  = trim($product->property_name) . " - " . trim($product->name[0]->value) . " - " . trim($player->name);
         $screen->publisher             = ScreenPublisher::from(["id" => $this->config->publisher_id]);
         $screen->is_active             = $product->is_sellable;

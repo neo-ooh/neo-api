@@ -18,4 +18,8 @@ class LoopConfiguration extends Data {
         public int $spot_length_ms,
     ) {
     }
+
+    public function spotsCount(): int {
+        return (int)round($this->loop_length_ms / $this->spot_length_ms);
+    }
 }

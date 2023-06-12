@@ -204,7 +204,11 @@ class ReachAdapter extends InventoryAdapter {
                                                                 currency: ScreenCurrency::from(["id" => 9]),
                                                             ),
                                                         ]);
-        $screen->average_weekly_impressions   = round(collect($product->weekdays_spot_impressions)->sum() * ($product->loop_configuration->loop_length_ms / $product->loop_configuration->spot_length_ms) * $impressionsShare);
+        $weeklyImpressions                    = collect($product->weekdays_spot_impressions)
+            ->map(fn($spotImpressions, $i) => ($product->operating_hours[$i + 1]?->open_length_min / ($product->loop_configuration->loop_length_ms / 60_000 /*ms to min*/)) * $product->loop_configuration->spotsCount()
+            )
+            ->sum();
+        $screen->average_weekly_impressions   = round($weeklyImpressions * $impressionsShare);
         $screen->bearing                      = null;
         $screen->internal_publisher_screen_id = "connect:" . $product->product_connect_id;
         $screen->ox_enabled                   = true;

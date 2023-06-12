@@ -18,8 +18,10 @@ use Neo\Modules\Properties\Models\InventoryResourceEvent;
 abstract class InventoryJobBase extends Job {
     private InventoryResourceEvent $event;
 
+    public int|null $triggerer_id;
+
     public function __construct(protected InventoryJobType $type, protected int $resourceId, protected int $inventoryId) {
-        clock($this->type);
+        $this->triggerer_id = Auth::id();
     }
 
     protected function beforeRun(): bool {
@@ -28,7 +30,7 @@ abstract class InventoryJobBase extends Job {
         $this->event->inventory_id = $this->inventoryId;
         $this->event->event_type   = $this->type->value;
         $this->event->triggered_at = Carbon::now();
-        $this->event->triggered_by = Auth::id();
+        $this->event->triggered_by = $this->triggerer_id;
         clock("before run");
         return true;
     }

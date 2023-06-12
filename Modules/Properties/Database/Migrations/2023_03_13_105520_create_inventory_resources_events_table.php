@@ -30,7 +30,11 @@ return new class extends Migration {
             $table->json("result");
 
             $table->timestamp("triggered_at");
-            $table->timestamp("triggered_by")->nullable();
+            $table->foreignId("triggered_by")
+                  ->nullable()
+                  ->constrained("actors", "id")
+                  ->nullOnDelete()
+                  ->cascadeOnUpdate();
         });
     }
 };

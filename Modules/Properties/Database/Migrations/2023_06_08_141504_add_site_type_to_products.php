@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void {
         Schema::table('products', function (Blueprint $table) {
-            $table->foreignId("site_type_id`")
+            $table->foreignId("site_type_id")
                   ->after("format_id")
                   ->nullable()
                   ->constrained("property_types", "id")

@@ -166,6 +166,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 
     public function property(): BelongsTo {
         return $this->belongsTo(Property::class, "property_id", "actor_id");
+//                    ->withTrashed();
     }
 
     public function format(): BelongsTo {

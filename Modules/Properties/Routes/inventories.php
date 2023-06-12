@@ -11,6 +11,7 @@
 use Illuminate\Support\Facades\Route;
 use Neo\Modules\Properties\Http\Controllers\InventoryProvidersController;
 use Neo\Modules\Properties\Http\Controllers\InventoryProvidersExternalResourcesController;
+use Neo\Modules\Properties\Http\Controllers\InventoryResourceEventsController;
 use Neo\Modules\Properties\Http\Controllers\InventoryResourcesActionsController;
 use Neo\Modules\Properties\Http\Controllers\InventoryResourcesController;
 use Neo\Modules\Properties\Http\Controllers\InventoryResourceSettingsController;
@@ -73,7 +74,17 @@ Route::group([
         | Inventory Resources Representations
         |----------------------------------------------------------------------
         */
+
         Route::  post("inventories-resources/{inventoryResource}/external-representations", [InventoryResourcesExternalRepresentationsController::class, "store"]);
         Route::   put("inventories-resources/{inventoryResource}/external-representations/{externalRepresentation:id}", [InventoryResourcesExternalRepresentationsController::class, "update"]);
         Route::delete("inventories-resources/{inventoryResource}/external-representations/{externalRepresentation:id}", [InventoryResourcesExternalRepresentationsController::class, "destroy"]);
+
+        /*
+        |----------------------------------------------------------------------
+        | Inventory Events
+        |----------------------------------------------------------------------
+        */
+
+        Route::get("inventories-events", [InventoryResourceEventsController::class, "index"]);
+        Route::put("inventories-resources/{inventoryResource}/events/{inventoryResourceEvent:id}", [InventoryResourceEventsController::class, "update"]);
     });

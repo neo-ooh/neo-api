@@ -18,7 +18,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\App;
-use Neo\Modules\Properties\Exceptions\Synchronization\UnsupportedInventoryFunctionalityException;
 use Neo\Modules\Properties\Jobs\Products\ImportProductJob;
 use Neo\Modules\Properties\Jobs\Products\PullProductJob;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
@@ -44,7 +43,6 @@ class PullFullInventoryJob implements ShouldQueue {
 
     /**
      * @throws InvalidInventoryAdapterException
-     * @throws UnsupportedInventoryFunctionalityException
      */
     public function handle(): void {
         // We need to list all the products that require synchronization.

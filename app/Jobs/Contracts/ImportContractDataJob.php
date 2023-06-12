@@ -240,7 +240,7 @@ class ImportContractDataJob implements ShouldQueue {
             ->whenEmpty(function () use ($flights) {
                 return $flights->where("type", "=", FlightType::BUA);
             })
-            ->sortBy("start_date")
+            ->sortBy("start_date", SORT_REGULAR, descending: false)
             ->first()?->start_date;
 
         $endDate = $flights
@@ -248,7 +248,7 @@ class ImportContractDataJob implements ShouldQueue {
             ->whenEmpty(function () use ($flights) {
                 return $flights->where("type", "=", FlightType::BUA);
             })
-            ->sortBy("end_date", SORT_REGULAR, "desc")
+            ->sortBy("end_date", SORT_REGULAR, descending: true)
             ->first()?->end_date;
 
         $contract->start_date           = $startDate;

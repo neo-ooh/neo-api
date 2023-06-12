@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Jobs;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Neo\Jobs\Job;
 use Neo\Modules\Properties\Models\InventoryResourceEvent;
 
@@ -27,6 +28,7 @@ abstract class InventoryJobBase extends Job {
         $this->event->inventory_id = $this->inventoryId;
         $this->event->event_type   = $this->type->value;
         $this->event->triggered_at = Carbon::now();
+        $this->event->triggered_by = Auth::id();
         clock("before run");
         return true;
     }

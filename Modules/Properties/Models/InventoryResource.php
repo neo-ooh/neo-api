@@ -13,6 +13,7 @@ namespace Neo\Modules\Properties\Models;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Properties\Rules\AccessibleInventoryResource;
@@ -56,6 +57,7 @@ class InventoryResource extends SecuredModel {
             "inventories_settings"     => "inventories_settings",
             "external_representations" => "external_representations",
             "events"                   => "events",
+            "product"                  => "product",
         ];
     }
 
@@ -63,6 +65,7 @@ class InventoryResource extends SecuredModel {
         return match ($childType) {
             "inventorySettings"      => $this->inventories_settings()->where("inventory_id", "=", $value)->firstOrFail(),
             "externalRepresentation" => $this->external_representations()->findOrFail($value),
+            "inventoryResourceEvent" => $this->events()->findOrFail($value),
             default                  => null,
         };
     }
@@ -80,6 +83,13 @@ class InventoryResource extends SecuredModel {
 
     public function events(): HasMany {
         return $this->hasMany(InventoryResourceEvent::class, "resource_id", "id");
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function product(): HasOne {
+        return $this->hasOne(Product::class, "inventory_resource_id", "id")->withTrashed();
     }
 
     /**

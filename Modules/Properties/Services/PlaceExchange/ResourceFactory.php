@@ -44,6 +44,7 @@ class ResourceFactory {
                             quantity                 : $adUnit->asset->screen_count,
                             price_type               : PriceType::CPM,
                             price                    : $adUnit->auction->bidfloor,
+                            programmatic_price       : $adUnit->auction->bidfloor,
                             picture_url              : $adUnit->asset->image_url,
                             loop_configuration       : new LoopConfiguration(
                                                            loop_length_ms: 0,// unknown

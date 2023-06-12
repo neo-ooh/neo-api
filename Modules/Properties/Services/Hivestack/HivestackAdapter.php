@@ -15,7 +15,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Enumerable;
 use Illuminate\Support\LazyCollection;
 use Neo\Modules\Properties\Enums\MediaType;
-use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\IncompatibleResourceAndInventoryException;
@@ -158,7 +157,7 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->network_id                     = $context["network_id"];
         $unit->mediatype_id                   = $product->property_type ? (int)$product->property_type->external_id : null;
         $unit->external_id                    = $location->external_id->external_id . "-" . $location->id;
-        $unit->floor_cpm                      = $product->price;
+        $unit->floor_cpm                      = $product->programmatic_price;
         $unit->longitude                      = $product->geolocation->longitude;
         $unit->latitude                       = $product->geolocation->latitude;
         $unit->loop_length                    = $product->loop_configuration->loop_length_ms / 1_000; // ms to seconds
@@ -210,7 +209,7 @@ class HivestackAdapter extends InventoryAdapter {
      */
     public function createProduct(ProductResource $product, array $context): InventoryResourceId|null {
         // First, validate this product is compatible with hivestack
-        if ($product->type !== ProductType::Digital || $product->price_type !== PriceType::CPM || $product->is_bonus) {
+        if ($product->type !== ProductType::Digital || $product->is_bonus) {
             throw new IncompatibleResourceAndInventoryException(0, $this->getInventoryID(), $this->getInventoryType());
         }
 

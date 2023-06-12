@@ -15,7 +15,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\LazyCollection;
 use Neo\Modules\Properties\Enums\MediaType;
-use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\IncompatibleResourceAndInventoryException;
@@ -108,7 +107,7 @@ class VistarAdapter extends InventoryAdapter {
         $venue->address   = $product->address->full;
 
         $venue->operating_minutes       = VenueOperatingMinutes::buildFromOperatingHours($product->operating_hours->all());
-        $venue->cpm_floor_cents         = (int)round($product->price * 100);
+        $venue->cpm_floor_cents         = (int)round($product->programmatic_price * 100);
         $venue->impressions             = new VenueImpressions(
             per_spot  : max(1, floor($impressionsPerPlay * 10000) / 10000), // Impressions rounded to 4 decimals
             per_second: 0,
@@ -131,7 +130,7 @@ class VistarAdapter extends InventoryAdapter {
      */
     public function createProduct(ProductResource $product, array $context): InventoryResourceId|null {
         // First, validate the product is compatible with Reach
-        if ($product->type !== ProductType::Digital || $product->price_type !== PriceType::CPM) {
+        if ($product->type !== ProductType::Digital) {
             throw new IncompatibleResourceAndInventoryException(0, $this->getInventoryID(), $this->getInventoryType());
         }
 

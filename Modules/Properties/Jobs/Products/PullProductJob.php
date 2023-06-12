@@ -224,6 +224,10 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
 
         if ($externalProduct->product->price_type === PriceType::Unit) {
             $product->unit_price = $externalProduct->product->price;
+        } else if ($externalProduct->product->price_type === PriceType::CPM) {
+            if ($product->category->programmatic_price !== $externalProduct->product->programmatic_price) {
+                $product->programmatic_price = $externalProduct->product->programmatic_price;
+            }
         }
 
         // Linked product

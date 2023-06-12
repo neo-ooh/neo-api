@@ -51,6 +51,7 @@ class ResourceFactory {
                             quantity                 : 1,
                             price_type               : PriceType::CPM,
                             price                    : $venue->cpm_floor_cents / 100,
+                            programmatic_price       : $venue->cpm_floor_cents / 100,
                             picture_url              : null,
                             loop_configuration       : null,
                             screen_width_px          : $venue->width_px,

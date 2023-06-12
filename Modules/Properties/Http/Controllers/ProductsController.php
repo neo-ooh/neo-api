@@ -57,8 +57,8 @@ class ProductsController {
         $product->screen_size_in = $request->input("screen_size_in", $product->screen_size_in);
         $product->screen_type_id = $request->input("screen_type_id", $product->screen_type_id);
 
-
-        $product->production_cost = $request->input("production_cost", $product->production_cost);
+        $product->production_cost    = $request->input("production_cost", $product->production_cost);
+        $product->programmatic_price = $request->input("programmatic_price");
 
         $product->save();
 

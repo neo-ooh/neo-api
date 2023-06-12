@@ -67,6 +67,11 @@ class ProductResource extends InventoryResource {
         public float                    $price,
 
         /**
+         * @var float The product's price for programmatic platforms, always as CPM
+         */
+        public float                    $programmatic_price,
+
+        /**
          * @var string Fully qualified URL for the product's picture
          */
         public string|null              $picture_url,

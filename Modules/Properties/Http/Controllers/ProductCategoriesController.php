@@ -55,7 +55,8 @@ class ProductCategoriesController {
         $productCategory->screen_size_in = $request->input("screen_size_in", $productCategory->screen_size_in);
         $productCategory->screen_type_id = $request->input("screen_type_id", $productCategory->screen_type_id);
 
-        $productCategory->production_cost = $request->input("production_cost", $productCategory->production_cost);
+        $productCategory->production_cost    = $request->input("production_cost", $productCategory->production_cost);
+        $productCategory->programmatic_price = $request->input("programmatic_price", $productCategory->programmatic_price);
         $productCategory->save();
 
         return new Response($productCategory->loadPublicRelations());

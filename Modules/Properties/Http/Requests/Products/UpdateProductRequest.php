@@ -36,7 +36,8 @@ class UpdateProductRequest extends FormRequest {
             "screen_size_in" => ["nullable", "nullable"],
             "screen_type_id" => ["nullable", new Exists(ScreenType::class, "id")],
 
-            "production_cost" => ["nullable", "numeric"],
+            "production_cost"    => ["nullable", "numeric"],
+            "programmatic_price" => ["nullable", "numeric"],
 
             "with" => ["array", new PublicRelations(Product::class)],
         ];

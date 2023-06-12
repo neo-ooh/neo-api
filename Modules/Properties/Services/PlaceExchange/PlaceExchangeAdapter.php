@@ -139,7 +139,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
         );
         $adUnit->auction          = new AdUnitAuction(
             at         : 1,
-            bidfloor   : $product->price,
+            bidfloor   : $product->programmatic_price,
             bidfloorcur: "USD",
         );
         $adUnit->eids             = []; // TODO: Fill in BroadSign ID
@@ -173,8 +173,8 @@ class PlaceExchangeAdapter extends InventoryAdapter {
         $adUnit->network_id      = $context["network_id"];
         $adUnit->placements      = $adUnit->placements ?? [];
         $adUnit->planning        = new AdUnitPlanning(
-            base_rate: $product->price,
-            rate_cur : "USD",
+            base_rate: $product->programmatic_price,
+            rate_cur : "CAD",
         );
         $adUnit->private_auction = 0; // Not private
         $adUnit->restrictions    = $adUnit->restrictions ?? new AdUnitRestrictions();

@@ -16,7 +16,6 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Collection;
 use Neo\Modules\Properties\Enums\MediaType;
-use Neo\Modules\Properties\Enums\PriceType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\IncompatibleResourceAndInventoryException;
@@ -200,7 +199,7 @@ class ReachAdapter extends InventoryAdapter {
 
         $screen->bid_floors                   = collect([
                                                             new ScreenBidFloor(
-                                                                floor   : $product->price,
+                                                                floor   : $product->programmatic_price,
                                                                 currency: ScreenCurrency::from(["id" => 9]),
                                                             ),
                                                         ]);
@@ -227,7 +226,7 @@ class ReachAdapter extends InventoryAdapter {
      */
     public function createProduct(ProductResource $product, array $context): InventoryResourceId|null {
         // First, validate the product is compatible with Reach
-        if ($product->type !== ProductType::Digital || $product->price_type !== PriceType::CPM) {
+        if ($product->type !== ProductType::Digital) {
             throw new IncompatibleResourceAndInventoryException(0, $this->getInventoryID(), $this->getInventoryType());
         }
 

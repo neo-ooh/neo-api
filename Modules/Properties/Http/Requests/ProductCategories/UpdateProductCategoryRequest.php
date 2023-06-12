@@ -37,7 +37,8 @@ class UpdateProductCategoryRequest extends FormRequest {
             "screen_size_in" => ["nullable", "nullable"],
             "screen_type_id" => ["nullable", new Exists(ScreenType::class, "id")],
 
-            "production_cost" => ["numeric"],
+            "production_cost"    => ["numeric"],
+            "programmatic_price" => ["numeric"],
         ];
     }
 

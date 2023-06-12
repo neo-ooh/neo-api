@@ -43,6 +43,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property boolean                       $allows_audio
  * @property boolean                       $allows_motion
  * @property double                        $production_cost
+ * @property double                        $programmatic_price
  * @property double                        $screen_size_in
  * @property int|null                      $screen_type_id
  * @property Carbon                        $created_at
@@ -73,6 +74,7 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
         "allowed_media_types",
         "allows_audio",
         "production_cost",
+        "programmatic_price",
     ];
 
     protected $casts = [

@@ -46,6 +46,7 @@ class ResourceFactory {
                             quantity                 : 1,
                             price_type               : PriceType::CPM,
                             price                    : $unit->floor_cpm,
+                            programmatic_price       : $unit->floor_cpm,
                             picture_url              : null,
                             loop_configuration       : new LoopConfiguration(
                                                            loop_length_ms: $unit->loop_length * 1000,

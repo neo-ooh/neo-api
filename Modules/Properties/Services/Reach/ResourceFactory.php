@@ -41,6 +41,7 @@ class ResourceFactory {
                             quantity                 : 1,
                             price_type               : PriceType::CPM,
                             price                    : $screen->bid_floors->first()->floor ?? 0,
+                            programmatic_price       : $screen->bid_floors->first()->floor ?? 0,
                             picture_url              : null,
                             loop_configuration       : null,
                             screen_width_px          : $screen->resolution->width,

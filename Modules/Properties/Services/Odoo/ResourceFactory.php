@@ -60,6 +60,7 @@ class ResourceFactory {
                             quantity                 : $product->nb_screen,
                             price_type               : PriceType::Unit,
                             price                    : $product->list_price,
+                            programmatic_price       : $product->list_price,
                             picture_url              : null,
                             loop_configuration       : null,
                             screen_width_px          : 0,

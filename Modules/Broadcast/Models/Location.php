@@ -120,6 +120,8 @@ class Location extends SecuredModel {
         "product_ids"  => "append:product_ids",
     ];
 
+    protected $touches = ["products"];
+
 
     /*
     |--------------------------------------------------------------------------

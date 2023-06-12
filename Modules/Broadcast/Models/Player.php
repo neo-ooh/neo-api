@@ -63,6 +63,8 @@ class Player extends Model {
         "screen_count",
     ];
 
+    protected $touches = ["location"];
+
     /*
     |--------------------------------------------------------------------------
     | Relations

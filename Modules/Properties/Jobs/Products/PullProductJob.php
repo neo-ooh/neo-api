@@ -214,12 +214,12 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
 
         // Product screen type support
         if ($inventory->hasCapability(InventoryCapability::ProductsScreenType) && $product->screen_type_id !== null) {
-            /** @var ScreenType|null $propertyType */
-            $propertyType = ScreenType::query()->whereHas("external_representations", function (Builder $query) use ($inventory) {
+            /** @var ScreenType|null $screenType */
+            $screenType = ScreenType::query()->whereHas("external_representations", function (Builder $query) use ($inventory) {
                 $query->where("inventory_id", "=", $inventory->getInventoryID());
             })->first();
 
-            $product->screen_type_id = $propertyType->getKey() ?? $product->screen_type_id;
+            $product->screen_type_id = $screenType->getKey() ?? $product->screen_type_id;
         }
 
         if ($externalProduct->product->price_type === PriceType::Unit) {
@@ -248,11 +248,31 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             $product->linked_product_id = null;
         }
 
+        // Property type
+        if ($inventory->hasCapability(InventoryCapability::PropertiesType)) {
+            /** @var PropertyType|null $propertyType */
+            $propertyType = PropertyType::query()
+                                        ->whereHas("external_representations", function (Builder $query) use ($inventory) {
+                                            $query->where("inventory_id", "=", $inventory->getInventoryID());
+                                        })
+                                        ->first();
 
-        // Property
-        // First we want to make sure, the property ID
+            if ($propertyType) {
+                // If the product has a site type that is different of the received one
+                if ($product->site_type_id !== null && $product->site_type_id !== $propertyType->getKey()) {
+                    // If the property type is set and is the same, set the product type to null
+                    if ($property->type_id === $propertyType->getKey()) {
+                        $product->site_type_id = null;
+                    } else {
+                        $product->site_type_id = $propertyType->getKey();
+                    }
+                } else if ($product->site_type_id === null && $property->type_id !== $property->getKey()) {
+                    // If the product has no site type, and the property type is different
+                    $product->site_type_id = $propertyType->getKey();
+                }
+            }
+        }
 
-        $product->save();
 
         // Property Name
         // To be decided
@@ -294,18 +314,8 @@ class PullProductJob extends InventoryJobBase implements ShouldBeUniqueUntilProc
             $property->address_id = $address->getKey();
         }
 
-        // Property type
-        if ($inventory->hasCapability(InventoryCapability::PropertiesType)) {
-            /** @var PropertyType|null $propertyType */
-            $propertyType = PropertyType::query()
-                                        ->whereHas("external_representations", function (Builder $query) use ($inventory) {
-                                            $query->where("inventory_id", "=", $inventory->getInventoryID());
-                                        })
-                                        ->first();
 
-            $property->type_id = $propertyType->getKey() ?? $property->type_id;
-        }
-
+        $product->save();
         $property->save();
 
         // Pull is complete

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -11,7 +11,7 @@
 namespace Neo\Http\Requests\Clients;
 
 use Auth;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
@@ -29,11 +29,12 @@ class ShowClientRequest extends FormRequest {
         }
 
         // Get the request client
-        /** @var Client $client */
-        $client = $this->route()?->parameter("client");
-        return $client->has("contracts", function (Builder $query) {
-            $query->where("owner_id", "=", Auth::id());
-        })->exists();
+        $clientId = $this->route()?->originalParameter("client");
+        return Client::query()
+                     ->where("id", "=", $clientId)
+                     ->whereHas("contracts", function (Builder $query) {
+                         $query->where("salesperson_id", "=", Auth::id());
+                     })->exists();
     }
 
     /**

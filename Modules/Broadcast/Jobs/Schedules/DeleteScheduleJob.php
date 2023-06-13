@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -56,6 +56,14 @@ class DeleteScheduleJob extends BroadcastJobBase {
         // Load the schedule
         /** @var Schedule $schedule */
         $schedule = Schedule::withTrashed()->find($this->resourceId);
+
+        if (!$schedule) {
+            return [
+                "error"   => true,
+                "message" => "Schedule could not be found",
+            ];
+        }
+
         $schedule->load(["campaign", "external_representations", "contents", "contents.layout"]);
 
         // If a representation is given, we remove this one only

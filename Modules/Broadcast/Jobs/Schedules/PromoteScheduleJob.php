@@ -81,6 +81,13 @@ class PromoteScheduleJob extends BroadcastJobBase {
         /** @var Schedule $schedule */
         $schedule = Schedule::withTrashed()->find($this->resourceId);
 
+        if (!$schedule) {
+            return [
+                "error"   => true,
+                "message" => "Schedule could not be found",
+            ];
+        }
+
         if ($schedule->trashed()) {
             return [
                 "error"   => true,

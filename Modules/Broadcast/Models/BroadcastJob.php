@@ -13,8 +13,10 @@ namespace Neo\Modules\Broadcast\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Neo\Helpers\Relation;
 use Neo\Models\Actor;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Enums\BroadcastParameters;
@@ -28,21 +30,24 @@ use Neo\Modules\Broadcast\Jobs\Schedules\PromoteScheduleJob;
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 
 /**
- * @property int                $id
- * @property int                $resource_id
- * @property BroadcastJobType   $type
- * @property Carbon             $created_at
- * @property int|null           $created_by
- * @property Carbon             $scheduled_at
- * @property int                $attempts
- * @property Carbon|null        $last_attempt_at
- * @property BroadcastJobStatus $status
- * @property array|null         $payload
- * @property array|null         $last_attempt_result
- * @property int|null           $updated_by
+ * @property int                      $id
+ * @property int                      $resource_id
+ * @property BroadcastJobType         $type
+ * @property Carbon                   $created_at
+ * @property int|null                 $created_by
+ * @property Carbon                   $scheduled_at
+ * @property int                      $attempts
+ * @property Carbon|null              $last_attempt_at
+ * @property BroadcastJobStatus       $status
+ * @property array|null               $payload
+ * @property array|null               $last_attempt_result
+ * @property int|null                 $updated_by
+ *
+ * @property BroadcastResourceDetails $resource
  */
 class BroadcastJob extends Model {
     use HasCreatedByUpdatedBy;
+    use HasPublicRelations;
 
     protected $table = "broadcast_jobs";
 
@@ -72,6 +77,14 @@ class BroadcastJob extends Model {
         return null;
     }
 
+    public function getPublicRelations(): array {
+        return [
+            "resource" => Relation::make(load: "resource"),
+            "creator"  => Relation::make(load: "creator"),
+            "updator"  => Relation::make(load: "updator"),
+        ];
+    }
+
     protected static function booted(): void {
         parent::boot();
 
@@ -80,6 +93,10 @@ class BroadcastJob extends Model {
             $job->scheduled_at = Carbon::now()->addSeconds(param(BroadcastParameters::BroadcastJobsDelaySec));
             $job->status       = BroadcastJobStatus::Pending;
         });
+    }
+
+    public function resource(): BelongsTo {
+        return $this->belongsTo(BroadcastResourceDetails::class, "resource_id", "id");
     }
 
     public function creator(): BelongsTo {

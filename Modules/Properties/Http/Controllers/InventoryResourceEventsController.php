@@ -38,8 +38,7 @@ class InventoryResourceEventsController extends Controller {
 
         $totalCount = $query->clone()->count();
 
-        $page = $request->input("page", 1);
-        clock($page, $request->input("page"));
+        $page  = $request->input("page", 1);
         $count = $request->input("count", 500);
         $from  = ($page - 1) * $count;
         $to    = ($page * $count) - 1;

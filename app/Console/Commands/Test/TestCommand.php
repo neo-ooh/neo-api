@@ -11,7 +11,11 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Broadcast\Models\Schedule;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\Reach\Models\Screen;
+use Neo\Modules\Properties\Services\Reach\ReachAdapter;
+use PhpOffice\PhpSpreadsheet\Reader\Exception;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -20,9 +24,28 @@ class TestCommand extends Command {
 
     /**
      * @return void
+     * @throws Exception
      */
     public function handle() {
-        $schedule = Schedule::find(24443);
-        dump($schedule->contents()->wherePivotNotNull("deleted_at")->get());
+        $file        = new Xlsx();
+        $spreadsheet = $file->load(storage_path("app/reach-missing.xlsx"));
+
+        $provider = InventoryProvider::query()->find(8);
+        /** @var ReachAdapter $inventory */
+        $inventory = $provider->getAdapter();
+
+        foreach ($spreadsheet->getActiveSheet()->toArray() as $line) {
+            $screenId = explode(":", $line[0])[0];
+            $this->line($screenId);
+            $screen = Screen::find($inventory->getConfig()->getClient(), $screenId);
+
+            if (!$screen->name) {
+                $this->comment("Already deleted");
+                continue;
+            }
+
+            $screen->delete();
+            $this->comment("Removed!");
+        }
     }
 }

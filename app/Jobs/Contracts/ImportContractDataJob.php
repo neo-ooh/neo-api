@@ -117,9 +117,7 @@ class ImportContractDataJob implements ShouldQueue {
         $flights = $this->getFlightsFromPlan($contract, $output);
         /** @var Collection<ContractFlight> $usedFlights */
         $usedFlights = collect();
-        /** @var Collection $lines */
-        $lines      = $flights->flatMap(fn(ContractFlight $flight) => $flight->lines);
-        $orderLines = $this->getLinesFromOdoo($odooClient, $contract, $output);
+        $orderLines  = $this->getLinesFromOdoo($odooClient, $contract, $output);
 
         $output->writeln($contract->contract_id . ": Received {$orderLines->count()} lines...");
 
@@ -162,20 +160,23 @@ class ImportContractDataJob implements ShouldQueue {
                 $type = FlightType::Bonus;
             }
 
-            /** @var ContractFlight|null $flight */
-            $flight = $flights->filter(function (ContractFlight $flight) use ($type, $orderLine) {
+            $flightFilter = function (ContractFlight $flight) use ($type, $orderLine) {
                 return $flight->start_date->toDateString() === $orderLine->rental_start
                     && $flight->end_date->toDateString() === $orderLine->rental_end
                     && $flight->type === $type;
-            })->first();
+            };
+
+            /** @var ContractFlight|null $flight */
+            $flight = $usedFlights->filter($flightFilter)->first() ?? $flights->filter($flightFilter)->first();
 
             if ($flight === null) {
                 $flight = ContractFlight::query()->firstOrCreate([
                                                                      "contract_id" => $contract->getKey(),
-                                                                     "uid"         => v4(),
                                                                      "type"        => $type,
                                                                      "start_date"  => $orderLine->rental_start,
                                                                      "end_date"    => $orderLine->rental_end,
+                                                                 ], [
+                                                                     "uid" => v4(),
                                                                  ]);
                 $flights->push($flight);
             }
@@ -185,8 +186,9 @@ class ImportContractDataJob implements ShouldQueue {
             }
 
             // If a line with the same product id and flight id already exists, use it, otherwise get a new line instance
-            $line = $lines->where("product_id", "===", $product->getKey())
-                          ->where("flight_id", "===", $flight->getKey())->first() ?? new ContractLine();
+            /** @var ContractLine $line */
+            $line = $flight->lines->where("product_id", "===", $product->getKey())
+                                  ->where("flight_id", "===", $flight->getKey())->first() ?? new ContractLine();
 
             $line->fill([
                             "product_id"    => $product->getKey(),
@@ -201,6 +203,7 @@ class ImportContractDataJob implements ShouldQueue {
                             "impressions"   => $orderLine->connect_impression ?: $orderLine->impression,
                         ]);
             $line->save();
+            $flight->lines = $flight->lines->push($line)->unique("id");
 
             // Log the line for later use
             $contractLines->push($line);
@@ -274,6 +277,7 @@ class ImportContractDataJob implements ShouldQueue {
 
         /** @var CPCompiledFlight $flight */
         foreach ($plan->flights as $i => $flight) {
+            /** @noinspection UnknownColumnInspection */
             $flights->push(ContractFlight::query()->updateOrCreate([
                                                                        "contract_id" => $contract->getKey(),
                                                                        "uid"         => $flight->id,
@@ -291,7 +295,11 @@ class ImportContractDataJob implements ShouldQueue {
         return $flights;
     }
 
-    public function getLinesFromOdoo(OdooClient $client, Contract $contract, ConsoleOutput $output) {
+    /**
+     * @throws OdooException
+     * @throws JsonException
+     */
+    public function getLinesFromOdoo(OdooClient $client, Contract $contract, ConsoleOutput $output): Collection {
         $lines     = collect();
         $chunkSize = 50;
 

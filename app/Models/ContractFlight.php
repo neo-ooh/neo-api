@@ -77,6 +77,7 @@ class ContractFlight extends Model {
     public $casts = [
         "start_date" => "datetime",
         "end_date"   => "datetime",
+        "type"       => FlightType::class,
     ];
 
     protected array $publicRelations = [

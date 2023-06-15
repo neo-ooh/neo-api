@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Helpers\Relation;
+use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Network;
 
 /**
@@ -38,6 +40,8 @@ use Neo\Modules\Broadcast\Models\Network;
  * @property Collection<int>          $network_ids
  */
 class Field extends Model {
+    use HasPublicRelations;
+
     protected $primaryKey = "id";
 
     protected $table = "fields";
@@ -59,6 +63,14 @@ class Field extends Model {
     ];
 
     protected $with = ["segments"];
+
+    public function getPublicRelations(): array {
+        return [
+            "category" => Relation::make("category"),
+            "segments" => Relation::make("segments"),
+            "networks" => Relation::make("networks"),
+        ];
+    }
 
     public function networks(): BelongsToMany {
         return $this->belongsToMany(Network::class, "fields_networks", "field_id", "network_id");

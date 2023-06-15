@@ -23,16 +23,15 @@ use Neo\Modules\Properties\Models\PropertyFieldSegmentValue;
 
 class FieldsController {
     public function index(ListFieldsRequest $request): Response {
-        return new Response(Field::all());
+        return new Response(Field::all()->loadPublicRelations());
     }
 
     public function show(ListFieldsRequest $request, Field $field): Response {
-        $field->load(["category", "networks:id"]);
+        $field->load(["category", "networks"]);
 
         $field->network_ids = $field->networks->map(fn(Network $n) => $n->id);
-        $field->makeHidden("networks");
 
-        return new Response($field);
+        return new Response($field->loadPublicRelations());
     }
 
     public function store(StoreFieldRequest $request): Response {

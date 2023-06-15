@@ -18,7 +18,7 @@ class InventoryRepresentationContext extends JSONDBColumn {
         /**
          * @var int|Optional Odoo's products variant id to use in contracts
          */
-        public int|Optional        $variant_id,
+        public int|Optional|null   $variant_id,
 
         /**
          * @var int|Optional Odoo's product categories production product

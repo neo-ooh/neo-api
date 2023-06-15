@@ -57,9 +57,12 @@ class PropertiesWarningsViewSeeder extends Seeder {
                                                               AND `ptm`.`year` = `pts`.`start_year`) < 12,
                    TRUE,
                    FALSE
-             )            AS `incomplete_traffic`
+             )            AS `incomplete_traffic`,
+            COUNT(`dv`.`id`) as 'demographic_variables_count'
         FROM `properties` `p`
-           JOIN `property_traffic_settings` `pts` ON `p`.`actor_id` = `pts`.`property_id`;        
+           JOIN `property_traffic_settings` `pts` ON `p`.`actor_id` = `pts`.`property_id`
+           LEFT JOIN `neo_ooh`.`demographic_values` `dv` ON `p`.`actor_id` = `dv`.`property_id`
+        GROUP BY `p`.`actor_id`        
         EOS
         );
     }

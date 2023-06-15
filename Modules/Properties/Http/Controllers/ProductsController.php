@@ -10,8 +10,11 @@
 
 namespace Neo\Modules\Properties\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Properties\Enums\MediaType;
+use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Http\Requests\Products\DestroyProductRequest;
 use Neo\Modules\Properties\Http\Requests\Products\ListProductsByIdsRequest;
 use Neo\Modules\Properties\Http\Requests\Products\ListProductsRequest;
@@ -21,15 +24,28 @@ use Neo\Modules\Properties\Models\Product;
 
 class ProductsController {
     public function index(ListProductsRequest $request) {
-        $products = Product::query()
-                           ->when($request->has("property_id"), function ($query) use ($request) {
-                               $query->where("property_id", "=", $request->input("property_id"));
-                           })
-                           ->when($request->has("category_id"), function ($query) use ($request) {
-                               $query->where("category_id", "=", $request->input("category_id"));
-                           })->get();
+        $query = Product::query()
+                        ->when($request->has("property_id"), function (Builder $query) use ($request) {
+                            $query->where("property_id", "=", $request->input("property_id"));
+                        })
+                        ->when($request->has("category_id"), function (Builder $query) use ($request) {
+                            $query->where("category_id", "=", $request->input("category_id"));
+                        })
+                        ->when($request->has("type"), function (Builder $query) use ($request) {
+                            $query->whereHas("category", function (Builder $query) use ($request) {
+                                $query->where("type", "=", $request->enum("type", ProductType::class));
+                            });
+                        });
 
-        return new Response($products->loadPublicRelations());
+        if ($request->has("parent_id")) {
+            $actorIds = ActorsGetter::from($request->input("parent_id"))
+                                    ->selectChildren(recursive: true)
+                                    ->getSelection();
+
+            $query->whereIn("property_id", $actorIds);
+        }
+
+        return new Response($query->get()->loadPublicRelations());
     }
 
     public function show(ShowProductRequest $request, Product $product) {

@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
+use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Campaign;
@@ -80,10 +81,14 @@ class ContractFlight extends Model {
         "type"       => FlightType::class,
     ];
 
-    protected array $publicRelations = [
-        "contract"   => "contract",
-        "advertiser" => "contract.advertiser",
-    ];
+    protected function getPublicRelations(): array {
+        return [
+            "contract"             => Relation::make(load: "contract"),
+            "advertiser"           => Relation::make(load: "contract.advertiser"),
+            "performances"         => Relation::make(append: "performances"),
+            "expected_impressions" => Relation::make(append: "expected_impressions"),
+        ];
+    }
 
     public function lines(): HasMany {
         return $this->hasMany(ContractLine::class, "flight_id", "id");

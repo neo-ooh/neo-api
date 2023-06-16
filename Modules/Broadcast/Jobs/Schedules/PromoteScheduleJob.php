@@ -397,7 +397,10 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
         $importCreativeJob = new ImportCreativeJob($creative->getKey(), $broadcaster->getBroadcasterId());
         $importCreativeJob->handle();
-        return $importCreativeJob->getLastAttemptResult();
+
+        $result = $importCreativeJob->getLastAttemptResult();
+        dump($result);
+        return $result;
     }
 
     /**

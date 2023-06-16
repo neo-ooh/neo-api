@@ -86,7 +86,8 @@ Route::group([
     Route::model("flight", ContractFlight::class);
 
 
-    Route::   get("flights/{flight}", ContractFlightsController::class . "@show");
+    Route::   get("flights", [ContractFlightsController::class, "index"]);
+    Route::   get("flights/{flight}", [ContractFlightsController::class, "show"]);
 
     Route::   get("flights/{flight}/exports", ContractsFlightsExportController::class . "@index");
     Route::   get("flights/{flight}/exports/{network}", ContractsFlightsExportController::class . "@show");

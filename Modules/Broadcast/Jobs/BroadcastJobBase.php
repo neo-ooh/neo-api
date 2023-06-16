@@ -99,10 +99,6 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUniqueUntilProces
     |--------------------------------------------------------------------------
     */
 
-    public function getLastAttemptResult(): mixed {
-        return $this->broadcastJob->last_attempt_result;
-    }
-
     protected function beforeRun(): bool {
         ++$this->broadcastJob->attempts;
         $this->broadcastJob->last_attempt_at = Carbon::now();
@@ -132,5 +128,10 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUniqueUntilProces
             "locations" => $exception->getFile() . ":" . $exception->getLine(),
             "trace"     => $exception->getTrace(),
         ]);
+    }
+
+    public function getLastAttemptResult(): mixed {
+        dump($this->broadcastJob->toArray());
+        return $this->broadcastJob->last_attempt_result;
     }
 }

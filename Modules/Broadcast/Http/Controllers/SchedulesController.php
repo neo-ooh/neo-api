@@ -12,6 +12,7 @@
 
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
@@ -19,7 +20,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\UnauthorizedException;
 use Neo\Enums\Capability;
 use Neo\Exceptions\BaseException;
 use Neo\Http\Controllers\Controller;
@@ -45,21 +45,57 @@ use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Broadcast\Models\ScheduleReview;
 use Neo\Modules\Broadcast\Utils\ScheduleUpdater;
 use Neo\Modules\Broadcast\Utils\ScheduleValidator;
+use Neo\Modules\Properties\Models\Product;
 use Ramsey\Uuid\Uuid;
 
 class SchedulesController extends Controller {
     public function index(ListSchedulesRequest $request): Response {
-        /** @var Collection<Schedule> $schedules */
-        $schedules = Schedule::query()
-                             ->where("batch_id", "=", $request->input("batch_id"))
-                             ->with("contents")
-                             ->get();
+        $query = Schedule::query();
 
-        if ($schedules->flatMap(fn(Schedule $schedule) => $schedule->contents)
-                      ->unique()
-                      ->some(fn(Content $content) => !$content->authorizeAccess())) {
-            throw new UnauthorizedException("You are not allowed to access these contents");
+        if ($request->has("batch_id")) {
+            $query->where("batch_id", "=", $request->input("batch_id"));
         }
+
+        if ($request->input("product_id")) {
+            // To load the schedules associated with a product, we need to know the format of the product
+            $product = Product::query()->find($request->input("product_id"));
+
+            $query->whereHas("campaign", function (Builder $query) use ($product) {
+                $query->whereHas("locations", function (Builder $query) use ($product) {
+                    $query->whereHas("products", function (Builder $query) use ($product) {
+                        $query->where("id", "=", $product->getKey());
+                    });
+                });
+            });
+            $query->whereHas("contents", function (Builder $query) use ($product) {
+                $query->whereHas("layout", function (Builder $query) use ($product) {
+                    $query->whereHas("formats", function (Builder $query) use ($product) {
+                        $query->where("id", "=", $product->format_id ?? $product->category->format_id);
+                    });
+                });
+                $query->whereNotExists(function (\Illuminate\Database\Query\Builder $query) use ($product) {
+                    $query->from("schedule_content_disabled_formats");
+                    $query->where("schedule_content_disabled_formats.schedule_content_id", "=", DB::raw("schedule_contents.id"));
+                    $query->where("schedule_content_disabled_formats.format_id", "=", $product->format_id ?? $product->category->format_id);
+                });
+            });
+        }
+
+        if ($request->input("current", false)) {
+            $query->where("start_date", "<=", \Carbon\Carbon::now())
+                  ->where("end_date", ">=", Carbon::now());
+        }
+
+        if ($request->input("past", false)) {
+            $query->where("end_date", "<", Carbon::now())->withTrashed();
+        }
+
+        if ($request->input("future", false)) {
+            $query->where("start_date", ">", Carbon::now());
+        }
+
+        /** @var Collection<Schedule> $schedules */
+        $schedules = $query->get();
 
         return new Response($schedules->loadPublicRelations());
     }

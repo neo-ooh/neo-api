@@ -10,37 +10,38 @@
 
 namespace Neo\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Neo\Models\Traits\HasCompositePrimaryKey;
+use Neo\Models\Traits\HasView;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Product;
-use Neo\Modules\Properties\Models\ProductCategory;
-use Neo\Modules\Properties\Models\Property;
 
 /**
- * @property-read int         $product_id
- * @property-read int         $flight_id
- * @property-read int         $external_id
- * @property double           $spots
- * @property double           $media_value
- * @property double           $discount
- * @property string           $discount_type
- * @property double           $price
- * @property int              $traffic
- * @property int              $impressions
+ * @property-read int              $product_id
+ * @property-read int              $flight_id
+ * @property-read int              $external_id
+ * @property double                $spots
+ * @property double                $media_value
+ * @property double                $discount
+ * @property string                $discount_type
+ * @property double                $price
+ * @property int                   $traffic
+ * @property int                   $impressions
  *
- * @property ContractFlight   $flight
- * @property Product|null     $product
+ * @property ContractFlight        $flight
+ * @property Product|null          $product
  *
- * @property number|null      $network_id
- * @property ProductType|null $product_type
+ * @property-read number|null      $network_id
+ * @property-read ProductType|null $product_type
  */
 class ContractLine extends Model {
     use HasCompositePrimaryKey;
+    use HasView;
 
-    protected $table = "contracts_lines";
+    protected $table = "contracts_lines_view";
+
+    public $write_table = "contracts_lines";
 
     public $incrementing = false;
 
@@ -67,17 +68,5 @@ class ContractLine extends Model {
 
     public function product(): BelongsTo {
         return $this->belongsTo(Product::class, "product_id", "id");
-    }
-
-    public function getNetworkIdAttribute() {
-        return Property::query()->whereHas("products", function (Builder $query) {
-            $query->where("id", "=", $this->product_id);
-        })->setEagerLoads([])->first()->network_id ?? null;
-    }
-
-    public function getProductTypeAttribute() {
-        return ProductCategory::query()->whereHas("products", function (Builder $query) {
-            $query->where("id", "=", $this->product_id);
-        })->setEagerLoads([])->first()->type ?? null;
     }
 }

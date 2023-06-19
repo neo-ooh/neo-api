@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Storage;
 use JsonException;
+use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\ReservablePerformance;
 use Neo\Resources\Contracts\CPCompiledPlan;
@@ -73,32 +74,28 @@ class Contract extends Model {
 
     protected function getPublicRelations(): array {
         return [
-            "advertiser"           => "advertiser",
-            "bursts"               => ["bursts.screenshots", "bursts.location"],
-            "client"               => "client",
-            "flights"              => "flights",
-            "expected_impressions" => [
-                fn(Contract $contract) => $contract->flights
-                    ->append("expected_impressions")
-                    ->each(fn(ContractFlight $flight) => $flight->lines->append(["network_id", "product_type"])),
-            ],
-            "locations"            => [
+            "advertiser"   => "advertiser",
+            "bursts"       => ["bursts.screenshots", "bursts.location"],
+            "client"       => "client",
+            "flights"      => "flights",
+            "lines"        => Relation::make(load: 'flights.lines'),
+            "locations"    => [
                 fn(Contract $contract) => $contract->flights
                     ->append("locations"),
             ],
-            "owner"                => "owner",
-            "performances"         => "append:performances",
-            "plan"                 => "append:stored_plan",
-            "reservations"         => "reservations",
-            "salesperson"          => "salesperson",
-            "screenshots"          => "validated_screenshots",
-            "campaigns"            => "campaigns",
+            "owner"        => "owner",
+            "performances" => "append:performances",
+            "plan"         => "append:stored_plan",
+            "reservations" => "reservations",
+            "salesperson"  => "salesperson",
+            "screenshots"  => "validated_screenshots",
+            "campaigns"    => "campaigns",
         ];
     }
 
     protected static function boot() {
         parent::boot();
-        
+
         static::deleting(function (Contract $contract) {
             foreach ($contract->bursts as $burst) {
                 $burst->delete();

@@ -20,6 +20,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Models\Traits\HasView;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Location;
@@ -30,7 +31,6 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterReporting;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
-use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Resources\Contracts\FlightPerformanceDatum;
 use Neo\Resources\Contracts\FlightType;
 
@@ -45,7 +45,7 @@ use Neo\Resources\Contracts\FlightType;
  * @property-read Carbon                             $created_at
  * @property-read Carbon                             $updated_at
  *
- * @property int                                     $expected_impressions
+ * @property-read  int                               $expected_impressions
  * @property EloquentCollection<ContractLine>        $lines
  * @property EloquentCollection<ContractReservation> $reservations
  * @property Contract                                $contract
@@ -56,8 +56,11 @@ use Neo\Resources\Contracts\FlightType;
  */
 class ContractFlight extends Model {
     use HasPublicRelations;
+    use HasView;
 
-    protected $table = "contracts_flights";
+    protected $table = "contracts_flights_view";
+
+    public $write_table = "contracts_flights";
 
     protected $primaryKey = "id";
 
@@ -83,10 +86,9 @@ class ContractFlight extends Model {
 
     protected function getPublicRelations(): array {
         return [
-            "contract"             => Relation::make(load: "contract"),
-            "advertiser"           => Relation::make(load: "contract.advertiser"),
-            "performances"         => Relation::make(append: "performances"),
-            "expected_impressions" => Relation::make(append: "expected_impressions"),
+            "contract"     => Relation::make(load: "contract"),
+            "advertiser"   => Relation::make(load: "contract.advertiser"),
+            "performances" => Relation::make(append: "performances"),
         ];
     }
 
@@ -111,14 +113,6 @@ class ContractFlight extends Model {
     | Performances
     |--------------------------------------------------------------------------
     */
-
-    public function getExpectedImpressionsAttribute(): int {
-        return (int)$this->lines()->whereHas('product', function (Builder $query) {
-            $query->whereHas("category", function (Builder $query) {
-                $query->where("type", "=", ProductType::Digital);
-            });
-        })->sum("impressions");
-    }
 
 
     /**

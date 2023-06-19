@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -21,14 +21,14 @@ abstract class DBView extends Model {
     /**
      * @throws DBViewException
      */
-    public function save(array $options = []): never {
+    /*public function save(array $options = []): never {
         throw new DBViewException("Cannot update a database view row");
-    }
+    }*/
 
     /**
      * @throws DBViewException
      */
-    public function delete(): never {
+    /*public function delete(): never {
         throw new DBViewException("Cannot delete a database view row");
-    }
+    }*/
 }

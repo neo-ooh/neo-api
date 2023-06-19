@@ -18,7 +18,6 @@ use Neo\Models\DBView;
  * @property-read bool $missing_products_locations
  * @property-read bool $missing_tenants
  * @property-read bool $incomplete_traffic
- * @property-read int  $demographic_variables_count
  */
 class PropertyWarnings extends DBView {
     protected $table = "properties_warnings";

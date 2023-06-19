@@ -25,6 +25,7 @@ use Neo\Models\Address;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
+use Neo\Models\Traits\HasView;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
 use Neo\Modules\Properties\Rules\AccessibleProperty;
@@ -45,6 +46,7 @@ use Throwable;
  * @property string                                $website
  *
  * @property Carbon                                $last_review_at
+ * @property-read int                              $demographic_variables_count
  *
  * @property Date                                  $created_at
  * @property int|null                              $created_by
@@ -78,6 +80,7 @@ class Property extends SecuredModel {
     use HasPublicRelations;
     use HasCreatedByUpdatedBy;
     use InventoryResourceModel;
+    use HasView;
 
     /*
     |--------------------------------------------------------------------------
@@ -92,6 +95,9 @@ class Property extends SecuredModel {
      * @var string
      */
     protected $table = "properties";
+
+
+    public $read_table = "properties_view";
 
     /**
      * The primary key for the table

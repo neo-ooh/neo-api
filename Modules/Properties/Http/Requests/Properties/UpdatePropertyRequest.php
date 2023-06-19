@@ -25,6 +25,7 @@ class UpdatePropertyRequest extends FormRequest {
             "pricelist_id" => ["nullable", "exists:pricelists,id"],
             "website"      => ["nullable", "string"],
             "type_id"      => ["nullable", "integer", new Exists(PropertyType::class, "id")],
+            "notes"        => ["nullable", "string"],
         ];
     }
 

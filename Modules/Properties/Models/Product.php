@@ -62,6 +62,7 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  * @property boolean                       $allows_motion
  * @property double|null                   $production_cost
  * @property double|null                   $programmatic_price
+ * @property string                        $notes
  * @property double|null                   $screen_size_in
  * @property int|null                      $screen_type_id
  * @property Carbon                        $created_at

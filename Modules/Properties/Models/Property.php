@@ -46,6 +46,7 @@ use Throwable;
  * @property string                                $website
  *
  * @property Carbon                                $last_review_at
+ * @property string                                $notes
  * @property-read int                              $demographic_variables_count
  *
  * @property Date                                  $created_at
@@ -94,10 +95,10 @@ class Property extends SecuredModel {
      *
      * @var string
      */
-    protected $table = "properties";
+    protected $table = "properties_view";
 
 
-    public $read_table = "properties_view";
+    public $write_table = "properties";
 
     /**
      * The primary key for the table

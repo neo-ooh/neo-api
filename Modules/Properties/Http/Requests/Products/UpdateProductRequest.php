@@ -39,6 +39,8 @@ class UpdateProductRequest extends FormRequest {
             "production_cost"    => ["nullable", "numeric"],
             "programmatic_price" => ["nullable", "numeric"],
 
+            "notes" => ["nullable", "string"],
+
             "with" => ["array", new PublicRelations(Product::class)],
         ];
     }

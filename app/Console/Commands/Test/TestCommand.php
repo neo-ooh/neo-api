@@ -11,11 +11,13 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Properties\Models\InventoryProvider;
-use Neo\Modules\Properties\Services\Reach\Models\Screen;
-use Neo\Modules\Properties\Services\Reach\ReachAdapter;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
+use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\Layout;
+use Neo\Modules\Broadcast\Models\Schedule;
+use Neo\Modules\Properties\Models\Product;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
-use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
 
 class TestCommand extends Command {
     protected $signature = 'test:test';
@@ -27,25 +29,36 @@ class TestCommand extends Command {
      * @throws Exception
      */
     public function handle() {
-        $file        = new Xlsx();
-        $spreadsheet = $file->load(storage_path("app/reach-missing.xlsx"));
+        $productId = 617;
+        $product   = Product::query()->find($productId);
+        $format    = Format::query()->find($product->format_id ?? $product->category->format_id);
+        $layoutIds = $format->layouts->pluck("id");
 
-        $provider = InventoryProvider::query()->find(8);
-        /** @var ReachAdapter $inventory */
-        $inventory = $provider->getAdapter();
+        $layouts = Layout::query()->whereHas("formats", function (Builder $query) use ($product) {
+            $query->where("id", $product->format_id ?? $product->category->format_id);
+        })->get();
 
-        foreach ($spreadsheet->getActiveSheet()->toArray() as $line) {
-            $screenId = explode(":", $line[0])[0];
-            $this->line($screenId);
-            $screen = Screen::find($inventory->getConfig()->getClient(), $screenId);
+        $query = Schedule::query();
+        $query->whereHas("campaign", function (Builder $query) use ($productId) {
+            $query->whereHas("locations", function (Builder $query) use ($productId) {
+                $query->whereHas("products", function (Builder $query) use ($productId) {
+                    $query->where("id", "=", $productId);
+                });
+            });
+        });
+        $query->whereHas("contents", function (Builder $query) use ($product) {
+            $query->whereHas("layout", function (Builder $query) use ($product) {
+                $query->whereHas("formats", function (Builder $query) use ($product) {
+                    $query->where("id", "=", $product->format_id ?? $product->category->format_id);
+                });
+            });
+            $query->whereNotExists(function (\Illuminate\Database\Query\Builder $query) use ($product) {
+                $query->from("schedule_content_disabled_formats");
+                $query->where("schedule_content_disabled_formats.schedule_content_id", "=", DB::raw("schedule_contents.id"));
+                $query->where("schedule_content_disabled_formats.format_id", "=", $product->format_id ?? $product->category->format_id);
+            });
+        });
 
-            if (!$screen->name) {
-                $this->comment("Already deleted");
-                continue;
-            }
-
-            $screen->delete();
-            $this->comment("Removed!");
-        }
+        dump($query->toSql());
     }
 }

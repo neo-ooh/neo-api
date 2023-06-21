@@ -11,6 +11,7 @@
 use Illuminate\Support\Facades\Route;
 use Neo\Modules\Properties\Http\Controllers\AddressController;
 use Neo\Modules\Properties\Http\Controllers\GroupTrafficStatsController;
+use Neo\Modules\Properties\Http\Controllers\InventoryPicturesController;
 use Neo\Modules\Properties\Http\Controllers\MonthlyTrafficController;
 use Neo\Modules\Properties\Http\Controllers\OpeningHoursController;
 use Neo\Modules\Properties\Http\Controllers\PropertiesContactsController;
@@ -18,10 +19,10 @@ use Neo\Modules\Properties\Http\Controllers\PropertiesController;
 use Neo\Modules\Properties\Http\Controllers\PropertiesStatisticsController;
 use Neo\Modules\Properties\Http\Controllers\PropertiesTrafficController;
 use Neo\Modules\Properties\Http\Controllers\PropertiesTranslationsController;
-use Neo\Modules\Properties\Http\Controllers\PropertyPicturesController;
 use Neo\Modules\Properties\Http\Controllers\PropertyTypesController;
 use Neo\Modules\Properties\Http\Controllers\TrafficSnapshotsController;
 use Neo\Modules\Properties\Http\Controllers\TrafficSourcesController;
+use Neo\Modules\Properties\Models\InventoryPicture;
 use Neo\Modules\Properties\Models\TrafficSource;
 
 Route::group([
@@ -105,14 +106,16 @@ Route::group([
 
         /*
         |----------------------------------------------------------------------
-        | Properties Pictures
+        | Pictures
         |----------------------------------------------------------------------
         */
 
-        Route::   get("properties/{property}/pictures", PropertyPicturesController::class . "@index");
-        Route::  post("properties/{property}/pictures", PropertyPicturesController::class . "@store");
-        Route::   put("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@update");
-        Route::delete("properties/{property}/pictures/{propertyPicture}", PropertyPicturesController::class . "@destroy");
+        Route::model("picture", InventoryPicture::class);
+
+        Route::   get("pictures", [InventoryPicturesController::class, "index"]);
+        Route::  post("pictures", [InventoryPicturesController::class, "store"]);
+        Route::   put("pictures/{picture}", [InventoryPicturesController::class, "update"]);
+        Route::delete("pictures/{picture}", [InventoryPicturesController::class, "destroy"]);
 
 
         /*

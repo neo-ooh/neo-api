@@ -63,7 +63,7 @@ use Throwable;
  * @property PropertyType|null                     $type
  * @property Address|null                          $address
  * @property Network|null                          $network
- * @property Collection<PropertyPicture>           $pictures
+ * @property Collection<InventoryPicture>          $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
  * @property Collection<OpeningHours>              $opening_hours
  * @property Collection<Brand>                     $tenants
@@ -74,6 +74,9 @@ use Throwable;
  * @property Collection<Product>                   $products
  *
  * @property array                                 $rolling_weekly_traffic
+ *
+ * @property int|null                              $cover_picture_id
+ * @property InventoryPicture|null                 $cover_picture
  *
  * @property InventoryResource                     $inventoryResource
  */
@@ -89,7 +92,6 @@ class Property extends SecuredModel {
     |--------------------------------------------------------------------------
     */
 
-
     /**
      * The table associated with the model.
      *
@@ -97,7 +99,11 @@ class Property extends SecuredModel {
      */
     protected $table = "properties_view";
 
-
+    /**
+     * The table used for write operations
+     *
+     * @var string
+     */
     public $write_table = "properties";
 
     /**
@@ -147,6 +153,10 @@ class Property extends SecuredModel {
             "actor"                     => "load:actor",
             "address"                   => "load:address",
             "contacts"                  => "load:contacts",
+            "cover_picture"             => Relation::make(
+                load: "cover_picture",
+                gate: Capability::properties_pictures_view,
+            ),
             "demographic_values_count"  => Relation::make(
                 count: "demographicValues",
                 gate : Capability::properties_demographics_view,
@@ -164,6 +174,10 @@ class Property extends SecuredModel {
             "parent"                    => "load:actor.parent",
             "pictures"                  => Relation::make(
                 load: "pictures",
+                gate: Capability::properties_pictures_view
+            ),
+            "pictures_products"         => Relation::make(
+                load: "pictures.product",
                 gate: Capability::properties_pictures_view
             ),
             "pricelist"                 => Relation::make(
@@ -268,7 +282,11 @@ class Property extends SecuredModel {
     }
 
     public function pictures(): HasMany {
-        return $this->hasMany(PropertyPicture::class, "property_id", "actor_id")->orderBy("order");
+        return $this->hasMany(InventoryPicture::class, "property_id", "actor_id")->orderBy("order");
+    }
+
+    public function cover_picture(): BelongsTo {
+        return $this->belongsTo(InventoryPicture::class, "cover_picture_id", "id");
     }
 
     public function fields_values(): HasMany {

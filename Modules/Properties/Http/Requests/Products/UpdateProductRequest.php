@@ -16,6 +16,7 @@ use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Properties\Enums\MediaType;
+use Neo\Modules\Properties\Models\InventoryPicture;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\PropertyType;
 use Neo\Modules\Properties\Models\ScreenType;
@@ -39,7 +40,8 @@ class UpdateProductRequest extends FormRequest {
             "production_cost"    => ["nullable", "numeric"],
             "programmatic_price" => ["nullable", "numeric"],
 
-            "notes" => ["nullable", "string"],
+            "cover_picture_id" => ["nullable", new Exists(InventoryPicture::class, "id")],
+            "notes"            => ["nullable", "string"],
 
             "with" => ["array", new PublicRelations(Product::class)],
         ];

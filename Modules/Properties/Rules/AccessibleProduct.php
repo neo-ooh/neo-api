@@ -21,7 +21,7 @@ class AccessibleProduct implements Rule, ImplicitRule {
     /**
      * Create a new rule instance.
      */
-    public function __construct() {
+    public function __construct(protected bool $allowNull = false) {
     }
 
     /**
@@ -33,9 +33,13 @@ class AccessibleProduct implements Rule, ImplicitRule {
      * @return bool
      */
     public function passes($attribute, $value): bool {
+        if (is_null($value) && $this->allowNull) {
+            return true;
+        }
+
         // Load the product and see if it exists
         /** @var Actor|null $product */
-        $product = Product::query()->find($value)->load("property");
+        $product = Product::query()->find($value)?->load("property");
 
         if (is_null($product)) {
             return false;
@@ -58,6 +62,6 @@ class AccessibleProduct implements Rule, ImplicitRule {
      * @return string
      */
     public function message(): string {
-        return 'You do not have access to the specified actor';
+        return 'You do not have access to the specified product';
     }
 }

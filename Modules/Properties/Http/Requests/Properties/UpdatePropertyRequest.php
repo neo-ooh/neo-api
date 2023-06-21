@@ -14,18 +14,20 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Properties\Models\InventoryPicture;
 use Neo\Modules\Properties\Models\PropertyType;
 
 class UpdatePropertyRequest extends FormRequest {
     public function rules(): array {
         return [
-            "network_id"   => ["nullable", "exists:networks,id"],
-            "is_sellable"  => ["required", "boolean"],
-            "has_tenants"  => ["required", "boolean"],
-            "pricelist_id" => ["nullable", "exists:pricelists,id"],
-            "website"      => ["nullable", "string"],
-            "type_id"      => ["nullable", "integer", new Exists(PropertyType::class, "id")],
-            "notes"        => ["nullable", "string"],
+            "network_id"       => ["nullable", "exists:networks,id"],
+            "is_sellable"      => ["required", "boolean"],
+            "has_tenants"      => ["required", "boolean"],
+            "pricelist_id"     => ["nullable", "exists:pricelists,id"],
+            "website"          => ["nullable", "string"],
+            "type_id"          => ["nullable", "integer", new Exists(PropertyType::class, "id")],
+            "notes"            => ["nullable", "string"],
+            "cover_picture_id" => ["nullable", new Exists(InventoryPicture::class, "id")],
         ];
     }
 

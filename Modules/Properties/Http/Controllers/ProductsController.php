@@ -76,7 +76,8 @@ class ProductsController {
         $product->production_cost    = $request->input("production_cost", $product->production_cost);
         $product->programmatic_price = $request->input("programmatic_price");
 
-        $product->notes = $request->input("notes") ?? "";
+        $product->cover_picture_id = $request->input("cover_picture_id");
+        $product->notes            = $request->input("notes") ?? "";
 
         $product->save();
 

@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Casts\EnumSetCast;
@@ -86,6 +87,9 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  *
  * @property int                           $locations_count           // Laravel `withCount` result accessor
  * @property Collection<Location>          $locations
+ *
+ * @property int|null                      $cover_picture_id
+ * @property InventoryPicture|null         $cover_picture
  */
 class Product extends Model implements WithImpressionsModels, WithAttachments {
     use SoftDeletes;
@@ -129,6 +133,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             "attachments"         => "attachments",
             "category"            => "category",
             "category-format"     => "category.format",
+            "cover_picture"       => Relation::make(
+                load: "cover_picture",
+                gate: Capability::properties_pictures_view,
+            ),
             "format"              => "format",
             "impressions_models"  => ["impressions_models", "category.impressions_models"],
             "inventories"         => Relation::make(
@@ -137,6 +145,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             ),
             "locations"           => "locations",
             "loop_configurations" => ["loop_configurations", "category.loop_configurations"],
+            "pictures"            => Relation::make(
+                load: "pictures",
+                gate: Capability::properties_pictures_view
+            ),
             "pricelist"           => ["load:pricelist.categories_pricings", "load:pricelist.products_pricings"],
             "property"            => "property",
             "screen_type"         => ["screen_type", "category.screen_type"],
@@ -219,6 +231,14 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         return $this->belongsTo(ScreenType::class, "screen_type_id", "id");
     }
 
+    public function pictures(): HasMany {
+        return $this->hasMany(InventoryPicture::class, "product_id", "id")->orderBy("order");
+    }
+
+    public function cover_picture(): BelongsTo {
+        return $this->belongsTo(InventoryPicture::class, "cover_picture_id", "id");
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Accessors
@@ -293,9 +313,9 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         $spotImpressionsPerHour = $el->evaluate($impressionsModel->formula, array_merge(
             [
                 "traffic" => $hourTraffic,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "faces" => $this->quantity,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "spots" => 1,
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "faces" => $this->quantity,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "spots" => 1,
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
             ], $impressionsModel->variables));
 
         $spotImpressionsPerPlay = [];

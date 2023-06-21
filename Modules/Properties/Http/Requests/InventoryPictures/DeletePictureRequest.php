@@ -5,21 +5,18 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - UpdatePictureRequest.php
+ * @neo/api - DeletePictureRequest.php
  */
 
-namespace Neo\Modules\Properties\Http\Requests\PropertiesPictures;
+namespace Neo\Modules\Properties\Http\Requests\InventoryPictures;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
-class UpdatePictureRequest extends FormRequest {
+class DeletePictureRequest extends FormRequest {
     public function rules(): array {
-        return [
-            "name"  => ["string"],
-            "order" => ["numeric"],
-        ];
+        return [];
     }
 
     public function authorize(): bool {

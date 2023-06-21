@@ -55,6 +55,9 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property ScreenType                    $screen_type
  *
  * @property PricelistProductsCategory     $pricing
+ *
+ * @property int|null                      $cover_picture_id
+ * @property InventoryPicture|null         $cover_picture
  */
 class ProductCategory extends Model implements WithImpressionsModels, WithAttachments {
     use HasImpressionsModels;
@@ -94,17 +97,25 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
 
     public function getPublicRelations() {
         return [
-            "properties"          => "load:properties",
-            "format"              => "load:format",
             "attachments"         => "load:attachments",
-            "products"            => "load:products",
+            "cover_picture"       => Relation::make(
+                load: "cover_picture",
+                gate: Capability::properties_pictures_view,
+            ),
+            "format"              => "load:format",
             "impressions_models"  => "load:impressions_models",
-            "loop_configurations" => "load:loop_configurations",
-            "screen_type"         => "screen_type",
             "inventories"         => Relation::make(
                 load: ["inventory_resource.inventories_settings", "inventory_resource.external_representations"],
                 gate: Capability::properties_inventories_view
             ),
+            "loop_configurations" => "load:loop_configurations",
+            "pictures"            => Relation::make(
+                load: "pictures",
+                gate: Capability::properties_pictures_view
+            ),
+            "products"            => "load:products",
+            "properties"          => "load:properties",
+            "screen_type"         => "screen_type",
         ];
     }
 
@@ -136,5 +147,13 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
 
     public function screen_type(): BelongsTo {
         return $this->belongsTo(ScreenType::class, "screen_type_id", "id");
+    }
+
+    public function pictures(): HasManyDeep {
+        return $this->hasManyDeepFromRelations([$this->products(), (new Product())->pictures()]);
+    }
+
+    public function cover_picture(): BelongsTo {
+        return $this->belongsTo(InventoryPicture::class, "cover_picture_id", "id");
     }
 }

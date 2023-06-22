@@ -156,7 +156,7 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->description                    = $location->name;
         $unit->network_id                     = $context["network_id"];
         $unit->mediatype_id                   = $product->property_type ? (int)$product->property_type->external_id : null;
-        $unit->external_id                    = $location->external_id->external_id . "-" . $location->id;
+        $unit->external_id                    = $location->external_id->external_id;
         $unit->floor_cpm                      = $product->programmatic_price;
         $unit->longitude                      = $product->geolocation->longitude;
         $unit->latitude                       = $product->geolocation->latitude;
@@ -177,6 +177,8 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->enable_strict_iab_blacklisting = true;
         $unit->weekly_traffic                 = $product->weekly_traffic;
         $unit->physical_unit_count            = $location->screen_count;
+
+        clock($unit);
     }
 
     /**

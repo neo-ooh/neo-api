@@ -298,7 +298,8 @@ class HivestackAdapter extends InventoryAdapter {
         // Any unit listed in the latter but missing in the former will have to be removed
         $unitsToRemove = array_diff(collect($productId->context["units"])
                                         ->map(fn(array $unit) => $unit["id"])
-                                        ->values(),
+                                        ->values()
+                                        ->all(),
                                     collect($unitIds)
                                         ->map(fn(array $unit) => $unit["id"])
                                         ->values()

@@ -43,25 +43,26 @@ class OdooClient {
      * @throws OdooException
      * @throws JsonException
      */
-    public function get(string $model, array $filters = [], array $fields = [], int|null $limit = null, int $offset = 0) {
-        $request = $this->client;
-
-        foreach ($filters as $filter) {
-            $request->where(...$filter);
-        }
+    public function get(string $model, array $filters = [], array $fields = [], int|null $limit = null, int $offset = 0, string $locale = 'en_CA') {
+        $parameters = [
+            "fields"  => $fields,
+            "context" => [
+                "lang" => $locale,
+            ],
+        ];
 
         if ($limit !== null) {
-            $request->limit($limit, $offset);
+            $parameters["limit"]  = $limit;
+            $parameters["offset"] = $offset;
         }
 
         $event = uniqid('', true);
         clock()->event("[Odoo] get@$model")->name($event)->color("cyan")->begin();
 
-        $response = $request->fields($fields)
-                            ->get($model);
+        $response = $this->client->call($model, 'search_read', [$filters], $parameters);
 
         clock()->event($event)->end();
-
+        
         return $response;
     }
 
@@ -72,10 +73,10 @@ class OdooClient {
      * @param string    $model
      * @param array|int $ids
      * @param array     $fields
+     * @param string    $locale
      * @return mixed
-     * @throws JsonException
      */
-    public function getById(string $model, array|int $ids, array $fields = []) {
+    public function getById(string $model, array|int $ids, array $fields = [], string $locale = 'en_CA') {
         $modelIds = is_int($ids) ? [$ids] : $ids;
 
         $event = uniqid('', true);
@@ -86,7 +87,12 @@ class OdooClient {
             ->color("cyan")
             ->begin();
 
-        $models = $this->client->call($model, 'read', [$modelIds], ["fields" => $fields]);
+        $models = $this->client->call($model, 'read', [$modelIds], [
+            "fields"  => $fields,
+            "context" => [
+                "lang" => $locale,
+            ],
+        ]);
 
         clock()->event($event)->end();
 

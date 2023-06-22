@@ -47,7 +47,10 @@ class ResourceFactory {
                                           ]
                         ),
             product   : new ProductResource(
-                            name                     : LocalizedString::collection([new LocalizedString(locale: "en-CA", value: trim($product->name))]),
+                            name                     : LocalizedString::collection([
+                                                                                       new LocalizedString(locale: "en-CA", value: trim($product->name)),
+                                                                                       new LocalizedString(locale: "fr-CA", value: trim($product->name)),
+                                                                                   ]),
                             type                     : $product->getType(),
                             category_id              : new InventoryResourceId(inventory_id: $config->inventoryID, external_id: $product->categ_id[0], type: InventoryResourceType::ProductCategory, context: []),
                             is_sellable              : $product->active,

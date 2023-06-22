@@ -34,6 +34,8 @@ use Neo\Modules\Properties\Services\Vistar\Models\Attributes\VenueOperatingMinut
  * @property string           $registration_id // Player ID
  * @property int              $static_duration_seconds
  * @property bool             $static_supported
+ * @property bool             $min_duration_ms
+ * @property bool             $max_duration_ms
  * @property bool             $video_supported
  * @property int              $height_px
  * @property int              $width_px

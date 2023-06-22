@@ -95,7 +95,7 @@ class VistarAdapter extends InventoryAdapter {
         $impressionsPerPlay = (collect($product->weekdays_spot_impressions)->sum() / 7) * $impressionsShare;
 
         $venue->name             = "[TEST] " . trim($player->name);  // TODO: Remove `[TEST]`
-        $venue->venue_type       = $product->property_type?->external_id;
+        $venue->venue_type_id    = $product->property_type ? (int)$product->property_type->external_id : null;
         $venue->network_id       = $context["network_id"];
         $venue->partner_venue_id = "connect_" . $product->property_connect_id . "_" . $product->product_connect_id . "_" . $player->external_id->external_id;
         $venue->activation_date  = $venue->activation_date ?? null;
@@ -116,8 +116,11 @@ class VistarAdapter extends InventoryAdapter {
         $venue->video_supported         = in_array(MediaType::Video, $product->allowed_media_types);
         $venue->static_supported        = in_array(MediaType::Image, $product->allowed_media_types);
         $venue->static_duration_seconds = $product->loop_configuration->spot_length_ms / 1_000;
-        $venue->height_px               = $product->screen_height_px;
-        $venue->width_px                = $product->screen_width_px;
+        $venue->min_duration_ms         = min(5_000, $product->loop_configuration->spot_length_ms);
+        $venue->max_duration_ms         = $product->loop_configuration->spot_length_ms;
+
+        $venue->height_px = $product->screen_height_px;
+        $venue->width_px  = $product->screen_width_px;
     }
 
     /**

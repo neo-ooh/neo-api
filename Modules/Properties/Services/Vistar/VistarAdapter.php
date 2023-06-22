@@ -92,9 +92,9 @@ class VistarAdapter extends InventoryAdapter {
     }
 
     protected function fillVenue(Venue $venue, BroadcastPlayer $player, ProductResource $product, array $context, float $impressionsShare): void {
-        $impressionsPerPlay = (collect($product->weekdays_spot_impressions)->sum() / 7) * $impressionsShare;
+        $impressionsPerPlay = collect($product->weekdays_spot_impressions)->average() * $impressionsShare;
 
-        $venue->name             = "[TEST] " . trim($player->name);  // TODO: Remove `[TEST]`
+        $venue->name             = trim($player->name);
         $venue->venue_type_id    = $product->property_type ? (int)$product->property_type->external_id : null;
         $venue->network_id       = $context["network_id"];
         $venue->partner_venue_id = "connect_" . $product->property_connect_id . "_" . $product->product_connect_id . "_" . $player->external_id->external_id;
@@ -109,7 +109,7 @@ class VistarAdapter extends InventoryAdapter {
         $venue->operating_minutes       = VenueOperatingMinutes::buildFromOperatingHours($product->operating_hours->all());
         $venue->cpm_floor_cents         = (int)round($product->programmatic_price * 100);
         $venue->impressions             = new VenueImpressions(
-            per_spot  : max(1, floor($impressionsPerPlay * 10000) / 10000), // Impressions rounded to 4 decimals
+            per_spot  : min(17, max(1, floor($impressionsPerPlay * 10000) / 10000)), // Impressions rounded to 4 decimals
             per_second: 0,
         );
         $venue->registration_id         = $player->external_id->external_id . "_test"; // TODO: Remove `test`

@@ -112,7 +112,7 @@ class VistarAdapter extends InventoryAdapter {
             per_spot  : min(17, max(1, floor($impressionsPerPlay * 10000) / 10000)), // Impressions rounded to 4 decimals
             per_second: 0,
         );
-        $venue->registration_id         = $player->external_id->external_id . "_test"; // TODO: Remove `test`
+        $venue->registration_id         = $player->external_id->external_id;
         $venue->video_supported         = in_array(MediaType::Video, $product->allowed_media_types);
         $venue->static_supported        = in_array(MediaType::Image, $product->allowed_media_types);
         $venue->static_duration_seconds = $product->loop_configuration->spot_length_ms / 1_000;

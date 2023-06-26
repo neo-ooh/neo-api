@@ -38,7 +38,7 @@ class AddressController extends Controller {
         $address->line_2   = trim($request->input("line_2"));
         $address->city_id  = $city->id;
         $address->zipcode  = trim($request->input("zipcode", $address->zipcode ?? ""));
-        $address->timezone = $request->input("timezone", $address->timezone);
+        $address->timezone = $request->input("timezone", $address->timezone) ?? "";
 
         if ($request->has("longitude") && $request->has("latitude")) {
             $address->geolocation = new Point($request->input("latitude"), $request->input("longitude"));

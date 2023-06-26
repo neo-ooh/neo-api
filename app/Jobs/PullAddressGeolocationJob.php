@@ -94,7 +94,7 @@ class PullAddressGeolocationJob implements ShouldQueue, ShouldBeUnique {
 
         /** @var GeonamesAddress $geoNameResponse */
         $geoNameResponse         = $responses->first();
-        $this->address->timezone = $geoNameResponse->getTimezone();
+        $this->address->timezone = $geoNameResponse->getTimezone() ?? "";
 
         $this->address->save();
     }

@@ -55,13 +55,12 @@ class LoopConfiguration extends Model {
 
     protected $touches = [
         "formats",
-        "products",
     ];
 
     public function formats(): BelongsToMany {
         return $this->belongsToMany(Format::class, "format_loop_configurations", "loop_configuration_id", "format_id");
     }
-
+    
     /**
      * @return bool Tell if the loop configuration dates makes it crosses the new year
      */

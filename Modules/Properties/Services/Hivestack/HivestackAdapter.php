@@ -175,7 +175,7 @@ class HivestackAdapter extends InventoryAdapter {
         $unit->allow_video                    = in_array(MediaType::Video, $product->allowed_media_types);
         $unit->allow_html                     = in_array(MediaType::HTML, $product->allowed_media_types);
         $unit->enable_strict_iab_blacklisting = true;
-        $unit->weekly_traffic                 = $product->weekly_traffic;
+        $unit->weekly_traffic                 = (int)round($product->weekly_traffic);
         $unit->physical_unit_count            = $location->screen_count;
 
         clock($unit);

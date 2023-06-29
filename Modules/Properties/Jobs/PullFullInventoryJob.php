@@ -60,9 +60,8 @@ class PullFullInventoryJob implements ShouldQueue {
         $properties = Property::query()->whereHas("inventories_settings", function (Builder $query) {
             $query->where("inventory_id", "=", $this->inventoryId)
                   ->where("pull_enabled", "=", true);
-        })->whereHas("external_representations", function (Builder $query) {
-            $query->where("inventory_id", "=", $this->inventoryId)
-                  ->withoutTrashed();
+        })->orWhereDoesntHave("inventories_settings", function (Builder $query) {
+            $query->where("inventory_id", "=", $this->inventoryId);
         })->get();
         $properties->load("external_representations");
 
@@ -93,9 +92,13 @@ class PullFullInventoryJob implements ShouldQueue {
         // Load products enabled individually
         $products->push(
             ...Product::query()
-                      ->whereHas("inventories_settings", function (Builder $query) {
-                          $query->where("inventory_id", "=", $this->inventoryId)
-                                ->where("pull_enabled", "=", true);
+                      ->where(function (Builder $query) {
+                          $query->whereHas("inventories_settings", function (Builder $query) {
+                              $query->where("inventory_id", "=", $this->inventoryId)
+                                    ->where("pull_enabled", "=", true);
+                          })->orWhereDoesntHave("inventories_settings", function (Builder $query) {
+                              $query->where("inventory_id", "=", $this->inventoryId);
+                          });
                       })
                       ->whereHas("external_representations", function (Builder $query) {
                           $query->where("inventory_id", "=", $this->inventoryId)

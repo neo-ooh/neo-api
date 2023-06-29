@@ -135,7 +135,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             "category.format"     => "category.format",
             "cover_picture"       => Relation::make(
                 load: "cover_picture",
-                gate: Capability::properties_pictures_view,
+                gate: [Capability::properties_pictures_view, Capability::planner_access],
             ),
             "format"              => "format",
             "impressions_models"  => ["impressions_models", "category.impressions_models"],
@@ -147,7 +147,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             "loop_configurations" => ["loop_configurations", "category.loop_configurations"],
             "pictures"            => Relation::make(
                 load: "pictures",
-                gate: Capability::properties_pictures_view
+                gate: [Capability::properties_pictures_view, Capability::planner_access]
             ),
             "pricelist"           => ["load:pricelist.categories_pricings", "load:pricelist.products_pricings"],
             "property"            => "property",
@@ -155,7 +155,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             "site_type"           => ["site_type", "property.type"],
             "unavailabilities"    => Relation::make(
                 load: ["unavailabilities.translations", "unavailabilities.products"],
-                gate: Capability::properties_unavailabilities_view
+                gate: [Capability::properties_unavailabilities_view, Capability::planner_access]
             ),
             "warnings"            => Relation::make(
                 load: "warnings",

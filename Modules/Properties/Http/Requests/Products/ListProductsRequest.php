@@ -29,13 +29,15 @@ class ListProductsRequest extends FormRequest {
             "property_id" => ["integer", new Exists(Property::class, "actor_id")],
             "category_id" => ["integer", new Exists(ProductCategory::class, "id")],
 
-            "type" => [new Enum(ProductType::class)],
+            "type"  => [new Enum(ProductType::class)],
+            "bonus" => ["sometimes", "boolean"],
 
             "with" => ["array", new PublicRelations(Product::class)],
         ];
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::products_view->value);
+        return Gate::allows(Capability::products_view->value)
+            || Gate::allows(Capability::planner_access->value);
     }
 }

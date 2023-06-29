@@ -155,11 +155,11 @@ class Property extends SecuredModel {
             "contacts"                  => "load:contacts",
             "cover_picture"             => Relation::make(
                 load: "cover_picture",
-                gate: Capability::properties_pictures_view,
+                gate: [Capability::properties_pictures_view, Capability::planner_access],
             ),
             "demographic_values_count"  => Relation::make(
                 count: "demographicValues",
-                gate : Capability::properties_demographics_view,
+                gate : [Capability::properties_demographics_view],
             ),
             "fields"                    => ["network.properties_fields", "fields_values"],
             "fields_values"             => "load:fields_values",
@@ -174,19 +174,19 @@ class Property extends SecuredModel {
             "parent"                    => "load:actor.parent",
             "pictures"                  => Relation::make(
                 load: "pictures",
-                gate: Capability::properties_pictures_view
+                gate: [Capability::properties_pictures_view, Capability::planner_access]
             ),
             "pictures_products"         => Relation::make(
                 load: "pictures.product",
-                gate: Capability::properties_pictures_view
+                gate: [Capability::properties_pictures_view, Capability::planner_access]
             ),
             "pricelist"                 => Relation::make(
                 load: ["pricelist.categories_pricings", "pricelist.products_pricings"],
-                gate: Capability::properties_pricelist_view
+                gate: [Capability::properties_pricelist_view, Capability::planner_access]
             ),
             "products"                  => Relation::make(
                 load: "products",
-                gate: Capability::products_view
+                gate: [Capability::products_view, Capability::planner_access]
             ),
             "products.warnings"         => Relation::make(
                 load: "products.warnings",
@@ -199,14 +199,14 @@ class Property extends SecuredModel {
             "products.unavailabilities" => ["load:products.unavailabilities.translations", "load:products.unavailabilities.products"],
             "tags"                      => Relation::make(
                 load: "actor.tags",
-                gate: Capability::properties_tags_view
+                gate: [Capability::properties_tags_view, Capability::planner_access]
             ),
             "type"                      => Relation::make(
                 load: "type"
             ),
             "tenants"                   => Relation::make(
                 load: "tenants",
-                gate: Capability::properties_tenants_view
+                gate: [Capability::properties_tenants_view, Capability::planner_access]
             ),
             "traffic.monthly_data"      => ["load:traffic.monthly_data"],
             "traffic.weekly_data"       => ["load:traffic.weekly_data"],
@@ -215,7 +215,7 @@ class Property extends SecuredModel {
             "translations"              => "translations",
             "unavailabilities"          => Relation::make(
                 load: ["unavailabilities.translations", "unavailabilities.products"],
-                gate: Capability::properties_unavailabilities_view
+                gate: [Capability::properties_unavailabilities_view, Capability::planner_access]
             ),
             "warnings"                  => Relation::make(
                 load: "warnings"

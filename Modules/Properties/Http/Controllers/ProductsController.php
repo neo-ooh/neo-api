@@ -35,6 +35,9 @@ class ProductsController {
                             $query->whereHas("category", function (Builder $query) use ($request) {
                                 $query->where("type", "=", $request->enum("type", ProductType::class));
                             });
+                        })
+                        ->when($request->input("bonus") !== null, function (Builder $query) use ($request) {
+                            $query->where("is_bonus", "=", $request->input("bonus"));
                         });
 
         if ($request->has("parent_id")) {

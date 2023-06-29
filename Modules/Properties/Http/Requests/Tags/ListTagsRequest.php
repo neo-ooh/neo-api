@@ -22,6 +22,7 @@ class ListTagsRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::properties_tags_edit->value);
+        return Gate::allows(Capability::properties_tags_edit->value)
+            || Gate::allows(Capability::planner_access->value);
     }
 }

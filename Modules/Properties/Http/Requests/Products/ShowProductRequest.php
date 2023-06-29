@@ -24,6 +24,7 @@ class ShowProductRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return Gate::allows(Capability::products_view->value);
+        return Gate::allows(Capability::products_view->value)
+            || Gate::allows(Capability::planner_access->value);
     }
 }

@@ -40,7 +40,7 @@ Route::group([
 
         Route::model("product", Product::class);
         Route::model("productCategory", ProductCategory::class);
-        
+
         Route::   get("product-categories", ProductCategoriesController::class . "@index");
         Route::   get("product-categories/_by_id", ProductCategoriesController::class . "@byIds");
         Route::   get("product-categories/{productCategory}", ProductCategoriesController::class . "@show");
@@ -90,6 +90,7 @@ Route::group([
         Route::   get("properties/{property}/tenants", [PropertiesTenantsController::class, "index"]);
         Route::  post("properties/{property}/tenants", [PropertiesTenantsController::class, "sync"]);
         Route::   put("properties/{property}/tenants", [PropertiesTenantsController::class, "import"]);
+        Route::delete("properties/{property}/tenants/{brand}", [PropertiesTenantsController::class, "remove"]);
 
 
         /*

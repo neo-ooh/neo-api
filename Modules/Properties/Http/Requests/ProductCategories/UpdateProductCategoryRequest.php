@@ -18,6 +18,7 @@ use Neo\Enums\Capability;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\ProductType;
+use Neo\Modules\Properties\Models\InventoryPicture;
 use Neo\Modules\Properties\Models\ScreenType;
 
 class UpdateProductCategoryRequest extends FormRequest {
@@ -34,8 +35,9 @@ class UpdateProductCategoryRequest extends FormRequest {
             "allows_audio"          => ["boolean"],
             "allows_motion"         => ["boolean"],
 
-            "screen_size_in" => ["nullable", "nullable"],
-            "screen_type_id" => ["nullable", new Exists(ScreenType::class, "id")],
+            "screen_size_in"   => ["nullable", "nullable"],
+            "screen_type_id"   => ["nullable", new Exists(ScreenType::class, "id")],
+            "cover_picture_id" => ["nullable", new Exists(InventoryPicture::class, "id")],
 
             "production_cost"    => ["numeric"],
             "programmatic_price" => ["numeric"],

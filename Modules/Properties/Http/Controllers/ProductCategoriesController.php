@@ -52,8 +52,9 @@ class ProductCategoriesController {
         $productCategory->allows_audio        = $request->input("allows_audio", $productCategory->allows_audio);
         $productCategory->allows_motion       = $request->input("allows_motion", $productCategory->allows_motion);
 
-        $productCategory->screen_size_in = $request->input("screen_size_in", $productCategory->screen_size_in);
-        $productCategory->screen_type_id = $request->input("screen_type_id", $productCategory->screen_type_id);
+        $productCategory->screen_size_in   = $request->input("screen_size_in", $productCategory->screen_size_in);
+        $productCategory->screen_type_id   = $request->input("screen_type_id", $productCategory->screen_type_id);
+        $productCategory->cover_picture_id = $request->input("cover_picture_id");
 
         $productCategory->production_cost    = $request->input("production_cost", $productCategory->production_cost);
         $productCategory->programmatic_price = $request->input("programmatic_price", $productCategory->programmatic_price);

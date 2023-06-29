@@ -110,7 +110,7 @@ class ProductCategory extends Model implements WithImpressionsModels, WithAttach
             ),
             "loop_configurations" => "load:loop_configurations",
             "pictures"            => Relation::make(
-                load: "pictures",
+                load: ["pictures.product", "pictures.property"],
                 gate: Capability::properties_pictures_view
             ),
             "products"            => "load:products",

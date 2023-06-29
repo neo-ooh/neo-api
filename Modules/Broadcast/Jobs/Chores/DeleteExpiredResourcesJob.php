@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -32,14 +32,13 @@ class DeleteExpiredResourcesJob extends Job {
               `schedules` `s`
               JOIN `schedule_details` `sd` ON `sd`.`schedule_id` = `s`.`id`
             WHERE
-              `s`.`end_date` < DATE_SUB(DATE(NOW()), INTERVAL 2 DAY)
+              `s`.`end_date` < DATE_SUB(DATE(NOW()), INTERVAL 3 DAY)
               AND EXISTS(
                 SELECT *
                   FROM `external_resources` `er`
                  WHERE `er`.`resource_id` = `s`.`id`
                    AND `er`.`deleted_at` IS NULL
               )
-
         SQL
         );
 

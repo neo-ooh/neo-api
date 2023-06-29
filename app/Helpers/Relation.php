@@ -30,26 +30,26 @@ function getAsArray(mixed $item) {
  */
 class Relation {
     /**
-     * @param string|string[]|null    $load   The relations to load on the model
-     * @param string|string[]|null    $count  The relations to count on the model
-     * @param string|string[]|null    $append The attribute to
-     * @param Capability|Closure|null $gate   If the gate is a function, it should return the
+     * @param string|string[]|null                 $load   The relations to load on the model
+     * @param string|string[]|null                 $count  The relations to count on the model
+     * @param string|string[]|null                 $append The attribute to
+     * @param Capability|Capability[]|Closure|null $gate   If the gate is a function, it should return the
      */
     public function __construct(
-        protected string|array|null            $load = null,
-        protected string|array|null            $count = null,
-        protected string|array|null            $append = null,
-        protected Closure|null                 $custom = null,
-        protected Capability|Closure|bool|null $gate = null,
+        protected string|array|null                  $load = null,
+        protected string|array|null                  $count = null,
+        protected string|array|null                  $append = null,
+        protected Closure|null                       $custom = null,
+        protected Capability|Closure|array|bool|null $gate = null,
     ) {
     }
 
     public static function make(
-        string|array|null            $load = null,
-        string|array|null            $count = null,
-        string|array|null            $append = null,
-        Closure|null                 $custom = null,
-        Capability|Closure|bool|null $gate = null,
+        string|array|null                  $load = null,
+        string|array|null                  $count = null,
+        string|array|null                  $append = null,
+        Closure|null                       $custom = null,
+        Capability|Closure|array|bool|null $gate = null,
     ) {
         return new static($load, $count, $append, $custom, $gate);
     }
@@ -136,6 +136,12 @@ class Relation {
         // Closure is a Capability, use the `Gate` facade to validate it
         if ($this->gate instanceof Capability) {
             return Gate::allows($this->gate->value);
+        }
+
+        if (is_array($this->gate)) {
+            return collect($this->gate)
+                ->filter(fn(Capability $capability) => Gate::allows($capability->value))
+                ->isNotEmpty();
         }
 
         // Gate is a closure, call it with a single model

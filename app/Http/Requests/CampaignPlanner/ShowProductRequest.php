@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - GetCampaignPlannerDemographicValuesRequest.php
+ * @neo/api - ShowProductRequest.php
  */
 
 namespace Neo\Http\Requests\CampaignPlanner;
@@ -15,14 +15,13 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Models\CampaignPlannerSave;
-use Neo\Modules\Properties\Models\DemographicVariable;
+use Neo\Modules\Properties\Models\Product;
 use Vinkla\Hashids\Facades\Hashids;
 
-class GetCampaignPlannerDemographicValuesRequest extends FormRequest {
+class ShowProductRequest extends FormRequest {
     public function rules(): array {
         return [
-            "variables"   => ["required", "array"],
-            "variables.*" => [new Exists(DemographicVariable::class, "id")],
+            "product_id" => ["required", new Exists(Product::class, "id")],
         ];
     }
 

@@ -79,11 +79,14 @@ Route::group([
                  "middleware" => "guests",
                  "prefix"     => "v1",
              ], function () {
-    Route::   get("campaign-planner/{campaignPlannerSave}/_save", CampaignPlannerController::class . "@save");
-    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_1", CampaignPlannerController::class . "@dataChunk_1");
-    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_2", CampaignPlannerController::class . "@dataChunk_2");
-    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_3", CampaignPlannerController::class . "@dataChunk_3");
-    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_4", CampaignPlannerController::class . "@dataChunk_4");
-    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_traffic", CampaignPlannerController::class . "@trafficChunk");
-    Route::   get("campaign-planner/{campaignPlannerSave}/_demographic_values", CampaignPlannerController::class . "@demographicValues");
+    Route::   get("campaign-planner/{campaignPlannerSave}/_save", [CampaignPlannerController::class, "save"]);
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_1", [CampaignPlannerController::class, "dataChunk_1"]);
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_2", [CampaignPlannerController::class, "dataChunk_2"]);
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_3", [CampaignPlannerController::class, "dataChunk_3"]);
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_4", [CampaignPlannerController::class, "dataChunk_4"]);
+    Route::   get("campaign-planner/{campaignPlannerSave}/_chunk_traffic", [CampaignPlannerController::class, "trafficChunk"]);
+    Route::   get("campaign-planner/{campaignPlannerSave}/_demographic_values", [CampaignPlannerController::class, "demographicValues"]);
+
+    Route::   get("campaign-planner/{campaignPlannerSave}/_property", [CampaignPlannerController::class, "property"]);
+    Route::   get("campaign-planner/{campaignPlannerSave}/_product", [CampaignPlannerController::class, "product"]);
 });

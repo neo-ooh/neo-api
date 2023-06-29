@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDataRequest;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDemographicValuesRequest;
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
+use Neo\Http\Requests\CampaignPlanner\ShowProductRequest;
+use Neo\Http\Requests\CampaignPlanner\ShowPropertyRequest;
 use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\CampaignPlannerSave;
 use Neo\Modules\Broadcast\Models\Format;
@@ -28,9 +30,12 @@ use Neo\Modules\Properties\Models\DemographicVariable;
 use Neo\Modules\Properties\Models\Field;
 use Neo\Modules\Properties\Models\FieldsCategory;
 use Neo\Modules\Properties\Models\Pricelist;
+use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
 use Neo\Modules\Properties\Models\Property;
 use Neo\Modules\Properties\Models\PropertyTrafficSnapshot;
+use Neo\Modules\Properties\Models\PropertyType;
+use Neo\Modules\Properties\Models\ScreenType;
 
 class CampaignPlannerController {
 
@@ -49,26 +54,26 @@ class CampaignPlannerController {
                               "actor.tags",
                               "translations",
                               "address",
-                              "pictures",
                               "tenants" => fn($q) => $q->select(["id"]),
                               "opening_hours",
                           ]);
 
         return [
             "properties" => $properties->map(fn(Property $property) => [
-                "id"            => $property->actor_id,
-                "is_sellable"   => $property->is_sellable,
-                "name"          => $property->actor->name,
-                "address"       => $property->address,
-                "network_id"    => $property->network_id,
-                "pricelist_id"  => $property->pricelist_id,
-                "translations"  => $property->translations,
-                "website"       => $property->website,
-                "opening_hours" => $property->opening_hours,
-                "pictures"      => $property->pictures,
-                "has_tenants"   => $property->has_tenants,
-                "tenants"       => $property->tenants->pluck('id'),
-                "tags"          => $property->actor->tags,
+                "id"               => $property->actor_id,
+                "is_sellable"      => $property->is_sellable,
+                "name"             => $property->actor->name,
+                "address"          => $property->address,
+                "network_id"       => $property->network_id,
+                "pricelist_id"     => $property->pricelist_id,
+                "translations"     => $property->translations,
+                "website"          => $property->website,
+                "opening_hours"    => $property->opening_hours,
+                "has_tenants"      => $property->has_tenants,
+                "tenants"          => $property->tenants->pluck('id'),
+                "tags"             => $property->actor->tags,
+                "cover_picture_id" => $property->cover_picture_id,
+                "type_id"          => $property->type_id,
             ]),
         ];
     }
@@ -96,7 +101,6 @@ class CampaignPlannerController {
 
         $properties->load([
                               "products",
-                              "products.attachments",
                               "products.impressions_models",
                           ]);
 
@@ -129,6 +133,8 @@ class CampaignPlannerController {
         $formats              = Format::query()
                                       ->with("loop_configurations")
                                       ->get();
+        $propertyTypes        = PropertyType::query()->get();
+        $screenTypes          = ScreenType::query()->get();
 
         return [
             "categories"            => $categories,
@@ -139,6 +145,8 @@ class CampaignPlannerController {
             "brands"                => $brands,
             "pricelists"            => $pricelists,
             "formats"               => $formats,
+            "property_types"        => $propertyTypes,
+            "screen_types"          => $screenTypes,
         ];
     }
 
@@ -165,6 +173,51 @@ class CampaignPlannerController {
     }
 
     public function save(Request $request, CampaignPlannerSave $campaignPlannerSave) {
-        return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
+        $save = CampaignPlannerSave::query()
+                                   ->from($campaignPlannerSave->getWriteTable())
+                                   ->where("id", "=", $campaignPlannerSave->getKey())
+                                   ->first();
+        return new Response(new CampaignPlannerSaveResource($save->makeVisible("data")));
+    }
+
+    public function property(ShowPropertyRequest $request, CampaignPlannerSave $campaignPlannerSave) {
+        $property = Property::query()
+                            ->find($request->input("property_id"))
+                            ->load([
+                                       "address",
+                                       "fields_values",
+                                       "network.properties_fields",
+                                       "opening_hours",
+                                       "products.unavailabilities",
+                                       "actor.tags",
+                                       "translations",
+                                       "unavailabilities",
+                                       "pictures",
+                                   ]);
+
+        return new Response($property);
+    }
+
+    public function product(ShowProductRequest $request, CampaignPlannerSave $campaignPlannerSave) {
+        $product = Product::query()
+                          ->find($request->input("product_id"))
+                          ->loadMissing([
+                                            "attachments",
+                                            "pricelist.categories_pricings",
+                                            "pricelist.products_pricings",
+                                            "pictures",
+                                            "cover_picture",
+                                            "format",
+                                            "category.format",
+                                            "pictures",
+                                            "loop_configurations",
+                                            "category.loop_configurations",
+                                            "screen_type",
+                                            "category.screen_type",
+                                            "site_type",
+                                            "property.type",
+                                        ]);
+
+        return new Response($product);
     }
 }

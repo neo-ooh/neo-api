@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -13,6 +13,7 @@ namespace Neo\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Neo\Models\Traits\HasView;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
@@ -26,19 +27,28 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property string  $uid
  */
 class CampaignPlannerSave extends Model {
-    protected $table = "campaign_planner_saves";
+    use HasView;
+
+    protected $table = "campaign_planner_saves_view";
+
+    protected $write_table = "campaign_planner_saves";
+
     protected $primaryKey = "id";
 
     protected $appends = ["uid"];
 
     protected $casts = [
-        "data" => "array"
+        "data" => "array",
     ];
 
     protected $fillable = [
         "name",
         "actor_id",
-        "data"
+        "data",
+    ];
+
+    protected $hidden = [
+        "data",
     ];
 
     public function resolveRouteBinding($value, $field = null) {

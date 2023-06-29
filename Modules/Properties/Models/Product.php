@@ -132,7 +132,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
         return [
             "attachments"         => "attachments",
             "category"            => "category",
-            "category-format"     => "category.format",
+            "category.format"     => "category.format",
             "cover_picture"       => Relation::make(
                 load: "cover_picture",
                 gate: Capability::properties_pictures_view,

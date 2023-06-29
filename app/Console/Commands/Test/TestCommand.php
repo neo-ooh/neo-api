@@ -11,11 +11,6 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
-use Neo\Modules\Broadcast\Models\Format;
-use Neo\Modules\Broadcast\Models\Layout;
-use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Properties\Models\Product;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
@@ -29,7 +24,7 @@ class TestCommand extends Command {
      * @throws Exception
      */
     public function handle() {
-        $productId = 617;
+        /*$productId = 617;
         $product   = Product::query()->find($productId);
         $format    = Format::query()->find($product->format_id ?? $product->category->format_id);
         $layoutIds = $format->layouts->pluck("id");
@@ -57,8 +52,22 @@ class TestCommand extends Command {
                 $query->where("schedule_content_disabled_formats.schedule_content_id", "=", DB::raw("schedule_contents.id"));
                 $query->where("schedule_content_disabled_formats.format_id", "=", $product->format_id ?? $product->category->format_id);
             });
-        });
+        });*/
 
-        dump($query->toSql());
+//        $inventory = InventoryProvider::query()->find(1);
+//        /** @var OdooAdapter $odoo */
+//        $odoo = $inventory->getAdapter();
+
+//        Cache::clear();
+
+//        $products = $odoo->listProducts(Carbon::now()->subDay());
+
+//        dump($products->first()->toArray());
+
+//        $product = Product::query()->find(357);
+        $product  = Product::query()->find(7458);
+        $resource = $product->toResource(1);
+
+        dump($resource->weekly_traffic);
     }
 }

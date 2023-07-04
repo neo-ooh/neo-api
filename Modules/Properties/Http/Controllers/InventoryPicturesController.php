@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
+use Neo\Modules\Broadcast\Utils\ThumbnailCreator;
 use Neo\Modules\Properties\Http\Requests\InventoryPictures\ListPicturesRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryPictures\StorePictureRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryPictures\UpdatePictureRequest;
@@ -60,6 +61,10 @@ class InventoryPicturesController {
 
         Storage::disk("public")
                ->putFileAs("/properties/pictures", $image, "$picture->uid.$picture->extension", ["visibility" => "public"]);
+
+        $creator = new ThumbnailCreator($image);
+        Storage::disk("public")
+               ->writeStream($picture->thumbnail_path, $creator->getThumbnailAsStream(), ["visibility" => "public"]);
 
         return new Response($picture->refresh(), 201);
     }

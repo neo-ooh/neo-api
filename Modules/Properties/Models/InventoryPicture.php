@@ -30,7 +30,9 @@ use Vinkla\Hashids\Facades\Hashids;
  *
  * @property string        $uid
  * @property string        $file_path
+ * @property string        $thumbnail_path
  * @property string        $url
+ * @property string        $thumbnail_url
  *
  */
 class InventoryPicture extends Model {
@@ -49,7 +51,7 @@ class InventoryPicture extends Model {
     ];
 
     protected $appends = [
-        "url",
+        "url", "thumbnail_url",
     ];
 
     public static function boot() {
@@ -88,7 +90,15 @@ class InventoryPicture extends Model {
         return "properties/pictures/$this->uid.$this->extension";
     }
 
+    public function getThumbnailPathAttribute() {
+        return "properties/pictures/$this->uid-thumb.$this->extension";
+    }
+
     public function getUrlAttribute() {
         return Storage::disk("public")->url($this->file_path);
+    }
+
+    public function getThumbnailUrlAttribute() {
+        return Storage::disk("public")->url($this->thumbnail_path);
     }
 }

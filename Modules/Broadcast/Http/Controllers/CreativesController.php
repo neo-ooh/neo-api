@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -91,7 +91,7 @@ class CreativesController extends Controller {
      */
     protected function handleStaticCreative(UploadedFile $file, Creative $creative, Frame $frame, Content $content): Response {
         // Control the uploaded creative
-        // This methods returns only if the creative is valid
+        // This method returns only if the creative is valid
         $validator = new CreativeValidator($file, $frame, $content);
         $validator->validate();
 

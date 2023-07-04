@@ -23,7 +23,27 @@ use Neo\Models\CampaignPlannerSave;
 
 class CampaignPlannerSavesController {
     public function index(ListSavesRequest $request, Actor $actor) {
-        return new Response($actor->campaign_planner_saves()->get());
+        $query = $actor->campaign_planner_saves();
+
+        $totalCount = $query->clone()->count();
+        $from       = 0;
+        $to         = $totalCount;
+
+        if ($request->has("page") || $request->has("count")) {
+            $page  = $request->input("page", 1);
+            $count = $request->input("count", 500);
+            $from  = ($page - 1) * $count;
+            $to    = ($page * $count) - 1;
+
+            $query->limit($count)
+                  ->offset($from);
+        }
+
+        $query->orderBy("updated_at", 'desc');
+
+        return new Response($query->get(), 200, [
+            "Content-Range" => "items $from-$to/$totalCount",
+        ]);
     }
 
     public function store(StoreSaveRequest $request) {
@@ -42,19 +62,9 @@ class CampaignPlannerSavesController {
         return new Response(new CampaignPlannerSaveResource($save), 201);
     }
 
-    public function recent(ListSavesRequest $request, Actor $actor) {
-        return new Response($actor->campaign_planner_saves()
-                                  ->orderBy("updated_at", "desc")
-                                  ->limit(5)
-                                  ->get());
-    }
-
     public function show(Actor $actor, CampaignPlannerSave $campaignPlannerSave) {
-        $save = CampaignPlannerSave::query()
-                                   ->from($campaignPlannerSave->getWriteTable())
-                                   ->where("id", "=", $campaignPlannerSave->getKey())
-                                   ->first();
-        return new Response(new CampaignPlannerSaveResource($save->makeVisible("data")));
+        $campaignPlannerSave->data = $campaignPlannerSave->getPlan();
+        return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
     }
 
     public function update(UpdateSaveRequest $request, Actor $actor, CampaignPlannerSave $campaignPlannerSave) {
@@ -72,8 +82,10 @@ class CampaignPlannerSavesController {
         $receivers = $request->input("actors");
 
         foreach ($receivers as $receiverId) {
-            $newSave           = $campaignPlannerSave->replicate();
+            $newSave           = new CampaignPlannerSave();
+            $newSave->name     = $campaignPlannerSave->name;
             $newSave->actor_id = $receiverId;
+            $newSave->data     = $campaignPlannerSave->getPlan();
             $newSave->save();
         }
 

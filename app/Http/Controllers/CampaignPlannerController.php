@@ -173,11 +173,8 @@ class CampaignPlannerController {
     }
 
     public function save(Request $request, CampaignPlannerSave $campaignPlannerSave) {
-        $save = CampaignPlannerSave::query()
-                                   ->from($campaignPlannerSave->getWriteTable())
-                                   ->where("id", "=", $campaignPlannerSave->getKey())
-                                   ->first();
-        return new Response(new CampaignPlannerSaveResource($save->makeVisible("data")));
+        $campaignPlannerSave->data = $campaignPlannerSave->getPlan();
+        return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
     }
 
     public function property(ShowPropertyRequest $request, CampaignPlannerSave $campaignPlannerSave) {

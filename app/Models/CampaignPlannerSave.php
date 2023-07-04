@@ -20,11 +20,11 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property integer $id
  * @property string  $name
  * @property integer $actor_id
- * @property array   $data
  * @property Carbon  $created_at
  * @property Carbon  $updated_at
  *
  * @property string  $uid
+ * @property array   $data
  */
 class CampaignPlannerSave extends Model {
     use HasView;
@@ -47,10 +47,6 @@ class CampaignPlannerSave extends Model {
         "data",
     ];
 
-    protected $hidden = [
-        "data",
-    ];
-
     public function resolveRouteBinding($value, $field = null) {
         $id = Hashids::decode($value)[0] ?? null;
         return $this->newQuery()->findOrFail($id);
@@ -62,5 +58,18 @@ class CampaignPlannerSave extends Model {
 
     public function getUidAttribute(): string {
         return Hashids::encode($this->id);
+    }
+
+    /**
+     * Get the plan data
+     *
+     * @return array
+     */
+    public function getPlan() {
+        return CampaignPlannerSave::query()
+                                  ->from($this->getWriteTable())
+                                  ->where("id", "=", $this->getKey())
+                                  ->first()
+            ->data;
     }
 }

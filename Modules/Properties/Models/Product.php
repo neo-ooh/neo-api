@@ -421,7 +421,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
             price_type               : $pricing->getType(),
             price                    : $pricing->getPrice(),
             programmatic_price       : $this->programmatic_price ?? $this->category->programmatic_price,
-            picture_url              : null,
+            picture_url              : $this->cover_picture?->url ?? $this->category->cover_picture?->url,
             loop_configuration       : $loopConfiguration ?
                                            new \Neo\Modules\Properties\Services\Resources\LoopConfiguration(
                                                loop_length_ms: $loopConfiguration->loop_length_ms,

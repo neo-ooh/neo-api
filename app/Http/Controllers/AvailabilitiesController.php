@@ -29,6 +29,8 @@ class AvailabilitiesController {
 
         DB::table("avail_dates")->insert($dates->toArray());
 
+        $locale = $request->input("locale", "en-CA");
+
         // Run our query to fetch availabilities
         // Since we use bindings, we need to prepare a specific list of `?` to be replace with the product ids
         $productBindings = $productIds->map(fn() => "?")->join(',');
@@ -39,7 +41,8 @@ class AvailabilitiesController {
                    CAST(COALESCE(`lc`.`free_spots_count`, 1) AS unsigned)                AS `reservable_spots_count`,
                    COALESCE(SUM(`cl`.`spots`), 0)                                        AS `reserved_spots_count`,
                    COALESCE(`lc`.`free_spots_count`, 1) - COALESCE(SUM(`cl`.`spots`), 0) AS `free_spots_count`,
-                   COUNT(`u`.`id`) > 0                                                   AS `unavailable`
+                   COUNT(`u`.`id`) > 0                                                   AS `unavailable`,
+                   `ut`.`reason`                                                         AS `unavailability_reason`
               FROM `products` `p`
                    CROSS JOIN `avail_dates` `d`
                    JOIN `products_categories` `pc` ON `p`.`category_id` = `pc`.`id`
@@ -55,6 +58,7 @@ class AvailabilitiesController {
                    LEFT JOIN `products_unavailabilities` `pu` ON `p`.`id` = `pu`.`product_id`
                    LEFT JOIN `properties_unavailabilities` `pru` ON `pru`.`property_id` = `p`.`property_id`
                    LEFT JOIN `unavailabilities` `u` ON (`pu`.`unavailability_id` = `u`.`id` OR `pru`.`unavailability_id` = `u`.`id`)
+                   LEFT JOIN `unavailabilities_translations` `ut` ON `u`.`id` = `ut`.`unavailability_id` AND `ut`.`locale` = ?
                 AND ((`u`.`start_date` IS NOT NULL AND `u`.`end_date` IS NOT NULL AND
                       `d`.`d` BETWEEN `u`.`start_date` AND `u`.`end_date`)
                   OR (`u`.`start_date` IS NOT NULL AND `u`.`end_date` IS NULL AND `u`.`start_date` <= `d`.`d`)
@@ -62,7 +66,7 @@ class AvailabilitiesController {
              WHERE `p`.`id` IN ($productBindings)
              GROUP BY `p`.`id`, `d`.`d`
             EOS
-            , $productIds->toArray());
+            , [$locale, ...$productIds->toArray()]);
 
         return new Response($availabilities);
     }

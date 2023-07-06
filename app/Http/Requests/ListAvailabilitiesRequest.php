@@ -11,6 +11,7 @@
 namespace Neo\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ListAvailabilitiesRequest extends FormRequest {
     public function rules(): array {
@@ -19,6 +20,8 @@ class ListAvailabilitiesRequest extends FormRequest {
             "product_ids.*" => ["integer"],
             "from"          => ["required", "date"],
             "to"            => ["required", "date"],
+
+            "locale" => ["string", Rule::in(["en-CA", "fr-CA"])],
         ];
     }
 

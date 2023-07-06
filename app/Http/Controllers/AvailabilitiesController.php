@@ -11,149 +11,58 @@
 namespace Neo\Http\Controllers;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Collection;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
 use Neo\Http\Requests\ListAvailabilitiesRequest;
-use Neo\Modules\Properties\Enums\ProductType;
-use Neo\Modules\Properties\Models\Product;
-use Neo\Resources\Contracts\FlightType;
 
 class AvailabilitiesController {
     public function index(ListAvailabilitiesRequest $request) {
-        $productIds    = $request->input("product_ids");
-        $productsSpots = $request->input("product_spots");
+        $productIds = collect($request->input("product_ids"));
 
-        $arraySizeValidator = Validator::make([
-                                                  "product_ids_count" => count($productIds),
-                                                                                                                                                                                                                                                                                                                                                                                                              "product_spots_count" => count($productsSpots),
-                                              ], [
-                                                  "product_spots_count" => ["same:product_ids_count"],
-                                              ]);
+        $dates = collect(CarbonPeriod::create($request->input("from"), $request->input("to"))
+                                     ->toArray())->map(fn(Carbon $d) => ["d" => $d->toDateString()]);
 
-        if ($arraySizeValidator->fails()) {
-            throw new ValidationException($arraySizeValidator);
-        }
+        // Start by creating a temporary table, and fill it with our dates
+        DB::statement("DROP TABLE IF EXISTS `avail_dates`", []);
+        DB::statement("CREATE TEMPORARY TABLE `avail_dates` (`d` date)", []);
 
-        $from = Carbon::parse($request->input("from"));
-        $to   = Carbon::parse($request->input("to"));
+        DB::table("avail_dates")->insert($dates->toArray());
 
-        $productIdsChunks = collect($productIds)->chunk(500);
+        // Run our query to fetch availabilities
+        // Since we use bindings, we need to prepare a specific list of `?` to be replace with the product ids
+        $productBindings = $productIds->map(fn() => "?")->join(',');
 
-        // Pull all the products
-        $products = new Collection();
-
-        foreach ($productIdsChunks as $chunk) {
-            // Pull all products as we will need information about them
-            $products = $products->merge(Product::query()
-                                                ->with(["loop_configurations", "category.loop_configurations"])
-                                                ->findMany($chunk));
-        }
-
-
-        // Pull all reservations made for the specified product or their linked ones and who intersect with the provided interval
-        $reservations = collect();
-
-        $allProductsIds       = $products->pluck("id")->merge($products->pluck("linked_product_id")->whereNotNull())->unique();
-        $allProductsIdsChunks = $allProductsIds->chunk(500);
-
-        foreach ($allProductsIdsChunks as $chunk) {
-            $reservations = $reservations->merge(DB::table('products')
-                                                   ->select('products.id', 'contracts_lines.spots', 'contracts_flights.start_date', 'contracts_flights.end_date')
-                                                   ->join('contracts_lines', 'contracts_lines.product_id', '=', 'products.id')
-                                                   ->join('contracts_flights', 'contracts_lines.flight_id', '=', 'contracts_flights.id')
-                                                   ->whereIn("products.id", $chunk)
-                                                   ->where('contracts_flights.start_date', '<', $to->toDateString())
-                                                   ->where('contracts_flights.end_date', '>', $from->toDateString())
-                                                   ->where('contracts_flights.type', '<>', FlightType::BUA)
-                                                   ->get()
-                                                   ->map(function ($reservation) {
-                                                       return [
-                                                           "product_id" => $reservation->id,
-                                                           "spots"      => $reservation->spots,
-                                                           "from"       => Carbon::parse($reservation->start_date),
-                                                           "to"         => Carbon::parse($reservation->end_date),
-                                                       ];
-                                                   }));
-        }
-
-        // Prepare a dates array that will be used as a base for the response
-        $datesList  = collect();
-        $dateCursor = $from;
-        $boundary   = $to->clone()->addDay();
-        do {
-            $datesList[] = $dateCursor->clone();
-            $dateCursor->addDay();
-        } while ($dateCursor->isBefore($boundary));
-
-        $availabilities = [];
-
-        // Loop accross all products
-        foreach ($productIds as $i => $productId) {
-            /** @var Product|null $product */
-            $product = $products->firstWhere("id", "=", $productId);
-
-            // Ignore if product OdooModel is missing
-            if (!$product) {
-                continue;
-            }
-
-            $spots = $productsSpots[$i];
-
-            // Get the reservations of the product or its linked counterpart
-            $productReservations = $reservations->filter(fn($reservation) => $reservation["product_id"] === $product->id || $reservation["product_id"] === $product->linked_product_id);
-
-            // Build the availability array for each date
-            $dates = collect();
-            foreach ($datesList as $date) {
-                // Determine how many time the product can be booked at the same time
-                if ($product->category->type === ProductType::Digital) {
-                    // Get the loop configuration for the current date
-                    $loopConfiguration = $product->getLoopConfiguration($date);
-
-                    // If the loop configuration is missing, we cannot determine the availability of the product
-                    if (!$loopConfiguration) {
-                        $dates[] = [
-                            "date"      => $date->toDateString(),
-                            "available" => "unknown",
-                        ];
-                        continue;
-                    }
-
-                    $productSpots = $loopConfiguration->free_spots_count;
-                } else {
-                    $productSpots = $product->quantity;
-                }
-
-                $dateReservations = $productReservations->filter(function ($reservation) use ($date) {
-                    return $date->gte($reservation["from"]) && $date->lte($reservation["to"]);
-                });
-
-                $reservedSpots = $dateReservations->sum("spots");
-
-                $dates[] = [
-                    "date"             => $date->toDateString(),
-                    "available"        => $reservedSpots <= $productSpots - $spots,
-                    "max_reservations" => $productSpots,
-                    "reserved"         => $reservedSpots,
-                ];
-            }
-
-            $state = 'none';
-            if ($dates->every("available", "===", true)) {
-                $state = 'full';
-            } else if ($dates->some("available", "===", true)) {
-                $state = 'partial';
-            }
-
-            $availabilities[] = [
-                "product_id"     => $product->getKey(),
-                "availabilities" => $state,
-                "dates"          => $dates,
-            ];
-        }
+        $availabilities = DB::select(<<<EOS
+            SELECT `p`.`id`                                                              AS `product_id`,
+                   `d`.`d`                                                               AS `date`,
+                   CAST(COALESCE(`lc`.`free_spots_count`, 1) AS unsigned)                AS `reservable_spots_count`,
+                   COALESCE(SUM(`cl`.`spots`), 0)                                        AS `reserved_spots_count`,
+                   COALESCE(`lc`.`free_spots_count`, 1) - COALESCE(SUM(`cl`.`spots`), 0) AS `free_spots_count`,
+                   COUNT(`u`.`id`) > 0                                                   AS `unavailable`
+              FROM `products` `p`
+                   CROSS JOIN `avail_dates` `d`
+                   JOIN `products_categories` `pc` ON `p`.`category_id` = `pc`.`id`
+                   LEFT JOIN (SELECT `cl`.*, `cf`.`start_date` `start_date`, `cf`.`end_date` `end_date`
+                                FROM `contracts_lines` `cl`
+                                     JOIN `contracts_flights` `cf` ON `cl`.`flight_id` = `cf`.`id`
+                               WHERE `cf`.`type` IN ('guaranteed', 'bonus')) `cl`
+                             ON `cl`.`product_id` = `p`.`id` AND `d`.`d` BETWEEN `cl`.`start_date` AND `cl`.`end_date`
+                   LEFT JOIN `formats` `f` ON `f`.`id` = COALESCE(`p`.`format_id`, `pc`.`format_id`)
+                   LEFT JOIN `format_loop_configurations` `flc` ON `f`.`id` = `flc`.`format_id`
+                   LEFT JOIN `loop_configurations` `lc` ON `flc`.`loop_configuration_id` = `lc`.`id`
+                AND DATE_FORMAT(`d`.`d`, "%m-%d") BETWEEN DATE_FORMAT(`lc`.`start_date`, "%m-%d") AND DATE_FORMAT(`lc`.`end_date`, "%m-%d")
+                   LEFT JOIN `products_unavailabilities` `pu` ON `p`.`id` = `pu`.`product_id`
+                   LEFT JOIN `properties_unavailabilities` `pru` ON `pru`.`property_id` = `p`.`property_id`
+                   LEFT JOIN `unavailabilities` `u` ON (`pu`.`unavailability_id` = `u`.`id` OR `pru`.`unavailability_id` = `u`.`id`)
+                AND ((`u`.`start_date` IS NOT NULL AND `u`.`end_date` IS NOT NULL AND
+                      `d`.`d` BETWEEN `u`.`start_date` AND `u`.`end_date`)
+                  OR (`u`.`start_date` IS NOT NULL AND `u`.`end_date` IS NULL AND `u`.`start_date` <= `d`.`d`)
+                  OR (`u`.`start_date` IS NULL AND `u`.`end_date` IS NOT NULL AND `u`.`end_date` >= `d`.`d`))
+             WHERE `p`.`id` IN ($productBindings)
+             GROUP BY `p`.`id`, `d`.`d`
+            EOS
+            , $productIds->toArray());
 
         return new Response($availabilities);
     }

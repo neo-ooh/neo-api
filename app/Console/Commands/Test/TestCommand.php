@@ -10,8 +10,8 @@
 
 namespace Neo\Console\Commands\Test;
 
+use Carbon\CarbonPeriod;
 use Illuminate\Console\Command;
-use Neo\Modules\Properties\Models\Product;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -65,9 +65,13 @@ class TestCommand extends Command {
 //        dump($products->first()->toArray());
 
 //        $product = Product::query()->find(357);
-        $product  = Product::query()->find(7458);
-        $resource = $product->toResource(1);
+//        $product  = Product::query()->find(7458);
+//        $resource = $product->toResource(1);
 
-        dump($resource->weekly_traffic);
+//        dump($resource->weekly_traffic);
+
+        dump(collect(CarbonPeriod::create("2023-10-01", "2023-12-01")->toArray())
+                 ->map(fn($date) => "('" . $date->toDateString() . "')")
+                 ->join(','));
     }
 }

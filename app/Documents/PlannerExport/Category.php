@@ -20,6 +20,8 @@ class Category {
     public int $faces;
     public int $impressions;
     public float $mediaValue;
+    public float $mediaInvestment;
+    public float $productionCost;
     public float $price;
     public float $cpm;
     public float $cpmPrice;
@@ -40,11 +42,13 @@ class Category {
             return new Product($product, $dbproduct);
         })->whereNotNull();
 
-        $this->faces       = $compiledCategory["faces_count"];
-        $this->impressions = $compiledCategory["impressions"];
-        $this->mediaValue  = $compiledCategory["media_value"];
-        $this->price       = $compiledCategory["price"];
-        $this->cpm         = $compiledCategory["cpm"];
-        $this->cpmPrice    = $compiledCategory["cpmPrice"];
+        $this->faces           = $compiledCategory["faces_count"];
+        $this->impressions     = $compiledCategory["impressions"];
+        $this->mediaValue      = $compiledCategory["media_value"];
+        $this->mediaInvestment = $compiledCategory["discounted_media_value"];
+        $this->productionCost  = $compiledCategory["production_cost_value"];
+        $this->price           = $compiledCategory["price"];
+        $this->cpm             = $compiledCategory["cpm"];
+        $this->cpmPrice        = $compiledCategory["cpmPrice"];
     }
 }

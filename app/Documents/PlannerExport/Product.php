@@ -20,6 +20,8 @@ class Product {
     public float $spots;
     public int $impressions;
     public float $mediaValue;
+    public float $mediaInvestment;
+    public float $productionCost;
     public float $unitPrice;
     public float $price;
     public int $isDiscounted;
@@ -32,13 +34,15 @@ class Product {
 
         $this->product = $product;
 
-        $this->faces        = $compiledProduct["quantity"];
-        $this->spots        = $compiledProduct["spots"];
-        $this->impressions  = $compiledProduct["impressions"];
-        $this->mediaValue   = $compiledProduct["media_value"];
-        $this->unitPrice    = $compiledProduct["unit_price"];
-        $this->price        = $compiledProduct["price"];
-        $this->isDiscounted = $compiledProduct["isDiscounted"];
-        $this->cpm          = $compiledProduct["cpm"];
+        $this->faces           = $compiledProduct["quantity"];
+        $this->spots           = $compiledProduct["spots"];
+        $this->impressions     = $compiledProduct["impressions"];
+        $this->mediaValue      = $compiledProduct["media_value"];
+        $this->mediaInvestment = $compiledProduct["discounted_media_value"];
+        $this->productionCost  = $compiledProduct["production_cost_value"];
+        $this->unitPrice       = $compiledProduct["unit_price"];
+        $this->price           = $compiledProduct["price"];
+        $this->isDiscounted    = $compiledProduct["isDiscounted"];
+        $this->cpm             = $compiledProduct["cpm"];
     }
 }

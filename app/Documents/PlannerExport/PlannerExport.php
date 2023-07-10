@@ -73,26 +73,26 @@ class PlannerExport extends XLSXDocument {
         $this->ws->pushPosition();
 
         // Set the header style
-        $this->ws->getStyle($this->ws->getRelativeRange(9, 5))->applyFromArray([
-                                                                                   'font'      => [
-                                                                                       'bold'  => true,
-                                                                                       'color' => [
-                                                                                           'argb' => "FFFFFFFF",
-                                                                                       ],
-                                                                                       'size'  => "13",
-                                                                                       "name"  => "Calibri",
-                                                                                   ],
-                                                                                   'alignment' => [
-                                                                                       'horizontal' => Alignment::HORIZONTAL_CENTER,
-                                                                                       'vertical'   => Alignment::VERTICAL_CENTER,
-                                                                                   ],
-                                                                                   'fill'      => [
-                                                                                       'fillType'   => Fill::FILL_SOLID,
-                                                                                       'startColor' => [
-                                                                                           'argb' => XLSXStyleFactory::COLORS["dark-blue"],
-                                                                                       ],
-                                                                                   ],
-                                                                               ]);
+        $this->ws->getStyle($this->ws->getRelativeRange(11, 5))->applyFromArray([
+                                                                                    'font'      => [
+                                                                                        'bold'  => true,
+                                                                                        'color' => [
+                                                                                            'argb' => "FFFFFFFF",
+                                                                                        ],
+                                                                                        'size'  => "13",
+                                                                                        "name"  => "Calibri",
+                                                                                    ],
+                                                                                    'alignment' => [
+                                                                                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                                                                        'vertical'   => Alignment::VERTICAL_CENTER,
+                                                                                    ],
+                                                                                    'fill'      => [
+                                                                                        'fillType'   => Fill::FILL_SOLID,
+                                                                                        'startColor' => [
+                                                                                            'argb' => XLSXStyleFactory::COLORS["dark-blue"],
+                                                                                        ],
+                                                                                    ],
+                                                                                ]);
 
         // Add the Neo logo
         $drawing = new Drawing();
@@ -116,7 +116,7 @@ class PlannerExport extends XLSXDocument {
             $flightsValues->push($this->printFlightSummary($flight, $flightIndex));
         }
 
-        $this->ws->getStyle($this->ws->getRelativeRange(9, 2))->applyFromArray(XLSXStyleFactory::totals());
+        $this->ws->getStyle($this->ws->getRelativeRange(11, 2))->applyFromArray(XLSXStyleFactory::totals());
         $this->ws->mergeCellsRelative(1, 2);
 
         // Print Totals headers
@@ -127,13 +127,17 @@ class PlannerExport extends XLSXDocument {
                                 in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
                                 in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
                                 in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
+                                in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
+                                in_array("production-cost", $this->columns, true) ? Lang::get("contract.table-production-cost") : "",
                                 in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
                                 in_array("cpm", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
                             ]);
 
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
-        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 7);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
 
         $impressions = $flightsValues->sum("impressions");
         $cpm         = $impressions > 0 ? $flightsValues->sum("cpmPrice") / $impressions * 1000 : 0;
@@ -146,6 +150,8 @@ class PlannerExport extends XLSXDocument {
                                 in_array("traffic", $this->columns, true) ? $flightsValues->sum("traffic") : "",
                                 in_array("impressions", $this->columns, true) ? $flightsValues->sum("impressions") : "",
                                 in_array("media-value", $this->columns, true) ? $flightsValues->sum("mediaValue") : "",
+                                in_array("media-investment", $this->columns, true) ? $flightsValues->sum("mediaInvestment") : "",
+                                in_array("production-cost", $this->columns, true) ? $flightsValues->sum("productionCost") : "",
                                 in_array("price", $this->columns, true) ? $flightsValues->sum("price") : "",
                                 in_array("cpm", $this->columns, true) ? $cpm : "",
                             ]);
@@ -159,14 +165,16 @@ class PlannerExport extends XLSXDocument {
         $this->ws->getColumnDimension("F")->setAutoSize(true);
         $this->ws->getColumnDimension("G")->setAutoSize(true);
         $this->ws->getColumnDimension("H")->setAutoSize(true);
+        $this->ws->getColumnDimension("I")->setAutoSize(true);
+        $this->ws->getColumnDimension("J")->setAutoSize(true);
     }
 
     /**
      * @throws Exception
      */
-    #[ArrayShape(["propertiesCount" => "int", "faces" => "int|mixed", "traffic" => "int|mixed", "impressions" => "int|mixed", "mediaValue" => "int|mixed", "price" => "int|mixed", "cpmPrice" => "int|mixed"])]
+    #[ArrayShape(["propertiesCount" => "int", "faces" => "int|mixed", "traffic" => "int|mixed", "impressions" => "int|mixed", "mediaValue" => "int|mixed", "mediaInvestment" => "int|mixed", "productionCost" => "int|mixed", "price" => "int|mixed", "cpmPrice" => "int|mixed"])]
     protected function printFlightSummary(Flight $flight, $flightIndex): array {
-        $this->ws->getStyle($this->ws->getRelativeRange(9))->applyFromArray(XLSXStyleFactory::flightRow());
+        $this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::flightRow());
 
         $this->ws->pushPosition();
         $this->ws->moveCursor(5, 0)->mergeCellsRelative(2);
@@ -180,15 +188,15 @@ class PlannerExport extends XLSXDocument {
                                 Lang::get("common.order-type-" . $flight->type),
                             ]);
 
-        $this->ws->getStyle($this->ws->getRelativeRange(9))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
-        $this->ws->getStyle($this->ws->getRelativeRange(9, 7))->applyFromArray([
-                                                                                   "fill" => [
-                                                                                       'fillType'   => Fill::FILL_SOLID,
-                                                                                       'startColor' => [
-                                                                                           'argb' => "FFFFFFFF",
-                                                                                       ],
-                                                                                   ],
-                                                                               ]);
+        $this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+        $this->ws->getStyle($this->ws->getRelativeRange(11, 7))->applyFromArray([
+                                                                                    "fill" => [
+                                                                                        'fillType'   => Fill::FILL_SOLID,
+                                                                                        'startColor' => [
+                                                                                            'argb' => "FFFFFFFF",
+                                                                                        ],
+                                                                                    ],
+                                                                                ]);
 
         $this->ws->printRow([
                                 Lang::get("contract.table-networks"),
@@ -197,6 +205,8 @@ class PlannerExport extends XLSXDocument {
                                 in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
                                 in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
                                 in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
+                                in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
+                                in_array("production-cost", $this->columns, true) ? Lang::get("contract.table-production-cost") : "",
                                 in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
                                 in_array("cpm", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
                                 in_array("weeks", $this->columns, true) ? Lang::get("contract.table-weeks") : "",
@@ -216,13 +226,17 @@ class PlannerExport extends XLSXDocument {
             "traffic"         => $flight->traffic,
             "impressions"     => $flight->impressions,
             "mediaValue"      => $flight->mediaValue,
+            "mediaInvestment" => $flight->mediaInvestment,
+            "productionCost"  => $flight->productionCost,
             "price"           => $flight->price,
             "cpmPrice"        => $flight->cpmPrice,
         ];
 
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
         $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
-        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 7);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+        $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
 
         $this->ws->printRow([
                                 "Total",
@@ -231,6 +245,8 @@ class PlannerExport extends XLSXDocument {
                                 in_array("traffic", $this->columns, true) ? $flightValues["traffic"] : "",
                                 in_array("impressions", $this->columns, true) ? $flightValues["impressions"] : "",
                                 in_array("media-value", $this->columns, true) ? $flightValues["mediaValue"] : "",
+                                in_array("media-investment", $this->columns, true) ? $flightValues["mediaInvestment"] : "",
+                                in_array("production-cost", $this->columns, true) ? $flightValues["productionCost"] : "",
                                 in_array("price", $this->columns, true) ? $flightValues["price"] : "",
                                 in_array("cpm", $this->columns, true) ? $flight->cpm : "",
                                 in_array("weeks", $this->columns, true) ? $flight->length : "",
@@ -262,7 +278,9 @@ class PlannerExport extends XLSXDocument {
             $this->ws->setRelativeCellFormat("#,##0_-", 4);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 7);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
 
             $impressions = $properties->sum("impressions");
             $cpmPrice    = $properties->sum("cpmPrice");
@@ -275,6 +293,8 @@ class PlannerExport extends XLSXDocument {
                                     in_array("traffic", $this->columns, true) ? $properties->sum("traffic") : "",
                                     in_array("impressions", $this->columns, true) ? $impressions : "",
                                     in_array("media-value", $this->columns, true) ? $properties->sum("mediaValue") : "",
+                                    in_array("media-investment", $this->columns, true) ? $properties->sum("mediaInvestment") : "",
+                                    in_array("production-cost", $this->columns, true) ? $properties->sum("productionCost") : "",
                                     in_array("price", $this->columns, true) ? $properties->sum("price") : "",
                                     in_array("cpm", $this->columns, true) ? $cpm : "",
                                     in_array("weeks", $this->columns, true) ? $flight->length : "",
@@ -298,7 +318,9 @@ class PlannerExport extends XLSXDocument {
             $this->ws->setRelativeCellFormat("#,##0_-", 4);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 7);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
 
             $this->ws->printRow([
                                     $group->group?->name ?? Lang::get("contract.group-remaining-properties"),
@@ -307,6 +329,8 @@ class PlannerExport extends XLSXDocument {
                                     in_array("traffic", $this->columns, true) ? $group->traffic : "",
                                     in_array("impressions", $this->columns, true) ? $group->impressions : "",
                                     in_array("media-value", $this->columns, true) ? $group->mediaValue : "",
+                                    in_array("media-investment", $this->columns, true) ? $group->mediaInvestment : "",
+                                    in_array("production-cost", $this->columns, true) ? $group->productionCost : "",
                                     in_array("price", $this->columns, true) ? $group->price : "",
                                     in_array("cpm", $this->columns, true) ? $group->cpm : "",
                                     in_array("weeks", $this->columns, true) ? $flight->length : "",
@@ -342,7 +366,7 @@ class PlannerExport extends XLSXDocument {
         $this->spreadsheet->addSheet($this->worksheet);
         $this->spreadsheet->setActiveSheetIndexByName($flightLabel);
 
-        $this->printFlightHeader($flight, $flightIndex, width: 10);
+        $this->printFlightHeader($flight, $flightIndex, width: 12);
 
         /** @var Group $group */
         foreach ($flight->groups as $group) {
@@ -350,8 +374,8 @@ class PlannerExport extends XLSXDocument {
 
             if ($groupsCount !== 1 || ($groupsCount === 1 && $group->group !== null)) {
                 // Group header
-                $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
-                $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
+                $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+                $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
                                                                                          "font" => [
                                                                                              'size'  => "14",
                                                                                              "color" => [
@@ -381,8 +405,8 @@ class PlannerExport extends XLSXDocument {
                 $properties = $group->properties->where("property.network_id", "=", $network->getKey());
 
                 // Network header
-                $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
-                $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
+                $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+                $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
                                                                                          "font" => [
                                                                                              'size'  => "14",
                                                                                              "color" => [
@@ -406,13 +430,15 @@ class PlannerExport extends XLSXDocument {
                                         in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
                                         in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
                                         in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
+                                        in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
+                                        in_array("production-cost", $this->columns, true) ? Lang::get("contract.table-production-cost") : "",
                                         in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
                                         in_array("cpm-lines", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
                                     ]);
 
                 /** @var Property $property */
                 foreach ($properties as $property) {
-                    $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
+                    $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
                                                                                              "font" => [
                                                                                                  "size" => 12,
                                                                                                  'bold' => true,
@@ -431,7 +457,9 @@ class PlannerExport extends XLSXDocument {
                     $this->ws->setRelativeCellFormat("#,##0_-", 6);
                     $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
                     $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
-                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 9);
+                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 9);
+                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 10);
+                    $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 11);
 
                     $this->ws->printRow([
                                             $property->property->actor->name,
@@ -442,6 +470,8 @@ class PlannerExport extends XLSXDocument {
                                             in_array("traffic", $this->columns, true) ? $property->traffic : "",
                                             in_array("impressions", $this->columns, true) ? $property->impressions : "",
                                             in_array("media-value", $this->columns, true) ? $property->mediaValue : "",
+                                            in_array("media-investment", $this->columns, true) ? $property->mediaInvestment : "",
+                                            in_array("production-cost", $this->columns, true) ? $property->productionCost : "",
                                             in_array("price", $this->columns, true) ? $property->price : "",
                                             in_array("cpm-lines", $this->columns, true) ? $property->cpm : "",
                                         ]);
@@ -454,7 +484,7 @@ class PlannerExport extends XLSXDocument {
 
                         /** @var Product $product */
                         foreach ($products as $product) {
-                            $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray([
+                            $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
                                                                                                      "font" => [
                                                                                                          "size" => 10,
                                                                                                      ],
@@ -478,7 +508,9 @@ class PlannerExport extends XLSXDocument {
                             $this->ws->setRelativeCellFormat("#,##0_-", 6);
                             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
                             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
-                            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 9);
+                            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 9);
+                            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 10);
+                            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 11);
 
                             $this->ws->printRow([
                                                     $product->product["name_" . Lang::locale()],
@@ -489,6 +521,8 @@ class PlannerExport extends XLSXDocument {
                                                     "",
                                                     in_array("impressions", $this->columns, true) ? $product->impressions : "",
                                                     in_array("media-value", $this->columns, true) ? $product->mediaValue : "",
+                                                    in_array("media-investment", $this->columns, true) ? $product->mediaInvestment : "",
+                                                    in_array("production-cost", $this->columns, true) ? $product->productionCost : "",
                                                     in_array("price", $this->columns, true) ? $product->price : "",
                                                     in_array("cpm-lines", $this->columns, true) ? $product->cpm : "",
                                                 ]);
@@ -496,7 +530,7 @@ class PlannerExport extends XLSXDocument {
                     }
                 }
 
-                $this->ws->getStyle($this->ws->getRelativeRange(10, 1))->applyFromArray([
+                $this->ws->getStyle($this->ws->getRelativeRange(12, 1))->applyFromArray([
                                                                                             "fill" => [
                                                                                                 'fillType'   => Fill::FILL_SOLID,
                                                                                                 'startColor' => [
@@ -509,13 +543,15 @@ class PlannerExport extends XLSXDocument {
             }
 
             // Group footer
-            $this->ws->getStyle($this->ws->getRelativeRange(10))->applyFromArray(XLSXStyleFactory::totals());
+            $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray(XLSXStyleFactory::totals());
             $this->ws->setRelativeCellFormat("#,##0_-", 3);
             $this->ws->setRelativeCellFormat("#,##0_-", 5);
             $this->ws->setRelativeCellFormat("#,##0_-", 6);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
             $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
-            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_SIMPLE, 9);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 9);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 10);
+            $this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 11);
 
             $this->ws->printRow([
                                     "Total",
@@ -526,11 +562,13 @@ class PlannerExport extends XLSXDocument {
                                     in_array("impressions", $this->columns, true) ? $group->traffic : "",
                                     in_array("impressions", $this->columns, true) ? $group->impressions : "",
                                     in_array("media-value", $this->columns, true) ? $group->mediaValue : "",
+                                    in_array("media-investment", $this->columns, true) ? $group->mediaInvestment : "",
+                                    in_array("production-cost", $this->columns, true) ? $group->productionCost : "",
                                     in_array("price", $this->columns, true) ? $group->price : "",
                                     in_array("cpm", $this->columns, true) ? $group->cpm : "",
                                 ]);
 
-            $this->ws->getStyle($this->ws->getRelativeRange(10, 2))->applyFromArray([
+            $this->ws->getStyle($this->ws->getRelativeRange(12, 2))->applyFromArray([
                                                                                         "fill" => [
                                                                                             'fillType'   => Fill::FILL_SOLID,
                                                                                             'startColor' => [
@@ -551,6 +589,8 @@ class PlannerExport extends XLSXDocument {
         $this->ws->getColumnDimension("G")->setAutoSize(true);
         $this->ws->getColumnDimension("H")->setAutoSize(true);
         $this->ws->getColumnDimension("I")->setAutoSize(true);
+        $this->ws->getColumnDimension("J")->setAutoSize(true);
+        $this->ws->getColumnDimension("K")->setAutoSize(true);
     }
 
     /**

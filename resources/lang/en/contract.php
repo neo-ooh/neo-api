@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -110,10 +110,12 @@ return [
     "table-location"                     => "Location",
     "table-markets"                      => "Markets",
     "table-markets-properties-products"  => "Markets, Properties & Products",
+    "table-media-investment"             => "Media Investment",
     "table-media-value"                  => "Media Value",
     "table-net-investment"               => "Net Investment",
     "table-networks"                     => "Networks",
     "table-product"                      => "ProductCategory",
+    "table-production-cost"              => "Production Cost",
     "table-properties"                   => "Properties",
     "table-quantity"                     => "Quantity",
     "table-rate-per-week"                => "Rate per Week",
@@ -136,5 +138,5 @@ return [
     "type-paper"             => "Paper",
     "payable-contact-header" => "Accounts payable contact (to be filled out by the client, in block letters)",
 
-    "group-remaining-properties" => "Remaining properties"
+    "group-remaining-properties" => "Remaining properties",
 ];

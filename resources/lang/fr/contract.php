@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -97,10 +97,12 @@ au contrat dès que l’un ou l’autre ou les deux l’auront signé.",
     "table-loop-holiday"                => "Durée de la boucle (Nov.-Déc.)",
     "table-markets"                     => "Marchés",
     "table-markets-properties-products" => "Marché, Propriétés et Produits",
+    "table-media-investment"            => "Investissement Média",
     "table-media-value"                 => "Valeur média",
     "table-net-investment"              => "Investissement net",
     "table-networks"                    => "Réseaux",
     "table-product"                     => "Produit",
+    "table-production-cost"             => "Coût de production",
     "table-quantity"                    => "Quantité",
     "table-screens-posters"             => "Écrans / affiches",
     "table-spot-duration"               => "Durée du spot",
@@ -137,5 +139,5 @@ Passé ce délai, Neo ne pourra pas garantir l’intégralité de l’inventaire
     "audience-extension-strategy" => "Stratégie d'extension d'audience",
     "adserver-products"           => "Achat d'impressions",
 
-    "group-remaining-properties" => "Properiétés restantes"
+    "group-remaining-properties" => "Properiétés restantes",
 ];

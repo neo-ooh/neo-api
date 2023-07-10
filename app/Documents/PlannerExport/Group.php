@@ -26,6 +26,8 @@ class Group {
     public int $traffic;
     public int $impressions;
     public float $mediaValue;
+    public float $mediaInvestment;
+    public float $productionCost;
     public float $price;
     public float $cpm;
     public float $cpmPrice;
@@ -81,6 +83,8 @@ class Group {
         $this->traffic          = $this->properties->sum("traffic");
         $this->impressions      = $this->properties->sum("impressions");
         $this->mediaValue       = $this->properties->sum("mediaValue");
+        $this->mediaInvestment  = $this->properties->sum("mediaInvestment");
+        $this->productionCost   = $this->properties->sum("productionCost");
         $this->price            = $this->properties->sum("price");
         $this->cpmPrice         = $this->properties->sum("cpmPrice");
         $this->cpm              = $this->impressions > 0 ? $this->cpmPrice / $this->impressions * 1000 : 0;

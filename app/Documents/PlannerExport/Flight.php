@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -26,6 +26,8 @@ class Flight {
     public int $traffic;
     public int $impressions;
     public float $mediaValue;
+    public float $mediaInvestment;
+    public float $productionCost;
     public float $price;
     public float $cpm;
     public float $cpmPrice;
@@ -40,12 +42,14 @@ class Flight {
         $this->groups = collect($compiledFlight['groups'])
             ->map(fn(array $group) => new Group(collect($group["properties"]), $group["group"]));
 
-        $this->faces       = $compiledFlight["faces_count"];
-        $this->traffic     = $compiledFlight["traffic"];
-        $this->impressions = $compiledFlight["impressions"];
-        $this->mediaValue  = $compiledFlight["media_value"];
-        $this->price       = $compiledFlight["price"];
-        $this->cpm         = $compiledFlight["cpm"];
-        $this->cpmPrice    = $compiledFlight["cpmPrice"];
+        $this->faces           = $compiledFlight["faces_count"];
+        $this->traffic         = $compiledFlight["traffic"];
+        $this->impressions     = $compiledFlight["impressions"];
+        $this->mediaValue      = $compiledFlight["media_value"];
+        $this->mediaInvestment = $compiledFlight["discounted_media_value"];
+        $this->productionCost  = $compiledFlight["production_cost_value"];
+        $this->price           = $compiledFlight["price"];
+        $this->cpm             = $compiledFlight["cpm"];
+        $this->cpmPrice        = $compiledFlight["cpmPrice"];
     }
 }

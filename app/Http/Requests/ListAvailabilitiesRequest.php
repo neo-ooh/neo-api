@@ -11,7 +11,9 @@
 namespace Neo\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
+use Neo\Enums\Capability;
 
 class ListAvailabilitiesRequest extends FormRequest {
     public function rules(): array {
@@ -26,6 +28,8 @@ class ListAvailabilitiesRequest extends FormRequest {
     }
 
     public function authorize(): bool {
-        return true;
+        return Gate::allows(Capability::planner_access->value)
+            || Gate::allows(Capability::odoo_contracts->value)
+            || Gate::allows(Capability::products_edit->value);
     }
 }

@@ -58,11 +58,11 @@ class AvailabilitiesController {
                    LEFT JOIN `products_unavailabilities` `pu` ON `p`.`id` = `pu`.`product_id`
                    LEFT JOIN `properties_unavailabilities` `pru` ON `pru`.`property_id` = `p`.`property_id`
                    LEFT JOIN `unavailabilities` `u` ON (`pu`.`unavailability_id` = `u`.`id` OR `pru`.`unavailability_id` = `u`.`id`)
-                   LEFT JOIN `unavailabilities_translations` `ut` ON `u`.`id` = `ut`.`unavailability_id` AND `ut`.`locale` = ?
                 AND ((`u`.`start_date` IS NOT NULL AND `u`.`end_date` IS NOT NULL AND
                       `d`.`d` BETWEEN `u`.`start_date` AND `u`.`end_date`)
                   OR (`u`.`start_date` IS NOT NULL AND `u`.`end_date` IS NULL AND `u`.`start_date` <= `d`.`d`)
                   OR (`u`.`start_date` IS NULL AND `u`.`end_date` IS NOT NULL AND `u`.`end_date` >= `d`.`d`))
+                   LEFT JOIN `unavailabilities_translations` `ut` ON `u`.`id` = `ut`.`unavailability_id` AND `ut`.`locale` = ?
              WHERE `p`.`id` IN ($productBindings)
              GROUP BY `p`.`id`, `d`.`d`
             EOS

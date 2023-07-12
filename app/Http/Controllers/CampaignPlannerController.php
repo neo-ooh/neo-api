@@ -127,7 +127,7 @@ class CampaignPlannerController {
         $demographicVariables = DemographicVariable::query()->get();
         $networks             = Network::query()->get();
         $brands               = Brand::query()->with("child_brands:id,parent_id")->get();
-        $pricelists           = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull())
+        $pricelists           = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull()->unique())
                                          ->with(["categories_pricings", "products_pricings"])
                                          ->get();
         $formats              = Format::query()

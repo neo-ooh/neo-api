@@ -26,6 +26,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class PlannerExport extends XLSXDocument {
     protected string $contractReference;
+    protected array|null $odoo;
     protected Collection $flights;
     protected array $columns;
 
@@ -35,6 +36,7 @@ class PlannerExport extends XLSXDocument {
      */
     protected function ingest($data): bool {
         $this->contractReference = $data["odoo"]["contract"] ?? "";
+        $this->odoo              = $data["odoo"] ?? null;
         $this->flights           = collect($data["flights"])->map(fn($record) => new Flight($record));
         $this->columns           = $data["columns"];
 
@@ -66,33 +68,30 @@ class PlannerExport extends XLSXDocument {
         return true;
     }
 
-    /**
-     * @throws Exception
-     */
-    protected function printSummary(): void {
+    protected function printHeader(int $width) {
         $this->ws->pushPosition();
 
         // Set the header style
-        $this->ws->getStyle($this->ws->getRelativeRange(11, 5))->applyFromArray([
-                                                                                    'font'      => [
-                                                                                        'bold'  => true,
-                                                                                        'color' => [
-                                                                                            'argb' => "FFFFFFFF",
+        $this->ws->getStyle($this->ws->getRelativeRange($width, 5))->applyFromArray([
+                                                                                        'font'      => [
+                                                                                            'bold'  => true,
+                                                                                            'color' => [
+                                                                                                'argb' => "FFFFFFFF",
+                                                                                            ],
+                                                                                            'size'  => "13",
+                                                                                            "name"  => "Calibri",
                                                                                         ],
-                                                                                        'size'  => "13",
-                                                                                        "name"  => "Calibri",
-                                                                                    ],
-                                                                                    'alignment' => [
-                                                                                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                                                                                        'vertical'   => Alignment::VERTICAL_CENTER,
-                                                                                    ],
-                                                                                    'fill'      => [
-                                                                                        'fillType'   => Fill::FILL_SOLID,
-                                                                                        'startColor' => [
-                                                                                            'argb' => XLSXStyleFactory::COLORS["dark-blue"],
+                                                                                        'alignment' => [
+                                                                                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                                                                                            'vertical'   => Alignment::VERTICAL_CENTER,
                                                                                         ],
-                                                                                    ],
-                                                                                ]);
+                                                                                        'fill'      => [
+                                                                                            'fillType'   => Fill::FILL_SOLID,
+                                                                                            'startColor' => [
+                                                                                                'argb' => XLSXStyleFactory::COLORS["dark-blue"],
+                                                                                            ],
+                                                                                        ],
+                                                                                    ]);
 
         // Add the Neo logo
         $drawing = new Drawing();
@@ -105,9 +104,21 @@ class PlannerExport extends XLSXDocument {
 
         // Date
         $this->ws->printRow(["Date", Date::now()->toFormattedDateString()]);
+        if ($this->odoo !== null) {
+            $this->ws->printRow([Lang::get("common.header-contract"), $this->contractReference]);
+            $this->ws->printRow([Lang::get("contract.header-advertiser"), $this->odoo["analyticAccountName"][1]]);
+            $this->ws->printRow([Lang::get("contract.header-customer"), $this->odoo["partnerName"][1]]);
+        }
 
         $this->ws->popPosition();
         $this->ws->moveCursor(0, 5);
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function printSummary(): void {
+        $this->printHeader(11);
 
         $flightsValues = collect();
 
@@ -366,6 +377,7 @@ class PlannerExport extends XLSXDocument {
         $this->spreadsheet->addSheet($this->worksheet);
         $this->spreadsheet->setActiveSheetIndexByName($flightLabel);
 
+        $this->printHeader(12);
         $this->printFlightHeader($flight, $flightIndex, width: 12);
 
         /** @var Group $group */

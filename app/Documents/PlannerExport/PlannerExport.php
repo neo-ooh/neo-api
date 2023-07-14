@@ -384,7 +384,7 @@ class PlannerExport extends XLSXDocument {
         foreach ($flight->groups as $group) {
             $groupsCount = $flight->groups->count();
 
-            if ($groupsCount !== 1 || ($groupsCount === 1 && $group->group !== null)) {
+            if ($groupsCount !== 1 || ($groupsCount === 1 && $group->group !== null && $group->group !== "remaining")) {
                 // Group header
                 $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
                 $this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([

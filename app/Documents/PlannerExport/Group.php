@@ -33,10 +33,10 @@ class Group {
     public float $cpmPrice;
 
     public function __construct(
-        Collection $compiledProperties,
-        array|null $groupDefinition
+        Collection        $compiledProperties,
+        array|null|string $groupDefinition
     ) {
-        $this->group = $groupDefinition ? new GroupDefinition(
+        $this->group = is_array($groupDefinition) ? new GroupDefinition(
             $groupDefinition["name"],
             $groupDefinition["categories"],
             $groupDefinition["cities"],

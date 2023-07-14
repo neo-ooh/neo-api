@@ -20,6 +20,9 @@ class Flight {
     public float $length;
     public string $type;
 
+    /**
+     * @var Collection<Group>
+     */
     public Collection $groups;
 
     public int $faces;

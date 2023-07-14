@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2023 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -17,10 +17,8 @@ use Neo\Enums\Capability;
 class StoreSaveRequest extends FormRequest {
     public function rules(): array {
         return [
-            "name"    => ["required", "string"],
-            "version" => ["required", "string"],
-
-            "plan" => ["required", "string"],
+            "plan"  => ["required", "array"],
+            "_meta" => ["required", "array"],
         ];
     }
 

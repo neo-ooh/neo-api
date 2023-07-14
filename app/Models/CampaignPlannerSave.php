@@ -13,31 +13,29 @@ namespace Neo\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
-use Neo\Resources\CampaignPlannerPlan\CampaignPlannerPlan;
+use Neo\Models\Traits\HasView;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
- * @property integer     $id
- * @property string      $uid
- * @property string      $name
- * @property integer     $actor_id
- * @property string      $version
- * @property string|null $contract
- * @property string|null $client_name
- * @property string|null $advertiser_name
- * @property Carbon      $created_at
- * @property Carbon      $updated_at
+ * @property integer $id
+ * @property string  $name
+ * @property integer $actor_id
+ * @property Carbon  $created_at
+ * @property Carbon  $updated_at
  *
- * @property string      $plan_path
- * @property string      $plan_url
+ * @property string  $uid
+ * @property array   $data
  */
 class CampaignPlannerSave extends Model {
-    protected $table = "campaign_planner_saves";
+    use HasView;
+
+    protected $table = "campaign_planner_saves_view";
+
+    protected $write_table = "campaign_planner_saves";
 
     protected $primaryKey = "id";
 
-    protected $appends = ["plan_url"];
+    protected $appends = ["uid"];
 
     protected $casts = [
         "data" => "array",
@@ -54,41 +52,24 @@ class CampaignPlannerSave extends Model {
         return $this->newQuery()->findOrFail($id);
     }
 
-    protected static function boot() {
-        parent::boot();
-
-        static::created(function (CampaignPlannerSave $save) {
-            $save->uid = \Hashids::encode($save->getKey());
-            $save->save();
-        });
-    }
-
     public function actor(): BelongsTo {
         return $this->belongsTo(Actor::class, "actor_id", "id");
     }
 
-    public function getPlanPathAttribute() {
-        return "plans/$this->uid.plan";
-    }
-
-    public function getPlanUrlAttribute() {
-        return Storage::disk("public")->url($this->plan_path);
-    }
-
-    public function storePlan($planData) {
-        clock()->event("Storing plan")->color("purple")->begin();
-        Storage::disk("public")->put($this->plan_path, $planData);
-        clock()->event("Storing plan")->end();
+    public function getUidAttribute(): string {
+        return Hashids::encode($this->id);
     }
 
     /**
      * Get the plan data
      *
-     * @return CampaignPlannerPlan
+     * @return array
      */
     public function getPlan() {
-        $rawPlan = Storage::disk("public")->get($this->plan_path);
-
-        return CampaignPlannerPlan::from(json_decode($rawPlan, true));
+        return CampaignPlannerSave::query()
+                                  ->from($this->getWriteTable())
+                                  ->where("id", "=", $this->getKey())
+                                  ->first()
+            ->data;
     }
 }

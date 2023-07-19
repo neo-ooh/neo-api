@@ -44,10 +44,10 @@ class PopulateCensusFederalElectoralDistrictsCommand extends Command {
         $districts = Items::fromFile($filePath, ["pointer" => "/features",]);
 
         foreach ($districts as $key => $district) {
-            if ($district->properties->FEDUID <= 24045) {
-                $this->comment("[skipped] " . $key . " - " . $district->properties->FEDUID . " - " . $district->properties->FEDNAME . ", " . $this->provincesSlug[$district->properties->PRUID]);
-                continue;
-            }
+//            if ($district->properties->FEDUID <= 24045) {
+//                $this->comment("[skipped] " . $key . " - " . $district->properties->FEDUID . " - " . $district->properties->FEDNAME . ", " . $this->provincesSlug[$district->properties->PRUID]);
+//                continue;
+//            }
 
             try {
                 CensusFederalElectoralDistrict::query()->insertOrIgnore([

@@ -10,11 +10,19 @@
 
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\BatchController;
+use Neo\Http\Controllers\CensusDivisionsController;
+use Neo\Http\Controllers\CensusFederalElectoralDistrictsController;
+use Neo\Http\Controllers\CensusForwardSortationAreaController;
+use Neo\Http\Controllers\CensusSubdivisionsController;
 use Neo\Http\Controllers\FoursquareController;
 use Neo\Http\Controllers\GoogleMapsController;
 use Neo\Http\Controllers\ModulesController;
 use Neo\Http\Controllers\StatsController;
 use Neo\Http\Controllers\TimezonesController;
+use Neo\Models\CensusDivision;
+use Neo\Models\CensusFederalElectoralDistrict;
+use Neo\Models\CensusForwardSortationArea;
+use Neo\Models\CensusSubdivision;
 
 Route::group([
                  "middleware" => "default",
@@ -60,6 +68,28 @@ Route::group([
     */
 
     Route::get("_third-party/foursquare/places", FoursquareController::class . "@_searchPlaces");
+
+    /*
+    |--------------------------------------------------------------------------
+    | Data
+    |--------------------------------------------------------------------------
+    */
+
+    Route::model("censusSubdivision", CensusSubdivision::class);
+    Route::get("census-subdivisions", [CensusSubdivisionsController::class, "index"]);
+    Route::get("census-subdivisions/{censusSubdivision}", [CensusSubdivisionsController::class, "show"]);
+
+    Route::model("censusDivision", CensusDivision::class);
+    Route::get("census-divisions", [CensusDivisionsController::class, "index"]);
+    Route::get("census-divisions/{censusDivision}", [CensusDivisionsController::class, "show"]);
+
+    Route::model("censusForwardSortationArea", CensusForwardSortationArea::class);
+    Route::get("census-fsas", [CensusForwardSortationAreaController::class, "index"]);
+    Route::get("census-fsas/{censusForwardSortationArea}", [CensusForwardSortationAreaController::class, "show"]);
+
+    Route::model("censusFederalElectoralDistrict", CensusFederalElectoralDistrict::class);
+    Route::get("census-federal-electoral-districts", [CensusFederalElectoralDistrictsController::class, "index"]);
+    Route::get("census-federal-electoral-districts/{censusFederalElectoralDistrict}", [CensusFederalElectoralDistrictsController::class, "show"]);
 
     /*
     |----------------------------------------------------------------------

@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 return new class extends Migration {
     public function up(): void {
         // For each plan, we want to pull it, extract missing information and store them, and store a copy of the plan data into a file
-        $plans = CampaignPlannerSave::query()->orderBy("id")->lazy(100);
+        $plans = \Illuminate\Support\Facades\DB::table("campaign_planner_saves_view")->orderBy("id")->lazy(100);
 
 
         $progress = (new ProgressBar(new ConsoleOutput(), $plans->count()));
@@ -41,10 +41,10 @@ return new class extends Migration {
 
             // Store the plan data in a file
             // Load plan
-            $planData = CampaignPlannerSave::query()
-                                           ->from((new CampaignPlannerSave())->getWriteTable())
-                                           ->where("id", "=", $plan->getKey())
-                                           ->first()->data;
+            $planData = \Illuminate\Support\Facades\DB::table("campaign_planner_saves")
+                                                      ->select(["data"])
+                                                      ->where("id", "=", $plan->getKey())
+                                                      ->first()->data;
 
             $plan->storePlan(json_encode($planData, JSON_UNESCAPED_UNICODE));
         }

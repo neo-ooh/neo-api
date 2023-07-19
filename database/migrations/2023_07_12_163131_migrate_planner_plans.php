@@ -29,10 +29,11 @@ return new class extends Migration {
             $progress->advance();
 
             // Fill in metadata values
+            $uid = $plan->uid ?? Hashids::encode($plan->id);
             \Illuminate\Support\Facades\DB::table("campaign_planner_saves")
                                           ->where("id", "=", $plan->id)
                                           ->update([
-                                                       "uid"             => $plan->uid ?? Hashids::encode($plan->id),
+                                                       "uid"             => $uid,
                                                        "version"         => $plan->version ?? 0,
                                                        "contract"        => $plan->contract_id,
                                                        "client_name"     => $plan->client_name,
@@ -46,7 +47,11 @@ return new class extends Migration {
                                                       ->where("id", "=", $plan->id)
                                                       ->first()->data;
 
-            $plan->storePlan(json_encode($planData, JSON_UNESCAPED_UNICODE));
+            $planSave = new CampaignPlannerSave([
+                                                    "id"  => $plan->id,
+                                                    "uid" => $plan->uid,
+                                                ]);
+            $planSave->storePlan(json_encode($planData, JSON_UNESCAPED_UNICODE));
         }
 
         $progress->finish();

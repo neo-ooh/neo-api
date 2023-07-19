@@ -30,7 +30,7 @@ return new class extends Migration {
 
             // Fill in metadata values
             \Illuminate\Support\Facades\DB::table("campaign_planner_saves")
-                                          ->where("id", "=", $plan->getKey())
+                                          ->where("id", "=", $plan->id)
                                           ->update([
                                                        "uid"             => $plan->uid ?? Hashids::encode($plan->id),
                                                        "version"         => $plan->version ?? 0,
@@ -43,7 +43,7 @@ return new class extends Migration {
             // Load plan
             $planData = \Illuminate\Support\Facades\DB::table("campaign_planner_saves")
                                                       ->select(["data"])
-                                                      ->where("id", "=", $plan->getKey())
+                                                      ->where("id", "=", $plan->id)
                                                       ->first()->data;
 
             $plan->storePlan(json_encode($planData, JSON_UNESCAPED_UNICODE));

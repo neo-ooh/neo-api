@@ -77,6 +77,7 @@ class CampaignPlannerSave extends Model {
 
     public function storePlan($planData) {
         clock()->event("Storing plan")->color("purple")->begin();
+        dump($this->plan_path);
         Storage::disk("public")->put($this->plan_path, $planData);
         clock()->event("Storing plan")->end();
     }

@@ -19,7 +19,7 @@ return new class extends Migration {
         $plans = \Illuminate\Support\Facades\DB::table("campaign_planner_saves_view")->orderBy("id")->lazy(100);
 
 
-        $progress = (new ProgressBar(new ConsoleOutput(), $plans->count()));
+        $progress = (new ProgressBar(new ConsoleOutput(), 3058));
         $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
         $progress->start();
 

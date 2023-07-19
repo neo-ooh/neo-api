@@ -44,10 +44,10 @@ class PopulateCensusSubdivisionsCommand extends Command {
         $subdivisions = Items::fromFile($filePath, ["pointer" => "/features",]);
 
         foreach ($subdivisions as $key => $subdivision) {
-            if ($subdivision->properties->CSDUID <= 6208087) {
-                $this->comment("[skipped] " . $key . " - " . $subdivision->properties->CSDUID . " - " . $subdivision->properties->CSDNAME . ", " . $this->provincesSlug[$subdivision->properties->PRUID]);
-                continue;
-            }
+//            if ($subdivision->properties->CSDUID <= 6208087) {
+//                $this->comment("[skipped] " . $key . " - " . $subdivision->properties->CSDUID . " - " . $subdivision->properties->CSDNAME . ", " . $this->provincesSlug[$subdivision->properties->PRUID]);
+//                continue;
+//            }
 
 
             try {

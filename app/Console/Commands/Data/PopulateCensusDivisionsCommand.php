@@ -18,7 +18,7 @@ use MatanYadaev\EloquentSpatial\Objects\MultiPolygon;
 use Neo\Models\CensusDivision;
 
 class PopulateCensusDivisionsCommand extends Command {
-    protected $signature = 'data:populate-census-divisions {census-file}';
+    protected $signature = 'data:populate-census-divisions {census-file} {skip}';
 
     protected $description = 'Read a census 2021 Census divisions file in GeoJson and populates the `census-divisions` table with it';
 
@@ -50,6 +50,11 @@ class PopulateCensusDivisionsCommand extends Command {
 //                $this->comment("[skipped] " . $key . " - " . $subdivision->properties->CDUID . " - " . $subdivision->properties->CDNAME . ", " . $this->provincesSlug[$subdivision->properties->PRUID]);
 //                continue;
 //            }
+
+            if ($key < $this->argument("skip")) {
+                $this->comment("[skipped] " . $key . " - " . $division->properties->CDUID . " - " . $division->properties->CDNAME . ", " . $this->provincesSlug[$division->properties->PRUID]);
+                continue;
+            }
 
             try {
                 CensusDivision::query()->insertOrIgnore([

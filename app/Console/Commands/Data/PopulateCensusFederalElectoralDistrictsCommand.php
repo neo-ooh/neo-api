@@ -18,7 +18,7 @@ use MatanYadaev\EloquentSpatial\Objects\MultiPolygon;
 use Neo\Models\CensusFederalElectoralDistrict;
 
 class PopulateCensusFederalElectoralDistrictsCommand extends Command {
-    protected $signature = 'data:populate-census-electoral-districts {census-file}';
+    protected $signature = 'data:populate-census-electoral-districts {census-file} {skip}';
 
     protected $description = 'Read a census 2021 Census Federal Electoral Districts file in GeoJson and populates the `census_federal_electoral_districts` table with it';
 
@@ -48,6 +48,11 @@ class PopulateCensusFederalElectoralDistrictsCommand extends Command {
 //                $this->comment("[skipped] " . $key . " - " . $district->properties->FEDUID . " - " . $district->properties->FEDNAME . ", " . $this->provincesSlug[$district->properties->PRUID]);
 //                continue;
 //            }
+
+            if ($key < $this->argument("skip")) {
+                $this->comment("[skipped] " . $key . " - " . $district->properties->FEDUID . " - " . $district->properties->FEDNAME . ", " . $this->provincesSlug[$district->properties->PRUID]);
+                continue;
+            }
 
             try {
                 CensusFederalElectoralDistrict::query()->insertOrIgnore([

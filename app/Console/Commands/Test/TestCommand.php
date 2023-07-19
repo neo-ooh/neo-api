@@ -10,8 +10,8 @@
 
 namespace Neo\Console\Commands\Test;
 
-use Carbon\CarbonPeriod;
 use Illuminate\Console\Command;
+use Neo\Models\CensusForwardSortationArea;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -24,54 +24,6 @@ class TestCommand extends Command {
      * @throws Exception
      */
     public function handle() {
-        /*$productId = 617;
-        $product   = Product::query()->find($productId);
-        $format    = Format::query()->find($product->format_id ?? $product->category->format_id);
-        $layoutIds = $format->layouts->pluck("id");
-
-        $layouts = Layout::query()->whereHas("formats", function (Builder $query) use ($product) {
-            $query->where("id", $product->format_id ?? $product->category->format_id);
-        })->get();
-
-        $query = Schedule::query();
-        $query->whereHas("campaign", function (Builder $query) use ($productId) {
-            $query->whereHas("locations", function (Builder $query) use ($productId) {
-                $query->whereHas("products", function (Builder $query) use ($productId) {
-                    $query->where("id", "=", $productId);
-                });
-            });
-        });
-        $query->whereHas("contents", function (Builder $query) use ($product) {
-            $query->whereHas("layout", function (Builder $query) use ($product) {
-                $query->whereHas("formats", function (Builder $query) use ($product) {
-                    $query->where("id", "=", $product->format_id ?? $product->category->format_id);
-                });
-            });
-            $query->whereNotExists(function (\Illuminate\Database\Query\Builder $query) use ($product) {
-                $query->from("schedule_content_disabled_formats");
-                $query->where("schedule_content_disabled_formats.schedule_content_id", "=", DB::raw("schedule_contents.id"));
-                $query->where("schedule_content_disabled_formats.format_id", "=", $product->format_id ?? $product->category->format_id);
-            });
-        });*/
-
-//        $inventory = InventoryProvider::query()->find(1);
-//        /** @var OdooAdapter $odoo */
-//        $odoo = $inventory->getAdapter();
-
-//        Cache::clear();
-
-//        $products = $odoo->listProducts(Carbon::now()->subDay());
-
-//        dump($products->first()->toArray());
-
-//        $product = Product::query()->find(357);
-//        $product  = Product::query()->find(7458);
-//        $resource = $product->toResource(1);
-
-//        dump($resource->weekly_traffic);
-
-        dump(collect(CarbonPeriod::create("2023-10-01", "2023-12-01")->toArray())
-                 ->map(fn($date) => "('" . $date->toDateString() . "')")
-                 ->join(','));
+        dd(CensusForwardSortationArea::query()->find("H2H"));
     }
 }

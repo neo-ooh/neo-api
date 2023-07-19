@@ -13,6 +13,10 @@ namespace Neo\Console;
 use DateTimeZone;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Neo\Console\Commands\Data\PopulateCensusDivisionsCommand;
+use Neo\Console\Commands\Data\PopulateCensusFederalElectoralDistrictsCommand;
+use Neo\Console\Commands\Data\PopulateCensusForwardSortationAreasCommand;
+use Neo\Console\Commands\Data\PopulateCensusSubdivisionsCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Console\Commands\Test\TestCommand;
 use Neo\Jobs\Contracts\ClearOldScreenshots;
@@ -48,6 +52,13 @@ class Kernel extends ConsoleKernel {
         // network:sync
         SynchronizeNetworkCommand::class,
         FetchCampaignsPerformancesCommand::class,
+
+        // Data -------------------
+
+        PopulateCensusDivisionsCommand::class,
+        PopulateCensusSubdivisionsCommand::class,
+        PopulateCensusFederalElectoralDistrictsCommand::class,
+        PopulateCensusForwardSortationAreasCommand::class,
     ];
 
     /**

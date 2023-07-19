@@ -115,6 +115,10 @@ class ImportContractDataJob implements ShouldQueue {
 
         // Load flights from the plan, if available
         $flights = $this->getFlightsFromPlan($contract, $output);
+
+        // Empty all flights lines as they will all be re-imported
+        $flights->each(fn(ContractFlight $flight) => $flight->lines()->delete());
+
         /** @var Collection<ContractFlight> $usedFlights */
         $usedFlights = collect();
         $orderLines  = $this->getLinesFromOdoo($odooClient, $contract, $output);
@@ -187,22 +191,19 @@ class ImportContractDataJob implements ShouldQueue {
 
             // If a line with the same product id and flight id already exists, use it, otherwise get a new line instance
             /** @var ContractLine $line */
-            $line = $flight->lines->where("product_id", "===", $product->getKey())
-                                  ->where("flight_id", "===", $flight->getKey())->first() ?? new ContractLine();
-
-            $line->fill([
-                            "product_id"    => $product->getKey(),
-                            "flight_id"     => $flight->getKey(),
-                            "external_id"   => $orderLine->getKey(),
-                            "spots"         => $orderLine->product_uom_qty,
-                            "media_value"   => $orderLine->price_unit * $orderLine->nb_weeks * $orderLine->nb_screen * $orderLine->product_uom_qty,
-                            "discount"      => $orderLine->discount,
-                            "discount_type" => "relative",
-                            "price"         => $orderLine->price_subtotal,
-                            "traffic"       => 0,
-                            "impressions"   => $orderLine->connect_impression ?: $orderLine->impression,
-                        ]);
-            $line->save();
+            $line          = ContractLine::query()->updateOrCreate([
+                                                                       "product_id" => $product->getKey(),
+                                                                       "flight_id"  => $flight->getKey(),
+                                                                   ], [
+                                                                       "external_id"   => $orderLine->getKey(),
+                                                                       "spots"         => $orderLine->product_uom_qty,
+                                                                       "media_value"   => $orderLine->price_unit * $orderLine->nb_weeks * $orderLine->nb_screen * $orderLine->product_uom_qty,
+                                                                       "discount"      => $orderLine->discount,
+                                                                       "discount_type" => "relative",
+                                                                       "price"         => $orderLine->price_subtotal,
+                                                                       "traffic"       => 0,
+                                                                       "impressions"   => $orderLine->connect_impression ?: $orderLine->impression,
+                                                                   ]);
             $flight->lines = $flight->lines->push($line)->unique("id");
 
             // Log the line for later use
@@ -288,9 +289,6 @@ class ImportContractDataJob implements ShouldQueue {
                                                                        "end_date"   => $flight->end_date,
                                                                    ]));
         }
-
-        // Empty all flights lines as they will all be re-imported
-        $flights->each(fn(ContractFlight $flight) => $flight->lines()->delete());
 
         return $flights;
     }

@@ -49,7 +49,7 @@ return new class extends Migration {
 
             $planSave = new CampaignPlannerSave([
                                                     "id"  => $plan->id,
-                                                    "uid" => $plan->uid,
+                                                    "uid" => $uid,
                                                 ]);
             $planSave->storePlan(json_encode($planData, JSON_UNESCAPED_UNICODE));
         }

@@ -33,7 +33,7 @@ return new class extends Migration {
                                           ->where("id", "=", $plan->getKey())
                                           ->update([
                                                        "uid"             => $plan->uid ?? Hashids::encode($plan->id),
-                                                       "viersion"        => $plan->version ?? 0,
+                                                       "version"         => $plan->version ?? 0,
                                                        "contract"        => $plan->contract_id,
                                                        "client_name"     => $plan->client_name,
                                                        "advertiser_name" => $plan->advertiser_name,

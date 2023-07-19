@@ -20,7 +20,6 @@ use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDemographicValuesRequest
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
 use Neo\Http\Requests\CampaignPlanner\ShowProductRequest;
 use Neo\Http\Requests\CampaignPlanner\ShowPropertyRequest;
-use Neo\Http\Resources\CampaignPlannerSaveResource;
 use Neo\Models\CampaignPlannerSave;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Network;
@@ -38,7 +37,6 @@ use Neo\Modules\Properties\Models\PropertyType;
 use Neo\Modules\Properties\Models\ScreenType;
 
 class CampaignPlannerController {
-
     protected function getPropertiesQuery() {
         return Property::query()->where("is_sellable", "=", true)
                        ->whereHas("address", function (Builder $query) {
@@ -173,8 +171,7 @@ class CampaignPlannerController {
     }
 
     public function save(Request $request, CampaignPlannerSave $campaignPlannerSave) {
-        $campaignPlannerSave->data = $campaignPlannerSave->getPlan();
-        return new Response(new CampaignPlannerSaveResource($campaignPlannerSave));
+        return new Response($campaignPlannerSave);
     }
 
     public function property(ShowPropertyRequest $request, CampaignPlannerSave $campaignPlannerSave) {

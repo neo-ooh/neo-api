@@ -18,7 +18,7 @@ use MatanYadaev\EloquentSpatial\Objects\MultiPolygon;
 use Neo\Models\CensusForwardSortationArea;
 
 class PopulateCensusForwardSortationAreasCommand extends Command {
-    protected $signature = 'data:populate-census-fsas {census-file}';
+    protected $signature = 'data:populate-census-fsas {census-file} {skip}';
 
     protected $description = 'Read a census 2021 Census forward sortation areas file in GeoJson and populates the `census_forward_sortation_areas` table with it';
 
@@ -42,12 +42,17 @@ class PopulateCensusForwardSortationAreasCommand extends Command {
         $filePath = $this->argument("census-file");
 
         $divisions = Items::fromFile($filePath, ["pointer" => "/features",]);
-        
+
         foreach ($divisions as $key => $division) {
 //            if ($division->properties->CDUID <= 6208087) {
 //                $this->comment("[skipped] " . $key . " - " . $subdivision->properties->CFSAUID . ", " . $this->provincesSlug[$subdivision->properties->PRUID]);
 //                continue;
 //            }
+
+            if ($key < $this->argument("skip")) {
+                $this->comment("[skipped] " . $key . " - " . $division->properties->CFSAUID . ", " . $this->provincesSlug[$division->properties->PRUID]);
+                continue;
+            }
 
             try {
                 CensusForwardSortationArea::query()->insertOrIgnore([

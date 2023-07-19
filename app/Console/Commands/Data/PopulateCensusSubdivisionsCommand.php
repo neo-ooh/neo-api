@@ -18,7 +18,7 @@ use MatanYadaev\EloquentSpatial\Objects\MultiPolygon;
 use Neo\Models\CensusSubdivision;
 
 class PopulateCensusSubdivisionsCommand extends Command {
-    protected $signature = 'data:populate-census-subdivisions {census-file}';
+    protected $signature = 'data:populate-census-subdivisions {census-file} {skip}';
 
     protected $description = 'Read a census 2021 Census Subdivisions file in GeoJson and populates the `census-subdivisions` table with it';
 
@@ -44,10 +44,18 @@ class PopulateCensusSubdivisionsCommand extends Command {
         $subdivisions = Items::fromFile($filePath, ["pointer" => "/features",]);
 
         foreach ($subdivisions as $key => $subdivision) {
+            if ($subdivision->properties->CSDUID === 6204030) {
+                continue; // Skip baffin island: too big
+            }
 //            if ($subdivision->properties->CSDUID <= 6208087) {
 //                $this->comment("[skipped] " . $key . " - " . $subdivision->properties->CSDUID . " - " . $subdivision->properties->CSDNAME . ", " . $this->provincesSlug[$subdivision->properties->PRUID]);
 //                continue;
 //            }
+
+            if ($key < $this->argument("skip")) {
+                $this->comment("[skipped] " . $key . " - " . $subdivision->properties->CSDUID . " - " . $subdivision->properties->CSDNAME . ", " . $this->provincesSlug[$subdivision->properties->PRUID]);
+                continue;
+            }
 
 
             try {

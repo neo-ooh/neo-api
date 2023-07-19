@@ -12,7 +12,6 @@ namespace Database\Seeders;
 
 use Database\Seeders\views\ActorsCapabilitiesViewSeeder;
 use Database\Seeders\views\ActorsDetailsViewSeeder;
-use Database\Seeders\views\CampaignPlannerSavesViewSeeder;
 use Database\Seeders\views\ContractFlightsViewSeeder;
 use Database\Seeders\views\ContractLinesViewSeeder;
 use Database\Seeders\views\FieldsSegmentsStatsViewSeeder;
@@ -28,8 +27,6 @@ class DatabaseSeeder extends BaseSeeder {
 
                         ContractFlightsViewSeeder::class,
                         ContractLinesViewSeeder::class,
-
-                        CampaignPlannerSavesViewSeeder::class,
 
                         // Data
                         ParamsSeeder::class,

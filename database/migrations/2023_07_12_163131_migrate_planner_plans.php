@@ -47,10 +47,9 @@ return new class extends Migration {
                                                       ->where("id", "=", $plan->id)
                                                       ->first()->data;
 
-            $planSave = new CampaignPlannerSave([
-                                                    "id"  => $plan->id,
-                                                    "uid" => $uid,
-                                                ]);
+            $planSave      = new CampaignPlannerSave();
+            $planSave->id  = $plan->id;
+            $planSave->uid = $uid;
             $planSave->storePlan(json_encode($planData, JSON_UNESCAPED_UNICODE));
         }
 

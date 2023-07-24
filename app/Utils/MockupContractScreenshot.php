@@ -32,9 +32,11 @@ class MockupContractScreenshot {
         // First, we need to find which format to mockup this screenshot to
         $location = $this->screenshot->burst->location;
 
-        $product = Product::query()->whereHas("locations", function (Builder $query) use ($location) {
-            $query->where("id", "=", $location->getKey());
-        })->first();
+        $product = Product::query()
+                          ->where("is_bonus", "=", false)
+                          ->whereHas("locations", function (Builder $query) use ($location) {
+                              $query->where("id", "=", $location->getKey());
+                          })->first();
 
         if (!$product) {
             return null;

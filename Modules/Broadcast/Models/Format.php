@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Neo\Enums\Capability;
+use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
@@ -41,6 +43,7 @@ use Neo\Modules\Properties\Models\ProductCategory;
  * @property Collection<DisplayType>       $display_types
  * @property Collection<BroadcastTag>      $broadcast_tags
  * @property Collection<LoopConfiguration> $loop_configurations
+ * @property Collection<FormatCropFrame>   $crop_frames
  *
  * @mixin Builder<Format>
  */
@@ -78,15 +81,20 @@ class Format extends Model {
         "products_categories",
     ];
 
-
-    protected array $publicRelations = [
-        "display_types"       => "display_types",
-        "display_types_ids"   => "display_types:id",
-        "layouts"             => "layouts",
-        "tags"                => "broadcast_tags",
-        "loop_configurations" => "loop_configurations",
-        "network"             => "network",
-    ];
+    public function getPublicRelations(): array {
+        return [
+            "display_types"       => "display_types",
+            "display_types_ids"   => "display_types:id",
+            "layouts"             => "layouts",
+            "tags"                => "broadcast_tags",
+            "loop_configurations" => "loop_configurations",
+            "network"             => "network",
+            "crop_frames"         => Relation::make(
+                load: "crop_frames",
+                gate: Capability::formats_crop_frames_edit
+            ),
+        ];
+    }
 
     protected static function boot(): void {
         parent::boot();
@@ -167,5 +175,12 @@ class Format extends Model {
      */
     public function products(): HasMany {
         return $this->hasMany(Product::class, "format_id", "id");
+    }
+
+    /**
+     * @return HasMany<FormatCropFrame>
+     */
+    public function crop_frames(): HasMany {
+        return $this->hasMany(FormatCropFrame::class, "format_id", "id");
     }
 }

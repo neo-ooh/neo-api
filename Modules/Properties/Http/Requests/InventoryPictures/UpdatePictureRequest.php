@@ -12,7 +12,9 @@ namespace Neo\Modules\Properties\Http\Requests\InventoryPictures;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
+use Neo\Modules\Properties\Models\Enums\InventoryPictureType;
 use Neo\Modules\Properties\Rules\AccessibleProduct;
 
 class UpdatePictureRequest extends FormRequest {
@@ -21,6 +23,7 @@ class UpdatePictureRequest extends FormRequest {
             "name"        => ["nullable", "string"],
             "description" => ["nullable", "string"],
 
+            "type"       => ["required", new Enum(InventoryPictureType::class)],
             "product_id" => ["sometimes", new AccessibleProduct(allowNull: true)],
 
             "order" => ["numeric"],

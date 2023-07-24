@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -23,10 +23,10 @@ class POP extends PDFDocument {
 
     public function __construct() {
         parent::__construct([
-            "margin_bottom" => 25,
-            "packTableData" => true,
-            "use_kwt"       => true,
-        ]);
+                                "margin_bottom" => 25,
+                                "packTableData" => true,
+                                "use_kwt"       => true,
+                            ]);
     }
 
     protected function ingest($data): bool {
@@ -44,12 +44,12 @@ class POP extends PDFDocument {
         // First, the preface
         // Build the cover page
         $this->mpdf->AddPageByArray([
-            "sheet-size"   => "Legal-L",
-            "pageselector" => "preface"
-        ]);
+                                        "sheet-size"   => "Legal-L",
+                                        "pageselector" => "preface",
+                                    ]);
 
         $this->mpdf->WriteHTML(view("documents.pop.coverpage", [
-            "locale" => $this->data->locale
+            "locale" => $this->data->locale,
         ])->render());
 
         $reservations = $this->data->values->where("type", "!==", "bua");
@@ -79,7 +79,8 @@ class POP extends PDFDocument {
         // If we have screenshots, display them
         if (count($this->data->screenshots) > 0) {
             $this->mpdf->WriteHTML(view("documents.pop.screenshots", [
-                "screenshots" => $this->data->screenshots
+                "screenshots" => $this->data->screenshots,
+                "mockups"     => $this->data->screenshots_mockup,
             ]));
         }
 

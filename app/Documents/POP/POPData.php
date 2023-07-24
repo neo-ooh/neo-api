@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -20,22 +20,22 @@ class POPData {
     public string $locale;
 
     #[ArrayShape([
-        'name' => 'string'
+        'name' => 'string',
     ])]
     public array $advertiser;
 
     #[ArrayShape([
-        'name' => 'string'
+        'name' => 'string',
     ])]
     public array $client;
 
     #[ArrayShape([
-        'name' => 'string'
+        'name' => 'string',
     ])]
     public array $presented_to;
 
     #[ArrayShape([
-        'name' => 'string'
+        'name' => 'string',
     ])]
     public array $salesperson;
 
@@ -43,6 +43,11 @@ class POPData {
      * @var Collection<Screenshot>
      */
     public Collection $screenshots;
+
+    /**
+     * @var bool Should the screenshots be mocked up when integrated in the document ?
+     */
+    public bool $screenshots_mockup;
 
     /**
      * @var Collection<POPBuyTypeValues>
@@ -72,27 +77,28 @@ class POPData {
     public float $total_counted_cpm = 0;
 
     public function __construct(array $data) {
-        $this->contract_name = $data["contract_name"];
-        $this->contract_id   = $data["contract_id"];
-        $this->locale        = $data["locale"];
-        $this->advertiser    = [
+        $this->contract_name      = $data["contract_name"];
+        $this->contract_id        = $data["contract_id"];
+        $this->locale             = $data["locale"];
+        $this->advertiser         = [
             "name" => $data["advertiser"]["name"],
         ];
-        $this->client        = [
+        $this->client             = [
             "name" => $data["client"]["name"],
         ];
-        $this->presented_to  = [
+        $this->presented_to       = [
             "name" => $data["presented_to"]["name"],
         ];
-        $this->salesperson   = [
+        $this->salesperson        = [
             "name" => $data["salesperson"]["name"],
         ];
-        $this->screenshots   = ContractScreenshot::query()
-                                                 ->whereIn("id", $data["screenshots"])
-                                                 ->with(["burst", "burst.location", "burst.location.display_type"])
-                                                 ->get()
-                                                 ->toBase()
-                                                 ->map(fn(ContractScreenshot $screenshot) => new Screenshot($screenshot));
+        $this->screenshots_mockup = $data["screenshots_mockup"];
+        $this->screenshots        = ContractScreenshot::query()
+                                                      ->whereIn("id", $data["screenshots"])
+                                                      ->with(["burst", "burst.location", "burst.location.display_type"])
+                                                      ->get()
+                                                      ->toBase()
+                                                      ->map(fn(ContractScreenshot $screenshot) => new Screenshot($screenshot, $this->screenshots_mockup));
 
         $this->values = collect($data["values"])->map(static fn(array $values) => new POPBuyTypeValues($values))
                                                 ->filter(fn(POPBuyTypeValues $values) => $values->networks->count() > 0);

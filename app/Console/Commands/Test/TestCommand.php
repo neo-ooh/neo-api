@@ -11,7 +11,8 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Models\CensusForwardSortationArea;
+use Neo\Models\ContractScreenshot;
+use Neo\Utils\MockupContractScreenshot;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -24,6 +25,8 @@ class TestCommand extends Command {
      * @throws Exception
      */
     public function handle() {
-        dd(CensusForwardSortationArea::query()->find("H2H"));
+        $screenshot = ContractScreenshot::query()->find(347738);
+
+        $builder = new MockupContractScreenshot($screenshot);
     }
 }

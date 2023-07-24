@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -17,26 +17,32 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Neo\Enums\Capability;
+use Neo\Helpers\Relation;
+use Neo\Models\Traits\HasPublicRelations;
 
 /**
  * Neo\Modules\Broadcast\Models\DisplayType
  *
- * @property int                   $id
- * @property int                   $connection_id
- * @property int                   $external_id
- * @property string                $name
- * @property string                $internal_name
- * @property int                   $width_px
- * @property int                   $height_px
- * @property Date                  $created_at
- * @property Date                  $updated_at
+ * @property int                          $id
+ * @property int                          $connection_id
+ * @property int                          $external_id
+ * @property string                       $name
+ * @property string                       $internal_name
+ * @property int                          $width_px
+ * @property int                          $height_px
+ * @property Date                         $created_at
+ * @property Date                         $updated_at
  *
- * @property BroadcasterConnection $broadcaster_connection
- * @property Collection<Location>  $locations
+ * @property BroadcasterConnection        $broadcaster_connection
+ * @property Collection<Location>         $locations
+ * @property Collection<DisplayTypeFrame> $frames
  *
  * @mixin Builder
  */
 class DisplayType extends Model {
+    use HasPublicRelations;
+
     /*
     |--------------------------------------------------------------------------
     | Table properties
@@ -61,6 +67,15 @@ class DisplayType extends Model {
         "name",
         "internal_name",
     ];
+
+    public function getPublicRelations() {
+        return [
+            "frames" => Relation::make(
+                load: "frames",
+                gate: Capability::formats_crop_frames_edit,
+            ),
+        ];
+    }
 
 
     /*
@@ -88,5 +103,12 @@ class DisplayType extends Model {
      */
     public function formats(): BelongsToMany {
         return $this->belongsToMany(Format::class, "format_display_types", "display_type_id", "format_id");
+    }
+
+    /**
+     * @return HasMany<DisplayTypeFrame>
+     */
+    public function frames(): HasMany {
+        return $this->hasMany(DisplayTypeFrame::class, "display_type_id", "id")->orderBy("name");
     }
 }

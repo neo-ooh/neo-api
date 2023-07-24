@@ -12,27 +12,29 @@ namespace Neo\Modules\Properties\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
+use Neo\Modules\Properties\Models\Enums\InventoryPictureType;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
- * @property int           $id
- * @property string        $name
- * @property int|null      $property_id
- * @property int|null      $product_id
- * @property int           $width
- * @property int           $height
- * @property int           $order
- * @property int           $extension
- * @property string        $description
+ * @property int                  $id
+ * @property string               $name
+ * @property InventoryPictureType $type
+ * @property int|null             $property_id
+ * @property int|null             $product_id
+ * @property int                  $width
+ * @property int                  $height
+ * @property int                  $order
+ * @property int                  $extension
+ * @property string               $description
  *
- * @property Property|null $property
- * @property Product|null  $product
+ * @property Property|null        $property
+ * @property Product|null         $product
  *
- * @property string        $uid
- * @property string        $file_path
- * @property string        $thumbnail_path
- * @property string        $url
- * @property string        $thumbnail_url
+ * @property string               $uid
+ * @property string               $file_path
+ * @property string               $thumbnail_path
+ * @property string               $url
+ * @property string               $thumbnail_url
  *
  */
 class InventoryPicture extends Model {
@@ -42,12 +44,17 @@ class InventoryPicture extends Model {
 
     protected $fillable = [
         "name",
+        "type",
         "property_id",
         "product_id",
         "width",
         "height",
         "order",
         "extension",
+    ];
+
+    protected $casts = [
+        "type" => InventoryPictureType::class,
     ];
 
     protected $appends = [

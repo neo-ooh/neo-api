@@ -17,6 +17,7 @@ use Neo\Modules\Properties\Http\Requests\InventoryPictures\ListPicturesRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryPictures\StorePictureRequest;
 use Neo\Modules\Properties\Http\Requests\InventoryPictures\UpdatePictureRequest;
 use Neo\Modules\Properties\Http\Requests\Products\DestroyProductRequest;
+use Neo\Modules\Properties\Models\Enums\InventoryPictureType;
 use Neo\Modules\Properties\Models\InventoryPicture;
 use Symfony\Component\HttpFoundation\File\Exception\UploadException;
 
@@ -49,6 +50,7 @@ class InventoryPicturesController {
         // Image is valid, create a resource for it and store it
         $picture = new InventoryPicture([
                                             "name"        => $image->getClientOriginalName(),
+                                            "type"        => InventoryPictureType::Regular,
                                             "order"       => 0,
                                             "width"       => $width,
                                             "height"      => $height,
@@ -71,6 +73,7 @@ class InventoryPicturesController {
 
     public function update(UpdatePictureRequest $request, InventoryPicture $picture): Response {
         $picture->name        = $request->input("name") ?? "";
+        $picture->type        = $request->input("type");
         $picture->description = $request->input("description") ?? "";
         $picture->product_id  = $request->input("product_id", null);
         $picture->order       = $request->input("order");

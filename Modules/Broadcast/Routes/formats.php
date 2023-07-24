@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -20,6 +20,7 @@
 */
 
 use Illuminate\Support\Facades\Route;
+use Neo\Modules\Broadcast\Http\Controllers\FormatCropFramesController;
 use Neo\Modules\Broadcast\Http\Controllers\FormatsController;
 use Neo\Modules\Broadcast\Http\Controllers\FormatsDisplayTypesController;
 use Neo\Modules\Broadcast\Http\Controllers\FormatsLayoutsController;
@@ -28,6 +29,7 @@ use Neo\Modules\Broadcast\Http\Controllers\FramesController;
 use Neo\Modules\Broadcast\Http\Controllers\LayoutsController;
 use Neo\Modules\Broadcast\Http\Controllers\LoopConfigurationsController;
 use Neo\Modules\Broadcast\Models\Format;
+use Neo\Modules\Broadcast\Models\FormatCropFrame;
 use Neo\Modules\Broadcast\Models\Frame;
 use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
@@ -83,6 +85,20 @@ Route::group([
     Route::put("formats/{format}/layouts/_sync", FormatsLayoutsController::class . "@sync");
     Route::put("formats/{format}/display-types/_sync", FormatsDisplayTypesController::class . "@sync");
     Route::put("formats/{format}/loop-configurations/_sync", FormatsLoopConfigurationsController::class . "@sync");
+
+    /*
+    |----------------------------------------------------------------------
+    | Format Crop Frames
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("formatCropFrame", FormatCropFrame::class);
+
+    Route::   get("formats/{format}/crop-frames", [FormatCropFramesController::class, "index"]);
+    Route::  post("formats/{format}/crop-frames", [FormatCropFramesController::class, "store"]);
+    Route::   get("formats/{format}/crop-frames/{formatCropFrame}", [FormatCropFramesController::class, "show"]);
+    Route::   put("formats/{format}/crop-frames/{formatCropFrame}", [FormatCropFramesController::class, "update"]);
+    Route::delete("formats/{format}/crop-frames/{formatCropFrame}", [FormatCropFramesController::class, "destroy"]);
 
     /*
     |----------------------------------------------------------------------

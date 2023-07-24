@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -14,6 +14,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
+use ImagickException;
+use Neo\Utils\MockupContractScreenshot;
 
 /**
  * Class ContractScreenshot
@@ -30,6 +32,7 @@ use Illuminate\Support\Facades\Storage;
  *
  * @property string        $file_path
  * @property string        $url
+ * @property string        $mockup_path
  */
 class ContractScreenshot extends Model {
     protected $table = "contracts_screenshots";
@@ -88,5 +91,14 @@ class ContractScreenshot extends Model {
 
     public function getUrlAttribute() {
         return Storage::disk("public")->url($this->file_path);
+    }
+
+    /**
+     * @return string
+     * @throws ImagickException
+     */
+    public function getMockupPathAttribute() {
+        $mockup = new MockupContractScreenshot($this);
+        return $mockup->makeMockup() ?? $this->url;
     }
 }

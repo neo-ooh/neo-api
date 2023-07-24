@@ -56,7 +56,8 @@
     "staudenmeir/eloquent-has-many-deep": "^1.15",
     "symfony/expression-language": "^6.0.1",
     "toin0u/geocoder-laravel": "^4.4",
-    "vinkla/hashids": "^11.0.0"
+    "vinkla/hashids": "^11.0.0",
+    "ext-imagick": "*"
   },
   "require-dev": {
     "enlightn/enlightn": "^2.3",

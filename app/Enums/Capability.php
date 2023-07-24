@@ -75,6 +75,9 @@ enum Capability: string {
     // Formats
     case locations_edit = "locations.edit";
 
+    // Formats Mockups
+    case formats_crop_frames_edit = 'formats.crop-frames.edit';
+
     // Terms Of Services
     case tos_update = "tos.update";
 

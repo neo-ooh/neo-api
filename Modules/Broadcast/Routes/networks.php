@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -21,12 +21,15 @@
 
 use Illuminate\Support\Facades\Route;
 use Neo\Modules\Broadcast\Http\Controllers\BroadcasterConnectionsController;
+use Neo\Modules\Broadcast\Http\Controllers\DisplayTypeFramesController;
 use Neo\Modules\Broadcast\Http\Controllers\DisplayTypesController;
 use Neo\Modules\Broadcast\Http\Controllers\LocationsController;
 use Neo\Modules\Broadcast\Http\Controllers\LocationsPlayersController;
 use Neo\Modules\Broadcast\Http\Controllers\NetworkContainersController;
 use Neo\Modules\Broadcast\Http\Controllers\NetworksController;
 use Neo\Modules\Broadcast\Models\BroadcasterConnection;
+use Neo\Modules\Broadcast\Models\DisplayType;
+use Neo\Modules\Broadcast\Models\DisplayTypeFrame;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Http\Controllers\PropertiesController;
@@ -58,6 +61,7 @@ Route::group([
     */
 
     Route::model("network", Network::class);
+
     Route::   get("networks", NetworksController::class . "@index");
     Route::   get("networks/_by_id", NetworksController::class . "@byId");
     Route::  post("networks", NetworksController::class . "@store");
@@ -77,7 +81,25 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::    get("display-types", DisplayTypesController::class . "@index");
+    Route::model("displayType", DisplayType::class);
+
+    Route::    get("display-types", [DisplayTypesController::class, "index"]);
+    Route::    get("display-types/{displayType}", [DisplayTypesController::class, "show"]);
+
+
+    /*
+    |----------------------------------------------------------------------
+    | Display Types Crop Frames
+    |----------------------------------------------------------------------
+    */
+
+    Route::model("displayTypeFrame", DisplayTypeFrame::class);
+
+    Route::    get("display-types/{displayType}/frames", [DisplayTypeFramesController::class, "index"]);
+    Route::   post("display-types/{displayType}/frames", [DisplayTypeFramesController::class, "store"]);
+    Route::    get("display-types/{displayType}/frames/{displayTypeFrame}", [DisplayTypeFramesController::class, "show"]);
+    Route::    put("display-types/{displayType}/frames/{displayTypeFrame}", [DisplayTypeFramesController::class, "update"]);
+    Route:: delete("display-types/{displayType}/frames/{displayTypeFrame}", [DisplayTypeFramesController::class, "destroy"]);
 
     /*
     |----------------------------------------------------------------------

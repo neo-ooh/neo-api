@@ -104,7 +104,12 @@ class MockupContractScreenshot {
                       ($cropFrame->scale / 10_000) * $destinationWidth,
                 rows: 0,
             );
-            $croppedFrame->setImageAlpha(.9);
+            
+            if (method_exists($croppedFrame, 'setImageAlpha')) { // <-- does not exist before 7.x.x
+                $croppedFrame->setImageAlpha(.9);
+            } else {
+                $croppedFrame->setImageOpacity(.9);
+            }
 
             $destinationImage->compositeImage(
                            $croppedFrame,

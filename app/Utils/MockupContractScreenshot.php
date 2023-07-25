@@ -81,8 +81,7 @@ class MockupContractScreenshot {
         $destinationWidth  = $destinationImage->getImageWidth();
         $destinationHeight = $destinationImage->getImageHeight();
 
-//        $sourceImage  = $this->loadImageFromUrl(/*$this->screenshot->url*/ "https://cdn.neo-ooh.info/ooh/bursts/13258/347765.jpg");
-        $sourceImage  = $this->loadImageFromUrl(/*$this->screenshot->url*/ "https://cdn.neo-ooh.info/ooh/bursts/13258/347765.jpg");
+        $sourceImage  = $this->loadImageFromUrl($this->screenshot->url);
         $sourceWidth  = $sourceImage->getImageWidth();
         $sourceHeight = $sourceImage->getImageHeight();
 
@@ -104,7 +103,7 @@ class MockupContractScreenshot {
                       ($cropFrame->scale / 10_000) * $destinationWidth,
                 rows: 0,
             );
-            
+
             if (method_exists($croppedFrame, 'setImageAlpha')) { // <-- does not exist before 7.x.x
                 $croppedFrame->setImageAlpha(.9);
             } else {
@@ -119,11 +118,12 @@ class MockupContractScreenshot {
             );
         }
 
-        $outputTmp  = tmpfile();
-        $outputPath = stream_get_meta_data($outputTmp)['uri'];
-        $destinationImage->writeImage($outputPath);
+        $outputTmp = tempnam(sys_get_temp_dir(), "screenshot_");
+        rename($outputTmp, $outputTmp .= '.jpeg');
 
-        return $outputPath;
+        $destinationImage->writeImage($outputTmp);
+
+        return $outputTmp;
     }
 
     /**

@@ -19,13 +19,14 @@ use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
 use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResource;
 
 /**
- * @property int                             $id
- * @property BroadcastResourceType           $type
+ * @property int                                     $id
+ * @property BroadcastResourceType                   $type
  *
- * @property ExternalBroadcasterResource     $resource
- * @property Collection<BroadcastJob>        $jobs
- * @property Collection<ExternalResource>    $external_representations
- * @property Collection<ResourcePerformance> $performances
+ * @property ExternalBroadcasterResource             $resource
+ * @property Collection<BroadcastJob>                $jobs
+ * @property Collection<ExternalResource>            $external_representations
+ * @property Collection<ResourcePerformance>         $performances
+ * @property Collection<ResourceLocationPerformance> $location_performances
  */
 class BroadcastResource extends Model {
     use HasPublicRelations;
@@ -73,6 +74,10 @@ class BroadcastResource extends Model {
 
     public function performances() {
         return $this->hasMany(ResourcePerformance::class, "resource_id", "id");
+    }
+
+    public function location_performances() {
+        return $this->hasMany(ResourceLocationPerformance::class, "resource_id", "id");
     }
 
     /**

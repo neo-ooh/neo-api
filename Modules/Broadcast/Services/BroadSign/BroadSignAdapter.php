@@ -37,6 +37,7 @@ use Neo\Modules\Broadcast\Services\BroadSign\Models\Creative as BroadSignCreativ
 use Neo\Modules\Broadcast\Services\BroadSign\Models\DayPart;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\DisplayType as BroadSignDisplayType;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\DisplayUnit;
+use Neo\Modules\Broadcast\Services\BroadSign\Models\DisplayUnitPerformance;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\LoopSlot;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\Player as BroadSignPlayer;
 use Neo\Modules\Broadcast\Services\BroadSign\Models\ReservablePerformance;
@@ -502,6 +503,20 @@ class BroadSignAdapter extends BroadcasterOperator implements
         $performances = ReservablePerformance::byReservable($this->getAPIClient(), $resourceIds);
 
         return $performances->map(fn(ReservablePerformance $performance) => $performance->toResource())->all();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCampaignsPerformancesByLocations(array $campaignIds): array {
+        $resourceIds = BroadcasterUtils::extractExternalIds($campaignIds, ExternalResourceType::Campaign);
+
+        $performances = collect();
+        foreach ($resourceIds as $resourceId) {
+            $performances->push(...DisplayUnitPerformance::byReservable($this->getAPIClient(), $resourceId));
+        }
+
+        return $performances->map(fn(DisplayUnitPerformance $performance) => $performance->toResource())->all();
     }
 
     /**

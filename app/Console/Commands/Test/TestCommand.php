@@ -11,8 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Models\ContractScreenshot;
-use Neo\Utils\MockupContractScreenshot;
+use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -25,8 +24,7 @@ class TestCommand extends Command {
      * @throws Exception
      */
     public function handle() {
-        $screenshot = ContractScreenshot::query()->find(347738);
-
-        $builder = new MockupContractScreenshot($screenshot);
+        $job = new FetchCampaignsPerformancesJob(2, 1);
+        $job->handle();
     }
 }

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2022 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -24,12 +24,15 @@ use Illuminate\Support\Facades\DB;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\ExternalResource;
+use Neo\Modules\Broadcast\Models\Location;
+use Neo\Modules\Broadcast\Models\ResourceLocationPerformance;
 use Neo\Modules\Broadcast\Models\ResourcePerformance;
 use Neo\Modules\Broadcast\Models\StructuredColumns\ResourcePerformanceData;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterReporting;
+use Neo\Modules\Broadcast\Services\Resources\CampaignLocationPerformance;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -128,7 +131,7 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
             $externalRepresentations = collect($batch->external_resources);
             $resources               = $externalRepresentations->map(fn(ExternalResource $resource) => $resource->toResource());
 
-            // Pull the performances for the representations
+            // Pull the daily performances for the representations
             /** @var Collection<CampaignPerformance> $performances */
             $performances = collect($broadcaster->getCampaignsPerformances($resources->all()));
 
@@ -192,6 +195,81 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
             }
 
             $performancesProgress->finish();
+
+            // Pull the locations performances for the representations
+            /** @var Collection<CampaignLocationPerformance> $locationsPerformances */
+            $locationsPerformances = collect($broadcaster->getCampaignsPerformancesByLocations($resources->all()));
+
+            DB::statement("DROP TABLE IF EXISTS `temp_locations_ids`", []);
+            DB::statement("CREATE TEMPORARY TABLE `temp_locations_ids` (`external_id` bigint UNSIGNED)", []);
+
+            DB::table("temp_locations_ids")->insert($locationsPerformances->pluck("location.external_id")
+                                                                          ->unique()
+                                                                          ->map(fn($locationID) => ["external_id" => $locationID])
+                                                                          ->toArray());
+
+            // Load all locations in advance to limit queries
+            $locations = Location::query()
+                                 ->join("temp_locations_ids", "locations.external_id", "=", "temp_locations_ids.external_id", "inner")
+                                 ->get();
+
+            $section->writeln("");
+            $locationsPerformancesProgress = new ProgressBar($section, $locationsPerformances->count());
+            $locationsPerformancesProgress->setMessage("");
+            $locationsPerformancesProgress->start();
+
+            // Store the performances
+            /** @var CampaignLocationPerformance $locationPerformance */
+            foreach ($locationsPerformances as $locationPerformance) {
+                $locationsPerformancesProgress->advance();
+
+                // Find back the associated representation
+                /** @var ExternalResource|null $representation */
+                $representation = $externalRepresentations->firstWhere("data.external_id", "=", $locationPerformance->campaign->external_id);
+                /** @var Location|null $location */
+                $location = $locations->firstWhere("external_id", "=", $locationPerformance->location->external_id);
+
+                if (!$representation || !$location) {
+                    continue;
+                }
+
+                $record = ResourceLocationPerformance::query()
+                                                     ->where("resource_id", "=", $representation->resource_id)
+                                                     ->where("location_id", "=", $location->getKey())
+                                                     ->where("data->network_id", $representation->data->network_id)
+                                                     ->whereJsonContains("data->formats_id", $representation->data->formats_id)
+                                                     ->first();
+
+                if ($record) {
+                    ResourceLocationPerformance::query()
+                                               ->where("resource_id", "=", $representation->resource_id)
+                                               ->where("location_id", "=", $location->getKey())
+                                               ->where("data->network_id", $representation->data->network_id)
+                                               ->whereJsonContains("data->formats_id", $representation->data->formats_id)
+                                               ->update([
+                                                            "repetitions" => $locationPerformance->repetitions,
+                                                            "impressions" => $locationPerformance->impressions,
+                                                        ]);
+
+                    continue;
+                }
+
+                $record = new ResourceLocationPerformance([
+                                                              "resource_id" => $representation->resource_id,
+                                                              "location_id" => $location->getKey(),
+                                                              "repetitions" => $locationPerformance->repetitions,
+                                                              "impressions" => $locationPerformance->impressions,
+                                                              "data"        => new ResourcePerformanceData(
+                                                                  network_id: $representation->data->network_id,
+                                                                  formats_id: $representation->data->formats_id,
+                                                              ),
+                                                          ]);
+
+                $record->save();
+            }
+
+            $locationsPerformancesProgress->finish();
+
             $section->clear();
         }
     }

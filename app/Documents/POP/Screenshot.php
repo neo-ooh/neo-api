@@ -30,7 +30,6 @@ class Screenshot {
 
 
         $this->url = $mockup ? $screenshot->mockup_path : $screenshot->url;
-//        dd($this->url);
 
         // Mark the screenshot as locked
         $screenshot->is_locked = true;

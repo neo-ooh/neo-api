@@ -14,31 +14,31 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void {
-        Schema::table('contracts_bursts', function (Blueprint $table) {
-            $table->renameColumn("start_at", "send_at");
-            $table->renameColumn("actor_id", "created_by");
-        });
+        /*        Schema::table('contracts_bursts', function (Blueprint $table) {
+                    $table->renameColumn("start_at", "send_at");
+                    $table->renameColumn("actor_id", "created_by");
+                });*/
 
         Schema::table('contracts_bursts', function (Blueprint $table) {
-            $table->foreignId("product_id")
-                  ->nullable()
-                  ->after("id")
-                  ->constrained("products", "id")
-                  ->cascadeOnUpdate()
-                  ->nullOnDelete();
+            /*            $table->foreignId("product_id")
+                              ->nullable()
+                              ->after("id")
+                              ->constrained("products", "id")
+                              ->cascadeOnUpdate()
+                              ->nullOnDelete();
 
-            $table->foreignId("player_id")
-                  ->nullable()
-                  ->after("location_id")
-                  ->constrained("products", "id")
-                  ->cascadeOnUpdate()
-                  ->nullOnDelete();
+                        $table->foreignId("player_id")
+                              ->nullable()
+                              ->after("location_id")
+                              ->constrained("products", "id")
+                              ->cascadeOnUpdate()
+                              ->nullOnDelete();
 
-            $table->boolean("sent")->default(0)->after("status");
+                        $table->boolean("sent")->default(0)->after("status");*/
 
             $table->foreignId("updated_by")
                   ->nullable()
-                  ->after("updated_by")
+                  ->after("updated_at")
                   ->constrained("actors", "id")
                   ->cascadeOnUpdate()
                   ->nullOnDelete();

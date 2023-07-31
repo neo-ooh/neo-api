@@ -86,7 +86,7 @@ class Contract extends Model {
             "plan"         => "append:stored_plan",
             "reservations" => "reservations",
             "salesperson"  => "salesperson",
-            "screenshots"  => Relation::make(load: ["screenshots.product", "screenshots.location"]),
+            "screenshots"  => Relation::make(load: ["screenshots.product.property", "screenshots.location"]),
             "campaigns"    => "campaigns",
         ];
     }

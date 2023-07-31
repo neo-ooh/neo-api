@@ -19,7 +19,7 @@ return new class extends Migration {
                     $table->renameColumn("actor_id", "created_by");
                 });*/
 
-        Schema::table('contracts_bursts', function (Blueprint $table) {
+        Schema::table('screenshots_requests', function (Blueprint $table) {
             /*            $table->foreignId("product_id")
                               ->nullable()
                               ->after("id")
@@ -33,27 +33,27 @@ return new class extends Migration {
                               ->constrained("products", "id")
                               ->cascadeOnUpdate()
                               ->nullOnDelete();
+*/
+            $table->boolean("sent")->default(0)->after("status");
 
-                        $table->boolean("sent")->default(0)->after("status");*/
+            /*            $table->foreignId("updated_by")
+                              ->nullable()
+                              ->after("updated_at")
+                              ->constrained("actors", "id")
+                              ->cascadeOnUpdate()
+                              ->nullOnDelete();
 
-            $table->foreignId("updated_by")
-                  ->nullable()
-                  ->after("updated_at")
-                  ->constrained("actors", "id")
-                  ->cascadeOnUpdate()
-                  ->nullOnDelete();
-
-            $table->dropColumn("deleted_at");
+                        $table->dropColumn("deleted_at");*/
         });
 
-        Schema::table('contracts_bursts', function (Blueprint $table) {
-            $table->rename("screenshots_requests");
-        });
+        /*        Schema::table('contracts_bursts', function (Blueprint $table) {
+                    $table->rename("screenshots_requests");
+                });
 
-        \Illuminate\Support\Facades\DB::statement(<<<EOL
-        UPDATE `screenshots_requests` SET `updated_by` = `created_by`
-        EOL
-        );
+                \Illuminate\Support\Facades\DB::statement(<<<EOL
+                UPDATE `screenshots_requests` SET `updated_by` = `created_by`
+                EOL
+                );*/
 
         \Illuminate\Support\Facades\DB::statement(<<<EOL
         UPDATE `screenshots_requests` SET `sent` = 1 WHERE `status` = 'ACTIVE'

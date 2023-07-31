@@ -38,11 +38,13 @@ class DeleteOldScreenshots extends Command {
      * @return int
      */
     public function handle(): int {
-        // Get all screenshots older than 60 days and not locked
+        // Get all screenshots older than 90 days and not associated with any contract
         $screenshots = Screenshot::query()
                                  ->whereDate("received_at", "<", Carbon::now()->subMonths(3))
                                  ->whereDoesntHave("contracts")
                                  ->get();
+
+        dd($screenshots->count());
 
         $progressBar = $this->makeProgressBar($screenshots->count());
 

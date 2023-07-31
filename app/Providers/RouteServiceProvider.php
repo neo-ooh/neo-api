@@ -51,6 +51,7 @@ class RouteServiceProvider extends ServiceProvider {
             Route::group([], base_path('routes/core.roles.php'));
 
             Route::group([], base_path('routes/core.misc.php'));
+            Route::group([], base_path('routes/module.third-parties.php'));
 
             // Now, we loop all modules to load their routes
             foreach (config('modules-legacy') as $module => $config) {

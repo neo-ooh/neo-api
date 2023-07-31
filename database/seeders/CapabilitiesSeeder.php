@@ -56,7 +56,6 @@ class CapabilitiesSeeder extends Seeder {
             ],
             "SALES"      => [
                 "contracts",
-                "bursts",
                 "tools",
                 "planning",
                 "advertisers",

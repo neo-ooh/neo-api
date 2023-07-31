@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -10,41 +10,31 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Query\Builder;
 use Illuminate\Http\Response;
-use Neo\Http\Requests\Screenshots\DestroyContractScreenshotsRequest;
-use Neo\Http\Requests\Screenshots\DestroyScreenshotsRequest;
-use Neo\Http\Requests\Screenshots\UpdateScreenshotsRequest;
-use Neo\Jobs\Contracts\DeleteBurstJob;
+use Illuminate\Support\Facades\DB;
+use Neo\Http\Requests\ContractsScreenshots\AssociateScreenshotRequest;
+use Neo\Http\Requests\ContractsScreenshots\DissociateScreenshotRequest;
 use Neo\Models\Contract;
-use Neo\Models\ContractScreenshot;
+use Neo\Models\Screenshot;
 
 class ContractsScreenshotsController extends Controller {
-    public function update(UpdateScreenshotsRequest $request, ContractScreenshot $screenshot) {
-        $screenshot->is_locked = $request->input("is_locked");
-        $screenshot->save();
+    public function associate(AssociateScreenshotRequest $request, Contract $contract, Screenshot $screenshot) {
+        $contract->screenshots()->attach($screenshot, ["flight_id" => $request->input("flight_id")]);
 
-        return new Response($screenshot);
+        return new Response($contract->screenshots);
     }
 
-    public function destroy(DestroyScreenshotsRequest $request, ContractScreenshot $screenshot) {
-        $screenshot->delete();
+    public function dissociate(DissociateScreenshotRequest $request, Contract $contract, Screenshot $screenshot) {
+        DB::table("contracts_screenshots")
+          ->where("contract_id", "=", $contract->getKey())
+          ->where("screenshot_id", "=", $screenshot->getKey())
+          ->where(function (Builder $query) use ($request) {
+              $query->where("flight_id", "=", $request->input("flight_id"))
+                    ->orWhereNull("flight_id");
+          })
+          ->delete();
 
-        return new Response([]);
-    }
-
-    public function destroyContractScreenshots(DestroyContractScreenshotsRequest $request, Contract $contract) {
-        $deleteLocked = $request->input("delete_locked", false);
-
-        foreach ($contract->bursts as $burst) {
-            // If we want to keep locked screenshot, delete them one by one and check their status every time
-            if (!$deleteLocked) {
-                DeleteBurstJob::dispatch($burst->getKey(), true);
-                continue;
-            }
-
-            $burst->delete();
-        }
-
-        return new Response(["status" => "ok"]);
+        return new Response($contract->screenshots);
     }
 }

@@ -11,7 +11,6 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -24,7 +23,8 @@ class TestCommand extends Command {
      * @throws Exception
      */
     public function handle() {
-        $job = new FetchCampaignsPerformancesJob(2, 1);
-        $job->handle();
+        dump(config("app.url"));
+//        $job = new SendScreenshotRequests();
+//        $job->sendRequest();
     }
 }

@@ -85,8 +85,8 @@ enum Capability: string {
     case contracts_edit = "contracts.edit";
     case contracts_manage = "contracts.manage";
 
-    case bursts_request = "bursts.request";
-    case bursts_quality = "bursts.quality";
+    case screenshots_requests = "bursts.request";
+    case screenshots_requests_quality = "bursts.quality";
 
     // Networks
     /**

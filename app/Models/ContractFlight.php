@@ -31,8 +31,11 @@ use Neo\Modules\Broadcast\Services\BroadcasterCapability;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterReporting;
 use Neo\Modules\Broadcast\Services\Resources\CampaignPerformance;
+use Neo\Modules\Properties\Models\Product;
 use Neo\Resources\Contracts\FlightPerformanceDatum;
 use Neo\Resources\Contracts\FlightType;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @property-read int                                $id
@@ -56,6 +59,7 @@ use Neo\Resources\Contracts\FlightType;
  */
 class ContractFlight extends Model {
     use HasPublicRelations;
+    use HasRelationships;
     use HasView;
 
     protected $table = "contracts_flights_view";
@@ -89,11 +93,19 @@ class ContractFlight extends Model {
             "contract"     => Relation::make(load: "contract"),
             "advertiser"   => Relation::make(load: "contract.advertiser"),
             "performances" => Relation::make(append: "performances"),
+            "products"     => Relation::make(load: "products"),
         ];
     }
 
     public function lines(): HasMany {
         return $this->hasMany(ContractLine::class, "flight_id", "id");
+    }
+
+    /**
+     * @return HasManyDeep<Product>
+     */
+    public function products(): HasManyDeep {
+        return $this->hasManyDeepFromRelations([$this->lines(), (new ContractLine())->product()]);
     }
 
     public function reservations(): HasMany {

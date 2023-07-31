@@ -14,8 +14,8 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Facades\Storage;
 use JsonException;
 use Neo\Helpers\Relation;
@@ -50,7 +50,6 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property Collection<ContractFlight>        $flights
  * @property Actor                             $owner
  * @property Advertiser|null                   $advertiser
- * @property Collection<ContractBurst>         $bursts
  * @property Collection<ContractReservation>   $reservations
  * @property Collection<ReservablePerformance> $performances
  */
@@ -75,7 +74,6 @@ class Contract extends Model {
     protected function getPublicRelations(): array {
         return [
             "advertiser"   => "advertiser",
-            "bursts"       => ["bursts.screenshots", "bursts.location"],
             "client"       => "client",
             "flights"      => "flights",
             "lines"        => Relation::make(load: 'flights.lines'),
@@ -88,19 +86,9 @@ class Contract extends Model {
             "plan"         => "append:stored_plan",
             "reservations" => "reservations",
             "salesperson"  => "salesperson",
-            "screenshots"  => "validated_screenshots",
+            "screenshots"  => Relation::make(load: ["screenshots.product", "screenshots.location"]),
             "campaigns"    => "campaigns",
         ];
-    }
-
-    protected static function boot() {
-        parent::boot();
-
-        static::deleting(function (Contract $contract) {
-            foreach ($contract->bursts as $burst) {
-                $burst->delete();
-            }
-        });
     }
 
     /*
@@ -125,10 +113,6 @@ class Contract extends Model {
         return $this->belongsTo(Actor::class, "owner_id", "id");
     }
 
-    public function bursts(): HasMany {
-        return $this->hasMany(ContractBurst::class, "contract_id", "id");
-    }
-
     public function reservations(): HasMany {
         return $this->hasMany(ContractReservation::class, "contract_id", "id");
     }
@@ -137,13 +121,9 @@ class Contract extends Model {
         return $this->hasMany(ContractFlight::class, "contract_id", "id")->orderBy("start_date");
     }
 
-    public function screenshots(): HasManyThrough {
-        return $this->hasManyThrough(ContractScreenshot::class, ContractBurst::class, 'contract_id', 'burst_id');
-    }
-
-    public function validated_screenshots(): HasManyThrough {
-        return $this->hasManyThrough(ContractScreenshot::class, ContractBurst::class, 'contract_id', 'burst_id')
-                    ->where("is_locked", "=", true);
+    public function screenshots(): BelongsToMany {
+        return $this->belongsToMany(Screenshot::class, "contracts_screenshots", "contract_id", "screenshot_id")
+                    ->withPivot(["flight_id"]);
     }
 
     /**

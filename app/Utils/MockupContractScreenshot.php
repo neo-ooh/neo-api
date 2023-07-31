@@ -13,30 +13,30 @@ namespace Neo\Utils;
 use Illuminate\Database\Eloquent\Builder;
 use Imagick;
 use ImagickException;
-use Neo\Models\ContractScreenshot;
+use Neo\Models\Screenshot;
 use Neo\Modules\Broadcast\Models\DisplayTypeFrame;
 use Neo\Modules\Broadcast\Models\FormatCropFrame;
 use Neo\Modules\Properties\Models\Enums\InventoryPictureType;
 use Neo\Modules\Properties\Models\Product;
 
 class MockupContractScreenshot {
-    public function __construct(protected ContractScreenshot $screenshot) {
+    public function __construct(protected Screenshot $screenshot) {
     }
 
     /**
      * Generate and store a mockup version of the screenshot in a temporary file
      *
      * @return string|null the path to the mockup temp file, null if nothing was generated
+     * @throws ImagickException
      */
     public function makeMockup(): null|string {
-        // First, we need to find which format to mockup this screenshot to
-        $location = $this->screenshot->burst->location;
-
-        $product = Product::query()
-                          ->where("is_bonus", "=", false)
-                          ->whereHas("locations", function (Builder $query) use ($location) {
-                              $query->where("id", "=", $location->getKey());
-                          })->first();
+        // First, we need to find which format to mock up this screenshot to
+        $location = $this->screenshot->location ?? $this->screenshot->player->location;
+        $product  = $this->screenshot->product ?? Product::query()
+                                                         ->where("is_bonus", "=", false)
+                                                         ->whereHas("locations", function (Builder $query) use ($location) {
+                                                             $query->where("id", "=", $location->getKey());
+                                                         })->first();
 
         if (!$product) {
             return null;

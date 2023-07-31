@@ -54,30 +54,30 @@ class Kernel extends HttpKernel {
      * @var array
      */
     protected $middlewareGroups = [
-        "default"   => [
+        "default"     => [
             "throttle:api",
             'auth:neo-loa-4,access-tokens',
             SubstituteBindings::class,
             SimpleErrors::class,
             'access.logs',
         ],
-        'guests'    => [
+        'guests'      => [
             'throttle:api',
             SubstituteBindings::class,
         ],
-        'loa-4'     => [
+        'loa-4'       => [
             'auth:neo-loa-4', // login + unlocked + 2fa + tos
         ],
-        'loa-3'     => [
+        'loa-3'       => [
             'auth:neo-loa-3', // login + unlocked + 2fa
         ],
-        'loa-2'     => [
+        'loa-2'       => [
             'auth:neo-loa-2', // login + unlocked
         ],
-        'loa-1'     => [
+        'loa-1'       => [
             'auth:neo-loa-1', // login
         ],
-        'broadsign' => [
+        'third-party' => [
             SubstituteBindings::class,
             'access.logs',
         ],

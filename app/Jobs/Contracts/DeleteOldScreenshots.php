@@ -1,23 +1,23 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ClearOldScreenshots.php
+ * @neo/api - DeleteOldScreenshots.php
  */
 
 namespace Neo\Jobs\Contracts;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Neo\Models\ContractBurst;
-use Neo\Models\ContractScreenshot;
+use Neo\Models\Screenshot;
+use Neo\Models\ScreenshotRequest;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
-class ClearOldScreenshots extends Command {
+class DeleteOldScreenshots extends Command {
     /**
      * The name and signature of the console command.
      *
@@ -39,14 +39,14 @@ class ClearOldScreenshots extends Command {
      */
     public function handle(): int {
         // Get all screenshots older than 60 days and not locked
-        $screenshots = ContractScreenshot::query()
-                                         ->whereDate("created_at", "<", Carbon::now()->subMonths(3))
-                                         ->where("is_locked", "=", "0")
-                                         ->get();
+        $screenshots = Screenshot::query()
+                                 ->whereDate("received_at", "<", Carbon::now()->subMonths(3))
+                                 ->whereDoesntHave("contracts")
+                                 ->get();
 
         $progressBar = $this->makeProgressBar($screenshots->count());
 
-        /** @var ContractScreenshot $screenshot */
+        /** @var Screenshot $screenshot */
         foreach ($screenshots as $screenshot) {
             $screenshot->delete();
             $progressBar->advance();
@@ -54,9 +54,11 @@ class ClearOldScreenshots extends Command {
 
         $progressBar->finish();
 
-        // Delete finished bursts without any screenshots
-        ContractBurst::query()->whereDate("start_at", "<", Carbon::now()->subMonths(3))
-                     ->whereDoesntHave("screenshots")->delete();
+        // Delete requests without any screenshots
+        ScreenshotRequest::query()
+                         ->whereDate("start_at", "<", Carbon::now()->subMonths(3))
+                         ->whereDoesntHave("screenshots")
+                         ->delete();
 
         return 0;
     }

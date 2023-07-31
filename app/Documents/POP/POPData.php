@@ -12,7 +12,7 @@ namespace Neo\Documents\POP;
 
 use Illuminate\Support\Collection;
 use JetBrains\PhpStorm\ArrayShape;
-use Neo\Models\ContractScreenshot;
+use Neo\Models\Screenshot as ScreenshotModel;
 
 class POPData {
     public string $contract_name;
@@ -93,12 +93,12 @@ class POPData {
             "name" => $data["salesperson"]["name"],
         ];
         $this->screenshots_mockup = $data["screenshots_mockup"];
-        $this->screenshots        = ContractScreenshot::query()
-                                                      ->whereIn("id", $data["screenshots"])
-                                                      ->with(["burst", "burst.location", "burst.location.display_type"])
-                                                      ->get()
-                                                      ->toBase()
-                                                      ->map(fn(ContractScreenshot $screenshot) => new Screenshot($screenshot, $this->screenshots_mockup));
+        $this->screenshots        = ScreenshotModel::query()
+                                                   ->whereIn("id", $data["screenshots"])
+                                                   ->with(["request", "location.display_type"])
+                                                   ->get()
+                                                   ->toBase()
+                                                   ->map(fn(ScreenshotModel $screenshot) => new Screenshot($screenshot, $this->screenshots_mockup));
 
         $this->values = collect($data["values"])->map(static fn(array $values) => new POPBuyTypeValues($values))
                                                 ->filter(fn(POPBuyTypeValues $values) => $values->networks->count() > 0);

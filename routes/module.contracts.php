@@ -13,18 +13,19 @@ use Neo\Http\Controllers\AdvertiserRepresentationsController;
 use Neo\Http\Controllers\AdvertisersController;
 use Neo\Http\Controllers\AvailabilitiesController;
 use Neo\Http\Controllers\ClientsController;
-use Neo\Http\Controllers\ContractBurstsController;
 use Neo\Http\Controllers\ContractFlightsController;
 use Neo\Http\Controllers\ContractsController;
 use Neo\Http\Controllers\ContractsFlightsExportController;
 use Neo\Http\Controllers\ContractsFlightsReservationsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
+use Neo\Http\Controllers\ScreenshotsController;
+use Neo\Http\Controllers\ScreenshotsRequestsController;
 use Neo\Models\Advertiser;
 use Neo\Models\Client;
 use Neo\Models\Contract;
-use Neo\Models\ContractBurst;
 use Neo\Models\ContractFlight;
-use Neo\Models\ContractScreenshot;
+use Neo\Models\Screenshot;
+use Neo\Models\ScreenshotRequest;
 
 Route::group([
                  "middleware" => "default",
@@ -97,30 +98,30 @@ Route::group([
 
     /*
     |----------------------------------------------------------------------
-    | Bursts
+    | Screenshots Requests
     |----------------------------------------------------------------------
     */
 
-    Route::model("burst", ContractBurst::class);
+    Route::model("screenshotRequest", ScreenshotRequest::class);
 
-    Route::  post("bursts", ContractBurstsController::class . "@store");
-    Route::   get("bursts/{burst}", ContractBurstsController::class . "@show");
-    Route::delete("bursts/{burst}", ContractBurstsController::class . "@destroy");
-    Route::delete("bursts/{burst}/screenshots", ContractBurstsController::class . "@destroyUnlockedScreenshots");
+    Route::   get("screenshots-requests", [ScreenshotsRequestsController::class, "index"]);
+    Route::  post("screenshots-requests", [ScreenshotsRequestsController::class, "store"]);
+    Route::   get("screenshots-requests/{screenshotRequest}", [ScreenshotsRequestsController::class, "show"]);
+    Route::delete("screenshots-requests/{screenshotRequest}", [ScreenshotsRequestsController::class, "destroy"]);
 
 
     /*
     |----------------------------------------------------------------------
-    | Bursts Screenshots
+    | Screenshots
     |----------------------------------------------------------------------
     */
 
-    Route::model("screenshot", ContractScreenshot::class);
+    Route::model("screenshot", Screenshot::class);
 
-    Route::   put("screenshots/{screenshot}", ContractsScreenshotsController::class . "@update");
-    Route::delete("screenshots/{screenshot}", ContractsScreenshotsController::class . "@destroy");
-    Route::delete("contracts/{contract}/screenshots", ContractsScreenshotsController::class . "@destroyContractScreenshots");
+    Route::   get("screenshots", [ScreenshotsController::class, "index"]);
 
+    Route::  post("contracts/{contract}/screenshots/{screenshot}", [ContractsScreenshotsController::class, "associate"]);
+    Route::delete("contracts/{contract}/screenshots/{screenshot}", [ContractsScreenshotsController::class, "dissociate"]);
 
     /*
     |----------------------------------------------------------------------

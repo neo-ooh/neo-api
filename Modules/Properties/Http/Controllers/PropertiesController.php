@@ -110,7 +110,8 @@ class PropertiesController extends Controller {
 
         // Create the traffic records for the property
         $property->traffic()->create([
-                                         "format" => TrafficFormat::MonthlyMedian->value,
+                                         "start_year" => 2022,
+                                         "format"     => TrafficFormat::MonthlyMedian->value,
                                      ]);
         $property->translations()->createMany([
                                                   ["locale" => "fr-CA"],

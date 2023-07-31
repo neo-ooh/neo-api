@@ -19,9 +19,9 @@ use Neo\Console\Commands\Data\PopulateCensusForwardSortationAreasCommand;
 use Neo\Console\Commands\Data\PopulateCensusSubdivisionsCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Console\Commands\Test\TestCommand;
-use Neo\Jobs\Contracts\ClearOldScreenshots;
+use Neo\Jobs\Contracts\DeleteOldScreenshots;
 use Neo\Jobs\Contracts\RefreshContracts;
-use Neo\Jobs\RequestScreenshotsBursts;
+use Neo\Jobs\SendScreenshotRequests;
 use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
 use Neo\Jobs\Traffic\PullLatestTrafficData;
 use Neo\Jobs\Traffic\TrafficRequiredReminder;
@@ -42,7 +42,7 @@ class Kernel extends ConsoleKernel {
         RefreshContracts::class,
 
         // contracts:clear-screenshots
-        ClearOldScreenshots::class,
+        DeleteOldScreenshots::class,
 
         // property:pull-traffic {property}
         PullPropertyTraffic::class,
@@ -78,7 +78,7 @@ class Kernel extends ConsoleKernel {
          */
 
         // Send screenshots requests to player
-        $schedule->job(RequestScreenshotsBursts::class)->everyMinute();
+        $schedule->job(SendScreenshotRequests::class)->everyMinute();
 
 
         /* -----------------

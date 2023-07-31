@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Neo\Models\Actor;
-use Neo\Models\ContractBurst;
+use Neo\Models\ScreenshotRequest;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
@@ -32,30 +32,31 @@ use Neo\Modules\Properties\Services\Resources\BroadcastPlayer;
 /**
  * Neo\Models\ActorsLocations
  *
- * @property int                              $id
- * @property int                              $network_id
- * @property string                           $external_id
- * @property int                              $display_type_id
- * @property string                           $name
- * @property string                           $internal_name
- * @property int|null                         $container_id
- * @property string                           $province [QC, ON, ...]
- * @property string                           $city
- * @property boolean                          $scheduled_sleep
- * @property Date                             $sleep_end
- * @property Date                             $sleep_start
- * @property Date                             $created_at
- * @property Date                             $updated_at
- * @property Date|null                        $deleted_at
+ * @property int                                $id
+ * @property int                                $network_id
+ * @property string                             $external_id
+ * @property int                                $display_type_id
+ * @property string                             $name
+ * @property string                             $internal_name
+ * @property int|null                           $container_id
+ * @property string                             $province [QC, ON, ...]
+ * @property string                             $city
+ * @property boolean                            $scheduled_sleep
+ * @property Date                               $sleep_end
+ * @property Date                               $sleep_start
+ * @property Date                               $created_at
+ * @property Date                               $updated_at
+ * @property Date|null                          $deleted_at
  *
- * @property ?NetworkContainer                $container
- * @property Network                          $network
- * @property EloquentCollection<Player>       $players
- * @property DisplayType                      $display_type
+ * @property ?NetworkContainer                  $container
+ * @property Network                            $network
+ * @property EloquentCollection<Player>         $players
+ * @property DisplayType                        $display_type
  *
- * @property-read Collection<int>             $product_ids
- * @property-read EloquentCollection<Product> $products
- * @property-read EloquentCollection<Actor>   $actors
+ * @property-read Collection<int>               $product_ids
+ * @property-read Collection<ScreenshotRequest> $screenshots_requests
+ * @property-read EloquentCollection<Product>   $products
+ * @property-read EloquentCollection<Actor>     $actors
  *
  * @mixin Builder
  */
@@ -181,10 +182,10 @@ class Location extends SecuredModel {
     /* Reports */
 
     /**
-     * @return HasMany<ContractBurst>
+     * @return HasMany<ScreenshotRequest>
      */
-    public function bursts(): HasMany {
-        return $this->hasMany(ContractBurst::class, "location_id");
+    public function screenshots_requests(): HasMany {
+        return $this->hasMany(ScreenshotRequest::class, "location_id");
     }
 
 

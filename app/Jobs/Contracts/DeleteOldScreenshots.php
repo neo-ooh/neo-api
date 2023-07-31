@@ -43,9 +43,7 @@ class DeleteOldScreenshots extends Command {
                                  ->whereDate("received_at", "<", Carbon::now()->subMonths(3))
                                  ->whereDoesntHave("contracts")
                                  ->get();
-
-        dd($screenshots->count());
-
+        
         $progressBar = $this->makeProgressBar($screenshots->count());
 
         /** @var Screenshot $screenshot */

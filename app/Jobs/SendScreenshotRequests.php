@@ -44,7 +44,8 @@ class SendScreenshotRequests implements ShouldBeUnique {
     public function handle(): void {
         // Load screenshots requests starting now or up to one minute in the future
         /** @var Collection $requests */
-        $requests = ScreenshotRequest::query()->where("status", "=", "PENDING")
+        $requests = ScreenshotRequest::query()
+                                     ->where("sent", "=", false)
                                      ->whereDate("send_at", "<=", Date::now()->setTimezone('America/Toronto')->addMinute())
                                      ->distinct()
                                      ->get();

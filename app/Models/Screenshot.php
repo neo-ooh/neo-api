@@ -22,6 +22,7 @@ use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Utils\MockupContractScreenshot;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * Class Screenshot
@@ -46,6 +47,7 @@ use Neo\Utils\MockupContractScreenshot;
  */
 class Screenshot extends Model {
     use HasPublicRelations;
+    use HasRelationships;
 
     protected $table = "screenshots";
 
@@ -108,7 +110,7 @@ class Screenshot extends Model {
     }
 
     public function contracts(): BelongsToMany {
-        return $this->belongsToMany(Contract::class, "contracts_flights", "screenshot_id", "contract_id");
+        return $this->belongsToMany(Contract::class, "contracts_screenshots", "screenshot_id", "contract_id");
     }
 
     /*

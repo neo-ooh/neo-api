@@ -51,7 +51,7 @@
                 </td>
                 <td class="pop-flight-summary__cell pop-flight-summary__contracted-impressions"
                     style="background-color: {{$network["color"]}}">
-                    {{ formatNumber($network["contracted_impressions"]) }}
+                    {{ formatNumber(round($network["contracted_impressions"])) }}
                 </td>
                 <td class="pop-flight-summary__cell pop-flight-summary__counted-impressions"
                     style="background-color: {{$network["color"]}}">
@@ -77,16 +77,16 @@
             <td class="pop-flight-summary__footer">
             </td>
             <td class="pop-flight-summary__footer pop-flight-summary__footer__counted-impressions">
-                {{ formatNumber($totals["contracted_impressions"]) }}
+                {{ formatNumber(round($totals["contracted_impressions"])) }}
             </td>
             <td class="pop-flight-summary__footer pop-flight-summary__footer__counted-impressions">
-                {{ formatNumber($totals["counted_impressions"]) }}
+                {{ formatNumber(round($totals["counted_impressions"])) }}
             </td>
             <td class="pop-flight-summary__footer pop-flight-summary__footer__counted-impressions">
-                {{ formatCurrency($totals["media_value"]) }}
+                {{ formatCurrency(round($totals["media_value"])) }}
             </td>
             <td class="pop-flight-summary__footer pop-flight-summary__footer__counted-impressions">
-                {{ formatCurrency($totals["net_investment"]) }}
+                {{ formatCurrency(round($totals["net_investment"])) }}
             </td>
         </tr>
         </tfoot>

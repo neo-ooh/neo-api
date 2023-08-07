@@ -202,7 +202,7 @@ class POPFlightDetails {
 		// Print mockups
 		$mockups = $formattedScreenshots->where("mockup", "=", true)->map(fn(array $screenshot) => ([
 			...$screenshot,
-			//			"url" => $screenshot["screenshot"]->mockup_path,
+			"url" => $screenshot["screenshot"]->mockup_path,
 		]));
 
 		if ($mockups->count() > 0) {

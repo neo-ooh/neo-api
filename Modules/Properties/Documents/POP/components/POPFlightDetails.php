@@ -143,7 +143,7 @@ class POPFlightDetails {
 				$popNetwork = $this->flight->networks->first(fn(POPFlightNetwork $network) => $network->network_id === $networkId);
 
 				// Build the lines for this network
-				$lineGroups = collect($this->buildLines(0, $flightBreakdown, $lines, $popNetwork->delivered_impressions_factor))->chunkWhile(fn($l) => $l["level"] !== 0);
+				$lineGroups = collect($this->buildLines(0, $flightBreakdown, $lines, $popNetwork))->chunkWhile(fn($l) => $l["level"] !== 0);
 
 				// Render the network
 				$this->pop->appendHTML(view("properties::pop.flight-details-network", [
@@ -202,7 +202,7 @@ class POPFlightDetails {
 		// Print mockups
 		$mockups = $formattedScreenshots->where("mockup", "=", true)->map(fn(array $screenshot) => ([
 			...$screenshot,
-			"url" => $screenshot["screenshot"]->mockup_path,
+			//			"url" => $screenshot["screenshot"]->mockup_path,
 		]));
 
 		if ($mockups->count() > 0) {
@@ -221,7 +221,7 @@ class POPFlightDetails {
 	 * @param float      $deliveryFactor
 	 * @return array
 	 */
-	public function buildLines(int $levelIndex, array $levels, Collection $lines, float $deliveryFactor): array {
+	public function buildLines(int $levelIndex, array $levels, Collection $lines, POPFlightNetwork $network): array {
 		$nextLevels = [...$levels];
 		/** @var string $currentLevel */
 		$currentLevel = array_shift($nextLevels);
@@ -244,23 +244,23 @@ class POPFlightDetails {
 			};
 
 			$contractedImpressions = $linesGroup->sum("impressions");
-			$deliveredImpressions  = $linesGroup->sum("performances.impressions") * $deliveryFactor;
+			$deliveredImpressions  = $linesGroup->sum("performances.impressions") * $network->delivered_impressions_factor;
 			$deliveryProgress      = $contractedImpressions > 0 ? $deliveredImpressions / $contractedImpressions : 0;
 
 			$levelLine = [
 				"level"                  => $levelIndex,
 				"type"                   => $currentLevel,
 				"label"                  => $label,
-				"contracted_impressions" => $contractedImpressions,
+				"contracted_impressions" => $contractedImpressions * $network->contracted_impressions_factor,
 				"counted_impressions"    => $deliveredImpressions,
-				"media_value"            => $linesGroup->sum("media_value") * $deliveryProgress,
-				"cpm"                    => $deliveredImpressions > 0 ? $linesGroup->sum("price") / $deliveredImpressions * 1000 : 0,
+				"media_value"            => ($linesGroup->sum("media_value") * $network->contracted_media_value_factor) * $deliveryProgress,
+				"cpm"                    => $deliveredImpressions > 0 ? ($linesGroup->sum("price") * $network->contracted_net_investment_factor) / $deliveredImpressions * 1000 : 0,
 			];
 
 			$printLines[] = $levelLine;
 
 			if (count($nextLevels) > 0) {
-				$printLines = [...$printLines, ...$this->buildLines($levelIndex + 1, $nextLevels, $linesGroup, $deliveryFactor)];
+				$printLines = [...$printLines, ...$this->buildLines($levelIndex + 1, $nextLevels, $linesGroup, $network)];
 			}
 
 			// If we are at the root level, we want a total row as well after the child ones.

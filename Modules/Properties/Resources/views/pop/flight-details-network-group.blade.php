@@ -2,7 +2,7 @@
     <thead>
     <tr>
         @php
-            $style = "border-bottom-color: #". $network["color"];
+            $style = "border-bottom-color: #". $network->toned_down_color;
         @endphp
         <td class="pop-flight-details__level-header pop-flight-details__level-header__label"
             style="{{ $style }}">
@@ -69,10 +69,10 @@
                 @endswitch
             </td>
             <td class="{{ $lineClass }} {{$lineClass}}__contracted-impressions pop-flight-details__cell pop-flight-details__cell__contracted-impressions">
-                {{ formatNumber($line["contracted_impressions"]) }}
+                {{ formatNumber((int)$line["contracted_impressions"]) }}
             </td>
             <td class="{{ $lineClass }} {{$lineClass}}__counted-impressions pop-flight-details__cell pop-flight-details__cell__counted-impressions">
-                {{ formatNumber($line["counted_impressions"]) }}
+                {{ formatNumber((int)$line["counted_impressions"]) }}
             </td>
             <td class="{{ $lineClass }} {{$lineClass}}__media-value pop-flight-details__cell pop-flight-details__cell__media-value">
                 {{ formatCurrency($line["media_value"]) }}

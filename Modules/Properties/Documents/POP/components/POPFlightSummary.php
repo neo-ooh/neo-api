@@ -33,21 +33,17 @@ class POPFlightSummary extends Component {
 			/** @var Network $network */
 			$network = $lines[0]->product->property->network;
 
-			$deliveredImpressions = $flightNetwork->delivered_impressions * $flightNetwork->delivered_impressions_factor;
-			$deliveryPercent      = $deliveredImpressions / $flightNetwork->contracted_impressions;
-
 			$networks[] = [
 				"name"                   => $network->name,
-				"color"                  => "#" . $network->color,
+				"color"                  => "#" . $network->toned_down_color,
 				"start_date"             => $this->flight->start_date,
 				"end_date"               => $this->flight->end_date,
-				"contracted_impressions" => $flightNetwork->contracted_impressions,
-				"counted_impressions"    => $deliveredImpressions,
-				"media_value"            => $flightNetwork->contracted_media_value * $deliveryPercent,
-				"net_investment"         => $flightNetwork->contracted_net_investment * $deliveryPercent,
+				"contracted_impressions" => $flightNetwork->getContractedImpressions(),
+				"counted_impressions"    => $flightNetwork->getDeliveredImpressions(),
+				"media_value"            => $flightNetwork->getContractedMediaValue() * $flightNetwork->getDeliveredPercent(),
+				"net_investment"         => $flightNetwork->getContractedNetInvestment() * $flightNetwork->getDeliveredPercent(),
 			];
 		}
-
 
 		$totals = [
 			"start_date"             => $this->flight->start_date,
@@ -59,7 +55,8 @@ class POPFlightSummary extends Component {
 		];
 
 		return view('properties::pop.flight-summary', [
-			"flight"   => $this->flight,
+			"title"    => $this->flight->flight_name,
+			"subtitle" => __("pop.flight-type-" . $this->flight->flight_type->value),
 			"networks" => $networks,
 			"totals"   => $totals,
 		])->render();

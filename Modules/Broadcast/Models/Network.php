@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -42,87 +42,105 @@ use Neo\Modules\Properties\Models\Property;
  * @property Collection<Property>         $properties
  * @property Collection<Field>            $properties_fields
  *
+ * @property string                       $toned_down_color
+ *
  * @mixin Builder
  */
 class Network extends Model {
-    use SoftDeletes;
-    use HasPublicRelations;
+	use SoftDeletes;
+	use HasPublicRelations;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'networks';
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'networks';
 
-    /**
-     * @var array<string, string>
-     */
-    protected $casts = [
-        "settings"     => NetworkSettings::class,
-        "last_sync_at" => "datetime",
-    ];
+	/**
+	 * @var array<string, string>
+	 */
+	protected $casts = [
+		"settings"     => NetworkSettings::class,
+		"last_sync_at" => "datetime",
+	];
 
-    /**
-     * @returns array<string, string|callable>
-     */
-    protected function getPublicRelations() {
-        return [
-            "connection" => "broadcaster_connection",
-            "fields"     => "properties_fields",
-            "locations"  => "locations",
-            "containers" => "containers",
-            "products"   => fn(Network $n) => $n->locations->append("product_ids"),
-        ];
-    }
+	/**
+	 * @returns array<string, string|callable>
+	 */
+	protected function getPublicRelations() {
+		return [
+			"connection" => "broadcaster_connection",
+			"fields"     => "properties_fields",
+			"locations"  => "locations",
+			"containers" => "containers",
+			"products"   => fn(Network $n) => $n->locations->append("product_ids"),
+		];
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * @return BelongsTo<BroadcasterConnection, Network>
-     */
-    public function broadcaster_connection(): BelongsTo {
-        return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
-    }
+	/**
+	 * @return BelongsTo<BroadcasterConnection, Network>
+	 */
+	public function broadcaster_connection(): BelongsTo {
+		return $this->belongsTo(BroadcasterConnection::class, "connection_id")->orderBy("name");
+	}
 
-    /**
-     * @return HasMany<NetworkContainer>
-     */
-    public function containers(): HasMany {
-        return $this->hasMany(NetworkContainer::class, "network_id", "id");
-    }
+	/**
+	 * @return HasMany<NetworkContainer>
+	 */
+	public function containers(): HasMany {
+		return $this->hasMany(NetworkContainer::class, "network_id", "id");
+	}
 
-    /**
-     * @return HasMany<Location>
-     */
-    public function locations(): HasMany {
-        return $this->hasMany(Location::class, 'network_id', 'id')->orderBy("name");
-    }
+	/**
+	 * @return HasMany<Location>
+	 */
+	public function locations(): HasMany {
+		return $this->hasMany(Location::class, 'network_id', 'id')->orderBy("name");
+	}
 
-    /**
-     * @return HasMany<Property>
-     */
-    public function properties(): HasMany {
-        return $this->hasMany(Property::class, "network_id", "id")->orderBy("name");
-    }
+	/**
+	 * @return HasMany<Property>
+	 */
+	public function properties(): HasMany {
+		return $this->hasMany(Property::class, "network_id", "id")->orderBy("name");
+	}
 
-    /**
-     * @return BelongsToMany<Field>
-     */
-    public function properties_fields(): BelongsToMany {
-        return $this->belongsToMany(Field::class, "fields_networks", "network_id", "field_id")
-                    ->withPivot(["order"])
-                    ->orderByPivot("order");
-    }
+	/**
+	 * @return BelongsToMany<Field>
+	 */
+	public function properties_fields(): BelongsToMany {
+		return $this->belongsToMany(Field::class, "fields_networks", "network_id", "field_id")
+		            ->withPivot(["order"])
+		            ->orderByPivot("order");
+	}
 
-    /**
-     * @return HasMany<Format>
-     */
-    public function formats() {
-        return $this->hasMany(Format::class, "network_id", "id");
-    }
+	/**
+	 * @return HasMany<Format>
+	 */
+	public function formats() {
+		return $this->hasMany(Format::class, "network_id", "id");
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| Attributes
+	|--------------------------------------------------------------------------
+	*/
+
+	public function getTonedDownColorAttribute() {
+		return match ($this->color) {
+			"0099F8" => "3E9CCA", // Shopping
+			"F8002B" => "D63641", // Fitness
+			"F38000" => "E5782C", // OTG
+			default  => $this->color,
+		};
+	}
 }

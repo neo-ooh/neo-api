@@ -59,13 +59,16 @@ class ProofOfPerformancesController extends Controller {
 				                                                       */ function (Collection $lines) use ($flight) {
 					                                                      $networkId = $lines[0]->product->property->network_id;
 					                                                      return new POPFlightNetwork(
-						                                                      network_id                  : $networkId,
-						                                                      contracted_impressions      : $lines->sum("impressions"),
-						                                                      contracted_media_value      : round($lines->sum("media_value")),
-						                                                      contracted_net_investment   : round($lines->sum("price")),
-						                                                      delivered_impressions       : $flight->performances->where("network_id", "=", $networkId)
-						                                                                                                         ->sum("impressions"),
-						                                                      delivered_impressions_factor: 1,
+						                                                      network_id                      : $networkId,
+						                                                      contracted_impressions          : $lines->sum("impressions"),
+						                                                      contracted_impressions_factor   : 1,
+						                                                      contracted_media_value          : round($lines->sum("media_value")),
+						                                                      contracted_media_value_factor   : 1,
+						                                                      contracted_net_investment       : round($lines->sum("price")),
+						                                                      contracted_net_investment_factor: 1,
+						                                                      delivered_impressions           : $flight->performances->where("network_id", "=", $networkId)
+						                                                                                                             ->sum("impressions"),
+						                                                      delivered_impressions_factor    : 1,
 					                                                      );
 				                                                      })->values()),
 				breakdown  : "products",
@@ -76,14 +79,15 @@ class ProofOfPerformancesController extends Controller {
 		}
 
 		return new Response(new POPRequest(
-			                    contract_id    : $contract->getKey(),
-			                    contract_number: $contract->contract_id,
-			                    salesperson    : $contract->salesperson->name,
-			                    client         : trim(explode(',', $contract->client?->name ?? '')[0]),
-			                    presented_to   : trim(explode(',', $contract->client?->name ?? '')[1] ?? ''),
-			                    advertiser     : $contract->advertiser?->name ?? '',
-			                    locale         : App::getLocale(),
-			                    flights        : $flights,
+			                    contract_id      : $contract->getKey(),
+			                    contract_number  : $contract->contract_id,
+			                    salesperson      : $contract->salesperson->name,
+			                    client           : trim(explode(',', $contract->client?->name ?? '')[0]),
+			                    presented_to     : trim(explode(',', $contract->client?->name ?? '')[1] ?? ''),
+			                    advertiser       : $contract->advertiser?->name ?? '',
+			                    locale           : App::getLocale(),
+			                    summary_breakdown: 'flights',
+			                    flights          : $flights,
 		                    ));
 	}
 

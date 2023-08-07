@@ -13,6 +13,7 @@ namespace Neo\Modules\Properties\Documents\POP;
 use Illuminate\Support\Facades\App;
 use Mpdf\MpdfException;
 use Neo\Documents\MPDFDocument;
+use Neo\Modules\Properties\Documents\POP\components\POPBuyTypeSummary;
 use Neo\Modules\Properties\Documents\POP\components\POPCoverPage;
 use Neo\Modules\Properties\Documents\POP\components\POPFlightDetails;
 use Neo\Modules\Properties\Documents\POP\components\POPFlightSummary;
@@ -59,9 +60,17 @@ class PDFPOP extends MPDFDocument {
 		// Print the summary
 		$this->addPage("legal", "main");
 
-		// Print the summary of each flight
-		foreach ($this->request->flights as $flight) {
-			$this->appendHTML((new POPFlightSummary($flight))->render());
+		if ($this->request->summary_breakdown === 'flights') {
+			// Print the summary of each flight
+			foreach ($this->request->flights as $flight) {
+				$this->appendHTML((new POPFlightSummary($flight))->render());
+			}
+		} else {
+			$flightsByType = $this->request->flights->toCollection()->groupBy("flight_type.value");
+
+			foreach ($flightsByType as $flights) {
+				$this->appendHTML((new POPBuyTypeSummary($flights))->render());
+			}
 		}
 
 		// Print the summary totals

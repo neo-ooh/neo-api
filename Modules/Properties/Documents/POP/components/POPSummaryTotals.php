@@ -28,16 +28,13 @@ class POPSummaryTotals extends Component {
 		foreach ($this->request->flights as $flight) {
 			/** @var Collection $networkValues */
 			$networkValues = $flight->networks->toCollection()->map(function (POPFlightNetwork $network) {
-				$deliveredImpressions = $network->delivered_impressions * $network->delivered_impressions_factor;
-				$deliveryPercent      = $deliveredImpressions / $network->contracted_impressions;
-
 				return [
-					"contracted_media_value"    => $network->contracted_media_value,
-					"contracted_impressions"    => $network->contracted_impressions,
-					"contracted_net_investment" => $network->contracted_net_investment,
-					"counted_impressions"       => $deliveredImpressions,
-					"media_value"               => $network->contracted_media_value * $deliveryPercent,
-					"net_investment"            => $network->contracted_net_investment * $deliveryPercent,
+					"contracted_impressions"    => $network->getContractedImpressions(),
+					"contracted_media_value"    => $network->getContractedMediaValue(),
+					"contracted_net_investment" => $network->getContractedNetInvestment(),
+					"counted_impressions"       => $network->getDeliveredImpressions(),
+					"media_value"               => $network->getContractedMediaValue() * $network->getDeliveredPercent(),
+					"net_investment"            => $network->getContractedNetInvestment() * $network->getDeliveredPercent(),
 				];
 			});
 
@@ -46,13 +43,28 @@ class POPSummaryTotals extends Component {
 				"type"                      => $flight->flight_type,
 				"start_date"                => $flight->start_date,
 				"end_date"                  => $flight->end_date,
+				"contracted_impressions"    => $networkValues->sum("contracted_impressions"),
 				"contracted_media_value"    => $networkValues->sum("contracted_media_value"),
 				"contracted_net_investment" => $networkValues->sum("contracted_net_investment"),
-				"contracted_impressions"    => $networkValues->sum("contracted_impressions"),
 				"counted_impressions"       => $networkValues->sum("counted_impressions"),
 				"media_value"               => $networkValues->sum("media_value"),
 				"net_investment"            => $networkValues->sum("net_investment"),
 			];
+		}
+
+		if ($this->request->summary_breakdown === 'buy-types') {
+			$flights = $flights->groupBy("type.value")->map(fn(Collection $flights) => ([
+				"name"                      => __("pop.flight-type-" . $flights[0]["type"]->value),
+				"type"                      => $flights[0]["type"],
+				"start_date"                => $flights->min("start_date"),
+				"end_Date"                  => $flights->min("end_date"),
+				"contracted_impressions"    => $flights->sum("contracted_impressions"),
+				"contracted_media_value"    => $flights->sum("contracted_media_value"),
+				"contracted_net_investment" => $flights->sum("contracted_net_investment"),
+				"counted_impressions"       => $flights->sum("counted_impressions"),
+				"media_value"               => $flights->sum("media_value"),
+				"net_investment"            => $flights->sum("net_investment"),
+			]));
 		}
 
 		$contractedImpressions   = $flights->sum("contracted_impressions");

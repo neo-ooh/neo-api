@@ -14,12 +14,12 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class PropertiesWarningsViewSeeder extends Seeder {
-    public function run() {
-        $viewName = "properties_warnings";
+	public function run() {
+		$viewName = "properties_warnings";
 
-        DB::statement("DROP VIEW IF EXISTS $viewName");
+		DB::statement("DROP VIEW IF EXISTS $viewName");
 
-        DB::statement(/** @lang SQL */ <<<EOS
+		DB::statement(/** @lang SQL */ <<<EOS
         CREATE VIEW $viewName AS
         SELECT `p`.`actor_id` AS `property_id`,
            IF(
@@ -61,9 +61,9 @@ class PropertiesWarningsViewSeeder extends Seeder {
             COUNT(`dv`.`id`) as 'demographic_variables_count'
         FROM `properties` `p`
            JOIN `property_traffic_settings` `pts` ON `p`.`actor_id` = `pts`.`property_id`
-           LEFT JOIN `neo_ooh`.`demographic_values` `dv` ON `p`.`actor_id` = `dv`.`property_id`
+           LEFT JOIN `demographic_values` `dv` ON `p`.`actor_id` = `dv`.`property_id`
         GROUP BY `p`.`actor_id`        
         EOS
-        );
-    }
+		);
+	}
 }

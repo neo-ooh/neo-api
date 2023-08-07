@@ -1,10 +1,10 @@
 <section class="pop-flight-summary">
     <div class="pop-flight-summary__titles">
         <span class="pop-flight-summary__titles__flight-name">
-            {{ strtoupper($flight->flight_name) }}
+            {{ strtoupper($title) }}
         </span>
         <span class="pop-flight-summary__titles__flight-type">
-            {{ __("pop.flight-type-" . $flight->flight_type->value) }}
+            {{ $subtitle }}
         </span>
     </div>
     <table autosize="1"

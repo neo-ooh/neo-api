@@ -26,6 +26,11 @@ class POPRequest extends Data {
 
 		public string         $locale,
 
+		/**
+		 * @var 'flights'|'buy-types'
+		 */
+		public string         $summary_breakdown,
+
 		#[DataCollectionOf(POPFlight::class)]
 		public DataCollection $flights,
 	) {

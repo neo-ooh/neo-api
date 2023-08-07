@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -20,9 +20,9 @@ use Neo\Documents\Contract\PDFComponents\DetailedOrdersTable;
 use Neo\Documents\Contract\PDFComponents\DetailedSummary;
 use Neo\Documents\Contract\PDFComponents\GeneralConditions;
 use Neo\Documents\Contract\PDFComponents\Totals;
-use Neo\Documents\PDFDocument;
+use Neo\Documents\MPDFDocument;
 
-class PDFContract extends PDFDocument {
+class PDFContract extends MPDFDocument {
     public const TYPE_PROPOSAL = 'proposal';
     public const TYPE_CONTRACT = 'contract';
 
@@ -36,19 +36,19 @@ class PDFContract extends PDFDocument {
 
     public function __construct() {
         parent::__construct([
-            "margin_bottom"    => 15,
-            "packTableData"    => true,
-            "use_kwt"          => true,
-            "setAutoTopMargin" => "pad",
-        ]);
+                                "margin_bottom"    => 15,
+                                "packTableData"    => true,
+                                "use_kwt"          => true,
+                                "setAutoTopMargin" => "pad",
+                            ]);
 
         CarbonInterval::setCascadeFactors([
-            'minute' => [60, 'seconds'],
-            'hour'   => [60, 'minutes'],
-            'day'    => [8, 'hours'],
-            'week'   => [5, 'days'],
-            'month'  => [999999, 'weeks'],
-        ]);
+                                              'minute' => [60, 'seconds'],
+                                              'hour'   => [60, 'minutes'],
+                                              'day'    => [8, 'hours'],
+                                              'week'   => [5, 'days'],
+                                              'month'  => [999999, 'weeks'],
+                                          ]);
 
         // Register our components
 
@@ -57,7 +57,7 @@ class PDFContract extends PDFDocument {
         ini_set("pcre.backtrack_limit", "5000000");
     }
 
-    public static function makeContract($data): PDFDocument {
+    public static function makeContract($data): MPDFDocument {
         $document               = parent::make($data);
         $document->documentType = self::TYPE_CONTRACT;
 
@@ -65,7 +65,7 @@ class PDFContract extends PDFDocument {
         return $document;
     }
 
-    public static function makeProposal($data): PDFDocument {
+    public static function makeProposal($data): MPDFDocument {
         $document               = parent::make($data);
         $document->documentType = self::TYPE_PROPOSAL;
 
@@ -124,7 +124,7 @@ class PDFContract extends PDFDocument {
     private function makeGeneralConditions(): void {
         $this->setLayout("", "legal", [
             "customer" => $this->customer,
-            "order"    => $this->order
+            "order"    => $this->order,
         ]);
 
         $this->mpdf->WriteHTML((new GeneralConditions())->render()->render());
@@ -133,7 +133,7 @@ class PDFContract extends PDFDocument {
     private function makeCampaignSummary(): void {
         $this->setLayout(__("contract.campaign-summary-title"), "legal", [
             "customer" => $this->customer,
-            "order"    => $this->order
+            "order"    => $this->order,
         ]);
 
         // Purchase summary
@@ -195,7 +195,7 @@ class PDFContract extends PDFDocument {
     private function makeCampaignDetails(): void {
         $this->setLayout(__("contract.campaign-details-title"), [355, 355], [
             "customer" => $this->customer,
-            "order"    => $this->order
+            "order"    => $this->order,
         ]);
 
         foreach (["purchase", "bonus", "bua"] as $orderType) {
@@ -221,7 +221,7 @@ class PDFContract extends PDFDocument {
     private function renderProductionDocument() {
         $this->setLayout(__("contract.production-details"), [355, 355], [
             "customer" => $this->customer,
-            "order"    => $this->order
+            "order"    => $this->order,
         ]);
 
         $this->mpdf->SetMargins(15, 15, 40);

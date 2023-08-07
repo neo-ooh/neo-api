@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -19,25 +19,25 @@ use Neo\Modules\Broadcast\Jobs\Networks\SynchronizeAllNetworksJob;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 
 class BroadcastKernelServiceProvider extends ServiceProvider {
-    public function register() {
-    }
+	public function register() {
+	}
 
-    public function boot() {
-        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            // Broadcast jobs
-            $schedule->job(BroadcastJobsSchedulerJob::class)->everyMinute();
+	public function boot() {
+		$this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+			// Broadcast jobs
+			$schedule->job(BroadcastJobsSchedulerJob::class)->everyMinute();
 
-            // Networks
-            $schedule->job(SynchronizeAllNetworksJob::class)->daily();
+			// Networks
+			$schedule->job(SynchronizeAllNetworksJob::class)->daily();
 
-            // Resources
-            $schedule->job(DeleteExpiredResourcesJob::class)->daily();
+			// Resources
+			$schedule->job(DeleteExpiredResourcesJob::class)->daily();
 
-            // Campaigns Performances
-            $schedule->job(FetchCampaignsPerformancesJob::class)->daily();
+			// Campaigns Performances
+			$schedule->job(FetchCampaignsPerformancesJob::class)->daily();
 
-            // Non executed broadcast jobs
-            $schedule->job(RetryPendingBroadcastJobsJob::class)->daily();
-        });
-    }
+			// Non-executed broadcast jobs
+			$schedule->job(RetryPendingBroadcastJobsJob::class)->daily();
+		});
+	}
 }

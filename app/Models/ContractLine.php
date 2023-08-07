@@ -16,57 +16,61 @@ use Neo\Models\Traits\HasCompositePrimaryKey;
 use Neo\Models\Traits\HasView;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Product;
+use Neo\Resources\Contracts\FlightProductPerformanceDatum;
 
 /**
- * @property-read int              $product_id
- * @property-read int              $flight_id
- * @property-read int              $external_id
- * @property double                $spots
- * @property double                $media_value
- * @property double                $discount
- * @property string                $discount_type
- * @property double                $price
- * @property int                   $traffic
- * @property int                   $impressions
+ * @property-read int                           $product_id
+ * @property-read int                           $flight_id
+ * @property-read int                           $external_id
+ * @property double                             $spots
+ * @property double                             $media_value
+ * @property double                             $discount
+ * @property string                             $discount_type
+ * @property double                             $price
+ * @property int                                $traffic
+ * @property int                                $impressions
  *
- * @property ContractFlight        $flight
- * @property Product|null          $product
+ * @property ContractFlight                     $flight
+ * @property Product|null                       $product
  *
- * @property-read number|null      $network_id
- * @property-read ProductType|null $product_type
+ * @property-read number|null                   $network_id
+ * @property-read ProductType|null              $product_type
+ *
+ * @property FlightProductPerformanceDatum|null $performances Performances for this line. To be filled using
+ *           `ContractFlight::fillLinesPerformances()`
  */
 class ContractLine extends Model {
-    use HasCompositePrimaryKey;
-    use HasView;
+	use HasCompositePrimaryKey;
+	use HasView;
 
-    protected $table = "contracts_lines_view";
+	protected $table = "contracts_lines_view";
 
-    public $write_table = "contracts_lines";
+	public $write_table = "contracts_lines";
 
-    public $incrementing = false;
+	public $incrementing = false;
 
-    protected $primaryKey = ["product_id", "flight_id"];
+	protected $primaryKey = ["product_id", "flight_id"];
 
-    protected $fillable = [
-        "product_id",
-        "flight_id",
-        "external_id",
-        "spots",
-        "media_value",
-        "discount",
-        "discount_type",
-        "price",
-        "traffic",
-        "impressions",
-        "created_at",
-        "updated_at",
-    ];
+	protected $fillable = [
+		"product_id",
+		"flight_id",
+		"external_id",
+		"spots",
+		"media_value",
+		"discount",
+		"discount_type",
+		"price",
+		"traffic",
+		"impressions",
+		"created_at",
+		"updated_at",
+	];
 
-    public function flight(): BelongsTo {
-        return $this->belongsTo(ContractFlight::class, "flight_id", "id");
-    }
+	public function flight(): BelongsTo {
+		return $this->belongsTo(ContractFlight::class, "flight_id", "id");
+	}
 
-    public function product(): BelongsTo {
-        return $this->belongsTo(Product::class, "product_id", "id");
-    }
+	public function product(): BelongsTo {
+		return $this->belongsTo(Product::class, "product_id", "id");
+	}
 }

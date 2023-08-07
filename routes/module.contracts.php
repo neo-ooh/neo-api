@@ -26,6 +26,7 @@ use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
 use Neo\Models\Screenshot;
 use Neo\Models\ScreenshotRequest;
+use Neo\Modules\Properties\Http\Controllers\ProofOfPerformancesController;
 
 Route::group([
                  "middleware" => "default",
@@ -129,6 +130,15 @@ Route::group([
     |----------------------------------------------------------------------
     */
 
-    Route::post("availabilities", AvailabilitiesController::class . "@index");
+    Route::post("availabilities", [AvailabilitiesController::class, "index"]);
+
+    /*
+    |----------------------------------------------------------------------
+    | POP
+    |----------------------------------------------------------------------
+    */
+
+    Route::   get("contracts/{contract}/proof-of-performances", [ProofOfPerformancesController::class, "getBase"]);
+    Route::  post("contracts/{contract}/proof-of-performances", [ProofOfPerformancesController::class, "build"]);
 
 });

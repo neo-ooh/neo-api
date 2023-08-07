@@ -1,0 +1,526 @@
+/*!
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - pop.scss
+ */
+
+@use "../../../../resources/documents/stylesheets/colors";
+
+@page cover-page {
+  size             : landscape;
+  background-color : colors.$dark-blue;
+  margin-top       : 60mm;
+}
+
+@page main {
+  size             : landscape;
+  background-color : #FFFFFF;
+
+  margin-top       : 30mm;
+  margin-left      : 15mm;
+  margin-right     : 15mm;
+  margin-bottom    : 20mm;
+
+  margin-header    : 5mm;
+  margin-footer    : 5mm;
+
+  header           : html_default_header;
+  footer           : html_default_footer;
+}
+
+@page mockups {
+  size             : landscape;
+  background-color : #FFFFFF;
+
+  margin-top       : 0;
+  margin-left      : 0;
+  margin-right     : 0;
+  margin-bottom    : 0;
+
+  header           : none;
+  footer           : none;
+}
+
+.pop-cover-page {
+  width      : 100%;
+  height     : 100%;
+
+  text-align : center;
+
+  &__logo {
+    width : 110mm;
+  }
+
+  &__separator {
+    width            : 80mm;
+    height           : 2px;
+    margin           : 15mm auto 10mm;
+
+    background-color : #FFFFFF;
+
+  }
+
+  &__title {
+    margin      : 0;
+
+    color       : #FFFFFF;
+    font-size   : 3.653rem;
+    font-family : "poppins-extra-light";
+  }
+
+  &__date {
+    margin-top  : -5mm;
+
+    color       : #FFFFFF;
+    font-size   : 1.802rem;
+    font-family : "poppins-bold";
+    font-weight : bold;
+  }
+}
+
+.pop-header {
+  &__logo {
+    position   : absolute;
+    left       : 25mm;
+    margin-top : 5mm;
+
+    width      : 25mm;
+  }
+
+  &__title {
+    margin-top  : -10mm;
+    text-align  : center;
+    font-size   : 1.953rem;
+    font-family : poppins-extra-light;
+  }
+
+  &__contract {
+    position        : absolute;
+    margin-left     : 248mm;
+    margin-top      : -15mm;
+
+    width           : 80mm;
+    border-collapse : collapse;
+
+    &__label {
+      width         : 35mm;
+      padding       : .5mm 2.5mm .5mm 0;
+
+      border-bottom : 1px solid #000000;
+      border-right  : 1px solid #000000;
+
+      text-align    : right;
+      font-size     : .889rem;
+      font-family   : poppins-extra-light;
+
+      &.last {
+        border-bottom : none;
+      }
+    }
+
+    &__value {
+      width         : 35mm;
+      padding       : .5mm 0 .5mm 2.5mm;
+
+      border-bottom : 1px solid #000000;
+
+      font-size     : .889rem;
+      font-weight   : bold;
+
+      &.last {
+        border-bottom : none;
+      }
+    }
+  }
+}
+
+.pop-footer {
+  &__attribution {
+    font-size : .79rem;
+    color     : colors.$dark-grey;
+
+    &__logo {
+      width : 150px;
+    }
+  }
+
+  &__folio {
+    margin-top     : -7.5mm;
+    text-align     : right;
+    vertical-align : bottom;
+
+    &__current {
+      font-size : 1.25rem;
+    }
+
+    &__group {
+      font-size : .79rem;
+      color     : colors.$idle-grey;
+    }
+  }
+}
+
+.pop-flight-summary {
+  &__titles {
+    &__flight-name {
+      font-size   : 1.25rem;
+
+      font-family : poppins-bold;
+      font-weight : bold;
+      color       : colors.$dark-blue;
+    }
+
+    &__flight-type {
+      border-left : 5mm solid #FFFFFF;
+    }
+  }
+
+  &__table {
+    border-collapse   : collapse;
+    page-break-inside : avoid;
+
+    font-family       : poppins-bold;
+    font-weight       : bold;
+    text-align        : center;
+    font-size         : 1rem;
+  }
+
+  &__header {
+    padding          : 1mm 1mm;
+    height           : 13mm;
+
+    border-left      : 1px solid #FFFFFF;
+    background-color : colors.$dark-blue;
+    color            : #FFFFFF;
+
+    &__network {
+      width       : 60mm;
+      border-left : none;
+    }
+
+    &__start-date, &__end-date {
+      width : 35mm;
+    }
+
+    &__contracted-impressions {
+      width : 50mm;
+    }
+
+    &__counted-impressions {
+      width : 50mm;
+    }
+
+    &__media-value, &__net-investment {
+      width : 50mm;
+    }
+  }
+
+  &__cell {
+    height      : 10mm;
+    padding     : 1mm 1mm;
+
+    border-left : 1px solid #FFFFFF;
+    border-top  : 1px solid #FFFFFF;
+
+    font-size   : .889rem;
+    color       : #FFFFFF;
+    text-align  : center;
+  }
+
+  &__network {
+    border-left : none;
+  }
+
+  &__footer {
+    padding   : 2.35mm 1mm;
+    font-size : .889rem;
+  }
+}
+
+.pop-totals-disclaimer {
+  margin : 10mm 0;
+}
+
+.pop-summary-totals {
+  &__table {
+    border-collapse   : collapse;
+    page-break-inside : avoid;
+  }
+
+  &__header {
+    padding          : 1mm 1mm;
+    height           : 13mm;
+
+    border-left      : 1px solid #FFFFFF;
+    background-color : colors.$dark-blue;
+    color            : #FFFFFF;
+
+    font-family      : poppins-bold;
+    font-weight      : bold;
+    text-align       : center;
+    font-size        : 1rem;
+
+    &__flight {
+      width : 60mm;
+    }
+
+    &__start-date, &__end-date {
+      width : 35mm;
+    }
+
+    &__impressions {
+      width : 50mm;
+    }
+
+    &__media-value {
+      width       : 50mm;
+      border-left : none;
+    }
+
+    &__net-investment {
+      width : 50mm;
+    }
+
+    &__cpm {
+      width : 50mm;
+    }
+  }
+
+  &__contracted-row {
+    background-color : rgba(colors.$light-blue, .25);
+  }
+
+  &__cell {
+    height      : 10mm;
+    padding     : 1mm 1mm;
+
+    border-top  : 1px solid colors.$idle-grey;
+    font-family : poppins-bold;
+    text-align  : center;
+    font-size   : .889rem;
+  }
+
+  &__flight {
+    border-right : 1px solid colors.$idle-grey;
+  }
+
+  &__footer {
+    padding     : 2.35mm 1mm;
+
+    border-top  : 1px solid colors.$idle-grey;
+    font-family : poppins-bold;
+    text-align  : center;
+    font-size   : .889em;
+  }
+}
+
+.pop-flight-details {
+  &__titles {
+    &__flight-name {
+      font-size   : 1.25rem;
+
+      font-family : poppins-bold;
+      font-weight : bold;
+      color       : colors.$dark-blue;
+    }
+
+    &__flight-type {
+      border-left : 5mm solid #FFFFFF;
+    }
+  }
+
+  &__group {
+    &__name {
+      font-size   : 1.25rem;
+      font-family : poppins-bold;
+      color       : colors.$dark-blue;
+    }
+  }
+
+  &__network {
+    &__name {
+      font-size   : 1rem;
+      font-family : poppins-bold;
+      font-weight : bold;
+    }
+  }
+
+  &__table {
+    margin-bottom   : 15mm;
+
+    border-collapse : collapse;
+    font-size       : .889rem;
+  }
+
+  &__cell {
+    &__label {
+      width : 80mm;
+    }
+
+    &__start-date, &__end-date {
+      width      : 35mm;
+
+      text-align : center;
+    }
+
+    &__media-value {
+      width      : 50mm;
+      text-align : right;
+    }
+
+    &__contracted-impressions {
+      width      : 50mm;
+      text-align : right;
+    }
+
+    &__counted-impressions {
+      width      : 50mm;
+      text-align : right;
+    }
+
+    &__cpm {
+      width      : 30mm;
+      text-align : right;
+    }
+  }
+
+  &__level-header {
+    height        : 7.5mm;
+    border-bottom : 1px solid;
+
+    text-align    : center;
+    font-family   : poppins-bold;
+
+    &__label {
+      text-align : left;
+    }
+
+    &__media-value,
+    &__contracted-impressions,
+    &__counted-impressions,
+    &__cpm {
+      text-align : right;
+    }
+  }
+
+  &__level-footer {
+    height      : 7.5mm;
+    font-family : poppins-bold;
+    text-align  : right;
+
+    &__media-value,
+    &__contracted-impressions,
+    &__counted-impressions,
+    &__cpm {
+      border-bottom : 1px solid #000000;
+    }
+  }
+
+  &__level-1 {
+    font-size     : .889rem;
+    height        : 7.5mm;
+    border-bottom : 1px solid colors.$ultralight-grey;
+    font-weight   : bold;
+  }
+
+  &__level-2 {
+    height        : 6mm;
+    border-bottom : 1px solid colors.$ultralight-grey;
+    font-size     : .889rem;
+    font-family   : poppins-light;
+
+    &__label {
+      padding-left : 12mm;
+    }
+  }
+}
+
+.pop-flight-screenshots {
+  &__title {
+    font-size   : 1.25rem;
+    font-family : poppins-bold;
+    color       : colors.$dark-blue;
+  }
+
+  &__screenshot {
+    page-break-inside : avoid;
+    float             : left;
+    width             : 75mm;
+
+    margin-left       : 10mm;
+    margin-bottom     : 10mm;
+
+    border            : 1px solid colors.$light-grey;
+
+    &.flush-left {
+      margin-left : 0;
+    }
+
+    &__thumbnail {
+      width               : 75mm;
+      height              : 40mm;
+
+      background-color    : colors.$ultralight-grey;
+      background-size     : contain;
+      background-position : center center;
+      background-repeat   : no-repeat;
+    }
+
+    &__details {
+      padding : 3mm 5mm;
+
+      &__date {
+        font-size   : .79rem;
+        font-family : poppins-bold;
+      }
+
+      &__location {
+        font-size   : .79rem;
+        line-height : 1.2em;
+        color       : colors.$dark-grey;
+      }
+    }
+  }
+
+  &__mockup {
+    page-break-inside : avoid;
+    float             : left;
+
+    width             : 177.75mm;
+    height            : 105mm;
+
+    &__picture {
+      width               : 177.75mm;
+      height              : 90mm;
+
+      //background-color    : colors.$ultralight-grey;
+      background-color    : #000000;
+      background-size     : cover;
+      background-position : center center;
+      background-repeat   : no-repeat;
+    }
+
+    &__details {
+      width            : 177mm;
+      height           : 13mm;
+      padding          : 2mm 5mm 3mm;
+
+      color            : #FFFFFF;
+
+      background-color : rgba(0, 0, 0, .75);
+
+      &__date {
+        font-size   : .79rem;
+        font-family : poppins-bold;
+      }
+
+      &__location {
+        font-size   : .79rem;
+        line-height : 1.2em;
+      }
+    }
+  }
+}

@@ -26,59 +26,66 @@ use Neo\Modules\Broadcast\Enums\BroadcastResourceType;
  * @property Collection<BroadcastTag>     $broadcast_tags
  */
 abstract class BroadcastResourceModel extends SecuredModel {
-    /**
-     * Disable auto-increment
-     *
-     * @var bool
-     */
-    public $incrementing = false;
+	/**
+	 * Disable auto-increment
+	 *
+	 * @var bool
+	 */
+	public $incrementing = false;
 
-    public BroadcastResourceType $resourceType;
+	public BroadcastResourceType $resourceType;
 
-    protected static function booted(): void {
-        parent::boot();
+	protected static function booted(): void {
+		parent::boot();
 
-        static::creating(static function (BroadcastResourceModel $model) {
-            $resource = BroadcastResource::query()
-                                         ->create([
-                                                      "type" => $model->resourceType,
-                                                  ]);
+		static::creating(static function (BroadcastResourceModel $model) {
+			$resource = BroadcastResource::query()
+			                             ->create([
+				                                      "type" => $model->resourceType,
+			                                      ]);
 
-            $model->id = $resource->getKey();
-        });
-    }
+			$model->id = $resource->getKey();
+		});
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * @return HasMany<ExternalResource>
-     */
-    public function external_representations(): HasMany {
-        return $this->hasMany(ExternalResource::class, "resource_id", "id");
-    }
+	/**
+	 * @return HasMany<ExternalResource>
+	 */
+	public function external_representations(): HasMany {
+		return $this->hasMany(ExternalResource::class, "resource_id", "id");
+	}
 
-    /**
-     * @return HasMany<BroadcastJob>
-     */
-    public function broadcast_jobs() {
-        return $this->hasMany(BroadcastJob::class, "resource_id", "id");
-    }
+	/**
+	 * @return HasMany<BroadcastJob>
+	 */
+	public function broadcast_jobs() {
+		return $this->hasMany(BroadcastJob::class, "resource_id", "id");
+	}
 
-    /**
-     * @return BelongsToMany<BroadcastTag>
-     */
-    public function broadcast_tags(): BelongsToMany {
-        return $this->belongsToMany(BroadcastTag::class, 'broadcast_resource_tags', 'resource_id', 'broadcast_tag_id');
-    }
+	/**
+	 * @return BelongsToMany<BroadcastTag>
+	 */
+	public function broadcast_tags(): BelongsToMany {
+		return $this->belongsToMany(BroadcastTag::class, 'broadcast_resource_tags', 'resource_id', 'broadcast_tag_id');
+	}
 
-    /**
-     * @return HasMany<ResourcePerformance>
-     */
-    public function performances(): HasMany {
-        return $this->hasMany(ResourcePerformance::class, "resource_id", "id");
-    }
+	/**
+	 * @return HasMany<ResourcePerformance>
+	 */
+	public function performances(): HasMany {
+		return $this->hasMany(ResourcePerformance::class, "resource_id", "id");
+	}
+
+	/**
+	 * @return HasMany<ResourcePerformance>
+	 */
+	public function location_performances(): HasMany {
+		return $this->hasMany(ResourceLocationPerformance::class, "resource_id", "id");
+	}
 }

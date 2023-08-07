@@ -11,20 +11,24 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
+use Neo\Models\ContractFlight;
+use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
-    protected $signature = 'test:test';
+	protected $signature = 'test:test';
 
-    protected $description = 'Internal tests';
+	protected $description = 'Internal tests';
 
-    /**
-     * @return void
-     * @throws Exception
-     */
-    public function handle() {
-        dump(config("app.url"));
-//        $job = new SendScreenshotRequests();
-//        $job->sendRequest();
-    }
+	/**
+	 * @return void
+	 * @throws Exception
+	 */
+	public function handle() {
+		(new FetchCampaignsPerformancesJob(null, 90))->handle();
+		/** @var ContractFlight $flight */
+		$flight = ContractFlight::query()->find(70934);
+		dump($flight->getReservationsLocationPerformances()->sum("impressions"));
+		dump($flight->products_performances->sum("impressions"));
+	}
 }

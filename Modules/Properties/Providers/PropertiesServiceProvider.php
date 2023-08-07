@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - PropertiesServiceProvider.php
+ */
 
 namespace Neo\Modules\Properties\Providers;
 
@@ -58,15 +66,16 @@ class PropertiesServiceProvider extends ServiceProvider {
      * @return void
      */
     public function registerViews() {
-        $viewPath = resource_path('views/modules/' . $this->moduleNameLower);
-
         $sourcePath = module_path($this->moduleName, 'Resources/views');
+        $viewPath   = resource_path('views/modules/' . $this->moduleNameLower);
 
         $this->publishes([
                              $sourcePath => $viewPath,
+
+                             module_path($this->moduleName, "/Documents/POP/components") => resource_path("views/modules/'.$this->moduleNameLower.'/pop"),
                          ], ['views', $this->moduleNameLower . '-module-views']);
 
-        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath]), $this->moduleNameLower);
+        $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath,]), $this->moduleNameLower);
     }
 
     /**

@@ -215,6 +215,7 @@
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/symfony/polyfill-php83" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/halaxa/json-machine" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/phpstan/phpstan-deprecation-rules" />
+      <excludeFolder url="file://$MODULE_DIR$/../../vendor/gotenberg/gotenberg-php" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

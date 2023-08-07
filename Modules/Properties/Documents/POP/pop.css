@@ -1,0 +1,400 @@
+/*!
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - pop.scss
+ */
+/*!
+ * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Valentin Dufois <vdufois@neo-ooh.com>
+ *
+ * @neo/api - _colors.scss
+ */
+@page cover-page {
+  size: landscape;
+  background-color: #252734;
+  margin-top: 60mm;
+}
+@page main {
+  size: landscape;
+  background-color: #FFFFFF;
+  margin-top: 30mm;
+  margin-left: 15mm;
+  margin-right: 15mm;
+  margin-bottom: 20mm;
+  margin-header: 5mm;
+  margin-footer: 5mm;
+  header: html_default_header;
+  footer: html_default_footer;
+}
+@page mockups {
+  size: landscape;
+  background-color: #FFFFFF;
+  margin-top: 0;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  header: none;
+  footer: none;
+}
+.pop-cover-page {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+.pop-cover-page__logo {
+  width: 110mm;
+}
+.pop-cover-page__separator {
+  width: 80mm;
+  height: 2px;
+  margin: 15mm auto 10mm;
+  background-color: #FFFFFF;
+}
+.pop-cover-page__title {
+  margin: 0;
+  color: #FFFFFF;
+  font-size: 3.653rem;
+  font-family: "poppins-extra-light";
+}
+.pop-cover-page__date {
+  margin-top: -5mm;
+  color: #FFFFFF;
+  font-size: 1.802rem;
+  font-family: "poppins-bold";
+  font-weight: bold;
+}
+
+.pop-header__logo {
+  position: absolute;
+  left: 25mm;
+  margin-top: 5mm;
+  width: 25mm;
+}
+.pop-header__title {
+  margin-top: -10mm;
+  text-align: center;
+  font-size: 1.953rem;
+  font-family: poppins-extra-light;
+}
+.pop-header__contract {
+  position: absolute;
+  margin-left: 248mm;
+  margin-top: -15mm;
+  width: 80mm;
+  border-collapse: collapse;
+}
+.pop-header__contract__label {
+  width: 35mm;
+  padding: 0.5mm 2.5mm 0.5mm 0;
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
+  text-align: right;
+  font-size: 0.889rem;
+  font-family: poppins-extra-light;
+}
+.pop-header__contract__label.last {
+  border-bottom: none;
+}
+.pop-header__contract__value {
+  width: 35mm;
+  padding: 0.5mm 0 0.5mm 2.5mm;
+  border-bottom: 1px solid #000000;
+  font-size: 0.889rem;
+  font-weight: bold;
+}
+.pop-header__contract__value.last {
+  border-bottom: none;
+}
+
+.pop-footer__attribution {
+  font-size: 0.79rem;
+  color: #595959;
+}
+.pop-footer__attribution__logo {
+  width: 150px;
+}
+.pop-footer__folio {
+  margin-top: -7.5mm;
+  text-align: right;
+  vertical-align: bottom;
+}
+.pop-footer__folio__current {
+  font-size: 1.25rem;
+}
+.pop-footer__folio__group {
+  font-size: 0.79rem;
+  color: #888888;
+}
+
+.pop-flight-summary__titles__flight-name {
+  font-size: 1.25rem;
+  font-family: poppins-bold;
+  font-weight: bold;
+  color: #252734;
+}
+.pop-flight-summary__titles__flight-type {
+  border-left: 5mm solid #FFFFFF;
+}
+.pop-flight-summary__table {
+  border-collapse: collapse;
+  page-break-inside: avoid;
+  font-family: poppins-bold;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
+}
+.pop-flight-summary__header {
+  padding: 1mm 1mm;
+  height: 13mm;
+  border-left: 1px solid #FFFFFF;
+  background-color: #252734;
+  color: #FFFFFF;
+}
+.pop-flight-summary__header__network {
+  width: 60mm;
+  border-left: none;
+}
+.pop-flight-summary__header__start-date, .pop-flight-summary__header__end-date {
+  width: 35mm;
+}
+.pop-flight-summary__header__contracted-impressions {
+  width: 50mm;
+}
+.pop-flight-summary__header__counted-impressions {
+  width: 50mm;
+}
+.pop-flight-summary__header__media-value, .pop-flight-summary__header__net-investment {
+  width: 50mm;
+}
+.pop-flight-summary__cell {
+  height: 10mm;
+  padding: 1mm 1mm;
+  border-left: 1px solid #FFFFFF;
+  border-top: 1px solid #FFFFFF;
+  font-size: 0.889rem;
+  color: #FFFFFF;
+  text-align: center;
+}
+.pop-flight-summary__network {
+  border-left: none;
+}
+.pop-flight-summary__footer {
+  padding: 2.35mm 1mm;
+  font-size: 0.889rem;
+}
+
+.pop-totals-disclaimer {
+  margin: 10mm 0;
+}
+
+.pop-summary-totals__table {
+  border-collapse: collapse;
+  page-break-inside: avoid;
+}
+.pop-summary-totals__header {
+  padding: 1mm 1mm;
+  height: 13mm;
+  border-left: 1px solid #FFFFFF;
+  background-color: #252734;
+  color: #FFFFFF;
+  font-family: poppins-bold;
+  font-weight: bold;
+  text-align: center;
+  font-size: 1rem;
+}
+.pop-summary-totals__header__flight {
+  width: 60mm;
+}
+.pop-summary-totals__header__start-date, .pop-summary-totals__header__end-date {
+  width: 35mm;
+}
+.pop-summary-totals__header__impressions {
+  width: 50mm;
+}
+.pop-summary-totals__header__media-value {
+  width: 50mm;
+  border-left: none;
+}
+.pop-summary-totals__header__net-investment {
+  width: 50mm;
+}
+.pop-summary-totals__header__cpm {
+  width: 50mm;
+}
+.pop-summary-totals__contracted-row {
+  background-color: rgba(62, 156, 202, 0.25);
+}
+.pop-summary-totals__cell {
+  height: 10mm;
+  padding: 1mm 1mm;
+  border-top: 1px solid #888888;
+  font-family: poppins-bold;
+  text-align: center;
+  font-size: 0.889rem;
+}
+.pop-summary-totals__flight {
+  border-right: 1px solid #888888;
+}
+.pop-summary-totals__footer {
+  padding: 2.35mm 1mm;
+  border-top: 1px solid #888888;
+  font-family: poppins-bold;
+  text-align: center;
+  font-size: 0.889em;
+}
+
+.pop-flight-details__titles__flight-name {
+  font-size: 1.25rem;
+  font-family: poppins-bold;
+  font-weight: bold;
+  color: #252734;
+}
+.pop-flight-details__titles__flight-type {
+  border-left: 5mm solid #FFFFFF;
+}
+.pop-flight-details__group__name {
+  font-size: 1.25rem;
+  font-family: poppins-bold;
+  color: #252734;
+}
+.pop-flight-details__network__name {
+  font-size: 1rem;
+  font-family: poppins-bold;
+  font-weight: bold;
+}
+.pop-flight-details__table {
+  margin-bottom: 15mm;
+  border-collapse: collapse;
+  font-size: 0.889rem;
+}
+.pop-flight-details__cell__label {
+  width: 80mm;
+}
+.pop-flight-details__cell__start-date, .pop-flight-details__cell__end-date {
+  width: 35mm;
+  text-align: center;
+}
+.pop-flight-details__cell__media-value {
+  width: 50mm;
+  text-align: right;
+}
+.pop-flight-details__cell__contracted-impressions {
+  width: 50mm;
+  text-align: right;
+}
+.pop-flight-details__cell__counted-impressions {
+  width: 50mm;
+  text-align: right;
+}
+.pop-flight-details__cell__cpm {
+  width: 30mm;
+  text-align: right;
+}
+.pop-flight-details__level-header {
+  height: 7.5mm;
+  border-bottom: 1px solid;
+  text-align: center;
+  font-family: poppins-bold;
+}
+.pop-flight-details__level-header__label {
+  text-align: left;
+}
+.pop-flight-details__level-header__media-value, .pop-flight-details__level-header__contracted-impressions, .pop-flight-details__level-header__counted-impressions, .pop-flight-details__level-header__cpm {
+  text-align: right;
+}
+.pop-flight-details__level-footer {
+  height: 7.5mm;
+  font-family: poppins-bold;
+  text-align: right;
+}
+.pop-flight-details__level-footer__media-value, .pop-flight-details__level-footer__contracted-impressions, .pop-flight-details__level-footer__counted-impressions, .pop-flight-details__level-footer__cpm {
+  border-bottom: 1px solid #000000;
+}
+.pop-flight-details__level-1 {
+  font-size: 0.889rem;
+  height: 7.5mm;
+  border-bottom: 1px solid #EEEEEE;
+  font-weight: bold;
+}
+.pop-flight-details__level-2 {
+  height: 6mm;
+  border-bottom: 1px solid #EEEEEE;
+  font-size: 0.889rem;
+  font-family: poppins-light;
+}
+.pop-flight-details__level-2__label {
+  padding-left: 12mm;
+}
+
+.pop-flight-screenshots__title {
+  font-size: 1.25rem;
+  font-family: poppins-bold;
+  color: #252734;
+}
+.pop-flight-screenshots__screenshot {
+  page-break-inside: avoid;
+  float: left;
+  width: 75mm;
+  margin-left: 10mm;
+  margin-bottom: 10mm;
+  border: 1px solid #BBBBBB;
+}
+.pop-flight-screenshots__screenshot.flush-left {
+  margin-left: 0;
+}
+.pop-flight-screenshots__screenshot__thumbnail {
+  width: 75mm;
+  height: 40mm;
+  background-color: #EEEEEE;
+  background-size: contain;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.pop-flight-screenshots__screenshot__details {
+  padding: 3mm 5mm;
+}
+.pop-flight-screenshots__screenshot__details__date {
+  font-size: 0.79rem;
+  font-family: poppins-bold;
+}
+.pop-flight-screenshots__screenshot__details__location {
+  font-size: 0.79rem;
+  line-height: 1.2em;
+  color: #595959;
+}
+.pop-flight-screenshots__mockup {
+  page-break-inside: avoid;
+  float: left;
+  width: 177.75mm;
+  height: 105mm;
+}
+.pop-flight-screenshots__mockup__picture {
+  width: 177.75mm;
+  height: 90mm;
+  background-color: #000000;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+.pop-flight-screenshots__mockup__details {
+  width: 177mm;
+  height: 13mm;
+  padding: 2mm 5mm 3mm;
+  color: #FFFFFF;
+  background-color: rgba(0, 0, 0, 0.75);
+}
+.pop-flight-screenshots__mockup__details__date {
+  font-size: 0.79rem;
+  font-family: poppins-bold;
+}
+.pop-flight-screenshots__mockup__details__location {
+  font-size: 0.79rem;
+  line-height: 1.2em;
+}
+
+/*# sourceMappingURL=pop.css.map */

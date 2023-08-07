@@ -13,9 +13,9 @@ namespace Neo\Documents\POP;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
 use Mpdf\HTMLParserMode;
-use Neo\Documents\PDFDocument;
+use Neo\Documents\MPDFDocument;
 
-class POP extends PDFDocument {
+class POP extends MPDFDocument {
     protected POPData $data;
 
     protected string $header_view = "documents.pop.header";

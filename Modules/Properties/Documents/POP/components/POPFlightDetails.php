@@ -32,7 +32,7 @@ class POPFlightDetails {
 		$showScreenshots = $this->flight->screenshots->count() > 0;
 
 		if ($showBreakdown || $showScreenshots) {
-			$this->pop->addPage("legal");
+			$this->pop->addPage("legal", "main");
 
 			// Render the flight header
 			$this->pop->appendHTML(view("properties::pop.flight-details-header", [

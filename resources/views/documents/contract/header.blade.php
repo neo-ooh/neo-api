@@ -11,21 +11,6 @@
             $output = $nbrfmtr->format($number);
             return str_replace(" "," ",$output);
         }
-
-        function formatCurrency($number) {
-            $locale = \Illuminate\Support\Facades\App::currentLocale();
-            $nbrfmtr =new NumberFormatter($locale, NumberFormatter::CURRENCY);
-
-            $nbrfmtr->setSymbol(NumberFormatter::CURRENCY_SYMBOL, '$');
-
-            $output = $nbrfmtr->format($number);
-
-            // Remove decimals if zero.
-            return str_replace([
-                $nbrfmtr->getSymbol(NumberFormatter::DECIMAL_SEPARATOR_SYMBOL)."00",
-                " "
-            ], ["", " "], $output);
-        }
     }
 
     $locale = App::currentLocale()

@@ -7,20 +7,18 @@
  * @neo/api - contract.scss
  */
 
-@import "common";
-
-
-@page {
+@page main {
   size             : portrait;
   background-color : #FFFFFF;
 
-  //margin-top       : 15mm;
   margin-left      : 15mm;
   margin-right     : 15mm;
 
   header           : html_default_header;
   footer           : html_default_footer;
 }
+
+@import "common";
 
 .contract-home-page {
   h1 {

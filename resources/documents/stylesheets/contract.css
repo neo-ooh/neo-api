@@ -6,6 +6,14 @@
  *
  * @neo/api - contract.scss
  */
+@page main {
+  size: portrait;
+  background-color: #FFFFFF;
+  margin-left: 15mm;
+  margin-right: 15mm;
+  header: html_default_header;
+  footer: html_default_footer;
+}
 /*!
  * Copyright 2020 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
@@ -231,14 +239,6 @@ footer {
   padding-left: 3mm;
 }
 
-@page {
-  size: portrait;
-  background-color: #FFFFFF;
-  margin-left: 15mm;
-  margin-right: 15mm;
-  header: html_default_header;
-  footer: html_default_footer;
-}
 .contract-home-page h1 {
   margin-bottom: 0;
   text-align: center;

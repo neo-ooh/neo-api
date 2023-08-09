@@ -11,10 +11,12 @@
 return [
 	"title" => "Campaign performance report",
 
-	"header-contract"    => "Contract",
-	"header-advertiser"  => "Advertiser",
-	"header-client"      => "Client",
-	"header-salesperson" => "Account Executive",
+	"header-contract"     => "Contract",
+	"header-advertiser"   => "Advertiser",
+	"header-client"       => "Client",
+	"header-salesperson"  => "Account Executive",
+	"header-dates"        => "Dates",
+	"header-presented-to" => "Presented to",
 
 	"flight-type-guaranteed" => "Guaranteed",
 	"flight-type-bonus"      => "Bonus",

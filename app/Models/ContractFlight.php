@@ -96,13 +96,22 @@ class ContractFlight extends Model {
 
 	protected function getPublicRelations(): array {
 		return [
-			"contract"     => Relation::make(load: "contract"),
-			"advertiser"   => Relation::make(load: "contract.advertiser"),
-			"performances" => Relation::make(append: "performances"),
-			"products"     => Relation::make(load: "products"),
-			"screenshots"  => Relation::make(load: ["screenshots.product.property", "screenshots.location"]),
+			"advertiser"            => Relation::make(load: "contract.advertiser"),
+			"campaigns"             => Relation::make(load: "campaigns"),
+			"contract"              => Relation::make(load: "contract"),
+			"lines"                 => Relation::make(load: "lines.product.property"),
+			"performances"          => Relation::make(append: "performances"),
+			"products"              => Relation::make(load: "products"),
+			"products-performances" => Relation::make(append: "products_performances", custom: fn(ContractFlight $flight) => $flight->fillLinesPerformances()),
+			"screenshots"           => Relation::make(load: ["screenshots.product.property", "screenshots.location"]),
 		];
 	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
 	public function lines(): HasMany {
 		return $this->hasMany(ContractLine::class, "flight_id", "id");
@@ -140,9 +149,8 @@ class ContractFlight extends Model {
 	|--------------------------------------------------------------------------
 	*/
 
-
 	/**
-	 * Load the flight performances, aggregated from all sources – Campaigns & Reservations
+	 * Load the flight day-by-day performances, aggregated from all sources – Campaigns & Reservations
 	 *
 	 * @return EloquentCollection<FlightPerformanceDatum>
 	 * @throws InvalidBroadcasterAdapterException
@@ -178,7 +186,7 @@ class ContractFlight extends Model {
 	}
 
 	/**
-	 * Loads performances of attached reservations
+	 * Loads day-by-day performances of attached reservations
 	 *
 	 * @return Collection<FlightPerformanceDatum>
 	 * @throws InvalidBroadcasterAdapterException
@@ -237,7 +245,7 @@ class ContractFlight extends Model {
 	}
 
 	/**
-	 * Performances of the flight on a per product basis
+	 * Performances of the flight on a per-product basis
 	 *
 	 * @throws InvalidBroadcasterAdapterException
 	 */
@@ -281,7 +289,7 @@ class ContractFlight extends Model {
 	}
 
 	/**
-	 * Loads location performances of attached reservations
+	 * Loads per-products performances of attached reservations
 	 *
 	 * @return Collection<FlightProductPerformanceDatum>
 	 * @throws InvalidBroadcasterAdapterException

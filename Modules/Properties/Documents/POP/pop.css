@@ -19,6 +19,11 @@
   background-color: #252734;
   margin-top: 60mm;
 }
+@page preface {
+  size: landscape;
+  background-color: #FFFFFF;
+  margin-top: 60mm;
+}
 @page main {
   size: landscape;
   background-color: #FFFFFF;
@@ -67,6 +72,32 @@
   font-size: 1.802rem;
   font-family: "poppins-bold";
   font-weight: bold;
+}
+
+.preface {
+  margin: 0 auto 0;
+  width: 180mm;
+  border-collapse: collapse;
+}
+.preface tr td {
+  border-bottom: 1px solid #000000;
+  font-size: 1.4rem;
+}
+.preface tr td:nth-child(1) {
+  text-align: right;
+  border-right: 1px solid #000000;
+  padding: 3mm 5mm 3mm 0;
+  white-space: nowrap;
+  width: 90mm;
+}
+.preface tr td:nth-child(2) {
+  padding: 3mm 0 3mm 5mm;
+  width: 90mm;
+  font-family: "poppins-bold";
+  color: #252734;
+}
+.preface tr:nth-child(6) td {
+  border-bottom: none;
 }
 
 .pop-header__logo {

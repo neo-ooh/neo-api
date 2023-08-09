@@ -19,6 +19,7 @@ use Neo\Modules\Properties\Documents\POP\components\POPFlightDetails;
 use Neo\Modules\Properties\Documents\POP\components\POPFlightSummary;
 use Neo\Modules\Properties\Documents\POP\components\POPFooter;
 use Neo\Modules\Properties\Documents\POP\components\POPHeader;
+use Neo\Modules\Properties\Documents\POP\components\POPPReface;
 use Neo\Modules\Properties\Documents\POP\components\POPSummaryTotals;
 
 class PDFPOP extends MPDFDocument {
@@ -52,10 +53,15 @@ class PDFPOP extends MPDFDocument {
 		$this->registerHeader((new POPHeader(__("pop.title"), $this->request))->render());
 		$this->registerFooter((new POPFooter())->render());
 
-		$this->addPage("legal", "cover-page");
 
 		// Add the cover page
+		$this->addPage("legal", "cover-page");
 		$this->appendHTML((new POPCoverPage())->render());
+
+		$this->addPage("legal", "preface");
+		$this->appendHTML((new POPPReface($this->request))->render());
+
+		// Add the presentation page
 
 		// Print the summary
 		$this->addPage("legal", "main");

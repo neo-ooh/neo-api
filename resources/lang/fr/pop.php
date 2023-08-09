@@ -11,10 +11,12 @@
 return [
 	"title" => "Rapport de performance de campagne",
 
-	"header-contract"    => "Contrat",
-	"header-advertiser"  => "Annonceur",
-	"header-client"      => "Client",
-	"header-salesperson" => "Directeur de compte",
+	"header-contract"     => "Contrat",
+	"header-advertiser"   => "Annonceur",
+	"header-client"       => "Client",
+	"header-salesperson"  => "Directeur·ice de compte",
+	"header-dates"        => "Dates",
+	"header-presented-to" => "Présenté à",
 
 	"flight-type-guaranteed" => "Garanti",
 	"flight-type-bonus"      => "Boni",

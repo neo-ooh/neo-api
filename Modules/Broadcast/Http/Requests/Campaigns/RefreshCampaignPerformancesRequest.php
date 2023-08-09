@@ -5,27 +5,23 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ListScreenshotsRequest.php
+ * @neo/api - RefreshCampaignPerformancesRequest.php
  */
 
-namespace Neo\Http\Requests\Screenshots;
+namespace Neo\Modules\Broadcast\Http\Requests\Campaigns;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Models\ContractFlight;
-use Neo\Models\Screenshot;
-use Neo\Rules\PublicRelations;
 
-class ListScreenshotsRequest extends FormRequest {
+class RefreshCampaignPerformancesRequest extends FormRequest {
 	/**
 	 * Determine if the user is authorized to make this request.
 	 *
 	 * @return bool
 	 */
 	public function authorize(): bool {
-		return Gate::allows(Capability::contracts_edit->value);
+		return Gate::allows(Capability::campaigns_edit->value);
 	}
 
 	/**
@@ -35,12 +31,7 @@ class ListScreenshotsRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		return [
-			"flight_id" => ["required", "integer", new Exists(ContractFlight::class, "id")],
-
-			"page"  => ["integer"],
-			"count" => ["integer"],
-
-			"with" => ["sometimes", "array", new PublicRelations(Screenshot::class)],
+			//
 		];
 	}
 }

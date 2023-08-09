@@ -34,252 +34,252 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class BroadSignAudienceFile extends XLSXDocument {
 
-    protected Location $location;
-    protected Product $product;
-    protected Property $property;
-    /**
-     * @var Frame[]
-     */
-    protected array $frames;
+	protected Location $location;
+	protected Product $product;
+	protected Property $property;
+	/**
+	 * @var Frame[]
+	 */
+	protected array $frames;
 
-    /**
-     * @param Location $data
-     * @return bool
-     * @throws InvalidBroadcasterAdapterException
-     * @throws InvalidBroadcastResource
-     * @throws LocationNotAssociatedWithProductException
-     */
-    protected function ingest($data): bool {
-        $this->location = $data;
+	/**
+	 * @param Location $data
+	 * @return bool
+	 * @throws InvalidBroadcasterAdapterException
+	 * @throws InvalidBroadcastResource
+	 * @throws LocationNotAssociatedWithProductException
+	 */
+	protected function ingest($data): bool {
+		$this->location = $data;
 
-        // As of 2022-10-31, only BroadSign is supported
-        // Validated the location is for a supported broadcaster
-        /** @var BroadSignAdapter $broadcaster */
-        $broadcaster = BroadcasterAdapterFactory::makeForNetwork($this->location->network_id);
+		// As of 2022-10-31, only BroadSign is supported
+		// Validated the location is for a supported broadcaster
+		/** @var BroadSignAdapter $broadcaster */
+		$broadcaster = BroadcasterAdapterFactory::makeForNetwork($this->location->network_id);
 
-        if ($broadcaster->getBroadcasterType() !== BroadcasterType::BroadSign) {
-            throw new InvalidBroadcasterAdapterException($broadcaster->getBroadcasterType()->value);
-        }
+		if ($broadcaster->getBroadcasterType() !== BroadcasterType::BroadSign) {
+			throw new InvalidBroadcasterAdapterException($broadcaster->getBroadcasterType()->value);
+		}
 
-        $product = $this->location->products()
-                                  ->where("is_bonus", "=", false)
-                                  ->with([
-                                             "impressions_models",
-                                             "loop_configurations",
-                                             "category.impressions_models",
-                                             "category.loop_configurations",
-                                         ])
-                                  ->withCount("locations")
-                                  ->first();
+		$product = $this->location->products()
+		                          ->where("is_bonus", "=", false)
+		                          ->with([
+			                                 "impressions_models",
+			                                 "loop_configurations",
+			                                 "category.impressions_models",
+			                                 "category.loop_configurations",
+		                                 ])
+		                          ->withCount("locations")
+		                          ->first();
 
-        if ($product === null) {
-            Log::error("Location {$this->location->getKey()} ({$this->location->name}) is not associated with any product.");
-            throw new LocationNotAssociatedWithProductException();
-        }
+		if ($product === null) {
+			Log::error("Location {$this->location->getKey()} ({$this->location->name}) is not associated with any product.");
+			throw new LocationNotAssociatedWithProductException();
+		}
 
-        $this->product = $product;
+		$this->product = $product;
 
-        /** @var Property $property */
-        $property       = Property::query()
-                                  ->with(["opening_hours", "traffic.weekly_data"])
-                                  ->find($this->product->property_id);
-        $this->property = $property;
+		/** @var Property $property */
+		$property       = Property::query()
+		                          ->with(["opening_hours", "traffic.weekly_data"])
+		                          ->find($this->product->property_id);
+		$this->property = $property;
 
-        $this->property->rolling_weekly_traffic = $this->property->traffic->getRollingWeeklyTraffic();
+		$this->property->rolling_weekly_traffic = $this->property->traffic->getRollingWeeklyTraffic();
 
-        // Load all the frames, of the display unit, and load their loop policies as well
-        $this->frames = $broadcaster->getLocationFrames($this->location->toExternalBroadcastIdResource());
+		// Load all the frames, of the display unit, and load their loop policies as well
+		$this->frames = $broadcaster->getLocationFrames($this->location->toExternalBroadcastIdResource());
 
-        return true;
-    }
+		return true;
+	}
 
-    /**
-     * @inheritDoc
-     * @throws InvalidOpeningHoursException
-     */
-    public function build(): bool {
-        $this->ws->printRow([
-                                "Display Unit Id",
-                                "Frame Id",
-                                "Start Date",
-                                "End Date",
-                                "Start Time",
-                                "End Time",
-                                "Monday",
-                                "Tuesday",
-                                "Wednesday",
-                                "Thursday",
-                                "Friday",
-                                "Saturday",
-                                "Sunday",
-                                "Total Impressions per hour",
-                            ]);
-        // For each frame of the display unit, for every day of the week, we have to calculate the hourly impressions.
-        $datePointer = Carbon::now()->startOf("week");
+	/**
+	 * @inheritDoc
+	 * @throws InvalidOpeningHoursException
+	 */
+	public function build(): bool {
+		$this->ws->printRow([
+			                    "Display Unit Id",
+			                    "Frame Id",
+			                    "Start Date",
+			                    "End Date",
+			                    "Start Time",
+			                    "End Time",
+			                    "Monday",
+			                    "Tuesday",
+			                    "Wednesday",
+			                    "Thursday",
+			                    "Friday",
+			                    "Saturday",
+			                    "Sunday",
+			                    "Total Impressions per hour",
+		                    ]);
+		// For each frame of the display unit, for every day of the week, we have to calculate the hourly impressions.
+		$datePointer = Carbon::now()->startOf("week");
 
-        // Define how many days should be generated. Here: a month
-        $endBoundary = $datePointer->clone()->addMonth();
+		// Define how many days should be generated. Here: a month
+		$endBoundary = $datePointer->clone()->addMonth();
 
-        // Dump a fail-over row for every frame
-        foreach ($this->frames as $frame) {
-            $this->ws->printRow([
-                                    $this->location->external_id,
-                                    $frame->external_id,
-                                    "",
-                                    "",
-                                    "",
-                                    "",
-                                    1,
-                                    1,
-                                    1,
-                                    1,
-                                    1,
-                                    1,
-                                    1,
-                                    1,
-                                ]);
-        }
+		// Dump a fail-over row for every frame
+		foreach ($this->frames as $frame) {
+			$this->ws->printRow([
+				                    $this->location->external_id,
+				                    $frame->external_id,
+				                    "",
+				                    "",
+				                    "",
+				                    "",
+				                    1,
+				                    1,
+				                    1,
+				                    1,
+				                    1,
+				                    1,
+				                    1,
+				                    1,
+			                    ]);
+		}
 
-        // Calculate how many minutes the property is open on each day
-        $openLengthsMinutes = collect();
-        /**
-         * @var Collection<int, DayOperatingHours> Resolved opening hours. Default the 24 hours if missing
-         */
-        $hours = collect();
+		// Calculate how many minutes the property is open on each day
+		$openLengthsMinutes = collect();
+		/**
+		 * @var Collection<int, DayOperatingHours> Resolved opening hours. Default the 24 hours if missing
+		 */
+		$hours = collect();
 
-        for ($weekday = 1; $weekday <= 7; $weekday++) {
-            /** @var OpeningHours|null $dayHours */
-            $dayHours  = $this->property->opening_hours->firstWhere("day", "===", $weekday);
-            $startTime = ($dayHours ? Carbon::createFromTimeString($dayHours->open_at) : Carbon::createFromTime(0, 0))->startOfMinute();
-            $endTime   = ($dayHours ? Carbon::createFromTimeString($dayHours->close_at) : Carbon::createFromTime(23, 59))->startOfMinute();
-            $endTime->setDateFrom($startTime);
-            $isClosed = $dayHours?->is_closed ?? false;
+		for ($weekday = 1; $weekday <= 7; $weekday++) {
+			/** @var OpeningHours|null $dayHours */
+			$dayHours  = $this->property->opening_hours->firstWhere("weekday", "===", $weekday);
+			$startTime = ($dayHours ? Carbon::createFromTimeString($dayHours->open_at) : Carbon::createFromTime(0, 0))->startOfMinute();
+			$endTime   = ($dayHours ? Carbon::createFromTimeString($dayHours->close_at) : Carbon::createFromTime(23, 59))->startOfMinute();
+			$endTime->setDateFrom($startTime);
+			$isClosed = $dayHours?->is_closed ?? false;
 
-            $hours[$weekday] = new DayOperatingHours(
-                day            : $weekday,
-                is_closed      : $isClosed,
-                start_at       : $startTime->format('H:i:s'),
-                end_at         : $endTime->format('H:i:s'),
-                open_length_min: $isClosed ? 0 : $startTime->diffInMinutes($endTime, absolute: true),
-            );
+			$hours[$weekday] = new DayOperatingHours(
+				day            : $weekday,
+				is_closed      : $isClosed,
+				start_at       : $startTime->format('H:i:s'),
+				end_at         : $endTime->format('H:i:s'),
+				open_length_min: $isClosed ? 0 : $startTime->diffInMinutes($endTime, absolute: true),
+			);
 
-            $openLengthsMinutes[$weekday] = $startTime->diffInMinutes($endTime, true);
-        }
+			$openLengthsMinutes[$weekday] = $startTime->diffInMinutes($endTime, true);
+		}
+		
+		// Make sure all the lengths are valid
+		if ($openLengthsMinutes->some(fn($length) => $length === 0)) {
+			throw new InvalidOpeningHoursException($this->property);
+		}
 
-        // Make sure all the lengths are valid
-        if ($openLengthsMinutes->some(fn($length) => $length === 0)) {
-            throw new InvalidOpeningHoursException($this->property);
-        }
+		$openDaysPerWeek = $hours->where("is_closed", "=", false)->count();
 
-        $openDaysPerWeek = $hours->where("is_closed", "=", false)->count();
+		// For each week
+		do {
+			// Get the week traffic
+			$dailyTraffic = floor($this->property->rolling_weekly_traffic[(int)strftime("%W", $datePointer->timestamp)] / $openDaysPerWeek);
 
-        // For each week
-        do {
-            // Get the week traffic
-            $dailyTraffic = floor($this->property->rolling_weekly_traffic[(int)strftime("%W", $datePointer->timestamp)] / $openDaysPerWeek);
+			// For each day of the week
+			for ($i = 0; $i < 7; $i++) {
+				$weekday = $i + 1;
+				$date    = $datePointer->clone()->addDays($i);
 
-            // For each day of the week
-            for ($i = 0; $i < 7; $i++) {
-                $weekday = $i + 1;
-                $date    = $datePointer->clone()->addDays($i);
+				// Get the loop configuration
+				$loopConfiguration = $this->product->getLoopConfiguration($date);
 
-                // Get the loop configuration
-                $loopConfiguration = $this->product->getLoopConfiguration($date);
+				// Get the appropriate impressions model
+				$impressionsModel = $this->product->getImpressionModel($date);
 
-                // Get the appropriate impressions model
-                $impressionsModel = $this->product->getImpressionModel($date);
+				// If the impressions model or the loop configuration is missing, ignore
+				if (!$impressionsModel || !$loopConfiguration) {
+					continue;
+				}
 
-                // If the impressions model or the loop configuration is missing, ignore
-                if (!$impressionsModel || !$loopConfiguration) {
-                    continue;
-                }
+				$el                = new ExpressionLanguage();
+				$impressionsPerDay = $el->evaluate($impressionsModel->formula, array_merge(
+					[
+						"traffic"       => $dailyTraffic,
+						"faces"         => $this->product->quantity,
+						"spots"         => 1,
+						"loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
+					],
+					$impressionsModel->variables
+				));
 
-                $el                = new ExpressionLanguage();
-                $impressionsPerDay = $el->evaluate($impressionsModel->formula, array_merge(
-                    [
-                        "traffic"       => $dailyTraffic,
-                        "faces"         => $this->product->quantity,
-                        "spots"         => 1,
-                        "loopLengthMin" => $loopConfiguration->loop_length_ms / (1_000 * 60), // ms to minutes
-                    ],
-                    $impressionsModel->variables
-                ));
+				// Because the impression for the product is spread on all the display unit attached to it,
+				// we divide the number of impressions by the number of display unit for the product
+				$impressionsPerDay /= $this->product->locations_count;
 
-                // Because the impression for the product is spread on all the display unit attached to it,
-                // we divide the number of impressions by the number of display unit for the product
-                $impressionsPerDay /= $this->product->locations_count;
+				/** @var Frame $frame */
+				foreach ($this->frames as $frame) {
+					/**
+					 * How many times the loop runs in one day, or,
+					 * How many times a single ad will be shown in a day
+					 */
+					$loopsPerDay = $openLengthsMinutes[$weekday] * 60_000 / $loopConfiguration->loop_length_ms;
 
-                /** @var Frame $frame */
-                foreach ($this->frames as $frame) {
-                    /**
-                     * How many times the loop runs in one day, or,
-                     * How many times a single ad will be shown in a day
-                     */
-                    $loopsPerDay = $openLengthsMinutes[$weekday] * 60_000 / $loopConfiguration->loop_length_ms;
+					/**
+					 * How many impressions a single play of an ad is going to generate
+					 */
+					$impressionsPerPlay = $impressionsPerDay / $loopsPerDay;
 
-                    /**
-                     * How many impressions a single play of an ad is going to generate
-                     */
-                    $impressionsPerPlay = $impressionsPerDay / $loopsPerDay;
+					/**
+					 * How many loops are played in an hour
+					 */
+					$playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopConfiguration->loop_length_ms;
 
-                    /**
-                     * How many loops are played in an hour
-                     */
-                    $playsPerHour = 3_600_000 /* 3600 * 1000 (ms) */ / $loopConfiguration->loop_length_ms;
+					/**
+					 * How many impressions are generated in an hour
+					 */
+					$impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
 
-                    /**
-                     * How many impressions are generated in an hour
-                     */
-                    $impressionsPerHour = ceil($impressionsPerPlay * $playsPerHour) + 2; // This +2 is to be `extra-generous` on the number of impressions delivered
+					$this->ws->printRow([
+						                    $this->location->external_id,
+						                    $frame->external_id,
+						                    $date->toDateString(),
+						                    $date->clone()->endOfDay()->toDateString(),
+						                    $hours[$weekday]->start_at,
+						                    $hours[$weekday]->end_at,
+						                    $weekday === 1 ? 1 : 0, // Monday
+						                    $weekday === 2 ? 1 : 0, // Tuesday
+						                    $weekday === 3 ? 1 : 0, // Wednesday
+						                    $weekday === 4 ? 1 : 0, // Thursday
+						                    $weekday === 5 ? 1 : 0, // Friday
+						                    $weekday === 6 ? 1 : 0, // Saturday
+						                    $weekday === 7 ? 1 : 0, // Sunday
+						                    $impressionsPerHour,
+					                    ]);
 
-                    $this->ws->printRow([
-                                            $this->location->external_id,
-                                            $frame->external_id,
-                                            $date->toDateString(),
-                                            $date->clone()->endOfDay()->toDateString(),
-                                            $hours[$weekday]->start_at,
-                                            $hours[$weekday]->end_at,
-                                            $weekday === 1 ? 1 : 0, // Monday
-                                            $weekday === 2 ? 1 : 0, // Tuesday
-                                            $weekday === 3 ? 1 : 0, // Wednesday
-                                            $weekday === 4 ? 1 : 0, // Thursday
-                                            $weekday === 5 ? 1 : 0, // Friday
-                                            $weekday === 6 ? 1 : 0, // Saturday
-                                            $weekday === 7 ? 1 : 0, // Sunday
-                                            $impressionsPerHour,
-                                        ]);
+					// We have to set the start and end date explicitly, otherwise PHPSpreadsheet is going to remove the leading zero fo the opening hours
+					$this->ws->setCellValueExplicit([5, $this->ws->getCursorRow() - 1],
+					                                $hours[$weekday]->start_at,
+					                                DataType::TYPE_STRING);
+					$this->ws->setCellValueExplicit([6, $this->ws->getCursorRow() - 1],
+					                                $hours[$weekday]->end_at,
+					                                DataType::TYPE_STRING);
+				}
+			}
 
-                    // We have to set the start and end date explicitly, otherwise PHPSpreadsheet is going to remove the leading zero fo the opening hours
-                    $this->ws->setCellValueExplicit([5, $this->ws->getCursorRow() - 1],
-                                                    $hours[$weekday]->start_at,
-                                                    DataType::TYPE_STRING);
-                    $this->ws->setCellValueExplicit([6, $this->ws->getCursorRow() - 1],
-                                                    $hours[$weekday]->end_at,
-                                                    DataType::TYPE_STRING);
-                }
-            }
+			$datePointer->addWeek();
+		} while ($datePointer->isBefore($endBoundary));
 
-            $datePointer->addWeek();
-        } while ($datePointer->isBefore($endBoundary));
+		return true;
+	}
 
-        return true;
-    }
+	public function format(): DocumentFormat {
+		return DocumentFormat::CSV;
+	}
 
-    public function format(): DocumentFormat {
-        return DocumentFormat::CSV;
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public function getName(): string {
+		return "AudienceFile-{$this->location->external_id}";
+	}
 
-    /**
-     * @inheritDoc
-     */
-    public function getName(): string {
-        return "AudienceFile-{$this->location->external_id}";
-    }
+	public function customizeOutput(BaseWriter $writer): void {
+		$writer->setPreCalculateFormulas(false);
 
-    public function customizeOutput(BaseWriter $writer): void {
-        $writer->setPreCalculateFormulas(false);
-
-        // Writer is actually a Csv writer as we export only to csv
-        $writer->setEnclosure('');
-    }
+		// Writer is actually a Csv writer as we export only to csv
+		$writer->setEnclosure('');
+	}
 }

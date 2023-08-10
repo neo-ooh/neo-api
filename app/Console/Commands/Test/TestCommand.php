@@ -11,8 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Models\ContractFlight;
-use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
+use Neo\Modules\Broadcast\Models\Campaign;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -25,10 +24,6 @@ class TestCommand extends Command {
 	 * @throws Exception
 	 */
 	public function handle() {
-		(new FetchCampaignsPerformancesJob(null, 90))->handle();
-		/** @var ContractFlight $flight */
-		$flight = ContractFlight::query()->find(70934);
-		dump($flight->getReservationsLocationPerformances()->sum("impressions"));
-		dump($flight->products_performances->sum("impressions"));
+		dump(Campaign::query()->find(34920)->products()->get()->toArray());
 	}
 }

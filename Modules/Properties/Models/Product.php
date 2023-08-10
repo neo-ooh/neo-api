@@ -138,7 +138,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 				load: "cover_picture",
 				gate: [Capability::properties_pictures_view, Capability::planner_access],
 			),
-			"format"              => "format",
+			"format"              => ["format", "category.format"],
 			"impressions_models"  => ["impressions_models", "category.impressions_models"],
 			"inventories"         => Relation::make(
 				load: ["inventory_resource.inventories_settings", "inventory_resource.external_representations"],
@@ -168,6 +168,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 
 	protected static function boot(): void {
 		parent::boot();
+
 
 		static::deleting(static function (Product $product) {
 			$product->attachments->each(fn(Attachment $attachment) => $attachment->delete());
@@ -203,8 +204,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 	}
 
 	public function campaigns(): BelongsToMany {
-		return $this->belongsToMany(Campaign::class, "campaign_locations", "product_id", "campaign_id")
-		            ->withPivot(["location_id"])
+		return $this->belongsToMany(Campaign::class, "campaign_products", "product_id", "campaign_id")
 		            ->withTimestamps();
 	}
 

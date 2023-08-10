@@ -11,13 +11,16 @@
 namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Properties\Http\Requests\ProductLocations\UpdateProductLocationsRequest;
 use Neo\Modules\Properties\Models\Product;
 
 class ProductsLocationsController {
-    public function sync(UpdateProductLocationsRequest $request, Product $product) {
-        $product->locations()->sync($request->input("locations", []));
+	public function sync(UpdateProductLocationsRequest $request, Product $product) {
+		$product->locations()->sync($request->input("locations", []));
 
-        return new Response($product->locations);
-    }
+		$product->campaigns->each(fn(Campaign $campaign) => $campaign->promote());
+
+		return new Response($product->locations);
+	}
 }

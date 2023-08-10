@@ -29,9 +29,7 @@ use Neo\Modules\Broadcast\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignPerformancesJob;
 use Neo\Modules\Broadcast\Models\Campaign;
-use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Schedule;
-use Neo\Modules\Properties\Models\Product;
 
 /**
  * @phpstan-type CampaignLocation array{location_id: int, format_id: int, product_id: int|null}
@@ -111,19 +109,7 @@ class CampaignsController extends Controller {
 			"product_id"  => null,
 		]));
 
-		// If products where given, we add their locations to the list as well
 		$productIds = collect($request->input("products", []));
-		/** @var Collection<Product> $products */
-		$products = Product::query()->with(["locations", "category"])->findMany($productIds);
-
-		/** @var Product $product */
-		foreach ($products as $product) {
-			$locations->push(...$product->locations->map(fn(Location $location) => ([
-				"location_id" => $location->getKey(),
-				"format_id"   => $product->format_id ?? $product->category->format_id,
-				"product_id"  => $product->getKey(),
-			])));
-		}
 
 		// We create the campaign and attach its location in a transaction as we want to prevent the campaign creation if there is a problem with the locations
 		try {
@@ -136,6 +122,8 @@ class CampaignsController extends Controller {
 				         "format_id"  => $locationDefinition["format_id"],
 				         "product_id" => $locationDefinition["product_id"],
 			         ]])->all());
+
+			$campaign->products()->attach($productIds);
 
 			DB::commit();
 		} catch (Exception $e) {

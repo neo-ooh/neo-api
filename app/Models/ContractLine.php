@@ -17,6 +17,7 @@ use Neo\Models\Traits\HasView;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Resources\Contracts\FlightProductPerformanceDatum;
+use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
  * @property-read int                           $product_id
@@ -41,6 +42,7 @@ use Neo\Resources\Contracts\FlightProductPerformanceDatum;
  */
 class ContractLine extends Model {
 	use HasCompositePrimaryKey;
+	use HasRelationships;
 	use HasView;
 
 	protected $table = "contracts_lines_view";

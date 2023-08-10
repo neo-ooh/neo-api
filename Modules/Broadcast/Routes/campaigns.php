@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsLocationsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsPerformancesController;
+use Neo\Modules\Broadcast\Http\Controllers\CampaignsProductsController;
 use Neo\Modules\Broadcast\Http\Controllers\CampaignsSchedulesController;
 use Neo\Modules\Broadcast\Http\Controllers\ScheduleContentsController;
 use Neo\Modules\Broadcast\Http\Controllers\SchedulesController;
@@ -62,6 +63,16 @@ Route::group([
 	Route::   get("campaigns/{campaign}/locations", CampaignsLocationsController::class . "@index");
 	Route::   put("campaigns/{campaign}/locations", CampaignsLocationsController::class . "@sync");
 	Route::delete("campaigns/{campaign}/locations/{location}", CampaignsLocationsController::class . "@remove");
+
+	/*
+   |----------------------------------------------------------------------
+   | Campaigns Products
+   |----------------------------------------------------------------------
+   */
+
+	Route::   get("campaigns/{campaign}/products", [CampaignsProductsController::class, "index"]);
+	Route::   put("campaigns/{campaign}/products", [CampaignsProductsController::class, "sync"]);
+	Route::delete("campaigns/{campaign}/products/{product}", [CampaignsProductsController::class, "remove"]);
 
 	/*
 	|----------------------------------------------------------------------

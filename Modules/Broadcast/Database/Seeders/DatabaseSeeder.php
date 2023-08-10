@@ -12,17 +12,19 @@ namespace Neo\Modules\Broadcast\Database\Seeders;
 
 use Illuminate\Database\Seeder as BaseSeeder;
 use Neo\Modules\Broadcast\Database\Seeders\views\BroadcastResourcesDetailsViewSeeder;
+use Neo\Modules\Broadcast\Database\Seeders\views\CampaignFormatsSeeder;
 use Neo\Modules\Broadcast\Database\Seeders\views\SchedulesDetailsViewSeeder;
 
 class DatabaseSeeder extends BaseSeeder {
-    public function run(): void {
-        $this->call([
-                        // Views
-                        SchedulesDetailsViewSeeder::class,
-                        BroadcastResourcesDetailsViewSeeder::class,
+	public function run(): void {
+		$this->call([
+			            // Views
+			            CampaignFormatsSeeder::class,
+			            SchedulesDetailsViewSeeder::class,
+			            BroadcastResourcesDetailsViewSeeder::class,
 
-                        // Data
-                        ParametersSeeder::class,
-                    ]);
-    }
+			            // Data
+			            ParametersSeeder::class,
+		            ]);
+	}
 }

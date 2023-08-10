@@ -27,14 +27,14 @@ class BroadcastKernelServiceProvider extends ServiceProvider {
 			// Broadcast jobs
 			$schedule->job(BroadcastJobsSchedulerJob::class)->everyMinute();
 
+			// Campaigns Performances
+			$schedule->job(FetchCampaignsPerformancesJob::class)->everyThreeHours();
+			
 			// Networks
 			$schedule->job(SynchronizeAllNetworksJob::class)->daily();
 
 			// Resources
 			$schedule->job(DeleteExpiredResourcesJob::class)->daily();
-
-			// Campaigns Performances
-			$schedule->job(FetchCampaignsPerformancesJob::class)->daily();
 
 			// Non-executed broadcast jobs
 			$schedule->job(RetryPendingBroadcastJobsJob::class)->daily();

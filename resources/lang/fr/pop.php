@@ -40,7 +40,7 @@ return [
 	"group-remaining" => "Produits restants",
 
 	"capped-impressions-disclaimer" => "*Les impressions comptabilisées dans le rapport de performance sont plafonnées à 150% des impressions contractées.",
-	"pop-from-broadsign"            => "Preuve de performance fournie par BroadSign",
+	"pop-from-broadsign"            => "Informations fournies par BroadSign",
 
 	"table-network"                => "Réseau",
 	"table-start-date"             => "Date de début",

@@ -11,7 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Models\ContractLine;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -24,6 +24,11 @@ class TestCommand extends Command {
 	 * @throws Exception
 	 */
 	public function handle() {
-		dump(Campaign::query()->find(34920)->products()->get()->toArray());
+		/** @var ContractLine $line */
+		$line = ContractLine::query()->where("flight_id", "=", 28521)
+		                    ->where("product_id", "=", 1)
+		                    ->first();
+
+		dump($line->campaigns()->get()->toArray());
 	}
 }

@@ -35,6 +35,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property string                            $contract_id // ID of the contract has set by sales (not related to the actual ID
  *           of the contract inside Connect)
  * @property integer                           $external_id
+ * @property boolean                           $is_closed
  * @property integer                           $client_id
  * @property integer                           $salesperson_id
  * @property integer                           $advertiser_id

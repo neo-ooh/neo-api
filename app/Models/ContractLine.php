@@ -12,8 +12,9 @@ namespace Neo\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Neo\Models\Traits\HasCompositePrimaryKey;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Neo\Models\Traits\HasView;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Resources\Contracts\FlightProductPerformanceDatum;
@@ -41,7 +42,6 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  *           `ContractFlight::fillLinesPerformances()`
  */
 class ContractLine extends Model {
-	use HasCompositePrimaryKey;
 	use HasRelationships;
 	use HasView;
 
@@ -51,7 +51,7 @@ class ContractLine extends Model {
 
 	public $incrementing = false;
 
-	protected $primaryKey = ["product_id", "flight_id"];
+	protected $primaryKey = "id";
 
 	protected $fillable = [
 		"product_id",
@@ -74,5 +74,9 @@ class ContractLine extends Model {
 
 	public function product(): BelongsTo {
 		return $this->belongsTo(Product::class, "product_id", "id");
+	}
+
+	public function campaigns(): BelongsToMany {
+		return $this->belongsToMany(Campaign::class, "contract_lines_campaigns", "contract_line_id", "campaign_id");
 	}
 }

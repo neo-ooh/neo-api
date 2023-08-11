@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Database\Seeders;
 
 use Illuminate\Database\Seeder as BaseSeeder;
+use Neo\Modules\Properties\Database\Seeders\views\ContractLinesCampaignsViewSeeder;
 use Neo\Modules\Properties\Database\Seeders\views\ProductsViewSeeder;
 use Neo\Modules\Properties\Database\Seeders\views\ProductsWarningsViewSeeder;
 use Neo\Modules\Properties\Database\Seeders\views\PropertiesViewSeeder;
@@ -24,6 +25,8 @@ class DatabaseSeeder extends BaseSeeder {
 			            ProductsViewSeeder::class,
 			            PropertiesWarningsViewSeeder::class,
 			            ProductsWarningsViewSeeder::class,
+
+			            ContractLinesCampaignsViewSeeder::class,
 
 			            // Data
 

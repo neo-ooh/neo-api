@@ -100,6 +100,7 @@ class ContractFlight extends Model {
 			"campaigns"             => Relation::make(load: "campaigns"),
 			"contract"              => Relation::make(load: "contract"),
 			"lines"                 => Relation::make(load: "lines.product.property"),
+			"lines-campaigns"       => Relation::make(load: "lines.campaigns"),
 			"performances"          => Relation::make(append: "performances"),
 			"products"              => Relation::make(load: "products"),
 			"products-performances" => Relation::make(append: "products_performances", custom: fn(ContractFlight $flight) => $flight->fillLinesPerformances()),

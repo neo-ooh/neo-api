@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -18,27 +18,28 @@ use Neo\Models\Contract;
 use Neo\Rules\PublicRelations;
 
 class UpdateContractRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize() {
-        /** @var Contract $contract */
-        $contract = $this->route("contract");
-        return $contract->salesperson_id === Auth::id() || Gate::allows(Capability::contracts_manage->value);
-    }
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	public function authorize() {
+		/** @var Contract $contract */
+		$contract = $this->route("contract");
+		return $contract->salesperson_id === Auth::id() || Gate::allows(Capability::contracts_manage->value);
+	}
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules() {
-        return [
-            "salesperson_id" => ["required", "exists:actors,id"],
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array
+	 */
+	public function rules() {
+		return [
+			"is_closed"      => ["required", "boolean"],
+			"salesperson_id" => ["required", "exists:actors,id"],
 
-            "with" => ["array", new PublicRelations(Contract::class)],
-        ];
-    }
+			"with" => ["array", new PublicRelations(Contract::class)],
+		];
+	}
 }

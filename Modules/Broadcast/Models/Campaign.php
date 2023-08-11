@@ -341,6 +341,7 @@ class Campaign extends BroadcastResourceModel {
 		                          new CampaignLocation(
 			                          location_id: $location->getKey(),
 			                          format_id  : $product->format_id,
+			                          network_id : $location->network_id,
 			                          location   : $location,
 		                          ))));
 
@@ -349,6 +350,7 @@ class Campaign extends BroadcastResourceModel {
 		new CampaignLocation(
 			location_id: $location->getKey(),
 			format_id  : $location->getRelationValue("pivot")->format_id,
+			network_id : $location->network_id,
 			location   : $location,
 		)
 		));

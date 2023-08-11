@@ -17,6 +17,7 @@ class CampaignLocation extends Data {
 	public function __construct(
 		public int      $location_id,
 		public int      $format_id,
+		public int      $network_id,
 
 		public Location $location
 	) {

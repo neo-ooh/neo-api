@@ -30,6 +30,7 @@ use Neo\Modules\Broadcast\Http\Requests\Campaigns\UpdateCampaignRequest;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignPerformancesJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Schedule;
+use Neo\Modules\Properties\Models\Product;
 
 /**
  * @phpstan-type CampaignLocation array{location_id: int, format_id: int, product_id: int|null}
@@ -110,6 +111,7 @@ class CampaignsController extends Controller {
 		]));
 
 		$productIds = collect($request->input("products", []));
+		$products   = Product::query()->findMany($productIds);
 
 		// We create the campaign and attach its location in a transaction as we want to prevent the campaign creation if there is a problem with the locations
 		try {
@@ -123,7 +125,7 @@ class CampaignsController extends Controller {
 				         "product_id" => $locationDefinition["product_id"],
 			         ]])->all());
 
-			$campaign->products()->attach($productIds);
+			$campaign->products()->attach($products->pluck("id"));
 
 			DB::commit();
 		} catch (Exception $e) {

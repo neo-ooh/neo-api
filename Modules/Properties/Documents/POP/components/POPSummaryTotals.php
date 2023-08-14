@@ -84,7 +84,7 @@ class POPSummaryTotals extends Component {
 			"media_value"         => $flights->sum("media_value"),
 			"counted_impressions" => $totalImpressions,
 			"net_investment"      => $totalInvestment,
-			"cpm"                 => $totalInvestment / $totalImpressions * 1000,
+			"cpm"                 => $totalImpressions > 0 ? $totalInvestment / $totalImpressions * 1000 : 0,
 		];
 
 		return view('properties::pop.summary-totals', [

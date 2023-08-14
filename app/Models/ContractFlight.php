@@ -101,7 +101,10 @@ class ContractFlight extends Model {
 			"contract"              => Relation::make(load: "contract"),
 			"lines"                 => Relation::make(load: "lines.product.property"),
 			"lines-campaigns"       => Relation::make(load: "lines.campaigns"),
-			"performances"          => Relation::make(append: "performances"),
+			"performances"          => Relation::make(
+				load  : "campaigns.performances",
+				append: "performances"
+			),
 			"products"              => Relation::make(load: "products"),
 			"products-performances" => Relation::make(append: "products_performances", custom: fn(ContractFlight $flight) => $flight->fillLinesPerformances()),
 			"screenshots"           => Relation::make(load: ["screenshots.product.property", "screenshots.location"]),

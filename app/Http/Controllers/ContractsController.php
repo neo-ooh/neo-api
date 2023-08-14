@@ -111,7 +111,7 @@ class ContractsController extends Controller {
 
 	public function update(UpdateContractRequest $request, Contract $contract): Response {
 		$contract->salesperson_id = $request->input("salesperson_id");
-		$contract->is_closed      = $request->input("salesperson_id");
+		$contract->is_closed      = $request->input("is_closed");
 		$contract->save();
 
 		return new Response($contract->loadPublicRelations());

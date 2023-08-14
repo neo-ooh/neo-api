@@ -68,6 +68,7 @@ class Contract extends Model {
 
 	protected $casts = [
 		"has_plan"   => "boolean",
+		"is_closed"  => "boolean",
 		"start_date" => "date",
 		"end_date"   => "date",
 	];
@@ -83,7 +84,10 @@ class Contract extends Model {
 					->append("locations"),
 			],
 			"owner"        => "owner",
-			"performances" => "append:performances",
+			"performances" => Relation::make(
+				load  : "flights.campaigns.performances",
+				append: "performances"
+			),
 			"plan"         => "append:stored_plan",
 			"reservations" => "reservations",
 			"salesperson"  => "salesperson",
@@ -141,8 +145,7 @@ class Contract extends Model {
 	*/
 
 	public function getPerformancesAttribute() {
-		return $this->flights->append("performances")
-		                     ->reduce(fn(\Illuminate\Support\Collection $acc, ContractFlight $flight) => $acc->push(...$flight->performances), collect());
+		return $this->flights->append("performances")->flatMap(fn(ContractFlight $flight) => $flight->performances);
 	}
 
 	/*

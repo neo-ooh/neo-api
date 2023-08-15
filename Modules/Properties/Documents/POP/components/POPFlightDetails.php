@@ -172,7 +172,7 @@ class POPFlightDetails {
 
 		$requestScreenshots = $this->flight->screenshots->toCollection();
 		$screenshots        = Screenshot::query()->findMany($requestScreenshots->pluck("screenshot_id"))
-		                                ->load(["product.property", "location"]);
+		                                ->load(["product.property.address", "location"]);
 
 		$formattedScreenshots = $screenshots->map(fn(Screenshot $screenshot) => ([
 			"screenshot"    => $screenshot,
@@ -191,7 +191,7 @@ class POPFlightDetails {
 					? $screenshot->location->city . ", " . $screenshot->location->province
 					: "-"
 				),
-			"received_at"   => $screenshot->received_at,
+			"received_at"   => $screenshot->received_at->setTimezone(array_filter([$screenshot->product?->property->address?->timezone])[0] ?? 'America/Toronto'),
 			"mockup"        => $requestScreenshots->firstWhere("screenshot_id", "=", $screenshot->getKey())->mockup,
 		]));
 

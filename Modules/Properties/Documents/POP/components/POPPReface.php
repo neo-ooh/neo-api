@@ -21,12 +21,17 @@ class POPPReface extends Component {
 	}
 
 	public function render() {
-		$flightsDates = $this->request->flights->toCollection()
-		                                       ->where("flight_type", '!==', FlightType::BUA)
-		                                       ->map(fn(POPFlight $flight) => ([
-			                                       "start_date" => Carbon::parse($flight->start_date),
-			                                       "end_date"   => Carbon::parse($flight->end_date),
-		                                       ]));
+		$flights = $this->request->flights->toCollection()
+		                                  ->where("flight_type", '!==', FlightType::BUA);
+
+		if ($flights->count() === 0) {
+			$flights = $this->request->flights->toCollection();
+		}
+
+		$flightsDates = $flights->map(fn(POPFlight $flight) => ([
+			"start_date" => Carbon::parse($flight->start_date),
+			"end_date"   => Carbon::parse($flight->end_date),
+		]));
 
 		return view('properties::pop.preface', [
 			"contract_name"   => $this->request->contract_number,

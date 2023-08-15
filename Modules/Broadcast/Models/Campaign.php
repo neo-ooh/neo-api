@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Carbon as Date;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Neo\Enums\Capability;
 use Neo\Helpers\Relation;
 use Neo\Models\Actor;
@@ -32,6 +33,8 @@ use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Jobs\Campaigns\DeleteCampaignJob;
 use Neo\Modules\Broadcast\Jobs\Campaigns\PromoteCampaignJob;
 use Neo\Modules\Broadcast\Models\Structs\CampaignLocation;
+use Neo\Modules\Broadcast\Models\Structs\CampaignScheduleLocation;
+use Neo\Modules\Broadcast\Models\Structs\CampaignScheduleProduct;
 use Neo\Modules\Broadcast\Rules\AccessibleCampaign;
 use Neo\Modules\Broadcast\Services\ExternalCampaignDefinition;
 use Neo\Modules\Broadcast\Services\Resources\Campaign as CampaignResource;
@@ -45,53 +48,56 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 /**
  * Neo\Models\Campaigns
  *
- * @property int                          $id
- * @property int                          $parent_id
- * @property int                          $creator_id
- * @property int|null                     $flight_id
- * @property string                       $name
- * @property double                       $static_duration_override  Duration in seconds for contents without a predetermined
- *           duration
+ * @property int                                  $id
+ * @property int                                  $parent_id
+ * @property int                                  $creator_id
+ * @property int|null                             $flight_id
+ * @property string                               $name
+ * @property double                               $static_duration_override  Duration in seconds for contents without a
+ *           predetermined duration
  *           (pictures). Override the format content length if set to a value above zero
- * @property double                       $dynamic_duration_override Maximum allowed duration for contents with a predetermined
- *           duration
+ * @property double                               $dynamic_duration_override Maximum allowed duration for contents with a
+ *           predetermined duration
  *           (videos). Override the format content length if set to a value above zero
- * @property int                          $occurrences_in_loop       Tell how many time in one loop the campaign should play,
- *           default to
+ * @property int                                  $occurrences_in_loop       Tell how many time in one loop the campaign should
+ *           play, default to
  *           1
- * @property int                          $priority                  Higher number means lower priority
- * @property Date                         $start_date                Y-m-d
- * @property Date                         $start_time                H:m:s
- * @property Date                         $end_date                  Y-m-d
- * @property Date                         $end_time                  H:m:s
- * @property int                          $broadcast_days            Bit mask of the days of the week the campaign should run:
+ * @property int                                  $priority                  Higher number means lower priority
+ * @property Date                                 $start_date                Y-m-d
+ * @property Date                                 $start_time                H:m:s
+ * @property Date                                 $end_date                  Y-m-d
+ * @property Date                                 $end_time                  H:m:s
+ * @property int                                  $broadcast_days            Bit mask of the days of the week the campaign should
+ *           run:
  *           127 =>
  *           01111111 - all week
- * @property int                          $default_schedule_duration_days
+ * @property int                                  $default_schedule_duration_days
  *
- * @property Date                         $created_at
- * @property Date                         $updated_at
- * @property Date|null                    $deleted_at
+ * @property Date                                 $created_at
+ * @property Date                                 $updated_at
+ * @property Date|null                            $deleted_at
  *
- * @property CampaignStatus               $status
+ * @property CampaignStatus                       $status
  *
- * @property Actor                        $parent
- * @property Actor                        $creator
+ * @property Actor                                $parent
+ * @property Actor                                $creator
  *
- * @property int                          $schedules_count
- * @property Collection<Schedule>         $schedules
- * @property Collection<Schedule>         $expired_schedules
+ * @property int                                  $schedules_count
+ * @property Collection<Schedule>                 $schedules
+ * @property Collection<Schedule>                 $expired_schedules
  *
- * @property Collection<Location>         $locations
- * @property int                          $locations_count
- * @property Collection<ResolvedProduct>  $products
+ * @property Collection<Location>                 $locations
+ * @property int                                  $locations_count
+ * @property Collection<ResolvedProduct>          $products
+ * @property Collection<CampaignScheduleProduct>  $schedules_products_targeting
+ * @property Collection<CampaignScheduleLocation> $schedules_location_targeting
  *
- * @property Collection<CampaignLocation> $resolved_locations
+ * @property Collection<CampaignLocation>         $resolved_locations
  *
- * @property Collection<Layout>           $layouts
+ * @property Collection<Layout>                   $layouts
  *
- * @property ContractFlight|null          $flight
- * @property Contract|null                $contract
+ * @property ContractFlight|null                  $flight
+ * @property Contract|null                        $contract
  *
  * @mixin Builder<Campaign>
  */
@@ -160,6 +166,9 @@ class Campaign extends BroadcastResourceModel {
 			"contract"                           => "contract",
 			"creator"                            => "creator",
 			"expired_schedules"                  => ["expired_schedules.owner:id,name"],
+			"expired_schedules_contents"         => Relation::make(
+				load: ["expired_schedules.owner:id,name", "expired_schedules.contents"]
+			),
 			"external_representations"           => Relation::make(
 				load: "external_representations",
 				gate: Capability::dev_tools,
@@ -177,9 +186,16 @@ class Campaign extends BroadcastResourceModel {
 			"schedules_count"                    => Relation::make(
 				count: "schedules"
 			),
+			"schedules_contents"                 => Relation::make(
+				load: ["schedules.owner:id,name", "schedules.contents"]
+			),
 			"schedules_external_representations" => Relation::make(
 				load: "schedules.external_representations",
 				gate: Capability::dev_tools,
+			),
+			"schedules_targeting"                => Relation::make(
+				append: ["schedules_products_targeting", "schedules_locations_targeting"],
+				gate  : Capability::campaigns_edit,
 			),
 			"status"                             => "append:status",
 			"tags"                               => Relation::make(
@@ -356,6 +372,54 @@ class Campaign extends BroadcastResourceModel {
 		));
 
 		return $productsLocations->merge($locations)->unique(fn(CampaignLocation $cl) => $cl->location_id . "-" . $cl->format_id);
+	}
+
+	public function getSchedulesProductsTargetingAttribute() {
+		return CampaignScheduleProduct::collection(
+			DB::select("
+				WITH `capro` AS (SELECT `campaign_products`.`campaign_id`, `p`.*
+                     FROM `campaign_products`
+                          JOIN `products_view` `p` ON `campaign_products`.`product_id` = `p`.`id`)
+				SELECT DISTINCT `capro`.`campaign_id` AS `campaign_id`,
+				                `capro`.`id` AS `product_id`,
+				                `s`.`id` AS `schedule_id`
+				  FROM `capro`
+				       CROSS JOIN `schedules` `s` ON `capro`.`campaign_id` = `s`.`campaign_id`
+				       JOIN `schedule_contents` `sc` ON `s`.`id` = `sc`.`schedule_id`
+				       JOIN `contents` `c` ON `sc`.`content_id` = `c`.`id`
+				       JOIN `layouts` `l` ON `c`.`layout_id` = `l`.`id`
+				       JOIN `format_layouts` `fl` ON `l`.`id` = `fl`.`layout_id` AND `capro`.`format_id` = `fl`.`format_id`
+				 WHERE `capro`.`campaign_id` = ?
+				   AND `s`.`deleted_at` IS NULL
+				   AND `capro`.`format_id` NOT IN (SELECT `scdf`.`format_id`
+				                                     FROM `schedule_content_disabled_formats` `scdf`
+				                                     WHERE `scdf`.`schedule_content_id` = `sc`.`id`)
+			", [$this->getKey()])
+		)->toCollection();
+	}
+
+	public function getSchedulesLocationsTargetingAttribute() {
+		return CampaignScheduleLocation::collection(
+			DB::select("
+			  WITH `calo` AS (SELECT `campaign_locations`.*, `locations`.`name`
+			                     FROM `campaign_locations`
+			                     JOIN `locations` ON `campaign_locations`.`location_id` = `locations`.`id`)
+			SELECT DISTINCT `calo`.`campaign_id`,
+			                `calo`.`location_id`,
+			                `s`.`id` as `schedule_id`
+			  FROM `calo`
+			       CROSS JOIN `schedules` `s` ON `calo`.`campaign_id` = `s`.`campaign_id`
+			       JOIN `schedule_contents` `sc` ON `s`.`id` = `sc`.`schedule_id`
+			       JOIN `contents` `c` ON `sc`.`content_id` = `c`.`id`
+			       JOIN `layouts` `l` ON `c`.`layout_id` = `l`.`id`
+			       JOIN `format_layouts` `fl` ON `l`.`id` = `fl`.`layout_id` AND `calo`.`format_id` = `fl`.`format_id`
+			 WHERE `calo`.`campaign_id` = ?
+				   AND `s`.`deleted_at` IS NULL
+			   AND `calo`.`format_id` NOT IN (SELECT `scdf`.`format_id`
+			                                     FROM `schedule_content_disabled_formats` `scdf`
+			                                     WHERE `scdf`.`schedule_content_id` = `sc`.`id`)
+			", [$this->getKey()])
+		)->toCollection();
 	}
 
 

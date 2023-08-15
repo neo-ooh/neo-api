@@ -12,24 +12,23 @@ namespace Neo\Modules\Properties\Http\Requests\Products;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Rules\PublicRelations;
 
 class ListProductsByIdsRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "ids"   => ["required", "array"],
-            "ids.*" => ["integer", new Exists(Product::class, "id")],
+	public function rules(): array {
+		return [
+			"ids"   => ["required", "array"],
+			"ids.*" => ["integer"],
 
-            "with" => ["array", new PublicRelations(Product::class)],
-        ];
-    }
+			"with" => ["array", new PublicRelations(Product::class)],
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::networks_edit->value)
-            || Gate::allows(Capability::products_view->value);
+	public function authorize(): bool {
+		return Gate::allows(Capability::networks_edit->value)
+			|| Gate::allows(Capability::products_view->value);
 
-    }
+	}
 }

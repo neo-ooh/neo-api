@@ -158,8 +158,10 @@ class BroadSignAudienceFile extends XLSXDocument {
 			$hours[$weekday] = new DayOperatingHours(
 				day            : $weekday,
 				is_closed      : $isClosed,
-				start_at       : $startTime->format('H:i:s'),
-				end_at         : $endTime->format('H:i:s'),
+//				start_at       : $startTime->format('H:i:s'),
+//				end_at         : $endTime->format('H:i:s'),
+				start_at       : "00:00:00",
+				end_at         : "23:59:00",
 				open_length_min: $isClosed ? 0 : $startTime->diffInMinutes($endTime, absolute: true),
 			);
 
@@ -237,10 +239,8 @@ class BroadSignAudienceFile extends XLSXDocument {
 						                    $frame->external_id,
 						                    $date->toDateString(),
 						                    $date->clone()->endOfDay()->toDateString(),
-						                    "00:00:00",
-						                    //						                    $hours[$weekday]->start_at,
-						                    "23:59:00",
-						                    //						                    $hours[$weekday]->end_at,
+						                    $hours[$weekday]->start_at,
+						                    $hours[$weekday]->end_at,
 						                    $weekday === 1 ? 1 : 0, // Monday
 						                    $weekday === 2 ? 1 : 0, // Tuesday
 						                    $weekday === 3 ? 1 : 0, // Wednesday

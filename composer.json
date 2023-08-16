@@ -52,6 +52,7 @@
     "predis/predis": "^2.0.0",
     "propaganistas/laravel-phone": "^5.0.3",
     "ramsey/uuid": "^4.1",
+    "sentry/sentry-laravel": "^3.7",
     "skagarwal/google-places-api": "^2.0",
     "spatie/image": "^2.2",
     "spatie/laravel-data": "^3.0",

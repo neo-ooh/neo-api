@@ -239,7 +239,7 @@ class BroadSignAudienceFile extends XLSXDocument {
 						                    $date->clone()->endOfDay()->toDateString(),
 						                    "00:00:00",
 						                    //						                    $hours[$weekday]->start_at,
-						                    "23:59:59",
+						                    "23:59:00",
 						                    //						                    $hours[$weekday]->end_at,
 						                    $weekday === 1 ? 1 : 0, // Monday
 						                    $weekday === 2 ? 1 : 0, // Tuesday

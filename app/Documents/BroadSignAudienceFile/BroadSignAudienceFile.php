@@ -165,7 +165,7 @@ class BroadSignAudienceFile extends XLSXDocument {
 
 			$openLengthsMinutes[$weekday] = $startTime->diffInMinutes($endTime, true);
 		}
-		
+
 		// Make sure all the lengths are valid
 		if ($openLengthsMinutes->some(fn($length) => $length === 0)) {
 			throw new InvalidOpeningHoursException($this->property);
@@ -237,8 +237,10 @@ class BroadSignAudienceFile extends XLSXDocument {
 						                    $frame->external_id,
 						                    $date->toDateString(),
 						                    $date->clone()->endOfDay()->toDateString(),
-						                    $hours[$weekday]->start_at,
-						                    $hours[$weekday]->end_at,
+						                    "00:00:00",
+						                    //						                    $hours[$weekday]->start_at,
+						                    "23:59:59",
+						                    //						                    $hours[$weekday]->end_at,
 						                    $weekday === 1 ? 1 : 0, // Monday
 						                    $weekday === 2 ? 1 : 0, // Tuesday
 						                    $weekday === 3 ? 1 : 0, // Wednesday

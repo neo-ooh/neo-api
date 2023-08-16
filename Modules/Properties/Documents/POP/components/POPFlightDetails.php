@@ -237,7 +237,7 @@ class POPFlightDetails {
 
 		foreach ($linesGroups as $linesGroup) {
 			$label = match ($currentLevel) {
-				"market"   => $linesGroup[0]->product->property->address->city->market->{"name_" . App::getLocale()},
+				"market"   => $linesGroup[0]->product->property->address->city->market?->{"name_" . App::getLocale()} ?? '',
 				"property" => $linesGroup[0]->product->property->actor->name,
 				"category" => $linesGroup[0]->product->category->{"name_" . App::getLocale()},
 				default    => $linesGroup[0]->product->{"name_" . App::getLocale()},

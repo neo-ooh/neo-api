@@ -17,6 +17,7 @@ use Neo\Models\Traits\HasView;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Models\ResolvedProduct;
 use Neo\Resources\Contracts\FlightProductPerformanceDatum;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
@@ -49,7 +50,7 @@ class ContractLine extends Model {
 	protected $table = "contracts_lines_view";
 
 	public $write_table = "contracts_lines";
-	
+
 	protected $primaryKey = "id";
 
 	protected $fillable = [
@@ -72,7 +73,7 @@ class ContractLine extends Model {
 	}
 
 	public function product(): BelongsTo {
-		return $this->belongsTo(Product::class, "product_id", "id");
+		return $this->belongsTo(ResolvedProduct::class, "product_id", "id");
 	}
 
 	public function campaigns(): BelongsToMany {

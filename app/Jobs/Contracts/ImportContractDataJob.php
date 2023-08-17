@@ -190,21 +190,23 @@ class ImportContractDataJob implements ShouldQueue {
 
 			// If a line with the same product id and flight id already exists, use it, otherwise get a new line instance
 			/** @var ContractLine $line */
-			$line          = ContractLine::query()->updateOrCreate([
-				                                                       "product_id" => $product->getKey(),
-				                                                       "flight_id"  => $flight->getKey(),
-			                                                       ], [
-				                                                       "external_id"   => $orderLine->getKey(),
-				                                                       "spots"         => $orderLine->product_uom_qty,
-				                                                       "media_value"   => $orderLine->price_unit * $orderLine->nb_weeks * $orderLine->nb_screen * $orderLine->product_uom_qty,
-				                                                       "discount"      => $orderLine->discount,
-				                                                       "discount_type" => "relative",
-				                                                       "price"         => $orderLine->price_subtotal,
-				                                                       "traffic"       => 0,
-				                                                       "impressions"   => $orderLine->connect_impression ?: $orderLine->impression,
-			                                                       ]);
-			$flight->lines = $flight->lines->push($line)->unique("id");
+			$line = ContractLine::query()->updateOrCreate([
+				                                              "product_id" => $product->getKey(),
+				                                              "flight_id"  => $flight->getKey(),
+			                                              ], [
+				                                              "external_id"   => $orderLine->getKey(),
+				                                              "spots"         => $orderLine->product_uom_qty,
+				                                              "media_value"   => $orderLine->price_unit * $orderLine->nb_weeks * $orderLine->nb_screen * $orderLine->product_uom_qty,
+				                                              "discount"      => $orderLine->discount,
+				                                              "discount_type" => "relative",
+				                                              "price"         => $orderLine->price_subtotal,
+				                                              "traffic"       => 0,
+				                                              "impressions"   => $orderLine->connect_impression ?: $orderLine->impression,
+			                                              ]);
 
+			dump($line->toArray());
+
+			$flight->lines = $flight->lines->push($line)->unique("id");
 			// Log the line for later use
 			$contractLines->push($line);
 
@@ -222,7 +224,7 @@ class ImportContractDataJob implements ShouldQueue {
 		// Remove any line that may have been removed
 		$contractLines->groupBy("flight_id")->each(function (Collection $lines) {
 			ContractLine::query()
-			            ->where("flight_id", $lines[0]["flight_id"])
+			            ->where("flight_id", "=", $lines[0]["flight_id"])
 			            ->whereNotIn("external_id", $lines->pluck("external_id"))
 			            ->delete();
 		});
@@ -245,7 +247,7 @@ class ImportContractDataJob implements ShouldQueue {
 		$endDate = $usedFlights
 			->sortBy("end_date", SORT_REGULAR, descending: true)
 			->first()?->end_date;
-		
+
 		$contract->start_date           = $startDate;
 		$contract->end_date             = $endDate;
 		$contract->expected_impressions = $expectedDigitalImpressions;

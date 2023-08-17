@@ -14,22 +14,22 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class ContractFlightsViewSeeder extends Seeder {
-    public function run() {
-        $viewName = "contracts_flights_view";
+	public function run() {
+		$viewName = "contracts_flights_view";
 
-        DB::statement("DROP VIEW IF EXISTS $viewName");
+		DB::statement("DROP VIEW IF EXISTS $viewName");
 
-        DB::statement(/** @lang SQL */ <<<EOS
+		DB::statement(/** @lang SQL */ <<<EOS
         CREATE VIEW $viewName AS
         SELECT `cf`.*,
                COALESCE(SUM(DISTINCT `cl`.`impressions`), 0) AS `expected_impressions`
           FROM `contracts_flights` AS `cf`
                LEFT JOIN `contracts_lines` AS `cl` ON `cf`.`id` = `cl`.`flight_id`
-               JOIN `products` AS `p` ON `cl`.`product_id` = `p`.`id`
-               JOIN `products_categories` ON `p`.`category_id` = `products_categories`.`id`
+               LEFT JOIN `products` AS `p` ON `cl`.`product_id` = `p`.`id`
+               LEFT JOIN `products_categories` ON `p`.`category_id` = `products_categories`.`id`
           WHERE `products_categories`.`type` = 'DIGITAL'
          GROUP BY `cl`.`flight_id`
         EOS
-        );
-    }
+		);
+	}
 }

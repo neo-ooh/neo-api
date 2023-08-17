@@ -157,7 +157,6 @@ class ImportContractDataJob implements ShouldQueue {
 
 			// Infer order line type
 			$type = FlightType::Guaranteed;
-
 			if ($product->is_bonus) {
 				$type = FlightType::BUA;
 			} else if ($orderLine->discount > 99.9) {
@@ -246,9 +245,7 @@ class ImportContractDataJob implements ShouldQueue {
 		$endDate = $usedFlights
 			->sortBy("end_date", SORT_REGULAR, descending: true)
 			->first()?->end_date;
-
-		dump($startDate->toDateString(), $endDate->toDateString());
-
+		
 		$contract->start_date           = $startDate;
 		$contract->end_date             = $endDate;
 		$contract->expected_impressions = $expectedDigitalImpressions;

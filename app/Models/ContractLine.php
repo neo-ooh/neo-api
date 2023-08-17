@@ -21,6 +21,7 @@ use Neo\Resources\Contracts\FlightProductPerformanceDatum;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
+ * @property-read int                           $id
  * @property-read int                           $product_id
  * @property-read int                           $flight_id
  * @property-read int                           $external_id
@@ -48,9 +49,7 @@ class ContractLine extends Model {
 	protected $table = "contracts_lines_view";
 
 	public $write_table = "contracts_lines";
-
-	public $incrementing = false;
-
+	
 	protected $primaryKey = "id";
 
 	protected $fillable = [

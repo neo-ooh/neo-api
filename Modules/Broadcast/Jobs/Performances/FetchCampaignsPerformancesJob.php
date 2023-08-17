@@ -47,7 +47,7 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 	 * @param int|null $networkId
 	 * @param int|null $lookBack How many days in the past should we look at
 	 */
-	public function __construct(protected int|null $networkId = null, protected int|null $lookBack = 3) {
+	public function __construct(protected int|null $networkId = null, protected int|null $lookBack = 3, protected int|null $campaignId = null) {
 	}
 
 	/**
@@ -57,10 +57,13 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 		// List all campaigns currently active with their external representations
 		$campaigns = Campaign::query()
 		                     ->where("start_date", "<", DB::raw("NOW()"))
+		                     ->when($this->campaignId !== null, function (Builder $query) {
+			                     $query->where("id", "=", $this->campaignId);
+		                     })
 		                     ->when($this->lookBack !== null, function (Builder $query) {
 			                     $query->where("end_date", ">=", DB::raw(/** @lang SQL */ "SUBDATE(NOW(), $this->lookBack)"));
 		                     })
-		                     ->with(["external_representations"])
+		                     ->with(["external_representations" => fn($q) => $q->withTrashed()])
 		                     ->lazy(500);
 
 		if ($this->lookBack) {
@@ -132,67 +135,88 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 			$resources               = $externalRepresentations->map(fn(ExternalResource $resource) => $resource->toResource());
 
 			// Pull the daily performances for the representations
-			/** @var Collection<CampaignPerformance> $performances */
-			$performances = collect($broadcaster->getCampaignsPerformances($resources->all()));
+			/** @var Collection<CampaignPerformance> $dailyPerformances */
+			$dailyPerformances = collect($broadcaster->getCampaignsPerformances($resources->all()));
 
 			// Filter out all the unwanted dates
 			if ($this->lookBack) {
-				$performances = $performances->whereIn("date", $concernedDates);
+				$dailyPerformances = $dailyPerformances->whereIn("date", $concernedDates);
 			}
 
 			$section = $output->section();
 			$section->writeln("Parsing daily performances");
 			$section->writeln("");
-			$performancesProgress = new ProgressBar($section, $performances->count());
+			$performancesProgress = new ProgressBar($section, $dailyPerformances->count());
 			$performancesProgress->setMessage("");
 			$performancesProgress->start();
 
-			// Store the performances
-			/** @var CampaignPerformance $performance */
-			foreach ($performances as $performance) {
+			// We want to group daily performance data by campaign resource
+
+			$groupedDailyPerformances = $dailyPerformances
+				->map(fn(CampaignPerformance $datum) => new CampaignPerformanceDatum(
+					representation: $externalRepresentations->firstWhere("data.external_id", "=", $datum->campaign->external_id),
+					campaign      : $datum->campaign,
+					date          : $datum->date,
+					repetitions   : $datum->repetitions,
+					impressions   : $datum->impressions,
+				))
+				->whereNotNull("representation")
+				->groupBy([
+					          "representation.resource_id",
+					          "date",
+					          "representation.data.formats_id.0",
+				          ]);
+
+			// Parse and store the performances
+			/** @var Collection<Collection<Collection<CampaignPerformanceDatum>>> $campaignDailyPerformances */
+			foreach ($groupedDailyPerformances as $campaignId => $campaignDailyPerformances) {
 				$performancesProgress->advance();
 
-				// Find back the associated representation
-				/** @var ExternalResource|null $representation */
-				$representation = $externalRepresentations->firstWhere("data.external_id", "=", $performance->campaign->external_id);
+				/** @var Collection<Collection<CampaignPerformanceDatum>> $campaignDayPerformances */
+				foreach ($campaignDailyPerformances as $date => $campaignDayPerformances) {
+					/** @var Collection<CampaignPerformanceDatum> $campaignDayFormatPerformances */
+					foreach ($campaignDayPerformances as $campaignDayFormatPerformances) {
+						/** @var ExternalResource $representation */
+						$representation = $campaignDayFormatPerformances->first()->representation;
 
-				if (!$representation) {
-					continue;
+						$repetitions = $campaignDayFormatPerformances->sum("repetitions");
+						$impressions = $campaignDayFormatPerformances->sum("impressions");
+
+						$record = ResourcePerformance::query()
+						                             ->where("resource_id", "=", $campaignId)
+						                             ->where("recorded_at", "=", $date)
+						                             ->where("data->network_id", $representation->data->network_id)
+						                             ->whereJsonContains("data->formats_id", $representation->data->formats_id)
+						                             ->first();
+
+						if ($record) {
+							ResourcePerformance::query()
+							                   ->where("resource_id", "=", $campaignId)
+							                   ->where("recorded_at", "=", $date)
+							                   ->where("data->network_id", $representation->data->network_id)
+							                   ->whereJsonContains("data->formats_id", $representation->data->formats_id)
+							                   ->update([
+								                            "repetitions" => $repetitions,
+								                            "impressions" => $impressions,
+							                            ]);
+
+							continue;
+						}
+
+						$record = new ResourcePerformance([
+							                                  "resource_id" => $campaignId,
+							                                  "recorded_at" => $date,
+							                                  "repetitions" => $repetitions,
+							                                  "impressions" => $impressions,
+							                                  "data"        => new ResourcePerformanceData(
+								                                  network_id: $representation->data->network_id,
+								                                  formats_id: $representation->data->formats_id,
+							                                  ),
+						                                  ]);
+
+						$record->save();
+					}
 				}
-
-				$record = ResourcePerformance::query()
-				                             ->where("resource_id", "=", $representation->resource_id)
-				                             ->where("recorded_at", "=", $performance->date)
-				                             ->where("data->network_id", $representation->data->network_id)
-				                             ->whereJsonContains("data->formats_id", $representation->data->formats_id)
-				                             ->first();
-
-				if ($record) {
-					ResourcePerformance::query()
-					                   ->where("resource_id", "=", $representation->resource_id)
-					                   ->where("recorded_at", "=", $performance->date)
-					                   ->where("data->network_id", $representation->data->network_id)
-					                   ->whereJsonContains("data->formats_id", $representation->data->formats_id)
-					                   ->update([
-						                            "repetitions" => $performance->repetitions,
-						                            "impressions" => $performance->impressions,
-					                            ]);
-
-					continue;
-				}
-
-				$record = new ResourcePerformance([
-					                                  "resource_id" => $representation->resource_id,
-					                                  "recorded_at" => $performance->date,
-					                                  "repetitions" => $performance->repetitions,
-					                                  "impressions" => $performance->impressions,
-					                                  "data"        => new ResourcePerformanceData(
-						                                  network_id: $representation->data->network_id,
-						                                  formats_id: $representation->data->formats_id,
-					                                  ),
-				                                  ]);
-
-				$record->save();
 			}
 
 			$performancesProgress->finish();
@@ -209,6 +233,8 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 			                                                              ->map(fn($locationID) => ["external_id" => $locationID])
 			                                                              ->toArray());
 
+			$groupedLocationsPerformances = $locationsPerformances->groupBy("location.external_id");
+
 			// Load all locations in advance to limit queries
 			$locations = Location::query()
 			                     ->join("temp_locations_ids", "locations.external_id", "=", "temp_locations_ids.external_id", "inner")
@@ -221,15 +247,15 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 			$locationsPerformancesProgress->start();
 
 			// Store the performances
-			/** @var CampaignLocationPerformance $locationPerformance */
-			foreach ($locationsPerformances as $locationPerformance) {
+			/** @var Collection<CampaignLocationPerformance> $locationPerformances */
+			foreach ($groupedLocationsPerformances as $locationPerformances) {
 				$locationsPerformancesProgress->advance();
 
 				// Find back the associated representation
 				/** @var ExternalResource|null $representation */
-				$representation = $externalRepresentations->firstWhere("data.external_id", "=", $locationPerformance->campaign->external_id);
+				$representation = $externalRepresentations->firstWhere("data.external_id", "=", $locationPerformances[0]->campaign->external_id);
 				/** @var Location|null $location */
-				$location = $locations->firstWhere("external_id", "=", $locationPerformance->location->external_id);
+				$location = $locations->firstWhere("external_id", "=", $locationPerformances[0]->location->external_id);
 
 				if (!$representation || !$location) {
 					continue;
@@ -249,8 +275,8 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 					                           ->where("data->network_id", $representation->data->network_id)
 					                           ->whereJsonContains("data->formats_id", $representation->data->formats_id)
 					                           ->update([
-						                                    "repetitions" => $locationPerformance->repetitions,
-						                                    "impressions" => $locationPerformance->impressions,
+						                                    "repetitions" => $locationPerformances->sum("repetitions"),
+						                                    "impressions" => $locationPerformances->sum("impressions"),
 					                                    ]);
 
 					continue;
@@ -259,8 +285,8 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 				$record = new ResourceLocationPerformance([
 					                                          "resource_id" => $representation->resource_id,
 					                                          "location_id" => $location->getKey(),
-					                                          "repetitions" => $locationPerformance->repetitions,
-					                                          "impressions" => $locationPerformance->impressions,
+					                                          "repetitions" => $locationPerformances->sum("repetitions"),
+					                                          "impressions" => $locationPerformances->sum("impressions"),
 					                                          "data"        => new ResourcePerformanceData(
 						                                          network_id: $representation->data->network_id,
 						                                          formats_id: $representation->data->formats_id,

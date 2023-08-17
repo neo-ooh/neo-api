@@ -27,7 +27,7 @@ use Neo\Modules\Broadcast\Http\Requests\Campaigns\RefreshCampaignPerformancesReq
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\ShowCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\StoreCampaignRequest;
 use Neo\Modules\Broadcast\Http\Requests\Campaigns\UpdateCampaignRequest;
-use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignPerformancesJob;
+use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Schedule;
 use Neo\Modules\Properties\Models\Product;
@@ -225,7 +225,7 @@ class CampaignsController extends Controller {
 	}
 
 	public function refreshPerformances(RefreshCampaignPerformancesRequest $request, Campaign $campaign) {
-		FetchCampaignPerformancesJob::dispatchSync($campaign->getKey());
+		FetchCampaignsPerformancesJob::dispatchSync(null, null, $campaign->getKey());
 
 		return new Response(["ok"]);
 	}

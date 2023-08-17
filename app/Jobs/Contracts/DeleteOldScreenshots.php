@@ -18,60 +18,60 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class DeleteOldScreenshots extends Command {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'contracts:clear-screenshots';
+	/**
+	 * The name and signature of the console command.
+	 *
+	 * @var string
+	 */
+	protected $signature = 'contracts:clear-screenshots';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = "Remove old contracts screenshots from the system";
+	/**
+	 * The console command description.
+	 *
+	 * @var string
+	 */
+	protected $description = "Remove old contracts screenshots from the system";
 
-    /**
-     * Execute the console command.
-     *
-     * @return int
-     */
-    public function handle(): int {
-        // Get all screenshots older than 90 days and not associated with any contract
-        $screenshots = Screenshot::query()
-                                 ->whereDate("received_at", "<", Carbon::now()->subMonths(3))
-                                 ->whereDoesntHave("contracts")
-                                 ->get();
-        
-        $progressBar = $this->makeProgressBar($screenshots->count());
+	/**
+	 * Execute the console command.
+	 *
+	 * @return int
+	 */
+	public function handle(): int {
+		// Get all screenshots older than 90 days and not associated with any contract
+		$screenshots = Screenshot::query()
+		                         ->whereDate("received_at", "<", Carbon::now()->subMonths(3))
+		                         ->whereDoesntHave("contracts")
+		                         ->get();
 
-        /** @var Screenshot $screenshot */
-        foreach ($screenshots as $screenshot) {
-            $screenshot->delete();
-            $progressBar->advance();
-        }
+		$progressBar = $this->makeProgressBar($screenshots->count());
 
-        $progressBar->finish();
+		/** @var Screenshot $screenshot */
+		foreach ($screenshots as $screenshot) {
+			$screenshot->delete();
+			$progressBar->advance();
+		}
 
-        // Delete requests without any screenshots
-        ScreenshotRequest::query()
-                         ->whereDate("start_at", "<", Carbon::now()->subMonths(3))
-                         ->whereDoesntHave("screenshots")
-                         ->delete();
+		$progressBar->finish();
 
-        return 0;
-    }
+		// Delete requests without any screenshots
+		ScreenshotRequest::query()
+		                 ->whereDate("send_at", "<", Carbon::now()->subMonths(3))
+		                 ->whereDoesntHave("screenshots")
+		                 ->delete();
 
-    /**
-     * @param int $steps
-     *
-     * @return ProgressBar
-     */
-    protected function makeProgressBar(int $steps): ProgressBar {
-        $bar = new ProgressBar(new ConsoleOutput(), $steps);
-        $bar->setFormat('%current%/%max% [%bar%] %message%');
+		return 0;
+	}
 
-        return $bar;
-    }
+	/**
+	 * @param int $steps
+	 *
+	 * @return ProgressBar
+	 */
+	protected function makeProgressBar(int $steps): ProgressBar {
+		$bar = new ProgressBar(new ConsoleOutput(), $steps);
+		$bar->setFormat('%current%/%max% [%bar%] %message%');
+
+		return $bar;
+	}
 }

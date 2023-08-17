@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -34,242 +34,243 @@ use Neo\Models\Actor;
  */
 abstract class JwtGuard implements Guard {
 
-    /**
-     * @var Actor|null Will store the user once it has been loaded at least once
-     */
-    protected ?Actor $actor = null;
+	/**
+	 * @var Actor|null Will store the user once it has been loaded at least once
+	 */
+	protected ?Actor $actor = null;
 
-    /**
-     * Holds the decoded token.
-     *
-     * @var array|null
-     */
-    protected ?array $token = null;
+	/**
+	 * Holds the decoded token.
+	 *
+	 * @var array|null
+	 */
+	protected ?array $token = null;
 
-    /**
-     * @var UserProvider
-     */
-    protected UserProvider $provider;
+	/**
+	 * @var UserProvider
+	 */
+	protected UserProvider $provider;
 
-    /**
-     * Specify if a user who has not validated its two factor authentication is allowed by the guard
-     *
-     * @var bool
-     */
-    protected bool $allowNonValidated2FA;
+	/**
+	 * Specify if a user who has not validated its two factor authentication is allowed by the guard
+	 *
+	 * @var bool
+	 */
+	protected bool $allowNonValidated2FA;
 
-    /** Specify if a user who has not approved the terms of service is allowed by the guard
-     *
-     * @var bool
-     */
-    protected bool $allowNonApprovedTos;
+	/** Specify if a user who has not approved the terms of service is allowed by the guard
+	 *
+	 * @var bool
+	 */
+	protected bool $allowNonApprovedTos;
 
-    /**
-     * Specify if a user who's account is disabled is allowed by the guard
-     *
-     * @var bool
-     */
-    protected bool $allowDisabledAccount;
-
-
-    /**
-     * JwtGuard constructor.
-     *
-     * @param UserProvider $actorProvider
-     */
-    public function __construct(UserProvider $actorProvider) {
-        $this->provider = $actorProvider;
-        $this->token    = $this->getToken();
-
-        // Try to grab and store the user
-        // Do we have a token ?
-        if (is_null($this->token)) {
-            // No
-            return;
-        }
-
-        // Token is valid, use its `uid` property to get the matching user
-        // Get the user
-        /** @var Actor|null $actor */
-        $actor = Actor::query()->find($this->token['uid']);
-
-        if (is_null($actor)) {
-            return; // Bad user
-        }
-
-        // Make sure a group is not getting logged in
-        if ($actor->is_group) {
-            return;
-        }
-
-        // Validate the token
-        if (!$this->validateUser($actor)) {
-            // Invalid token
-            return;
-        }
-
-        $this->setUser($actor);
-    }
-
-    /**
-     * Retrieve and decode the token.
-     *
-     * @return array|null
-     */
-    protected function getToken(): ?array {
-        // Get the Authorization/Bearer token
-        $token     = Request::bearerToken() ?? '';
-        $publicKey = config('auth.jwt_public_key');
-
-        // Try to decode the token
-        try {
-            $data = JWT::decode($token, new Key($publicKey, 'RS256'));
-        } catch (Exception) {
-            // Invalid token, this is not a user
-            return null;
-        }
-
-        return (array)$data;
-    }
-
-    private function validateUser(Actor $actor): bool {
-        // If its an impersonating token, we need to validate its accompanying token
-        $isImpersonating = array_key_exists("imp", $this->token) && $this->token["imp"];
-
-        if ($isImpersonating && !$this->validateImpersonator()) {
-            // We could not validate the impersonator, reject the auth
-            return false;
-        }
-
-        if ($isImpersonating) {
-            return true;
-        }
-
-        return $this->checkActorMeetsCriteria($actor);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function checkActorMeetsCriteria(Actor $actor): bool {
-        // Validate that the token has its two factor auth OR that the guard allows it to be missing
-        if (!$this->allowNonValidated2FA && !$actor->is2FAValid(updateIfNecessary: false)) {
-            return false;
-        }
-
-        // Validate that the user has approved the Tos
-        if (!$actor->tos_accepted && !$this->allowNonApprovedTos) {
-            return false;
-        }
-
-        // Validate the the user account is not locked, OR that a locked account is allowed to log in
-        if ($actor->is_locked && !$this->allowDisabledAccount) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Validate the existence of a second Authorization token validating the use of the main token for impersonation.
-     *
-     * @return bool
-     */
-    protected function validateImpersonator(): bool {
-        $impersonatorToken = Str::substr(Request::header('X-Impersonator-Authorization', ''), strlen("Bearer "));
-        $publicKey         = config("auth.jwt_public_key");
-
-        try {
-            $impersonatorData = (array)JWT::decode($impersonatorToken, new Key($publicKey, 'RS256'));
-        } catch (Exception $e) {
-            return false;
-        }
-
-        $impersonator = Actor::findOrFail($impersonatorData["uid"]);
-
-        // Validate the impersonator and make sure it has the capability to impersonate
-        if (!$this->checkActorMeetsCriteria($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate)) {
-            return false;
-        }
-
-        // Given token is valid, validate our main token is correctly associated with the current impersonatore
-        return $this->token["iid"] === $impersonatorData["uid"];
-    }
-
-    /**
-     * Determine if the current user is authenticated.
-     *
-     * @return bool
-     */
-    public function check(): bool {
-        return !is_null($this->actor);
-    }
-
-    /**
-     * Determine if the current user is a guest.
-     *
-     * @return bool
-     */
-    public function guest(): bool {
-        // A guest is everything but a user
-        return !$this->check();
-    }
+	/**
+	 * Specify if a user who's account is disabled is allowed by the guard
+	 *
+	 * @var bool
+	 */
+	protected bool $allowDisabledAccount;
 
 
-    public function hasUser(): bool {
-        return $this->user() !== null;
-    }
+	/**
+	 * JwtGuard constructor.
+	 *
+	 * @param UserProvider $actorProvider
+	 */
+	public function __construct(UserProvider $actorProvider) {
+		$this->provider = $actorProvider;
+		$this->token    = $this->getToken();
 
-    /**
-     * Get the currently authenticated user.
-     *
-     * @return Authenticatable|Actor|null
-     */
-    public function user(): Actor|Authenticatable|null {
-        return $this->actor;
-    }
+		// Try to grab and store the user
+		// Do we have a token ?
+		if (is_null($this->token)) {
+			// No
+			return;
+		}
 
-    /**
-     * Get the ID for the currently authenticated user.
-     *
-     * @return int|null
-     */
-    public function id(): ?int {
-        if (is_null($this->user())) {
-            return null;
-        }
+		// Token is valid, use its `uid` property to get the matching user
+		// Get the user
+		/** @var Actor|null $actor */
+		$actor = Actor::query()->find($this->token['uid']);
 
-        return $this->actor->id;
-    }
+		if (is_null($actor)) {
+			return; // Bad user
+		}
 
-    /**
-     * Validate a user's credentials.
-     *
-     * @param array $credentials
-     *
-     * @return bool
-     */
-    public function validate(array $credentials = []): bool {
-        $actor = $this->provider->retrieveByCredentials($credentials);
+		// Make sure a group is not getting logged in
+		if ($actor->is_group) {
+			return;
+		}
 
-        if (is_null($actor)) {
-            return false;
-        }
+		// Validate the token
+		if (!$this->validateUser($actor)) {
+			// Invalid token
+			return;
+		}
 
-        $this->setUser($actor);
+		$this->setUser($actor);
+	}
 
-        return true;
-    }
+	/**
+	 * Retrieve and decode the token.
+	 *
+	 * @return array|null
+	 */
+	protected function getToken(): ?array {
+		// Get the Authorization/Bearer token
+		$token     = Request::bearerToken() ?? '';
+		$publicKey = config('auth.jwt_public_key');
 
-    /**
-     * Set the current actor.
-     *
-     * @param Authenticatable|null $user
-     *
-     * @return void
-     */
-    public function setUser(?Authenticatable $user): void {
-        /* Authenticatable => Actor */
-        $this->actor = $user;
-    }
+		// Try to decode the token
+		try {
+			$data = JWT::decode($token, new Key($publicKey, 'RS256'));
+		} catch (Exception) {
+			// Invalid token, this is not a user
+			return null;
+		}
+
+		return (array)$data;
+	}
+
+	private function validateUser(Actor $actor): bool {
+		// If its an impersonating token, we need to validate its accompanying token
+		$isImpersonating = array_key_exists("imp", $this->token) && $this->token["imp"];
+
+		if ($isImpersonating && !$this->validateImpersonator()) {
+			// We could not validate the impersonator, reject the auth
+			return false;
+		}
+
+		if ($isImpersonating) {
+			return true;
+		}
+
+		return $this->checkActorMeetsCriteria($actor);
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	public function checkActorMeetsCriteria(Actor $actor): bool {
+		// Validate that the token has its two factor auth OR that the guard allows it to be missing
+		if (!$this->allowNonValidated2FA && !$actor->is2FAValid(updateIfNecessary: false)) {
+			return false;
+		}
+
+		// Validate that the user has approved the Tos
+		if (!$actor->tos_accepted && !$this->allowNonApprovedTos) {
+			return false;
+		}
+
+		// Validate the the user account is not locked, OR that a locked account is allowed to log in
+		if ($actor->is_locked && !$this->allowDisabledAccount) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate the existence of a second Authorization token validating the use of the main token for impersonation.
+	 *
+	 * @return bool
+	 */
+	protected function validateImpersonator(): bool {
+		$impersonatorToken = Str::substr(Request::header('X-Impersonator-Authorization', ''), strlen("Bearer "));
+		$publicKey         = config("auth.jwt_public_key");
+
+		try {
+			$impersonatorData = (array)JWT::decode($impersonatorToken, new Key($publicKey, 'RS256'));
+		} catch (Exception $e) {
+			return false;
+		}
+
+		$impersonator = Actor::findOrFail($impersonatorData["uid"]);
+
+		// Validate the impersonator and make sure it has the capability to impersonate
+		if (!$this->checkActorMeetsCriteria($impersonator) || !$impersonator->hasCapability(Capability::actors_impersonate)) {
+			return false;
+		}
+
+		// Given token is valid, validate our main token is correctly associated with the current impersonatore
+		return $this->token["iid"] === $impersonatorData["uid"];
+	}
+
+	/**
+	 * Determine if the current user is authenticated.
+	 *
+	 * @return bool
+	 */
+	public function check(): bool {
+		return !is_null($this->actor);
+	}
+
+	/**
+	 * Determine if the current user is a guest.
+	 *
+	 * @return bool
+	 */
+	public function guest(): bool {
+		// A guest is everything but a user
+		return !$this->check();
+	}
+
+
+	public function hasUser(): bool {
+		return $this->user() !== null;
+	}
+
+	/**
+	 * Get the currently authenticated user.
+	 *
+	 * @return Authenticatable|Actor|null
+	 */
+	public function user(): Actor|Authenticatable|null {
+		return $this->actor;
+	}
+
+	/**
+	 * Get the ID for the currently authenticated user.
+	 *
+	 * @return int|null
+	 */
+	public function id(): ?int {
+		if (is_null($this->user())) {
+			return null;
+		}
+
+		return $this->actor->id;
+	}
+
+	/**
+	 * Validate a user's credentials.
+	 *
+	 * @param array $credentials
+	 *
+	 * @return bool
+	 */
+	public function validate(array $credentials = []): bool {
+		$actor = $this->provider->retrieveByCredentials($credentials);
+
+		if (is_null($actor)) {
+			return false;
+		}
+
+		$this->setUser($actor);
+
+		return true;
+	}
+
+	/**
+	 * Set the current actor.
+	 *
+	 * @param Authenticatable|Actor|null $user
+	 *
+	 * @return void
+	 */
+	public function setUser(?Authenticatable $user): void {
+		$this->actor = $user;
+
+
+	}
 }

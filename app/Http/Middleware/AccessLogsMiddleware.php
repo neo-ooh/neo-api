@@ -45,7 +45,7 @@ class AccessLogsMiddleware {
 					                "username"   => $user->name,
 					                "email"      => $user->email ?? null,
 					                "segment"    => $user instanceof Actor ? 'user' : 'access-token',
-					                "ip_address" => $request->userAgent(),
+					                "ip_address" => $request->getClientIp(),
 				                ]);
 			}
 		});

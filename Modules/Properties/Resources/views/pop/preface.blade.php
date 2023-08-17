@@ -13,7 +13,7 @@
     </tr>
     <tr>
         <td>{{ __("pop.header-dates") }}</td>
-        <td>{{ $start_date->toDateString() }} / {{ $end_date->toDateString() }}</td>
+        <td>{{ $start_date }} / {{ $end_date }}</td>
     </tr>
     <tr>
         <td>{{ __("pop.header-salesperson") }}</td>

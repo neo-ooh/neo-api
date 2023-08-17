@@ -37,8 +37,8 @@ class POPPReface extends Component {
 			"contract_name"   => $this->request->contract_number,
 			"advertiser_name" => $this->request->advertiser,
 			"client_name"     => $this->request->client,
-			"start_date"      => $flightsDates->min("start_date"),
-			"end_date"        => $flightsDates->max("end_date"),
+			"start_date"      => $flightsDates->min("start_date")?->toDateString() ?? "",
+			"end_date"        => $flightsDates->max("end_date")?->toDateString() ?? "",
 			"salesperson"     => $this->request->salesperson,
 			"presented_to"    => $this->request->presented_to,
 		])->render();

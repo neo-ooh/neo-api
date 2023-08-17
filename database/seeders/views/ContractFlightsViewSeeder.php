@@ -19,17 +19,16 @@ class ContractFlightsViewSeeder extends Seeder {
 
 		DB::statement("DROP VIEW IF EXISTS $viewName");
 
-		DB::statement(/** @lang SQL */ <<<EOS
+		DB::statement(/** @lang SQL */ "
         CREATE VIEW $viewName AS
-        SELECT `cf`.*,
-               COALESCE(SUM(DISTINCT `cl`.`impressions`), 0) AS `expected_impressions`
-          FROM `contracts_flights` AS `cf`
-               LEFT JOIN `contracts_lines` AS `cl` ON `cf`.`id` = `cl`.`flight_id`
-               LEFT JOIN `products` AS `p` ON `cl`.`product_id` = `p`.`id`
-               LEFT JOIN `products_categories` ON `p`.`category_id` = `products_categories`.`id`
-          WHERE `products_categories`.`type` = 'DIGITAL'
-         GROUP BY `cl`.`flight_id`
-        EOS
+		SELECT `cf`.*,
+		       COALESCE(SUM(DISTINCT `cl`.`impressions`), 0) AS `expected_impressions`
+		  FROM `contracts_flights` AS `cf`
+		       LEFT JOIN `contracts_lines` AS `cl` ON `cf`.`id` = `cl`.`flight_id`
+		       LEFT JOIN `products` AS `p` ON `cl`.`product_id` = `p`.`id`
+		       LEFT JOIN `products_categories` `pc` ON `p`.`category_id` =  `pc`.`id` AND `pc`.`type` = 'DIGITAL'
+		 GROUP BY `cf`.`id`
+        "
 		);
 	}
 }

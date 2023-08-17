@@ -135,23 +135,18 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 			$resources               = $externalRepresentations->map(fn(ExternalResource $resource) => $resource->toResource());
 
 			// Pull the daily performances for the representations
-			/** @var Collection<CampaignPerformance> $dailyPerformances */
-			$dailyPerformances = collect($broadcaster->getCampaignsPerformances($resources->all()));
+			$dailyPerformances = collect();
+			foreach ($resources->chunk(50) as $resourcesChunk) {
+				/** @var Collection<CampaignPerformance> $dailyPerformances */
+				$dailyPerformances = $dailyPerformances->merge($broadcaster->getCampaignsPerformances($resourcesChunk->all()));
+			}
 
 			// Filter out all the unwanted dates
 			if ($this->lookBack) {
 				$dailyPerformances = $dailyPerformances->whereIn("date", $concernedDates);
 			}
 
-			$section = $output->section();
-			$section->writeln("Parsing daily performances");
-			$section->writeln("");
-			$performancesProgress = new ProgressBar($section, $dailyPerformances->count());
-			$performancesProgress->setMessage("");
-			$performancesProgress->start();
-
 			// We want to group daily performance data by campaign resource
-
 			$groupedDailyPerformances = $dailyPerformances
 				->map(fn(CampaignPerformance $datum) => new CampaignPerformanceDatum(
 					representation: $externalRepresentations->firstWhere("data.external_id", "=", $datum->campaign->external_id),
@@ -166,6 +161,13 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 					          "date",
 					          "representation.data.formats_id.0",
 				          ]);
+
+			$section = $output->section();
+			$section->writeln("Parsing daily performances");
+			$section->writeln("");
+			$performancesProgress = new ProgressBar($section, $groupedDailyPerformances->count());
+			$performancesProgress->setMessage("");
+			$performancesProgress->start();
 
 			// Parse and store the performances
 			/** @var Collection<Collection<Collection<CampaignPerformanceDatum>>> $campaignDailyPerformances */
@@ -223,7 +225,11 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 
 			// Pull the locations performances for the representations
 			/** @var Collection<CampaignLocationPerformance> $locationsPerformances */
-			$locationsPerformances = collect($broadcaster->getCampaignsPerformancesByLocations($resources->all()));
+			$locationsPerformances = collect();
+			foreach ($resources->chunk(50) as $resourcesChunk) {
+				/** @var Collection<CampaignPerformance> $dailyPerformances */
+				$locationsPerformances = collect($broadcaster->getCampaignsPerformancesByLocations($resourcesChunk->all()));
+			}
 
 			DB::statement("DROP TABLE IF EXISTS `temp_locations_ids`", []);
 			DB::statement("CREATE TEMPORARY TABLE `temp_locations_ids` (`external_id` bigint UNSIGNED)", []);
@@ -242,7 +248,7 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 
 			$section->writeln("Parsing locations performances");
 			$section->writeln("");
-			$locationsPerformancesProgress = new ProgressBar($section, $locationsPerformances->count());
+			$locationsPerformancesProgress = new ProgressBar($section, $groupedLocationsPerformances->count());
 			$locationsPerformancesProgress->setMessage("");
 			$locationsPerformancesProgress->start();
 

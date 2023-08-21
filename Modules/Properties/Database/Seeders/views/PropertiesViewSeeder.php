@@ -22,8 +22,10 @@ class PropertiesViewSeeder extends Seeder {
 		DB::statement(/** @lang SQL */ <<<EOS
         CREATE VIEW $viewName AS
         SELECT `p`.*,
+               `a`.name as `name`,
             COUNT(`dv`.`id`) as 'demographic_variables_count'
         FROM `properties` `p`
+           JOIN `actors` `a` ON `p`.`actor_id` = `a`.`id`
            LEFT JOIN `demographic_values` `dv` ON `p`.`actor_id` = `dv`.`property_id`
         GROUP BY `p`.`actor_id`        
         EOS

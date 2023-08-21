@@ -63,195 +63,195 @@ use Neo\Modules\Broadcast\Services\Resources\Content as ContentResource;
  * @mixin DB
  */
 class Content extends BroadcastResourceModel {
-    use SoftDeletes;
-    use HasPublicRelations;
-    use EagerLoadPivotTrait;
+	use SoftDeletes;
+	use HasPublicRelations;
+	use EagerLoadPivotTrait;
 
-    /*
-    |--------------------------------------------------------------------------
-    | OdooModel properties
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| OdooModel properties
+	|--------------------------------------------------------------------------
+	*/
 
-    public BroadcastResourceType $resourceType = BroadcastResourceType::Content;
+	public BroadcastResourceType $resourceType = BroadcastResourceType::Content;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'contents';
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'contents';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
-    protected $fillable = [
-        'owner_id',
-        'library_id',
-        'layout_id',
-        'name',
-        'duration',
-        'max_schedule_duration',
-        'max_schedule_count',
-    ];
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array<string>
+	 */
+	protected $fillable = [
+		'owner_id',
+		'library_id',
+		'layout_id',
+		'name',
+		'duration',
+		'max_schedule_duration',
+		'max_schedule_count',
+	];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'is_approved'           => 'boolean',
-        'max_schedule_duration' => 'integer',
-        'max_schedule_count'    => 'integer',
-    ];
+	/**
+	 * The attributes that should be cast.
+	 *
+	 * @var array<string, string>
+	 */
+	protected $casts = [
+		'is_approved'           => 'boolean',
+		'max_schedule_duration' => 'integer',
+		'max_schedule_count'    => 'integer',
+	];
 
-    /**
-     * The rule used to validate access to the model upon binding it with a route
-     *
-     * @var string
-     */
-    protected string $accessRule = AccessibleContent::class;
+	/**
+	 * The rule used to validate access to the model upon binding it with a route
+	 *
+	 * @var string
+	 */
+	protected string $accessRule = AccessibleContent::class;
 
-    protected function getPublicRelations() {
-        return [
-            "creatives"       => "creatives",
-            "external_ids"    => "creatives.external_representations",
-            "layout"          => ["layout", "layout.frames"],
-            "library"         => "library",
-            "owner"           => "owner",
-            "schedules"       => [
-                "schedules.broadcast_tags",
-                "schedules.owner:id,name",
-                "schedules.campaign.parent:id,name",
-            ],
-            "tags"            => "broadcast_tags",
-            "schedules_count" => "count:schedules",
-        ];
-    }
+	protected function getPublicRelations() {
+		return [
+			"creatives"       => "creatives",
+			"external_ids"    => "creatives.external_representations",
+			"layout"          => ["layout", "layout.frames"],
+			"library"         => "library",
+			"owner"           => "owner",
+			"schedules"       => [
+				"schedules.broadcast_tags",
+				"schedules.owner:id,name",
+				"schedules.campaign.parent:id,name",
+			],
+			"tags"            => "broadcast_tags",
+			"schedules_count" => "count:schedules",
+		];
+	}
 
-    public static function boot(): void {
-        parent::boot();
+	public static function boot(): void {
+		parent::boot();
 
-        static::deleting(static function (Content $content) {
-            /** @var Collection<Creative> $creatives */
-            $creatives = $content->creatives()->withTrashed()->get();
+		static::deleting(static function (Content $content) {
+			/** @var Collection<Creative> $creatives */
+			$creatives = $content->creatives()->withTrashed()->get();
 
-            foreach ($creatives as $creative) {
-                if ($content->isForceDeleting()) {
-                    $creative->forceDelete();
-                } else {
-                    $creative->delete();
-                }
-            }
-        });
-    }
+			foreach ($creatives as $creative) {
+				if ($content->isForceDeleting()) {
+					$creative->forceDelete();
+				} else {
+					$creative->delete();
+				}
+			}
+		});
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * The Actor who owns this content
-     *
-     * @return BelongsTo
-     */
-    public function owner(): BelongsTo {
-        return $this->belongsTo(Actor::class, 'owner_id', 'id')->withTrashed();
-    }
+	/**
+	 * The Actor who owns this content
+	 *
+	 * @return BelongsTo
+	 */
+	public function owner(): BelongsTo {
+		return $this->belongsTo(Actor::class, 'owner_id', 'id')->withTrashed();
+	}
 
-    /**
-     * The Library hosting this content
-     *
-     * @return BelongsTo
-     */
-    public function library(): BelongsTo {
-        return $this->belongsTo(Library::class, 'library_id', 'id')->withTrashed();
-    }
+	/**
+	 * The Library hosting this content
+	 *
+	 * @return BelongsTo
+	 */
+	public function library(): BelongsTo {
+		return $this->belongsTo(Library::class, 'library_id', 'id')->withTrashed();
+	}
 
-    /**
-     * The Content's creatives
-     *
-     * @return HasMany
-     */
-    public function creatives(): HasMany {
-        return $this->hasMany(Creative::class, 'content_id', 'id')->withTrashed();
-    }
+	/**
+	 * The Content's creatives
+	 *
+	 * @return HasMany
+	 */
+	public function creatives(): HasMany {
+		return $this->hasMany(Creative::class, 'content_id', 'id')->withTrashed();
+	}
 
-    /**
-     * The Schedules using this content
-     *
-     * @return BelongsToMany<Schedule>
-     */
-    public function schedules(): BelongsToMany {
-        return $this->belongsToMany(Schedule::class, 'schedule_contents', 'content_id', 'schedule_id')
-                    ->using(ScheduleContent::class)
-                    ->withTrashed();
-    }
+	/**
+	 * The Schedules using this content
+	 *
+	 * @return BelongsToMany<Schedule>
+	 */
+	public function schedules(): BelongsToMany {
+		return $this->belongsToMany(Schedule::class, 'schedule_contents', 'content_id', 'schedule_id')
+		            ->using(ScheduleContent::class)
+		            ->withTrashed();
+	}
 
-    /**
-     * The Content's Layout
-     *
-     * @return BelongsTo
-     */
-    public function layout(): BelongsTo {
-        return $this->belongsTo(Layout::class, "layout_id", "id")->withTrashed();
-    }
+	/**
+	 * The Content's Layout
+	 *
+	 * @return BelongsTo
+	 */
+	public function layout(): BelongsTo {
+		return $this->belongsTo(Layout::class, "layout_id", "id")->withTrashed();
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Attributes
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Attributes
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * A content editable status is based on its scheduling. A content who has never been schedules, or only at the state of
-     * drafts, will be editable. As soon as one of the content's schedule gets sent for review or reviewed, the content is
-     * locked and cannot be edited again.
-     *
-     * @return bool True if the content can be edited
-     */
-    public function getIsEditableAttribute(): bool {
-        if ($this->schedules_count === 0) {
-            // No schedules, can be edited
-            return true;
-        }
+	/**
+	 * A content editable status is based on its scheduling. A content who has never been schedules, or only at the state of
+	 * drafts, will be editable. As soon as one of the content's schedule gets sent for review or reviewed, the content is
+	 * locked and cannot be edited again.
+	 *
+	 * @return bool True if the content can be edited
+	 */
+	public function getIsEditableAttribute(): bool {
+		if ($this->schedules_count === 0) {
+			// No schedules, can be edited
+			return true;
+		}
 
-        // If a content has been scheduled, it can still be edited if it has never been locked/approved, etc...
-        return $this->schedules->every("status", "===", ScheduleStatus::Draft);
-    }
-
-
-    /**
-     * @return ContentResource
-     */
-    public function toResource(): ContentResource {
-        return new ContentResource(
-            name         : $this->name ?? "Content #{$this->getKey()}",
-            duration_msec: (int)($this->duration * 1000),
-            is_fullscreen: false,
-        );
-    }
+		// If a content has been scheduled, it can still be edited if it has never been locked/approved, etc...
+		return $this->schedules->every("status", "===", ScheduleStatus::Draft);
+	}
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Actions
-    |--------------------------------------------------------------------------
-    */
+	/**
+	 * @return ContentResource
+	 */
+	public function toResource(): ContentResource {
+		return new ContentResource(
+			name         : $this->name ?? "Content #{$this->getKey()}",
+			duration_msec: (int)($this->duration * 1000),
+			is_fullscreen: false,
+		);
+	}
 
-    /**
-     * Dispatch the appropriate jobs to keep the content and its creative up to date on external broadcasters
-     *
-     * @return void
-     */
-    public function promote(): void {
-        $this->creatives->each(function (Creative $creative) {
-            new UpdateCreativeJob($creative->getKey());
-        });
-    }
+
+	/*
+	|--------------------------------------------------------------------------
+	| Actions
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
+	 * Dispatch the appropriate jobs to keep the content and its creative up to date on external broadcasters
+	 *
+	 * @return void
+	 */
+	public function promote(): void {
+		$this->creatives->each(function (Creative $creative) {
+			new UpdateCreativeJob($creative->getKey());
+		});
+	}
 }

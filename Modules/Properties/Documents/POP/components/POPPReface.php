@@ -40,7 +40,7 @@ class POPPReface extends Component {
 			"start_date"      => $flightsDates->min("start_date")?->toDateString() ?? "",
 			"end_date"        => $flightsDates->max("end_date")?->toDateString() ?? "",
 			"salesperson"     => $this->request->salesperson,
-			"presented_to"    => $this->request->presented_to,
+			"presented_to"    => $this->request->presented_to ?? "",
 		])->render();
 	}
 }

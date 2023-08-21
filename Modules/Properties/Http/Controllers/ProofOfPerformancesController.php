@@ -83,7 +83,7 @@ class ProofOfPerformancesController extends Controller {
 			                    contract_number  : $contract->contract_id,
 			                    salesperson      : $contract->salesperson->name,
 			                    client           : trim(explode(',', $contract->client?->name ?? '')[0]),
-			                    presented_to     : trim(explode(',', $contract->client?->name ?? '')[1] ?? ''),
+			                    presented_to     : trim(explode(',', $contract->client?->name ?? '')[1] ?? '') ?? "",
 			                    advertiser       : $contract->advertiser?->name ?? '',
 			                    locale           : App::getLocale(),
 			                    summary_breakdown: 'flights',

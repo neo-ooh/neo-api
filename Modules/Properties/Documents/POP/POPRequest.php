@@ -21,7 +21,7 @@ class POPRequest extends Data {
 
 		public string         $salesperson,
 		public string         $client,
-		public string         $presented_to,
+		public string|null    $presented_to,
 		public string         $advertiser,
 
 		public string         $locale,

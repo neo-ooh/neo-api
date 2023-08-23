@@ -20,12 +20,12 @@ use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
  * and proceed to remove any external representation they may have
  */
 class DeleteExpiredResourcesJob extends Job {
-    public function __construct() {
-    }
+	public function __construct() {
+	}
 
-    public function run(): mixed {
-        // This query list all the schedules that have expired but still have non-trashed external representations
-        $expiredSchedules = DB::select(<<<SQL
+	public function run(): mixed {
+		// This query list all the schedules that have expired but still have non-trashed external representations
+		$expiredSchedules = DB::select(<<<SQL
             SELECT
               `s`.*
             FROM
@@ -40,14 +40,14 @@ class DeleteExpiredResourcesJob extends Job {
                    AND `er`.`deleted_at` IS NULL
               )
         SQL
-        );
+		);
 
-        foreach ($expiredSchedules as $schedule) {
-            DeleteScheduleJob::dispatch($schedule->id);
-        }
+		foreach ($expiredSchedules as $schedule) {
+			DeleteScheduleJob::dispatch($schedule->id);
+		}
 
-        // This query list all the creatives that have no active scheduling (No draft, and no approved schedules whose end date is in the future), but who have non-trashed external representations
-        $unusedCreatives = DB::select(<<<EOF
+		// This query list all the creatives that have no active scheduling (No draft, and no approved schedules whose end date is in the future), but who have non-trashed external representations
+		$unusedCreatives = DB::select(<<<EOF
         SELECT `cr`.*
          FROM `creatives` `cr`
          JOIN `contents` `co` ON `co`.`id` = `cr`.`content_id`
@@ -58,7 +58,7 @@ class DeleteExpiredResourcesJob extends Job {
           JOIN `schedule_contents` `sc` ON `sc`.`schedule_id` = `s`.`id`
           WHERE
             `sc`.`content_id` =  `co`.`id`
-          AND `s`.`end_date` > NOW()
+          AND `s`.`end_date` > DATE_SUB(DATE(NOW()), INTERVAL 3 DAY)
           AND (
                 `s2`.`is_approved` = 1
               OR (`s2`.`is_approved` = 0 AND `s2`.`is_rejected` = 0)
@@ -73,12 +73,12 @@ class DeleteExpiredResourcesJob extends Job {
           )
         ORDER BY `created_at` DESC
         EOF
-        );
+		);
 
-        foreach ($unusedCreatives as $creative) {
-            DeleteCreativeJob::dispatch($creative->id);
-        }
+		foreach ($unusedCreatives as $creative) {
+			DeleteCreativeJob::dispatch($creative->id);
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Http\Controllers\Public;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
+use Neo\Helpers\PublicRelations;
 use Neo\Modules\Properties\Http\Requests\Public\Properties\ListPropertiesRequest;
 use Neo\Modules\Properties\Models\Property;
 
@@ -45,9 +46,16 @@ class PropertiesController {
 		                      })
 		                      ->get();
 
-		return new Response($properties->load([
-			                                      "address.city.market",
-			                                      "network",
-		                                      ])->all());
+		return new Response(PublicRelations::loadPublicRelations(
+			             $properties,
+			             [
+				             "address",
+				             "cover_picture",
+				             "network",
+				             "pictures",
+				             "traffic.rolling_weekly",
+				             "translations",
+			             ],
+			bypassGates: true)->all());
 	}
 }

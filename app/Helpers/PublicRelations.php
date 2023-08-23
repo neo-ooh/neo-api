@@ -18,57 +18,66 @@ use Neo\Models\Traits\HasPublicRelations;
 use RuntimeException;
 
 class PublicRelations {
-    public static function loadPublicRelations(Model|Collection $subject, string|array|null $relations = null): void {
-        if ($subject instanceof Collection) {
-            // Short-circuit if the collection is empty
-            if ($subject->count() === 0) {
-                return;
-            }
+	/**
+	 * @template T of Model|Collection
+	 * @param T                 $subject
+	 * @param string|array|null $relations
+	 * @param bool              $bypassGates
+	 * @return T
+	 */
+	public static function loadPublicRelations(Model|Collection $subject, string|array|null $relations = null, bool $bypassGates = false): Model|Collection {
+		if ($subject instanceof Collection) {
+			// Short-circuit if the collection is empty
+			if ($subject->count() === 0) {
+				return $subject;
+			}
 
-            $model = $subject->first();
-        } else {
-            $model = $subject;
-        }
+			$model = $subject->first();
+		} else {
+			$model = $subject;
+		}
 
-        // Make sure the target model as the `HasPublicRelation` trait
-        if (!in_array(HasPublicRelations::class, class_uses_recursive($model::class), true)) {
-            throw new RuntimeException("Calling `loadPublicRelations` on a Models/Models Collection without the `HasPublicRelation` Trait");
-        }
+		// Make sure the target model as the `HasPublicRelation` trait
+		if (!in_array(HasPublicRelations::class, class_uses_recursive($model::class), true)) {
+			throw new RuntimeException("Calling `loadPublicRelations` on a Models/Models Collection without the `HasPublicRelation` Trait");
+		}
 
-        $publicRelations = $model->getPublicRelationsList();
+		$publicRelations = $model->getPublicRelationsList();
 
-        foreach (static::prepareRelationsList($relations) as $requestedRelation) {
-            if (!array_key_exists($requestedRelation, $publicRelations)) {
-                // Block on invalid relations in dev
-                if (config("app.env") === 'development') {
-                    throw new InvalidArgumentException("Relation '$requestedRelation' is not marked as public for the model '" . static::class . "'");
-                }
+		foreach (static::prepareRelationsList($relations) as $requestedRelation) {
+			if (!array_key_exists($requestedRelation, $publicRelations)) {
+				// Block on invalid relations in dev
+				if (config("app.env") === 'development') {
+					throw new InvalidArgumentException("Relation '$requestedRelation' is not marked as public for the model '" . static::class . "'");
+				}
 
-                continue;
-            }
+				continue;
+			}
 
-            self::performExpansion($subject, $publicRelations[$requestedRelation]);
-        }
-    }
+			self::performExpansion($subject, $publicRelations[$requestedRelation], $bypassGates);
+		}
 
-    protected static function prepareRelationsList(string|array|null $relations = null) {
-        if ($relations !== null) {
-            return is_array($relations) ? $relations : [$relations];
-        }
+		return $subject;
+	}
 
-        return Request::input("with", []);
-    }
+	protected static function prepareRelationsList(string|array|null $relations = null) {
+		if ($relations !== null) {
+			return is_array($relations) ? $relations : [$relations];
+		}
 
-    protected static function performExpansion(Model|Collection $subject, Relation|string|array|callable $relation): void {
-        if (is_array($relation)) {
-            foreach ($relation as $value) {
-                self::performExpansion($subject, $value);
-            }
+		return Request::input("with", []);
+	}
 
-            return;
-        }
+	protected static function performExpansion(Model|Collection $subject, Relation|string|array|callable $relation, bool $bypassGate = false): void {
+		if (is_array($relation)) {
+			foreach ($relation as $value) {
+				self::performExpansion($subject, $value);
+			}
 
-        $relationObject = $relation instanceof Relation ? $relation : Relation::fromLegacy($relation);
-        $relationObject->expand($subject);
-    }
+			return;
+		}
+
+		$relationObject = $relation instanceof Relation ? $relation : Relation::fromLegacy($relation);
+		$relationObject->expand($subject, $bypassGate);
+	}
 }

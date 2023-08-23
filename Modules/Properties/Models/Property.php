@@ -211,7 +211,10 @@ class Property extends SecuredModel {
 			),
 			"traffic.monthly_data"      => ["load:traffic.monthly_data"],
 			"traffic.weekly_data"       => ["load:traffic.weekly_data"],
-			"traffic.rolling_weekly"    => [fn(Property $property) => $property->traffic->append("rolling_weekly_traffic")],
+			"traffic.rolling_weekly"    => Relation::make(
+				load  : 'traffic.weekly_data',
+				custom: fn(Property $property) => $property->traffic->append("rolling_weekly_traffic"),
+			),
 			"traffic.source"            => ["load:traffic.source"],
 			"translations"              => "translations",
 			"unavailabilities"          => Relation::make(

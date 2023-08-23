@@ -143,7 +143,7 @@ class ActorsController extends Controller {
 		}
 
 		if (in_array("sharers", $with, true)) {
-			$actor->load("sharers");
+			$actor->load("additional_accesses");
 		}
 
 		if (in_array("logo", $with, true)) {
@@ -156,7 +156,7 @@ class ActorsController extends Controller {
 
 		$actor->append(["parent", "registration_sent", "is_registered"]);
 
-		return new Response($actor);
+		return new Response($actor->loadPublicRelations());
 	}
 
 	public function store(StoreActorRequest $request): Response {

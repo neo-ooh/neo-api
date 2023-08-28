@@ -150,7 +150,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 		"is_locked"      => "boolean",
 		"tos_accepted"   => "boolean",
 		"limited_access" => "boolean",
-		"last_login_at"  => "date",
+		"last_login_at"  => "datetime",
 	];
 
 	/**
@@ -186,6 +186,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 			"additional_accesses"     => Relation::make(load: "additional_accesses"),
 			"capabilities"            => Relation::make(load: "capabilities"),
 			"ancestors_ids"           => Relation::make(load: "ancestors_ids"),
+			"locations"               => Relation::make(load: "own_locations"),
 			"locations_ids"           => Relation::make(load: "own_locations:id"),
 			"locked_by"               => Relation::make(load: "locked_by"),
 			"logo"                    => Relation::make(load: "logo"),

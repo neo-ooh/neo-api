@@ -11,6 +11,7 @@
 use Illuminate\Support\Facades\Route;
 use Neo\Modules\Properties\Http\Controllers\Public\ProductsController;
 use Neo\Modules\Properties\Http\Controllers\Public\PropertiesController;
+use Neo\Modules\Properties\Http\Controllers\Public\StatsController;
 
 Route::group([
 	             "middleware" => "guests",
@@ -19,4 +20,6 @@ Route::group([
 	static function () {
 		Route::get("properties", [PropertiesController::class, "index"]);
 		Route::get("products", [ProductsController::class, "index"]);
+
+		Route::get("stats", [StatsController::class, "show"]);
 	});

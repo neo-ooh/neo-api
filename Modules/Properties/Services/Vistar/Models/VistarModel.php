@@ -24,142 +24,142 @@ use Throwable;
 
 abstract class
 VistarModel {
-    use HasAttributes;
+	use HasAttributes;
 
-    public string $endpoint;
+	public string $endpoint;
 
-    public string $slug;
+	public string $slug;
 
-    public string $key;
+	public string $key;
 
-    public function __construct(protected VistarClient $client, array $attributes = []) {
-        $this->setAttributes($attributes);
-    }
+	public function __construct(protected VistarClient $client, array $attributes = []) {
+		$this->setAttributes($attributes);
+	}
 
-    /**
-     * @return bool
-     * @throws GuzzleException
-     * @throws RequestException
-     */
-    public function create(): bool {
-        $endpoint = new Endpoint("POST", $this->getEndpointName() . "/");
+	/**
+	 * @return bool
+	 * @throws GuzzleException
+	 * @throws RequestException
+	 */
+	public function create(): bool {
+		$endpoint = new Endpoint("POST", $this->getEndpointName() . "/");
 
-        $response = $this->client->call($endpoint, $this->toArray(), [
-            "Content-Type" => "application/json",
-        ]);
+		$response = $this->client->call($endpoint, $this->toArray(), [
+			"Content-Type" => "application/json",
+		]);
 
-        $this->setAttributes($response->json());
-        return true;
-    }
+		$this->setAttributes($response->json());
+		return true;
+	}
 
-    /**
-     * Reload the model from the API
-     *
-     * @return $this
-     * @throws GuzzleException
-     * @throws RequestException
-     */
-    public function refresh(): static {
-        $endpoint = new Endpoint("GET", $this->getEndpointName() . "/" . $this->getKey());
+	/**
+	 * Reload the model from the API
+	 *
+	 * @return $this
+	 * @throws GuzzleException
+	 * @throws RequestException
+	 */
+	public function refresh(): static {
+		$endpoint = new Endpoint("GET", $this->getEndpointName() . "/" . $this->getKey());
 
-        $response = $this->client->call($endpoint, []);
+		$response = $this->client->call($endpoint, []);
 
-        $this->setAttributes($response->json());
-        return $this;
-    }
+		$this->setAttributes($response->json());
+		return $this;
+	}
 
-    /**
-     * Loads the model using its key
-     *
-     * @param VistarClient    $client
-     * @param                 $key
-     * @return static
-     */
-    public static function find(VistarClient $client, $key): static {
-        $model = new static($client);
-        $model->setAttribute($model->key, $key);
-        try {
-            $model->refresh();
-        } catch (Throwable $e) {
-            clock($e);
-        } finally {
-            return $model;
-        }
-    }
+	/**
+	 * Loads the model using its key
+	 *
+	 * @param VistarClient    $client
+	 * @param                 $key
+	 * @return static
+	 */
+	public static function find(VistarClient $client, $key): static {
+		$model = new static($client);
+		$model->setAttribute($model->key, $key);
+		try {
+			$model->refresh();
+		} catch (Throwable $e) {
+			clock($e);
+		} finally {
+			return $model;
+		}
+	}
 
-    /**
-     * @param VistarClient $client
-     * @return Collection<static>
-     * @throws GuzzleException
-     * @throws RequestException
-     * @throws APIAuthenticationError
-     */
-    public static function all(VistarClient $client): Enumerable {
-        $model = new static($client);
+	/**
+	 * @param VistarClient $client
+	 * @return Collection<static>
+	 * @throws GuzzleException
+	 * @throws RequestException
+	 * @throws APIAuthenticationError
+	 */
+	public static function all(VistarClient $client): Enumerable {
+		$model = new static($client);
 
-        $endpoint = new Endpoint("GET", $model->getEndpointName() . "/");
+		$endpoint = new Endpoint("GET", $model->getEndpointName() . "/");
 
-        $response = $client->call($endpoint, []);
+		$response = $client->call($endpoint, []);
 
-        /** @var array<array<string, mixed>> $rawModels */
-        $rawModels = $response->json()[$model->slug];
+		/** @var array<array<string, mixed>> $rawModels */
+		$rawModels = $response->json()[$model->slug];
 
-        return collect($rawModels)->map(fn(array $attributes) => new static($client, $attributes));
-    }
+		return collect($rawModels)->map(fn(array $attributes) => new static($client, $attributes));
+	}
 
-    /**
-     * @throws RequestException
-     * @throws GuzzleException
-     */
-    public function save(): bool {
-        // If the model key is missing or null, we want to create the model
-        if (!isset($this->{$this->key}) || $this->getKey() === null) {
-            return $this->create();
-        }
+	/**
+	 * @throws RequestException
+	 * @throws GuzzleException
+	 */
+	public function save(): bool {
+		// If the model key is missing or null, we want to create the model
+		if (!isset($this->{$this->key}) || $this->getKey() === null) {
+			return $this->create();
+		}
 
-        $endpoint = new Endpoint("PUT", $this->getEndpointName() . "/" . $this->getKey());
+		$endpoint = new Endpoint("PUT", $this->getEndpointName() . "/" . $this->getKey());
 
-        $response = $this->client->call($endpoint, $this->toArray());
+		$response = $this->client->call($endpoint, $this->toArray());
 
-        $this->setAttributes($response->json());
-        return true;
-    }
+		$this->setAttributes($response->json());
+		return true;
+	}
 
-    /**
-     * @return bool
-     * @throws APIAuthenticationError
-     * @throws GuzzleException
-     * @throws RequestException
-     */
-    public function delete(): bool {
-        $endpoint = new Endpoint("DELETE", $this->getEndpointName() . "/" . $this->getKey());
+	/**
+	 * @return bool
+	 * @throws APIAuthenticationError
+	 * @throws GuzzleException
+	 * @throws \Neo\Modules\Properties\Services\Exceptions\RequestException
+	 */
+	public function delete(): bool {
+		$endpoint = new Endpoint("DELETE", $this->getEndpointName() . "/" . $this->getKey());
 
-        $this->client->call($endpoint, []);
+		$this->client->call($endpoint, []);
 
-        return true;
-    }
+		return true;
+	}
 
-    public function setKey($value) {
-        $this->setAttribute($this->key, $value);
-        return $this;
-    }
+	public function setKey($value) {
+		$this->setAttribute($this->key, $value);
+		return $this;
+	}
 
 
-    public function getKey() {
-        return $this->getAttribute($this->key);
-    }
+	public function getKey() {
+		return $this->getAttribute($this->key);
+	}
 
-    protected function getEndpoint() {
+	protected function getEndpoint() {
 
-    }
+	}
 
-    protected function getEndpointName() {
-        if (isset($this->endpoint)) {
-            return $this->endpoint;
-        }
+	protected function getEndpointName() {
+		if (isset($this->endpoint)) {
+			return $this->endpoint;
+		}
 
-        // Get the current class name without the namespace, and pluralize it
-        $reflection = new ReflectionClass($this);
-        return Str::plural(strtolower($reflection->getShortName()));
-    }
+		// Get the current class name without the namespace, and pluralize it
+		$reflection = new ReflectionClass($this);
+		return Str::plural(strtolower($reflection->getShortName()));
+	}
 }

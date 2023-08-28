@@ -269,6 +269,7 @@ class ReachAdapter extends InventoryAdapter {
 	/**
 	 * @throws RequestException
 	 * @throws GuzzleException
+	 * @throws \Neo\Modules\Properties\Services\Exceptions\RequestException
 	 */
 	public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
 		$client = $this->getConfig()->getClient();
@@ -304,6 +305,7 @@ class ReachAdapter extends InventoryAdapter {
 
 		// We now want to compare the list of screens we just built against the one we were given.
 		// Any screen listed in the latter but missing in the former will have to be removed
+		/** @var int[] $screensToRemove */
 		$screensToRemove = array_diff(collect($productId->context["screens"])
 			                              ->pluck("id")
 			                              ->values()
@@ -314,9 +316,7 @@ class ReachAdapter extends InventoryAdapter {
 			                              ->all());
 
 		foreach ($screensToRemove as $screenToRemove) {
-			$screen = new Screen($client);
-			$screen->setKey($screenToRemove);
-			$screen->delete();
+			$this->deleteScreen($client, (int)$screenToRemove);
 		}
 
 		$productId->context["screens"] = $screenIds;
@@ -325,19 +325,39 @@ class ReachAdapter extends InventoryAdapter {
 	}
 
 	/**
-	 * @throws RequestException
+	 * @param InventoryResourceId $productId
+	 * @return bool
 	 * @throws GuzzleException
+	 * @throws \Neo\Modules\Properties\Services\Exceptions\RequestException
 	 */
 	public function removeProduct(InventoryResourceId $productId): bool {
 		$client = $this->getConfig()->getClient();
 
 		// We have to remove all the screens listed in the product's context
 		foreach ($productId->context["screens"] as ["id" => $screenId]) {
-			$screen = new Screen($client);
-			$screen->setKey($screenId);
-			$screen->delete();
+			$this->deleteScreen($client, (int)$screenId);
 		}
 
 		return true;
+	}
+
+	/**
+	 * @throws GuzzleException
+	 * @throws \Neo\Modules\Properties\Services\Exceptions\RequestException
+	 */
+	protected function deleteScreen(ReachClient $client, int $screenId): void {
+		try {
+
+			$screen = new Screen($client);
+			$screen->setKey($screenId);
+			$screen->delete();
+		} catch (\Neo\Modules\Properties\Services\Exceptions\RequestException $e) {
+			if ($e->response->status() === 404) {
+				// Screen to delete could not be found. It has already been removed. Continue
+				return;
+			}
+
+			throw $e;
+		}
 	}
 }

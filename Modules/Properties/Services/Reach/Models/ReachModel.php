@@ -27,161 +27,162 @@ use ReflectionClass;
 use Throwable;
 
 abstract class ReachModel {
-    use HasAttributes;
+	use HasAttributes;
 
-    public string $endpoint;
+	public string $endpoint;
 
-    public string $key;
+	public string $key;
 
-    public function __construct(protected ReachClient $client, array $attributes = []) {
-        $this->setAttributes($attributes);
-    }
+	public function __construct(protected ReachClient $client, array $attributes = []) {
+		$this->setAttributes($attributes);
+	}
 
-    /**
-     * @return bool
-     * @throws GuzzleException
-     * @throws RequestException
-     */
-    public function create(): bool {
-        $endpoint = new Endpoint("POST", $this->getEndpointName() . "/");
+	/**
+	 * @return bool
+	 * @throws GuzzleException
+	 * @throws RequestException
+	 */
+	public function create(): bool {
+		$endpoint = new Endpoint("POST", $this->getEndpointName() . "/");
 
-        $response = $this->client->call($endpoint, $this->toArray(), [
-            "Content-Type" => "application/json",
-        ]);
+		$response = $this->client->call($endpoint, $this->toArray(), [
+			"Content-Type" => "application/json",
+		]);
 
-        $this->setAttributes($response->json());
-        return true;
-    }
+		$this->setAttributes($response->json());
+		return true;
+	}
 
-    /**
-     * Reload the model from the API
-     *
-     * @return $this
-     * @throws GuzzleException
-     * @throws RequestException
-     */
-    public function refresh(): static {
-        $endpoint = new Endpoint("GET", $this->getEndpointName() . "/" . $this->getKey() . "/");
+	/**
+	 * Reload the model from the API
+	 *
+	 * @return $this
+	 * @throws GuzzleException
+	 * @throws RequestException
+	 */
+	public function refresh(): static {
+		$endpoint = new Endpoint("GET", $this->getEndpointName() . "/" . $this->getKey() . "/");
 
-        $response = $this->client->call($endpoint, $this->toArray());
+		$response = $this->client->call($endpoint, $this->toArray());
 
-        $this->setAttributes($response->json());
-        return $this;
-    }
+		$this->setAttributes($response->json());
+		return $this;
+	}
 
-    /**
-     * Loads the model using its key
-     *
-     * @param ReachClient     $client
-     * @param                 $key
-     * @return static
-     */
-    public static function find(ReachClient $client, $key): static {
-        $model = new static($client);
-        $model->setAttribute($model->key, $key);
-        try {
-            $model->refresh();
-        } catch (Throwable $e) {
-            clock($e);
-        } finally {
-            return $model;
-        }
-    }
+	/**
+	 * Loads the model using its key
+	 *
+	 * @param ReachClient     $client
+	 * @param                 $key
+	 * @return static
+	 */
+	public static function find(ReachClient $client, $key): static {
+		$model = new static($client);
+		$model->setAttribute($model->key, $key);
+		try {
+			$model->refresh();
+		} catch (Throwable $e) {
+			clock($e);
+		} finally {
+			return $model;
+		}
+	}
 
-    /**
-     * @param ReachClient $client
-     * @param Carbon|null $ifModifiedSince
-     * @param int         $limit
-     * @return Collection<static>
-     */
-    public static function all(ReachClient $client, Carbon|null $ifModifiedSince = null, int $limit = 50): Enumerable {
-        $model = new static($client);
+	/**
+	 * @param ReachClient $client
+	 * @param Carbon|null $ifModifiedSince
+	 * @param int         $limit
+	 * @return Collection<static>
+	 */
+	public static function all(ReachClient $client, Carbon|null $ifModifiedSince = null, int $limit = 50): Enumerable {
+		$model = new static($client);
 
-        return LazyCollection::make(function () use ($ifModifiedSince, $model, $limit, $client) {
-            $endpoint   = new Endpoint("GET", $model->getEndpointName() . "/");
-            $parameters = [
-                "page_size" => $limit,
-            ];
-            $headers    = [
-                "If-Modified-Since" => $ifModifiedSince?->format("D, d M Y H:i:s \G\M\T"),
-            ];
+		return LazyCollection::make(function () use ($ifModifiedSince, $model, $limit, $client) {
+			$endpoint   = new Endpoint("GET", $model->getEndpointName() . "/");
+			$parameters = [
+				"page_size" => $limit,
+			];
+			$headers    = [
+				"If-Modified-Since" => $ifModifiedSince?->format("D, d M Y H:i:s \G\M\T"),
+			];
 
-            do {
-                $response           = $client->call($endpoint, $parameters, $headers);
-                $collectionResponse = ModelsCollectionResponse::from($response->json());
+			do {
+				$response           = $client->call($endpoint, $parameters, $headers);
+				$collectionResponse = ModelsCollectionResponse::from($response->json());
 
-                foreach ($collectionResponse->results as $result) {
-                    yield new static($client, $result);
-                }
+				foreach ($collectionResponse->results as $result) {
+					yield new static($client, $result);
+				}
 
-                if ($collectionResponse->next === null) {
-                    $endpoint = null;
-                } else {
-                    $nextUri            = Uri::createFromString($collectionResponse->next);
-                    $endpoint           = new Endpoint("GET", $nextUri->getPath());
-                    $endpoint->base     = Uri::createFromComponents([
-                                                                        "scheme" => $nextUri->getScheme(),
-                                                                        "host"   => $nextUri->getHost(),
-                                                                        "port"   => $nextUri->getPort(),
-                                                                    ])->toString();
-                    $query              = Query::createFromUri($nextUri);
-                    $parameters["page"] = $query->params("page");
-                }
-            } while ($endpoint !== null);
-        });
-    }
+				if ($collectionResponse->next === null) {
+					$endpoint = null;
+				} else {
+					$nextUri            = Uri::createFromString($collectionResponse->next);
+					$endpoint           = new Endpoint("GET", $nextUri->getPath());
+					$endpoint->base     = Uri::createFromComponents([
+						                                                "scheme" => $nextUri->getScheme(),
+						                                                "host"   => $nextUri->getHost(),
+						                                                "port"   => $nextUri->getPort(),
+					                                                ])->toString();
+					$query              = Query::createFromUri($nextUri);
+					$parameters["page"] = $query->params("page");
+				}
+			} while ($endpoint !== null);
+		});
+	}
 
-    /**
-     * @throws RequestException
-     * @throws GuzzleException
-     */
-    public function save(): bool {
-        // If the model key is missing or null, we want to create the model
-        if (!isset($this->{$this->key}) || $this->getKey() === null) {
-            return $this->create();
-        }
+	/**
+	 * @throws RequestException
+	 * @throws GuzzleException
+	 */
+	public function save(): bool {
+		// If the model key is missing or null, we want to create the model
+		if (!isset($this->{$this->key}) || $this->getKey() === null) {
+			return $this->create();
+		}
 
-        $endpoint = new Endpoint("PUT", $this->getEndpointName() . "/" . $this->getKey() . "/");
+		$endpoint = new Endpoint("PUT", $this->getEndpointName() . "/" . $this->getKey() . "/");
 
-        $response = $this->client->call($endpoint, $this->toArray());
+		$response = $this->client->call($endpoint, $this->toArray());
 
-        $this->setAttributes($response->json());
-        return true;
-    }
+		$this->setAttributes($response->json());
+		return true;
+	}
 
-    /**
-     * @throws RequestException
-     * @throws GuzzleException
-     */
-    public function delete(): bool {
-        $endpoint = new Endpoint("DELETE", $this->getEndpointName() . "/" . $this->getKey() . "/");
+	/**
+	 * @return bool
+	 * @throws GuzzleException
+	 * @throws \Neo\Modules\Properties\Services\Exceptions\RequestException
+	 */
+	public function delete(): bool {
+		$endpoint = new Endpoint("DELETE", $this->getEndpointName() . "/" . $this->getKey() . "/");
 
-        $this->client->call($endpoint, $this->toArray());
+		$this->client->call($endpoint, $this->toArray());
 
-        return true;
-    }
+		return true;
+	}
 
-    public function setKey($value) {
-        $this->setAttribute($this->key, $value);
-        return $this;
-    }
+	public function setKey($value) {
+		$this->setAttribute($this->key, $value);
+		return $this;
+	}
 
 
-    public function getKey() {
-        return $this->getAttribute($this->key);
-    }
+	public function getKey() {
+		return $this->getAttribute($this->key);
+	}
 
-    protected function getEndpoint() {
+	protected function getEndpoint() {
 
-    }
+	}
 
-    protected function getEndpointName() {
-        if (isset($this->endpoint)) {
-            return $this->endpoint;
-        }
+	protected function getEndpointName() {
+		if (isset($this->endpoint)) {
+			return $this->endpoint;
+		}
 
-        // Get the current class name without the namespace, and pluralize it
-        $reflection = new ReflectionClass($this);
-        return Str::plural(strtolower($reflection->getShortName()));
-    }
+		// Get the current class name without the namespace, and pluralize it
+		$reflection = new ReflectionClass($this);
+		return Str::plural(strtolower($reflection->getShortName()));
+	}
 }

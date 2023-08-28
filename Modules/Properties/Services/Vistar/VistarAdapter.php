@@ -38,216 +38,226 @@ use Traversable;
  * @extends InventoryAdapter<VistarConfig>
  */
 class VistarAdapter extends InventoryAdapter {
-    protected array $capabilities = [
-        InventoryCapability::ProductsRead,
-        InventoryCapability::ProductsWrite,
-        InventoryCapability::PropertiesType,
-    ];
+	protected array $capabilities = [
+		InventoryCapability::ProductsRead,
+		InventoryCapability::ProductsWrite,
+		InventoryCapability::PropertiesType,
+	];
 
-    /**
-     * @inheritDoc
-     */
-    public static function buildConfig(InventoryProvider $provider): InventoryConfig {
-        return new VistarConfig(
-            name         : $provider->name,
-            inventoryID  : $provider->id,
-            inventoryUUID: $provider->uuid,
-            api_url      : $provider->settings->api_url,
-            api_username : $provider->settings->api_username,
-            api_key      : $provider->settings->api_key,
-        );
-    }
+	/**
+	 * @inheritDoc
+	 */
+	public static function buildConfig(InventoryProvider $provider): InventoryConfig {
+		return new VistarConfig(
+			name         : $provider->name,
+			inventoryID  : $provider->id,
+			inventoryUUID: $provider->uuid,
+			api_url      : $provider->settings->api_url,
+			api_username : $provider->settings->api_username,
+			api_key      : $provider->settings->api_key,
+		);
+	}
 
-    /**
-     * @return bool|string
-     * @throws GuzzleException
-     */
-    public function validateConfiguration(): bool|string {
-        try {
-            return $this->getConfig()->getClient()->login();
-        } catch (APIAuthenticationError $e) {
-            return $e->getMessage();
-        }
-    }
+	/**
+	 * @return bool|string
+	 * @throws GuzzleException
+	 */
+	public function validateConfiguration(): bool|string {
+		try {
+			return $this->getConfig()->getClient()->login();
+		} catch (APIAuthenticationError $e) {
+			return $e->getMessage();
+		}
+	}
 
-    public function listProducts(?Carbon $ifModifiedSince = null): Traversable {
-        return LazyCollection::make(function () {
-            $venues = Venue::all($this->getConfig()->getClient());
+	public function listProducts(?Carbon $ifModifiedSince = null): Traversable {
+		return LazyCollection::make(function () {
+			$venues = Venue::all($this->getConfig()->getClient());
 
-            foreach ($venues as $venue) {
-                yield ResourceFactory::makeIdentifiableProduct($venue, $this->getConfig());
-            }
-        });
-    }
+			foreach ($venues as $venue) {
+				yield ResourceFactory::makeIdentifiableProduct($venue, $this->getConfig());
+			}
+		});
+	}
 
-    public function getProduct(InventoryResourceId $productId): IdentifiableProduct {
-        $venueId = array_values($productId->context["venues"] ?? [])[0]["id"] ?? null;
+	public function getProduct(InventoryResourceId $productId): IdentifiableProduct {
+		$venueId = array_values($productId->context["venues"] ?? [])[0]["id"] ?? null;
 
-        if (!$venueId) {
-            throw new RuntimeException("Product has invalid context: No venue id could be found");
-        }
+		if (!$venueId) {
+			throw new RuntimeException("Product has invalid context: No venue id could be found");
+		}
 
-        $venue = Venue::find($this->getConfig()->getClient(), $venueId);
-        return ResourceFactory::makeIdentifiableProduct($venue, $this->getConfig());
-    }
+		$venue = Venue::find($this->getConfig()->getClient(), $venueId);
+		return ResourceFactory::makeIdentifiableProduct($venue, $this->getConfig());
+	}
 
-    protected function fillVenue(Venue $venue, BroadcastPlayer $player, ProductResource $product, array $context, float $impressionsShare): void {
-        $impressionsCap = [
-            "twmUKzTrTzOPh6GOuDHQPw" => 17, // SHO
-            "FkSuEcdwQxSfrEyUHbdjeQ" => 5, // OTG
-            "uemvjQiyTRWo67XexuHOJQ" => 12, // FIT
-        ]; // TODO: MAke that dynamic, this is bad
+	protected function fillVenue(Venue $venue, BroadcastPlayer $player, ProductResource $product, array $context, float $impressionsShare): void {
+		$impressionsCap = [
+			"twmUKzTrTzOPh6GOuDHQPw" => 17, // SHO
+			"FkSuEcdwQxSfrEyUHbdjeQ" => 5, // OTG
+			"uemvjQiyTRWo67XexuHOJQ" => 12, // FIT
+		]; // TODO: MAke that dynamic, this is bad
 
-        $impressionsPerPlay = collect($product->weekdays_spot_impressions)->average() * $impressionsShare;
+		$impressionsPerPlay = collect($product->weekdays_spot_impressions)->average() * $impressionsShare;
 
-        $venue->name             = trim($player->name);
-        $venue->venue_type_id    = $product->property_type ? (int)$product->property_type->external_id : null;
-        $venue->network_id       = $context["network_id"];
-        $venue->partner_venue_id = "connect_" . $product->property_connect_id . "_" . $product->product_connect_id . "_" . $player->external_id->external_id;
-        $venue->activation_date  = $venue->activation_date ?? null;
+		$venue->name             = trim($player->name);
+		$venue->venue_type_id    = $product->property_type ? (int)$product->property_type->external_id : null;
+		$venue->network_id       = $context["network_id"];
+		$venue->partner_venue_id = "connect_" . $product->property_connect_id . "_" . $product->product_connect_id . "_" . $player->external_id->external_id;
+		$venue->activation_date  = $venue->activation_date ?? null;
 //        $venue->excluded_buy_types = $venue->activation_date ?? [];
-        $venue->industry_id = $venue->industry_id ?? null;
+		$venue->industry_id = $venue->industry_id ?? null;
 
-        $venue->longitude = $product->geolocation->longitude;
-        $venue->latitude  = $product->geolocation->latitude;
-        $venue->address   = $product->address->full;
+		$venue->longitude = $product->geolocation->longitude;
+		$venue->latitude  = $product->geolocation->latitude;
+		$venue->address   = $product->address->full;
 
-        $venue->operating_minutes       = VenueOperatingMinutes::buildFromOperatingHours($product->operating_hours->all());
-        $venue->cpm_floor_cents         = (int)round($product->programmatic_price * 100);
-        $venue->impressions             = new VenueImpressions(
-            per_spot  : min($impressionsCap[$context["network_id"]] ?? 5, max(1, floor($impressionsPerPlay * 10000) / 10000)), // Impressions rounded to 4 decimals
-            per_second: 0,
-        );
-        $venue->registration_id         = $player->external_id->external_id;
-        $venue->video_supported         = in_array(MediaType::Video, $product->allowed_media_types);
-        $venue->static_supported        = in_array(MediaType::Image, $product->allowed_media_types);
-        $venue->static_duration_seconds = $product->loop_configuration->spot_length_ms / 1_000;
-        $venue->min_duration_ms         = min(5_000, $product->loop_configuration->spot_length_ms);
-        $venue->max_duration_ms         = $product->loop_configuration->spot_length_ms;
+		$venue->operating_minutes       = VenueOperatingMinutes::buildFromOperatingHours($product->operating_hours->all());
+		$venue->cpm_floor_cents         = (int)round($product->programmatic_price * 100);
+		$venue->impressions             = new VenueImpressions(
+			per_spot  : min($impressionsCap[$context["network_id"]] ?? 5, max(1, floor($impressionsPerPlay * 10000) / 10000)), // Impressions rounded to 4 decimals
+			per_second: 0,
+		);
+		$venue->registration_id         = $player->external_id->external_id;
+		$venue->video_supported         = in_array(MediaType::Video, $product->allowed_media_types);
+		$venue->static_supported        = in_array(MediaType::Image, $product->allowed_media_types);
+		$venue->static_duration_seconds = $product->loop_configuration->spot_length_ms / 1_000;
+		$venue->min_duration_ms         = min(5_000, $product->loop_configuration->spot_length_ms);
+		$venue->max_duration_ms         = $product->loop_configuration->spot_length_ms;
 
-        $venue->height_px = $product->screen_height_px;
-        $venue->width_px  = $product->screen_width_px;
-    }
+		$venue->height_px = $product->screen_height_px;
+		$venue->width_px  = $product->screen_width_px;
+	}
 
-    /**
-     * @param ProductResource $product
-     * @param array           $context
-     * @return InventoryResourceId|null
-     * @throws GuzzleException
-     * @throws IncompatibleResourceAndInventoryException
-     * @throws RequestException
-     */
-    public function createProduct(ProductResource $product, array $context): InventoryResourceId|null {
-        // First, validate the product is compatible with Reach
-        if ($product->type !== ProductType::Digital) {
-            throw new IncompatibleResourceAndInventoryException(0, $this->getInventoryID(), $this->getInventoryType());
-        }
+	/**
+	 * @param ProductResource $product
+	 * @param array           $context
+	 * @return InventoryResourceId|null
+	 * @throws GuzzleException
+	 * @throws IncompatibleResourceAndInventoryException
+	 * @throws RequestException
+	 */
+	public function createProduct(ProductResource $product, array $context): InventoryResourceId|null {
+		// First, validate the product is compatible with Reach
+		if ($product->type !== ProductType::Digital) {
+			throw new IncompatibleResourceAndInventoryException(0, $this->getInventoryID(), $this->getInventoryType());
+		}
 
-        /** @var VistarClient $client */
-        $client = $this->getConfig()->getClient();
+		/** @var VistarClient $client */
+		$client = $this->getConfig()->getClient();
 
-        $venueIds = [];
+		$venueIds = [];
 
-        $screensCount = collect($product->broadcastLocations)->sum("screen_count");
+		$screensCount = collect($product->broadcastLocations)->sum("screen_count");
 
-        /** @var BroadcastLocation $broadcastLocation */
-        foreach ($product->broadcastLocations as $broadcastLocation) {
-            /** @var BroadcastPlayer $broadcastPlayer */
-            foreach ($broadcastLocation->players as $broadcastPlayer) {
-                $impressionsShare = $broadcastPlayer->screen_count / $screensCount;
+		/** @var BroadcastLocation $broadcastLocation */
+		foreach ($product->broadcastLocations as $broadcastLocation) {
+			/** @var BroadcastPlayer $broadcastPlayer */
+			foreach ($broadcastLocation->players as $broadcastPlayer) {
+				$impressionsShare = $broadcastPlayer->screen_count / $screensCount;
 
-                $venue = new Venue($client);
-                $this->fillVenue($venue, $broadcastPlayer, $product, $context, $impressionsShare);
-                $venue->save();
+				$venue = new Venue($client);
+				$this->fillVenue($venue, $broadcastPlayer, $product, $context, $impressionsShare);
+				$venue->save();
 
-                $venueIds[$broadcastPlayer->id] = ["id" => $venue->getKey(), "name" => $venue->name];
-            }
-        }
+				$venueIds[$broadcastPlayer->id] = ["id" => $venue->getKey(), "name" => $venue->name];
+			}
+		}
 
-        return new InventoryResourceId(
-            inventory_id: $this->getInventoryID(),
-            external_id : 'MULTIPLE',
-            type        : InventoryResourceType::Product,
-            context     : [
-                              ...$context,
-                              "venues" => $venueIds,
-                          ]
-        );
-    }
+		return new InventoryResourceId(
+			inventory_id: $this->getInventoryID(),
+			external_id : 'MULTIPLE',
+			type        : InventoryResourceType::Product,
+			context     : [
+				              ...$context,
+				              "venues" => $venueIds,
+			              ]
+		);
+	}
 
-    /**
-     * @param InventoryResourceId $productId
-     * @param ProductResource     $product
-     * @return InventoryResourceId|false
-     * @throws APIAuthenticationError
-     * @throws GuzzleException
-     * @throws RequestException
-     */
-    public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
-        $client = $this->getConfig()->getClient();
+	/**
+	 * @param InventoryResourceId $productId
+	 * @param ProductResource     $product
+	 * @return InventoryResourceId|false
+	 * @throws APIAuthenticationError
+	 * @throws GuzzleException
+	 * @throws RequestException
+	 * @throws \Neo\Modules\Properties\Services\Exceptions\RequestException
+	 */
+	public function updateProduct(InventoryResourceId $productId, ProductResource $product): InventoryResourceId|false {
+		$client = $this->getConfig()->getClient();
 
-        $venueIds = [];
+		$venueIds = [];
 
-        $screensCount = collect($product->broadcastLocations)->sum("screen_count");
-        // For each player, we pull the screen to update it. If the screen does not exist, we create it and update our id/context
-        foreach ($product->broadcastLocations as $broadcastLocation) {
-            /** @var BroadcastPlayer $broadcastPlayer */
-            foreach ($broadcastLocation->players as $broadcastPlayer) {
-                $impressionsShare = $broadcastPlayer->screen_count / $screensCount;
+		$screensCount = collect($product->broadcastLocations)->sum("screen_count");
+		// For each player, we pull the screen to update it. If the screen does not exist, we create it and update our id/context
+		foreach ($product->broadcastLocations as $broadcastLocation) {
+			/** @var BroadcastPlayer $broadcastPlayer */
+			foreach ($broadcastLocation->players as $broadcastPlayer) {
+				$impressionsShare = $broadcastPlayer->screen_count / $screensCount;
 
-                if (!isset($productId->context["venues"][$broadcastPlayer->id])) {
-                    // No ID for this location
-                    $venue = new Venue($client);
-                } else {
-                    $venue = Venue::find($client, $productId->context["venues"][$broadcastPlayer->id]["id"]);
-                }
+				if (!isset($productId->context["venues"][$broadcastPlayer->id])) {
+					// No ID for this location
+					$venue = new Venue($client);
+				} else {
+					$venue = Venue::find($client, $productId->context["venues"][$broadcastPlayer->id]["id"]);
+				}
 
-                $this->fillVenue($venue, $broadcastPlayer, $product, $productId->context, $impressionsShare);
-                $venue->save();
+				$this->fillVenue($venue, $broadcastPlayer, $product, $productId->context, $impressionsShare);
+				$venue->save();
 
-                $venueIds[$broadcastPlayer->id] = ["id" => $venue->getKey(), "name" => $venue->name];
-            }
-        }
+				$venueIds[$broadcastPlayer->id] = ["id" => $venue->getKey(), "name" => $venue->name];
+			}
+		}
 
-        // We now want to compare the list of screens we just built against the one we were given.
-        // Any screen listed in the latter but missing in the former will have to be removed
-        $venuesToRemove = array_diff(collect($productId->context["venues"])
-                                         ->pluck("id")
-                                         ->values()
-                                         ->all(),
-                                     collect($venueIds)
-                                         ->pluck("id")
-                                         ->values()
-                                         ->all());
+		// We now want to compare the list of screens we just built against the one we were given.
+		// Any screen listed in the latter but missing in the former will have to be removed
+		$venuesToRemove = array_diff(collect($productId->context["venues"])
+			                             ->pluck("id")
+			                             ->values()
+			                             ->all(),
+		                             collect($venueIds)
+			                             ->pluck("id")
+			                             ->values()
+			                             ->all());
 
-        foreach ($venuesToRemove as $venueToRemove) {
-            $venue = new Venue($client);
-            $venue->setKey($venueToRemove);
-            $venue->delete();
-        }
+		foreach ($venuesToRemove as $venueToRemove) {
+			try {
+				$venue = new Venue($client);
+				$venue->setKey($venueToRemove);
+				$venue->delete();
+			} catch (\Neo\Modules\Properties\Services\Exceptions\RequestException $e) {
+				if ($e->response->status() === 404) {
+					// Venue to delete could not be found. It has already been removed. Continue
+					continue;
+				}
 
-        $productId->context["venues"] = $venueIds;
+				throw $e;
+			}
+		}
 
-        return $productId;
-    }
+		$productId->context["venues"] = $venueIds;
 
-    /**
-     * @param InventoryResourceId $productId
-     * @return bool
-     * @throws APIAuthenticationError
-     * @throws GuzzleException
-     * @throws RequestException
-     */
-    public function removeProduct(InventoryResourceId $productId): bool {
-        $client = $this->getConfig()->getClient();
+		return $productId;
+	}
 
-        // We have to remove all the units listed in the product's context
-        foreach ($productId->context["venues"] as ["id" => $venueId]) {
-            $venue = new Venue($client);
-            $venue->setKey($venueId);
-            $venue->delete();
-        }
+	/**
+	 * @param InventoryResourceId $productId
+	 * @return bool
+	 * @throws APIAuthenticationError
+	 * @throws GuzzleException
+	 * @throws RequestException
+	 */
+	public function removeProduct(InventoryResourceId $productId): bool {
+		$client = $this->getConfig()->getClient();
 
-        return true;
-    }
+		// We have to remove all the units listed in the product's context
+		foreach ($productId->context["venues"] as ["id" => $venueId]) {
+			$venue = new Venue($client);
+			$venue->setKey($venueId);
+			$venue->delete();
+		}
+
+		return true;
+	}
 }

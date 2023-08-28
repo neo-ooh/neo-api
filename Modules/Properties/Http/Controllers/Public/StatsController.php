@@ -81,7 +81,6 @@ class StatsController extends Controller {
 			                    "traffic"          => $properties->flatMap(fn(Property $p) => $p->traffic->weekly_data->slice(-4)
 			                                                                                                          ->pluck("traffic"))
 			                                                     ->sum(),
-			                    "impressions" =>
 		                    ]);
 	}
 }

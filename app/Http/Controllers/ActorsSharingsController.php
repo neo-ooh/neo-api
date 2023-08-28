@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\ActorsShares\DestroyShareRequest;
 use Neo\Http\Requests\ActorsShares\StoreShareRequest;
+use Neo\Http\Requests\ActorsShares\SyncAdditionalAccesssesRequest;
 use Neo\Models\Actor;
 
 class ActorsSharingsController extends Controller {

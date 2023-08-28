@@ -45,12 +45,15 @@ class ProductsViewSeeder extends Seeder {
 				COALESCE(`p`.`screen_size_in`, `pc`.`screen_size_in`) as 'screen_size_in',
 				COALESCE(`p`.`screen_type_id`, `pc`.`screen_type_id`) as 'screen_type_id',
 				COALESCE(`p`.`cover_picture_id`, `pc`.`cover_picture_id`) as 'cover_picture_id',
+				COUNT(`ip`.`id`) as `pictures_count`,
 				`p`.`created_at`,
 				`p`.`updated_at`,
 				`p`.`deleted_at`
 				FROM `products` `p`
 				JOIN `products_categories` `pc` ON `p`.`category_id` = `pc`.`id`
 				JOIN `properties` `pr` ON `p`.`property_id` = `pr`.`actor_id`        
+				LEFT JOIN `inventory_pictures` `ip` ON `p`.`id` = `ip`.`product_id`      
+				GROUP BY `p`.`id`  
 		EOS
 		);
 	}

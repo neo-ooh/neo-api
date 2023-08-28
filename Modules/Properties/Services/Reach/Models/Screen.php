@@ -40,6 +40,7 @@ use Neo\Services\API\Endpoint;
  * @property NamedIdentityAttribute|null        $screen_type
  * @property float|null                         $diagonal_size
  * @property string                             $diagonal_size_units
+ * @property int<1, 100>                        $screen_count
  *
  * @property float                              $max_ad_duration
  * @property float                              $min_ad_duration
@@ -98,65 +99,65 @@ use Neo\Services\API\Endpoint;
  * @property int                                $connectivity
  */
 class Screen extends ReachModel {
-    public string $key = "id";
+	public string $key = "id";
 
-    protected array $casts = [
-        "allowed_ad_types"      => NamedIdentityAttribute::class,
-        "aspect_ratio"          => ScreenAspectRatio::class,
-        "audience_data_sources" => NamedIdentityAttribute::class,
-        "bid_floors"            => ScreenBidFloor::class,
-        "publisher"             => ScreenPublisher::class,
-        "resolution"            => ScreenResolution::class,
-        "screen_type"           => NamedIdentityAttribute::class,
-        "tags"                  => NamedIdentityAttribute::class,
-        "time_zone"             => NamedIdentityAttribute::class,
-        "venue_types"           => ScreenVenueType::class,
-    ];
+	protected array $casts = [
+		"allowed_ad_types"      => NamedIdentityAttribute::class,
+		"aspect_ratio"          => ScreenAspectRatio::class,
+		"audience_data_sources" => NamedIdentityAttribute::class,
+		"bid_floors"            => ScreenBidFloor::class,
+		"publisher"             => ScreenPublisher::class,
+		"resolution"            => ScreenResolution::class,
+		"screen_type"           => NamedIdentityAttribute::class,
+		"tags"                  => NamedIdentityAttribute::class,
+		"time_zone"             => NamedIdentityAttribute::class,
+		"venue_types"           => ScreenVenueType::class,
+	];
 
-    public function toInventoryResourceId(int $inventoryId): InventoryResourceId {
-        return new InventoryResourceId(
-            inventory_id: $inventoryId,
-            external_id : $this->getKey(),
-            type        : InventoryResourceType::Product,
-            context     : [
-                              "player_external_id" => explode(":", $this->device_id)[1],
-                          ],
-        );
-    }
+	public function toInventoryResourceId(int $inventoryId): InventoryResourceId {
+		return new InventoryResourceId(
+			inventory_id: $inventoryId,
+			external_id : $this->getKey(),
+			type        : InventoryResourceType::Product,
+			context     : [
+				              "player_external_id" => explode(":", $this->device_id)[1],
+			              ],
+		);
+	}
 
-    public function fillImpressions(array $weekdaysSpotImpressions) {
-        // First, build a csv
-        $csv = "";
-        // Headers
-        $csv .= "screen_id,start_date,end_date,start_time,end_time,mon,tue,wed,thu,fri,sat,sun,demography_type,total,males,females,males_12,males_18,males_25,males_35,males_45,males_55,males_65,females_12,females_18,females_25,females_35,females_45,females_55,females_65\n";
+	public function fillImpressions(array $weekdaysSpotImpressions) {
+		// First, build a csv
+		$csv = "";
+		// Headers
+		$csv .= "screen_id,start_date,end_date,start_time,end_time,mon,tue,wed,thu,fri,sat,sun,demography_type,total,males,females,males_12,males_18,males_25,males_35,males_45,males_55,males_65,females_12,females_18,females_25,females_35,females_45,females_55,females_65\n";
 
-        foreach ($weekdaysSpotImpressions as $weekDay => $spotImpressions) {
-            // broadsign.com:example,2017-01-01,2017-12-31,12:00:01,18:00:00,1,1,1,1,0,0,0,basic,50,,,,,,,,,,,,,,,,
-            $csv .= $this->device_id . ",";
-            $csv .= Carbon::now()->startOfYear()->toDateString() . ",";
-            $csv .= Carbon::now()->addYear()->endOfYear()->toDateString() . ",";
-            $csv .= "00:00:00,";
-            $csv .= "23:59:59,";
-            $csv .= ($weekDay === 1 ? 1 : 0) . ","; // Monday
-            $csv .= ($weekDay === 2 ? 1 : 0) . ","; // Tuesday
-            $csv .= ($weekDay === 3 ? 1 : 0) . ","; // Wednesday
-            $csv .= ($weekDay === 4 ? 1 : 0) . ","; // Thursday
-            $csv .= ($weekDay === 5 ? 1 : 0) . ","; // Friday
-            $csv .= ($weekDay === 6 ? 1 : 0) . ","; // Saturday
-            $csv .= ($weekDay === 7 ? 1 : 0) . ","; // Sunday
-            $csv .= "basic,";
-            $csv .= max(1, floor($spotImpressions * 10000) / 10000) . ",";   // Impressions per play rounded to 4 decimals
-            $csv .= ",,,,,,,,,,,,,,,\n";                                     // Columns not used
-        }
+		foreach ($weekdaysSpotImpressions as $weekDay => $spotImpressions) {
+			// broadsign.com:example,2017-01-01,2017-12-31,12:00:01,18:00:00,1,1,1,1,0,0,0,basic,50,,,,,,,,,,,,,,,,
+			$csv .= $this->device_id . ",";
+			$csv .= Carbon::now()->startOfYear()->toDateString() . ",";
+			$csv .= Carbon::now()->addYear()->endOfYear()->toDateString() . ",";
+			$csv .= "00:00:00,";
+			$csv .= "23:59:59,";
+			$csv .= ($weekDay === 1 ? 1 : 0) . ","; // Monday
+			$csv .= ($weekDay === 2 ? 1 : 0) . ","; // Tuesday
+			$csv .= ($weekDay === 3 ? 1 : 0) . ","; // Wednesday
+			$csv .= ($weekDay === 4 ? 1 : 0) . ","; // Thursday
+			$csv .= ($weekDay === 5 ? 1 : 0) . ","; // Friday
+			$csv .= ($weekDay === 6 ? 1 : 0) . ","; // Saturday
+			$csv .= ($weekDay === 7 ? 1 : 0) . ","; // Sunday
+			$csv .= "basic,";
+			$csv .= max(1, floor($spotImpressions * 10000) / 10000) . ",";   // Impressions per play rounded to 4 decimals
+			$csv .= ",,,,,,,,,,,,,,,\n";                                     // Columns not used
+		}
 
-        $endpoint = Endpoint::post("/schedules/")->multipart();
-        $this->client->call(
-            $endpoint,
-            [[
-                 "contents" => $csv,
-                 "filename" => $this->device_id . "-audience.csv",
-                 "name"     => $this->device_id . "-audience.csv",
-             ]],
-        );
-    }
+		$endpoint = Endpoint::post("/schedules/")->multipart();
+		$this->client->call(
+			$endpoint,
+			[[
+				 "contents" => $csv,
+				 "filename" => $this->device_id . "-audience.csv",
+				 "name"     => $this->device_id . "-audience.csv",
+			 ]],
+		);
+	}
 }

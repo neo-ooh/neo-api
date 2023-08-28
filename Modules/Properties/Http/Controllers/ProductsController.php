@@ -21,24 +21,25 @@ use Neo\Modules\Properties\Http\Requests\Products\ListProductsRequest;
 use Neo\Modules\Properties\Http\Requests\Products\ShowProductRequest;
 use Neo\Modules\Properties\Http\Requests\Products\UpdateProductRequest;
 use Neo\Modules\Properties\Models\Product;
+use Neo\Modules\Properties\Models\ResolvedProduct;
 
 class ProductsController {
 	public function index(ListProductsRequest $request) {
-		$query = Product::query()
-		                ->when($request->has("property_id"), function (Builder $query) use ($request) {
-			                $query->where("property_id", "=", $request->input("property_id"));
-		                })
-		                ->when($request->has("category_id"), function (Builder $query) use ($request) {
-			                $query->where("category_id", "=", $request->input("category_id"));
-		                })
-		                ->when($request->has("type"), function (Builder $query) use ($request) {
-			                $query->whereHas("category", function (Builder $query) use ($request) {
-				                $query->where("type", "=", $request->enum("type", ProductType::class));
-			                });
-		                })
-		                ->when($request->input("bonus") !== null, function (Builder $query) use ($request) {
-			                $query->where("is_bonus", "=", $request->input("bonus"));
-		                });
+		$query = ResolvedProduct::query()
+		                        ->when($request->has("property_id"), function (Builder $query) use ($request) {
+			                        $query->where("property_id", "=", $request->input("property_id"));
+		                        })
+		                        ->when($request->has("category_id"), function (Builder $query) use ($request) {
+			                        $query->where("category_id", "=", $request->input("category_id"));
+		                        })
+		                        ->when($request->has("type"), function (Builder $query) use ($request) {
+			                        $query->whereHas("category", function (Builder $query) use ($request) {
+				                        $query->where("type", "=", $request->enum("type", ProductType::class));
+			                        });
+		                        })
+		                        ->when($request->input("bonus") !== null, function (Builder $query) use ($request) {
+			                        $query->where("is_bonus", "=", $request->input("bonus"));
+		                        });
 
 		if ($request->has("parent_id")) {
 			$actorIds = ActorsGetter::from($request->input("parent_id"))

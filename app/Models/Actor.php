@@ -183,12 +183,16 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
 	protected function getPublicRelations() {
 		return [
-			"ancestors_ids"       => Relation::make(load: "ancestors_ids"),
-			"locations_ids"       => Relation::make(load: "own_locations:id"),
-			"logo"                => Relation::make(load: "logo"),
-			"parent"              => Relation::make(load: "parent"),
-			"phone"               => Relation::make(load: "phone"),
-			"additional_accesses" => Relation::make(load: "additional_accesses"),
+			"additional_accesses"     => Relation::make(load: "additional_accesses"),
+			"capabilities"            => Relation::make(load: "capabilities"),
+			"ancestors_ids"           => Relation::make(load: "ancestors_ids"),
+			"locations_ids"           => Relation::make(load: "own_locations:id"),
+			"locked_by"               => Relation::make(load: "locked_by"),
+			"logo"                    => Relation::make(load: "logo"),
+			"parent"                  => Relation::make(load: "parent"),
+			"phone"                   => Relation::make(load: "phone"),
+			"roles"                   => Relation::make(load: "roles"),
+			"standalone_capabilities" => Relation::make(load: "standalone_capabilities"),
 		];
 	}
 

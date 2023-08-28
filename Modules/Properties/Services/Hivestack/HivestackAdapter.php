@@ -154,6 +154,7 @@ class HivestackAdapter extends InventoryAdapter {
 		$unit->active                         = $product->is_sellable;
 		$unit->name                           = trim($product->property_name) . " - " . trim($product->name[0]->value);
 		$unit->description                    = $location->name;
+		$unit->image_uri                      = $product->picture_url ?? $unit->image_uri ?? null;
 		$unit->network_id                     = $context["network_id"];
 		$unit->mediatype_id                   = $product->property_type ? (int)$product->property_type->external_id : null;
 		$unit->external_id                    = $location->external_id->external_id;
@@ -177,8 +178,6 @@ class HivestackAdapter extends InventoryAdapter {
 		$unit->enable_strict_iab_blacklisting = true;
 		$unit->weekly_traffic                 = (int)round($product->weekly_traffic);
 		$unit->physical_unit_count            = $location->screen_count;
-
-		clock($unit);
 	}
 
 	/**
@@ -304,7 +303,7 @@ class HivestackAdapter extends InventoryAdapter {
 			                            ->map(fn(array $unit) => $unit["id"])
 			                            ->values()
 			                            ->all());
-		
+
 		foreach ($unitsToRemove as $unitToRemove) {
 			$this->deleteUnit($client, (int)$unitToRemove);
 		}

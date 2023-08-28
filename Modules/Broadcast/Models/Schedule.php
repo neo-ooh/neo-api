@@ -66,259 +66,259 @@ use Neo\Modules\Broadcast\Services\Resources\Schedule as ScheduleResource;
  * @mixin Builder
  */
 class Schedule extends BroadcastResourceModel {
-    use SoftDeletes;
-    use HasPublicRelations;
-    use EagerLoadPivotTrait;
+	use SoftDeletes;
+	use HasPublicRelations;
+	use EagerLoadPivotTrait;
 
-    public BroadcastResourceType $resourceType = BroadcastResourceType::Schedule;
+	public BroadcastResourceType $resourceType = BroadcastResourceType::Schedule;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = "schedules";
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = "schedules";
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
-    protected $fillable = [
-        "campaign_id",
-        "owner_id",
-        "start_date",
-        "start_time",
-        "end_date",
-        "end_time",
-        "order",
-        "is_locked",
-    ];
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array<string>
+	 */
+	protected $fillable = [
+		"campaign_id",
+		"owner_id",
+		"start_date",
+		"start_time",
+		"end_date",
+		"end_time",
+		"order",
+		"is_locked",
+	];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        "is_locked" => "boolean",
-        "locked_at" => "date",
+	/**
+	 * The attributes that should be cast.
+	 *
+	 * @var array<string, string>
+	 */
+	protected $casts = [
+		"is_locked" => "boolean",
+		"locked_at" => "datetime",
 
-        "start_date" => "date:Y-m-d",
-        "start_time" => "date:H:i:s",
-        "end_date"   => "date:Y-m-d",
-        "end_time"   => "date:H:i:s",
-    ];
+		"start_date" => "date:Y-m-d",
+		"start_time" => "date:H:i:s",
+		"end_date"   => "date:Y-m-d",
+		"end_time"   => "date:H:i:s",
+	];
 
-    /**
-     * The relationships that should always be loaded.
-     *
-     * @var array<string>
-     */
-    protected $with = ["details"];
+	/**
+	 * The relationships that should always be loaded.
+	 *
+	 * @var array<string>
+	 */
+	protected $with = ["details"];
 
-    /**
-     * The attributes that should always be loaded.
-     *
-     * @var array<string>
-     */
-    protected $appends = [
-        "status",
-    ];
+	/**
+	 * The attributes that should always be loaded.
+	 *
+	 * @var array<string>
+	 */
+	protected $appends = [
+		"status",
+	];
 
-    protected string $accessRule = AccessibleSchedule::class;
+	protected string $accessRule = AccessibleSchedule::class;
 
-    protected function getPublicRelations(): array {
-        return [
-            "contents"                      => ["contents.creatives", "contents.schedules", "contents.broadcast_tags", "contents.schedule_settings.disabled_formats_ids"],
-            "reviews"                       => "reviews",
-            "owner"                         => "owner",
-            "tags"                          => "broadcast_tags",
-            "campaign"                      => ["campaign", "campaign.parent:id,name"],
-            "external_representation_count" => Relation::make(
-                count: "external_representations",
-                gate : Capability::dev_tools,
-            ),
-        ];
-    }
+	protected function getPublicRelations(): array {
+		return [
+			"contents"                      => ["contents.creatives", "contents.schedules", "contents.broadcast_tags", "contents.schedule_settings.disabled_formats_ids"],
+			"reviews"                       => "reviews",
+			"owner"                         => "owner",
+			"tags"                          => "broadcast_tags",
+			"campaign"                      => ["campaign", "campaign.parent:id,name"],
+			"external_representation_count" => Relation::make(
+				count: "external_representations",
+				gate : Capability::dev_tools,
+			),
+		];
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Events
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Events
+	|--------------------------------------------------------------------------
+	*/
 
-    protected static function boot(): void {
-        parent::boot();
+	protected static function boot(): void {
+		parent::boot();
 
-        static::deleting(static function (Schedule $schedule) {
-            if ($schedule->isForceDeleting()) {
-                // Clean up all reviews for the schedule
-                $schedule->reviews()->delete();
-            }
+		static::deleting(static function (Schedule $schedule) {
+			if ($schedule->isForceDeleting()) {
+				// Clean up all reviews for the schedule
+				$schedule->reviews()->delete();
+			}
 
-            // Dispatch job to delete schedules in broadcasters
-            DeleteScheduleJob::dispatch($schedule->getKey());
-        });
-    }
+			// Dispatch job to delete schedules in broadcasters
+			DeleteScheduleJob::dispatch($schedule->getKey());
+		});
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * @return HasOne<ScheduleDetails>
-     */
-    public function details(): HasOne {
-        return $this->hasOne(ScheduleDetails::class, 'schedule_id', 'id');
-    }
+	/**
+	 * @return HasOne<ScheduleDetails>
+	 */
+	public function details(): HasOne {
+		return $this->hasOne(ScheduleDetails::class, 'schedule_id', 'id');
+	}
 
-    /**
-     * @return BelongsTo<Actor, Schedule>
-     */
-    public function owner(): BelongsTo {
-        return $this->belongsTo(Actor::class, 'owner_id', 'id');
-    }
+	/**
+	 * @return BelongsTo<Actor, Schedule>
+	 */
+	public function owner(): BelongsTo {
+		return $this->belongsTo(Actor::class, 'owner_id', 'id');
+	}
 
-    /**
-     * @return BelongsTo<Campaign, Schedule>
-     */
-    public function campaign(): BelongsTo {
-        return $this->belongsTo(Campaign::class, 'campaign_id', 'id')->withTrashed();
-    }
+	/**
+	 * @return BelongsTo<Campaign, Schedule>
+	 */
+	public function campaign(): BelongsTo {
+		return $this->belongsTo(Campaign::class, 'campaign_id', 'id')->withTrashed();
+	}
 
-    /**
-     * @return BelongsToMany<Content>
-     */
-    public function contents(): BelongsToMany {
-        return $this->belongsToMany(Content::class, "schedule_contents", "schedule_id", "content_id")
-                    ->wherePivotNull("deleted_at")
-                    ->withPivot(['id'])
-                    ->using(ScheduleContent::class)
-                    ->as("schedule_settings")
-                    ->withTrashed();
-    }
+	/**
+	 * @return BelongsToMany<Content>
+	 */
+	public function contents(): BelongsToMany {
+		return $this->belongsToMany(Content::class, "schedule_contents", "schedule_id", "content_id")
+		            ->wherePivotNull("deleted_at")
+		            ->withPivot(['id'])
+		            ->using(ScheduleContent::class)
+		            ->as("schedule_settings")
+		            ->withTrashed();
+	}
 
-    /**
-     * @return HasMany<ScheduleReview>
-     */
-    public function reviews(): HasMany {
-        return $this->hasMany(ScheduleReview::class, 'schedule_id', 'id')->orderByDesc("created_at");
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Attributes
-    |--------------------------------------------------------------------------
-    */
-
-    public function isApproved() {
-        return $this->details->is_approved;
-    }
-
-    public function getStatusAttribute(): ScheduleStatus {
-        if ($this->trashed()) {
-            return ScheduleStatus::Trashed;
-        }
-
-        if (!$this->is_locked) {
-            return ScheduleStatus::Draft;
-        }
-
-        // Schedule is locked
-        // Check reviews and its content pre-approval
-        if (!$this->isApproved()) {
-            // Schedule's content is not pre-approved,
-            // Is their a review for it ?
-            $mostRecentReview = $this->reviews->first();
-
-            if (!$mostRecentReview) {
-                return ScheduleStatus::Pending;
-            }
+	/**
+	 * @return HasMany<ScheduleReview>
+	 */
+	public function reviews(): HasMany {
+		return $this->hasMany(ScheduleReview::class, 'schedule_id', 'id')->orderByDesc("created_at");
+	}
 
 
-            // Is the last review valid ?
-            if (!$mostRecentReview->approved) {
-                return ScheduleStatus::Rejected;
-            }
-        }
+	/*
+	|--------------------------------------------------------------------------
+	| Attributes
+	|--------------------------------------------------------------------------
+	*/
 
-        // Has broadcasting finished ?
-        if ($this->end_date < Date::now()->startOfDay()) {
-            return ScheduleStatus::Expired; // Finish
-        }
+	public function isApproved() {
+		return $this->details->is_approved;
+	}
 
-        // The schedule is approved, has broadcasting started ?
-        if ($this->start_date > Date::now()) {
-            return ScheduleStatus::Approved; // Not started
-        }
+	public function getStatusAttribute(): ScheduleStatus {
+		if ($this->trashed()) {
+			return ScheduleStatus::Trashed;
+		}
 
-        // This schedule is live
-        return ScheduleStatus::Live;
-    }
+		if (!$this->is_locked) {
+			return ScheduleStatus::Draft;
+		}
 
-    /*
-    |--------------------------------------------------------------------------
-    |
-    |--------------------------------------------------------------------------
-    */
+		// Schedule is locked
+		// Check reviews and its content pre-approval
+		if (!$this->isApproved()) {
+			// Schedule's content is not pre-approved,
+			// Is their a review for it ?
+			$mostRecentReview = $this->reviews->first();
 
-    /**
-     * @return ScheduleResource
-     */
-    public function toResource(): ScheduleResource {
-        return new ScheduleResource(
-            enabled       : $this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live,
-            name          : $this->campaign->name . " - " . $this->contents->first()?->name,
-            start_date    : $this->start_date->toDateString(),
-            start_time    : $this->start_time->toTimeString(),
-            end_date      : $this->end_date->toDateString(),
-            end_time      : $this->end_time->toTimeString(),
-            broadcast_days: $this->broadcast_days,
-            order         : $this->order,
-        );
-    }
-
-    /**
-     * Get the external resources matching the given parameters
-     *
-     * @param int $broadcasterId
-     * @param int $networkId
-     * @param int $formatId
-     * @return array<ExternalResource>
-     */
-    public function getExternalRepresentation(int $broadcasterId, int $networkId, int $formatId): array {
-        return $this->external_representations->filter(function (ExternalResource $resource) use ($formatId, $networkId, $broadcasterId) {
-            return $resource->broadcaster_id === $broadcasterId &&
-                $resource->data->network_id === $networkId &&
-                in_array($formatId, $resource->data->formats_id, true);
-        })->all();
-    }
+			if (!$mostRecentReview) {
+				return ScheduleStatus::Pending;
+			}
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Actions
-    |--------------------------------------------------------------------------
-    */
+			// Is the last review valid ?
+			if (!$mostRecentReview->approved) {
+				return ScheduleStatus::Rejected;
+			}
+		}
 
-    /**
-     * Create update the schedule in broadcasters
-     *
-     * @return void
-     */
-    public function promote(): void {
-        // Check if the campaign already has a pending job, bail out if so.
-        if ($this->broadcast_jobs()->where("type", "=", PromoteScheduleJob::TYPE->value)
-                 ->where("status", "<>", BroadcastJobStatus::Active)
-                 ->whereNull("last_attempt_at")
-                 ->exists()) {
-            return;
-        }
+		// Has broadcasting finished ?
+		if ($this->end_date < Date::now()->startOfDay()) {
+			return ScheduleStatus::Expired; // Finish
+		}
 
-        new PromoteScheduleJob($this->getKey());
-    }
+		// The schedule is approved, has broadcasting started ?
+		if ($this->start_date > Date::now()) {
+			return ScheduleStatus::Approved; // Not started
+		}
+
+		// This schedule is live
+		return ScheduleStatus::Live;
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	|
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
+	 * @return ScheduleResource
+	 */
+	public function toResource(): ScheduleResource {
+		return new ScheduleResource(
+			enabled       : $this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live,
+			name          : $this->campaign->name . " - " . $this->contents->first()?->name,
+			start_date    : $this->start_date->toDateString(),
+			start_time    : $this->start_time->toTimeString(),
+			end_date      : $this->end_date->toDateString(),
+			end_time      : $this->end_time->toTimeString(),
+			broadcast_days: $this->broadcast_days,
+			order         : $this->order,
+		);
+	}
+
+	/**
+	 * Get the external resources matching the given parameters
+	 *
+	 * @param int $broadcasterId
+	 * @param int $networkId
+	 * @param int $formatId
+	 * @return array<ExternalResource>
+	 */
+	public function getExternalRepresentation(int $broadcasterId, int $networkId, int $formatId): array {
+		return $this->external_representations->filter(function (ExternalResource $resource) use ($formatId, $networkId, $broadcasterId) {
+			return $resource->broadcaster_id === $broadcasterId &&
+				$resource->data->network_id === $networkId &&
+				in_array($formatId, $resource->data->formats_id, true);
+		})->all();
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| Actions
+	|--------------------------------------------------------------------------
+	*/
+
+	/**
+	 * Create update the schedule in broadcasters
+	 *
+	 * @return void
+	 */
+	public function promote(): void {
+		// Check if the campaign already has a pending job, bail out if so.
+		if ($this->broadcast_jobs()->where("type", "=", PromoteScheduleJob::TYPE->value)
+		         ->where("status", "<>", BroadcastJobStatus::Active)
+		         ->whereNull("last_attempt_at")
+		         ->exists()) {
+			return;
+		}
+
+		new PromoteScheduleJob($this->getKey());
+	}
 }

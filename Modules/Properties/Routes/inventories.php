@@ -18,73 +18,76 @@ use Neo\Modules\Properties\Http\Controllers\InventoryResourceSettingsController;
 use Neo\Modules\Properties\Http\Controllers\InventoryResourcesExternalRepresentationsController;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\InventoryResource;
+use Neo\Modules\Properties\Models\InventoryResourceEvent;
 
 Route::group([
-                 "middleware" => "default",
-                 "prefix"     => "v1",
+	             "middleware" => "default",
+	             "prefix"     => "v1",
              ],
-    static function () {
-        /*
-        |----------------------------------------------------------------------
-        | Inventory Provider
-        |----------------------------------------------------------------------
-        */
+	static function () {
+		/*
+		|----------------------------------------------------------------------
+		| Inventory Provider
+		|----------------------------------------------------------------------
+		*/
 
-        Route::model("inventoryProvider", InventoryProvider::class);
+		Route::model("inventoryProvider", InventoryProvider::class);
 
-        Route::   get("inventories", [InventoryProvidersController::class, "index"]);
-        Route::  post("inventories", [InventoryProvidersController::class, "store"]);
-        Route::   get("inventories/{inventoryProvider}", [InventoryProvidersController::class, "show"]);
-        Route::   put("inventories/{inventoryProvider}", [InventoryProvidersController::class, "update"]);
-        Route::   put("inventories/{inventoryProvider}/_clear_cache", [InventoryProvidersController::class, "clearCache"]);
-        Route::   put("inventories/{inventoryProvider}/_validate_configuration", [InventoryProvidersController::class, "validateConfiguration"]);
-        Route::delete("inventories/{inventoryProvider}", [InventoryProvidersController::class, "destroy"]);
+		Route::   get("inventories", [InventoryProvidersController::class, "index"]);
+		Route::  post("inventories", [InventoryProvidersController::class, "store"]);
+		Route::   get("inventories/{inventoryProvider}", [InventoryProvidersController::class, "show"]);
+		Route::   put("inventories/{inventoryProvider}", [InventoryProvidersController::class, "update"]);
+		Route::   put("inventories/{inventoryProvider}/_clear_cache", [InventoryProvidersController::class, "clearCache"]);
+		Route::   put("inventories/{inventoryProvider}/_validate_configuration", [InventoryProvidersController::class, "validateConfiguration"]);
+		Route::delete("inventories/{inventoryProvider}", [InventoryProvidersController::class, "destroy"]);
 
-        Route::   get("inventories/{inventoryProvider}/external-resources", [InventoryProvidersExternalResourcesController::class, "index"]);
+		Route::   get("inventories/{inventoryProvider}/external-resources", [InventoryProvidersExternalResourcesController::class, "index"]);
 
-        /*
-        |----------------------------------------------------------------------
-        | Inventory Resources Settings
-        |----------------------------------------------------------------------
-        */
+		/*
+		|----------------------------------------------------------------------
+		| Inventory Resources Settings
+		|----------------------------------------------------------------------
+		*/
 
-        Route::model("inventoryResource", InventoryResource::class);
+		Route::model("inventoryResource", InventoryResource::class);
 
-        Route::   get("inventories-resources/{inventoryResource}", [InventoryResourcesController::class, "show"]);
+		Route::   get("inventories-resources/{inventoryResource}", [InventoryResourcesController::class, "show"]);
 
-        Route::   get("inventories-resources/{inventoryResource}/settings", [InventoryResourceSettingsController::class, "index"]);
-        Route::   get("inventories-resources/{inventoryResource}/settings/{inventorySettings:inventory_id}", [InventoryResourceSettingsController::class, "show"]);
-        Route::   put("inventories-resources/{inventoryResource}/settings/{inventorySettingsId}", [InventoryResourceSettingsController::class, "update"]);
-        Route::delete("inventories-resources/{inventoryResource}/settings/{inventorySettings:inventory_id}", [InventoryResourceSettingsController::class, "destroy"]);
+		Route::   get("inventories-resources/{inventoryResource}/settings", [InventoryResourceSettingsController::class, "index"]);
+		Route::   get("inventories-resources/{inventoryResource}/settings/{inventorySettings:inventory_id}", [InventoryResourceSettingsController::class, "show"]);
+		Route::   put("inventories-resources/{inventoryResource}/settings/{inventorySettingsId}", [InventoryResourceSettingsController::class, "update"]);
+		Route::delete("inventories-resources/{inventoryResource}/settings/{inventorySettings:inventory_id}", [InventoryResourceSettingsController::class, "destroy"]);
 
-        /*
-        |----------------------------------------------------------------------
-        | Inventory Resources Actions
-        |----------------------------------------------------------------------
-        */
+		/*
+		|----------------------------------------------------------------------
+		| Inventory Resources Actions
+		|----------------------------------------------------------------------
+		*/
 
-        Route::  post("inventories-resources/{inventoryResource}/_push", [InventoryResourcesActionsController::class, "push"]);
-        Route::  post("inventories-resources/{inventoryResource}/_pull", [InventoryResourcesActionsController::class, "pull"]);
-        Route::  post("inventories-resources/{inventoryResource}/_create", [InventoryResourcesActionsController::class, "create"]);
-        Route::  post("inventories-resources/{inventoryResource}/_import_product", [InventoryResourcesActionsController::class, "importProduct"]);
-        Route::  post("inventories-resources/{inventoryResource}/_delete", [InventoryResourcesActionsController::class, "destroy"]);
+		Route::  post("inventories-resources/{inventoryResource}/_push", [InventoryResourcesActionsController::class, "push"]);
+		Route::  post("inventories-resources/{inventoryResource}/_pull", [InventoryResourcesActionsController::class, "pull"]);
+		Route::  post("inventories-resources/{inventoryResource}/_create", [InventoryResourcesActionsController::class, "create"]);
+		Route::  post("inventories-resources/{inventoryResource}/_import_product", [InventoryResourcesActionsController::class, "importProduct"]);
+		Route::  post("inventories-resources/{inventoryResource}/_delete", [InventoryResourcesActionsController::class, "destroy"]);
 
-        /*
-        |----------------------------------------------------------------------
-        | Inventory Resources Representations
-        |----------------------------------------------------------------------
-        */
+		/*
+		|----------------------------------------------------------------------
+		| Inventory Resources Representations
+		|----------------------------------------------------------------------
+		*/
 
-        Route::  post("inventories-resources/{inventoryResource}/external-representations", [InventoryResourcesExternalRepresentationsController::class, "store"]);
-        Route::   put("inventories-resources/{inventoryResource}/external-representations/{externalRepresentation:id}", [InventoryResourcesExternalRepresentationsController::class, "update"]);
-        Route::delete("inventories-resources/{inventoryResource}/external-representations/{externalRepresentation:id}", [InventoryResourcesExternalRepresentationsController::class, "destroy"]);
+		Route::  post("inventories-resources/{inventoryResource}/external-representations", [InventoryResourcesExternalRepresentationsController::class, "store"]);
+		Route::   put("inventories-resources/{inventoryResource}/external-representations/{externalRepresentation:id}", [InventoryResourcesExternalRepresentationsController::class, "update"]);
+		Route::delete("inventories-resources/{inventoryResource}/external-representations/{externalRepresentation:id}", [InventoryResourcesExternalRepresentationsController::class, "destroy"]);
 
-        /*
-        |----------------------------------------------------------------------
-        | Inventory Events
-        |----------------------------------------------------------------------
-        */
+		/*
+		|----------------------------------------------------------------------
+		| Inventory Events
+		|----------------------------------------------------------------------
+		*/
 
-        Route::get("inventories-events", [InventoryResourceEventsController::class, "index"]);
-        Route::put("inventories-resources/{inventoryResource}/events/{inventoryResourceEvent:id}", [InventoryResourceEventsController::class, "update"]);
-    });
+		Route::model("inventoryResourceEvent", InventoryResourceEvent::class);
+
+		Route::get("inventories-events", [InventoryResourceEventsController::class, "index"]);
+		Route::put("inventories-resources/{inventoryResource}/events/{inventoryResourceEvent:id}", [InventoryResourceEventsController::class, "update"]);
+	});

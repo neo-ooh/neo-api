@@ -33,62 +33,65 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property string      $plan_url
  */
 class CampaignPlannerSave extends Model {
-    protected $table = "campaign_planner_saves";
+	protected $table = "campaign_planner_saves";
 
-    protected $primaryKey = "id";
+	protected $primaryKey = "id";
 
-    protected $appends = ["plan_url"];
+	protected $appends = ["plan_url"];
 
-    protected $casts = [
-        "data" => "array",
-    ];
+	protected $casts = [
+		"data" => "array",
+	];
 
-    protected $fillable = [
-        "name",
-        "actor_id",
-        "data",
-    ];
+	protected $fillable = [
+		"name",
+		"actor_id",
+		"data",
+	];
 
-    public function resolveRouteBinding($value, $field = null) {
-        $id = Hashids::decode($value)[0] ?? null;
-        return $this->newQuery()->findOrFail($id);
-    }
+	public function resolveRouteBinding($value, $field = null) {
+		$id = Hashids::decode($value)[0] ?? null;
+		return $this->newQuery()->findOrFail($id);
+	}
 
-    protected static function boot() {
-        parent::boot();
+	protected static function boot() {
+		parent::boot();
 
-        static::created(function (CampaignPlannerSave $save) {
-            $save->uid = \Hashids::encode($save->getKey());
-            $save->save();
-        });
-    }
+		static::created(function (CampaignPlannerSave $save) {
+			$save->uid = \Hashids::encode($save->getKey());
+			$save->save();
+		});
+	}
 
-    public function actor(): BelongsTo {
-        return $this->belongsTo(Actor::class, "actor_id", "id");
-    }
+	public function actor(): BelongsTo {
+		return $this->belongsTo(Actor::class, "actor_id", "id");
+	}
 
-    public function getPlanPathAttribute() {
-        return "plans/$this->uid.plan";
-    }
+	public function getPlanPathAttribute() {
+		return "plans/$this->uid.plan";
+	}
 
-    public function getPlanUrlAttribute() {
-        return Storage::disk("public")->url($this->plan_path);
-    }
+	public function getPlanUrlAttribute() {
+		return Storage::disk("public")->url($this->plan_path);
+	}
 
-    public function storePlan($planData) {
-        clock()->event("Storing plan")->color("purple")->begin();
-        Storage::disk("public")->put($this->plan_path, $planData, ['maxage']);
-        clock()->event("Storing plan")->end();
-    }
+	/**
+	 * @param CampaignPlannerPlan $plan
+	 * @return void
+	 */
+	public function storePlan(CampaignPlannerPlan $plan): void {
+		clock()->event("Storing plan")->color("purple")->begin();
+		Storage::disk("public")->put($this->plan_path, $plan->toJson(), ['maxage']);
+		clock()->event("Storing plan")->end();
+	}
 
-    /**
-     * Get the plan data
-     *
-     * @return CampaignPlannerPlan
-     */
-    public function getPlan() {
-        $rawPlan = Storage::disk("public")->get($this->plan_path);
-
-        return CampaignPlannerPlan::from(json_decode($rawPlan, true));
-    }
+	/**
+	 * Get the plan data
+	 *
+	 * @return CampaignPlannerPlan
+	 */
+	public function getPlan() {
+		$rawPlan = Storage::disk("public")->get($this->plan_path);
+		return CampaignPlannerPlan::fromRaw($rawPlan);
+	}
 }

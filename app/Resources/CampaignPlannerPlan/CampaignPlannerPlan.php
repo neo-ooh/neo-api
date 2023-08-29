@@ -10,13 +10,54 @@
 
 namespace Neo\Resources\CampaignPlannerPlan;
 
-use Spatie\LaravelData\Data;
+class CampaignPlannerPlan {
+	public CampaignPlannerPlanMeta|null $meta = null;
+	public CampaignPlannerPlanRoot|null $plan = null;
 
-class CampaignPlannerPlan extends Data {
-    public function __construct(
-        public CampaignPlannerPlanMeta $_meta,
-        public CampaignPlannerPlanRoot $plan,
-    ) {
+	protected function __construct(
+		protected array $rawMeta,
+		protected array $rawPlan
+	) {
+	}
 
-    }
+	public static function fromRaw(string $rawPlan) {
+		$data = json_decode($rawPlan, associative: true);
+
+		return new static(
+			rawMeta: $data["_meta"],
+			rawPlan: $data["plan"]
+		);
+	}
+
+	/**
+	 * @return CampaignPlannerPlanMeta
+	 */
+	public function getMeta(): CampaignPlannerPlanMeta {
+		if ($this->meta === null) {
+			$this->meta = CampaignPlannerPlanMeta::from($this->rawMeta);
+		}
+
+		return $this->meta;
+	}
+
+	/**
+	 * @return CampaignPlannerPlanRoot
+	 */
+	public function getPlan(): CampaignPlannerPlanRoot {
+		if ($this->plan === null) {
+			$this->plan = CampaignPlannerPlanRoot::from($this->rawPlan);
+		}
+
+		return $this->plan;
+	}
+
+	public function toJson(): string {
+		$meta = $this->meta ?? $this->rawMeta;
+		$plan = $this->plan ?? $this->rawPlan;
+
+		return json_encode([
+			                   "_meta" => $meta,
+			                   "plan"  => $plan,
+		                   ], JSON_UNESCAPED_UNICODE);
+	}
 }

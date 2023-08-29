@@ -47,24 +47,26 @@ class CampaignPlannerSavesController {
 	}
 
 	public function store(StoreSaveRequest $request) {
-		$plan = CampaignPlannerPlan::from(json_decode($request->input("plan"), true));
+		$plan = CampaignPlannerPlan::fromRaw($request->input("plan"));
 
 		$save           = new CampaignPlannerSave();
 		$save->actor_id = Auth::id();
 		$save->name     = $request->input("name");
 		$save->version  = $request->input("version");
 
-		$save->contract        = $plan->plan->odoo?->contract;
-		$save->client_name     = $plan->plan->odoo?->partnerName[1];
-		$save->advertiser_name = $plan->plan->odoo?->analyticAccountName !== null ? $plan->plan->odoo?->analyticAccountName[1] : null;
+		$save->contract        = $plan->getPlan()->odoo?->contract;
+		$save->client_name     = $plan->getPlan()->odoo?->partnerName[1];
+		$save->advertiser_name = $plan->getPlan()->odoo?->analyticAccountName !== null
+			? $plan->getPlan()->odoo?->analyticAccountName[1]
+			: null;
 
 		$save->save();
 
-		$plan->_meta->id       = $save->id;
-		$plan->_meta->uid      = $save->uid;
-		$plan->_meta->actor_id = $save->actor_id;
+		$plan->getMeta()->id       = $save->id;
+		$plan->getMeta()->uid      = $save->uid;
+		$plan->getMeta()->actor_id = $save->actor_id;
 
-		$save->storePlan(json_encode($plan, JSON_UNESCAPED_UNICODE));
+		$save->storePlan($plan);
 
 		return new Response($save, 201);
 	}
@@ -78,15 +80,17 @@ class CampaignPlannerSavesController {
 		$campaignPlannerSave->version = $request->input("version");
 
 		$rawPlan = $request->input("plan");
-		$plan    = CampaignPlannerPlan::from(json_decode($rawPlan, true));
+		$plan    = CampaignPlannerPlan::fromRaw($rawPlan);
 
-		$campaignPlannerSave->contract        = $plan->plan->odoo?->contract;
-		$campaignPlannerSave->client_name     = $plan->plan->odoo?->partnerName[1];
-		$campaignPlannerSave->advertiser_name = $plan->plan->odoo?->analyticAccountName !== null ? $plan->plan->odoo?->analyticAccountName[1] : null;
+		$campaignPlannerSave->contract        = $plan->getPlan()->odoo?->contract;
+		$campaignPlannerSave->client_name     = $plan->getPlan()->odoo?->partnerName[1];
+		$campaignPlannerSave->advertiser_name = $plan->getPlan()->odoo?->analyticAccountName !== null
+			? $plan->getPlan()->odoo?->analyticAccountName[1]
+			: null;
 
 		$campaignPlannerSave->save();
 
-		$campaignPlannerSave->storePlan($rawPlan);
+		$campaignPlannerSave->storePlan($plan);
 
 		return new Response($campaignPlannerSave);
 	}
@@ -105,14 +109,13 @@ class CampaignPlannerSavesController {
 			$newSave->save();
 
 			clock()->event("Copy to Actor #$receiverId")->color("purple")->begin();
-//			Storage::disk("public")->copy($campaignPlannerSave->plan_path, $newSave->plan_path);
 
-			$plan                  = $campaignPlannerSave->getPlan();
-			$plan->_meta->id       = $newSave->getKey();
-			$plan->_meta->uid      = $newSave->uid;
-			$plan->_meta->actor_id = $newSave->actor_id;
+			$plan                      = $campaignPlannerSave->getPlan();
+			$plan->getMeta()->id       = $newSave->getKey();
+			$plan->getMeta()->uid      = $newSave->uid;
+			$plan->getMeta()->actor_id = $newSave->actor_id;
 
-			$newSave->storePlan(json_encode($plan, JSON_UNESCAPED_UNICODE));
+			$newSave->storePlan($plan);
 
 			clock()->event("Copy to Actor #$receiverId")->end();
 		}

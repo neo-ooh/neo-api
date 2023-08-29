@@ -27,103 +27,102 @@ use Symfony\Component\Console\Output\ConsoleOutput;
 use Symfony\Component\Console\Output\Output;
 
 class PushFullInventoryJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected Output|null $output = null;
+	protected Output|null $output = null;
 
-    public function __construct(protected int $inventoryId) {
-        if (App::runningInConsole()) {
-            $this->output = new ConsoleOutput();
-        }
-    }
+	public function __construct(protected int $inventoryId, protected bool $debug = false) {
+		if (App::runningInConsole() && $this->debug) {
+			$this->output = new ConsoleOutput();
+		}
+	}
 
-    public function handle(): void {
-        // We need to list all the products that require synchronization.
-        // Those are products without any settings set for this inventory whose property has settings enabling them for a push on this inventory
-        // plus products with settings enabling them for push on this inventory. In any case, the product `updated_at` field should be set to a datetime after the last pull of the inventory
-        // We list products for both situation, dedup, and run the regular push job on them.
+	public function handle(): void {
+		// We need to list all the products that require synchronization.
+		// Those are products without any settings set for this inventory whose property has settings enabling them for a push on this inventory
+		// plus products with settings enabling them for push on this inventory. In any case, the product `updated_at` field should be set to a datetime after the last pull of the inventory
+		// We list products for both situation, dedup, and run the regular push job on them.
 
 
-        $provider  = InventoryProvider::query()->findOrFail($this->inventoryId);
-        $inventory = $provider->getAdapter();
+		$provider = InventoryProvider::query()->findOrFail($this->inventoryId);
 
-        $this->output?->writeln("List properties and products push-enabled...");
+		$this->output?->writeln("List properties and products push-enabled...");
 
-        // Products enabled through their property
-        $properties = Property::query()->whereHas("inventories_settings", function (Builder $query) {
-            $query->where("inventory_id", "=", $this->inventoryId)
-                  ->where("push_enabled", "=", true);
-        })->orWhereDoesntHave("inventories_settings", function (Builder $query) {
-            $query->where("inventory_id", "=", $this->inventoryId);
-        })->get();
+		// Products enabled through their property
+		$properties = Property::query()->whereHas("inventories_settings", function (Builder $query) {
+			$query->where("inventory_id", "=", $this->inventoryId)
+			      ->where("push_enabled", "=", true);
+		})->orWhereDoesntHave("inventories_settings", function (Builder $query) {
+			$query->where("inventory_id", "=", $this->inventoryId);
+		})->get();
 
-        $products = new Collection();
+		$products = new Collection();
 
-        foreach ($properties->chunk(500) as $propertiesChunk) {
-            $products->push(
-                ...Product::query()
-                          ->whereIn("property_id", $propertiesChunk->pluck("actor_id"))
-                          ->where(function (Builder $query) {
-                              $query->whereHas("inventories_settings", function (Builder $query) {
-                                  $query->where("inventory_id", "=", $this->inventoryId)
-                                        ->where("push_enabled", "=", true);
-                              })->orWhereDoesntHave("inventories_settings", function (Builder $query) {
-                                  $query->where("inventory_id", "=", $this->inventoryId);
-                              });
-                          })
-                          ->whereHas("external_representations", function (Builder $query) {
-                              $query->where("inventory_id", "=", $this->inventoryId)
-                                    ->withoutTrashed();
-                          })
-                          ->when($provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
-                          ->get()
-            );
-        }
+		foreach ($properties->chunk(500) as $propertiesChunk) {
+			$products->push(
+				...Product::query()
+				          ->whereIn("property_id", $propertiesChunk->pluck("actor_id"))
+				          ->where(function (Builder $query) {
+					          $query->whereHas("inventories_settings", function (Builder $query) {
+						          $query->where("inventory_id", "=", $this->inventoryId)
+						                ->where("push_enabled", "=", true);
+					          })->orWhereDoesntHave("inventories_settings", function (Builder $query) {
+						          $query->where("inventory_id", "=", $this->inventoryId);
+					          });
+				          })
+				          ->whereHas("external_representations", function (Builder $query) {
+					          $query->where("inventory_id", "=", $this->inventoryId)
+					                ->withoutTrashed();
+				          })
+				          ->when($provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
+				          ->get()
+			);
+		}
 
-        // Load products enabled individually
-        $products->push(
-            ...Product::query()
-                      ->where(function (Builder $query) {
-                          $query->whereHas("inventories_settings", function (Builder $query) {
-                              $query->where("inventory_id", "=", $this->inventoryId)
-                                    ->where("push_enabled", "=", true);
-                          })->orWhereDoesntHave("inventories_settings", function (Builder $query) {
-                              $query->where("inventory_id", "=", $this->inventoryId);
-                          });
-                      })
-                      ->whereHas("external_representations", function (Builder $query) {
-                          $query->where("inventory_id", "=", $this->inventoryId)
-                                ->withoutTrashed();
-                      })
-                      ->when($provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
-                      ->get()
-        );
+		// Load products enabled individually
+		$products->push(
+			...Product::query()
+			          ->where(function (Builder $query) {
+				          $query->whereHas("inventories_settings", function (Builder $query) {
+					          $query->where("inventory_id", "=", $this->inventoryId)
+					                ->where("push_enabled", "=", true);
+				          })->orWhereDoesntHave("inventories_settings", function (Builder $query) {
+					          $query->where("inventory_id", "=", $this->inventoryId);
+				          });
+			          })
+			          ->whereHas("external_representations", function (Builder $query) {
+				          $query->where("inventory_id", "=", $this->inventoryId)
+				                ->withoutTrashed();
+			          })
+			          ->when($provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
+			          ->get()
+		);
 
-        $products = $products->unique();
-        $products->load("property");
+		$products = $products->unique();
+		$products->load("property");
 
-        $this->output?->writeln("Listed {$products->count()} products");
+		$this->output?->writeln("Listed {$products->count()} products");
 
-        $progress = null;
+		$progress = null;
 
-        if (App::runningInConsole()) {
-            $progress = new ProgressBar($this->output->section(), $products->count());
-            $progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
-            $progress->setMessage("");
-            $progress->start();
-        }
+		if (App::runningInConsole()) {
+			$progress = new ProgressBar($this->output->section(), $products->count());
+			$progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
+			$progress->setMessage("");
+			$progress->start();
+		}
 
-        // Now that we have listed all our products, we push them all one by one
-        /** @var Product $product */
-        foreach ($products as $product) {
-            if (App::runningInConsole()) {
-                $progress?->advance();
-                $progress?->setMessage($product->property->actor->name . ": " . $product->name_en);
-            }
+		// Now that we have listed all our products, we push them all one by one
+		/** @var Product $product */
+		foreach ($products as $product) {
+			if (App::runningInConsole()) {
+				$progress?->advance();
+				$progress?->setMessage($product->property->actor->name . ": " . $product->name_en);
+			}
 
-            (new PushProductJob($product->inventory_resource_id, $this->inventoryId))->handle();
-        }
+			(new PushProductJob($product->inventory_resource_id, $this->inventoryId))->handle();
+		}
 
-        $progress?->finish();
-    }
+		$progress?->finish();
+	}
 }

@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Properties\Jobs;
 
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -42,7 +43,6 @@ class PushFullInventoryJob implements ShouldQueue {
 		// Those are products without any settings set for this inventory whose property has settings enabling them for a push on this inventory
 		// plus products with settings enabling them for push on this inventory. In any case, the product `updated_at` field should be set to a datetime after the last pull of the inventory
 		// We list products for both situation, dedup, and run the regular push job on them.
-
 
 		$provider = InventoryProvider::query()->findOrFail($this->inventoryId);
 
@@ -105,7 +105,7 @@ class PushFullInventoryJob implements ShouldQueue {
 
 		$progress = null;
 
-		if (App::runningInConsole()) {
+		if ($this->output) {
 			$progress = new ProgressBar($this->output->section(), $products->count());
 			$progress->setFormat("%current%/%max% [%bar%] %percent:3s%% %message%");
 			$progress->setMessage("");
@@ -124,5 +124,10 @@ class PushFullInventoryJob implements ShouldQueue {
 		}
 
 		$progress?->finish();
+
+		InventoryProvider::query()->where("id", "=", $this->inventoryId)
+		                 ->update([
+			                          "last_push_at" => Carbon::now()->shiftTimezone("utc"),
+		                          ]);
 	}
 }

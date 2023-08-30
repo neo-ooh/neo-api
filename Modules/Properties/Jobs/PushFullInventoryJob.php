@@ -115,7 +115,7 @@ class PushFullInventoryJob implements ShouldQueue {
 		// Now that we have listed all our products, we push them all one by one
 		/** @var Product $product */
 		foreach ($products as $product) {
-			if (App::runningInConsole()) {
+			if ($this->output) {
 				$progress?->advance();
 				$progress?->setMessage($product->property->actor->name . ": " . $product->name_en);
 			}

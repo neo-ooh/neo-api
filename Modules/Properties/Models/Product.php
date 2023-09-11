@@ -32,7 +32,6 @@ use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Interfaces\WithAttachments;
 use Neo\Modules\Properties\Models\Interfaces\WithImpressionsModels;
 use Neo\Modules\Properties\Models\Misc\ProductPricing;
-use Neo\Modules\Properties\Models\Traits\HasImpressionsModels;
 use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
 use Neo\Modules\Properties\Services\Resources\DayOperatingHours;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
@@ -93,7 +92,6 @@ use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
  */
 class Product extends Model implements WithImpressionsModels, WithAttachments {
 	use SoftDeletes;
-	use HasImpressionsModels;
 	use HasRelationships;
 	use HasPublicRelations;
 	use InventoryResourceModel;
@@ -125,8 +123,6 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 		"allows_audio"        => "boolean",
 		"allows_motion"       => "boolean",
 	];
-
-	public string $impressions_models_pivot_table = "products_impressions_models";
 
 	protected function getPublicRelations() {
 		return [
@@ -241,12 +237,10 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 		return $this->belongsTo(InventoryPicture::class, "cover_picture_id", "id");
 	}
 
-	/*
-	|--------------------------------------------------------------------------
-	| Accessors
-	|--------------------------------------------------------------------------
-	*/
 
+	public function impressions_models(): BelongsToMany {
+		return $this->belongsToMany(ImpressionsModel::class, "products_impressions_models", "product_id", "impressions_model_id");
+	}
 
 	/*
 	|--------------------------------------------------------------------------

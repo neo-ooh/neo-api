@@ -26,7 +26,6 @@ use Neo\Modules\Properties\Enums\MediaType;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Models\Interfaces\WithAttachments;
 use Neo\Modules\Properties\Models\Interfaces\WithImpressionsModels;
-use Neo\Modules\Properties\Models\Traits\HasImpressionsModels;
 use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
@@ -60,100 +59,101 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property InventoryPicture|null         $cover_picture
  */
 class ProductCategory extends Model implements WithImpressionsModels, WithAttachments {
-    use HasImpressionsModels;
-    use HasRelationships;
-    use HasPublicRelations;
-    use InventoryResourceModel;
+	use HasRelationships;
+	use HasPublicRelations;
+	use InventoryResourceModel;
 
-    protected $table = "products_categories";
+	protected $table = "products_categories";
 
-    protected $primaryKey = "id";
+	protected $primaryKey = "id";
 
-    protected $fillable = [
-        "name_en",
-        "name_fr",
-        "type",
-        "external_id",
-        "allowed_media_types",
-        "allows_audio",
-        "production_cost",
-        "programmatic_price",
-    ];
+	protected $fillable = [
+		"name_en",
+		"name_fr",
+		"type",
+		"external_id",
+		"allowed_media_types",
+		"allows_audio",
+		"production_cost",
+		"programmatic_price",
+	];
 
-    protected $casts = [
-        "type"                => ProductType::class,
-        "allowed_media_types" => EnumSetCast::class . ":" . MediaType::class,
-        "allows_audio"        => "boolean",
-        "allows_motion"       => "boolean",
-    ];
+	protected $casts = [
+		"type"                => ProductType::class,
+		"allowed_media_types" => EnumSetCast::class . ":" . MediaType::class,
+		"allows_audio"        => "boolean",
+		"allows_motion"       => "boolean",
+	];
 
-    public string $impressions_models_pivot_table = "products_categories_impressions_models";
+	public InventoryResourceType $inventoryResourceType = InventoryResourceType::ProductCategory;
 
-    public InventoryResourceType $inventoryResourceType = InventoryResourceType::ProductCategory;
+	public $touches = [
+		"products",
+	];
 
-    public $touches = [
-        "products",
-    ];
+	public function getPublicRelations() {
+		return [
+			"attachments"         => "load:attachments",
+			"cover_picture"       => Relation::make(
+				load: "cover_picture",
+				gate: Capability::properties_pictures_view,
+			),
+			"format"              => "load:format",
+			"impressions_models"  => "load:impressions_models",
+			"inventories"         => Relation::make(
+				load: ["inventory_resource.inventories_settings", "inventory_resource.external_representations"],
+				gate: Capability::properties_inventories_view
+			),
+			"loop_configurations" => "load:loop_configurations",
+			"pictures"            => Relation::make(
+				load: ["pictures.product", "pictures.property"],
+				gate: Capability::properties_pictures_view
+			),
+			"products"            => "load:products",
+			"properties"          => "load:properties",
+			"screen_type"         => "screen_type",
+		];
+	}
 
-    public function getPublicRelations() {
-        return [
-            "attachments"         => "load:attachments",
-            "cover_picture"       => Relation::make(
-                load: "cover_picture",
-                gate: Capability::properties_pictures_view,
-            ),
-            "format"              => "load:format",
-            "impressions_models"  => "load:impressions_models",
-            "inventories"         => Relation::make(
-                load: ["inventory_resource.inventories_settings", "inventory_resource.external_representations"],
-                gate: Capability::properties_inventories_view
-            ),
-            "loop_configurations" => "load:loop_configurations",
-            "pictures"            => Relation::make(
-                load: ["pictures.product", "pictures.property"],
-                gate: Capability::properties_pictures_view
-            ),
-            "products"            => "load:products",
-            "properties"          => "load:properties",
-            "screen_type"         => "screen_type",
-        ];
-    }
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	public function properties(): BelongsToMany {
+		return $this->belongsToMany(Property::class, "products", "category_id", "property_id");
+	}
 
-    public function properties(): BelongsToMany {
-        return $this->belongsToMany(Property::class, "products", "category_id", "property_id");
-    }
+	public function format(): BelongsTo {
+		return $this->belongsTo(Format::class, "format_id", "id");
+	}
 
-    public function format(): BelongsTo {
-        return $this->belongsTo(Format::class, "format_id", "id");
-    }
+	public function products(): HasMany {
+		return $this->hasMany(Product::class, "category_id", "id");
+	}
 
-    public function products(): HasMany {
-        return $this->hasMany(Product::class, "category_id", "id");
-    }
+	public function attachments(): BelongsToMany {
+		return $this->belongsToMany(Attachment::class, "products_categories_attachments", "product_category_id", "attachment_id");
+	}
 
-    public function attachments(): BelongsToMany {
-        return $this->belongsToMany(Attachment::class, "products_categories_attachments", "product_category_id", "attachment_id");
-    }
+	public function loop_configurations(): HasManyDeep {
+		return $this->hasManyDeepFromRelations([$this->format(), (new Format())->loop_configurations()]);
+	}
 
-    public function loop_configurations(): HasManyDeep {
-        return $this->hasManyDeepFromRelations([$this->format(), (new Format())->loop_configurations()]);
-    }
+	public function screen_type(): BelongsTo {
+		return $this->belongsTo(ScreenType::class, "screen_type_id", "id");
+	}
 
-    public function screen_type(): BelongsTo {
-        return $this->belongsTo(ScreenType::class, "screen_type_id", "id");
-    }
+	public function pictures(): HasManyDeep {
+		return $this->hasManyDeepFromRelations([$this->products(), (new Product())->pictures()]);
+	}
 
-    public function pictures(): HasManyDeep {
-        return $this->hasManyDeepFromRelations([$this->products(), (new Product())->pictures()]);
-    }
+	public function cover_picture(): BelongsTo {
+		return $this->belongsTo(InventoryPicture::class, "cover_picture_id", "id");
+	}
 
-    public function cover_picture(): BelongsTo {
-        return $this->belongsTo(InventoryPicture::class, "cover_picture_id", "id");
-    }
+	public function impressions_models(): BelongsToMany {
+		return $this->belongsToMany(ImpressionsModel::class, "products_categories_impressions_models", "product_category_id", "impressions_model_id");
+	}
 }

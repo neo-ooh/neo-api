@@ -34,7 +34,7 @@ class ThumbnailCreator {
 		return match ($extension) {
 			"jpg", "jpeg", "png" => $this->makeThumbnailForImage($this->file, $format),
 			"mp4"                => $this->makeThumbnailForVideo($this->file),
-			default              => throw new UnsupportedFileFormatException(),
+			default              => throw new UnsupportedFileFormatException($this->file->getMimeType()),
 		};
 	}
 

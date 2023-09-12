@@ -125,7 +125,8 @@ class PushFullInventoryJob implements ShouldQueue {
 
 		$progress?->finish();
 
-		InventoryProvider::query()->where("id", "=", $this->inventoryId)
+		InventoryProvider::query()
+		                 ->where("id", "=", $this->inventoryId)
 		                 ->update([
 			                          "last_push_at" => Carbon::now()->shiftTimezone("utc"),
 		                          ]);

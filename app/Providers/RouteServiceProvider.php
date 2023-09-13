@@ -24,72 +24,72 @@ use Neo\Http\Controllers\StatusController;
  * @package Neo\Providers
  */
 class RouteServiceProvider extends ServiceProvider {
-    /**
-     * Define your route model bindings, pattern filters, etc.
-     *
-     * @return void
-     */
-    public function boot(): void {
-        $this->configureRateLimiting();
+	/**
+	 * Define your route model bindings, pattern filters, etc.
+	 *
+	 * @return void
+	 */
+	public function boot(): void {
+		$this->configureRateLimiting();
 
-        // Register our status route
-        Route::group([
-                         "middleware" => "guests",
-                     ], static function () {
-            Route:: get('/_status', StatusController::class . '@getStatus');
-        });
+		// Register our status route
+		Route::group([
+			             "middleware" => "guests",
+		             ], static function () {
+			Route:: get('/_status', StatusController::class . '@getStatus');
+		});
 
-        $this->routes(function () {
-            // Guests and not fully authenticated routes
-            Route::group([], base_path('routes/core.auth.php'));
+		$this->routes(function () {
+			// Guests and not fully authenticated routes
+			Route::group([], base_path('routes/core.auth.php'));
 
-            // Core modules
-            Route::group([], base_path('routes/core.actors.php'));
-            Route::group([], base_path('routes/core.address.php'));
-            Route::group([], base_path('routes/core.networks.php'));
-            Route::group([], base_path('routes/core.parameters.php'));
-            Route::group([], base_path('routes/core.roles.php'));
+			// Core modules
+			Route::group([], base_path('routes/core.actors.php'));
+			Route::group([], base_path('routes/core.address.php'));
+			Route::group([], base_path('routes/core.networks.php'));
+			Route::group([], base_path('routes/core.parameters.php'));
+			Route::group([], base_path('routes/core.roles.php'));
 
-            Route::group([], base_path('routes/core.misc.php'));
-            Route::group([], base_path('routes/module.third-parties.php'));
+			Route::group([], base_path('routes/core.misc.php'));
+			Route::group([], base_path('routes/module.third-parties.php'));
 
-            // Now, we loop all modules to load their routes
-            foreach (config('modules-legacy') as $module => $config) {
-                if ($module === 'core') {
-                    continue;
-                }
+			// Now, we loop all modules to load their routes
+			foreach (config('modules-legacy') as $module => $config) {
+				if ($module === 'core') {
+					continue;
+				}
 
-                if (!$config["enabled"]) {
-                    continue;
-                }
+				if (!$config["enabled"]) {
+					continue;
+				}
 
-                $routesFile = base_path("routes/module.$module.php");
+				$routesFile = base_path("routes/module.$module.php");
 
-                if (!file_exists($routesFile)) {
-                    continue;
-                }
+				if (!file_exists($routesFile)) {
+					continue;
+				}
 
-                Route::group([], $routesFile);
-            }
+				Route::group([], $routesFile);
+			}
 
 
-            // Heartbeat route for up-time monitoring
-            Route::get("/_heartbeat", static fn() => new Response());
-        });
-    }
+			// Heartbeat route for up-time monitoring
+			Route::get("/_heartbeat", static fn() => new Response());
+		});
+	}
 
-    /**
-     * Configure the rate limiters for the application.
-     *
-     * @return void
-     */
-    protected function configureRateLimiting(): void {
-        RateLimiter::for('api',
-            static function (Request $request) {
-                $user       = $request->user();
-                $identifier = $user->id ?? $request->ip();
+	/**
+	 * Configure the rate limiters for the application.
+	 *
+	 * @return void
+	 */
+	protected function configureRateLimiting(): void {
+		RateLimiter::for('api',
+			static function (Request $request) {
+				$user       = $request->user();
+				$identifier = $user->id ?? $request->ip();
 
-                return Limit::perMinute($user ? 256 : 60)->by($identifier);
-            });
-    }
+				return Limit::perMinute($user ? 1024 : 60)->by($identifier);
+			});
+	}
 }

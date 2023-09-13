@@ -19,42 +19,46 @@ use Neo\Modules\Properties\Models\Field;
 use Neo\Modules\Properties\Models\FieldSegment;
 
 class FieldSegmentsController {
-    public function store(StoreFieldSegmentRequest $request, Field $field) {
-        $segment = new FieldSegment([
-                                        "name_en" => $request->input("name_en"),
-                                        "name_fr" => $request->input("name_fr"),
-                                        "order"   => $field->segments()->count(),
-                                        "color"   => $request->input("color"),
-                                    ]);
+	public function store(StoreFieldSegmentRequest $request, Field $field) {
+		$segment = new FieldSegment([
+			                            "name_en" => $request->input("name_en"),
+			                            "name_fr" => $request->input("name_fr"),
+			                            "order"   => $field->segments()->count(),
+			                            "color"   => $request->input("color"),
+		                            ]);
 
-        if ($field->demographic_filled) {
-            $segment->variable_id = $request->input("variable_id");
-        }
+		if ($field->demographic_filled) {
+			$segment->variable_id = $request->input("variable_id");
+		}
 
-        $field->segments()->save($segment);
+		$field->segments()->save($segment);
 
-        UpdateDemographicFieldsJob::dispatch(null, $field->getKey());
+		UpdateDemographicFieldsJob::dispatch(null, $field->getKey());
 
-        return new Response($segment, 201);
-    }
+		return new Response($segment, 201);
+	}
 
-    public function update(UpdateFieldSegmentRequest $request, Field $field, FieldSegment $segment) {
-        $segment->name_en     = $request->input("name_en");
-        $segment->name_fr     = $request->input("name_fr");
-        $segment->order       = $request->input("order");
-        $segment->color       = $request->input("color");
-        $segment->variable_id = $field->demographic_filled ? $request->input("variable_id") : null;
+	public function update(UpdateFieldSegmentRequest $request, Field $field, FieldSegment $segment) {
+		$segment->name_en     = $request->input("name_en");
+		$segment->name_fr     = $request->input("name_fr");
+		$segment->order       = $request->input("order");
+		$segment->color       = $request->input("color");
+		$segment->variable_id = $field->demographic_filled ? $request->input("variable_id") : null;
 
-        $segment->save();
+		$updateValues = $segment->isDirty("variable_id");
 
-        UpdateDemographicFieldsJob::dispatch(null, $field->getKey());
+		$segment->save();
 
-        return new Response($segment);
-    }
+		if ($updateValues) {
+			UpdateDemographicFieldsJob::dispatch(null, $field->getKey());
+		}
 
-    public function destroy(DestroyFieldSegmentRequest $request, Field $field, FieldSegment $segment) {
-        $segment->delete();
+		return new Response($segment);
+	}
 
-        return new Response($segment);
-    }
+	public function destroy(DestroyFieldSegmentRequest $request, Field $field, FieldSegment $segment) {
+		$segment->delete();
+
+		return new Response($segment);
+	}
 }

@@ -15,85 +15,84 @@ use Neo\Models\Capability;
 use Neo\Models\Role;
 
 class CapabilitiesSeeder extends Seeder {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public static function run(): void {
-        $allCapabilities = \Neo\Enums\Capability::cases();
+	/**
+	 * Run the database seeds.
+	 *
+	 * @return void
+	 */
+	public static function run(): void {
+		$allCapabilities = \Neo\Enums\Capability::cases();
 
-        /** @var Role $role */
-        $role = Role::query()->firstOrCreate(["name" => "Admin"]);
+		/** @var Role $role */
+		$role = Role::query()->firstOrCreate(["name" => "Admin"]);
 
-        $caps = [];
+		$caps = [];
 
-        foreach ($allCapabilities as $capabilityEnum) {
-            $cap = Capability::query()
-                             ->firstOrCreate(["slug" => $capabilityEnum->value], ["service" => "", "standalone" => true]);
+		foreach ($allCapabilities as $capabilityEnum) {
+			$cap = Capability::query()
+			                 ->firstOrCreate(["slug" => $capabilityEnum->value], ["service" => "", "standalone" => true]);
 
-            $caps[] = $cap->id;
-        }
+			$caps[] = $cap->id;
+		}
 
-        // Make sure all capabilities are always assigned to the Admin role
-        $role->capabilities()->sync($caps);
+		// Make sure all capabilities are always assigned to the Admin role
+		$role->capabilities()->sync($caps);
 
-        // Define the capabilities groups
-        $prefixGroups = [
-            "ACTORS"     => [
-                "actors",
-                "roles",
-                "brandings",
-            ],
-            "BROADCAST"  => [
-                "broadcast",
-                "networks",
-                "formats",
-                "campaigns",
-                "schedules",
-                "contents",
-                "libraries",
-            ],
-            "SALES"      => [
-                "contracts",
-                "tools",
-                "planning",
-                "advertisers",
-            ],
-            "PROPERTIES" => [
-                "properties",
-                "products",
-                "pricelists",
-                "loops",
-                "tags",
-                "traffic",
-                "impressions",
-            ],
-            "DYNAMICS"   => [
-                "dynamics",
-            ],
-            "INTERNAL"   => [
-                "tos",
-                "headlines",
-                "access",
-                "documents",
-                "chores",
-                "tests",
-                "dev",
-            ],
-        ];
+		// Define the capabilities groups
+		$prefixGroups = [
+			"ACTORS"     => [
+				"actors",
+				"roles",
+			],
+			"BROADCAST"  => [
+				"broadcast",
+				"networks",
+				"formats",
+				"campaigns",
+				"schedules",
+				"contents",
+				"libraries",
+			],
+			"SALES"      => [
+				"contracts",
+				"tools",
+				"planning",
+				"advertisers",
+			],
+			"PROPERTIES" => [
+				"properties",
+				"products",
+				"pricelists",
+				"loops",
+				"tags",
+				"traffic",
+				"impressions",
+			],
+			"DYNAMICS"   => [
+				"dynamics",
+			],
+			"INTERNAL"   => [
+				"tos",
+				"headlines",
+				"access",
+				"documents",
+				"chores",
+				"tests",
+				"dev",
+			],
+		];
 
-        foreach ($prefixGroups as $group => $prefixes) {
-            $q = Capability::query();
+		foreach ($prefixGroups as $group => $prefixes) {
+			$q = Capability::query();
 
-            foreach ($prefixes as $prefix) {
-                $q->orWhere("slug", "like", $prefix . "_%");
-            }
+			foreach ($prefixes as $prefix) {
+				$q->orWhere("slug", "like", $prefix . "_%");
+			}
 
-            $q->update(["service" => $group]);
-        }
+			$q->update(["service" => $group]);
+		}
 
-        // Delete missing capabilities
-        Capability::query()->whereNotIn("id", $caps)->delete();
-    }
+		// Delete missing capabilities
+		Capability::query()->whereNotIn("id", $caps)->delete();
+	}
 }

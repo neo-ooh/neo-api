@@ -38,12 +38,8 @@ class StoreActorRequest extends FormRequest {
             "locale"         => ["required", "string"],
             "enabled"        => ["required", "boolean"],
             "parent_id"      => ["required", "numeric", "exists:actors,id"],
-            "branding_id"    => ["sometimes", "numeric", "nullable", "exists:brandings,id"],
-            "roles"          => ["sometimes", "array", "distinct"],
-            "roles.*"        => ["integer", "exists:roles,id"],
-            "capabilities"   => ["sometimes", "array", "distinct"],
-            "capabilities.*" => ["integer", "exists:capabilities,id"],
-            "make_library"   => ["boolean"],
+			"roles"        => ["sometimes", "array", "distinct"],
+			"roles.*"      => ["integer", "exists:roles,id"],
         ];
     }
 }

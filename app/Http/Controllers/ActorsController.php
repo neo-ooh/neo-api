@@ -27,7 +27,6 @@ use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\ShowActorSecurityStatusRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
-use Neo\Jobs\CreateActorLibrary;
 use Neo\Jobs\CreateSignupToken;
 use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
@@ -96,67 +95,13 @@ class ActorsController extends Controller {
 	}
 
 	public function show(Request $request, Actor $actor): Response {
-		$with = $request->get("with", []);
-
 		if ($actor->is_locked) {
 			$actor->load("lockedBy");
 		}
 
-		if (in_array("direct_children", $with, true)) {
-			$actor->append("direct_children");
-		}
-
-		if (in_array("roles", $with, true)) {
-			$actor->load("roles");
-		}
-
-		if (in_array("roles_capabilities", $with, true)) {
-			$actor->load("roles_capabilities");
-		}
-
-		if (in_array("standalone_capabilities", $with, true)) {
-			$actor->load("standalone_capabilities");
-		}
-
-		if (in_array("capabilities", $with, true)) {
-			$actor->load(["capabilities"]);
-		}
-
-		if (!is_null($actor->branding_id) && in_array("branding", $with, true)) {
-			$actor->load("branding");
-		}
-
-		if (in_array("applied_branding", $with, true)) {
-			$actor->append("applied_branding");
-		}
-
-		if (in_array("own_locations", $with, true)) {
-			$actor->load("own_locations");
-		}
-
-		if (in_array("locations", $with, true)) {
-			$actor->append("locations");
-		}
-
-		if (in_array("formats", $with, true)) {
-			$actor->setRelation("formats", $actor->getLocations()->pluck("format")->unique("id")->values());
-		}
-
-		if (in_array("sharers", $with, true)) {
-			$actor->load("sharers");
-		}
-
-		if (in_array("logo", $with, true)) {
-			$actor->load("logo");
-		}
-
-		if (in_array("phone", $with, true) || Auth::user()?->is($actor)) {
-			$actor->load("phone");
-		}
-
 		$actor->append(["parent", "registration_sent", "is_registered"]);
 
-		return new Response($actor);
+		return new Response($actor->loadPublicRelations());
 	}
 
 	public function store(StoreActorRequest $request): Response {
@@ -175,12 +120,10 @@ class ActorsController extends Controller {
 		$parent = Actor::query()->find($values["parent_id"]);
 		$actor->moveTo($parent);
 
-		// If its a physical user, add more informations
+		// If it's a physical user, add more information
 		if (!$actor->is_group) {
-			$actor->email       = $values['email'];
-			$actor->branding_id = $values['branding_id'];
+			$actor->email = $values['email'];
 			$actor->roles()->attach($values['roles']);
-			$actor->standalone_capabilities()->attach($values['capabilities']);
 			$actor->save();
 
 			// Execute the user's creation side effects
@@ -195,7 +138,11 @@ class ActorsController extends Controller {
 
 		// Should we create a library for the user ?
 		if ($actor->is_group && $request->input("make_library", false)) {
-			CreateActorLibrary::dispatch($actor->id);
+			$library                = new Library();
+			$library->owner_id      = $actor->id;
+			$library->name          = $actor->name;
+			$library->content_limit = 0;
+			$library->save();
 		}
 
 		return new Response($actor, 201);
@@ -206,7 +153,7 @@ class ActorsController extends Controller {
 		if (count($request->all()) === 0) {
 			return new Response([
 				                    "code" => "empty-request",
-				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        "message" => "You must pass at lease 1 parameter when calling this route",
+				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             "message" => "You must pass at lease 1 parameter when calling this route",
 			                    ], 422);
 		}
 
@@ -214,7 +161,6 @@ class ActorsController extends Controller {
 		$actor->name           = $request->get("name", $actor->name);
 		$actor->email          = $request->get("email", $actor->email);
 		$actor->locale         = $request->get("locale", $actor->locale);
-		$actor->branding_id    = $request->get("branding_id", $actor->branding_id);
 		$actor->limited_access = $request->get("limited_access", $actor->limited_access);
 		$actor->two_fa_method  = $request->get("two_fa_method", $actor->two_fa_method);
 
@@ -241,7 +187,7 @@ class ActorsController extends Controller {
 			if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
 				return new Response([
 					                    'code' => 'actor.hierarchy-loop',
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        'message' => 'Parent assignment would result in incoherent actors hierarchy',
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             'message' => 'Parent assignment would result in incoherent actors hierarchy',
 					                    'data' => $actor,
 				                    ], 403);
 			}
@@ -256,35 +202,15 @@ class ActorsController extends Controller {
 	}
 
 	public function destroy(DestroyActorsRequest $request, Actor $actor): Response {
-		// Move or delete this actor's resources according to specified behaviour
-		switch ($request["behaviour"]) {
-			case "to-parent":
-				$actor->children->each(fn($actor) => $actor->moveTo($actor->parent));
-				$actor->libraries->each(function (Library $library) use ($actor) {
-					$library->owner_id = $actor->parent_id;
-					$library->save();
-				});
-				$actor->campaigns->each(function (Campaign $campaign) use ($actor) {
-					$campaign->parent_id = $actor->parent_id;
-					$campaign->save();
-				});
-				break;
-			case "to-self":
-				$actor->children->each(fn($actor) => $actor->moveTo(Auth::user()));
-				$actor->libraries->each(function (Library $library) use ($actor) {
-					$library->owner_id = Auth::id();
-					$library->save();
-				});
-				$actor->campaigns->each(function (Campaign $campaign) use ($actor) {
-					$campaign->parent_id = Auth::id();
-					$campaign->save();
-				});
-				break;
-			case "to-trash":
-				$actor->libraries->each(fn(Library $library) => $library->delete());
-				$actor->campaigns->each(fn(Campaign $campaign) => $campaign->delete());
-				break;
-		}
+		$actor->direct_children->each(fn($actor) => $actor->moveTo($actor->parent));
+		$actor->libraries->each(function (Library $library) use ($actor) {
+			$library->owner_id = $actor->parent_id;
+			$library->save();
+		});
+		$actor->campaigns->each(function (Campaign $campaign) use ($actor) {
+			$campaign->parent_id = $actor->parent_id;
+			$campaign->save();
+		});
 
 		$actor->phone?->delete();
 
@@ -345,6 +271,7 @@ class ActorsController extends Controller {
 		$signupToken?->makeVisible("token");
 
 		return new Response([
+			                    "actor_id"         => $actor->getKey(),
 			                    "signup_token"     => $signupToken,
 			                    "two_factor_token" => $twoFAToken,
 		                    ]);

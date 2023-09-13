@@ -61,165 +61,165 @@ use Neo\Modules\Properties\Services\Resources\BroadcastPlayer;
  * @mixin Builder
  */
 class Location extends SecuredModel {
-    use SoftDeletes;
-    use HasPublicRelations;
+	use SoftDeletes;
+	use HasPublicRelations;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Table properties
-    |--------------------------------------------------------------------------
-    */
-
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'locations';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
-    protected $fillable = [
-        "network_id",
-        "external_id",
-        "display_type_id",
-        "name",
-        "internal_name",
-        "container_id",
-    ];
-
-    /**
-     * @var array<string, string>
-     */
-    protected $casts = [
-        "scheduled_sleep" => "boolean",
-        "sleep_end"       => "date",
-        "sleep_start"     => "date",
-    ];
-
-    /**
-     * The rule used to validate access to the model upon binding it with a route
-     *
-     * @var class-string
-     */
-    protected string $accessRule = AccessibleLocation::class;
-
-    /**
-     * @var array<string, string|callable>
-     */
-    protected array $publicRelations = [
-        "display_type" => "display_type",
-        "network"      => "network",
-        "broadcaster"  => "network.broadcaster_connection",
-        "players"      => "players",
-        "actors"       => "actors",
-        "products"     => "products",
-        "product_ids"  => "append:product_ids",
-    ];
-
-    protected $touches = ["products"];
+	/*
+	|--------------------------------------------------------------------------
+	| Table properties
+	|--------------------------------------------------------------------------
+	*/
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'locations';
 
-    /**
-     * @return BelongsTo<Network, Location>
-     */
-    public function network(): BelongsTo {
-        return $this->belongsTo(Network::class, "network_id");
-    }
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array<string>
+	 */
+	protected $fillable = [
+		"network_id",
+		"external_id",
+		"display_type_id",
+		"name",
+		"internal_name",
+		"container_id",
+	];
 
-    /**
-     * @return HasMany<Player>
-     */
-    public function players(): HasMany {
-        return $this->hasMany(Player::class, "location_id");
-    }
+	/**
+	 * @var array<string, string>
+	 */
+	protected $casts = [
+		"scheduled_sleep" => "boolean",
+		"sleep_end"       => "datetime",
+		"sleep_start"     => "datetime",
+	];
 
-    /**
-     * @return BelongsTo<DisplayType, Location>
-     */
-    public function display_type(): BelongsTo {
-        return $this->belongsTo(DisplayType::class, "display_type_id");
-    }
+	/**
+	 * The rule used to validate access to the model upon binding it with a route
+	 *
+	 * @var class-string
+	 */
+	protected string $accessRule = AccessibleLocation::class;
 
-    /**
-     * @return BelongsTo<NetworkContainer, Location>
-     */
-    public function container(): BelongsTo {
-        return $this->belongsTo(NetworkContainer::class, "container_id", "id");
-    }
+	/**
+	 * @var array<string, string|callable>
+	 */
+	protected array $publicRelations = [
+		"display_type" => "display_type",
+		"network"      => "network",
+		"broadcaster"  => "network.broadcaster_connection",
+		"players"      => "players",
+		"actors"       => "actors",
+		"products"     => "products",
+		"product_ids"  => "append:product_ids",
+	];
 
-    /**
-     * @return BelongsToMany<Actor>
-     */
-    public function actors(): BelongsToMany {
-        return $this->belongsToMany(Actor::class, "actors_locations", "location_id", "actor_id");
-    }
-
-    /**
-     * @return BelongsToMany<Product>
-     */
-    public function products(): BelongsToMany {
-        return $this->belongsToMany(Product::class, "products_locations", "location_id", "product_id");
-    }
-
-    /**
-     * @return Collection<int>
-     */
-    public function getProductIdsAttribute(): Collection {
-        return $this->products()->allRelatedIds();
-    }
-
-    /* Reports */
-
-    /**
-     * @return HasMany<ScreenshotRequest>
-     */
-    public function screenshots_requests(): HasMany {
-        return $this->hasMany(ScreenshotRequest::class, "location_id");
-    }
+	protected $touches = ["products"];
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | ***
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    public function loadHierarchy(): self {
-        $this->container?->append('parents_list');
+	/**
+	 * @return BelongsTo<Network, Location>
+	 */
+	public function network(): BelongsTo {
+		return $this->belongsTo(Network::class, "network_id");
+	}
 
-        return $this;
-    }
+	/**
+	 * @return HasMany<Player>
+	 */
+	public function players(): HasMany {
+		return $this->hasMany(Player::class, "location_id");
+	}
 
-    /**
-     * @return ExternalBroadcasterResourceId
-     */
-    public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
-        return new ExternalBroadcasterResourceId(
-            broadcaster_id: $this->network->connection_id,
-            external_id   : $this->external_id,
-            type          : ExternalResourceType::Location,
-        );
-    }
+	/**
+	 * @return BelongsTo<DisplayType, Location>
+	 */
+	public function display_type(): BelongsTo {
+		return $this->belongsTo(DisplayType::class, "display_type_id");
+	}
 
-    public function toInventoryResource() {
-        return new BroadcastLocation(
-            provider    : $this->network->broadcaster_connection->broadcaster,
-            id          : $this->getKey(),
-            external_id : $this->toExternalBroadcastIdResource(),
-            name        : $this->name,
-            screen_count: $this->players->sum("screen_count"),
-            players     : BroadcastPlayer::collection($this->players->map(fn(Player $player) => $player->toInventoryResource())),
-        );
-    }
+	/**
+	 * @return BelongsTo<NetworkContainer, Location>
+	 */
+	public function container(): BelongsTo {
+		return $this->belongsTo(NetworkContainer::class, "container_id", "id");
+	}
+
+	/**
+	 * @return BelongsToMany<Actor>
+	 */
+	public function actors(): BelongsToMany {
+		return $this->belongsToMany(Actor::class, "actors_locations", "location_id", "actor_id");
+	}
+
+	/**
+	 * @return BelongsToMany<Product>
+	 */
+	public function products(): BelongsToMany {
+		return $this->belongsToMany(Product::class, "products_locations", "location_id", "product_id");
+	}
+
+	/**
+	 * @return Collection<int>
+	 */
+	public function getProductIdsAttribute(): Collection {
+		return $this->products()->allRelatedIds();
+	}
+
+	/* Reports */
+
+	/**
+	 * @return HasMany<ScreenshotRequest>
+	 */
+	public function screenshots_requests(): HasMany {
+		return $this->hasMany(ScreenshotRequest::class, "location_id");
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| ***
+	|--------------------------------------------------------------------------
+	*/
+
+	public function loadHierarchy(): self {
+		$this->container?->append('parents_list');
+
+		return $this;
+	}
+
+	/**
+	 * @return ExternalBroadcasterResourceId
+	 */
+	public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
+		return new ExternalBroadcasterResourceId(
+			broadcaster_id: $this->network->connection_id,
+			external_id   : $this->external_id,
+			type          : ExternalResourceType::Location,
+		);
+	}
+
+	public function toInventoryResource() {
+		return new BroadcastLocation(
+			provider    : $this->network->broadcaster_connection->broadcaster,
+			id          : $this->getKey(),
+			external_id : $this->toExternalBroadcastIdResource(),
+			name        : $this->name,
+			screen_count: $this->players->sum("screen_count"),
+			players     : BroadcastPlayer::collection($this->players->map(fn(Player $player) => $player->toInventoryResource())),
+		);
+	}
 }

@@ -95,38 +95,8 @@ class ActorsController extends Controller {
 	}
 
 	public function show(Request $request, Actor $actor): Response {
-		$with = $request->get("with", []);
-
 		if ($actor->is_locked) {
 			$actor->load("lockedBy");
-		}
-
-		if (in_array("direct_children", $with, true)) {
-			$actor->append("direct_children");
-		}
-
-		if (in_array("roles_capabilities", $with, true)) {
-			$actor->load("roles_capabilities");
-		}
-
-		if (!is_null($actor->branding_id) && in_array("branding", $with, true)) {
-			$actor->load("branding");
-		}
-
-		if (in_array("applied_branding", $with, true)) {
-			$actor->append("applied_branding");
-		}
-
-		if (in_array("own_locations", $with, true)) {
-			$actor->load("own_locations");
-		}
-
-		if (in_array("locations", $with, true)) {
-			$actor->append("locations");
-		}
-
-		if (in_array("formats", $with, true)) {
-			$actor->setRelation("formats", $actor->getLocations()->pluck("format")->unique("id")->values());
 		}
 
 		$actor->append(["parent", "registration_sent", "is_registered"]);
@@ -183,7 +153,7 @@ class ActorsController extends Controller {
 		if (count($request->all()) === 0) {
 			return new Response([
 				                    "code" => "empty-request",
-				                    "message" => "You must pass at lease 1 parameter when calling this route",
+				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             "message" => "You must pass at lease 1 parameter when calling this route",
 			                    ], 422);
 		}
 
@@ -191,7 +161,6 @@ class ActorsController extends Controller {
 		$actor->name           = $request->get("name", $actor->name);
 		$actor->email          = $request->get("email", $actor->email);
 		$actor->locale         = $request->get("locale", $actor->locale);
-		$actor->branding_id    = $request->get("branding_id", $actor->branding_id);
 		$actor->limited_access = $request->get("limited_access", $actor->limited_access);
 		$actor->two_fa_method  = $request->get("two_fa_method", $actor->two_fa_method);
 
@@ -218,7 +187,7 @@ class ActorsController extends Controller {
 			if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
 				return new Response([
 					                    'code' => 'actor.hierarchy-loop',
-					                    'message' => 'Parent assignment would result in incoherent actors hierarchy',
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             'message' => 'Parent assignment would result in incoherent actors hierarchy',
 					                    'data' => $actor,
 				                    ], 403);
 			}

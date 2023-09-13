@@ -56,7 +56,6 @@ use Neo\Rules\AccessibleActor;
  *           never a user.
  * @property bool                $is_locked             Tell if the current actor has been locked. A locked actor cannot login
  * @property int|null            $locked_by             Tell who locke this actor, if applicable
- * @property int|null            $branding_id           ID of the branding applied to this user
  *
  * @property ActorDetails        $details               Meta information about the actor
  *
@@ -92,7 +91,6 @@ use Neo\Rules\AccessibleActor;
  * @property Collection          $additional_accesses
  *
  * @property Collection          $locations
- * @property Branding|null       $branding
  *
  * @property Collection<Library> $libraries
  *
@@ -337,38 +335,6 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 	public function libraries(): HasMany {
 		return $this->hasMany(Library::class, "owner_id", "id");
 	}
-
-
-	/*
-	|--------------------------------------------------------------------------
-	| Branding
-	|--------------------------------------------------------------------------
-	*/
-
-	/**
-	 * Gets the user"s applied branding
-	 *
-	 * @return BelongsTo<Branding, Actor>
-	 */
-	public function branding(): BelongsTo {
-		return $this->belongsTo(Branding::class);
-	}
-
-	public function getAppliedBrandingAttribute(): ?Branding {
-		if ($this->branding) {
-			return $this->branding;
-		}
-
-		/** @var Actor|null $parent */
-		$parent = $this->Parents()->whereHas("branding")->first();
-
-		if (is_null($parent)) {
-			return null;
-		}
-
-		return $parent->branding;
-	}
-
 
 	/*
 	|--------------------------------------------------------------------------

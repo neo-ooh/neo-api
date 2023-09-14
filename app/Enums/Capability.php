@@ -63,6 +63,11 @@ enum Capability: string {
 	 */
 	case campaigns_tags = "campaigns.tags";
 
+	/**
+	 * Gives access to campaigns
+	 */
+	case campaigns_view = "campaigns.view";
+
 	// Formats
 	case formats_edit = "formats.edit";
 

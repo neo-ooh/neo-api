@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -17,15 +17,13 @@ use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Rules\PublicRelations;
 
 class ShowCampaignRequest extends FormRequest {
-    public function authorize(): bool {
-        return Gate::allows(Capability::campaigns_edit->value)
-            || Gate::allows(Capability::contents_schedule->value)
-            || Gate::allows(Capability::contents_review->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::campaigns_view->value);
+	}
 
-    public function rules(): array {
-        return [
-            "with" => ["array", new PublicRelations(Campaign::class)],
-        ];
-    }
+	public function rules(): array {
+		return [
+			"with" => ["array", new PublicRelations(Campaign::class)],
+		];
+	}
 }

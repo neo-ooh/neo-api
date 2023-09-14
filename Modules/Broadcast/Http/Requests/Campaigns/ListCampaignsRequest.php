@@ -20,28 +20,26 @@ use Neo\Rules\AccessibleActor;
 use Neo\Rules\PublicRelations;
 
 class ListCampaignsRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool {
-        return Gate::allows(Capability::campaigns_edit->value)
-            || Gate::allows(Capability::contents_schedule->value)
-            || Gate::allows(Capability::contents_review->value);
-    }
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	public function authorize(): bool {
+		return Gate::allows(Capability::campaigns_view->value);
+	}
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules(): array {
-        return [
-            "parent_id" => ["sometimes", "integer", new AccessibleActor(true)],
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array
+	 */
+	public function rules(): array {
+		return [
+			"parent_id" => ["sometimes", "integer", new AccessibleActor(true)],
 
-            "layout_id" => ["integer", new Exists(Layout::class, "id")],
-            "with"      => ["array", new PublicRelations(Campaign::class)],
-        ];
-    }
+			"layout_id" => ["integer", new Exists(Layout::class, "id")],
+			"with"      => ["array", new PublicRelations(Campaign::class)],
+		];
+	}
 }

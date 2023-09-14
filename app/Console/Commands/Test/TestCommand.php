@@ -11,11 +11,9 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
-use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
-use Neo\Modules\Broadcast\Services\BroadSign\BroadSignAdapter;
-use Neo\Modules\Broadcast\Services\BroadSign\Models\Creative;
+use Neo\Models\Utils\ActorsGetter;
+use Neo\Modules\Properties\Models\OpeningHours;
+use Neo\Modules\Properties\Models\Property;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -28,36 +26,65 @@ class TestCommand extends Command {
 	 * @throws Exception
 	 */
 	public function handle() {
-		/** @var BroadSignAdapter $broadsign */
-		$broadsign = BroadcasterAdapterFactory::makeForBroadcaster(1);
-		$client    = new BroadSignClient($broadsign->getConfig());
+		// -- Deactivate ad copies on BroadSign
+//		/** @var BroadSignAdapter $broadsign */
+//		$broadsign = BroadcasterAdapterFactory::makeForBroadcaster(1);
+//		$client    = new BroadSignClient($broadsign->getConfig());
+//
+//		$creatives = collect(Creative::inContainer($client, 455721438));
+//		$creatives = $creatives->where("active", "=", true);
+//		$creatives = $creatives->sortBy("id");
+//
+//		/** @var Creative $creative */
+//		foreach ($creatives as $creative) {
+//			if (!$creative->active) {
+//				continue;
+//			}
+//
+//			$this->output->writeLn("[" . $creative->id . "] " . $creative->name);
+//
+//			$r = DB::select("
+//				SELECT * FROM `external_resources`
+//				WHERE JSON_VALUE(`data`, '$.external_id') = ?
+//				AND `deleted_at` IS NULL
+//			", [$creative->id]);
+//
+//			if (count($r) > 0) {
+//				$this->output->success("Still alive");
+//				continue;
+//			}
+//
+//			$creative->active = false;
+//			$creative->save();
+//			$this->output->error("Not used anymore, deactivated.");
+//		}
 
-		$creatives = collect(Creative::inContainer($client, 455721438));
-		$creatives = $creatives->where("active", "=", true);
-		$creatives = $creatives->sortBy("id");
-		
-		/** @var Creative $creative */
-		foreach ($creatives as $creative) {
-			if (!$creative->active) {
-				continue;
+		$actors     = ActorsGetter::from(88)->selectChildren(recursive: true)->getSelection();
+		$properties = Property::query()->whereIn("actor_id", $actors)
+		                      ->whereHas("opening_hours", null, "<", 7)
+		                      ->with("opening_hours")
+		                      ->get();
+
+		/** @var Property $property */
+		foreach ($properties as $property) {
+			$this->info($property->name);
+			for ($weekday = 1; $weekday <= 7; $weekday++) {
+				$hours = $property->opening_hours->firstWhere("weekday", "===", $property);
+
+				if ($hours) {
+					$this->comment($weekday . ": OK");
+					continue;
+				}
+
+				OpeningHours::query()->insert([
+					                              "property_id" => $property->getKey(),
+					                              "weekday"     => $weekday,
+					                              "is_closed"   => false,
+					                              "open_at"     => "00:00:00",
+					                              "close_at"    => "23:59:00",
+				                              ]);
+				$this->comment($weekday . ": Added");
 			}
-
-			$this->output->writeLn("[" . $creative->id . "] " . $creative->name);
-
-			$r = DB::select("
-				SELECT * FROM `external_resources`
-				WHERE JSON_VALUE(`data`, '$.external_id') = ?
-				AND `deleted_at` IS NULL
-			", [$creative->id]);
-
-			if (count($r) > 0) {
-				$this->output->success("Still alive");
-				continue;
-			}
-
-			$creative->active = false;
-			$creative->save();
-			$this->output->error("Not used anymore, deactivated.");
 		}
 	}
 }

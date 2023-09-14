@@ -18,7 +18,7 @@ use Neo\Rules\PublicRelations;
 
 class ListCampaignProductsRequest extends FormRequest {
 	public function authorize(): bool {
-		return Gate::allows(Capability::campaigns_edit->value);
+		return Gate::allows(Capability::campaigns_view->value);
 	}
 
 	public function rules(): array {

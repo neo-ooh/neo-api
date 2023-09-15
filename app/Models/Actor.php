@@ -61,7 +61,8 @@ use Neo\Rules\AccessibleActor;
  *
  * @property Date                $created_at
  * @property Date                $updated_at
- * @property Date                $last_login_at
+ * @property Date|null           $last_login_at
+ * @property Date|null           $last_activity_at
  * @property Date|null           $deleted_at
  *
  * @property bool                $registration_sent     Tell if the registration email was sent to the actor. Not applicable to
@@ -143,12 +144,13 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 	 * @var array<string, string>
 	 */
 	protected $casts = [
-		"is_group"       => "boolean",
-		"is_property"    => "boolean",
-		"is_locked"      => "boolean",
-		"tos_accepted"   => "boolean",
-		"limited_access" => "boolean",
-		"last_login_at"  => "datetime",
+		"is_group"         => "boolean",
+		"is_property"      => "boolean",
+		"is_locked"        => "boolean",
+		"tos_accepted"     => "boolean",
+		"limited_access"   => "boolean",
+		"last_login_at"    => "datetime",
+		"last_activity_at" => "datetime",
 	];
 
 	/**

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2022 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -27,64 +27,71 @@ use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
  * @extends BroadcastJobBase<array{broadcasterId: int}>
  */
 class UpdateCreativeJob extends BroadcastJobBase {
-    public function __construct(int $creativeId, BroadcastJob|null $broadcastJob = null) {
-        parent::__construct(BroadcastJobType::UpdateCreative, $creativeId, null, $broadcastJob);
-    }
+	public function __construct(int $creativeId, BroadcastJob|null $broadcastJob = null) {
+		parent::__construct(BroadcastJobType::UpdateCreative, $creativeId, null, $broadcastJob);
+	}
 
-    /**
-     * @inheritDoc
-     * @return array|null
-     * @throws InvalidBroadcasterAdapterException
-     */
-    protected function run(): array|null {
-        /** @var Creative $creative */
-        $creative = Creative::withTrashed()->find($this->resourceId);
+	/**
+	 * @inheritDoc
+	 * @return array|null
+	 * @throws InvalidBroadcasterAdapterException
+	 */
+	protected function run(): array|null {
+		/** @var Creative $creative */
+		$creative = Creative::withTrashed()->find($this->resourceId);
 
-        if ($creative->trashed()) {
-            return [
-                "error"   => true,
-                "message" => "Creative is trashed",
-            ];
-        }
+		if ($creative) {
+			return [
+				"error"   => true,
+				"message" => "Could not find creative",
+			];
+		}
 
-        // List all active external representation of the creative
-        $externalRepresentations = $creative->external_representations;
-        $results                 = [
-            "success" => [],
-            "failed"  => [],
-        ];
+		if ($creative->trashed()) {
+			return [
+				"error"   => true,
+				"message" => "Creative is trashed",
+			];
+		}
 
-        /** @var ExternalResource $externalRepresentation */
-        foreach ($externalRepresentations as $externalRepresentation) {
-            /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-            $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($externalRepresentation->broadcaster_id);
+		// List all active external representation of the creative
+		$externalRepresentations = $creative->external_representations;
+		$results                 = [
+			"success" => [],
+			"failed"  => [],
+		];
 
-            if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
-                // Broadcaster does not support scheduling, do nothing
-                return [
-                    "error"   => false,
-                    "message" => "Broadcaster does not support scheduling",
-                ];
-            }
+		/** @var ExternalResource $externalRepresentation */
+		foreach ($externalRepresentations as $externalRepresentation) {
+			/** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
+			$broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($externalRepresentation->broadcaster_id);
 
-            // Collect creative tags
-            $tags = new BroadcastTagsCollector();
-            $tags->collect($creative->content->broadcast_tags, [BroadcastTagType::Targeting]);
-            $tags->collect($creative->frame->broadcast_tags, [BroadcastTagType::Targeting]);
-            $tags->collect($creative->broadcast_tags, [BroadcastTagType::Targeting]);
+			if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
+				// Broadcaster does not support scheduling, do nothing
+				return [
+					"error"   => false,
+					"message" => "Broadcaster does not support scheduling",
+				];
+			}
 
-            $creativeTags = $tags->get($broadcaster->getBroadcasterId());
+			// Collect creative tags
+			$tags = new BroadcastTagsCollector();
+			$tags->collect($creative->content->broadcast_tags, [BroadcastTagType::Targeting]);
+			$tags->collect($creative->frame->broadcast_tags, [BroadcastTagType::Targeting]);
+			$tags->collect($creative->broadcast_tags, [BroadcastTagType::Targeting]);
 
-            // Update representation
-            $result = $broadcaster->updateCreative($externalRepresentation->toResource(), $creativeTags);
+			$creativeTags = $tags->get($broadcaster->getBroadcasterId());
 
-            if ($result === true) {
-                $results['success'][] = $externalRepresentation;
-            } else {
-                $results['failed'][] = $externalRepresentation;
-            }
-        }
+			// Update representation
+			$result = $broadcaster->updateCreative($externalRepresentation->toResource(), $creativeTags);
 
-        return $results;
-    }
+			if ($result === true) {
+				$results['success'][] = $externalRepresentation;
+			} else {
+				$results['failed'][] = $externalRepresentation;
+			}
+		}
+
+		return $results;
+	}
 }

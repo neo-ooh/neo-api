@@ -13,16 +13,19 @@ namespace Neo\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Neo\Models\AccessToken;
 use Neo\Models\Actor;
 
 class TrackUserActivityMiddleware {
 	public function handle(Request $request, Closure $next) {
-		/** @var Actor|null $user */
+		/** @var Actor|AccessToken|null $user */
 		if ($user = Auth::user()) {
-			$t                = $user->timestamps;
-			$user->timestamps = false;
-			$user->touchQuietly("last_activity_at");
-			$user->timestamps = $t;
+			if ($user instanceof Actor) {
+				$t                = $user->timestamps;
+				$user->timestamps = false;
+				$user->touchQuietly("last_activity_at");
+				$user->timestamps = $t;
+			}
 		}
 		return $next($request);
 	}

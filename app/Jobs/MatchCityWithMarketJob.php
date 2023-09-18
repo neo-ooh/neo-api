@@ -15,32 +15,31 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Neo\Models\City;
 use Neo\Models\Market;
 
 class MatchCityWithMarketJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected readonly int $cityID) {
-    }
+	public function __construct(protected readonly int $cityID) {
+	}
 
-    public function handle(): void {
-        $city = City::query()->find($this->cityID);
+	public function handle(): void {
+		$city = City::query()->find($this->cityID);
 
-        if (!$city || !$city->geolocation) {
-            return;
-        }
+		if (!$city || !$city->geolocation) {
+			return;
+		}
 
-        $market = Market::query()
-                        ->whereRaw(DB::raw("ST_CONTAINS(area, ST_GEOMFROMTEXT('{$city->geolocation->toWKT()}'))"))
-                        ->first();
+		$market = Market::query()
+		                ->whereRaw("ST_CONTAINS(area, ST_GEOMFROMTEXT('{$city->geolocation->toWKT()}'))")
+		                ->first();
 
-        if (!$market) {
-            return;
-        }
+		if (!$market) {
+			return;
+		}
 
-        $city->market_id = $market->getKey();
-        $city->save();
-    }
+		$city->market_id = $market->getKey();
+		$city->save();
+	}
 }

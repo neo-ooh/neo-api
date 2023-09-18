@@ -92,7 +92,7 @@ class Contract extends Model {
 			"reservations" => "reservations",
 			"salesperson"  => "salesperson",
 			"screenshots"  => Relation::make(load: ["screenshots.product.property", "screenshots.location"]),
-			"campaigns"    => "campaigns",
+			"campaigns"    => Relation::make(load: "campaigns", custom: fn(Contract $contract) => $contract->campaigns->append("status")),
 		];
 	}
 

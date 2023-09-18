@@ -266,40 +266,31 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 				if (!$representation || !$location) {
 					continue;
 				}
+				
+				$didUpdate = ResourceLocationPerformance::query()
+				                                        ->where("resource_id", "=", $representation->resource_id)
+				                                        ->where("location_id", "=", $location->getKey())
+				                                        ->where("data->network_id", $representation->data->network_id)
+				                                        ->whereJsonContains("data->formats_id", $representation->data->formats_id)
+				                                        ->update([
+					                                                 "repetitions" => $locationPerformances->sum("repetitions"),
+					                                                 "impressions" => $locationPerformances->sum("impressions"),
+				                                                 ]);
 
-				$record = ResourceLocationPerformance::query()
-				                                     ->where("resource_id", "=", $representation->resource_id)
-				                                     ->where("location_id", "=", $location->getKey())
-				                                     ->where("data->network_id", $representation->data->network_id)
-				                                     ->whereJsonContains("data->formats_id", $representation->data->formats_id)
-				                                     ->first();
+				if (!$didUpdate) {
+					$record = new ResourceLocationPerformance([
+						                                          "resource_id" => $representation->resource_id,
+						                                          "location_id" => $location->getKey(),
+						                                          "repetitions" => $locationPerformances->sum("repetitions"),
+						                                          "impressions" => $locationPerformances->sum("impressions"),
+						                                          "data"        => new ResourcePerformanceData(
+							                                          network_id: $representation->data->network_id,
+							                                          formats_id: $representation->data->formats_id,
+						                                          ),
+					                                          ]);
 
-				if ($record) {
-					ResourceLocationPerformance::query()
-					                           ->where("resource_id", "=", $representation->resource_id)
-					                           ->where("location_id", "=", $location->getKey())
-					                           ->where("data->network_id", $representation->data->network_id)
-					                           ->whereJsonContains("data->formats_id", $representation->data->formats_id)
-					                           ->update([
-						                                    "repetitions" => $locationPerformances->sum("repetitions"),
-						                                    "impressions" => $locationPerformances->sum("impressions"),
-					                                    ]);
-
-					continue;
+					$record->save();
 				}
-
-				$record = new ResourceLocationPerformance([
-					                                          "resource_id" => $representation->resource_id,
-					                                          "location_id" => $location->getKey(),
-					                                          "repetitions" => $locationPerformances->sum("repetitions"),
-					                                          "impressions" => $locationPerformances->sum("impressions"),
-					                                          "data"        => new ResourcePerformanceData(
-						                                          network_id: $representation->data->network_id,
-						                                          formats_id: $representation->data->formats_id,
-					                                          ),
-				                                          ]);
-
-				$record->save();
 			}
 
 			$locationsPerformancesProgress->finish();

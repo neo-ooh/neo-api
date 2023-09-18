@@ -171,7 +171,7 @@
                             @if($order->show_investment)
                                 <td class="border-right">
                                     @php
-                                        $regionDiscount = ($regionMediaValue - $regionNetInvestment) / $regionMediaValue * 100
+                                        $regionDiscount = $regionMediaValue > 0 ? ($regionMediaValue - $regionNetInvestment) / $regionMediaValue * 100 : 0
                                     @endphp
                                     {{ (int)floor($regionDiscount) === 0 ? '-' : format($regionDiscount) . "%" }}
                                 </td>

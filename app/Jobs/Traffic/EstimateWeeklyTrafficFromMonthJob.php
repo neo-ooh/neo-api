@@ -24,115 +24,115 @@ use Neo\Modules\Properties\Models\WeeklyTrafficDatum;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class EstimateWeeklyTrafficFromMonthJob implements ShouldQueue {
-    use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Batchable, Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected int $propertyId, protected int $year, protected int $month) {
-    }
+	public function __construct(protected int $propertyId, protected int $year, protected int $month) {
+	}
 
-    public function handle() {
-        $output = new ConsoleOutput();
+	public function handle() {
+		$output = new ConsoleOutput();
 
-        // List all the weeks we are working on
-        $weeks = [];
-        // Special case for january
-        $datePointer = Carbon::create($this->year, $this->month)->startOfWeek(CarbonInterface::MONDAY);
-        $boundary    = Carbon::create($this->year, $this->month)->addMonth();
+		// List all the weeks we are working on
+		$weeks = [];
+		// Special case for january
+		$datePointer = Carbon::create($this->year, $this->month)->startOfWeek(CarbonInterface::MONDAY);
+		$boundary    = Carbon::create($this->year, $this->month)->addMonth();
 
-        do {
-            $weeks[] = $datePointer->clone();
-            $datePointer->addWeek();
-        } while ($datePointer->lte($boundary));
+		do {
+			$weeks[] = $datePointer->clone();
+			$datePointer->addWeek();
+		} while ($datePointer->lte($boundary));
 
-        $weeks[] = $weeks[array_key_last($weeks)]->clone()->endOfWeek(CarbonInterface::SUNDAY);
+		$weeks[] = $weeks[array_key_last($weeks)]->clone()->endOfWeek(CarbonInterface::SUNDAY);
 
-        // List the month we need to get data from
-        $monthTraffic = collect($weeks)
-            ->mapWithKeys(fn($d) => ["$d->year-$d->month" => $d])
-            ->map(fn($d) => MonthlyTrafficDatum::query()
-                                               ->where("property_id", "=", $this->propertyId)
-                                               ->where("year", "=", $d->year)
-                                               ->where("month", "=", $d->month - 1)
-                                               ->first());
+		// List the month we need to get data from
+		$monthTraffic = collect($weeks)
+			->mapWithKeys(fn($d) => ["$d->year-$d->month" => $d])
+			->map(fn($d) => MonthlyTrafficDatum::query()
+			                                   ->where("property_id", "=", $this->propertyId)
+			                                   ->where("year", "=", $d->year)
+			                                   ->where("month", "=", $d->month - 1)
+			                                   ->first());
 
-        array_pop($weeks);
+		array_pop($weeks);
 
-        $weeklyTraffic = [];
+		$weeklyTraffic = [];
 
-        // Now we calculate the traffic for each weeks
-        /**
-         * @var Carbon $week
-         */
-        foreach ($weeks as $week) {
-            $weekNumber = strftime("%W", $week->timestamp) + 1;
-            $output->writeln("[Week #$weekNumber] {$week->toFormattedDateString()} -> {$week->clone()->endOfWeek()->toFormattedDateString()}");
+		// Now we calculate the traffic for each weeks
+		/**
+		 * @var Carbon $week
+		 */
+		foreach ($weeks as $week) {
+			$weekNumber = $week->weekOfYear;
+			$output->writeln("[Week #$weekNumber] {$week->toFormattedDateString()} -> {$week->clone()->endOfWeek()->toFormattedDateString()}");
 
-            $trafficCount     = 0;
-            $foundDaysTraffic = 0;
+			$trafficCount     = 0;
+			$foundDaysTraffic = 0;
 
-            for ($i = 0; $i < 7; ++$i) {
-                $day       = $week->clone()->addDays($i);
-                $monthData = $monthTraffic->get("$day->year-$day->month");
+			for ($i = 0; $i < 7; ++$i) {
+				$day       = $week->clone()->addDays($i);
+				$monthData = $monthTraffic->get("$day->year-$day->month");
 
-                // We are missing month data for this week, use the default month instead
-                if (!$monthData && ($day->month !== $this->month || $day->year !== $this->year)) {
-                    $monthData = $monthTraffic->get("$this->year-$this->month");
-                }
+				// We are missing month data for this week, use the default month instead
+				if (!$monthData && ($day->month !== $this->month || $day->year !== $this->year)) {
+					$monthData = $monthTraffic->get("$this->year-$this->month");
+				}
 
-                if (!$monthData) {
-                    $output->writeln("[$this->year-$this->month-$day->day] => " . "No data!");
-                    continue;
-                }
+				if (!$monthData) {
+					$output->writeln("[$this->year-$this->month-$day->day] => " . "No data!");
+					continue;
+				}
 
-                $trafficCount += $monthData->final_traffic / $day->daysInMonth;
-                $foundDaysTraffic++;
-            }
+				$trafficCount += $monthData->final_traffic / $day->daysInMonth;
+				$foundDaysTraffic++;
+			}
 
-            $output->writeln("[Week #$weekNumber] $foundDaysTraffic days of traffic found");
+			$output->writeln("[Week #$weekNumber] $foundDaysTraffic days of traffic found");
 
-            if ($foundDaysTraffic < 7) {
-                $output->writeln("[Week #$weekNumber] Incomplete week of data, leave empty");
-                // Not enough information for this week, remove any records
-                WeeklyTrafficDatum::query()->where("property_id", "=", $this->propertyId)
-                                  ->where("year", "=", $week->weekYear)
-                                  ->where("week", "=", $weekNumber)
-                                  ->delete();
-                continue;
-            }
+			if ($foundDaysTraffic < 7) {
+				$output->writeln("[Week #$weekNumber] Incomplete week of data, leave empty");
+				// Not enough information for this week, remove any records
+				WeeklyTrafficDatum::query()->where("property_id", "=", $this->propertyId)
+				                  ->where("year", "=", $week->weekYear)
+				                  ->where("week", "=", $weekNumber)
+				                  ->delete();
+				continue;
+			}
 
-            $weeklyTraffic[$weekNumber] = $trafficCount;
+			$weeklyTraffic[$weekNumber] = $trafficCount;
 
-            WeeklyTrafficDatum::query()->updateOrInsert([
-                                                            "property_id" => $this->propertyId,
-                                                            "year"        => $week->weekYear,
-                                                            "week"        => $weekNumber,
-                                                        ], [
-                                                            "traffic"     => $trafficCount,
-                                                            "is_estimate" => true,
-                                                        ]);
-        }
+			WeeklyTrafficDatum::query()->updateOrInsert([
+				                                            "property_id" => $this->propertyId,
+				                                            "year"        => $week->weekYear,
+				                                            "week"        => $weekNumber,
+			                                            ], [
+				                                            "traffic"     => $trafficCount,
+				                                            "is_estimate" => true,
+			                                            ]);
+		}
 
-        if ($this->month === 12 && Carbon::create($this->year, $this->month)
-                                         ->endOfMonth()
-                                         ->startOfWeek(CarbonInterface::MONDAY)
-                                         ->subDay()->isoWeek === 52) {
+		if ($this->month === 12 && Carbon::create($this->year, $this->month)
+		                                 ->endOfMonth()
+		                                 ->startOfWeek(CarbonInterface::MONDAY)
+		                                 ->subDay()->isoWeek === 52) {
 
 
-            $output->writeln("Force adding 53rd week");
+			$output->writeln("Force adding 53rd week");
 
-            WeeklyTrafficDatum::query()->updateOrInsert([
-                                                            "property_id" => $this->propertyId,
-                                                            "year"        => $this->year,
-                                                            "week"        => 53,
-                                                        ], [
-                                                            "traffic"     => $weeklyTraffic[52],
-                                                            "is_estimate" => true,
-                                                        ]);
-        }
+			WeeklyTrafficDatum::query()->updateOrInsert([
+				                                            "property_id" => $this->propertyId,
+				                                            "year"        => $this->year,
+				                                            "week"        => 53,
+			                                            ], [
+				                                            "traffic"     => $weeklyTraffic[52],
+				                                            "is_estimate" => true,
+			                                            ]);
+		}
 
-        // All good, Push the new values to Odoo
+		// All good, Push the new values to Odoo
 //        PushPropertyTrafficJob::dispatch($this->propertyId);
 
-        // And clear our cache
-        Cache::forget("property-$this->propertyId-rolling-weekly-traffic");
-    }
+		// And clear our cache
+		Cache::forget("property-$this->propertyId-rolling-weekly-traffic");
+	}
 }

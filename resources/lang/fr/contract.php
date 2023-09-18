@@ -130,6 +130,7 @@ Passé ce délai, Neo ne pourra pas garantir l’intégralité de l’inventaire
 	"products-digital-horizontal-indoor" => "Intérieur - Multizone",
 	"products-digital-in-screen"         => "Extérieur - Multizone",
 	"products-digital-full-screen"       => "Extérieur - Plein écran",
+	"products-digital-outdoor-vertical"  => "Extérieur - Vertical",
 
 	"totals-guaranteed-media-total" => "Média Garanti Total",
 	"totals-bua-total"              => "Boni selon Dispo. Total",

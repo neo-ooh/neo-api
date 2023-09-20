@@ -18,7 +18,7 @@ use Neo\Enums\Capability;
 class SyncInventoryRequest extends FormRequest {
 	public function rules(): array {
 		return [
-			"action" => ["required", "string", Rule::in(["push" | "pull"])],
+			"action" => ["required", "string", Rule::in(["push", "pull"])],
 		];
 	}
 

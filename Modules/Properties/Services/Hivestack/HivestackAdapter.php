@@ -155,7 +155,7 @@ class HivestackAdapter extends InventoryAdapter {
 		$unit->name                           = trim($product->property_name) . " - " . trim($product->name[0]->value);
 		$unit->description                    = $location->name;
 		$unit->image_uri                      = $product->picture_url ?? $unit->image_uri ?? null;
-		$unit->network_id                     = $context["network_id"];
+		$unit->network_id                     = (int)$context["network_id"];
 		$unit->mediatype_id                   = $product->property_type ? (int)$product->property_type->external_id : null;
 		$unit->external_id                    = $location->external_id->external_id;
 		$unit->floor_cpm                      = $product->programmatic_price;
@@ -336,8 +336,9 @@ class HivestackAdapter extends InventoryAdapter {
 	 */
 	protected function deleteUnit(HivestackClient $client, int $unitId): void {
 		try {
-			$unit = new Unit($client);
-			$unit->setKey($unitId);
+			$unit         = Unit::find($client, $unitId);
+			$unit->active = false;
+			$unit->save();
 			$unit->delete();
 		} catch (RequestException $e) {
 			if ($e->response->status() === 404) {

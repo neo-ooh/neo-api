@@ -42,6 +42,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property boolean                           $has_plan
  * @property Carbon                            $start_date
  * @property Carbon                            $end_date
+ * @property boolean                           $additional_flights_imported
  * @property integer                           $expected_impressions
  * @property integer                           $received_impressions
  * @property integer                           $created_at
@@ -67,10 +68,11 @@ class Contract extends Model {
 	];
 
 	protected $casts = [
-		"has_plan"   => "boolean",
-		"is_closed"  => "boolean",
-		"start_date" => "date",
-		"end_date"   => "date",
+		"has_plan"                    => "boolean",
+		"is_closed"                   => "boolean",
+		"start_date"                  => "date",
+		"end_date"                    => "date",
+		"additional_flights_imported" => "boolean",
 	];
 
 	protected function getPublicRelations(): array {

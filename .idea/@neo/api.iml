@@ -8,6 +8,7 @@
       <sourceFolder url="file://$MODULE_DIR$/../../Modules" isTestSource="false" packagePrefix="Neo\Modules\" />
       <sourceFolder url="file://$MODULE_DIR$/../../Modules/Broadcast/" isTestSource="false" packagePrefix="Neo\Modules\Broadcast\" />
       <sourceFolder url="file://$MODULE_DIR$/../../Modules/Properties/" isTestSource="false" packagePrefix="Neo\Modules\Properties\" />
+      <sourceFolder url="file://$MODULE_DIR$/../../Modules/Dynamics" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/../../public" />
       <excludeFolder url="file://$MODULE_DIR$/../dataSources" />
       <excludeFolder url="file://$MODULE_DIR$/../../vendor/skagarwal/google-places-api" />

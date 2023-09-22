@@ -123,7 +123,9 @@ class PushFullInventoryJob implements ShouldQueue {
 			(new PushProductJob($product->inventory_resource_id, $this->inventoryId))->handle();
 		}
 
-		$progress?->finish();
+		if ($this->output) {
+			$progress?->finish();
+		}
 
 		InventoryProvider::query()
 		                 ->where("id", "=", $this->inventoryId)

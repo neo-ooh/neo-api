@@ -49,6 +49,8 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property Carbon                                    $start_date
  * @property Carbon                                    $end_date
  * @property FlightType                                $type
+ * @property boolean                                   $additional_lines_imported
+ * @property boolean                                   $missing_lines_on_import
  * @property-read Carbon                               $created_at
  * @property-read Carbon                               $updated_at
  *
@@ -89,9 +91,11 @@ class ContractFlight extends Model {
 	 * @var array<string, string>
 	 */
 	public $casts = [
-		"start_date" => "datetime",
-		"end_date"   => "datetime",
-		"type"       => FlightType::class,
+		"start_date"                => "datetime",
+		"end_date"                  => "datetime",
+		"type"                      => FlightType::class,
+		"additional_lines_imported" => "boolean",
+		"missing_lines_on_import"   => "boolean",
 	];
 
 	protected function getPublicRelations(): array {

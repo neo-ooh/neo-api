@@ -108,7 +108,7 @@ class AvailabilitiesController {
 
 			$avails = Cache::remember(
 				key     : "availabilities-" . $productId . "-" . $year,
-				ttl     : 24 * 3600,
+				ttl     : $cacheEnd,
 				callback: function () use ($year, $loadDates, $datesLoaded, $productId) {
 					if (!$datesLoaded) {
 						$loadDates();

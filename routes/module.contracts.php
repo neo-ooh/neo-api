@@ -29,116 +29,117 @@ use Neo\Models\ScreenshotRequest;
 use Neo\Modules\Properties\Http\Controllers\ProofOfPerformancesController;
 
 Route::group([
-                 "middleware" => "default",
-                 "prefix"     => "v1",
+	             "middleware" => "default",
+	             "prefix"     => "v1",
              ], static function () {
-    /*
-    |----------------------------------------------------------------------
-    | Advertisers
-    |----------------------------------------------------------------------
-    */
+	/*
+	|----------------------------------------------------------------------
+	| Advertisers
+	|----------------------------------------------------------------------
+	*/
 
-    Route::model("advertiser", Advertiser::class);
+	Route::model("advertiser", Advertiser::class);
 
-    Route::   get("advertisers", AdvertisersController::class . "@index");
-    Route::   get("advertisers/_by_id", AdvertisersController::class . "@byId");
-    Route::   get("advertisers/{advertiser}", AdvertisersController::class . "@show");
-    Route::   put("advertisers/{advertiser}", AdvertisersController::class . "@update");
+	Route::   get("advertisers", AdvertisersController::class . "@index");
+	Route::   get("advertisers/_by_id", AdvertisersController::class . "@byId");
+	Route::   get("advertisers/{advertiser}", AdvertisersController::class . "@show");
+	Route::   put("advertisers/{advertiser}", AdvertisersController::class . "@update");
 
-    Route::  post("advertisers/{advertiser}/representations", AdvertiserRepresentationsController::class . "@store");
-    Route::   put("advertisers/{advertiser}/representations/{broadcaster}", AdvertiserRepresentationsController::class . "@update");
-    Route::delete("advertisers/{advertiser}/representations/{broadcaster}", AdvertiserRepresentationsController::class . "@destroy");
-
-
-    /*
-    |----------------------------------------------------------------------
-    | Clients
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("client", Client::class);
-
-    Route::get("clients", [ClientsController::class, "index"]);
-    Route::get("clients/_by_id", [ClientsController::class, "byId"]);
-    Route::get("clients/{client}", [ClientsController::class, "show"]);
+	Route::  post("advertisers/{advertiser}/representations", AdvertiserRepresentationsController::class . "@store");
+	Route::   put("advertisers/{advertiser}/representations/{broadcaster}", AdvertiserRepresentationsController::class . "@update");
+	Route::delete("advertisers/{advertiser}/representations/{broadcaster}", AdvertiserRepresentationsController::class . "@destroy");
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Contracts
-    |----------------------------------------------------------------------
-    */
+	/*
+	|----------------------------------------------------------------------
+	| Clients
+	|----------------------------------------------------------------------
+	*/
 
-    Route::model("contract", Contract::class);
+	Route::model("client", Client::class);
 
-    Route::   get("contracts", ContractsController::class . "@index");
-    Route::  post("contracts", ContractsController::class . "@store");
-    Route::   get("contracts/_recent", ContractsController::class . "@recent");
-    Route::   get("contracts/{contract}", ContractsController::class . "@show");
-    Route::   put("contracts/{contract}", ContractsController::class . "@update");
-    Route::delete("contracts/{contract}", ContractsController::class . "@destroy");
-    Route::  post("contracts/{contract}/_refresh", ContractsController::class . "@refresh");
-
-    /*
-    |----------------------------------------------------------------------
-    | Contracts flights
-    |----------------------------------------------------------------------
-    */
-
-    Route::model("flight", ContractFlight::class);
+	Route::get("clients", [ClientsController::class, "index"]);
+	Route::get("clients/_by_id", [ClientsController::class, "byId"]);
+	Route::get("clients/{client}", [ClientsController::class, "show"]);
 
 
-    Route::   get("flights", [ContractFlightsController::class, "index"]);
-    Route::   get("flights/{flight}", [ContractFlightsController::class, "show"]);
+	/*
+	|----------------------------------------------------------------------
+	| Contracts
+	|----------------------------------------------------------------------
+	*/
 
-    Route::   get("flights/{flight}/exports", ContractsFlightsExportController::class . "@index");
-    Route::   get("flights/{flight}/exports/{network}", ContractsFlightsExportController::class . "@show");
+	Route::model("contract", Contract::class);
 
-    Route::   put("flights/{flight}/reservations/_sync", ContractsFlightsReservationsController::class . "@sync");
+	Route::   get("contracts", ContractsController::class . "@index");
+	Route::  post("contracts", ContractsController::class . "@store");
+	Route::   get("contracts/_recent", ContractsController::class . "@recent");
+	Route::   get("contracts/{contract}", ContractsController::class . "@show");
+	Route::   put("contracts/{contract}", ContractsController::class . "@update");
+	Route::delete("contracts/{contract}", ContractsController::class . "@destroy");
+	Route::  post("contracts/{contract}/_refresh", ContractsController::class . "@refresh");
+
+	/*
+	|----------------------------------------------------------------------
+	| Contracts flights
+	|----------------------------------------------------------------------
+	*/
+
+	Route::model("flight", ContractFlight::class);
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Screenshots Requests
-    |----------------------------------------------------------------------
-    */
+	Route::   get("flights", [ContractFlightsController::class, "index"]);
+	Route::   get("flights/{flight}", [ContractFlightsController::class, "show"]);
 
-    Route::model("screenshotRequest", ScreenshotRequest::class);
+	Route::   get("flights/{flight}/exports", ContractsFlightsExportController::class . "@index");
+	Route::   get("flights/{flight}/exports/{network}", ContractsFlightsExportController::class . "@show");
 
-    Route::   get("screenshots-requests", [ScreenshotsRequestsController::class, "index"]);
-    Route::  post("screenshots-requests", [ScreenshotsRequestsController::class, "store"]);
-    Route::   get("screenshots-requests/{screenshotRequest}", [ScreenshotsRequestsController::class, "show"]);
-    Route::delete("screenshots-requests/{screenshotRequest}", [ScreenshotsRequestsController::class, "destroy"]);
+	Route::   put("flights/{flight}/reservations/_sync", ContractsFlightsReservationsController::class . "@sync");
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Screenshots
-    |----------------------------------------------------------------------
-    */
+	/*
+	|----------------------------------------------------------------------
+	| Screenshots Requests
+	|----------------------------------------------------------------------
+	*/
 
-    Route::model("screenshot", Screenshot::class);
+	Route::model("screenshotRequest", ScreenshotRequest::class);
 
-    Route::   get("screenshots", [ScreenshotsController::class, "index"]);
+	Route::   get("screenshots-requests", [ScreenshotsRequestsController::class, "index"]);
+	Route::  post("screenshots-requests", [ScreenshotsRequestsController::class, "store"]);
+	Route::   get("screenshots-requests/{screenshotRequest}", [ScreenshotsRequestsController::class, "show"]);
+	Route::delete("screenshots-requests/{screenshotRequest}", [ScreenshotsRequestsController::class, "destroy"]);
 
-    Route::  post("contracts/{contract}/screenshots/{screenshot}", [ContractsScreenshotsController::class, "associate"]);
-    Route::delete("contracts/{contract}/screenshots/{screenshot}", [ContractsScreenshotsController::class, "dissociate"]);
 
-    /*
-    |----------------------------------------------------------------------
-    | Availabilities
-    |----------------------------------------------------------------------
-    */
+	/*
+	|----------------------------------------------------------------------
+	| Screenshots
+	|----------------------------------------------------------------------
+	*/
 
-    Route::post("availabilities", [AvailabilitiesController::class, "index"]);
+	Route::model("screenshot", Screenshot::class);
 
-    /*
-    |----------------------------------------------------------------------
-    | POP
-    |----------------------------------------------------------------------
-    */
+	Route::   get("screenshots", [ScreenshotsController::class, "index"]);
 
-    Route::   get("contracts/{contract}/proof-of-performances", [ProofOfPerformancesController::class, "getBase"]);
-    Route::  post("contracts/{contract}/proof-of-performances", [ProofOfPerformancesController::class, "build"]);
+	Route::  post("contracts/{contract}/screenshots/{screenshot}", [ContractsScreenshotsController::class, "associate"]);
+	Route::delete("contracts/{contract}/screenshots/{screenshot}", [ContractsScreenshotsController::class, "dissociate"]);
+
+	/*
+	|----------------------------------------------------------------------
+	| Availabilities
+	|----------------------------------------------------------------------
+	*/
+
+	Route::post("availabilities", [AvailabilitiesController::class, "index"]);
+	Route::post("availabilities/_year", [AvailabilitiesController::class, "show"]);
+
+	/*
+	|----------------------------------------------------------------------
+	| POP
+	|----------------------------------------------------------------------
+	*/
+
+	Route::   get("contracts/{contract}/proof-of-performances", [ProofOfPerformancesController::class, "getBase"]);
+	Route::  post("contracts/{contract}/proof-of-performances", [ProofOfPerformancesController::class, "build"]);
 
 });

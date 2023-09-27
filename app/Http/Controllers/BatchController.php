@@ -10,32 +10,36 @@
 
 namespace Neo\Http\Controllers;
 
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\RateLimiter;
 use Neo\Http\Requests\BatchRequest;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 class BatchController extends Controller {
-    public function handle(BatchRequest $request) {
-        set_time_limit(0);
-        
-        $requests  = $request->input("requests");
-        $responses = [];
+	public function handle(BatchRequest $request) {
+		set_time_limit(0);
 
-        foreach ($requests as $request) {
-            $internalRequest = Request::create($request["uri"], $request["method"], $request["payload"] ?? []);
-            $internalRequest->setJson(new ParameterBag($request["payload"] ?? []));
-            $internalRequest->headers->set("Accept", "application/json");
+		$requests  = $request->input("requests");
+		$responses = [];
 
-            $response    = app()->handle($internalRequest);
-            $responses[] = [
-                "id"       => $request["id"],
-                "status"   => $response->getStatusCode(),
-                "headers"  => $response->headers->all(),
-                "response" => json_decode($response->getContent()),
-            ];
-        }
+		foreach ($requests as $request) {
+			$internalRequest = Request::create($request["uri"], $request["method"], $request["payload"] ?? []);
+			$internalRequest->setJson(new ParameterBag($request["payload"] ?? []));
+			$internalRequest->headers->set("Accept", "application/json");
 
-        return new Response($responses);
-    }
+			RateLimiter::clear(Auth::id());
+			$response = app()->handle($internalRequest);
+
+			$responses[] = [
+				"id"       => $request["id"],
+				"status"   => $response->getStatusCode(),
+				"headers"  => $response->headers->all(),
+				"response" => json_decode($response->getContent()),
+			];
+		}
+
+		return new Response($responses);
+	}
 }

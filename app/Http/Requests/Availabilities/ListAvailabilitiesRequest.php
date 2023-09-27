@@ -8,7 +8,7 @@
  * @neo/api - ListAvailabilitiesRequest.php
  */
 
-namespace Neo\Http\Requests;
+namespace Neo\Http\Requests\Availabilities;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;

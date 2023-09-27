@@ -109,7 +109,7 @@ class AvailabilitiesController {
 			$avails = Cache::tags(["products", "availabilities"])
 			               ->remember(
 				               key     : "availabilities-" . $productId . "-" . $year,
-				               ttl     : $cacheEnd,
+				               ttl     : 24 * 3600,
 				               callback: function () use ($year, $loadDates, $datesLoaded, $productId) {
 					               if (!$datesLoaded) {
 						               $loadDates();

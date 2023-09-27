@@ -106,20 +106,21 @@ class AvailabilitiesController {
 			// For past year, until end of month
 			$cacheEnd = $year >= now()->year ? now()->endOfDay() : now()->endOfMonth();
 
-			$avails = Cache::remember(
-				key     : "availabilities-" . $productId . "-" . $year,
-				ttl     : $cacheEnd,
-				callback: function () use ($year, $loadDates, $datesLoaded, $productId) {
-					if (!$datesLoaded) {
-						$loadDates();
-						$datesLoaded = true;
-					}
+			$avails = Cache::tags(["products", "availabilities"])
+			               ->remember(
+				               key     : "availabilities-" . $productId . "-" . $year,
+				               ttl     : $cacheEnd,
+				               callback: function () use ($year, $loadDates, $datesLoaded, $productId) {
+					               if (!$datesLoaded) {
+						               $loadDates();
+						               $datesLoaded = true;
+					               }
 
-					if (App::runningInConsole()) {
-						dump($productId);
-					}
+					               if (App::runningInConsole()) {
+						               dump($productId);
+					               }
 
-					$availabilities = DB::select(<<<EOS
+					               $availabilities = DB::select(<<<EOS
 									SELECT `p`.`id`                                                              AS `product_id`,
 										   `d`.`d`                                                               AS `date`,
 										   CAST(COALESCE(`lc`.`free_spots_count`, 1) AS unsigned)                AS `reservable_spots_count`,
@@ -148,10 +149,10 @@ class AvailabilitiesController {
 									WHERE `p`.`id` = ?
 									GROUP BY `p`.`id`, `d`.`d`
 									EOS
-						, [$productId]);
+						               , [$productId]);
 
-					return $availabilities;
-				});
+					               return $availabilities;
+				               });
 
 			$productsAvails->push(...$avails);
 

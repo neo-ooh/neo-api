@@ -150,11 +150,7 @@ class AvailabilitiesController {
 									GROUP BY `p`.`id`, `d`.`d`
 									EOS
 						               , [$productId]);
-
-					               if (App::runningInConsole()) {
-						               dump("DB Query: " . $execution_time . "s");
-					               }
-
+								   
 					               return $availabilities;
 				               });
 

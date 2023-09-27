@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Availabilities\ListAvailabilitiesRequest;
@@ -114,6 +115,11 @@ class AvailabilitiesController {
 						               $loadDates();
 						               $datesLoaded = true;
 					               }
+
+					               if (App::runningInConsole()) {
+						               dump($productId);
+					               }
+
 					               $availabilities = DB::select(<<<EOS
 									SELECT `p`.`id`                                                              AS `product_id`,
 										   `d`.`d`                                                               AS `date`,

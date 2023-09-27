@@ -120,6 +120,8 @@ class AvailabilitiesController {
 						               dump($productId);
 					               }
 
+					               $time_start = microtime(true);
+
 					               $availabilities = DB::select(<<<EOS
 									SELECT `p`.`id`                                                              AS `product_id`,
 										   `d`.`d`                                                               AS `date`,
@@ -150,6 +152,14 @@ class AvailabilitiesController {
 									GROUP BY `p`.`id`, `d`.`d`
 									EOS
 						               , [$productId]);
+
+					               $time_end = microtime(true);
+
+					               $execution_time = $time_end - $time_start;
+
+					               if (App::runningInConsole()) {
+						               dump("DB Query: " . $execution_time . "s");
+					               }
 
 					               return $availabilities;
 				               });

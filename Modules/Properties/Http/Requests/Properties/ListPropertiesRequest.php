@@ -18,17 +18,18 @@ use Neo\Modules\Broadcast\Models\Network;
 use Neo\Rules\AccessibleActor;
 
 class ListPropertiesRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "network_id" => ["integer", new Exists(Network::class, "id")],
-            "parent_id"  => ["sometimes", "integer", new AccessibleActor(true)],
+	public function rules(): array {
+		return [
+			"network_id" => ["integer", new Exists(Network::class, "id")],
+			"parent_id"  => ["sometimes", "integer", new AccessibleActor(true)],
 
-            "with" => ["sometimes", "array"],
-        ];
-    }
+			"extended" => ["sometimes", "boolean"],
+			"with"     => ["sometimes", "array"],
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::properties_view->value)
-            || Gate::allows(Capability::planner_access->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::properties_view->value)
+			|| Gate::allows(Capability::planner_access->value);
+	}
 }

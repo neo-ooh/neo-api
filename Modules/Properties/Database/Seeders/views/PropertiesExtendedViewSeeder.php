@@ -5,7 +5,7 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - PropertiesViewSeeder.php
+ * @neo/api - PropertiesExtendedViewSeeder.php
  */
 
 namespace Neo\Modules\Properties\Database\Seeders\views;
@@ -13,18 +13,20 @@ namespace Neo\Modules\Properties\Database\Seeders\views;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class PropertiesViewSeeder extends Seeder {
+class PropertiesExtendedViewSeeder extends Seeder {
 	public function run() {
-		$viewName = "properties_view";
+		$viewName = "properties_extended_view";
 
 		DB::statement("DROP VIEW IF EXISTS $viewName");
 
 		DB::statement(/** @lang SQL */ <<<EOS
         CREATE VIEW $viewName AS
         SELECT `p`.*,
-               `a`.name as `name`
+               `a`.name as `name`,
+            COUNT(`dv`.`id`) as 'demographic_variables_count'
         FROM `properties` `p`
            JOIN `actors` `a` ON `p`.`actor_id` = `a`.`id`
+           LEFT JOIN `demographic_values` `dv` ON `p`.`actor_id` = `dv`.`property_id`
         GROUP BY `p`.`actor_id`        
         EOS
 		);

@@ -10,6 +10,7 @@
 
 namespace Neo\Modules\Properties\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
@@ -48,7 +49,11 @@ class PropertiesController extends Controller {
 
 		$actorIds = $actors->where("is_property", "=", true)->pluck("id");
 
-		$query = Property::query()->whereIn("actor_id", $actorIds);
+		$query = Property::query()
+		                 ->whereIn("actor_id", $actorIds)
+		                 ->when($request->input("extended", false), function (Builder $query) {
+			                 $query->from("properties_extended_view");
+		                 });
 
 		if ($request->has("network_id")) {
 			$query->where("network_id", "=", $request->input("network_id"));
@@ -113,7 +118,7 @@ class PropertiesController extends Controller {
 			                             "start_year" => 2022,
 			                             "format"     => TrafficFormat::MonthlyMedian->value,
 		                             ]);
-		
+
 		$property->translations()->createMany([
 			                                      ["locale" => "fr-CA"],
 			                                      ["locale" => "en-CA"],

@@ -14,6 +14,7 @@ use Illuminate\Database\Seeder as BaseSeeder;
 use Neo\Modules\Properties\Database\Seeders\views\ContractLinesCampaignsViewSeeder;
 use Neo\Modules\Properties\Database\Seeders\views\ProductsViewSeeder;
 use Neo\Modules\Properties\Database\Seeders\views\ProductsWarningsViewSeeder;
+use Neo\Modules\Properties\Database\Seeders\views\PropertiesExtendedViewSeeder;
 use Neo\Modules\Properties\Database\Seeders\views\PropertiesViewSeeder;
 use Neo\Modules\Properties\Database\Seeders\views\PropertiesWarningsViewSeeder;
 
@@ -21,8 +22,10 @@ class DatabaseSeeder extends BaseSeeder {
 	public function run(): void {
 		$this->call([
 			            // Views
-			            PropertiesViewSeeder::class,
 			            ProductsViewSeeder::class,
+			            ProductsViewSeeder::class,
+			            PropertiesViewSeeder::class,
+			            PropertiesExtendedViewSeeder::class,
 			            PropertiesWarningsViewSeeder::class,
 			            ProductsWarningsViewSeeder::class,
 

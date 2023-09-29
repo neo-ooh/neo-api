@@ -15,21 +15,25 @@ use Illuminate\Support\ServiceProvider;
 use Neo\Modules\Properties\Console\Commands\MatchHivestackUnitsToProductsCommand;
 use Neo\Modules\Properties\Console\Commands\MatchReachScreensToProductsCommand;
 use Neo\Modules\Properties\Console\Commands\MatchVistarVenuesToProductsCommand;
+use Neo\Modules\Properties\Jobs\CacheProductsAvailabilitiesJob;
 use Neo\Modules\Properties\Jobs\SynchronizeInventoriesJob;
 
 class PropertiesKernelServiceProvider extends ServiceProvider {
-    public function register() {
-        $this->commands(
-            MatchHivestackUnitsToProductsCommand::class,
-            MatchReachScreensToProductsCommand::class,
-            MatchVistarVenuesToProductsCommand::class,
-        );
-    }
+	public function register() {
+		$this->commands(
+			MatchHivestackUnitsToProductsCommand::class,
+			MatchReachScreensToProductsCommand::class,
+			MatchVistarVenuesToProductsCommand::class,
+		);
+	}
 
-    public function boot() {
-        $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
-            // Synchronize inventories daily
-            $schedule->job(SynchronizeInventoriesJob::class)->daily();
-        });
-    }
+	public function boot() {
+		$this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+			// Synchronize inventories daily
+			$schedule->job(SynchronizeInventoriesJob::class)->daily();
+
+			// Pre-cache products availabilities every day
+			$schedule->job(CacheProductsAvailabilitiesJob::class)->dailyAt("04:00");
+		});
+	}
 }

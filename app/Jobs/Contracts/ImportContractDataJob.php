@@ -134,10 +134,10 @@ class ImportContractDataJob implements ShouldQueue {
 
 		// Takes the flight already existing in the contract that didn't exist in the contract
 		$planFlights = $flights->pluck("uid");
-		foreach ($contract->flights as $contractFlight) {
+		foreach ($contract->flights as $i => $contractFlight) {
 			if ($planFlights->doesntContain($contractFlight->uid)) {
 				$flights->push(new FlightDefinition(
-					               name     : $contractFlight->name,
+					               name     : $contractFlight->name ?? "Flight #$i",
 					               uid      : $contractFlight->uid,
 					               type     : $contractFlight->type,
 					               startDate: $contractFlight->start_date->toDateString(),

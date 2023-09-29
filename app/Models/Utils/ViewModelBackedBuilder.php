@@ -44,11 +44,19 @@ class ViewModelBackedBuilder extends Builder {
 					...$where,
 					"column" => str_replace($this->model->getReadTable(), $this->model->getWriteTable(), $where["column"]),
 				];
+			} else if ($where["type"] === 'NotExists') {
+				/** @var \Illuminate\Database\Query\Builder $query */
+				$query         = $where["query"];
+				$query->wheres = array_map(fn(array $where) => (
+				array_map(fn(string $w) => str_replace($this->model->getReadTable(), $this->model->getWriteTable(), $w), $where)
+				), $query->wheres);
+
+				$writeWheres[] = $where;
 			} else {
 				$writeWheres[] = $where;
 			}
 		}
-
+		
 		$this->query->wheres = $writeWheres;
 	}
 

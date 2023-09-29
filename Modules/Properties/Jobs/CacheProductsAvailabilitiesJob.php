@@ -28,7 +28,8 @@ class CacheProductsAvailabilitiesJob implements ShouldQueue {
 
 	public function handle(): void {
 		// We want to cache the availabilities for all products for the current year and the next
-		Product::query()->where("is_bonus", "=", false)
+		Product::query()
+		       ->where("is_bonus", "=", false)
 		       ->chunk(500, function (Collection $products, $page) {
 			       $controller = new AvailabilitiesController();
 			       dump($page, 2023);

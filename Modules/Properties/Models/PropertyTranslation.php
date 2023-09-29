@@ -24,13 +24,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PropertyTranslation extends Model {
 
-    protected $table = "properties_translations";
+	protected $table = "properties_translations";
 
-    protected $primaryKey = null;
+	protected $primaryKey = null;
 
-    protected $fillable = [
-        "property_id",
-        "locale",
-        "description",
-    ];
+	public $incrementing = false;
+
+	protected $fillable = [
+		"property_id",
+		"locale",
+		"description",
+	];
 }

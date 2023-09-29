@@ -212,7 +212,7 @@
                         @if($order->show_investment)
                             <td class="border-right">
                                 @php
-                                    $totalDiscount = ($totalMediaValue - $totalNetInvestment) / $totalMediaValue * 100
+                                    $totalDiscount = $totalMediaValue > 0 ? ($totalMediaValue - $totalNetInvestment) / $totalMediaValue * 100 : 0
                                 @endphp
                                 {{ (int)floor($totalDiscount) === 0 ? '-' : format($totalDiscount) . "%" }}
                             </td>

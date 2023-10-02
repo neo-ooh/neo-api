@@ -33,13 +33,13 @@ class AssociateInventoryProductsCommand extends Command {
 				$this->error("Odoo inventories does not support auto-matching of products");
 				break;
 			case InventoryType::Hivestack:
-				AssociateProductsWithHivestack::dispatch($inventoryId);
+				(new AssociateProductsWithHivestack($inventoryId))->handle();
 				break;
 			case InventoryType::Vistar:
-				AssociateProductsWithVistar::dispatch($inventoryId);
+				(new AssociateProductsWithVistar($inventoryId))->handle();
 				break;
 			case InventoryType::Reach:
-				AssociateProductsWithReach::dispatch($inventoryId);
+				(new AssociateProductsWithReach($inventoryId))->handle();
 				break;
 			case InventoryType::PlaceExchange:
 				$this->error("PlaceExchange inventories does not support auto-matching of products");

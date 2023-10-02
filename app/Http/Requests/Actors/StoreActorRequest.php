@@ -16,30 +16,30 @@ use Illuminate\Validation\Rule;
 use Neo\Enums\Capability;
 
 class StoreActorRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool {
-        return Gate::allows(Capability::actors_create->value);
-    }
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	public function authorize(): bool {
+		return Gate::allows(Capability::actors_create->value);
+	}
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules(): array {
-        return [
-            "is_group"       => ["required", "boolean"],
-            "name"           => ["required", "string"],
-            "email"          => ["required_unless:is_group,true", "email", Rule::unique("actors", "email")->withoutTrashed()],
-            "locale"         => ["required", "string"],
-            "enabled"        => ["required", "boolean"],
-            "parent_id"      => ["required", "numeric", "exists:actors,id"],
-			"roles"        => ["sometimes", "array", "distinct"],
-			"roles.*"      => ["integer", "exists:roles,id"],
-        ];
-    }
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array
+	 */
+	public function rules(): array {
+		return [
+			"is_group"  => ["required", "boolean"],
+			"name"      => ["required", "string"],
+			"email"     => ["required_unless:is_group,true", "email", Rule::unique("actors", "email")->withoutTrashed()],
+			"locale"    => ["required", "string"],
+			"enabled"   => ["sometimes", "boolean"],
+			"parent_id" => ["required", "numeric", "exists:actors,id"],
+			"roles"     => ["sometimes", "array", "distinct"],
+			"roles.*"   => ["integer", "exists:roles,id"],
+		];
+	}
 }

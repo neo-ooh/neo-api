@@ -33,7 +33,7 @@ class SyncCampaignProductsRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		return [
-			"products"   => ["required", "array"],
+			"products"   => ["array"],
 			"products.*" => ["integer", new Exists(Product::class, "id")],
 		];
 	}

@@ -105,29 +105,26 @@ class ActorsController extends Controller {
 	}
 
 	public function store(StoreActorRequest $request): Response {
-		// Authorization is handled by the request
-		$values = $request->validated();
-
 		// Create the actor's "shell"
 		$actor           = new Actor();
-		$actor->name     = $values['name'];
-		$actor->locale   = $values['locale'];
-		$actor->is_group = $values['is_group'];
+		$actor->name     = $request->input("name");
+		$actor->locale   = $request->input("locale");
+		$actor->is_group = $request->input("is_group");
 		$actor->save();
 
 		// Place it in the tree
 		/** @var Actor $parent */
-		$parent = Actor::query()->find($values["parent_id"]);
+		$parent = Actor::query()->find($request->input("parent_id"));
 		$actor->moveTo($parent);
 
 		// If it's a physical user, add more information
 		if (!$actor->is_group) {
-			$actor->email = $values['email'];
-			$actor->roles()->attach($values['roles']);
+			$actor->email = $request->input("email");
+			$actor->roles()->attach($request->input("roles", []));
 			$actor->save();
 
 			// Execute the user's creation side effects
-			if ($values["enabled"] === true) {
+			if ($request->input("enabled", true)) {
 				CreateSignupToken::dispatch($actor->id);
 			} else {
 				$actor->is_locked = true;

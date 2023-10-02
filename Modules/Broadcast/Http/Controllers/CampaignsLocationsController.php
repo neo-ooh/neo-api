@@ -30,7 +30,7 @@ class CampaignsLocationsController extends Controller {
 	 * @return Response
 	 */
 	public function sync(SyncCampaignLocationsRequest $request, Campaign $campaign): Response {
-		$locations = collect($request->input("locations"));
+		$locations = collect($request->input("locations", []));
 		$campaign->locations()
 		         ->sync($locations->mapWithKeys(fn(array $locationDefinition) => [
 			         $locationDefinition["location_id"] =>

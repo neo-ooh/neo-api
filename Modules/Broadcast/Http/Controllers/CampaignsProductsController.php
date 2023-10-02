@@ -30,7 +30,7 @@ class CampaignsProductsController extends Controller {
 	 * @return Response
 	 */
 	public function sync(SyncCampaignProductsRequest $request, Campaign $campaign): Response {
-		$products = collect($request->input("products"));
+		$products = collect($request->input("products", []));
 		$campaign->products()->sync($products);
 
 		$campaign->promote();

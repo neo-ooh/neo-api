@@ -26,10 +26,11 @@ class MockupContractScreenshot {
 	/**
 	 * Generate and store a mockup version of the screenshot in a temporary file
 	 *
+	 * @param boolean $removeLetterboxes Remove letterboxes
 	 * @return string|null the path to the mockup temp file, null if nothing was generated
 	 * @throws ImagickException
 	 */
-	public function makeMockup(): null|string {
+	public function makeMockup(bool $removeLetterboxes): null|string {
 		// First, we need to find which format to mock up this screenshot to
 		$location = $this->screenshot->location ?? $this->screenshot->player->location;
 		$product  = $this->screenshot->product ?? Product::query()
@@ -97,7 +98,12 @@ class MockupContractScreenshot {
 
 			// Extract frame
 			$croppedFrame = $sourceImage->clone();
-			$croppedFrame->trimImage(5);
+
+			if ($removeLetterboxes) {
+				$croppedFrame->trimImage(5);
+				$croppedFrame->setPage(0, 0, 0, 0);
+			}
+
 			$croppedFrame->cropImage(
 				width : $sourceFrame->width * $sourceWidth,
 				height: $sourceFrame->height * $sourceHeight,

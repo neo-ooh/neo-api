@@ -193,6 +193,7 @@ class POPFlightDetails {
 				),
 			"received_at"   => $screenshot->received_at->setTimezone(array_filter([$screenshot->product?->property->address?->timezone])[0] ?? 'America/Toronto'),
 			"mockup"        => $requestScreenshots->firstWhere("screenshot_id", "=", $screenshot->getKey())->mockup,
+			"trim"          => $requestScreenshots->firstWhere("screenshot_id", "=", $screenshot->getKey())->trim,
 		]));
 
 		$this->pop->appendHTML(view("properties::pop.flight-screenshots-thumbnails", [
@@ -202,7 +203,7 @@ class POPFlightDetails {
 		// Print mockups
 		$mockups = $formattedScreenshots->where("mockup", "=", true)->map(fn(array $screenshot) => ([
 			...$screenshot,
-			"url" => $screenshot["screenshot"]->mockup_path,
+			"url" => $screenshot["screenshot"]->makeMockupPath($screenshot["trim"]),
 		]));
 
 		if ($mockups->count() > 0) {

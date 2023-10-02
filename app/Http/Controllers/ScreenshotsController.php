@@ -77,7 +77,7 @@ class ScreenshotsController extends Controller {
 		$succeeded = false;
 		do {
 			try {
-				$screenshot->store($request->getContent(asResource: false));
+				$screenshot->store($request->getContent(asResource: true));
 				$succeeded = true;
 			} catch (ServerException $e) {
 				if ($e->getCode() === 503) {

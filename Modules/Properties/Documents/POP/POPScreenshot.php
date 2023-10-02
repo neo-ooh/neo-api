@@ -16,6 +16,7 @@ class POPScreenshot extends Data {
 	public function __construct(
 		public int  $screenshot_id,
 		public bool $mockup,
+		public bool $trim,
 	) {
 	}
 }

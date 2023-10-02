@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
-use Imagick;
 use ImagickException;
 use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasPublicRelations;
@@ -125,32 +124,24 @@ class Screenshot extends Model {
 	}
 
 	/**
-	 * @param string $screenshot
-	 * @throws ImagickException
+	 * @param resource $screenshot
 	 */
-	public function store(string $screenshot): void {
-		// Start by storing the screenshots to a temp location
-		/** @var Imagick $image */
-		$image = new Imagick();
-		$image->readImageBlob($screenshot);
-		$image->trimImage(5);
-		$image->setImagePage(0, 0, 0, 0);
-
-		// And store the screenshot
-		Storage::disk("public")->put($this->file_path, $image->getImageBlob(), ["visibility" => "public"]);
+	public function store($screenshot): void {
+		Storage::disk("public")->writeStream($this->file_path, $screenshot, ["visibility" => "public"]);
 	}
-	
+
 
 	public function getUrlAttribute(): string {
 		return Storage::disk("public")->url($this->file_path);
 	}
 
 	/**
+	 * @param bool $trim
 	 * @return string
 	 * @throws ImagickException
 	 */
-	public function getMockupPathAttribute(): string {
+	public function makeMockupPath(bool $trim): string {
 		$mockup = new MockupContractScreenshot($this);
-		return $mockup->makeMockup() ?? $this->url;
+		return $mockup->makeMockup($trim) ?? $this->url;
 	}
 }

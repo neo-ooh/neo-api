@@ -33,6 +33,8 @@ use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\Contracts\ImportContractReservations;
 use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Models\Contract;
+use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
+use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Services\Odoo\OdooConfig;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -122,6 +124,13 @@ class ContractsController extends Controller {
 		// Clear the contract's cache
 		Cache::tags(["contract-performances", $contract->contract_id])->flush();
 
+		// Prepare refresh jobs for the flights' campaigns
+		$refreshCampaignsJobs = $contract->flights
+			->load("campaigns")
+			->pluck("campaigns")
+			->flatten()
+			->map(fn(Campaign $campaign) => new FetchCampaignsPerformancesJob(campaignId: $campaign->getKey()));
+
 		if ($request->input("reimport", false)) {
 			if (config("app.env") === "development") {
 				(new ImportContractDataJob($contract->id))->handle();
@@ -132,6 +141,7 @@ class ContractsController extends Controller {
 				                     ->chain([
 					                             new ImportContractReservations($contract->id),
 					                             new RefreshContractsPerformancesJob($contract->id),
+					                             ...$refreshCampaignsJobs,
 				                             ]);
 				// We don't fall through here because we want to importReservations and refresh performances to always be run after the importData job.
 			}
@@ -139,6 +149,7 @@ class ContractsController extends Controller {
 			ImportContractReservations::dispatch($contract->id)
 			                          ->chain([
 				                                  new RefreshContractsPerformancesJob($contract->id),
+				                                  ...$refreshCampaignsJobs,
 			                                  ]);
 		}
 

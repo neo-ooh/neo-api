@@ -97,6 +97,7 @@ class MockupContractScreenshot {
 
 			// Extract frame
 			$croppedFrame = $sourceImage->clone();
+			$croppedFrame->trimImage(5);
 			$croppedFrame->cropImage(
 				width : $sourceFrame->width * $sourceWidth,
 				height: $sourceFrame->height * $sourceHeight,

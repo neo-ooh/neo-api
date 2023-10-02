@@ -20,9 +20,9 @@ class POPRequest extends Data {
 		public string         $contract_number,
 
 		public string         $salesperson,
-		public string         $client,
+		public string|null    $client,
 		public string|null    $presented_to,
-		public string         $advertiser,
+		public string|null    $advertiser,
 
 		public string         $locale,
 

@@ -5,46 +5,43 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - MatchReachScreensToProductsCommand.php
+ * @neo/api - AssociateProductsWithReach.php
  */
 
 namespace Neo\Modules\Properties\Console\Commands;
 
-use Illuminate\Console\Command;
+use Illuminate\Support\Facades\App;
 use Neo\Documents\XLSX\Worksheet;
+use Neo\Jobs\Job;
 use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
-use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 use Neo\Modules\Properties\Services\InventoryType;
 use Neo\Modules\Properties\Services\Reach\ReachAdapter;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\IdentifiableProduct;
-use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\Console\Output\ConsoleOutput;
 
-class MatchReachScreensToProductsCommand extends Command {
-	protected $signature = 'reach:match-screens-to-products {inventory}';
+class AssociateProductsWithReach extends Job {
+	public ConsoleOutput|null $output = null;
 
-	protected $description = 'Match Reach screens';
+	public function __construct(public int $inventoryId) {
+		if (App::runningInConsole()) {
+			$this->output = new ConsoleOutput();
+		}
+	}
 
-	/**
-	 * @throws InvalidInventoryAdapterException
-	 * @throws Exception
-	 * @throws \PhpOffice\PhpSpreadsheet\Writer\Exception
-	 */
-	public function handle(): void {
-		$inventoryId = $this->argument("inventory");
-
-		$provider = InventoryProvider::query()->findOrFail($inventoryId);
+	protected function run(): mixed {
+		$provider = InventoryProvider::query()->findOrFail($this->inventoryId);
 		/** @var ReachAdapter $inventory */
 		$inventory = $provider->getAdapter();
 
 		if ($inventory->getInventoryType() !== InventoryType::Reach) {
-			$this->output->error("Bad Inventory ID");
-			return;
+			$this->output?->writeln("Bad Inventory ID");
+			return false;
 		}
 
 		$screens = $inventory->listProducts();
@@ -59,7 +56,7 @@ class MatchReachScreensToProductsCommand extends Command {
 				continue;
 			}
 
-			$this->output->write("#" . $screen->resourceId->external_id . " " . $screen->product->name[0]->value);
+			$this->output?->write("#" . $screen->resourceId->external_id . " " . $screen->product->name[0]->value);
 
 			// Find the location this screen is representing
 			$playerExternalId = $screen->resourceId->context["player_external_id"];
@@ -67,7 +64,7 @@ class MatchReachScreensToProductsCommand extends Command {
 			$player = Player::query()->where("external_id", "=", $playerExternalId)->first();
 
 			if (!$player) {
-				$this->output->writeln(": No player found.");
+				$this->output?->writeln(": No player found.");
 				$notMatched[] = $screen->resourceId->external_id . ":" . $screen->product->name[0]->value;
 				continue;
 			}
@@ -78,13 +75,13 @@ class MatchReachScreensToProductsCommand extends Command {
 
 			$products = $location->products->where("is_bonus", "=", false);
 			if ($products->count() === 0) {
-				$this->output->writeln(": No products found for screen.");
+				$this->output?->writeln(": No products found for screen.");
 				$notMatched[] = $screen->resourceId->external_id . ":" . $screen->product->name[0]->value;
 				continue;
 			}
 
 			if ($products->count() > 1) {
-				$this->output->write(" (Multiple products found!)");
+				$this->output?->write(" (Multiple products found!)");
 			}
 
 			/** @var Product $product */
@@ -92,7 +89,7 @@ class MatchReachScreensToProductsCommand extends Command {
 
 			// Does this product already has an external representation for this inventory ?
 			/** @var ExternalInventoryResource|null $representation */
-			$representation = $product->external_representations()->firstWhere("inventory_id", "=", $inventoryId);
+			$representation = $product->external_representations()->firstWhere("inventory_id", "=", $this->inventoryId);
 
 			if ($representation) {
 				// Representation already exist, append current ID
@@ -110,7 +107,7 @@ class MatchReachScreensToProductsCommand extends Command {
 			} else {
 				$representation = new ExternalInventoryResource([
 					                                                "resource_id"  => $product->inventory_resource_id,
-					                                                "inventory_id" => $inventoryId,
+					                                                "inventory_id" => $this->inventoryId,
 					                                                "type"         => InventoryResourceType::Product,
 					                                                "external_id"  => "MULTIPLE",
 					                                                "context"      => [
@@ -127,10 +124,10 @@ class MatchReachScreensToProductsCommand extends Command {
 			$representation->save();
 
 			$inventorySettings               = $product->property->inventories_settings()
-			                                                     ->where("inventory_id", "=", $inventoryId)
+			                                                     ->where("inventory_id", "=", $this->inventoryId)
 			                                                     ->firstOrCreate([
 				                                                                     "resource_id" => $product->property->inventory_resource_id,
-				                                                                                                                                                                                                                                                                                                                               "inventory_id" => $inventoryId,
+				                                                                                                                                                                                                                                                                                                                                  "inventory_id" => $this->inventoryId,
 			                                                                     ], [
 				                                                                     "is_enabled"   => true,
 				                                                                     "push_enabled" => true,
@@ -140,7 +137,7 @@ class MatchReachScreensToProductsCommand extends Command {
 			$inventorySettings->push_enabled = true;
 			$inventorySettings->save();
 
-			$this->output->writeln(": Associated to " . $product->property->actor->name . " - " . $product->name_en);
+			$this->output?->writeln(": Associated to " . $product->property->actor->name . " - " . $product->name_en);
 		}
 
 		$spreadsheet = new Spreadsheet();
@@ -149,13 +146,15 @@ class MatchReachScreensToProductsCommand extends Command {
 		$spreadsheet->removeSheetByIndex(0);
 
 		foreach ($notMatched as $unitName) {
-			$this->output->warning($unitName);
+			$this->output?->writeln($unitName);
 			$worksheet->printRow([$unitName]);
 		}
 
 		$filename = storage_path("reach-missing.xlsx");
 		$writer   = new Xlsx($spreadsheet);
 		$writer->save($filename);
-		dump($filename);
+		$this->output?->writeln($filename);
+
+		return true;
 	}
 }

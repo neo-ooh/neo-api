@@ -46,6 +46,7 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 	/**
 	 * @param int|null $networkId
 	 * @param int|null $lookBack How many days in the past should we look at
+	 * @param int|null $campaignId
 	 */
 	public function __construct(protected int|null $networkId = null, protected int|null $lookBack = 3, protected int|null $campaignId = null) {
 	}
@@ -266,7 +267,7 @@ class FetchCampaignsPerformancesJob implements ShouldQueue {
 				if (!$representation || !$location) {
 					continue;
 				}
-				
+
 				$didUpdate = ResourceLocationPerformance::query()
 				                                        ->where("resource_id", "=", $representation->resource_id)
 				                                        ->where("location_id", "=", $location->getKey())

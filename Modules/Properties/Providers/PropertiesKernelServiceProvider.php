@@ -12,18 +12,14 @@ namespace Neo\Modules\Properties\Providers;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\ServiceProvider;
-use Neo\Modules\Properties\Console\Commands\MatchHivestackUnitsToProductsCommand;
-use Neo\Modules\Properties\Console\Commands\MatchReachScreensToProductsCommand;
-use Neo\Modules\Properties\Console\Commands\MatchVistarVenuesToProductsCommand;
+use Neo\Modules\Properties\Console\Commands\AssociateInventoryProductsCommand;
 use Neo\Modules\Properties\Jobs\CacheProductsAvailabilitiesJob;
 use Neo\Modules\Properties\Jobs\SynchronizeInventoriesJob;
 
 class PropertiesKernelServiceProvider extends ServiceProvider {
 	public function register() {
 		$this->commands(
-			MatchHivestackUnitsToProductsCommand::class,
-			MatchReachScreensToProductsCommand::class,
-			MatchVistarVenuesToProductsCommand::class,
+			AssociateInventoryProductsCommand::class
 		);
 	}
 

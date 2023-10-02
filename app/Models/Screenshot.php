@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Storage;
+use Imagick;
 use ImagickException;
 use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasPublicRelations;
@@ -46,101 +47,110 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property string            $mockup_path
  */
 class Screenshot extends Model {
-    use HasPublicRelations;
-    use HasRelationships;
+	use HasPublicRelations;
+	use HasRelationships;
 
-    protected $table = "screenshots";
+	protected $table = "screenshots";
 
-    public $timestamps = false;
+	public $timestamps = false;
 
-    protected $casts = [
-        "received_at" => 'datetime',
-    ];
+	protected $casts = [
+		"received_at" => 'datetime',
+	];
 
-    protected $fillable = [
-        "id",
-        "product_id",
-        "location_id",
-        "player_id",
-        "request_id",
-        "received_at",
-    ];
+	protected $fillable = [
+		"id",
+		"product_id",
+		"location_id",
+		"player_id",
+		"request_id",
+		"received_at",
+	];
 
-    protected $appends = [
-        "url",
-    ];
+	protected $appends = [
+		"url",
+	];
 
-    public function getPublicRelations(): array {
-        return [
-            "product"  => Relation::make(load: "product.property"),
-            "location" => Relation::make(load: "location"),
-            "player"   => Relation::make(load: "player"),
-            "request"  => Relation::make(load: "request"),
-        ];
-    }
+	public function getPublicRelations(): array {
+		return [
+			"product"  => Relation::make(load: "product.property"),
+			"location" => Relation::make(load: "location"),
+			"player"   => Relation::make(load: "player"),
+			"request"  => Relation::make(load: "request"),
+		];
+	}
 
-    protected static function boot(): void {
-        parent::boot();
+	protected static function boot(): void {
+		parent::boot();
 
-        static::deleting(static function (Screenshot $screenshot) {
-            Storage::disk("public")->delete($screenshot->file_path);
-        });
-    }
+		static::deleting(static function (Screenshot $screenshot) {
+			Storage::disk("public")->delete($screenshot->file_path);
+		});
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    public function product(): BelongsTo {
-        return $this->belongsTo(Product::class, "product_id", "id");
-    }
+	public function product(): BelongsTo {
+		return $this->belongsTo(Product::class, "product_id", "id");
+	}
 
-    public function location(): BelongsTo {
-        return $this->belongsTo(Location::class, "location_id", "id");
-    }
+	public function location(): BelongsTo {
+		return $this->belongsTo(Location::class, "location_id", "id");
+	}
 
-    public function player(): BelongsTo {
-        return $this->belongsTo(Player::class, "player_id", "id");
-    }
+	public function player(): BelongsTo {
+		return $this->belongsTo(Player::class, "player_id", "id");
+	}
 
-    public function request(): BelongsTo {
-        return $this->belongsTo(ScreenshotRequest::class, "request_id", "id");
-    }
+	public function request(): BelongsTo {
+		return $this->belongsTo(ScreenshotRequest::class, "request_id", "id");
+	}
 
-    public function contracts(): BelongsToMany {
-        return $this->belongsToMany(Contract::class, "contracts_screenshots", "screenshot_id", "contract_id");
-    }
+	public function contracts(): BelongsToMany {
+		return $this->belongsToMany(Contract::class, "contracts_screenshots", "screenshot_id", "contract_id");
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Screenshot
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Screenshot
+	|--------------------------------------------------------------------------
+	*/
 
-    public function getFilePathAttribute(): string {
-        return "bursts/$this->request_id/{$this->getKey()}.jpg";
-    }
+	public function getFilePathAttribute(): string {
+		return "bursts/$this->request_id/{$this->getKey()}.jpg";
+	}
 
-    /**
-     * @param resource $screenshot
-     */
-    public function store($screenshot): void {
-        // And store the screenshot
-        Storage::disk("public")->writeStream($this->file_path, $screenshot, ["visibility" => "public"]);
-    }
+	/**
+	 * @param string $screenshot
+	 * @throws ImagickException
+	 */
+	public function store(string $screenshot): void {
+		// Start by storing the screenshots to a temp location
+		/** @var Imagick $image */
+		$image = new Imagick();
+		$image->readImageBlob($screenshot);
+		$image->trimImage(5);
+		$image->setImagePage(0, 0, 0, 0);
 
-    public function getUrlAttribute(): string {
-        return Storage::disk("public")->url($this->file_path);
-    }
+		// And store the screenshot
+		Storage::disk("public")->put($this->file_path, $image->getImageBlob(), ["visibility" => "public"]);
+	}
+	
 
-    /**
-     * @return string
-     * @throws ImagickException
-     */
-    public function getMockupPathAttribute(): string {
-        $mockup = new MockupContractScreenshot($this);
-        return $mockup->makeMockup() ?? $this->url;
-    }
+	public function getUrlAttribute(): string {
+		return Storage::disk("public")->url($this->file_path);
+	}
+
+	/**
+	 * @return string
+	 * @throws ImagickException
+	 */
+	public function getMockupPathAttribute(): string {
+		$mockup = new MockupContractScreenshot($this);
+		return $mockup->makeMockup() ?? $this->url;
+	}
 }

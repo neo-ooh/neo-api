@@ -19,27 +19,27 @@ use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\InventoryType;
 
 class SynchronizeInventoriesJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct() {
-    }
+	public function __construct() {
+	}
 
-    public function handle(): void {
-        // List all our enabled inventories, and trigger push and pull accordingly
-        $inventories = InventoryProvider::query()
-                                        ->where("is_active", "=", true)
-                                        ->where("provider", "<>", InventoryType::Dummy)
-                                        ->get();
+	public function handle(): void {
+		// List all our enabled inventories, and trigger push and pull accordingly
+		$inventories = InventoryProvider::query()
+		                                ->where("is_active", "=", true)
+		                                ->where("provider", "<>", InventoryType::Dummy)
+		                                ->get();
 
-        /** @var InventoryProvider $inventory */
-        foreach ($inventories as $inventory) {
-            if ($inventory->auto_pull) {
-                PullFullInventoryJob::dispatch($inventory->getKey());
-            }
+		/** @var InventoryProvider $inventory */
+		foreach ($inventories as $inventory) {
+			if ($inventory->allow_pull && $inventory->auto_pull) {
+				PullFullInventoryJob::dispatch($inventory->getKey());
+			}
 
-            if ($inventory->auto_push) {
-                PushFullInventoryJob::dispatch($inventory->getKey());
-            }
-        }
-    }
+			if ($inventory->allow_push && $inventory->auto_push) {
+				PushFullInventoryJob::dispatch($inventory->getKey());
+			}
+		}
+	}
 }

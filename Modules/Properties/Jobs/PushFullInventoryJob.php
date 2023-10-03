@@ -43,7 +43,6 @@ class PushFullInventoryJob implements ShouldQueue {
 		// Those are products without any settings set for this inventory whose property has settings enabling them for a push on this inventory
 		// plus products with settings enabling them for push on this inventory. In any case, the product `updated_at` field should be set to a datetime after the last pull of the inventory
 		// We list products for both situation, dedup, and run the regular push job on them.
-
 		$provider = InventoryProvider::query()->findOrFail($this->inventoryId);
 
 		$this->output?->writeln("List properties and products push-enabled...");
@@ -127,10 +126,7 @@ class PushFullInventoryJob implements ShouldQueue {
 			$progress?->finish();
 		}
 
-		InventoryProvider::query()
-		                 ->where("id", "=", $this->inventoryId)
-		                 ->update([
-			                          "last_push_at" => Carbon::now()->shiftTimezone("utc"),
-		                          ]);
+		$provider->last_push_at = Carbon::now()->shiftTimezone("utc");
+		InventoryProvider::withoutTimestampsOn($provider, fn() => $provider->save());
 	}
 }

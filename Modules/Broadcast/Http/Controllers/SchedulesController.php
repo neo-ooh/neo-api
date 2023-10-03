@@ -12,6 +12,7 @@
 
 namespace Neo\Modules\Broadcast\Http\Controllers;
 
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
@@ -32,6 +33,7 @@ use Neo\Modules\Broadcast\Exceptions\IncompatibleContentLengthAndCampaignExcepti
 use Neo\Modules\Broadcast\Exceptions\InvalidScheduleBroadcastDaysException;
 use Neo\Modules\Broadcast\Exceptions\InvalidScheduleDatesException;
 use Neo\Modules\Broadcast\Exceptions\InvalidScheduleTimesException;
+use Neo\Modules\Broadcast\Http\Requests\Schedules\CloneScheduleRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\DestroyScheduleRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\ListPendingSchedulesRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\ListSchedulesByIdsRequest;
@@ -304,6 +306,82 @@ class SchedulesController extends Controller {
 		}
 
 		return new Response(array_map(static fn(Schedule $schedule) => $schedule->getKey(), $schedules), 201);
+	}
+
+	public function clone(CloneScheduleRequest $request, Schedule $schedule) {
+		// When cloning a schedule, we know that the source schedule is already valid with the campaign, which means we can skip most of the checks
+		// We still need to check that every content of the schedule can be scheduled an additional time and for the set duration.
+
+		// Validate the schedule contents
+		$scheduleDuration = $schedule->end_date->diffInDays($schedule->start_date, absolute: true);
+		foreach ($schedule->contents as $content) {
+			if ($content->max_schedule_count > 0 && $content->schedules_count + 1 > $content->max_schedule_count) {
+				return new Response("Some contents of the schedule cannot be scheduled more times.", 422);
+			}
+
+			if ($content->max_schedule_duration > 0 && $scheduleDuration > $content->max_schedule_duration) {
+				return new Response("Some contents of the schedule cannot be scheduled this long.", 422);
+			}
+		}
+
+		// Contents are good
+		try {
+			DB::beginTransaction();
+
+			// Create the schedule
+			$clone                 = new Schedule();
+			$clone->campaign_id    = $schedule->campaign_id;
+			$clone->owner_id       = Auth::id();
+			$clone->start_date     = $schedule->start_date;
+			$clone->start_time     = $schedule->start_time;
+			$clone->end_date       = $schedule->end_date;
+			$clone->end_time       = $schedule->end_time;
+			$clone->broadcast_days = $schedule->broadcast_days;
+			$clone->order          = $schedule->order;
+			$clone->batch_id       = $schedule->batch_id;
+			$clone->is_locked      = $schedule->batch_id !== null && $schedule->is_locked;
+			$clone->save();
+
+			// If cloned is schedule is directly lockes, check if it should be auto-approved  
+			if ($clone->is_locked) {
+				/** @var Actor $user */
+				$user = Auth::user();
+
+				if ($user->hasCapability(Capability::contents_review)) {
+					$review              = new ScheduleReview();
+					$review->reviewer_id = $user->getKey();
+					$review->schedule_id = $schedule->getKey();
+					$review->approved    = true;
+					$review->message     = "[auto-approved]";
+					$review->save();
+				}
+			}
+
+			// Attach contents
+			$clone->contents()->attach($schedule->contents->pluck("id"));
+
+			// Copy contents settings
+			foreach ($clone->contents as $content) {
+				$original = $schedule->contents->firstWhere("id", "=", $content->getKey());
+
+				$content->schedule_settings->disabled_formats()
+				                           ->attach($original->schedule_settings->disabled_formats_ids->pluck("format_id"));
+			}
+		} catch (Exception $e) {
+			DB::rollBack();
+			throw $e;
+		}
+
+		DB::commit();
+
+		// All good!
+		$clone->promote();
+
+		return new Response($clone);
+	}
+
+	public function cloneWithCampaign(CloneScheduleRequest $request, Campaign $campaign, Schedule $schedule) {
+		return $this->clone($request, $schedule);
 	}
 
 	public function updateWithCampaign(UpdateScheduleRequest $request, Campaign $campaign, Schedule $schedule) {

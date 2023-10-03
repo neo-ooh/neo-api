@@ -127,6 +127,6 @@ class PushFullInventoryJob implements ShouldQueue {
 		}
 
 		$provider->last_push_at = Carbon::now()->shiftTimezone("utc");
-		InventoryProvider::withoutTimestampsOn($provider, fn() => $provider->save());
+		InventoryProvider::withoutTimestamps(fn() => $provider->save());
 	}
 }

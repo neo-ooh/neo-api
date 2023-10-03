@@ -135,7 +135,7 @@ class InventoryProvidersController extends Controller {
 
 	public function clearCache(ClearInventoryCacheRequest $request, InventoryProvider $inventoryProvider) {
 		$inventoryProvider->clearCache();
-		
+
 		return new Response([], 202);
 	}
 

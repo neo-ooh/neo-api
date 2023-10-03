@@ -317,7 +317,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 			$loopLengthMin                    = $loopConfiguration->loop_length_ms / (60_000);
 			$loopsPerDay                      = ($openLengthHrs * 60 /* Hrs to minutes */) / $loopLengthMin;
 			$spotImpressionsPerDay            = $impressionsPerSpotPerHour * $openLengthHrs;
-			$spotImpressionsPerPlay[$weekday] = $spotImpressionsPerDay / $loopsPerDay;
+			$spotImpressionsPerPlay[$weekday] = $loopsPerDay > 0 ? $spotImpressionsPerDay / $loopsPerDay : 0;
 		}
 
 		return $spotImpressionsPerPlay;

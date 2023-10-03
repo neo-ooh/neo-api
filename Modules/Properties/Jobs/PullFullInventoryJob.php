@@ -155,7 +155,7 @@ class PullFullInventoryJob implements ShouldQueue {
 			if ($product !== null) {
 				$detailsSection?->write("Updating existing product...");
 				// We do, trigger a regular pull for this product
-				(new PullProductJob($product->inventory_resource_id, $this->inventoryId, $externalProduct))->handle();
+				PullProductJob::dispatch($product->inventory_resource_id, $this->inventoryId, $externalProduct);
 				continue;
 			}
 
@@ -172,7 +172,7 @@ class PullFullInventoryJob implements ShouldQueue {
 			if ($property !== null && $property->inventories_settings->firstWhere("inventory_id", "=", $this->inventoryId)?->auto_import_products) {
 				$detailsSection?->write("Importing new product...");
 				// There is a property already associated with the external products' property
-				(new ImportProductJob($this->inventoryId, $property->getKey(), $externalProduct->resourceId, $externalProduct))->handle();
+				ImportProductJob::dispatchSync($this->inventoryId, $property->getKey(), $externalProduct->resourceId, $externalProduct);
 			}
 		}
 

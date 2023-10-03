@@ -119,7 +119,7 @@ class PushFullInventoryJob implements ShouldQueue {
 				$progress?->setMessage($product->property->actor->name . ": " . $product->name_en);
 			}
 
-			(new PushProductJob($product->inventory_resource_id, $this->inventoryId))->handle();
+			PushProductJob::dispatch($product->inventory_resource_id, $this->inventoryId);
 		}
 
 		if ($this->output) {

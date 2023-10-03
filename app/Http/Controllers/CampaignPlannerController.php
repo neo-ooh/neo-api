@@ -53,7 +53,6 @@ class CampaignPlannerController {
 			                         "translations",
 			                         "address",
 			                         "opening_hours",
-			                         "tenants" => fn($q) => $q->select(["id"]),
 		                         ]);
 
 		$dataArray = $properties->map(fn(Property $property) => [
@@ -70,7 +69,6 @@ class CampaignPlannerController {
 			"tags"             => $property->actor->tags,
 			"cover_picture_id" => $property->cover_picture_id,
 			"type_id"          => $property->type_id,
-			"tenants"          => $property->tenants->pluck('id'),
 		])->all();
 
 		return new Response([

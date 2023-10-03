@@ -37,181 +37,183 @@ use Neo\Modules\Properties\Models\PropertyType;
 use Neo\Modules\Properties\Models\ScreenType;
 
 class CampaignPlannerController {
-    protected function getPropertiesQuery() {
-        return Property::query()->where("is_sellable", "=", true)
-                       ->whereHas("address", function (Builder $query) {
-                           $query->whereNotNull("geolocation");
-                       });
-    }
+	protected function getPropertiesQuery() {
+		return Property::query()->where("is_sellable", "=", true)
+		               ->whereHas("address", function (Builder $query) {
+			               $query->whereNotNull("geolocation");
+		               });
+	}
 
-    public function dataChunk_1(GetCampaignPlannerDataRequest $request) {
-        /** @var Collection<Property> $properties */
-        $properties = $this->getPropertiesQuery()->get();
+	public function dataChunk_1(GetCampaignPlannerDataRequest $request) {
+		/** @var Collection<Property> $properties */
+		$properties = $this->getPropertiesQuery()->get();
 
-        $properties->load([
-                              "actor.tags",
-                              "translations",
-                              "address",
-                              "tenants" => fn($q) => $q->select(["id"]),
-                              "opening_hours",
-                          ]);
+		$properties->loadMissing([
+			                         "actor.tags",
+			                         "translations",
+			                         "address",
+			                         "opening_hours",
+		                         ]);
 
-        return [
-            "properties" => $properties->map(fn(Property $property) => [
-                "id"               => $property->actor_id,
-                "is_sellable"      => $property->is_sellable,
-                "name"             => $property->actor->name,
-                "address"          => $property->address,
-                "network_id"       => $property->network_id,
-                "pricelist_id"     => $property->pricelist_id,
-                "translations"     => $property->translations,
-                "website"          => $property->website,
-                "opening_hours"    => $property->opening_hours,
-                "has_tenants"      => $property->has_tenants,
-                "tenants"          => $property->tenants->pluck('id'),
-                "tags"             => $property->actor->tags,
-                "cover_picture_id" => $property->cover_picture_id,
-                "type_id"          => $property->type_id,
-            ]),
-        ];
-    }
+		$dataArray = $properties->map(fn(Property $property) => [
+			"id"               => $property->actor_id,
+			"is_sellable"      => $property->is_sellable,
+			"name"             => $property->actor->name,
+			"address"          => $property->address,
+			"network_id"       => $property->network_id,
+			"pricelist_id"     => $property->pricelist_id,
+			"translations"     => $property->translations,
+			"website"          => $property->website,
+			"opening_hours"    => $property->opening_hours,
+			"has_tenants"      => $property->has_tenants,
+			"tags"             => $property->actor->tags,
+			"cover_picture_id" => $property->cover_picture_id,
+			"type_id"          => $property->type_id,
+		])->all();
 
-    public function dataChunk_2(GetCampaignPlannerDataRequest $request) {
-        /** @var Collection<Property> $properties */
-        $properties = $this->getPropertiesQuery()->get();
+		return new Response([
+			                    "properties" => $dataArray,
+		                    ]);
+	}
 
-        $properties->load([
-                              "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"])
-                                                             ->whereNull("reference_value"),
-                          ]);
+	public function dataChunk_2(GetCampaignPlannerDataRequest $request) {
+		/** @var Collection<Property> $properties */
+		$properties = $this->getPropertiesQuery()->get();
 
-        return [
-            "properties" => $properties->map(fn(Property $property) => [
-                "id"            => $property->actor_id,
-                "fields_values" => $property->fields_values,
-            ]),
-        ];
-    }
+		$properties->load([
+			                  "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"])
+			                                                 ->whereNull("reference_value"),
+			                  "tenants"       => fn($q) => $q->select(["id"]),
+		                  ]);
 
-    public function dataChunk_3(GetCampaignPlannerDataRequest $request) {
-        /** @var Collection<Property> $properties */
-        $properties = $this->getPropertiesQuery()->get();
+		return [
+			"properties" => $properties->map(fn(Property $property) => [
+				"id"            => $property->actor_id,
+				"fields_values" => $property->fields_values,
+				"tenants"       => $property->tenants->pluck('id'),
+			]),
+		];
+	}
 
-        $properties->load([
-                              "products",
-                              "products.impressions_models",
-                          ]);
+	public function dataChunk_3(GetCampaignPlannerDataRequest $request) {
+		/** @var Collection<Property> $properties */
+		$properties = $this->getPropertiesQuery()->get();
 
-        return [
-            "properties" => $properties->map(fn(Property $property) => [
-                "id"                      => $property->actor_id,
-                "products"                => $property->products,
-                "products_ids"            => $property->products->pluck("id"),
-                "products_categories_ids" => $property->products->groupBy("category_id")
-                                                                ->map(static fn($products) => $products->pluck('id')),
-            ]),
-        ];
-    }
+		$properties->load([
+			                  "products",
+			                  "products.impressions_models",
+		                  ]);
 
-    public function dataChunk_4(GetCampaignPlannerDataRequest $request) {
-        $properties = $this->getPropertiesQuery()->get(["actor_id", "pricelist_id"]);
+		return [
+			"properties" => $properties->map(fn(Property $property) => [
+				"id"                      => $property->actor_id,
+				"products"                => $property->products,
+				"products_ids"            => $property->products->pluck("id"),
+				"products_categories_ids" => $property->products->groupBy("category_id")
+				                                                ->map(static fn($products) => $products->pluck('id')),
+			]),
+		];
+	}
 
-        $categories           = ProductCategory::with(["impressions_models", "attachments"])->get();
-        $fieldCategories      = FieldsCategory::query()->get();
-        $fields               = Field::query()
-                                     ->with(["segments.stats"])
-                                     ->get()
-                                     ->append("network_ids");
-        $demographicVariables = DemographicVariable::query()->get();
-        $networks             = Network::query()->get();
-        $brands               = Brand::query()->with("child_brands:id,parent_id")->get();
-        $pricelists           = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull()->unique())
-                                         ->with(["categories_pricings", "products_pricings"])
-                                         ->get();
-        $formats              = Format::query()
-                                      ->with("loop_configurations")
-                                      ->get();
-        $propertyTypes        = PropertyType::query()->get();
-        $screenTypes          = ScreenType::query()->get();
+	public function dataChunk_4(GetCampaignPlannerDataRequest $request) {
+		$properties = $this->getPropertiesQuery()->get(["actor_id", "pricelist_id"]);
 
-        return [
-            "categories"            => $categories,
-            "networks"              => $networks,
-            "fields_categories"     => $fieldCategories,
-            "fields"                => $fields,
-            "demographic_variables" => $demographicVariables,
-            "brands"                => $brands,
-            "pricelists"            => $pricelists,
-            "formats"               => $formats,
-            "property_types"        => $propertyTypes,
-            "screen_types"          => $screenTypes,
-        ];
-    }
+		$categories           = ProductCategory::with(["impressions_models", "attachments"])->get();
+		$fieldCategories      = FieldsCategory::query()->get();
+		$fields               = Field::query()
+		                             ->with(["segments.stats"])
+		                             ->get()
+		                             ->append("network_ids");
+		$demographicVariables = DemographicVariable::query()->get();
+		$networks             = Network::query()->get();
+		$brands               = Brand::query()->with("child_brands:id,parent_id")->get();
+		$pricelists           = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull()->unique())
+		                                 ->with(["categories_pricings", "products_pricings"])
+		                                 ->get();
+		$formats              = Format::query()
+		                              ->with("loop_configurations")
+		                              ->get();
+		$propertyTypes        = PropertyType::query()->get();
+		$screenTypes          = ScreenType::query()->get();
 
-    public function trafficChunk(GetCampaignPlannerTrafficRequest $request) {
-        $date = $request->input("date");
+		return [
+			"categories"            => $categories,
+			"networks"              => $networks,
+			"fields_categories"     => $fieldCategories,
+			"fields"                => $fields,
+			"demographic_variables" => $demographicVariables,
+			"brands"                => $brands,
+			"pricelists"            => $pricelists,
+			"formats"               => $formats,
+			"property_types"        => $propertyTypes,
+			"screen_types"          => $screenTypes,
+		];
+	}
 
-        // If no date is provided, we use the most recent snapshot available
-        if (!$date) {
-            $date = DB::query()->select("date")
-                      ->from((new PropertyTrafficSnapshot())->getTable())
-                      ->orderBy("date", "desc")
-                      ->first()->date;
-        }
+	public function trafficChunk(GetCampaignPlannerTrafficRequest $request) {
+		$date = $request->input("date");
 
-        $snapshots = PropertyTrafficSnapshot::query()->where("date", "=", $date)->get();
+		// If no date is provided, we use the most recent snapshot available
+		if (!$date) {
+			$date = DB::query()->select("date")
+			          ->from((new PropertyTrafficSnapshot())->getTable())
+			          ->orderBy("date", "desc")
+			          ->first()->date;
+		}
 
-        return [
-            "traffic" => $snapshots,
-        ];
-    }
+		$snapshots = PropertyTrafficSnapshot::query()->where("date", "=", $date)->get();
 
-    public function demographicValues(GetCampaignPlannerDemographicValuesRequest $request) {
-        return new Response(DemographicValue::query()->whereIn("value_id", $request->input("variables"))->get());
-    }
+		return [
+			"traffic" => $snapshots,
+		];
+	}
 
-    public function save(Request $request, CampaignPlannerSave $campaignPlannerSave) {
-        return new Response($campaignPlannerSave);
-    }
+	public function demographicValues(GetCampaignPlannerDemographicValuesRequest $request) {
+		return new Response(DemographicValue::query()->whereIn("value_id", $request->input("variables"))->get());
+	}
 
-    public function property(ShowPropertyRequest $request, CampaignPlannerSave $campaignPlannerSave) {
-        $property = Property::query()
-                            ->find($request->input("property_id"))
-                            ->load([
-                                       "address",
-                                       "fields_values",
-                                       "network.properties_fields",
-                                       "opening_hours",
-                                       "products.unavailabilities",
-                                       "actor.tags",
-                                       "translations",
-                                       "unavailabilities",
-                                       "pictures",
-                                   ]);
+	public function save(Request $request, CampaignPlannerSave $campaignPlannerSave) {
+		return new Response($campaignPlannerSave);
+	}
 
-        return new Response($property);
-    }
+	public function property(ShowPropertyRequest $request, CampaignPlannerSave $campaignPlannerSave) {
+		$property = Property::query()
+		                    ->find($request->input("property_id"))
+		                    ->load([
+			                           "address",
+			                           "fields_values",
+			                           "network.properties_fields",
+			                           "opening_hours",
+			                           "products.unavailabilities",
+			                           "actor.tags",
+			                           "translations",
+			                           "unavailabilities",
+			                           "pictures",
+		                           ]);
 
-    public function product(ShowProductRequest $request, CampaignPlannerSave $campaignPlannerSave) {
-        $product = Product::query()
-                          ->find($request->input("product_id"))
-                          ->loadMissing([
-                                            "attachments",
-                                            "pricelist.categories_pricings",
-                                            "pricelist.products_pricings",
-                                            "pictures",
-                                            "cover_picture",
-                                            "format",
-                                            "category.format",
-                                            "pictures",
-                                            "loop_configurations",
-                                            "category.loop_configurations",
-                                            "screen_type",
-                                            "category.screen_type",
-                                            "site_type",
-                                            "property.type",
-                                        ]);
+		return new Response($property);
+	}
 
-        return new Response($product);
-    }
+	public function product(ShowProductRequest $request, CampaignPlannerSave $campaignPlannerSave) {
+		$product = Product::query()
+		                  ->find($request->input("product_id"))
+		                  ->loadMissing([
+			                                "attachments",
+			                                "pricelist.categories_pricings",
+			                                "pricelist.products_pricings",
+			                                "pictures",
+			                                "cover_picture",
+			                                "format",
+			                                "category.format",
+			                                "pictures",
+			                                "loop_configurations",
+			                                "category.loop_configurations",
+			                                "screen_type",
+			                                "category.screen_type",
+			                                "site_type",
+			                                "property.type",
+		                                ]);
+
+		return new Response($product);
+	}
 }

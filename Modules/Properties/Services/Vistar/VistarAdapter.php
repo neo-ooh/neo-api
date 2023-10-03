@@ -11,6 +11,7 @@
 namespace Neo\Modules\Properties\Services\Vistar;
 
 use Carbon\Carbon;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\LazyCollection;
@@ -255,7 +256,10 @@ class VistarAdapter extends InventoryAdapter {
 		foreach ($productId->context["venues"] as ["id" => $venueId]) {
 			$venue = new Venue($client);
 			$venue->setKey($venueId);
-			$venue->delete();
+			try {
+				$venue->delete();
+			} catch (Exception $e) {
+			}
 		}
 
 		return true;

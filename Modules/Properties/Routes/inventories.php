@@ -18,6 +18,7 @@ use Neo\Modules\Properties\Http\Controllers\InventoryResourceSettingsController;
 use Neo\Modules\Properties\Http\Controllers\InventoryResourcesExternalRepresentationsController;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\InventoryResource;
+use Neo\Modules\Properties\Models\InventoryResourceEvent;
 
 Route::group([
 	             "middleware" => "default",
@@ -86,8 +87,8 @@ Route::group([
 		|----------------------------------------------------------------------
 		*/
 
-//		Route::model("inventoryResourceEvent", InventoryResourceEvent::class);
+		Route::model("inventoryResourceEvent", InventoryResourceEvent::class);
 
 		Route::get("inventories-events", [InventoryResourceEventsController::class, "index"]);
-		Route::put("inventories-resources/{inventoryResource}/events/{inventoryResourceEvent:id}", [InventoryResourceEventsController::class, "update"]);
+		Route::put("inventories-events/{inventoryResourceEvent}", [InventoryResourceEventsController::class, "update"]);
 	});

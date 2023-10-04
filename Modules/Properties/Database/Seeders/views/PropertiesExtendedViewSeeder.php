@@ -20,15 +20,17 @@ class PropertiesExtendedViewSeeder extends Seeder {
 		DB::statement("DROP VIEW IF EXISTS $viewName");
 
 		DB::statement(/** @lang SQL */ <<<EOS
-        CREATE VIEW $viewName AS
-        SELECT `p`.*,
-               `a`.name as `name`,
-            COUNT(`dv`.`id`) as 'demographic_variables_count'
-        FROM `properties` `p`
-           JOIN `actors` `a` ON `p`.`actor_id` = `a`.`id`
-           LEFT JOIN `demographic_values` `dv` ON `p`.`actor_id` = `dv`.`property_id`
-        GROUP BY `p`.`actor_id`        
-        EOS
+		CREATE VIEW $viewName AS
+		SELECT `p`.*,
+			`a`.name as `name`,
+			COUNT(`dv`.`id`) as 'demographic_variables_count',
+			(SELECT COUNT(*) FROM `inventory_pictures` WHERE `inventory_pictures`.`property_id` = `p`.`actor_id` AND `inventory_pictures`.`type` <> 'mockup') as `pictures_count`,
+			(SELECT COUNT(*) FROM `inventory_pictures` WHERE `inventory_pictures`.`property_id` = `p`.`actor_id` AND `inventory_pictures`.`type` = 'mockup') as `mockups_count`
+		FROM `properties` `p`
+			JOIN `actors` `a` ON `p`.`actor_id` = `a`.`id`
+			LEFT JOIN `demographic_values` `dv` ON `p`.`actor_id` = `dv`.`property_id`
+		GROUP BY `p`.`actor_id`
+		EOS
 		);
 	}
 }

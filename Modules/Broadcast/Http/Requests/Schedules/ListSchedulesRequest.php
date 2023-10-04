@@ -18,20 +18,20 @@ use Neo\Modules\Properties\Rules\AccessibleProduct;
 use Neo\Rules\PublicRelations;
 
 class ListSchedulesRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "batch_id"   => ["sometimes", "string"],
-            "product_id" => ["integer", new AccessibleProduct()],
+	public function rules(): array {
+		return [
+			"batch_id"   => ["sometimes", "string"],
+			"product_id" => ["sometimes", "integer", new AccessibleProduct()],
 
-            "current" => ["sometimes", "boolean"],
-            "past"    => ["sometimes", "boolean"],
-            "future"  => ["sometimes", "boolean"],
+			"current" => ["sometimes", "boolean"],
+			"past"    => ["sometimes", "boolean"],
+			"future"  => ["sometimes", "boolean"],
 
-            "with" => ["array", new PublicRelations(Schedule::class)],
-        ];
-    }
+			"with" => ["array", new PublicRelations(Schedule::class)],
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::contents_schedule->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::contents_schedule->value);
+	}
 }

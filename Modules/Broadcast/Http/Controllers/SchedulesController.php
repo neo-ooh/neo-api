@@ -328,6 +328,17 @@ class SchedulesController extends Controller {
 		try {
 			DB::beginTransaction();
 
+			// Check the batch Id.
+			// if the schedule is already in a batch, we use this one, otherwise we create a new one
+			$batchId              = $schedule->batch_id ?? Uuid::uuid4();
+			$alreadyExistingBatch = !!$schedule->batch_id;
+
+			if (!$alreadyExistingBatch) {
+				// Update the original schedule with the new batch Id
+				$schedule->batch_id = $batchId;
+				$schedule->save();
+			}
+
 			// Create the schedule
 			$clone                 = new Schedule();
 			$clone->campaign_id    = $schedule->campaign_id;
@@ -338,11 +349,11 @@ class SchedulesController extends Controller {
 			$clone->end_time       = $schedule->end_time;
 			$clone->broadcast_days = $schedule->broadcast_days;
 			$clone->order          = $schedule->order;
-			$clone->batch_id       = $schedule->batch_id;
-			$clone->is_locked      = $schedule->batch_id !== null && $schedule->is_locked;
+			$clone->batch_id       = $batchId;
+			$clone->is_locked      = $alreadyExistingBatch && $schedule->is_locked;
 			$clone->save();
 
-			// If cloned is schedule is directly lockes, check if it should be auto-approved  
+			// If cloned is schedule is directly locks, check if it should be auto-approved
 			if ($clone->is_locked) {
 				/** @var Actor $user */
 				$user = Auth::user();

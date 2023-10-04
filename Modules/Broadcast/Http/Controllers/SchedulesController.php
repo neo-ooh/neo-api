@@ -40,7 +40,6 @@ use Neo\Modules\Broadcast\Http\Requests\Schedules\ListSchedulesByIdsRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\ListSchedulesRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\StoreScheduleRequest;
 use Neo\Modules\Broadcast\Http\Requests\Schedules\UpdateScheduleRequest;
-use Neo\Modules\Broadcast\Jobs\Schedules\DeleteScheduleJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Schedule;
@@ -544,22 +543,12 @@ class SchedulesController extends Controller {
 			// If the schedule is approved, we check if it has started playing.
 			// If it has started playing earlier than today, we set its end-date for yesterday, effectively stopping its
 			// broadcast, but keeping it in the `expired` list
-			if ($s->start_date < Carbon::now() && !$s->start_date->isToday()) {
-				$s->end_date = Carbon::now()->subDay()->min($s->start_date);
+			if ($s->start_date <= Carbon::now()) {
+				$s->end_date    = Carbon::now()->subDay()->min($s->start_date);
+				$s->is_archived = true;
 				$s->save();
 				$s->promote();
 
-				continue;
-			}
-
-			// If the schedule started today, we change its end date to today, its end time to now, and we delete it
-			if ($s->start_date < Carbon::now() && $s->start_date->isToday()) {
-				$s->end_date   = Carbon::today();
-				$s->end_time   = Carbon::now();
-				$s->start_time = $s->start_time->isAfter($s->end_time) ? $s->end_time->clone()->subMinutes(1) : $s->start_time;
-				$s->save();
-
-				new DeleteScheduleJob($s->getKey());
 				continue;
 			}
 

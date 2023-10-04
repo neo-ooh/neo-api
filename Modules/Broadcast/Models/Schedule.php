@@ -46,6 +46,7 @@ use Neo\Modules\Broadcast\Services\Resources\Schedule as ScheduleResource;
  * @property int                        $broadcast_days
  * @property int                        $order
  * @property bool                       $is_locked
+ * @property bool                       $is_archived
  * @property Date|null                  $locked_at
  * @property string                     $batch_id
  *
@@ -101,8 +102,9 @@ class Schedule extends BroadcastResourceModel {
 	 * @var array<string, string>
 	 */
 	protected $casts = [
-		"is_locked" => "boolean",
-		"locked_at" => "datetime",
+		"is_locked"   => "boolean",
+		"is_archived" => "boolean",
+		"locked_at"   => "datetime",
 
 		"start_date" => "date:Y-m-d",
 		"start_time" => "date:H:i:s",
@@ -228,6 +230,10 @@ class Schedule extends BroadcastResourceModel {
 			return ScheduleStatus::Draft;
 		}
 
+		if ($this->is_archived) {
+			return ScheduleStatus::Expired;
+		}
+
 		// Schedule is locked
 		// Check reviews and its content pre-approval
 		if (!$this->isApproved()) {
@@ -271,7 +277,7 @@ class Schedule extends BroadcastResourceModel {
 	 */
 	public function toResource(): ScheduleResource {
 		return new ScheduleResource(
-			enabled       : $this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live,
+			enabled       : !$this->is_archived && ($this->status === ScheduleStatus::Approved || $this->status === ScheduleStatus::Live),
 			name          : $this->campaign->name . " - " . $this->contents->first()?->name,
 			start_date    : $this->start_date->toDateString(),
 			start_time    : $this->start_time->toTimeString(),

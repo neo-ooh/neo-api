@@ -253,7 +253,8 @@ class Campaign extends BroadcastResourceModel {
 			            $query->where("end_date", ">=", Carbon::now()->startOfDay())
 			                  ->orWhereRelation("details", function (Builder $query) {
 				                  $query->where("is_approved", "=", false);
-			                  });
+			                  })
+			                  ->where("is_archived", "=", false);
 		            })
 		            ->orderBy("order");
 	}
@@ -267,6 +268,7 @@ class Campaign extends BroadcastResourceModel {
 			            $query->where("is_approved", "=", true);
 		            })
 		            ->where("end_date", "<", Carbon::now()->startOfDay())
+		            ->orWhere("is_archived", "=", true)
 		            ->withTrashed()
 		            ->orderByDesc("end_date");
 	}

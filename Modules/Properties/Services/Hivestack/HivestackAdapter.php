@@ -336,7 +336,13 @@ class HivestackAdapter extends InventoryAdapter {
 	 */
 	protected function deleteUnit(HivestackClient $client, int $unitId): void {
 		try {
-			$unit         = Unit::find($client, $unitId);
+			$unit = Unit::find($client, $unitId);
+
+			if (!$unit) {
+				// Unit could not be found, it most probably has already been removed
+				return;
+			}
+
 			$unit->active = false;
 			$unit->save();
 			$unit->delete();

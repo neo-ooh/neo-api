@@ -317,7 +317,10 @@ class Schedule extends BroadcastResourceModel {
 	 * @return void
 	 */
 	public function promote(): void {
-		// Check if the campaign already has a pending job, bail out if so.
+		// We start by promoting the campaign as well
+		$this->campaign->promote();
+
+		// Check if the schedule already has a pending job, bail out if so.
 		if ($this->broadcast_jobs()->where("type", "=", PromoteScheduleJob::TYPE->value)
 		         ->where("status", "<>", BroadcastJobStatus::Active)
 		         ->whereNull("last_attempt_at")

@@ -18,6 +18,7 @@ use Spatie\LaravelData\DataCollection;
 
 class POPFlight extends Data {
 	public function __construct(
+		public bool           $include,
 		public int            $flight_id,
 		public string         $flight_name,
 		public FlightType     $flight_type,

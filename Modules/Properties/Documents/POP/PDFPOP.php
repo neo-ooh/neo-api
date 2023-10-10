@@ -37,7 +37,8 @@ class PDFPOP extends MPDFDocument {
 	}
 
 	protected function ingest($data): bool {
-		$this->request = $data;
+		$this->request          = $data;
+		$this->request->flights = $this->request->flights->filter(fn(POPFlight $flight) => $flight->include);
 
 		return true;
 	}

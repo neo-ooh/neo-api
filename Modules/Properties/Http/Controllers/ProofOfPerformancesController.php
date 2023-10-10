@@ -47,6 +47,7 @@ class ProofOfPerformancesController extends Controller {
 			$flightLines = $flight->lines->where("product.category.type", "=", ProductType::Digital);
 
 			$flights[] = new POPFlight(
+				include    : true,
 				flight_id  : $flight->getKey(),
 				flight_name: $flight->name ?? "Flight",
 				flight_type: $flight->type,
@@ -100,6 +101,10 @@ class ProofOfPerformancesController extends Controller {
 
 		/** @var POPFlight $flight */
 		foreach ($popData->flights as $flight) {
+			if (!$flight->include) {
+				continue;
+			}
+
 			$contractFlight = $contract
 				->flights
 				->firstWhere("id", "=", $flight->flight_id);

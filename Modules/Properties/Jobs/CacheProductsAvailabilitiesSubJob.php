@@ -12,10 +12,10 @@ namespace Neo\Modules\Properties\Jobs;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Collection;
 use Neo\Http\Controllers\AvailabilitiesController;
 
 class CacheProductsAvailabilitiesSubJob implements ShouldQueue {

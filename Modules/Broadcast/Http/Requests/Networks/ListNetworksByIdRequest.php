@@ -26,7 +26,6 @@ class ListNetworksByIdRequest extends FormRequest {
 	public function authorize() {
 		return Gate::allows(Capability::networks_edit->value)
 			|| Gate::allows(Capability::campaigns_view->value)
-			|| Gate::allows(Capability::dynamics_weather->value)
 			|| Gate::allows(Capability::properties_edit->value)
 			|| Gate::allows(Capability::planner_access->value);
 	}

@@ -18,27 +18,28 @@ use Neo\Modules\Broadcast\Models\BroadcastTag;
 use Neo\Modules\Broadcast\Models\Layout;
 
 class UpdateFormatRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool {
-        return Gate::allows(Capability::formats_edit->value);
-    }
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	public function authorize(): bool {
+		return Gate::allows(Capability::formats_edit->value);
+	}
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules(): array {
-        return [
-            "name"           => ["required", "string"],
-            "tags"           => ["present", "array"],
-            "tags.*"         => ["integer", new Exists(BroadcastTag::class, "id")],
-            "content_length" => ["required", "integer"],
-            "main_layout_id" => ["nullable", new Exists(Layout::class, "id")],
-        ];
-    }
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array
+	 */
+	public function rules(): array {
+		return [
+			"name"           => ["required", "string"],
+			"slug"           => ["nullable", "string"],
+			"tags"           => ["present", "array"],
+			"tags.*"         => ["integer", new Exists(BroadcastTag::class, "id")],
+			"content_length" => ["required", "integer"],
+			"main_layout_id" => ["nullable", new Exists(Layout::class, "id")],
+		];
+	}
 }

@@ -92,8 +92,7 @@ class Creative extends BroadSignModel {
 			                                 ->parser(new ResourceIDParser()),
 			"create_dynamic"      => Endpoint::post("/content/v11/add")
 			                                 ->unwrap(static::$unwrapKey)
-			                                 ->parser(new ResourceIDParser())
-			                                 ->multipart(),
+			                                 ->parser(new ResourceIDParser()),
 			"get"                 => Endpoint::get("/content/v11/{id}")
 			                                 ->unwrap(static::$unwrapKey)
 			                                 ->parser(new SingleResourcesParser(static::class)),
@@ -129,21 +128,21 @@ class Creative extends BroadSignModel {
 
 
 	protected static function getAttributesForCreative(CreativeResource $creative, CreativeStorageType $storage) {
-		$attributes           = [];
-		$attributes["height"] = $creative->height;
-		$attributes["width"]  = $creative->width;
+		$attributes = [];
 
 		if ($storage === CreativeStorageType::Link) {
 			$attributes["expire_on_empty_remote_dir"] = "false";                                // Don;t expire if connection is lost
 			$attributes["io_strategy"]                = "esf";                                  // ???
-			$attributes["source_append_id"]           = "false";                                // Append player ID to url (no)
+			$attributes["source"]                     = $creative->url;                         // URL to the resource
+			$attributes["source_append_id"]           = "true";                                 // Append player ID to url (no)
 			$attributes["source_expiry"]              = "0";                                    // Not sure
 			$attributes["source_refresh"]             = $creative->refresh_rate_minutes;        // URL refresh interval (minutes)
-
-			$attributes["source"] = $creative->url;             // URL to the resource
 		}
 
 		if ($creative->type === CreativeType::Static) {
+			$attributes["height"] = $creative->height;
+			$attributes["width"]  = $creative->width;
+
 			if ($creative->extension === "mp4") {
 				$attributes["duration"] = $creative->length_ms;
 			}
@@ -172,8 +171,10 @@ class Creative extends BroadSignModel {
 			"originalfilename" => stripQuotes($creative->fileName),
 			"feeds"            => "",
 			"attributes"       => static::getAttributesForCreative($creative, $storageType),
-			"mime"             => $creative->extension,
+			"mime"             => "",
 		];
+
+		clock($metadata);
 
 		switch ($storageType) {
 			case CreativeStorageType::File:
@@ -218,10 +219,11 @@ class Creative extends BroadSignModel {
 			"name"             => stripQuotes($creative->name),
 			"originalfilename" => stripQuotes($creative->fileName),
 			"size"             => "-1",
-			"feeds"            => "",
 			"attributes"       => static::getAttributesForCreative($creative, CreativeStorageType::Link),
-			"mime"             => "",
+			"mime"             => "-1",
 		];
+
+		clock($metadata);
 
 		$response = static::executeRequest(
 			client  : $client,
@@ -230,6 +232,7 @@ class Creative extends BroadSignModel {
 		);
 
 		return $response["id"];
+
 	}
 
 	/**
@@ -252,14 +255,15 @@ class Creative extends BroadSignModel {
 		$endpoint->base = $client->getConfig()->apiURL;
 
 		// Prepare the request command
-		$req          = [];
-		$req[]        = "curl -s";                                                  // curl with silent output
-		$req[]        = "-w '\n%{http_code}'";                                      // display http status code on 2nd line
-		$req[]        = "-POST " . $endpoint->getUrl();                             // POST method + URL
-		$req[]        = "-E" . $client->getConfig()->getCertPath();                 // BroadSign cert auth
-		$req[]        = "-H 'Content-Type: multipart/mixed'";                       // Request Content Type
-		$req[]        = "-F 'metadata=$metadata;type=application/json'";            // Request metadata
-		$req[]        = $file ? "-F 'file=@$file'" : "-F 'file=dummy.txt'";         // Request file
+		$req   = [];
+		$req[] = "curl -s";                                                                            // curl with silent output
+		$req[] = "-w '\n%{http_code}'";                                                                // display http status code on 2nd line
+		$req[] = "-POST " . $endpoint->getUrl();                                                       // POST method + URL
+		$req[] = "-E" . $client->getConfig()->getCertPath();                                           // BroadSign cert auth
+		$req[] = "-H 'Content-Type: multipart/mixed'";                                                 // Request Content Type
+		$req[] = "-F '$metadata;type=application/json'";                                               // Request metadata
+//		$req[] = $file ? "-F 'file=@$file'" : "";                                                      // Request file
+
 		$curl_command = implode(" ", $req);
 		$curl_command .= " 2>&1"; // Redirect error output to standard output
 
@@ -270,6 +274,7 @@ class Creative extends BroadSignModel {
 
 		if (config('app.env') !== 'production') {
 			Log::debug("[BroadSign] $endpoint->method@{$endpoint->getPath()}", [json_encode($payload, JSON_THROW_ON_ERROR)]);
+			Log::debug("[curl] $curl_command");
 			clock([
 				      "endpoint" => "$endpoint->method@{$endpoint->getPath()}",
 				      "payload"  => $payload,

@@ -26,7 +26,6 @@ use Illuminate\Routing\Middleware\ValidateSignature;
 use Neo\Http\Middleware\AccessLogsMiddleware;
 use Neo\Http\Middleware\Authenticate;
 use Neo\Http\Middleware\CheckForMaintenanceMode;
-use Neo\Http\Middleware\DynamicsMiddleware;
 use Neo\Http\Middleware\SimpleErrors;
 use Neo\Http\Middleware\TrackUserActivityMiddleware;
 use Neo\Http\Middleware\TrimStrings;
@@ -102,7 +101,6 @@ class Kernel extends HttpKernel {
 		'signed'           => ValidateSignature::class,
 		'throttle'         => ThrottleRequests::class,
 		'verified'         => EnsureEmailIsVerified::class,
-		'dynamics'         => DynamicsMiddleware::class,
 		'access.logs'      => AccessLogsMiddleware::class,
 	];
 

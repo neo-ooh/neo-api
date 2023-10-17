@@ -16,7 +16,7 @@ use Neo\Http\Controllers\Controller;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Dynamics\Http\Requests\Identify\IdentifyPlayerRequest;
-use Neo\Modules\Properties\Models\ResolvedProduct;
+use Neo\Modules\Properties\Models\Property;
 
 class IdentificationController extends Controller {
 	public function identify(IdentifyPlayerRequest $request) {
@@ -48,17 +48,23 @@ class IdentificationController extends Controller {
 		                })
 		                ->first();
 
-		$product = ResolvedProduct::query()
-		                          ->where("is_bonus", "=", false)
-		                          ->whereHas("locations", function (Builder $query) use ($player) {
-			                          $query->whereHas("players", function (Builder $query) use ($player) {
-				                          $query->where("id", "=", $player->getKey());
-			                          });
-		                          })
-		                          ->where("format_id", "=", $format?->getKey())
-		                          ->first();
+		$property = Property::query()
+		                    ->whereHas("actor", function (Builder $query) use ($player) {
+			                    $query->whereHas("own_locations", function (Builder $query) use ($player) {
+				                    $query->where("id", "=", $player->location_id);
+			                    });
+		                    })
+		                    ->first();
 
-		$property = $product?->property()->first();
+		/*		$product = ResolvedProduct::query()
+										  ->where("is_bonus", "=", false)
+										  ->whereHas("locations", function (Builder $query) use ($player) {
+											  $query->whereHas("players", function (Builder $query) use ($player) {
+												  $query->where("id", "=", $player->getKey());
+											  });
+										  })
+										  ->where("format_id", "=", $format?->getKey())
+										  ->first();*/
 
 		return new Response([
 			                    "player"  => $player,

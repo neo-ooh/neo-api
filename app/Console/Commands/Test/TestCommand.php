@@ -28,7 +28,7 @@ class TestCommand extends Command {
 		$client = new WeatherSourceClient();
 		/** @var City $city */
 		$city = City::query()->find(1);
-		
-		dump($client->getWeather($city->geolocation->getCoordinates()[0], $city->geolocation->getCoordinates()[1]));
+
+		dump($client->getWeather($city->geolocation->getCoordinates()[0], $city->geolocation->getCoordinates()[1], $city->province->slug === 'QC' ? 'fr' : 'en'));
 	}
 }

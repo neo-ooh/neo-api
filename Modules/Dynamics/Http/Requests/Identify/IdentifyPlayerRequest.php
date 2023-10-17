@@ -28,6 +28,7 @@ class IdentifyPlayerRequest extends FormRequest {
 	}
 
 	public function authorize(): bool {
-		return Gate::allows(Capability::dynamics_weather->value) || Gate::allows(Capability::dynamics_news->value);
+		return Gate::allows(Capability::dynamics_weather_pull->value)
+			|| Gate::allows(Capability::dynamics_news_pull->value);
 	}
 }

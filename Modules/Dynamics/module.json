@@ -1,0 +1,11 @@
+{
+    "name": "Dynamics",
+    "alias": "dynamics",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Neo\\Modules\\Dynamics\\Providers\\DynamicsServiceProvider"
+    ],
+    "files": []
+}

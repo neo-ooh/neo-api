@@ -5,11 +5,15 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - WeatherAdapter.php
+ * @neo/api - config.php
  */
 
-namespace Neo\Modules\Dynamics\Services\Weather;
+return [
+	"name" => "Dynamics",
 
-interface WeatherAdapter {
-	public function getWeather(float $lng, float $lat, string $locale): WeatherReport;
-}
+	"weather" => [
+		"api-key" => env('WEATHER_API_KEY'),
+
+		"reports-ttl-minutes" => env('WEATHER_REPORT_TTL_MINUTES', 5),
+	],
+];

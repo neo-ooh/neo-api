@@ -5,11 +5,12 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - WeatherAdapter.php
+ * @neo/api - WeatherBundleBackgroundSelection.php
  */
 
-namespace Neo\Modules\Dynamics\Services\Weather;
+namespace Neo\Modules\Dynamics\Models\Enums;
 
-interface WeatherAdapter {
-	public function getWeather(float $lng, float $lat, string $locale): WeatherReport;
+enum WeatherBundleBackgroundSelection: string {
+	case Weather = "weather";
+	case Random = "random";
 }

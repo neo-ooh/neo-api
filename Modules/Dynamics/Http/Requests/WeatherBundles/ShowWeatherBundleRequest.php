@@ -5,21 +5,25 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - ShowWeatherDataRequest.php
+ * @neo/api - ShowWeatherBundleRequest.php
  */
 
-namespace Neo\Modules\Dynamics\Http\Requests\WeatherData;
+namespace Neo\Modules\Dynamics\Http\Requests\WeatherBundles;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
+use Neo\Modules\Dynamics\Models\WeatherBundle;
+use Neo\Rules\PublicRelations;
 
-class ShowWeatherDataRequest extends FormRequest {
+class ShowWeatherBundleRequest extends FormRequest {
 	public function rules(): array {
-		return [];
+		return [
+			"with" => ["array", new PublicRelations(WeatherBundle::class)],
+		];
 	}
 
 	public function authorize(): bool {
-		return Gate::allows(Capability::dynamics_weather_pull->value);
+		return Gate::allows(Capability::dynamics_weather_edit->value);
 	}
 }

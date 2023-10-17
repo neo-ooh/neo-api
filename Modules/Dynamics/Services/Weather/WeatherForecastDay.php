@@ -14,51 +14,61 @@ use Spatie\LaravelData\Data;
 
 class WeatherForecastDay extends Data {
 	public function __construct(
-		public string $date,
+		public string           $date,
 
 		/**
 		 * @var 'metric'|'imperial' Celsius/Fahrenheit
 		 */
-		public string $units,
+		public string           $units,
 
 		/**
 		 * @var float Celsius/Fahrenheit
 		 */
-		public float  $temperature_min,
+		public float            $temperature_min,
 
 		/**
 		 * @var float Celsius/Fahrenheit
 		 */
-		public float  $temperature_max,
+		public float            $temperature_max,
 
 		/**
 		 * @var float Celsius/Fahrenheit
 		 */
-		public float  $feels_like_min,
+		public float            $feels_like_min,
 
 		/**
 		 * @var float Celsius/Fahrenheit
 		 */
-		public float  $feels_like_max,
+		public float            $feels_like_max,
+
+		/**
+		 * @var string
+		 */
+		public WeatherCondition $condition,
+
+		/**
+		 * @var string
+		 */
+		public string           $condition_string,
 
 		/**
 		 * @var float
 		 */
-		public float  $cloud_coverage_percent,
+		public float            $cloud_coverage_percent,
 
-		public float  $atmospheric_pressure,
-		public float  $humidity_percent,
+		public float            $atmospheric_pressure,
+		public float            $humidity_percent,
 
-		public float  $rain_probability_percent,
+		public float            $rain_probability_percent,
 
-		public float  $snow_probability_percent,
+		public float            $snow_probability_percent,
 
-		public float  $wind_direction_degrees,
+		public float            $wind_direction_degrees,
 
 		/**
 		 * @var float km/h / miles/h
 		 */
-		public float  $wind_speed
+		public float            $wind_speed
 
 	) {
 	}

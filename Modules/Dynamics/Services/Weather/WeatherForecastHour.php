@@ -34,6 +34,16 @@ class WeatherForecastHour extends Data {
 		public float  $feels_like,
 
 		/**
+		 * @var string
+		 */
+		public string $condition,
+
+		/**
+		 * @var string
+		 */
+		public string $condition_string,
+
+		/**
 		 * @var float
 		 */
 		public float  $cloud_coverage_percent,

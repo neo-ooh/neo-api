@@ -17,27 +17,12 @@ use Neo\Modules\Dynamics\Exceptions\CouldNotFetchThirdPartyDataException;
 class WeatherSourceClient implements WeatherAdapter {
 
 	protected array $fields = [
-		"popular",
+		"allSummary",
 		"relHum",
 		"sfcPres",
 	];
 
-	protected array $forecastHourFields = [
-		"popular",
-		"allPrecip",
-		"relHum",
-		"sfcPres",
-	];
-
-	protected array $forecastDayFields = [
-		"popular",
-		"relHumAvg",
-		"allPrecip",
-		"allPres",
-		"allTemp",
-	];
-
-	public function getWeather(float $lng, float $lat): WeatherReport {
+	public function getWeather(float $lng, float $lat, string $locale): WeatherReport {
 		$geoValues = "$lat,$lng";
 		$client    = new Client();
 
@@ -48,60 +33,30 @@ class WeatherSourceClient implements WeatherAdapter {
 //		                           ])->wait();
 
 		// Current weather
-		$currentWeather = $client->get("https://nowcast.weathersourceapis.com/v2/points/$geoValues", [
+		$rawReport = $client->get("https://appwx.weathersourceapis.com/v2/points/$geoValues", [
 			"headers" => [
 				"X-API-KEY" => config('dynamics.weather.api-key'),
 			],
 			"query"   => [
+				"services"  => "all",
 				"fields"    => implode(",", $this->fields),
 				"unitScale" => "METRIC",
+				"language"  => $locale === 'fr' ? "FRENCH" : "ENGLISH",
 			],
 		]);
-		if ($currentWeather->getStatusCode() !== 200) {
-			throw new CouldNotFetchThirdPartyDataException($currentWeather);
+		if ($rawReport->getStatusCode() !== 200) {
+			throw new CouldNotFetchThirdPartyDataException($rawReport);
 		}
 
-		// Hourly forecast
-		sleep(1);
-		$forecastHourlyWeather = $client->get("https://forecast.weathersourceapis.com/v2/points/$geoValues/hours", [
-			"headers" => [
-				"X-API-KEY" => config('dynamics.weather.api-key'),
-			],
-			"query"   => [
-				"fields"    => implode(",", $this->forecastHourFields),
-				"unitScale" => "METRIC",
-			],
-		]);
-		if ($forecastHourlyWeather->getStatusCode() !== 200) {
-			throw new CouldNotFetchThirdPartyDataException($forecastHourlyWeather);
-		}
-
-
-		// Daily forecast
-		sleep(1);
-		$forecastDailyWeather = $client->get("https://forecast.weathersourceapis.com/v2/points/$geoValues/days", [
-			"headers" => [
-				"X-API-KEY" => config('dynamics.weather.api-key'),
-			],
-			"query"   => [
-				"fields"    => implode(",", $this->forecastDayFields),
-				"unitScale" => "METRIC",
-			],
-		]);
-		if ($forecastDailyWeather->getStatusCode() !== 200) {
-			throw new CouldNotFetchThirdPartyDataException($forecastDailyWeather);
-		}
+		$rawReportBody = json_decode($rawReport->getBody()->getContents(), associative: true);
 
 		// Build a weather report with the received responses
 		return new WeatherReport(
-			now            : $this->makeWeatherDatum(json_decode($currentWeather->getBody()
-			                                                                    ->getContents(), associative: true)["nowcast"]),
-			forecast_hourly: WeatherForecastHour::collection(collect(json_decode($forecastHourlyWeather->getBody()
-			                                                                                           ->getContents(), associative: true)["forecast"])
+			now            : $this->makeWeatherDatum($rawReportBody["nowcast"]),
+			forecast_hourly: WeatherForecastHour::collection(collect($rawReportBody["forecastHour"])
 				                                                 ->map(fn(array $values) => $this->makeWeatherForecastHour($values))),
 
-			forecast_daily : WeatherForecastDay::collection(collect(json_decode($forecastDailyWeather->getBody()
-			                                                                                         ->getContents(), associative: true)["forecast"])
+			forecast_daily : WeatherForecastDay::collection(collect($rawReportBody["forecastDay"])
 				                                                ->map(fn(array $values) => $this->makeWeatherForecastDay($values))),
 		);
 	}
@@ -114,6 +69,8 @@ class WeatherSourceClient implements WeatherAdapter {
 			units                 : "metric",
 			temperature           : $values["temp"],
 			feels_like            : $values["feelsLike"],
+			condition             : $this->mapIconToCondition($values["icon"]),
+			condition_string      : $values["summary"],
 			cloud_coverage_percent: $values["cldCvr"],
 			atmospheric_pressure  : $values["sfcPres"],
 			humidity_percent      : $values["relHum"],
@@ -134,6 +91,8 @@ class WeatherSourceClient implements WeatherAdapter {
 			units                   : "metric",
 			temperature             : $values["temp"],
 			feels_like              : $values["feelsLike"],
+			condition               : $this->mapIconToCondition($values["icon"]),
+			condition_string        : $values["summary"],
 			cloud_coverage_percent  : $values["cldCvr"],
 			atmospheric_pressure    : $values["sfcPres"],
 			humidity_percent        : $values["relHum"],
@@ -152,6 +111,8 @@ class WeatherSourceClient implements WeatherAdapter {
 			temperature_max         : $values["tempMax"],
 			feels_like_min          : $values["feelsLikeMin"],
 			feels_like_max          : $values["feelsLikeMax"],
+			condition               : $this->mapIconToCondition($values["icon"]),
+			condition_string        : $values["summary"],
 			cloud_coverage_percent  : $values["cldCvrAvg"],
 			atmospheric_pressure    : $values["sfcPresMax"],
 			humidity_percent        : $values["relHumAvg"],
@@ -160,5 +121,27 @@ class WeatherSourceClient implements WeatherAdapter {
 			wind_direction_degrees  : $values["windDirAvg"],
 			wind_speed              : $values["windSpdAvg"]
 		);
+	}
+
+	protected function mapIconToCondition(string $icon): WeatherCondition {
+		$tokens        = explode("-", $icon);
+		$ignoredTokens = ["wi", "night", "alt"];
+
+		do {
+			array_shift($tokens);
+		} while (in_array($tokens[0], $ignoredTokens));
+
+		return match (implode('-', $tokens)) {
+			"cloudy", "cloudy-gusts", "cloudy-high", "cloudy-windy", "sunny-overcast"                 => WeatherCondition::Cloudy,
+			"fog", "haze"                                                                             => WeatherCondition::Fog,
+			"showers", "hail"                                                                         => WeatherCondition::HeavyRain,
+			"partly-cloudy"                                                                           => WeatherCondition::MostlySunny,
+			"sprinkle"                                                                                => WeatherCondition::LightRain,
+			"rain-mix"                                                                                => WeatherCondition::RainAndSun,
+			"rain", "rain-wind", "sleet", "sleet-storm"                                               => WeatherCondition::Rain,
+			"snow", "snow-wind"                                                                       => WeatherCondition::Snow,
+			"clear", "hot", "lunar-eclipse", "light-wind", "solar-eclipse", "sunny", "stars", "windy" => WeatherCondition::Sunny,
+			"lightning", "thunderstorms", "storm-showers", "snow-thunderstorm"                        => WeatherCondition::Thunderstorm,
+		};
 	}
 }

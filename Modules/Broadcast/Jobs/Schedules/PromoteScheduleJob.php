@@ -316,8 +316,17 @@ class PromoteScheduleJob extends BroadcastJobBase {
 				}
 			}
 
-			// Finally, attach/sync the creatives with the schedules
-			$this->attachContentsToSchedules($broadcaster, $updatedExternalResources, $contents);
+			try {
+				// Finally, attach/sync the creatives with the schedules
+				$this->attachContentsToSchedules($broadcaster, $updatedExternalResources, $contents);
+			} catch (MissingExternalCreativeException $e) {
+				// If the job is a general job (no external representation specified), schedule a new job for this specific representation
+				if ($useSpecificRepresentation) {
+					throw $e;
+				}
+
+				new PromoteScheduleJob($schedule->getKey(), $representation);
+			}
 		}
 
 		// If we are working with all the representations, and no errors occured,

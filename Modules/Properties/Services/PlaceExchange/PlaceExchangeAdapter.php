@@ -27,6 +27,7 @@ use Neo\Modules\Properties\Services\PlaceExchange\Models\AdUnit;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitAsset;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitAssetCapabilities;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitAuction;
+use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitExternalId;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitLocation;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitMeasurement;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitPlanning;
@@ -61,13 +62,14 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 	 */
 	public static function buildConfig(InventoryProvider $provider): InventoryConfig {
 		return new PlaceExchangeConfig(
-			name         : $provider->name,
-			inventoryID  : $provider->id,
-			inventoryUUID: $provider->uuid,
-			api_url      : $provider->settings->api_url,
-			api_username : $provider->settings->api_username,
-			api_key      : $provider->settings->api_key,
-			org_id       : $provider->settings->client_id,
+			name                      : $provider->name,
+			inventoryID               : $provider->id,
+			inventoryUUID             : $provider->uuid,
+			api_url                   : $provider->settings->api_url,
+			api_username              : $provider->settings->api_username,
+			api_key                   : $provider->settings->api_key,
+			org_id                    : $provider->settings->client_id,
+			conversion_rate_usd_to_cad: $provider->settings->usd_cad_rate,
 		);
 	}
 
@@ -115,12 +117,16 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 			                          "w" => $product->screen_width_px,
 			                          "h" => $product->screen_height_px,
 		                          ]];
-		$adUnit->aspect_ratios = [[
-			                          "wratio" => $wratio,
-			                          "hratio" => $hratio,
-		                          ]];
+		$adUnit->aspect_ratios = [];
 
 		$name = str_replace(" ", "_", trim($player->name));
+
+		/** @var string[] $mimeTypes */
+		$mimeTypes = [
+			...(in_array(MediaType::Image, $product->allowed_media_types) ? ["image/jpeg", "image/png"] : []),
+			...(in_array(MediaType::Video, $product->allowed_media_types) ? ["video/mp4"] : []),
+			...(in_array(MediaType::HTML, $product->allowed_media_types) ? ["text/html"] : []),
+		];
 
 		$adUnit->asset            = new AdUnitAsset(
 			aspect_ratio: $wratio . ":" . $hratio,
@@ -129,9 +135,9 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 				              banner: in_array(MediaType::Image, $product->allowed_media_types),
 				              video : in_array(MediaType::Video, $product->allowed_media_types),
 			              ),
-			category_id : $adUnit->asset->category ?? null,
-			image_url   : $adUnit->asset->image_url ?? "",
-			mimes       : $adUnit->asset->mimes ?? [],
+			category    : $context["category_id"] ?? null,
+			image_url   : $product->picture_url ?? "",
+			mimes       : $mimeTypes,
 			name        : $name,
 			screen_count: $player->screen_count,
 			size        : $product->screen_size_in ?? 5,
@@ -139,10 +145,17 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 		);
 		$adUnit->auction          = new AdUnitAuction(
 			at         : 1,
-			bidfloor   : $product->programmatic_price,
+			bidfloor   : round($product->programmatic_price / $this->getConfig()->conversion_rate_usd_to_cad),
 			bidfloorcur: "USD",
 		);
-		$adUnit->eids             = []; // TODO: Fill in BroadSign ID
+		$adUnit->eids             = [
+			new AdUnitExternalId(source: "broadsign.com",
+			                     uids  : [["id" => $player->external_id->external_id]],
+			),
+			new AdUnitExternalId(source: "neo-ooh.com",
+			                     uids  : [["id" => (string)$player->id]],
+			),
+		];
 		$adUnit->integration_type = 3;
 		$adUnit->keywords         = $adUnit->keywords ?? [];
 		$adUnit->location         = $adUnit->location ?? AdUnitLocation::from([
@@ -165,16 +178,16 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 
 		$adUnit->measurement     = new AdUnitMeasurement(
 			duration     : $product->loop_configuration->spot_length_ms / 1_000, // ms to s
-			imp_four_week: max(1, $impressionsPerWeek * 4 * $impressionsShare),
-			imp_x        : max(1, $impressionsPerPlay * $impressionsShare),
+			imp_four_week: round(max(1, $impressionsPerWeek * 4 * $impressionsShare)),
+			imp_x        : round(max(1, $impressionsPerPlay * $impressionsShare)),
 			provider     : "",
 		);
 		$adUnit->name            = $name;
 		$adUnit->network_id      = $context["network_id"];
 		$adUnit->placements      = $adUnit->placements ?? [];
 		$adUnit->planning        = new AdUnitPlanning(
-			base_rate: $product->programmatic_price,
-			rate_cur : "CAD",
+			base_rate: round($product->programmatic_price / $this->getConfig()->conversion_rate_usd_to_cad),
+			rate_cur : "USD",
 		);
 		$adUnit->private_auction = 0; // Not private
 		$adUnit->restrictions    = $adUnit->restrictions ?? new AdUnitRestrictions();
@@ -242,7 +255,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 					$adUnit->save();
 				} catch (RequestException $e) {
 					// In case of an error when filling the ad unit, delete it. Otherwise, the incomplete unit would be left dangling
-					$adUnit->delete();
+					$this->deleteAdUnit($client, $adUnit->getKey());
 					throw $e;
 				}
 
@@ -296,6 +309,9 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 				$unitName = $adUnit->name;
 
 				$this->fillAdUnit($adUnit, $broadcastPlayer, $product, $productId->context, $impressionsShare);
+
+				clock($adUnit->getAttributes());
+
 				$adUnit->save($unitName);
 
 				$adUnitsIds[$broadcastPlayer->id] = ["id" => $adUnit->getKey(), "name" => $adUnit->name];
@@ -345,7 +361,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 	 * @throws RequestException
 	 * @throws APIAuthenticationError
 	 */
-	protected function deleteAdUnit(PlaceExchangeClient $client, string $adUnitId): void {
+	public function deleteAdUnit(PlaceExchangeClient $client, string $adUnitId): void {
 		$adUnit         = AdUnit::find($client, $adUnitId);
 		$adUnitKey      = $adUnit->name;
 		$adUnit->name   .= "_disabled-" . time();

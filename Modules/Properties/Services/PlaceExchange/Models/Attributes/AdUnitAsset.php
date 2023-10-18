@@ -13,27 +13,27 @@ namespace Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes;
 use Spatie\LaravelData\Data;
 
 class AdUnitAsset extends Data {
-    /**
-     * @param string                  $aspect_ratio
-     * @param AdUnitAssetCapabilities $capability
-     * @param int|null                $category_id
-     * @param string                  $image_url
-     * @param string[]                $mimes
-     * @param string                  $name
-     * @param string                  $screen_count
-     * @param float                   $size
-     * @param string                  $type
-     */
-    public function __construct(
-        public string                  $aspect_ratio,
-        public AdUnitAssetCapabilities $capability,
-        public int|null                $category_id,
-        public string                  $image_url,
-        public array                   $mimes,
-        public string                  $name,
-        public string                  $screen_count,
-        public float                   $size,
-        public string                  $type,
-    ) {
-    }
+	/**
+	 * @param string                  $aspect_ratio
+	 * @param AdUnitAssetCapabilities $capability
+	 * @param int|null                $category
+	 * @param string                  $image_url
+	 * @param string[]                $mimes
+	 * @param string                  $name
+	 * @param string                  $screen_count
+	 * @param float                   $size
+	 * @param string                  $type
+	 */
+	public function __construct(
+		public string                  $aspect_ratio,
+		public AdUnitAssetCapabilities $capability,
+		public int|null                $category,
+		public string                  $image_url,
+		public array                   $mimes,
+		public string                  $name,
+		public string                  $screen_count,
+		public float                   $size,
+		public string                  $type,
+	) {
+	}
 }

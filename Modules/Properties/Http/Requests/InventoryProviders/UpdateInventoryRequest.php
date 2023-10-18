@@ -17,68 +17,69 @@ use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\InventoryType;
 
 class UpdateInventoryRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "name"      => ["required", "string", "min:3"],
-            "is_active" => ["required", "boolean"],
+	public function rules(): array {
+		return [
+			"name"      => ["required", "string", "min:3"],
+			"is_active" => ["required", "boolean"],
 
-            "allow_pull" => ["required", "boolean"],
-            "auto_pull"  => ["required", "boolean"],
-            "allow_push" => ["required", "boolean"],
-            "auto_push"  => ["required", "boolean"],
+			"allow_pull" => ["required", "boolean"],
+			"auto_pull"  => ["required", "boolean"],
+			"allow_push" => ["required", "boolean"],
+			"auto_push"  => ["required", "boolean"],
 
-            ...$this->getInventoryOptions(),
-        ];
-    }
+			...$this->getInventoryOptions(),
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::inventories_edit->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::inventories_edit->value);
+	}
 
-    protected function getInventoryOptions(): array {
-        /** @var InventoryProvider $inventory */
-        $inventory = InventoryProvider::query()->findOrFail($this->route()->originalParameter("inventoryProvider"));
+	protected function getInventoryOptions(): array {
+		/** @var InventoryProvider $inventory */
+		$inventory = InventoryProvider::query()->findOrFail($this->route()->originalParameter("inventoryProvider"));
 
-        return match ($inventory->provider) {
-            InventoryType::Odoo          => [
-                "api_url"      => ["required", "string"],
-                "api_key"      => ["sometimes", "string"],
-                "api_username" => ["required", "string"],
-                "database"     => ["required", "string"],
-            ],
-            InventoryType::Hivestack     => [
-                "api_url"         => ["required", "string"],
-                "api_key"         => ["sometimes", "string"],
-                "networks"        => ["nullable", "array"],
-                "networks.*.id"   => ["nullable", "string"],
-                "networks.*.name" => ["nullable", "string"],
-            ],
-            InventoryType::PlaceExchange => [
-                "api_url"         => ["required", "string"],
-                "api_key"         => ["sometimes", "string"],
-                "api_username"    => ["required", "string"],
-                "client_id"       => ["required", "string"],
-                "networks"        => ["nullable", "array"],
-                "networks.*.id"   => ["nullable", "string"],
-                "networks.*.name" => ["nullable", "string"],
-            ],
-            InventoryType::Reach         => [
-                "auth_url"     => ["required", "string"],
-                "api_url"      => ["required", "string"],
-                "api_key"      => ["sometimes", "string"],
-                "api_username" => ["required", "string"],
-                "publisher_id" => ["required", "string"],
-                "client_id"    => ["required", "string"],
-            ],
-            InventoryType::Vistar        => [
-                "api_url"         => ["required", "string"],
-                "api_key"         => ["sometimes", "string"],
-                "api_username"    => ["required", "string"],
-                "networks"        => ["nullable", "array"],
-                "networks.*.id"   => ["nullable", "string"],
-                "networks.*.name" => ["nullable", "string"],
-            ],
-            InventoryType::Dummy         => [],
-        };
-    }
+		return match ($inventory->provider) {
+			InventoryType::Odoo          => [
+				"api_url"      => ["required", "string"],
+				"api_key"      => ["sometimes", "string"],
+				"api_username" => ["required", "string"],
+				"database"     => ["required", "string"],
+			],
+			InventoryType::Hivestack     => [
+				"api_url"         => ["required", "string"],
+				"api_key"         => ["sometimes", "string"],
+				"networks"        => ["nullable", "array"],
+				"networks.*.id"   => ["nullable", "string"],
+				"networks.*.name" => ["nullable", "string"],
+			],
+			InventoryType::PlaceExchange => [
+				"api_url"         => ["required", "string"],
+				"api_key"         => ["sometimes", "string"],
+				"api_username"    => ["required", "string"],
+				"client_id"       => ["required", "string"],
+				"usd_cad_rate"    => ["required", "numeric"],
+				"networks"        => ["nullable", "array"],
+				"networks.*.id"   => ["nullable", "string"],
+				"networks.*.name" => ["nullable", "string"],
+			],
+			InventoryType::Reach         => [
+				"auth_url"     => ["required", "string"],
+				"api_url"      => ["required", "string"],
+				"api_key"      => ["sometimes", "string"],
+				"api_username" => ["required", "string"],
+				"publisher_id" => ["required", "string"],
+				"client_id"    => ["required", "string"],
+			],
+			InventoryType::Vistar        => [
+				"api_url"         => ["required", "string"],
+				"api_key"         => ["sometimes", "string"],
+				"api_username"    => ["required", "string"],
+				"networks"        => ["nullable", "array"],
+				"networks.*.id"   => ["nullable", "string"],
+				"networks.*.name" => ["nullable", "string"],
+			],
+			InventoryType::Dummy         => [],
+		};
+	}
 }

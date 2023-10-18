@@ -14,20 +14,21 @@ use Neo\Modules\Properties\Services\InventoryConfig;
 use Neo\Modules\Properties\Services\InventoryType;
 
 class PlaceExchangeConfig extends InventoryConfig {
-    public InventoryType $type = InventoryType::PlaceExchange;
+	public InventoryType $type = InventoryType::PlaceExchange;
 
-    public function __construct(
-        public string $name,
-        public int    $inventoryID,
-        public string $inventoryUUID,
-        public string $api_url,
-        public string $api_username,
-        public string $api_key,
-        public string $org_id,
-    ) {
-    }
+	public function __construct(
+		public string $name,
+		public int    $inventoryID,
+		public string $inventoryUUID,
+		public string $api_url,
+		public string $api_username,
+		public string $api_key,
+		public string $org_id,
+		public string $conversion_rate_usd_to_cad,
+	) {
+	}
 
-    public function getClient() {
-        return new PlaceExchangeClient($this);
-    }
+	public function getClient() {
+		return new PlaceExchangeClient($this);
+	}
 }

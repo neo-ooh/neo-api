@@ -14,36 +14,41 @@ use Neo\Models\Utils\JSONDBColumn;
 use Spatie\LaravelData\Optional;
 
 class InventoryRepresentationContext extends JSONDBColumn {
-    public function __construct(
-        /**
-         * @var int|Optional Odoo's products variant id to use in contracts
-         */
-        public int|Optional|null   $variant_id,
+	public function __construct(
+		/**
+		 * @var int|Optional Odoo's products variant id to use in contracts
+		 */
+		public int|Optional|null   $variant_id,
 
-        /**
-         * @var int|Optional Odoo's product categories production product
-         */
-        public int|Optional        $production_product_id,
+		/**
+		 * @var int|Optional Odoo's product categories production product
+		 */
+		public int|Optional        $production_product_id,
 
-        /**
-         * @var int|Optional Hivestack|Vistar|PlaceExchange units network id
-         */
-        public int|string|Optional $network_id,
+		/**
+		 * @var int|Optional Hivestack|Vistar|PlaceExchange units network id
+		 */
+		public int|string|Optional $network_id,
 
-        /**
-         * @var array{id: string, name: string}|Optional Hivestack|PlaceExchange units ids for products
-         */
-        public array|Optional      $units,
+		/**
+		 * @var array{id: string, name: string}|Optional Hivestack|PlaceExchange units ids for products
+		 */
+		public array|Optional      $units,
 
-        /**
-         * @var array{id: string, name: string}|Optional Reach screens ids for products
-         */
-        public array|Optional      $screens,
+		/**
+		 * @var array{id: string, name: string}|Optional Reach screens ids for products
+		 */
+		public array|Optional      $screens,
 
-        /**
-         * @var array{id: string, name: string}|Optional Vistar venue ids for products
-         */
-        public array|Optional      $venues,
-    ) {
-    }
+		/**
+		 * @var array{id: string, name: string}|Optional Vistar venue ids for products
+		 */
+		public array|Optional      $venues,
+
+		/**
+		 * @var int|Optional Place Exchange Asset category
+		 */
+		public int|null|Optional   $category_id,
+	) {
+	}
 }

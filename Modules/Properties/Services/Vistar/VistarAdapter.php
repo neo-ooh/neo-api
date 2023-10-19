@@ -123,7 +123,7 @@ class VistarAdapter extends InventoryAdapter {
 		$venue->video_supported         = in_array(MediaType::Video, $product->allowed_media_types);
 		$venue->static_supported        = in_array(MediaType::Image, $product->allowed_media_types);
 		$venue->static_duration_seconds = $product->loop_configuration->spot_length_ms / 1_000;
-		$venue->min_duration_ms         = min(5_000, $product->loop_configuration->spot_length_ms);
+		$venue->min_duration_ms         = $product->loop_configuration->spot_length_ms; // min(5_000, $product->loop_configuration->spot_length_ms);
 		$venue->max_duration_ms         = $product->loop_configuration->spot_length_ms;
 
 		$venue->height_px = $product->screen_height_px;

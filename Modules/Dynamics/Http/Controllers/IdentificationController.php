@@ -67,11 +67,12 @@ class IdentificationController extends Controller {
 										  ->first();*/
 
 		return new Response([
-			                    "player"  => $player,
-			                    "format"  => $format,
+			                    "player"      => $player,
+			                    "format"      => $format,
+			                    "property_id" => $property->getKey(),
 			                    //			                    "product"  => $product,
 			                    //			                    "property" => $property,
-			                    "address" => $property?->address()->first(),
+			                    "address"     => $property?->address()->first(),
 		                    ]);
 	}
 }

@@ -17,9 +17,8 @@ use Neo\Modules\Dynamics\Exceptions\CouldNotFetchThirdPartyDataException;
 class WeatherSourceClient implements WeatherAdapter {
 
 	protected array $fields = [
+		"all",
 		"allSummary",
-		"relHum",
-		"sfcPres",
 	];
 
 	public function getWeather(float $lng, float $lat, string $locale): WeatherReport {
@@ -53,39 +52,39 @@ class WeatherSourceClient implements WeatherAdapter {
 		// Build a weather report with the received responses
 		return new WeatherReport(
 			now            : $this->makeWeatherDatum($rawReportBody["nowcast"]),
-			forecast_hourly: WeatherForecastHour::collection(collect($rawReportBody["forecastHour"])
-				                                                 ->map(fn(array $values) => $this->makeWeatherForecastHour($values))),
+			forecast_hourly: HourWeatherDatum::collection(collect($rawReportBody["forecastHour"])
+				                                              ->map(fn(array $values) => $this->makeWeatherForecastHour($values))),
 
-			forecast_daily : WeatherForecastDay::collection(collect($rawReportBody["forecastDay"])
-				                                                ->map(fn(array $values) => $this->makeWeatherForecastDay($values))),
+			forecast_daily : DayWeatherDatum::collection(collect($rawReportBody["forecastDay"])
+				                                             ->map(fn(array $values) => $this->makeWeatherForecastDay($values))),
 		);
 	}
 
 	public function makeWeatherDatum(array $values) {
 		$date = Carbon::parse($values["timestamp"], "utc");
-		return new WeatherDatum(
-			date                  : $date->toDateString(),
-			time                  : $date->toTimeString(),
-			units                 : "metric",
-			temperature           : $values["temp"],
-			feels_like            : $values["feelsLike"],
-			condition             : $this->mapIconToCondition($values["icon"]),
-			condition_string      : $values["summary"],
-			cloud_coverage_percent: $values["cldCvr"],
-			atmospheric_pressure  : $values["sfcPres"],
-			humidity_percent      : $values["relHum"],
-			is_raining            : (bool)$values["precipFlag"],
-			rain_intensity_percent: $values["precipIntensity"],
-			is_snowing            : (bool)$values["snowfallFlag"],
-			snow_intensity_percent: $values["snowfallIntensity"],
-			wind_direction_degrees: $values["windDir"],
-			wind_speed            : $values["windSpd"]
+		return new CurrentWeatherDatum(
+			date                   : $date->toDateString(),
+			time                   : $date->toTimeString(),
+			units                  : "metric",
+			temperature            : $values["temp"],
+			feels_like             : $values["feelsLike"],
+			condition              : $this->mapIconToCondition($values["icon"]),
+			condition_string       : $values["summary"],
+			cloud_coverage_percent : $values["cldCvr"],
+			atmospheric_pressure   : 0, //$values["sfcPres"],
+			humidity_percent       : $values["relHum"],
+			is_raining             : (bool)$values["precipFlag"],
+			rain_intensity_percent : $values["precipIntensity"],
+			is_snowing             : (bool)$values["snowfallFlag"],
+			snow_intensity_percent : $values["snowfallIntensity"],
+			wind_direction_cardinal: $values["windDir"],
+			wind_speed             : $values["windSpd"]
 		);
 	}
 
 	public function makeWeatherForecastHour(array $values) {
 		$date = Carbon::parse($values["timestamp"]);
-		return new WeatherForecastHour(
+		return new HourWeatherDatum(
 			date                    : $date->toDateString(),
 			time                    : $date->toTimeString(),
 			units                   : "metric",
@@ -94,17 +93,17 @@ class WeatherSourceClient implements WeatherAdapter {
 			condition               : $this->mapIconToCondition($values["icon"]),
 			condition_string        : $values["summary"],
 			cloud_coverage_percent  : $values["cldCvr"],
-			atmospheric_pressure    : $values["sfcPres"],
+			atmospheric_pressure    : 0, //$values["sfcPres"],
 			humidity_percent        : $values["relHum"],
 			rain_probability_percent: $values["precipProb"],
 			snow_probability_percent: $values["snowfallProb"],
-			wind_direction_degrees  : $values["windDir"],
+			wind_direction_cardinal : (int)$values["windDir"],
 			wind_speed              : $values["windSpd"]
 		);
 	}
 
 	public function makeWeatherForecastDay(array $values) {
-		return new WeatherForecastDay(
+		return new DayWeatherDatum(
 			date                    : $values["date"],
 			units                   : "metric",
 			temperature_min         : $values["tempMin"],
@@ -113,19 +112,19 @@ class WeatherSourceClient implements WeatherAdapter {
 			feels_like_max          : $values["feelsLikeMax"],
 			condition               : $this->mapIconToCondition($values["icon"]),
 			condition_string        : $values["summary"],
-			cloud_coverage_percent  : $values["cldCvrAvg"],
-			atmospheric_pressure    : $values["sfcPresMax"],
-			humidity_percent        : $values["relHumAvg"],
+			cloud_coverage_percent  : ($values["cldCvrMin"] + $values["cldCvrMax"]) / 2,
+			atmospheric_pressure    : 0, //$values["sfcPres"],
+			humidity_percent        : ($values["relHumMin"] + $values["relHumMax"]) / 2,
 			rain_probability_percent: $values["precipProb"],
 			snow_probability_percent: $values["snowfallProb"],
-			wind_direction_degrees  : $values["windDirAvg"],
-			wind_speed              : $values["windSpdAvg"]
+			wind_direction_cardinal : $values["windDirAvg"],
+			wind_speed              : ($values["windSpdMin"] + $values["windSpdMax"]) / 2,
 		);
 	}
 
 	protected function mapIconToCondition(string $icon): WeatherCondition {
 		$tokens        = explode("-", $icon);
-		$ignoredTokens = ["wi", "night", "alt"];
+		$ignoredTokens = ["wi", "night", "alt", "day"];
 
 		do {
 			array_shift($tokens);

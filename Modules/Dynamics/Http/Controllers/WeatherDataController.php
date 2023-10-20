@@ -18,12 +18,14 @@ use Neo\Models\City;
 use Neo\Modules\Dynamics\Http\Requests\WeatherData\ShowWeatherDataRequest;
 use Neo\Modules\Dynamics\Jobs\PullWeatherDataJob;
 use Neo\Modules\Dynamics\Services\Weather\WeatherAdapter;
+use Neo\Modules\Dynamics\Services\Weather\WeatherReport;
 
 class WeatherDataController extends Controller {
 	public function show(ShowWeatherDataRequest $request, City $city, WeatherAdapter $weatherAdapter) {
 		$cache     = Cache::store("dynamics")->tags(["weather"]);
 		$reportKey = "weather-city-{$city->getKey()}";
 
+		/** @var WeatherReport|null $weatherReport */
 		$weatherReport = $cache->get($reportKey);
 
 		// If no report could be found, request one in the background, and fail this request

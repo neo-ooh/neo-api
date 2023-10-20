@@ -5,14 +5,14 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - WeatherForecastDay.php
+ * @neo/api - DayWeatherDatum.php
  */
 
 namespace Neo\Modules\Dynamics\Services\Weather;
 
 use Spatie\LaravelData\Data;
 
-class WeatherForecastDay extends Data {
+class DayWeatherDatum extends Data {
 	public function __construct(
 		public string           $date,
 
@@ -63,7 +63,7 @@ class WeatherForecastDay extends Data {
 
 		public float            $snow_probability_percent,
 
-		public float            $wind_direction_degrees,
+		public string           $wind_direction_cardinal,
 
 		/**
 		 * @var float km/h / miles/h

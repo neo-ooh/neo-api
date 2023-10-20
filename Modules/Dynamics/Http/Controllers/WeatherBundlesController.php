@@ -21,6 +21,7 @@ use Neo\Modules\Dynamics\Http\Requests\WeatherBundles\MatchWeatherBundleRequest;
 use Neo\Modules\Dynamics\Http\Requests\WeatherBundles\ShowWeatherBundleRequest;
 use Neo\Modules\Dynamics\Http\Requests\WeatherBundles\StoreWeatherBundleRequest;
 use Neo\Modules\Dynamics\Http\Requests\WeatherBundles\UpdateWeatherBundleRequest;
+use Neo\Modules\Dynamics\Http\Resources\WeatherBundleResource;
 use Neo\Modules\Dynamics\Models\Structs\WeatherBundleTargeting;
 use Neo\Modules\Dynamics\Models\WeatherBundle;
 
@@ -58,7 +59,7 @@ class WeatherBundlesController extends Controller {
 
 	public function update(UpdateWeatherBundleRequest $request, WeatherBundle $weatherBundle) {
 		$rawTargeting = $request->input("targeting", null);
-		
+
 		$weatherBundle->name                 = $request->input("name");
 		$weatherBundle->flight_id            = $request->input("flight_id");
 		$weatherBundle->priority             = $request->input("priority");
@@ -84,27 +85,33 @@ class WeatherBundlesController extends Controller {
 
 	public function match(MatchWeatherBundleRequest $request) {
 		$now      = Carbon::now()->toDateString();
-		$formatId = $request->input("format_id");
+		$formatId = (int)$request->input("format_id");
 
-		WeatherBundle::query()
-		             ->where(function (Builder $query) use ($now) {
-			             $query->where(function (Builder $query) use ($now) {
-				             $query->where("ignore_years", "=", true)
-				                   ->whereBetween(DB::raw("DATE_FORMAT('$now', '%m-%d')"), [
-					                   DB::raw("DATE_FORMAT(`start_date`, '%m-%d')"),
-					                   DB::raw("DATE_FORMAT(`end_date`, '%m-%d')"),
-				                   ]);
-			             })->orWhere(function (Builder $query) use ($now) {
-				             $query->where("ignore_years", "=", false)
-				                   ->whereBetween($now, ['start_date', 'end_date']);
-			             });
+		$bundle = WeatherBundle::query()
+		                       ->where(function (Builder $query) use ($now) {
+			                       $query->where(function (Builder $query) use ($now) {
+				                       $query->where("ignore_years", "=", true)
+				                             ->whereBetween(DB::raw("DATE_FORMAT('$now', '%m-%d')"), [
+					                             DB::raw("DATE_FORMAT(`start_date`, '%m-%d')"),
+					                             DB::raw("DATE_FORMAT(`end_date`, '%m-%d')"),
+				                             ]);
+			                       })->orWhere(function (Builder $query) use ($now) {
+				                       $query->where("ignore_years", "=", false)
+				                             ->whereBetween(DB::raw($now), ['start_date', 'end_date']);
+			                       });
 
-		             })
-		             ->whereHas("formats", function (Builder $query) use ($formatId) {
-			             $query->where("id", "=", $formatId);
-		             })
+		                       })
+		                       ->whereHas("formats", function (Builder $query) use ($formatId) {
+			                       $query->where("id", "=", $formatId);
+		                       })
 			// TODO: Where Targeting
-			         ->orderByDesc("priority")
-		             ->first();
+			                   ->orderByDesc("priority")
+		                       ->first();
+
+		$bundle?->load("backgrounds");
+
+		$bundle->backgrounds = $bundle->backgrounds->where("format_id", "===", $formatId);
+
+		return new Response($bundle ? new WeatherBundleResource($bundle) : null);
 	}
 }

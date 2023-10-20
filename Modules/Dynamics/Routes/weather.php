@@ -42,11 +42,11 @@ Route::group([
 
 		Route::   get("dynamics/weather/bundles/", [WeatherBundlesController::class, "index"]);
 		Route::  post("dynamics/weather/bundles/", [WeatherBundlesController::class, "store"]);
+		Route::   get("dynamics/weather/bundles/match", [WeatherBundlesController::class, "match"]);
 		Route::   get("dynamics/weather/bundles/{weatherBundle}", [WeatherBundlesController::class, "show"]);
 		Route::   put("dynamics/weather/bundles/{weatherBundle}", [WeatherBundlesController::class, "update"]);
 		Route::delete("dynamics/weather/bundles/{weatherBundle}", [WeatherBundlesController::class, "destroy"]);
 
-		Route::   get("dynamics/weather/bundles/match", [WeatherBundlesController::class, "match"]);
 
 		/*
 		|----------------------------------------------------------------------

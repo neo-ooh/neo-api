@@ -16,13 +16,13 @@ use Spatie\LaravelData\DataCollection;
 
 class WeatherReport extends Data {
 	public function __construct(
-		public WeatherDatum   $now,
+		public CurrentWeatherDatum $now,
 
-		#[DataCollectionOf(WeatherForecastHour::class)]
-		public DataCollection $forecast_hourly,
+		#[DataCollectionOf(HourWeatherDatum::class)]
+		public DataCollection      $forecast_hourly,
 
-		#[DataCollectionOf(WeatherForecastDay::class)]
-		public DataCollection $forecast_daily,
+		#[DataCollectionOf(DayWeatherDatum::class)]
+		public DataCollection      $forecast_daily,
 	) {
 	}
 }

@@ -12,13 +12,14 @@ namespace Neo\Modules\Dynamics\Http\Requests\WeatherBundles;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Exists;
+use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Properties\Models\Property;
 
 class MatchWeatherBundleRequest extends FormRequest {
 	public function rules(): array {
 		return [
 			"property_id" => ["required", new Exists(Property::class, "actor_id")],
-			"format_id"   => ["required", new Exists(Property::class, "id")],
+			"format_id"   => ["required", new Exists(Format::class, "id")],
 		];
 	}
 

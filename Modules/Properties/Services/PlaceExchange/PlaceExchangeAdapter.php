@@ -161,7 +161,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 		$adUnit->location         = $adUnit->location ?? AdUnitLocation::from([
 			                                                                      "lat"                 => $product->geolocation->latitude,
 			                                                                      "lon"                 => $product->geolocation->longitude,
-			                                                                      "horizontal_accuracy" => 0,
+			                                                                      "horizontal_accuracy" => 15,
 			                                                                      "dma_code"            => null,
 		                                                                      ]);
 		$adUnit->location->lat    = $product->geolocation->latitude;

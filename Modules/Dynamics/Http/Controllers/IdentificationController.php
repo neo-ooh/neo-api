@@ -48,6 +48,7 @@ class IdentificationController extends Controller {
 		                })
 		                ->first();
 
+		/** @var Property|null $property */
 		$property = Property::query()
 		                    ->whereHas("actor", function (Builder $query) use ($player) {
 			                    $query->whereHas("own_locations", function (Builder $query) use ($player) {
@@ -69,7 +70,7 @@ class IdentificationController extends Controller {
 		return new Response([
 			                    "player"      => $player,
 			                    "format"      => $format,
-			                    "property_id" => $property->getKey(),
+			                    "property_id" => $property?->getKey(),
 			                    //			                    "product"  => $product,
 			                    //			                    "property" => $property,
 			                    "address"     => $property?->address()->first(),

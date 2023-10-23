@@ -87,6 +87,7 @@ class WeatherBundlesController extends Controller {
 		$now      = Carbon::now()->toDateString();
 		$formatId = (int)$request->input("format_id");
 
+		/** @var WeatherBundle|null $bundle */
 		$bundle = WeatherBundle::query()
 		                       ->where(function (Builder $query) use ($now) {
 			                       $query->where(function (Builder $query) use ($now) {
@@ -108,9 +109,10 @@ class WeatherBundlesController extends Controller {
 			                   ->orderByDesc("priority")
 		                       ->first();
 
-		$bundle?->load("backgrounds");
-
-		$bundle->backgrounds = $bundle->backgrounds->where("format_id", "===", $formatId);
+		if ($bundle) {
+			$bundle->load("backgrounds");
+			$bundle->backgrounds = $bundle->backgrounds->where("format_id", "===", $formatId);
+		}
 
 		return new Response($bundle ? new WeatherBundleResource($bundle) : null);
 	}

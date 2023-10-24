@@ -74,7 +74,7 @@ class POPSummaryTotals extends Component {
 			"media_value"    => $flights->sum("contracted_media_value"),
 			"impressions"    => $contractedImpressions,
 			"net_investment" => $contractedNetInvestment,
-			"cpm"            => $contractedNetInvestment / $contractedImpressions * 1000,
+			"cpm"            => $contractedImpressions > 0 ? $contractedNetInvestment / $contractedImpressions * 1000 : 0,
 		];
 
 		$totalImpressions = $flights->sum("counted_impressions");

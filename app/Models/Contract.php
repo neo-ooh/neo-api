@@ -35,6 +35,7 @@ use Vinkla\Hashids\Facades\Hashids;
  * @property string                            $contract_id // ID of the contract has set by sales (not related to the actual ID
  *           of the contract inside Connect)
  * @property integer                           $external_id
+ * @property integer|null                      $group_id
  * @property boolean                           $is_closed
  * @property integer                           $client_id
  * @property integer                           $salesperson_id
@@ -80,6 +81,7 @@ class Contract extends Model {
 			"advertiser"   => "advertiser",
 			"client"       => "client",
 			"flights"      => "flights",
+			"group"        => "group",
 			"lines"        => Relation::make(load: 'flights.lines'),
 			"locations"    => [
 				fn(Contract $contract) => $contract->flights
@@ -104,6 +106,10 @@ class Contract extends Model {
 	|--------------------------------------------------------------------------
 	*/
 
+	public function group(): BelongsTo {
+		return $this->belongsTo(Actor::class, "group_id", "id");
+	}
+	
 	public function salesperson(): BelongsTo {
 		return $this->belongsTo(Actor::class, "salesperson_id", "id");
 	}

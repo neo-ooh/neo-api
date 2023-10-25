@@ -131,12 +131,14 @@ class Creative extends BroadSignModel {
 		$attributes = [];
 
 		if ($storage === CreativeStorageType::Link) {
-			$attributes["expire_on_empty_remote_dir"] = "false";                                 // Don;t expire if connection is lost
+			/*$attributes["expire_on_empty_remote_dir"] = "false";                                 // Don;t expire if connection is lost
 			$attributes["io_strategy"]                = "esf";                                   // ???
 			$attributes["source"]                     = $creative->url;                          // URL to the resource
 			$attributes["source_append_id"]           = "false";                                 // Append player ID to url (no)
 			$attributes["source_expiry"]              = "0";                                     // Not sure
-			$attributes["source_refresh"]             = $creative->refresh_rate_minutes;         // URL refresh interval (minutes)
+			$attributes["source_refresh"]             = $creative->refresh_rate_minutes;         // URL refresh interval (minutes)*/
+			$attributes["direct_url"]      = $creative->url;
+			$attributes["show_scrollbars"] = false;
 		}
 
 		if ($creative->type === CreativeType::Static) {
@@ -154,7 +156,7 @@ class Creative extends BroadSignModel {
 	public static function import(BroadSignClient $client, CreativeResource $creative, CreativeStorageType $storageType): int {
 		return match ($creative->type) {
 			CreativeType::Static => static::importStaticCreative($client, $creative, $storageType),
-			CreativeType::Url    => static::importDynamicCreative($client, $creative),
+			CreativeType::Url    => static::importAsWebRedirect($client, $creative),
 		};
 	}
 
@@ -211,12 +213,13 @@ class Creative extends BroadSignModel {
 	/**
 	 * @throws JsonException
 	 */
-	protected static function importDynamicCreative(BroadSignClient $client, CreativeResource $creative): int {
+	protected static function importAsWebRedirect(BroadSignClient $client, CreativeResource $creative): int {
 		// Prepare the creative metadata for BroadSign
 		$metadata = [
 			"name"             => stripQuotes($creative->name),
 			"originalfilename" => stripQuotes($creative->fileName),
 			"size"             => "-1",
+			"mime"             => "html",
 			"attributes"       => static::getAttributesForCreative($creative, CreativeStorageType::Link),
 		];
 
@@ -259,7 +262,7 @@ class Creative extends BroadSignModel {
 		$req   = [];
 		$req[] = "curl -s";                                                                                                       // curl with silent output
 		$req[] = "-w '\n%{http_code}'";                                                                                           // display http status code on 2nd line
-		$req[] = "" . $endpoint->getUrl();                                                                                        // POST method + URL
+		$req[] = $endpoint->getUrl();                                                                                             // POST method + URL
 		$req[] = "-E" . $client->getConfig()
 		                       ->getCertPath();                                                                                                                             // BroadSign cert auth
 		$req[] = "-H 'Content-Type: multipart/mixed'";                                                                                                                      // Request Content Type

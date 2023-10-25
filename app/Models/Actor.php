@@ -27,6 +27,7 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Neo\Enums\ActorType;
+use Neo\Enums\Capability;
 use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasCampaigns;
 use Neo\Models\Traits\HasCapabilities;
@@ -51,13 +52,14 @@ use Neo\Rules\AccessibleActor;
  * @property string              $password
  * @property string              $locale
  * @property ActorType           $type
- * @property bool                $is_group              Tell if the current actor is a group
- * @property bool                $is_property           Tell if the current actor is a property. A property is always  group,
+ * @property bool                $is_contract              Tell if the current actor is matched with a contract
+ * @property bool                $is_group                 Tell if the current actor is a group
+ * @property bool                $is_property              Tell if the current actor is a property. A property is always a group,
  *           never a user.
- * @property bool                $is_locked             Tell if the current actor has been locked. A locked actor cannot login
- * @property int|null            $locked_by             Tell who locke this actor, if applicable
+ * @property bool                $is_locked                Tell if the current actor has been locked. A locked actor cannot login
+ * @property int|null            $locked_by                Tell who locke this actor, if applicable
  *
- * @property ActorDetails        $details               Meta information about the actor
+ * @property ActorDetails        $details                  Meta information about the actor
  *
  * @property Date                $created_at
  * @property Date                $updated_at
@@ -65,13 +67,14 @@ use Neo\Rules\AccessibleActor;
  * @property Date|null           $last_activity_at
  * @property Date|null           $deleted_at
  *
- * @property bool                $registration_sent     Tell if the registration email was sent to the actor. Not applicable to
+ * @property bool                $registration_sent        Tell if the registration email was sent to the actor. Not applicable
+ *           to
  *           groups
- * @property bool                $is_registered         Tell if the user has registered its account. Not applicable to groups
- * @property bool                $tos_accepted          Tell if the actor has accepted the current version of the TOS. Not
+ * @property bool                $is_registered            Tell if the user has registered its account. Not applicable to groups
+ * @property bool                $tos_accepted             Tell if the actor has accepted the current version of the TOS. Not
  *           applicable to groups
- * @property bool                $limited_access        If set, the actor does not have access to its group and group's children
- *           campaigns. Only to its own, its children campaigns and with user shared with it.
+ * @property bool                $limited_access           If set, the actor does not have access to its group and group's
+ *           children campaigns. Only to its own, its children campaigns and with user shared with it.
  *
  * @property int|null            $phone_id
  * @property Phone|null          $phone
@@ -144,6 +147,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 	 * @var array<string, string>
 	 */
 	protected $casts = [
+		"is_contract"      => "boolean",
 		"is_group"         => "boolean",
 		"is_property"      => "boolean",
 		"is_locked"        => "boolean",
@@ -170,6 +174,7 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 	protected $appends = [
 		"parent_id",
 		"parent_is_group",
+		"is_contract",
 		"is_property",
 		"type",
 	];
@@ -371,6 +376,13 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 			$getter->selectParent();
 		}
 
+		if ($this->hasCapability(Capability::contracts_edit)) {
+			$getter->selectContracts(
+				all        : $this->hasCapability(Capability::contracts_manage),
+				getChildren: true
+			);
+		}
+
 		return $ids ? $getter->getSelection() : $getter->getActors();
 	}
 
@@ -380,6 +392,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 
 	public function getParentIsGroupAttribute(): bool {
 		return $this->details->parent_is_group;
+	}
+
+	public function getIsContractAttribute(): bool {
+		return $this->details->is_contract;
 	}
 
 	public function getIsPropertyAttribute(): bool {
@@ -439,6 +455,10 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 	public function getTypeAttribute(): ActorType {
 		if ($this->is_property) {
 			return ActorType::Property;
+		}
+
+		if ($this->is_contract) {
+			return ActorType::Contract;
 		}
 
 		if ($this->is_group) {

@@ -46,7 +46,7 @@ class CampaignsController extends Controller {
 		if ($request->input("parent_id")) {
 			$actorIds = ActorsGetter::from($request->input("parent_id"))
 			                        ->selectFocus()
-			                        ->selectChildren(recursive: true)
+			                        ->selectChildren(recursive: $request->input("recursive", false))
 			                        ->getSelection();
 		} else {
 			$actorIds = Auth::user()?->getAccessibleActors(ids: true);

@@ -17,242 +17,272 @@ use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
 
 class ActorsGetter {
-    protected const CLOSURES_TABLE = 'actors_closures';
-    protected const SHARES_TABLE = 'actors_shares';
+	protected const CLOSURES_TABLE = 'actors_closures';
+	protected const SHARES_TABLE = 'actors_shares';
+	protected const CONTRACTS_TABLE = 'contracts';
 
-    /**
-     * @var Collection<int> List of selected actor ids
-     */
-    protected Collection $selection;
+	/**
+	 * @var Collection<int> List of selected actor ids
+	 */
+	protected Collection $selection;
 
-    protected function __construct(protected int $focus) {
-        $this->selection = collect();
-    }
+	protected function __construct(protected int $focus) {
+		$this->selection = collect();
+	}
 
-    /**
-     * Create a new instance of ActorsGetter with the given actor/actor id as focus
-     *
-     * @param int|Actor $actor
-     * @return static
-     */
-    public static function from(int|Actor $actor) {
-        if ($actor instanceof Actor) {
-            return new static($actor->getKey());
-        }
+	/**
+	 * Create a new instance of ActorsGetter with the given actor/actor id as focus
+	 *
+	 * @param int|Actor $actor
+	 * @return static
+	 */
+	public static function from(int|Actor $actor) {
+		if ($actor instanceof Actor) {
+			return new static($actor->getKey());
+		}
 
-        return new static($actor);
-    }
+		return new static($actor);
+	}
 
-    /**
-     * Update the getter focus with the given actor
-     *
-     * @param int|Actor $actor
-     * @return $this
-     */
-    public function setFocus(int|Actor $actor): self {
-        if ($actor instanceof Actor) {
-            $this->focus = $actor->getKey();
-        } else {
-            $this->focus = $actor;
-        }
+	/**
+	 * Update the getter focus with the given actor
+	 *
+	 * @param int|Actor $actor
+	 * @return $this
+	 */
+	public function setFocus(int|Actor $actor): self {
+		if ($actor instanceof Actor) {
+			$this->focus = $actor->getKey();
+		} else {
+			$this->focus = $actor;
+		}
 
-        return $this;
-    }
+		return $this;
+	}
 
-    public function reset(): self {
-        $this->selection = collect();
+	public function reset(): self {
+		$this->selection = collect();
 
-        return $this;
-    }
+		return $this;
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Getters
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Getters
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * Give the focused actor ID
-     *
-     * @return int
-     */
-    public function getFocus(): int {
-        return $this->focus;
-    }
+	/**
+	 * Give the focused actor ID
+	 *
+	 * @return int
+	 */
+	public function getFocus(): int {
+		return $this->focus;
+	}
 
-    /**
-     * List all the selected actor ids
-     *
-     * @return Collection<int>
-     */
-    public function getSelection(): Collection {
-        return $this->selection->unique()->whereNotNull();
-    }
+	/**
+	 * List all the selected actor ids
+	 *
+	 * @return Collection<int>
+	 */
+	public function getSelection(): Collection {
+		return $this->selection->unique()->whereNotNull();
+	}
 
-    /**
-     * List all the selected actors
-     *
-     * @return EloquentCollection<Actor>
-     */
-    public function getActors(): EloquentCollection {
-        return Actor::findMany($this->getSelection());
-    }
+	/**
+	 * List all the selected actors
+	 *
+	 * @return EloquentCollection<Actor>
+	 */
+	public function getActors(): EloquentCollection {
+		return Actor::findMany($this->getSelection());
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Internal Selectors
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Internal Selectors
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * @param int $focus
-     * @return int|null
-     */
-    public static function getParent(int $focus): int|null {
-        return DB::table(static::CLOSURES_TABLE)
-                 ->where("descendant_id", "=", $focus)
-                 ->where("depth", "=", 1)
-                 ->limit(1)
-                 ->pluck("ancestor_id")
-                 ->first();
-    }
+	/**
+	 * @param int $focus
+	 * @return int|null
+	 */
+	public static function getParent(int $focus): int|null {
+		return DB::table(static::CLOSURES_TABLE)
+		         ->where("descendant_id", "=", $focus)
+		         ->where("depth", "=", 1)
+		         ->limit(1)
+		         ->pluck("ancestor_id")
+		         ->first();
+	}
 
-    /**
-     * @param int $focus
-     * @return Collection<int>
-     */
-    public static function getParents(int $focus): Collection {
-        return DB::table(static::CLOSURES_TABLE)
-                 ->where("descendant_id", "=", $focus)
-                 ->where("depth", ">", 0)
-                 ->pluck("ancestor_id");
-    }
+	/**
+	 * @param int $focus
+	 * @return Collection<int>
+	 */
+	public static function getParents(int $focus): Collection {
+		return DB::table(static::CLOSURES_TABLE)
+		         ->where("descendant_id", "=", $focus)
+		         ->where("depth", ">", 0)
+		         ->pluck("ancestor_id");
+	}
 
-    /**
-     * @param int  $focus
-     * @param bool $recursive
-     * @return Collection<int>
-     */
-    public static function getChildren(int $focus, bool $recursive): Collection {
-        return DB::table(static::CLOSURES_TABLE)
-                 ->where("ancestor_id", "=", $focus)
-                 ->when($recursive, function (Builder $query) {
-                     $query->where("depth", ">", 0);
-                 }, function (Builder $query) {
-                     $query->where("depth", "=", 1);
-                 })
-                 ->pluck("descendant_id");
-    }
+	/**
+	 * @param int  $focus
+	 * @param bool $recursive
+	 * @return Collection<int>
+	 */
+	public static function getChildren(int $focus, bool $recursive): Collection {
+		return DB::table(static::CLOSURES_TABLE)
+		         ->where("ancestor_id", "=", $focus)
+		         ->when($recursive, function (Builder $query) {
+			         $query->where("depth", ">", 0);
+		         }, function (Builder $query) {
+			         $query->where("depth", "=", 1);
+		         })
+		         ->pluck("descendant_id");
+	}
 
-    /**
-     * @param int  $focus
-     * @param bool $getChildren
-     * @return Collection<int>
-     */
-    public static function getSiblings(int $focus, bool $getChildren): Collection {
-        $parent = static::getParent($focus);
+	/**
+	 * @param int  $focus
+	 * @param bool $getChildren
+	 * @return Collection<int>
+	 */
+	public static function getSiblings(int $focus, bool $getChildren): Collection {
+		$parent = static::getParent($focus);
 
-        // Check if we have a parent, if not, we are at the root of the tree and sibling querying works differently
-        if (!$parent) {
-            $actors = DB::table("actors_details")
-                        ->whereNull("parent_id")
-                        ->where("id", "<>", $focus)
-                        ->pluck("id");
-        } else {
-            // List the parent's children, excluding the current focus
-            $actors = static::getChildren($parent, recursive: false)
-                            ->where(null, '!==', $focus);
-        }
+		// Check if we have a parent, if not, we are at the root of the tree and sibling querying works differently
+		if (!$parent) {
+			$actors = DB::table("actors_details")
+			            ->whereNull("parent_id")
+			            ->where("id", "<>", $focus)
+			            ->pluck("id");
+		} else {
+			// List the parent's children, excluding the current focus
+			$actors = static::getChildren($parent, recursive: false)
+			                ->where(null, '!==', $focus);
+		}
 
-        // If the siblings children are requested, load them as well
-        if ($getChildren) {
-            $actors = $actors->merge(
-                DB::table(static::CLOSURES_TABLE)
-                  ->whereIn("ancestor_id", $actors)
-                  ->where("depth", ">", "0")
-                  ->pluck("descendant_id")
-            );
-        }
+		// If the siblings children are requested, load them as well
+		if ($getChildren) {
+			$actors = $actors->merge(
+				DB::table(static::CLOSURES_TABLE)
+				  ->whereIn("ancestor_id", $actors)
+				  ->where("depth", ">", "0")
+				  ->pluck("descendant_id")
+			);
+		}
 
-        return $actors;
-    }
+		return $actors;
+	}
 
-    /**
-     * @param int  $focus
-     * @param bool $getChildren
-     * @return Collection<int>
-     */
-    public static function getShared(int $focus, bool $getChildren): Collection {
-        $actors = DB::table(static::SHARES_TABLE)
-                    ->where("shared_with_id", "=", $focus)
-                    ->pluck("sharer_id");
+	/**
+	 * @param int  $focus
+	 * @param bool $getChildren
+	 * @return Collection<int>
+	 */
+	public static function getShared(int $focus, bool $getChildren): Collection {
+		$actors = DB::table(static::SHARES_TABLE)
+		            ->where("shared_with_id", "=", $focus)
+		            ->pluck("sharer_id");
 
-        if ($getChildren) {
-            $actors = $actors->merge(
-                DB::table(static::CLOSURES_TABLE)
-                  ->whereIn("ancestor_id", $actors)
-                  ->where("depth", ">", "0")
-                  ->pluck("descendant_id")
-            );
-        }
+		if ($getChildren) {
+			$actors = $actors->merge(
+				DB::table(static::CLOSURES_TABLE)
+				  ->whereIn("ancestor_id", $actors)
+				  ->where("depth", ">", "0")
+				  ->pluck("descendant_id")
+			);
+		}
 
-        return $actors;
-    }
+		return $actors;
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Selectors
-    |--------------------------------------------------------------------------
-    */
+	public static function getContracts(int|null $salespersonId = null, bool $getChildren = true) {
+		$actors = DB::table(static::CONTRACTS_TABLE)
+		            ->when("salesperson_id", function (Builder $query) use ($salespersonId) {
+			            $query->where("salesperson_id", "=", $salespersonId);
+		            })
+		            ->pluck("group_id")
+		            ->unique()
+		            ->whereNotNull();
 
-    public function selectFocus(): self {
-        $this->selection->push($this->focus);
+		if ($getChildren) {
+			$actors = $actors->merge(
+				DB::table(static::CLOSURES_TABLE)
+				  ->whereIn("ancestor_id", $actors)
+				  ->where("depth", ">", "0")
+				  ->pluck("descendant_id")
+			);
+		}
 
-        return $this;
-    }
+		return $actors;
+	}
 
-    public function selectParent(): self {
-        $parent = static::getParent($this->focus);
+	/*
+	|--------------------------------------------------------------------------
+	| Selectors
+	|--------------------------------------------------------------------------
+	*/
 
-        // Check if we have a parent, if not, short-circuit to prevent adding a null value to the selection
-        if (!$parent) {
-            return $this;
-        }
+	public function selectFocus(): self {
+		$this->selection->push($this->focus);
 
-        $this->selection->push($parent);
+		return $this;
+	}
 
-        return $this;
-    }
+	public function selectParent(): self {
+		$parent = static::getParent($this->focus);
 
-    public function selectParents(): self {
-        $this->selection = $this->selection->merge(
-            static::getParents($this->focus),
-        );
+		// Check if we have a parent, if not, short-circuit to prevent adding a null value to the selection
+		if (!$parent) {
+			return $this;
+		}
 
-        return $this;
-    }
+		$this->selection->push($parent);
 
-    public function selectChildren(bool $recursive = false): self {
-        $this->selection = $this->selection->merge(
-            static::getChildren($this->focus, $recursive),
-        );
+		return $this;
+	}
 
-        return $this;
-    }
+	public function selectParents(): self {
+		$this->selection = $this->selection->merge(
+			static::getParents($this->focus),
+		);
 
-    public function selectSiblings(bool $getChildren = false): self {
-        $this->selection = $this->selection->merge(
-            static::getSiblings($this->focus, $getChildren),
-        );
+		return $this;
+	}
 
-        return $this;
-    }
+	public function selectChildren(bool $recursive = false): self {
+		$this->selection = $this->selection->merge(
+			static::getChildren($this->focus, $recursive),
+		);
 
-    public function selectShared(bool $getChildren = false): self {
-        $this->selection = $this->selection->merge(
-            static::getShared($this->focus, $getChildren),
-        );
+		return $this;
+	}
 
-        return $this;
-    }
+	public function selectSiblings(bool $getChildren = false): self {
+		$this->selection = $this->selection->merge(
+			static::getSiblings($this->focus, $getChildren),
+		);
+
+		return $this;
+	}
+
+	public function selectShared(bool $getChildren = false): self {
+		$this->selection = $this->selection->merge(
+			static::getShared($this->focus, $getChildren),
+		);
+
+		return $this;
+	}
+
+	public function selectContracts(bool $all = false, bool $getChildren = false) {
+		$this->selection = $this->selection->merge(
+			static::getContracts($all ? null : $this->focus, $getChildren),
+		);
+
+		return $this;
+	}
 }

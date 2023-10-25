@@ -45,9 +45,15 @@ class ActorsController extends Controller {
 		$params = $request->validated();
 
 		if ($request->input("parent_id")) {
-			$actors = ActorsGetter::from($request->input("parent_id"))
-			                      ->selectChildren(recursive: true)
-			                      ->getActors();
+			$getter = ActorsGetter::from($request->input("parent_id"))
+			                      ->selectChildren(recursive: $request->input("recursive", false));
+
+
+			if ($request->input("with_parent", false)) {
+				$getter->selectFocus();
+			}
+
+			$actors = $getter->getActors();
 		} else {
 			/** @var Collection $actors */
 			$actors = Auth::user()?->getAccessibleActors() ?? new Collection();
@@ -150,7 +156,7 @@ class ActorsController extends Controller {
 		if (count($request->all()) === 0) {
 			return new Response([
 				                    "code" => "empty-request",
-				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             "message" => "You must pass at lease 1 parameter when calling this route",
+				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         "message" => "You must pass at lease 1 parameter when calling this route",
 			                    ], 422);
 		}
 
@@ -184,7 +190,7 @@ class ActorsController extends Controller {
 			if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
 				return new Response([
 					                    'code' => 'actor.hierarchy-loop',
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             'message' => 'Parent assignment would result in incoherent actors hierarchy',
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         'message' => 'Parent assignment would result in incoherent actors hierarchy',
 					                    'data' => $actor,
 				                    ], 403);
 			}

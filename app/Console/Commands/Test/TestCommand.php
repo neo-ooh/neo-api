@@ -11,8 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Properties\Enums\MediaType;
-use Neo\Modules\Properties\Models\Product;
+use Neo\Models\Utils\ActorsGetter;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -25,15 +24,6 @@ class TestCommand extends Command {
 	 * @throws Exception
 	 */
 	public function handle() {
-		$product  = Product::find(448);
-		$resource = $product->toResource(6);
-
-		dump(
-			[
-				...(in_array(MediaType::Image, $resource->allowed_media_types) ? ["image/jpeg", "image/png"] : []),
-				...(in_array(MediaType::Video, $resource->allowed_media_types) ? ["video/mp4"] : []),
-				...(in_array(MediaType::HTML, $resource->allowed_media_types) ? ["text/html"] : []),
-			]
-		);
+		dump(ActorsGetter::getContracts(808, true));
 	}
 }

@@ -20,35 +20,37 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int  $parent_id
  * @property bool $parent_is_group
  * @property bool $is_property
+ * @property bool $is_contract
  *
  * @mixin Builder
  */
 class ActorDetails extends DBView {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'actors_details';
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'actors_details';
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'parent_is_group' => 'boolean',
-        'is_property'     => 'boolean',
-    ];
+	/**
+	 * The attributes that should be cast.
+	 *
+	 * @var array<string, string>
+	 */
+	protected $casts = [
+		'parent_is_group' => 'boolean',
+		'is_property'     => 'boolean',
+		'is_contract'     => 'boolean',
+	];
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    public function actor(): BelongsTo {
-        return $this->belongsTo(Actor::class, 'id', 'id');
-    }
+	public function actor(): BelongsTo {
+		return $this->belongsTo(Actor::class, 'id', 'id');
+	}
 }

@@ -61,7 +61,7 @@ class AvailabilitiesController {
                 AND DATE_FORMAT(`d`.`d`, "%m-%d") BETWEEN DATE_FORMAT(`lc`.`start_date`, "%m-%d") AND DATE_FORMAT(`lc`.`end_date`, "%m-%d")
                    LEFT JOIN `products_unavailabilities` `pu` ON `p`.`id` = `pu`.`product_id`
                    LEFT JOIN `properties_unavailabilities` `pru` ON `pru`.`property_id` = `p`.`property_id`
-                   LEFT JOIN `unavailabilities` `u` ON (`pu`.`unavailability_id` = `u`.`id` OR `pru`.`unavailability_id` = `u`.`id`)
+                   LEFT JOIN `unavailabilities` `u` ON `pu`.`unavailability_id` = `u`.`id` OR `pru`.`unavailability_id` = `u`.`id` AND `u`.deleted_at IS NULL
                 AND ((`u`.`start_date` IS NOT NULL AND `u`.`end_date` IS NOT NULL AND
                       `d`.`d` BETWEEN `u`.`start_date` AND `u`.`end_date`)
                   OR (`u`.`start_date` IS NOT NULL AND `u`.`end_date` IS NULL AND `u`.`start_date` <= `d`.`d`)
@@ -150,7 +150,7 @@ class AvailabilitiesController {
 									GROUP BY `p`.`id`, `d`.`d`
 									EOS
 						               , [$productId]);
-								   
+
 					               return $availabilities;
 				               });
 

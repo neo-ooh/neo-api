@@ -111,7 +111,7 @@ class AvailabilitiesController {
 			               ->remember(
 				               key     : "availabilities-" . $productId . "-" . $year,
 				               ttl     : $cacheEnd,
-				               callback: function () use ($year, $loadDates, $datesLoaded, $productId) {
+				               callback: function () use ($year, $loadDates, &$datesLoaded, $productId) {
 					               if (!$datesLoaded) {
 						               $loadDates();
 						               $datesLoaded = true;

@@ -45,6 +45,8 @@ class CampaignPlannerController {
 	}
 
 	public function dataChunk_1(GetCampaignPlannerDataRequest $request) {
+		set_time_limit(120);
+
 		/** @var Collection<Property> $properties */
 		$properties = $this->getPropertiesQuery()->get();
 
@@ -59,14 +61,14 @@ class CampaignPlannerController {
 			"id"               => $property->actor_id,
 			"is_sellable"      => $property->is_sellable,
 			"name"             => $property->actor->name,
-			"address"          => $property->address,
+			"address"          => $property->address->makeHidden(["created_at", "updated_at"]),
 			"network_id"       => $property->network_id,
 			"pricelist_id"     => $property->pricelist_id,
-			"translations"     => $property->translations,
+			"translations"     => $property->translations->makeHidden(["created_at", "updated_at"]),
 			"website"          => $property->website,
-			"opening_hours"    => $property->opening_hours,
+			"opening_hours"    => $property->opening_hours->makeHidden(["created_at", "updated_at"]),
 			"has_tenants"      => $property->has_tenants,
-			"tags"             => $property->actor->tags,
+			"tags"             => $property->actor->tags->makeHidden(["created_at", "updated_at"]),
 			"cover_picture_id" => $property->cover_picture_id,
 			"type_id"          => $property->type_id,
 		])->all();

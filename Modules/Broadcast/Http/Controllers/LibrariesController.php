@@ -36,12 +36,15 @@ class LibrariesController extends Controller {
 	 */
 	public function index(ListLibrariesRequest $request): Response {
 		if ($request->input("parent_id")) {
-			$actors = ActorsGetter::from($request->input("parent_id"))
-			                      ->selectFocus()
-			                      ->selectChildren(recursive: $request->input("recursive", false))
-			                      ->getSelection();
+			$getter = ActorsGetter::from($request->input("parent_id"))
+			                      ->selectFocus();
+			if ($request->input("recursive", false)) {
+				$getter->selectChildren(recursive: true);
+			}
+
+			$actors = $getter->getSelection();
 		} else {
-			$actors = Auth::user()?->getAccessibleActors(ids: true);
+			$actors = Auth::user()?->getAccessibleActors(shallow: !$request->input("recursive", true), ids: true);
 		}
 
 		clock($actors);

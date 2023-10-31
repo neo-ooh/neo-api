@@ -14,17 +14,17 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class BatchRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "requests"           => ["required", "array"],
-            "requests.*.id"      => ["required", "int"],
-            "requests.*.uri"     => ["required", "string"],
-            "requests.*.method"  => ["required", Rule::in(["get", "post", "put", "patch", "delete"])],
-            "requests.*.payload" => ["sometimes"],
-        ];
-    }
+	public function rules(): array {
+		return [
+			"requests"           => ["required", "array"],
+			"requests.*.id"      => ["required"],
+			"requests.*.uri"     => ["required", "string"],
+			"requests.*.method"  => ["required", Rule::in(["get", "post", "put", "patch", "delete"])],
+			"requests.*.payload" => ["sometimes"],
+		];
+	}
 
-    public function authorize(): bool {
-        return true;
-    }
+	public function authorize(): bool {
+		return true;
+	}
 }

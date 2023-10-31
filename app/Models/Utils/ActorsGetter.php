@@ -126,6 +126,7 @@ class ActorsGetter {
 		return DB::table(static::CLOSURES_TABLE)
 		         ->where("descendant_id", "=", $focus)
 		         ->where("depth", ">", 0)
+		         ->orderBy("depth", 'desc')
 		         ->pluck("ancestor_id");
 	}
 

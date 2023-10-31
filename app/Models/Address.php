@@ -34,50 +34,50 @@ use Neo\Modules\Properties\Services\Resources\Address as AddressResource;
  * @property string      $string_representation Human-readable version of the address
  */
 class Address extends Model {
-    protected $table = "addresses";
+	protected $table = "addresses";
 
-    protected $primaryKey = "id";
+	protected $primaryKey = "id";
 
-    protected $casts = [
-        "geolocation" => Point::class,
-    ];
+	protected $casts = [
+		"geolocation" => Point::class,
+	];
 
-    protected $with = [
-        "city",
-        "city.province",
-        "city.province.country",
-        "city.market",
-    ];
+	protected $with = [
+		"city",
+		"city.province",
+		"city.province.country",
+		"city.market",
+	];
 
-    protected $appends = [
-        "string_representation",
-    ];
+	protected $appends = [
+//        "string_representation",
+	];
 
-    public function city(): BelongsTo {
-        return $this->belongsTo(City::class, "city_id");
-    }
+	public function city(): BelongsTo {
+		return $this->belongsTo(City::class, "city_id");
+	}
 
-    public function getStringRepresentationAttribute(): string {
-        $str = $this->line_1;
-        if ($this->line_2 && $this->line_2 !== '') {
-            $str .= ", $this->line_2";
-        }
+	public function getStringRepresentationAttribute(): string {
+		$str = $this->line_1;
+		if ($this->line_2 && $this->line_2 !== '') {
+			$str .= ", $this->line_2";
+		}
 
-        $zipcode = substr($this->zipcode, 0, 3) . " " . substr($this->zipcode, 3);
+		$zipcode = substr($this->zipcode, 0, 3) . " " . substr($this->zipcode, 3);
 
-        $str .= ", {$this->city->name} {$this->city->province->slug} $zipcode";
-        $str .= ", {$this->city->province->country->name}";
+		$str .= ", {$this->city->name} {$this->city->province->slug} $zipcode";
+		$str .= ", {$this->city->province->country->name}";
 
-        return $str;
-    }
+		return $str;
+	}
 
-    public function toInventoryResource(): AddressResource {
-        return new AddressResource(
-            line_1 : $this->line_1,
-            line_2 : $this->line_2,
-            city   : $this->city->toInventoryResource(),
-            zipcode: $this->zipcode,
-            full   : $this->getStringRepresentationAttribute(),
-        );
-    }
+	public function toInventoryResource(): AddressResource {
+		return new AddressResource(
+			line_1 : $this->line_1,
+			line_2 : $this->line_2,
+			city   : $this->city->toInventoryResource(),
+			zipcode: $this->zipcode,
+			full   : $this->getStringRepresentationAttribute(),
+		);
+	}
 }

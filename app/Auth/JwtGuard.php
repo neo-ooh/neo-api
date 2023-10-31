@@ -91,7 +91,7 @@ abstract class JwtGuard implements Guard {
 		// Token is valid, use its `uid` property to get the matching user
 		// Get the user
 		/** @var Actor|null $actor */
-		$actor = Actor::query()->find($this->token['uid']);
+		$actor = Actor::query()->whereKey($this->token['uid'])->first();
 
 		if (is_null($actor)) {
 			return; // Bad user

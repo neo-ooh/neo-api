@@ -44,12 +44,15 @@ class CampaignsController extends Controller {
 	 */
 	public function index(ListCampaignsRequest $request): Response {
 		if ($request->input("parent_id")) {
-			$actorIds = ActorsGetter::from($request->input("parent_id"))
-			                        ->selectFocus()
-			                        ->selectChildren(recursive: $request->input("recursive", false))
-			                        ->getSelection();
+			$getter = ActorsGetter::from($request->input("parent_id"))
+			                      ->selectFocus();
+			if ($request->input("recursive", false)) {
+				$getter->selectChildren(recursive: true);
+			}
+
+			$actorIds = $getter->getSelection();
 		} else {
-			$actorIds = Auth::user()?->getAccessibleActors(ids: true);
+			$actorIds = Auth::user()?->getAccessibleActors(shallow: !$request->input("recursive", true), ids: true);
 		}
 
 		/** @var Collection<Campaign> $campaigns */

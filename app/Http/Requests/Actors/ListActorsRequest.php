@@ -52,12 +52,14 @@ class ListActorsRequest extends FormRequest {
 			"capabilities"   => ["array"],
 			"capabilities.*" => [new Enum(Capability::class)],
 
-			// Legacy
-			"exclude"        => ["sometimes", "array"],
-			"exclude.*"      => ["integer", "exists:actors,id"],
-			"groups"         => ["sometimes", "boolean"],
+			"with"      => ["array", new PublicRelations(Actor::class)],
+			"compact"   => ["sometimes", "boolean"],
 
-			"with" => ["array", new PublicRelations(Actor::class)],
+			// Legacy
+			"exclude"   => ["sometimes", "array"],
+			"exclude.*" => ["integer", "exists:actors,id"],
+			"groups"    => ["sometimes", "boolean"],
+
 		];
 	}
 }

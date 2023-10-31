@@ -32,6 +32,7 @@ Route::group([
 	Route::  post("actors", ActorsController::class . "@store");
 
 	Route::   get("actors/{actor}", ActorsController::class . "@show");
+	Route::   get("actors/{actor}/hierarchy", ActorsController::class . "@getHierarchy");
 	Route::   put("actors/{actor}", ActorsController::class . "@update");
 	Route::delete("actors/{actor}", ActorsController::class . "@destroy");
 

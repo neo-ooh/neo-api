@@ -24,6 +24,14 @@ class TestCommand extends Command {
 	 * @throws Exception
 	 */
 	public function handle() {
-		dump(ActorsGetter::getContracts(808, true));
+//		dump(Actor::find(448)->getAccessibleActors(shallow: true)->pluck("id"));
+//		dump(ActorsGetter::from(40)
+//		                 ->selectChildren(recursive: false)
+//		                 ->getSelection());
+
+		dump(ActorsGetter::from(558)
+		                 ->selectParents()
+		                 ->selectFocus()
+		                 ->getSelection());
 	}
 }

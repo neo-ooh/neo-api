@@ -427,23 +427,23 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 	}
 
 	public function getParentIdAttribute(): ?int {
-		return $this->getRelation("details")->parent_id;
+		return $this->details->parent_id;
 	}
 
 	public function getParentIsGroupAttribute(): bool {
-		return $this->getRelation("details")->parent_is_group;
+		return $this->details->parent_is_group;
 	}
 
 	public function getIsContractAttribute(): bool {
-		return $this->getRelation("details")->is_contract;
+		return $this->details->is_contract;
 	}
 
 	public function getIsPropertyAttribute(): bool {
-		return $this->getRelation("details")->is_property;
+		return $this->details->is_property;
 	}
 
 	public function getPathIdsAttribute(): string {
-		return $this->getRelation("details")->path_ids;
+		return $this->details->path_ids;
 	}
 
 	public function ancestors_ids() {

@@ -13,7 +13,9 @@ namespace Neo\Http\Requests\Contracts;
 use Auth;
 use Gate;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Models\Actor;
 use Neo\Models\Contract;
 use Neo\Rules\PublicRelations;
 
@@ -36,8 +38,10 @@ class UpdateContractRequest extends FormRequest {
 	 */
 	public function rules() {
 		return [
-			"is_closed"      => ["required", "boolean"],
-			"salesperson_id" => ["required", "exists:actors,id"],
+			"group_id"       => ["sometimes", "nullable", new Exists(Actor::class, "id")],
+			"salesperson_id" => ["required", new Exists(Actor::class, "id")],
+
+			"is_closed" => ["required", "boolean"],
 
 			"with" => ["array", new PublicRelations(Contract::class)],
 		];

@@ -37,6 +37,7 @@ class ListCampaignsRequest extends FormRequest {
 	public function rules(): array {
 		return [
 			"parent_id" => ["sometimes", "integer", new AccessibleActor(true)],
+			"recursive" => ["sometimes", "boolean"],
 
 			"layout_id" => ["integer", new Exists(Layout::class, "id")],
 			"with"      => ["array", new PublicRelations(Campaign::class)],

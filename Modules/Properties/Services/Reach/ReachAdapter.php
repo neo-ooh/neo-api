@@ -347,7 +347,6 @@ class ReachAdapter extends InventoryAdapter {
 	 */
 	protected function deleteScreen(ReachClient $client, int $screenId): void {
 		try {
-
 			$screen = new Screen($client);
 			$screen->setKey($screenId);
 			$screen->delete();

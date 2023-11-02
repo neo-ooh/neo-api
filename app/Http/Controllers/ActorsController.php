@@ -21,6 +21,7 @@ use Neo\Enums\ActorType;
 use Neo\Enums\Capability;
 use Neo\Http\Requests\Actors\DestroyActorsRequest;
 use Neo\Http\Requests\Actors\ImpersonateActorRequest;
+use Neo\Http\Requests\Actors\ListActorHierarchyRequest;
 use Neo\Http\Requests\Actors\ListActorsByIdRequest;
 use Neo\Http\Requests\Actors\ListActorsRequest;
 use Neo\Http\Requests\Actors\RequestActorTokenRequest;
@@ -41,20 +42,52 @@ use Symfony\Component\Mailer\Exception\TransportException;
  * @package Neo\Http\Controllers
  */
 class ActorsController extends Controller {
+	protected function compactActors(Collection $actors) {
+		return $actors->makeHidden([
+			                           "created_at",
+			                           "updated_at",
+			                           "deleted_at",
+			                           "tos_accepted",
+			                           "two_fa_method",
+			                           "locked_by",
+			                           "is_locked",
+			                           "branding_id",
+			                           "last_login_at",
+			                           "last_activity_at",
+			                           "limited_access",
+			                           "locale",
+			                           "phone_id",
+		                           ]);
+	}
+
 	public function index(ListActorsRequest $request): Response {
 		$params = $request->validated();
 
 		if ($request->input("parent_id")) {
-			$actors = ActorsGetter::from($request->input("parent_id"))
-			                      ->selectChildren(recursive: true)
-			                      ->getActors();
+			$getter = ActorsGetter::from($request->input("parent_id"))
+			                      ->selectChildren(recursive: $request->input("recursive", false));
+
+
+			if ($request->input("with_parent", false)) {
+				$getter->selectFocus();
+			}
+
+			$actors = $getter->getActors();
 		} else {
-			/** @var Collection $actors */
-			$actors = Auth::user()?->getAccessibleActors() ?? new Collection();
+			if ($request->input("recursive", true)) {
+				/** @var Collection $actors */
+				$actors = Auth::user()?->getAccessibleActors(shallow: false) ?? new Collection();
+			} else if (Auth::id() === 1) {
+				$actors = Auth::user()->getAccessibleActors(children: true, shallow: true, shared: false, parent: false);
+			} else {
+				$actors = Actor::query()->findMany(Auth::user()->getRootAccessesShallow());
+			}
 		}
 
 		if ($request->input("withself", false)) {
 			$actors = $actors->push(Auth::user());
+		} else {
+			$actors = $actors->where("id", "!==", Auth::id());
 		}
 
 		$actors = $actors->unique("id");
@@ -83,6 +116,10 @@ class ActorsController extends Controller {
 			$actors = $actors->whereNotIn("id", $params["exclude"]);
 		}
 
+		if ($request->has("compact")) {
+			$actors = $this->compactActors($actors);
+		}
+
 		return new Response($actors->loadPublicRelations()->sortBy("name")->values());
 	}
 
@@ -92,6 +129,26 @@ class ActorsController extends Controller {
 		                         ->orderBy("name")
 		                         ->get()
 		                         ->values()->all());
+	}
+
+	public function getHierarchy(ListActorHierarchyRequest $request, Actor $actor) {
+		$hierarchyIds = ActorsGetter::from($actor)
+		                            ->selectParents()
+		                            ->selectFocus()
+		                            ->getSelection();
+
+		$accessibleActors = Auth::user()->getAccessibleActors(ids: true)->toArray();
+
+		$hierarchyIds = $hierarchyIds->filter(fn($actorId) => in_array($actorId, $accessibleActors));
+
+		$actors    = Actor::query()->findMany($hierarchyIds);
+		$hierarchy = Collection::make($hierarchyIds->map(fn($actorId) => $actors->firstWhere("id", "=", $actorId)));
+
+		if ($request->input("compact")) {
+			$hierarchy = $this->compactActors($hierarchy);
+		}
+
+		return new Response($hierarchy->values()->loadPublicRelations());
 	}
 
 	public function show(Request $request, Actor $actor): Response {
@@ -150,7 +207,7 @@ class ActorsController extends Controller {
 		if (count($request->all()) === 0) {
 			return new Response([
 				                    "code" => "empty-request",
-				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             "message" => "You must pass at lease 1 parameter when calling this route",
+				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "message" => "You must pass at lease 1 parameter when calling this route",
 			                    ], 422);
 		}
 
@@ -184,7 +241,7 @@ class ActorsController extends Controller {
 			if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
 				return new Response([
 					                    'code' => 'actor.hierarchy-loop',
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             'message' => 'Parent assignment would result in incoherent actors hierarchy',
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    'message' => 'Parent assignment would result in incoherent actors hierarchy',
 					                    'data' => $actor,
 				                    ], 403);
 			}

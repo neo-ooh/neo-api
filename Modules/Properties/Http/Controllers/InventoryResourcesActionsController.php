@@ -30,109 +30,116 @@ use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 
 class InventoryResourcesActionsController extends Controller {
-    public function push(PushInventoryResourceRequest $request, InventoryResource $inventoryResource) {
-        // Products can be pushed directly, but properties cannot. A push on a property, is a push on all its products
-        /** @var Collection<Product> $products */
-        $products = $inventoryResource->products;
+	public function push(PushInventoryResourceRequest $request, InventoryResource $inventoryResource) {
+		// Products can be pushed directly, but properties cannot. A push on a property, is a push on all its products
+		/** @var Collection<Product> $products */
+		$products = $inventoryResource->products;
 
-        if ($inventoryResource->type === InventoryResourceType::Product && $products->isEmpty()) {
-            return new Response([], 404);
-        }
+		if ($inventoryResource->type === InventoryResourceType::Product && $products->isEmpty()) {
+			return new Response([], 404);
+		}
 
-        // Loop on each resource
-        /** @var Product $product */
-        foreach ($products as $product) {
-            $inventoriesID = $request->has("inventory_id")
-                ? [$request->input("inventory_id")]
-                : $product->enabled_inventories;
+		$allSuccess = true;
 
-            // Trigger a loop for each enabled inventory
-            foreach ($inventoriesID as $inventoryID) {
-                if ($request->input("sync", false)) {
-                    (new PushProductJob($product->inventory_resource_id, $inventoryID))->handle();
-                } else {
-                    PushProductJob::dispatch($product->inventory_resource_id, $inventoryID);
-                }
-            }
-        }
+		// Loop on each resource
+		/** @var Product $product */
+		foreach ($products as $product) {
+			$inventoriesID = $request->has("inventory_id")
+				? [$request->input("inventory_id")]
+				: $product->enabled_inventories;
 
-        return new Response();
+			// Trigger a loop for each enabled inventory
+			foreach ($inventoriesID as $inventoryID) {
+				if ($request->input("sync", true)) {
+					$job = (new PushProductJob($product->inventory_resource_id, $inventoryID));
+					$job->handle();
 
-    }
+					if (!$job->successful()) {
+						$allSuccess = false;
+					}
+				} else {
+					PushProductJob::dispatch($product->inventory_resource_id, $inventoryID);
+				}
+			}
+		}
 
-    public function pull(PullInventoryResourceRequest $request, InventoryResource $inventoryResource) {
-        // Products can be pulled directly, but properties cannot. A pull on a property, is a pull on all its products
-        /** @var Collection<Product> $products */
-        $products = $inventoryResource->products;
+		return new Response(["success" => $allSuccess]);
 
-        if ($inventoryResource->type === InventoryResourceType::Product && $products->isEmpty()) {
-            return new Response([], 404);
-        }
+	}
 
-        // Loop   on each resource
-        /** @var Product $product */
-        foreach ($products as $product) {
-            $inventoriesID = $request->has("inventory_id")
-                ? [$request->input("inventory_id")]
-                : $product->enabled_inventories;
+	public function pull(PullInventoryResourceRequest $request, InventoryResource $inventoryResource) {
+		// Products can be pulled directly, but properties cannot. A pull on a property, is a pull on all its products
+		/** @var Collection<Product> $products */
+		$products = $inventoryResource->products;
 
-            // Trigger a loop for each enabled inventory
-            foreach ($inventoriesID as $inventoryID) {
-                if ($request->input("sync", false)) {
-                    (new PullProductJob($product->inventory_resource_id, $inventoryID))->handle();
-                } else {
-                    PullProductJob::dispatch($product->inventory_resource_id, $inventoryID);
-                }
-            }
-        }
+		if ($inventoryResource->type === InventoryResourceType::Product && $products->isEmpty()) {
+			return new Response([], 404);
+		}
 
-        return new Response();
-    }
+		// Loop   on each resource
+		/** @var Product $product */
+		foreach ($products as $product) {
+			$inventoriesID = $request->has("inventory_id")
+				? [$request->input("inventory_id")]
+				: $product->enabled_inventories;
 
-    public function create(CreateProductRequest $request, InventoryResource $inventoryResource) {
-        // Only products can be created, make sure we're not trying to do something stupid
-        if ($inventoryResource->type !== InventoryResourceType::Product) {
-            return new Response([]);
-        }
+			// Trigger a loop for each enabled inventory
+			foreach ($inventoriesID as $inventoryID) {
+				if ($request->input("sync", false)) {
+					(new PullProductJob($product->inventory_resource_id, $inventoryID))->handle();
+				} else {
+					PullProductJob::dispatch($product->inventory_resource_id, $inventoryID);
+				}
+			}
+		}
 
-        $createJob = new CreateProductJob($inventoryResource->getKey(), $request->input("inventory_id"), $request->input("context", []));
-        $createJob->handle();
+		return new Response();
+	}
 
-        return new Response(["status" => "ok"]);
-    }
+	public function create(CreateProductRequest $request, InventoryResource $inventoryResource) {
+		// Only products can be created, make sure we're not trying to do something stupid
+		if ($inventoryResource->type !== InventoryResourceType::Product) {
+			return new Response([]);
+		}
 
-    /**
-     * @param ImportProductRequest $request
-     * @param InventoryResource    $inventoryResource
-     * @return Response
-     */
-    public function importProduct(ImportProductRequest $request, InventoryResource $inventoryResource) {
-        $externalID = new InventoryResourceId(
-            inventory_id: $request->input("inventory_id"),
-            external_id : $request->input("external_id"),
-            type        : InventoryResourceType::Product,
-            context     : $request->input("context", [])
-        );
+		$createJob = new CreateProductJob($inventoryResource->getKey(), $request->input("inventory_id"), $request->input("context", []));
+		$createJob->handle();
 
-        // Load the property to get its id
-        $property = Property::query()->where("inventory_resource_id", "=", $inventoryResource->getKey())->firstOrFail();
+		return new Response(["status" => "ok"]);
+	}
 
-        // Import the product synchronously
-        $importJob = new ImportProductJob($request->input("inventory_id"), $property->getKey(), $externalID);
-        $importJob->handle();
+	/**
+	 * @param ImportProductRequest $request
+	 * @param InventoryResource    $inventoryResource
+	 * @return Response
+	 */
+	public function importProduct(ImportProductRequest $request, InventoryResource $inventoryResource) {
+		$externalID = new InventoryResourceId(
+			inventory_id: $request->input("inventory_id"),
+			external_id : $request->input("external_id"),
+			type        : InventoryResourceType::Product,
+			context     : $request->input("context", [])
+		);
 
-        return new Response($importJob->getResult());
-    }
+		// Load the property to get its id
+		$property = Property::query()->where("inventory_resource_id", "=", $inventoryResource->getKey())->firstOrFail();
 
-    public function destroy(DestroyExternalResourceRequest $request, InventoryResource $inventoryResource) {
-        if ($inventoryResource->type !== InventoryResourceType::Product) {
-            // We only delete products
-            return new Response([]);
-        }
+		// Import the product synchronously
+		$importJob = new ImportProductJob($request->input("inventory_id"), $property->getKey(), $externalID);
+		$importJob->handle();
 
-        $deleteJob = new DestroyProductJob($inventoryResource->getKey(), $request->input("inventory_id"));
-        $deleteJob->handle();
+		return new Response($importJob->getResult());
+	}
 
-        return new Response([]);
-    }
+	public function destroy(DestroyExternalResourceRequest $request, InventoryResource $inventoryResource) {
+		if ($inventoryResource->type !== InventoryResourceType::Product) {
+			// We only delete products
+			return new Response([]);
+		}
+
+		$deleteJob = new DestroyProductJob($inventoryResource->getKey(), $request->input("inventory_id"));
+		$deleteJob->handle();
+
+		return new Response([]);
+	}
 }

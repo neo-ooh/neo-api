@@ -1,5 +1,5 @@
 <?php /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Neo\Http\Controllers\Controller;
+use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Broadcast\Http\Requests\Libraries\DestroyLibraryRequest;
 use Neo\Modules\Broadcast\Http\Requests\Libraries\ListLibrariesRequest;
 use Neo\Modules\Broadcast\Http\Requests\Libraries\SearchLibrariesRequest;
@@ -28,102 +29,114 @@ use Neo\Modules\Broadcast\Models\Layout;
 use Neo\Modules\Broadcast\Models\Library;
 
 class LibrariesController extends Controller {
-    /**
-     * @param ListLibrariesRequest $request
-     *
-     * @return Response
-     */
-    public function index(ListLibrariesRequest $request): Response {
-        /** @var Collection<Library> $libraries */
-        $libraries = Library::query()->whereIn("owner_id", Auth::user()?->getAccessibleActors(ids: true))->get();
+	/**
+	 * @param ListLibrariesRequest $request
+	 *
+	 * @return Response
+	 */
+	public function index(ListLibrariesRequest $request): Response {
+		if ($request->has("parent_id")) {
+			$getter = ActorsGetter::from($request->input("parent_id"))
+			                      ->selectFocus();
+			if ($request->input("recursive", false)) {
+				$getter->selectChildren(recursive: true);
+			}
 
-        if ($request->has("formats")) {
-            $libraries->load("formats");
-            $libraries = $libraries->filter(fn(Library $library) => $library->formats->contains(fn(Format $format) => in_array($format->getKey(), array_map('intval', $request->input('formats', [])), true)));
-        }
+			$actors = $getter->getSelection();
+		} else {
+			$actors = Auth::user()?->getAccessibleActors(shallow: false, ids: true);
+		}
 
-        if ($request->has("layouts")) {
-            $libraries->load("layouts");
-            $libraries = $libraries->filter(fn(Library $library) => $library->layouts->contains(fn(Layout $layout) => in_array($layout->getKey(), array_map('intval', $request->input('layouts', [])), true)));
-        }
+		/** @var Collection<Library> $libraries */
+		$libraries = Library::query()->whereIn("owner_id", $actors)->get();
 
-        return new Response($libraries->values()->loadPublicRelations());
-    }
+		if ($request->has("formats")) {
+			$libraries->load("formats");
+			$libraries = $libraries->filter(fn(Library $library) => $library->formats->contains(fn(Format $format) => in_array($format->getKey(), array_map('intval', $request->input('formats', [])), true)));
+		}
 
-    public function query(SearchLibrariesRequest $request): Response {
-        $q = strtolower($request->input("q"));
+		if ($request->has("layouts")) {
+			$libraries->load("layouts");
+			$libraries = $libraries->filter(fn(Library $library) => $library->layouts->contains(fn(Layout $layout) => in_array($layout->getKey(), array_map('intval', $request->input('layouts', [])), true)));
+		}
 
-        /** @var Collection<Library> $libraries */
-        $libraries    = Library::query()->whereIn("owner_id", Auth::user()?->getAccessibleActors(ids: true))->get();
-        $searchEngine = new Fuse($libraries->toArray(), [
-            "keys" => [
-                "name",
-            ],
-        ]);
-        $results      = collect($searchEngine->search($q));
+		return new Response($libraries->values()->loadPublicRelations());
+	}
 
-        return new Response($results->map(fn($result) => $result["item"]));
-    }
+	public function query(SearchLibrariesRequest $request): Response {
+		$q = strtolower($request->input("q"));
 
-    /**
-     * @param StoreLibraryRequest $request
-     *
-     * @return Response
-     */
-    public function store(StoreLibraryRequest $request): Response {
-        $library                = new Library();
-        $library->name          = $request->input("name");
-        $library->owner_id      = $request->input("owner_id");
-        $library->advertiser_id = $request->input("advertiser_id", null);
-        $library->content_limit = $request->input("content_limit", 0);
-        $library->save();
+		/** @var Collection<Library> $libraries */
+		$libraries    = Library::query()->whereIn("owner_id", Auth::user()?->getAccessibleActors(ids: true))->get();
+		$searchEngine = new Fuse($libraries->toArray(), [
+			"keys" => [
+				"name",
+			],
+		]);
+		$results      = collect($searchEngine->search($q));
 
-        $library->formats()->sync($request->input("formats", []));
+		return new Response($results->map(fn($result) => $result["item"]));
+	}
 
-        return new Response($library->loadPublicRelations(), 201);
-    }
+	/**
+	 * @param StoreLibraryRequest $request
+	 *
+	 * @return Response
+	 */
+	public function store(StoreLibraryRequest $request): Response {
+		$library                = new Library();
+		$library->name          = $request->input("name");
+		$library->owner_id      = $request->input("owner_id");
+		$library->advertiser_id = $request->input("advertiser_id", null);
+		$library->content_limit = $request->input("content_limit", 0);
+		$library->save();
 
-    /**
-     * @param ShowLibraryRequest $request
-     * @param Library            $library
-     *
-     * @return Response
-     */
-    public function show(ShowLibraryRequest $request, Library $library): Response {
-        return new Response($library->loadPublicRelations());
-    }
+		$library->formats()->sync($request->input("formats", []));
 
-    /**
-     * @param UpdateLibraryRequest $request
-     * @param Library              $library
-     *
-     * @return Response
-     */
-    public function update(UpdateLibraryRequest $request, Library $library): Response {
-        $library->name          = $request->input("name");
-        $library->owner_id      = $request->input("owner_id");
-        $library->advertiser_id = $request->input("advertiser_id", $library->advertiser_id);
-        $library->content_limit = $request->input("content_limit");
+		return new Response($library->loadPublicRelations(), 201);
+	}
 
-        $library->save();
+	/**
+	 * @param ShowLibraryRequest $request
+	 * @param Library            $library
+	 *
+	 * @return Response
+	 */
+	public function show(ShowLibraryRequest $request, Library $library): Response {
+		return new Response($library->loadPublicRelations());
+	}
 
-        $library->formats()->sync($request->input("formats", []));
+	/**
+	 * @param UpdateLibraryRequest $request
+	 * @param Library              $library
+	 *
+	 * @return Response
+	 */
+	public function update(UpdateLibraryRequest $request, Library $library): Response {
+		$library->name          = $request->input("name");
+		$library->owner_id      = $request->input("owner_id");
+		$library->advertiser_id = $request->input("advertiser_id", $library->advertiser_id);
+		$library->content_limit = $request->input("content_limit");
 
-        $library->refresh();
+		$library->save();
 
-        return new Response($library->loadPublicRelations());
-    }
+		$library->formats()->sync($request->input("formats", []));
 
-    /**
-     * @param DestroyLibraryRequest $request
-     * @param Library               $library
-     *
-     * @return Response
-     * @throws Exception
-     */
-    public function destroy(DestroyLibraryRequest $request, Library $library): Response {
-        $library->delete();
+		$library->refresh();
 
-        return new Response($library);
-    }
+		return new Response($library->loadPublicRelations());
+	}
+
+	/**
+	 * @param DestroyLibraryRequest $request
+	 * @param Library               $library
+	 *
+	 * @return Response
+	 * @throws Exception
+	 */
+	public function destroy(DestroyLibraryRequest $request, Library $library): Response {
+		$library->delete();
+
+		return new Response($library);
+	}
 }

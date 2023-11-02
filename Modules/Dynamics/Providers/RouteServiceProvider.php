@@ -49,6 +49,7 @@ class RouteServiceProvider extends ServiceProvider {
 	 * @return void
 	 */
 	protected function mapApiRoutes(): void {
-		Route::group([], module_path('Dynamics', '/Routes/dynamics.php'));
+		Route::group([], module_path('Dynamics', '/Routes/common.php'));
+		Route::group([], module_path('Dynamics', '/Routes/weather.php'));
 	}
 }

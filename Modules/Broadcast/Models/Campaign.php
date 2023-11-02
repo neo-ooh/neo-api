@@ -20,6 +20,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Neo\Enums\Capability;
 use Neo\Helpers\Relation;
+use Neo\Http\Resources\SearchResult;
 use Neo\Models\Actor;
 use Neo\Models\Contract;
 use Neo\Models\ContractFlight;
@@ -542,5 +543,28 @@ class Campaign extends BroadcastResourceModel {
 		}
 
 		return $warnings;
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| Search
+	|--------------------------------------------------------------------------
+	*/
+
+	public static function search(string $query): array {
+		$campaigns = static::query()
+		                   ->whereFullText("name", $query)
+		                   ->select(["id", "name", "parent_id"])
+		                   ->get();
+
+		return $campaigns->map(fn(Campaign $campaign) => new SearchResult(
+			id       : $campaign->getKey(),
+			type     : "campaign",
+			subtype  : "campaign",
+			label    : $campaign->name,
+			parent_id: $campaign->parent_id,
+			model    : $campaign
+		))->all();
 	}
 }

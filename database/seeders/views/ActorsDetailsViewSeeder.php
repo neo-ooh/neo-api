@@ -14,12 +14,12 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
 class ActorsDetailsViewSeeder extends Seeder {
-    public function run() {
-        $viewName = "actors_details";
+	public function run() {
+		$viewName = "actors_details";
 
-        DB::statement("DROP VIEW IF EXISTS $viewName");
+		DB::statement("DROP VIEW IF EXISTS $viewName");
 
-        DB::statement(/** @lang SQL */ <<<EOS
+		DB::statement(/** @lang SQL */ <<<EOS
         CREATE VIEW $viewName AS
         SELECT `a`.`id`                      AS `id`,
                `ac`.`ancestor_id`            AS `parent_id`,
@@ -28,7 +28,12 @@ class ActorsDetailsViewSeeder extends Seeder {
                            SELECT 1
                              FROM `properties`
                             WHERE `properties`.`actor_id` = `a`.`id`
-                         ))                  AS `is_property`
+                         ))                  AS `is_property`,
+               (SELECT EXISTS(
+                           SELECT 1
+                             FROM `contracts`
+                            WHERE `contracts`.`group_id` = `a`.`id`
+                         ))                  AS `is_contract`
           FROM `actors` `a`
                LEFT JOIN `actors_closures` `ac`
                          ON `ac`.`descendant_id` = `a`.`id` AND `ac`.`depth` = 1
@@ -37,6 +42,6 @@ class ActorsDetailsViewSeeder extends Seeder {
          GROUP BY `a`.`id`,
                   `ac`.`ancestor_id`
         EOS
-        );
-    }
+		);
+	}
 }

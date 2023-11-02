@@ -107,8 +107,11 @@ enum Capability: string {
 	case networks_refresh = "networks.refresh";
 
 	// Dymamics
-	case dynamics_weather = "dynamics.weather";
-	case dynamics_news = "dynamics.news";
+	case dynamics_weather_pull = "dynamics.weather.pull";
+	case dynamics_weather_edit = "dynamics.weather.edit";
+
+	case dynamics_news_pull = "dynamics.news.pull";
+	case dynamics_news_edit = "dynamics.news.edit";
 
 	// Documents Generation
 	case documents_generation = "documents.generation";

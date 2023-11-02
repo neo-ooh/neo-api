@@ -17,6 +17,7 @@ use Neo\Http\Controllers\CensusSubdivisionsController;
 use Neo\Http\Controllers\FoursquareController;
 use Neo\Http\Controllers\GoogleMapsController;
 use Neo\Http\Controllers\ModulesController;
+use Neo\Http\Controllers\SearchController;
 use Neo\Http\Controllers\StatsController;
 use Neo\Http\Controllers\TimezonesController;
 use Neo\Models\CensusDivision;
@@ -25,77 +26,85 @@ use Neo\Models\CensusForwardSortationArea;
 use Neo\Models\CensusSubdivision;
 
 Route::group([
-                 "middleware" => "default",
-                 "prefix"     => "v1",
+	             "middleware" => "default",
+	             "prefix"     => "v1",
              ], function () {
-    /*
-    |----------------------------------------------------------------------
-    | Modules
-    |----------------------------------------------------------------------
-    */
+	/*
+	|----------------------------------------------------------------------
+	| Modules
+	|----------------------------------------------------------------------
+	*/
 
-    Route::get("modules/_status", ModulesController::class . "@status");
+	Route::get("modules/_status", ModulesController::class . "@status");
 
 
-    /*
-    |----------------------------------------------------------------------
-    | Stats
-    |----------------------------------------------------------------------
-    */
+	/*
+	|----------------------------------------------------------------------
+	| Stats
+	|----------------------------------------------------------------------
+	*/
 
-    Route::get("stats", StatsController::class . "@index");
+	Route::get("stats", StatsController::class . "@index");
 
-    /*
-    |----------------------------------------------------------------------
-    | Timezones
-    |----------------------------------------------------------------------
-    */
+	/*
+	|----------------------------------------------------------------------
+	| Timezones
+	|----------------------------------------------------------------------
+	*/
 
-    Route::get("timezones", [TimezonesController::class, "index"]);
+	Route::get("timezones", [TimezonesController::class, "index"]);
 
-    /*
-    |--------------------------------------------------------------------------
-    | Google Maps
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Google Maps
+	|--------------------------------------------------------------------------
+	*/
 
-    Route::get("google/places", GoogleMapsController::class . "@_searchPlaces");
+	Route::get("google/places", GoogleMapsController::class . "@_searchPlaces");
 
-    /*
-    |--------------------------------------------------------------------------
-    | Foursquare
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Foursquare
+	|--------------------------------------------------------------------------
+	*/
 
-    Route::get("_third-party/foursquare/places", FoursquareController::class . "@_searchPlaces");
+	Route::get("_third-party/foursquare/places", FoursquareController::class . "@_searchPlaces");
 
-    /*
-    |--------------------------------------------------------------------------
-    | Data
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Data
+	|--------------------------------------------------------------------------
+	*/
 
-    Route::model("censusSubdivision", CensusSubdivision::class);
-    Route::get("census-subdivisions", [CensusSubdivisionsController::class, "index"]);
-    Route::get("census-subdivisions/{censusSubdivision}", [CensusSubdivisionsController::class, "show"]);
+	Route::model("censusSubdivision", CensusSubdivision::class);
+	Route::get("census-subdivisions", [CensusSubdivisionsController::class, "index"]);
+	Route::get("census-subdivisions/{censusSubdivision}", [CensusSubdivisionsController::class, "show"]);
 
-    Route::model("censusDivision", CensusDivision::class);
-    Route::get("census-divisions", [CensusDivisionsController::class, "index"]);
-    Route::get("census-divisions/{censusDivision}", [CensusDivisionsController::class, "show"]);
+	Route::model("censusDivision", CensusDivision::class);
+	Route::get("census-divisions", [CensusDivisionsController::class, "index"]);
+	Route::get("census-divisions/{censusDivision}", [CensusDivisionsController::class, "show"]);
 
-    Route::model("censusForwardSortationArea", CensusForwardSortationArea::class);
-    Route::get("census-fsas", [CensusForwardSortationAreaController::class, "index"]);
-    Route::get("census-fsas/{censusForwardSortationArea}", [CensusForwardSortationAreaController::class, "show"]);
+	Route::model("censusForwardSortationArea", CensusForwardSortationArea::class);
+	Route::get("census-fsas", [CensusForwardSortationAreaController::class, "index"]);
+	Route::get("census-fsas/{censusForwardSortationArea}", [CensusForwardSortationAreaController::class, "show"]);
 
-    Route::model("censusFederalElectoralDistrict", CensusFederalElectoralDistrict::class);
-    Route::get("census-federal-electoral-districts", [CensusFederalElectoralDistrictsController::class, "index"]);
-    Route::get("census-federal-electoral-districts/{censusFederalElectoralDistrict}", [CensusFederalElectoralDistrictsController::class, "show"]);
+	Route::model("censusFederalElectoralDistrict", CensusFederalElectoralDistrict::class);
+	Route::get("census-federal-electoral-districts", [CensusFederalElectoralDistrictsController::class, "index"]);
+	Route::get("census-federal-electoral-districts/{censusFederalElectoralDistrict}", [CensusFederalElectoralDistrictsController::class, "show"]);
 
-    /*
-    |----------------------------------------------------------------------
-    | Batch
-    |----------------------------------------------------------------------
-    */
+	/*
+	|----------------------------------------------------------------------
+	| Batch
+	|----------------------------------------------------------------------
+	*/
 
-    Route::post("batch", BatchController::class . "@handle");
+	Route::post("batch", BatchController::class . "@handle");
+
+	/*
+	|----------------------------------------------------------------------
+	| Search
+	|----------------------------------------------------------------------
+	*/
+
+	Route::get("search", [SearchController::class, "search"]);
 });

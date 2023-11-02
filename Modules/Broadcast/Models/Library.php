@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Neo\Http\Resources\SearchResult;
 use Neo\Models\Actor;
 use Neo\Models\Advertiser;
 use Neo\Models\SecuredModel;
@@ -56,209 +57,233 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @mixin Builder
  */
 class Library extends SecuredModel {
-    use Notifiable;
-    use HasPublicRelations;
-    use HasRelationships;
-    use SoftDeletes;
+	use Notifiable;
+	use HasPublicRelations;
+	use HasRelationships;
+	use SoftDeletes;
 
-    /*
-    |--------------------------------------------------------------------------
-    | Table properties
-    |--------------------------------------------------------------------------
-    */
-
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'libraries';
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
-    protected $fillable = [
-        'owner_id',
-        'name',
-        'content_limit',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'content_limit'  => 'integer',
-        'hidden_formats' => 'array',
-    ];
-
-    /**
-     * The rule used to validate access to the model upon binding it with a route
-     *
-     * @var class-string
-     */
-    protected string $accessRule = AccessibleLibrary::class;
-
-    protected function getPublicRelations() {
-        return [
-            "parent"     => ["owner"],
-            "advertiser" => "advertiser",
-            "contents"   => ["contents", "contents.creatives", "contents.broadcast_tags", fn(Library $library) => $library->contents->loadCount("schedules")],
-            "formats"    => "formats",
-            "layouts"    => ["layouts", "layouts.frames", "contents_layouts.frames"],
-            "shares"     => "shares",
-        ];
-    }
-
-    protected static function boot(): void {
-        parent::boot();
-
-        /**
-         * On library deletion, also deletes all its contents
-         */
-        static::deleting(static function (Library $library) {
-            RemoveLibraryCreativesJob::dispatch($library->getKey());
-        });
-    }
-
-    /**
-     * Gets all libraries owned by the given actor
-     *
-     * @param Actor $actor
-     *
-     * @return Builder
-     */
-    public static function of(Actor $actor): Builder {
-        return static::selectLibraries()
-                     ->where("l.owner_id", "=", $actor->getKey());
-    }
-
-    /**
-     * Gets a new query for selecting libraries
-     *
-     * @return Builder
-     */
-    protected static function selectLibraries(): Builder {
-        return static::query()
-                     ->select("l.*", DB::raw("COUNT(c.id) AS contents_count"))
-                     ->from("libraries", "l")
-                     ->leftJoin("contents AS c", "c.library_id", "=", "l.id")
-                     ->groupBy("l.id")
-                     ->orderBy("l.name");
-    }
+	/*
+	|--------------------------------------------------------------------------
+	| Table properties
+	|--------------------------------------------------------------------------
+	*/
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'libraries';
 
-    /* Direct */
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array<string>
+	 */
+	protected $fillable = [
+		'owner_id',
+		'name',
+		'content_limit',
+	];
 
-    /**
-     * Gets all libraries shared with the given actor
-     *
-     * @param Actor $actor
-     *
-     * @return Builder
-     */
-    public static function sharedWith(Actor $actor): Builder {
-        return static::selectLibraries()
-                     ->join("library_shares as ls",
-                         function (JoinClause $join) {
-                             $join->on("ls.library_id", "=", "l.id");
-                         })
-                     ->where("ls.actor_id", "=", $actor->getKey());
-    }
+	/**
+	 * The attributes that should be cast.
+	 *
+	 * @var array<string, string>
+	 */
+	protected $casts = [
+		'content_limit'  => 'integer',
+		'hidden_formats' => 'array',
+	];
 
-    /**
-     * Gets all libraries of children of the given actor. Includes libraries of user shared with the given user.
-     *
-     * @param Actor $actor
-     *
-     * @return Builder
-     */
-    public static function ofChildrenOf(Actor $actor): Builder {
-        return static::selectLibraries()
-                     ->whereIn("l.owner_id", $actor->getAccessibleActors(true, false, false, false)
-                                                   ->pluck("id"));
-    }
+	/**
+	 * The rule used to validate access to the model upon binding it with a route
+	 *
+	 * @var class-string
+	 */
+	protected string $accessRule = AccessibleLibrary::class;
+
+	protected function getPublicRelations() {
+		return [
+			"parent"     => ["owner"],
+			"advertiser" => "advertiser",
+			"contents"   => ["contents", "contents.creatives", "contents.broadcast_tags", fn(Library $library) => $library->contents->loadCount("schedules")],
+			"formats"    => "formats",
+			"layouts"    => ["layouts", "layouts.frames", "contents_layouts.frames"],
+			"shares"     => "shares",
+		];
+	}
+
+	protected static function boot(): void {
+		parent::boot();
+
+		/**
+		 * On library deletion, also deletes all its contents
+		 */
+		static::deleting(static function (Library $library) {
+			RemoveLibraryCreativesJob::dispatch($library->getKey());
+		});
+	}
+
+	/**
+	 * Gets all libraries owned by the given actor
+	 *
+	 * @param Actor $actor
+	 *
+	 * @return Builder
+	 */
+	public static function of(Actor $actor): Builder {
+		return static::selectLibraries()
+		             ->where("l.owner_id", "=", $actor->getKey());
+	}
+
+	/**
+	 * Gets a new query for selecting libraries
+	 *
+	 * @return Builder
+	 */
+	protected static function selectLibraries(): Builder {
+		return static::query()
+		             ->select("l.*", DB::raw("COUNT(c.id) AS contents_count"))
+		             ->from("libraries", "l")
+		             ->leftJoin("contents AS c", "c.library_id", "=", "l.id")
+		             ->groupBy("l.id")
+		             ->orderBy("l.name");
+	}
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * @return BelongsTo<Actor, Library>
-     */
-    public function owner(): BelongsTo {
-        return $this->belongsTo(Actor::class, 'owner_id', 'id')->withTrashed();
-    }
+	/* Direct */
 
-    /**
-     * @return BelongsToMany<Actor>
-     */
-    public function shares(): BelongsToMany {
-        return $this->belongsToMany(Actor::class, 'library_shares', 'library_id', 'actor_id')
-                    ->withTimestamps();
-    }
+	/**
+	 * Gets all libraries shared with the given actor
+	 *
+	 * @param Actor $actor
+	 *
+	 * @return Builder
+	 */
+	public static function sharedWith(Actor $actor): Builder {
+		return static::selectLibraries()
+		             ->join("library_shares as ls",
+			             function (JoinClause $join) {
+				             $join->on("ls.library_id", "=", "l.id");
+			             })
+		             ->where("ls.actor_id", "=", $actor->getKey());
+	}
 
-    /**
-     * @return BelongsTo<Advertiser, Library>
-     */
-    public function advertiser(): BelongsTo {
-        return $this->belongsTo(Advertiser::class, "advertiser_id", "id");
-    }
+	/**
+	 * Gets all libraries of children of the given actor. Includes libraries of user shared with the given user.
+	 *
+	 * @param Actor $actor
+	 *
+	 * @return Builder
+	 */
+	public static function ofChildrenOf(Actor $actor): Builder {
+		return static::selectLibraries()
+		             ->whereIn("l.owner_id", $actor->getAccessibleActors(true, false, false, false)
+		                                           ->pluck("id"));
+	}
 
-    /**
-     * @return HasMany<Content>
-     */
-    public function contents(): HasMany {
-        return $this->hasMany(Content::class, 'library_id', 'id');
-    }
 
-    /**
-     * @return BelongsToMany<Format>
-     */
-    public function formats() {
-        return $this->belongsToMany(Format::class, "library_formats", "library_id", "format_id");
-    }
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
 
-    /**
-     * @return HasManyDeep<Layout>
-     */
-    public function layouts(): HasManyDeep {
-        return $this->hasManyDeepFromRelations($this->formats(), (new Format())->layouts())
-                    ->distinct();
-    }
+	/**
+	 * @return BelongsTo<Actor, Library>
+	 */
+	public function owner(): BelongsTo {
+		return $this->belongsTo(Actor::class, 'owner_id', 'id')->withTrashed();
+	}
 
-    /**
-     * @return HasManyDeep<Layout>
-     */
-    public function contents_layouts(): HasManyDeep {
-        return $this->hasManyDeepFromRelations($this->contents(), (new Content())->layout());
-    }
+	/**
+	 * @return BelongsToMany<Actor>
+	 */
+	public function shares(): BelongsToMany {
+		return $this->belongsToMany(Actor::class, 'library_shares', 'library_id', 'actor_id')
+		            ->withTimestamps();
+	}
 
-    /*
-    |--------------------------------------------------------------------------
-    | Getters
-    |--------------------------------------------------------------------------
-    */
+	/**
+	 * @return BelongsTo<Advertiser, Library>
+	 */
+	public function advertiser(): BelongsTo {
+		return $this->belongsTo(Advertiser::class, "advertiser_id", "id");
+	}
 
-    public function isAccessibleBy(Actor $actor): bool {
-        // Is the actor the owner ?
-        if ($actor->getKey() === $this->owner_id) {
-            return true;
-        }
+	/**
+	 * @return HasMany<Content>
+	 */
+	public function contents(): HasMany {
+		return $this->hasMany(Content::class, 'library_id', 'id');
+	}
 
-        return $actor->getAccessibleActors(ids: true)->contains($this->owner_id);
-    }
+	/**
+	 * @return BelongsToMany<Format>
+	 */
+	public function formats() {
+		return $this->belongsToMany(Format::class, "library_formats", "library_id", "format_id");
+	}
+
+	/**
+	 * @return HasManyDeep<Layout>
+	 */
+	public function layouts(): HasManyDeep {
+		return $this->hasManyDeepFromRelations($this->formats(), (new Format())->layouts())
+		            ->distinct();
+	}
+
+	/**
+	 * @return HasManyDeep<Layout>
+	 */
+	public function contents_layouts(): HasManyDeep {
+		return $this->hasManyDeepFromRelations($this->contents(), (new Content())->layout())
+		            ->distinct();
+	}
+
+	/*
+	|--------------------------------------------------------------------------
+	| Getters
+	|--------------------------------------------------------------------------
+	*/
+
+	public function isAccessibleBy(Actor $actor): bool {
+		// Is the actor the owner ?
+		if ($actor->getKey() === $this->owner_id) {
+			return true;
+		}
+
+		return $actor->getAccessibleActors(ids: true)->contains($this->owner_id);
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| Search
+	|--------------------------------------------------------------------------
+	*/
+
+	public static function search(string $query): array {
+		$libraries = static::query()
+		                   ->whereFullText("name", $query)
+		                   ->select(["id", "name", "owner_id"])
+		                   ->get();
+
+		return $libraries->map(fn(Library $library) => new SearchResult(
+			id       : $library->getKey(),
+			type     : "library",
+			subtype  : "library",
+			label    : $library->name,
+			parent_id: $library->owner_id,
+			model    : $library,
+		))->all();
+	}
 }

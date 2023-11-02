@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Services\PlaceExchange\Models;
 
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitAsset;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitAuction;
+use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitExternalId;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitLocation;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitMeasurement;
 use Neo\Modules\Properties\Services\PlaceExchange\Models\Attributes\AdUnitPlanning;
@@ -28,7 +29,7 @@ use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
  * @property AdUnitAsset|null                  $asset
  * @property AdUnitAuction|null                $auction
  * @property int                               $created_by
- * @property string[]                          $eids
+ * @property AdUnitExternalId[]                $eids
  * @property null                              $ext
  * @property string                            $id
  * @property int                               $integration_type //0: API, 1: Light, 2: Vast, 3: BroadSign
@@ -54,28 +55,29 @@ use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
  * @property AdUnitVenue                       $venue
  */
 class AdUnit extends PlaceExchangeModel {
-    public string $key = "name";
+	public string $key = "name";
 
-    protected array $casts = [
-        "asset"        => AdUnitAsset::class,
-        "auction"      => AdUnitAuction::class,
-        "location"     => AdUnitLocation::class,
-        "measurement"  => AdUnitMeasurement::class,
-        "planning"     => AdUnitPlanning::class,
-        "restrictions" => AdUnitRestrictions::class,
-        "slot"         => AdUnitSlot::class,
-        "status"       => AdUnitStatus::class,
-        "venue"        => AdUnitVenue::class,
-    ];
+	protected array $casts = [
+		"asset"        => AdUnitAsset::class,
+		"auction"      => AdUnitAuction::class,
+		"eids"         => AdUnitExternalId::class,
+		"location"     => AdUnitLocation::class,
+		"measurement"  => AdUnitMeasurement::class,
+		"planning"     => AdUnitPlanning::class,
+		"restrictions" => AdUnitRestrictions::class,
+		"slot"         => AdUnitSlot::class,
+		"status"       => AdUnitStatus::class,
+		"venue"        => AdUnitVenue::class,
+	];
 
-    public function toInventoryResourceId(int $inventoryId): InventoryResourceId {
-        return new InventoryResourceId(
-            inventory_id: $inventoryId,
-            external_id : $this->getKey(),
-            type        : InventoryResourceType::Product,
-            context     : [
-                              "network_id" => $this->network_id,
-                          ],
-        );
-    }
+	public function toInventoryResourceId(int $inventoryId): InventoryResourceId {
+		return new InventoryResourceId(
+			inventory_id: $inventoryId,
+			external_id : $this->getKey(),
+			type        : InventoryResourceType::Product,
+			context     : [
+				              "network_id" => $this->network_id,
+			              ],
+		);
+	}
 }

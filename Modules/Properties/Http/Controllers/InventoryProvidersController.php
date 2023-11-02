@@ -61,6 +61,7 @@ class InventoryProvidersController extends Controller {
 				$provider->settings->api_key      = $request->input("api_key");
 				$provider->settings->api_username = $request->input("api_username");
 				$provider->settings->client_id    = $request->input("client_id");
+				$provider->settings->usd_cad_rate = $request->input("usd_cad_rate");
 				break;
 			case InventoryType::Reach:
 				$provider->settings->auth_url     = $request->input("auth_url");
@@ -114,6 +115,7 @@ class InventoryProvidersController extends Controller {
 				$inventoryProvider->settings->api_username = $request->input("api_username");
 				$inventoryProvider->settings->client_id    = $request->input("client_id");
 				$inventoryProvider->settings->networks     = $request->input("networks");
+				$inventoryProvider->settings->usd_cad_rate = $request->input("usd_cad_rate");
 			case InventoryType::Reach:
 				$inventoryProvider->settings->auth_url     = $request->input("auth_url");
 				$inventoryProvider->settings->api_url      = $request->input("api_url");

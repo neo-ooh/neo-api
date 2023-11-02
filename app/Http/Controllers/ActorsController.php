@@ -74,8 +74,14 @@ class ActorsController extends Controller {
 
 			$actors = $getter->getActors();
 		} else {
-			/** @var Collection $actors */
-			$actors = Auth::user()?->getAccessibleActors(shallow: !$request->input("recursive", true)) ?? new Collection();
+			if ($request->input("recursive", true)) {
+				/** @var Collection $actors */
+				$actors = Auth::user()?->getAccessibleActors(shallow: false) ?? new Collection();
+			} else if (Auth::id() === 1) {
+				$actors = Auth::user()->getAccessibleActors(children: true, shallow: true, shared: false, parent: false);
+			} else {
+				$actors = Actor::query()->findMany(Auth::user()->getRootAccessesShallow());
+			}
 		}
 
 		if ($request->input("withself", false)) {
@@ -201,7 +207,7 @@ class ActorsController extends Controller {
 		if (count($request->all()) === 0) {
 			return new Response([
 				                    "code" => "empty-request",
-				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "message" => "You must pass at lease 1 parameter when calling this route",
+				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "message" => "You must pass at lease 1 parameter when calling this route",
 			                    ], 422);
 		}
 
@@ -235,7 +241,7 @@ class ActorsController extends Controller {
 			if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
 				return new Response([
 					                    'code' => 'actor.hierarchy-loop',
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   'message' => 'Parent assignment would result in incoherent actors hierarchy',
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    'message' => 'Parent assignment would result in incoherent actors hierarchy',
 					                    'data' => $actor,
 				                    ], 403);
 			}

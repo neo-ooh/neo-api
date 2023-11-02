@@ -25,10 +25,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Neo\Enums\ActorType;
 use Neo\Enums\Capability;
 use Neo\Helpers\Relation;
+use Neo\Http\Resources\SearchResult;
 use Neo\Models\Traits\HasCampaigns;
 use Neo\Models\Traits\HasCapabilities;
 use Neo\Models\Traits\HasHierarchy;
@@ -379,11 +381,49 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 		if ($this->hasCapability(Capability::contracts_edit)) {
 			$getter->selectContracts(
 				all        : $this->hasCapability(Capability::contracts_manage),
-				getChildren: true
+				getChildren: !$shallow
 			);
 		}
 
 		return $ids ? $getter->getSelection() : $getter->getActors();
+	}
+
+	public function getRootAccessesShallow() {
+		$sharedActors = ActorsGetter::from($this->getKey())
+		                            ->selectShared(getChildren: false)
+		                            ->getSelection();
+
+		$contracts = ActorsGetter::from($this->getKey())
+		                         ->selectContracts(all: $this->hasCapability(Capability::contracts_manage), getChildren: false)
+		                         ->getSelection();
+
+		if ($this->limited_access) {
+			return [...$sharedActors, ...$contracts];
+		}
+
+		// Load the full accessible hierarchy without actors that fall outside the standard inheritance (shared & contracts)
+		$actors   = ActorsGetter::from($this)->selectSiblings(getChildren: true)->getSelection();
+		$actors[] = $this->parent_id;
+
+		// Filter out any actor in the shared and contract list that also show up in the natural hierarchy of the user
+		$sharedActors = $sharedActors->diff($actors);
+		$contracts    = $contracts->diff($actors);
+
+		$actors = [...$sharedActors, ...$contracts];
+
+		// Load the hierarchy of out-of-natural-inheritance actors to see if our parent is there
+		$parentInList = DB::table(ActorsGetter::CLOSURES_TABLE)
+		                  ->whereIn("ancestor_id", $actors)
+		                  ->where("descendant_id", "=", $this->parent_id)
+		                  ->exists();
+
+		if ($parentInList) {
+			return $actors;
+		}
+
+		$actors[] = $this->parent_id;
+
+		return $actors;
 	}
 
 	public function getParentIdAttribute(): ?int {
@@ -575,5 +615,34 @@ class Actor extends SecuredModel implements AuthenticatableContract, Authorizabl
 		}
 
 		return JWT::encode($payload, config("auth.jwt_private_key"), "RS256");
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| Search
+	|--------------------------------------------------------------------------
+	*/
+
+	public static function search(string $query): array {
+		$accessibleActors = Auth::user()->getAccessibleActors(ids: true);
+		$actors           = static::query()
+		                          ->whereFullText("name", $query)
+		                          ->whereIn("id", $accessibleActors)
+		                          ->select(["id", "name", "is_group"])
+		                          ->get();
+
+		if (!Auth::user()->hasCapability(Capability::actors_edit)) {
+			$actors = $actors->filter(fn(Actor $actor) => $actor->type !== ActorType::User);
+		}
+
+		return $actors->map(fn(Actor $actor) => new SearchResult(
+			id       : $actor->getKey(),
+			type     : "actor",
+			subtype  : $actor->type->value,
+			label    : $actor->name,
+			parent_id: $actor->parent_id,
+			model    : $actor,
+		))->all();
 	}
 }

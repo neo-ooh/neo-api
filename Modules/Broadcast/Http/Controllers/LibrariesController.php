@@ -35,7 +35,7 @@ class LibrariesController extends Controller {
 	 * @return Response
 	 */
 	public function index(ListLibrariesRequest $request): Response {
-		if ($request->input("parent_id")) {
+		if ($request->has("parent_id")) {
 			$getter = ActorsGetter::from($request->input("parent_id"))
 			                      ->selectFocus();
 			if ($request->input("recursive", false)) {
@@ -44,10 +44,9 @@ class LibrariesController extends Controller {
 
 			$actors = $getter->getSelection();
 		} else {
-			$actors = Auth::user()?->getAccessibleActors(shallow: !$request->input("recursive", true), ids: true);
+			$actors = Auth::user()?->getAccessibleActors(shallow: false, ids: true);
 		}
 
-		clock($actors);
 		/** @var Collection<Library> $libraries */
 		$libraries = Library::query()->whereIn("owner_id", $actors)->get();
 

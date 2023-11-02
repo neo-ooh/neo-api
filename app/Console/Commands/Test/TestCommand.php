@@ -11,7 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Models\Utils\ActorsGetter;
+use Neo\Models\Actor;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -29,9 +29,11 @@ class TestCommand extends Command {
 //		                 ->selectChildren(recursive: false)
 //		                 ->getSelection());
 
-		dump(ActorsGetter::from(558)
-		                 ->selectParents()
-		                 ->selectFocus()
-		                 ->getSelection());
+//		dump(ActorsGetter::from(558)
+//		                 ->selectParents()
+//		                 ->selectFocus()
+//		                 ->getSelection());
+
+		dump(Actor::find(1010)->getRootAccessesShallow());
 	}
 }

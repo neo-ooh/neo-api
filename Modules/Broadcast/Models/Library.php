@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
+use Neo\Http\Resources\SearchResult;
 use Neo\Models\Actor;
 use Neo\Models\Advertiser;
 use Neo\Models\SecuredModel;
@@ -261,5 +262,28 @@ class Library extends SecuredModel {
 		}
 
 		return $actor->getAccessibleActors(ids: true)->contains($this->owner_id);
+	}
+
+
+	/*
+	|--------------------------------------------------------------------------
+	| Search
+	|--------------------------------------------------------------------------
+	*/
+
+	public static function search(string $query): array {
+		$libraries = static::query()
+		                   ->whereFullText("name", $query)
+		                   ->select(["id", "name", "owner_id"])
+		                   ->get();
+
+		return $libraries->map(fn(Library $library) => new SearchResult(
+			id       : $library->getKey(),
+			type     : "library",
+			subtype  : "library",
+			label    : $library->name,
+			parent_id: $library->owner_id,
+			model    : $library,
+		))->all();
 	}
 }

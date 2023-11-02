@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\DB;
 use Neo\Models\Actor;
 
 class ActorsGetter {
-	protected const CLOSURES_TABLE = 'actors_closures';
-	protected const SHARES_TABLE = 'actors_shares';
-	protected const CONTRACTS_TABLE = 'contracts';
+	public const CLOSURES_TABLE = 'actors_closures';
+	public const SHARES_TABLE = 'actors_shares';
+	public const CONTRACTS_TABLE = 'contracts';
 
 	/**
 	 * @var Collection<int> List of selected actor ids

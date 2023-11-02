@@ -15,46 +15,42 @@ use Spatie\LaravelData\Data;
 use Spatie\LaravelData\DataCollection;
 
 class CPCompiledFlight extends Data {
-    public function __construct(
-        public string         $id,
-        public string|null    $name,
-        public FlightType     $type,
+	public function __construct(
+		public string         $id,
+		public string|null    $name,
+		public FlightType     $type,
 
 //        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public string         $start_date,
+		public string         $start_date,
 //        #[WithCast(DateTimeInterfaceCast::class, format: 'Y-m-d')]
-        public string         $end_date,
+		public string         $end_date,
 //        #[WithCast(DateTimeInterfaceCast::class, format: 'H:i:s')]
-        public string         $start_time,
+		public string         $start_time,
 //        #[WithCast(DateTimeInterfaceCast::class, format: 'H:i:s')]
-        public string         $end_time,
+		public string         $end_time,
 
-        public int            $weekdays,
+		public int            $weekdays,
 
-        public int            $length,
-
-        #[DataCollectionOf(CPCompiledProperty::class)]
-        public DataCollection $properties,
+		#[DataCollectionOf(CPCompiledProperty::class)]
+		public DataCollection $properties,
 
 
-        public int            $traffic,
-        public int            $faces_count,
-        public float          $impressions,
-        public float          $media_value,
+		public int            $traffic,
+		public int            $faces_count,
+		public float          $impressions,
+		public float          $media_value,
 
-        public array          $discounts,
+		public float          $price,
+		public float          $cpm,
+		public float          $cpmPrice,
+	) {
+	}
 
-        public float          $price,
-        public float          $cpm,
-        public float          $cpmPrice,
-    ) {
-    }
+	public function getFlightName(int $index) {
+		if (strlen($this->name) === 0) {
+			return "Flight #$index";
+		}
 
-    public function getFlightName(int $index) {
-        if (strlen($this->name) === 0) {
-            return "Flight #$index";
-        }
-
-        return $this->name;
-    }
+		return $this->name;
+	}
 }

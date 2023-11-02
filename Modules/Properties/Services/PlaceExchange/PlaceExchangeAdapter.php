@@ -139,7 +139,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 			image_url   : $product->picture_url ?? "",
 			mimes       : $mimeTypes,
 			name        : $name,
-			screen_count: $player->screen_count,
+			screen_count: max(1, $player->screen_count),
 			size        : $product->screen_size_in ?? 5,
 			type        : "digital",
 		);
@@ -231,7 +231,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 
 		$adUnitsIds = [];
 
-		$screensCount = collect($product->broadcastLocations)->sum("screen_count");
+		$screensCount = max(1, collect($product->broadcastLocations)->sum("screen_count"));
 
 		/** @var BroadcastLocation $broadcastLocation */
 		foreach ($product->broadcastLocations as $broadcastLocation) {

@@ -11,7 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Models\Actor;
+use Neo\Modules\Properties\Models\Product;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -34,6 +34,21 @@ class TestCommand extends Command {
 //		                 ->selectFocus()
 //		                 ->getSelection());
 
-		dump(Actor::find(1010)->getRootAccessesShallow());
+//		dump(Actor::find(1010)->getRootAccessesShallow());
+
+		$p              = new Product();
+		$p->property_id = 87;
+		$p->name_en     = "Outdoor - Vertical Full Screen";
+		$p->name_fr     = "Extérieur - Vertical Plein écran";
+		$p->category_id = 36;
+		$p->quantity    = 1;
+		$p->save();
+
+//		$p              = new Product();
+//		$p->property_id = 87;
+//		$p->name_en     = "Indoor - Digital-Horizontal";
+//		$p->name_fr     = "Intérieur - Multizone";
+//		$p->category_id = 29;
+//		$p->save();
 	}
 }

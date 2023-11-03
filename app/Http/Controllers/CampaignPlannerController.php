@@ -22,7 +22,6 @@ use Neo\Http\Requests\CampaignPlanner\ShowProductRequest;
 use Neo\Http\Requests\CampaignPlanner\ShowPropertyRequest;
 use Neo\Models\CampaignPlannerSave;
 use Neo\Modules\Broadcast\Models\Format;
-use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Models\Brand;
 use Neo\Modules\Properties\Models\DemographicValue;
 use Neo\Modules\Properties\Models\DemographicVariable;
@@ -32,6 +31,7 @@ use Neo\Modules\Properties\Models\Pricelist;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
 use Neo\Modules\Properties\Models\Property;
+use Neo\Modules\Properties\Models\PropertyNetwork;
 use Neo\Modules\Properties\Models\PropertyTrafficSnapshot;
 use Neo\Modules\Properties\Models\PropertyType;
 use Neo\Modules\Properties\Models\ScreenType;
@@ -127,7 +127,7 @@ class CampaignPlannerController {
 		                             ->get()
 		                             ->append("network_ids");
 		$demographicVariables = DemographicVariable::query()->get();
-		$networks             = Network::query()->get();
+		$networks             = PropertyNetwork::query()->get();
 		$brands               = Brand::query()->with("child_brands:id,parent_id")->get();
 		$pricelists           = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull()->unique())
 		                                 ->with(["categories_pricings", "products_pricings"])

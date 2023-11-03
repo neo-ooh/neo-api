@@ -165,7 +165,6 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 	protected static function boot(): void {
 		parent::boot();
 
-
 		static::deleting(static function (Product $product) {
 			$product->attachments->each(fn(Attachment $attachment) => $attachment->delete());
 			$product->unavailabilities->each(fn(Unavailability $unavailability) => $unavailability->delete());

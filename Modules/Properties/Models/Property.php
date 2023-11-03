@@ -26,7 +26,6 @@ use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Models\Traits\HasView;
-use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
 use Neo\Modules\Properties\Rules\AccessibleProperty;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
@@ -63,7 +62,7 @@ use Throwable;
  * @property PropertyTrafficSettings               $traffic
  * @property PropertyType|null                     $type
  * @property Address|null                          $address
- * @property Network|null                          $network
+ * @property PropertyNetwork|null                  $network
  * @property Collection<InventoryPicture>          $pictures
  * @property Collection<PropertyFieldSegmentValue> $fields_values
  * @property Collection<OpeningHours>              $opening_hours
@@ -262,7 +261,7 @@ class Property extends SecuredModel {
 	}
 
 	public function network(): BelongsTo {
-		return $this->belongsTo(Network::class, "network_id");
+		return $this->belongsTo(PropertyNetwork::class, "network_id");
 	}
 
 	public function warnings(): HasOne {

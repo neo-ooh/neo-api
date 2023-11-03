@@ -15,13 +15,10 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\StructuredColumns\NetworkSettings;
-use Neo\Modules\Properties\Models\Field;
-use Neo\Modules\Properties\Models\Property;
 
 /**
  * @property int                          $id
@@ -39,8 +36,6 @@ use Neo\Modules\Properties\Models\Property;
  * @property BroadcasterConnection        $broadcaster_connection
  * @property Collection<NetworkContainer> $containers
  * @property Collection<Location>         $locations
- * @property Collection<Property>         $properties
- * @property Collection<Field>            $properties_fields
  *
  * @property string                       $toned_down_color
  *
@@ -71,7 +66,6 @@ class Network extends Model {
 	protected function getPublicRelations() {
 		return [
 			"connection" => "broadcaster_connection",
-			"fields"     => "properties_fields",
 			"locations"  => "locations",
 			"containers" => "containers",
 			"products"   => fn(Network $n) => $n->locations->append("product_ids"),
@@ -103,22 +97,6 @@ class Network extends Model {
 	 */
 	public function locations(): HasMany {
 		return $this->hasMany(Location::class, 'network_id', 'id')->orderBy("name");
-	}
-
-	/**
-	 * @return HasMany<Property>
-	 */
-	public function properties(): HasMany {
-		return $this->hasMany(Property::class, "network_id", "id")->orderBy("name");
-	}
-
-	/**
-	 * @return BelongsToMany<Field>
-	 */
-	public function properties_fields(): BelongsToMany {
-		return $this->belongsToMany(Field::class, "fields_networks", "network_id", "field_id")
-		            ->withPivot(["order"])
-		            ->orderByPivot("order");
 	}
 
 	/**

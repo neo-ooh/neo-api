@@ -11,7 +11,9 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Modules\Properties\Models\Product;
+use Illuminate\Support\Facades\DB;
+use Neo\Models\Actor;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -24,31 +26,23 @@ class TestCommand extends Command {
 	 * @throws Exception
 	 */
 	public function handle() {
-//		dump(Actor::find(448)->getAccessibleActors(shallow: true)->pluck("id"));
-//		dump(ActorsGetter::from(40)
-//		                 ->selectChildren(recursive: false)
-//		                 ->getSelection());
+		dd(Actor::query()->find(3962)->direct_children->count());
 
-//		dump(ActorsGetter::from(558)
-//		                 ->selectParents()
-//		                 ->selectFocus()
-//		                 ->getSelection());
+		$reader    = new Csv();
+		$xlsx      = $reader->load("/Users/vdufois/Documents/Mobile/Drako/NeoFitnessDrakoImpressions.csv");
+		$worksheet = $xlsx->getActiveSheet();
+		$worksheet->toArray();
 
-//		dump(Actor::find(1010)->getRootAccessesShallow());
+		$data = $worksheet->toArray();
+		array_shift($data);
 
-		$p              = new Product();
-		$p->property_id = 87;
-		$p->name_en     = "Outdoor - Vertical Full Screen";
-		$p->name_fr     = "Extérieur - Vertical Plein écran";
-		$p->category_id = 36;
-		$p->quantity    = 1;
-		$p->save();
-
-//		$p              = new Product();
-//		$p->property_id = 87;
-//		$p->name_en     = "Indoor - Digital-Horizontal";
-//		$p->name_fr     = "Intérieur - Multizone";
-//		$p->category_id = 29;
-//		$p->save();
+		foreach ($data as $k => $row) {
+			$propertyId  = (int)$row[0];
+			$impressions = (int)$row[10];
+			dump($k . "- (" . $propertyId . ") " . $impressions);
+			DB::table("properties")
+			  ->where("actor_id", "=", $propertyId)
+			  ->update(["mobile_impressions_per_week" => round($impressions / 4)]);
+		}
 	}
 }

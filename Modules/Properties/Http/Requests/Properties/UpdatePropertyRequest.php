@@ -18,20 +18,21 @@ use Neo\Modules\Properties\Models\InventoryPicture;
 use Neo\Modules\Properties\Models\PropertyType;
 
 class UpdatePropertyRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "network_id"       => ["nullable", "exists:networks,id"],
-            "is_sellable"      => ["required", "boolean"],
-            "has_tenants"      => ["required", "boolean"],
-            "pricelist_id"     => ["nullable", "exists:pricelists,id"],
-            "website"          => ["nullable", "string"],
-            "type_id"          => ["nullable", "integer", new Exists(PropertyType::class, "id")],
-            "notes"            => ["nullable", "string"],
-            "cover_picture_id" => ["nullable", new Exists(InventoryPicture::class, "id")],
-        ];
-    }
+	public function rules(): array {
+		return [
+			"network_id"                  => ["nullable", "exists:networks,id"],
+			"is_sellable"                 => ["required", "boolean"],
+			"has_tenants"                 => ["required", "boolean"],
+			"pricelist_id"                => ["nullable", "exists:pricelists,id"],
+			"website"                     => ["nullable", "string"],
+			"type_id"                     => ["nullable", "integer", new Exists(PropertyType::class, "id")],
+			"notes"                       => ["nullable", "string"],
+			"cover_picture_id"            => ["nullable", new Exists(InventoryPicture::class, "id")],
+			"mobile_impressions_per_week" => ["nullable", "integer", "min:0"],
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::properties_create->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::properties_create->value);
+	}
 }

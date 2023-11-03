@@ -12,28 +12,30 @@ namespace Neo\Modules\Properties\Http\Requests\Properties;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
+use Neo\Modules\Properties\Models\PropertyNetwork;
 use Neo\Rules\AccessibleActor;
 
 class StorePropertyRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool {
-        return Gate::allows(Capability::properties_create->value);
-    }
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	public function authorize(): bool {
+		return Gate::allows(Capability::properties_create->value);
+	}
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules(): array {
-        return [
-            "actor_id"   => ["required", "exists:actors,id", new AccessibleActor()],
-            "network_id" => ["required", "exists:networks,id"],
-        ];
-    }
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array
+	 */
+	public function rules(): array {
+		return [
+			"actor_id"   => ["required", "exists:actors,id", new AccessibleActor()],
+			"network_id" => ["required", new Exists(PropertyNetwork::class, "id")],
+		];
+	}
 }

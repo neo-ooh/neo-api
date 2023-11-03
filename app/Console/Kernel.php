@@ -27,6 +27,7 @@ use Neo\Jobs\Traffic\PullLatestTrafficData;
 use Neo\Jobs\Traffic\TrafficRequiredReminder;
 use Neo\Modules\Broadcast\Console\Commands\FetchCampaignsPerformancesCommand;
 use Neo\Modules\Broadcast\Console\Commands\SynchronizeNetworkCommand;
+use Neo\Modules\Properties\Console\Commands\ImportMobilePropertiesCommand;
 use Neo\Modules\Properties\Jobs\CreateTrafficSnapshotJob;
 
 class Kernel extends ConsoleKernel {
@@ -59,6 +60,7 @@ class Kernel extends ConsoleKernel {
 		PopulateCensusSubdivisionsCommand::class,
 		PopulateCensusFederalElectoralDistrictsCommand::class,
 		PopulateCensusForwardSortationAreasCommand::class,
+		ImportMobilePropertiesCommand::class,
 	];
 
 	/**

@@ -44,6 +44,7 @@ use Throwable;
  * @property boolean                               $is_sellable
  * @property boolean                               $has_tenants
  * @property string                                $website
+ * @property int                                   $mobile_impressions_per_week
  *
  * @property Carbon                                $last_review_at
  * @property string                                $notes

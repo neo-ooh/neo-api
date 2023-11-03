@@ -148,14 +148,15 @@ class PropertiesController extends Controller {
 	}
 
 	public function update(UpdatePropertyRequest $request, Property $property): Response {
-		$property->network_id       = $request->input("network_id");
-		$property->is_sellable      = $request->input("is_sellable");
-		$property->has_tenants      = $request->input("has_tenants");
-		$property->pricelist_id     = $request->input("pricelist_id");
-		$property->website          = $request->input("website") ?? "";
-		$property->type_id          = $request->input("type_id");
-		$property->notes            = $request->input("notes") ?? "";
-		$property->cover_picture_id = $request->input("cover_picture_id");
+		$property->network_id                  = $request->input("network_id");
+		$property->is_sellable                 = $request->input("is_sellable");
+		$property->has_tenants                 = $request->input("has_tenants");
+		$property->pricelist_id                = $request->input("pricelist_id");
+		$property->website                     = $request->input("website") ?? "";
+		$property->type_id                     = $request->input("type_id");
+		$property->notes                       = $request->input("notes") ?? "";
+		$property->cover_picture_id            = $request->input("cover_picture_id");
+		$property->mobile_impressions_per_week = $request->input("mobile_impressions_per_week", 0);
 		$property->save();
 
 		return new Response($property->loadPublicRelations());

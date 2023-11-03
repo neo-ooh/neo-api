@@ -156,7 +156,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 			                     uids  : [["id" => (string)$player->id]],
 			),
 		];
-		$adUnit->integration_type = 3;
+		$adUnit->integration_type = 0;
 		$adUnit->keywords         = $adUnit->keywords ?? [];
 		$adUnit->location         = $adUnit->location ?? AdUnitLocation::from([
 			                                                                      "lat"                 => $product->geolocation->latitude,

@@ -55,7 +55,7 @@ class Flight {
 	}
 
 	public function getWeekLength() {
-		$diffInDays = $this->start->diffInDays($this->end, absolute: true);
+		$diffInDays = $this->start->diffInDays($this->end, absolute: true) / 7;
 		return round($diffInDays, 1);
 	}
 }

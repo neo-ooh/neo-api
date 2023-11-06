@@ -119,7 +119,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 		                          ]];
 		$adUnit->aspect_ratios = [];
 
-		$name = str_replace(" ", "_", trim($player->name));
+		$name = $player->external_id->external_id;
 
 		/** @var string[] $mimeTypes */
 		$mimeTypes = [
@@ -240,7 +240,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 				$impressionsShare = $broadcastPlayer->screen_count / $screensCount;
 
 				$adUnit         = new AdUnit($client);
-				$adUnit->name   = str_replace(" ", "_", trim($broadcastPlayer->name));
+				$adUnit->name   = $broadcastPlayer->external_id->external_id;
 				$adUnit->slot   = new AdUnitSlot(
 					h           : $product->screen_height_px,
 					max_duration: $product->loop_configuration->spot_length_ms / 1_000,
@@ -309,9 +309,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 				$unitName = $adUnit->name;
 
 				$this->fillAdUnit($adUnit, $broadcastPlayer, $product, $productId->context, $impressionsShare);
-
-				clock($adUnit->getAttributes());
-
+				
 				$adUnit->save($unitName);
 
 				$adUnitsIds[$broadcastPlayer->id] = ["id" => $adUnit->getKey(), "name" => $adUnit->name];

@@ -43,10 +43,9 @@ class Address extends Model {
 	];
 
 	protected $with = [
-		"city",
-		"city.province",
-		"city.province.country",
-		"city.market",
+//		"city",
+//		"city.province.country",
+//		"city.market",
 	];
 
 	protected $appends = [

@@ -31,50 +31,55 @@ use Neo\Modules\Properties\Services\Resources\City as CityResource;
  * @property int         $id
  */
 class City extends Model {
-    protected $table = "cities";
+	protected $table = "cities";
 
-    protected $primaryKey = "id";
+	protected $primaryKey = "id";
 
-    public $timestamps = false;
+	public $timestamps = false;
 
-    protected $casts = [
-        "geolocation" => Point::class,
-    ];
+	protected $casts = [
+		"geolocation" => Point::class,
+	];
 
-    protected $fillable = [
-        "name",
-        "market_id",
-        "province_id",
-    ];
+	protected $with = [
+		"market",
+		"province.country",
+	];
 
-    /**
-     * @return BelongsTo
-     */
-    public function province(): BelongsTo {
-        return $this->belongsTo(Province::class, "province_id");
-    }
+	protected $fillable = [
+		"name",
+		"market_id",
+		"province_id",
+	];
 
-    /**
-     * @return BelongsTo
-     */
-    public function market(): BelongsTo {
-        return $this->belongsTo(Market::class, "market_id");
-    }
+	/**
+	 * @return BelongsTo
+	 */
+	public function province(): BelongsTo {
+		return $this->belongsTo(Province::class, "province_id");
+	}
 
-    /**
-     * @return HasMany
-     */
-    public function addresses(): HasMany {
-        return $this->hasMany(Address::class, "city_id", "id");
-    }
+	/**
+	 * @return BelongsTo
+	 */
+	public function market(): BelongsTo {
+		return $this->belongsTo(Market::class, "market_id");
+	}
 
-    /**
-     * @return CityResource
-     */
-    public function toInventoryResource(): CityResource {
-        return new CityResource(
-            name         : $this->name,
-            province_slug: strtoupper($this->province->slug),
-        );
-    }
+	/**
+	 * @return HasMany
+	 */
+	public function addresses(): HasMany {
+		return $this->hasMany(Address::class, "city_id", "id");
+	}
+
+	/**
+	 * @return CityResource
+	 */
+	public function toInventoryResource(): CityResource {
+		return new CityResource(
+			name         : $this->name,
+			province_slug: strtoupper($this->province->slug),
+		);
+	}
 }

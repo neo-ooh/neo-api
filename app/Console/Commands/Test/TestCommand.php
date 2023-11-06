@@ -12,8 +12,6 @@ namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Neo\Models\Actor;
-use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -26,23 +24,10 @@ class TestCommand extends Command {
 	 * @throws Exception
 	 */
 	public function handle() {
-		dd(Actor::query()->find(3962)->direct_children->count());
-
-		$reader    = new Csv();
-		$xlsx      = $reader->load("/Users/vdufois/Documents/Mobile/Drako/NeoFitnessDrakoImpressions.csv");
-		$worksheet = $xlsx->getActiveSheet();
-		$worksheet->toArray();
-
-		$data = $worksheet->toArray();
-		array_shift($data);
-
-		foreach ($data as $k => $row) {
-			$propertyId  = (int)$row[0];
-			$impressions = (int)$row[10];
-			dump($k . "- (" . $propertyId . ") " . $impressions);
-			DB::table("properties")
-			  ->where("actor_id", "=", $propertyId)
-			  ->update(["mobile_impressions_per_week" => round($impressions / 4)]);
-		}
+		dump(DB::table("opening_hours")
+		       ->select("property_id", "weekday", "is_closed", "open_at", "close_at")
+		       ->get()
+		       ->groupBy("property_id")
+		       ->keyBy("0.property_id"));
 	}
 }

@@ -368,6 +368,7 @@ class Product extends Model implements WithImpressionsModels, WithAttachments {
 	public function toResource(int $inventoryID): ProductResource {
 		$this->loadMissing([
 			                   "property",
+			                   "property.address.city",
 			                   "property.type.external_representations",
 			                   "category.format",
 			                   "locations",

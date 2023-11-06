@@ -99,7 +99,7 @@ class PropertiesExport extends XLSXDocument {
 			                                   "products.category.impressions_models",
 			                                   "products.pricelist",
 			                                   "traffic.weekly_data",
-			                                   "address",
+			                                   "address.city",
 			                                   "opening_hours",
 		                                   ])
 		                            ->findMany($data["properties"]);

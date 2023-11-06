@@ -40,51 +40,53 @@ use Neo\Modules\Broadcast\Models\Network;
  * @property Collection<int>          $network_ids
  */
 class Field extends Model {
-    use HasPublicRelations;
+	use HasPublicRelations;
 
-    protected $primaryKey = "id";
+	protected $primaryKey = "id";
 
-    protected $table = "fields";
+	protected $table = "fields";
 
-    protected $fillable = [
-        "category_id",
-        "name_en",
-        "name_fr",
-        "type",
-        "unit",
-        "is_filter",
-        "demographic_filled",
-        "visualization",
-    ];
+	protected $fillable = [
+		"category_id",
+		"name_en",
+		"name_fr",
+		"type",
+		"unit",
+		"is_filter",
+		"demographic_filled",
+		"visualization",
+	];
 
-    protected $casts = [
-        "is_filter"          => "boolean",
-        "demographic_filled" => "boolean",
-    ];
+	protected $casts = [
+		"is_filter"          => "boolean",
+		"demographic_filled" => "boolean",
+	];
 
-    protected $with = ["segments"];
+	protected $with = ["segments"];
 
-    public function getPublicRelations(): array {
-        return [
-            "category" => Relation::make("category"),
-            "segments" => Relation::make("segments"),
-            "networks" => Relation::make("networks"),
-        ];
-    }
+	protected $hidden = ["pivot"];
 
-    public function networks(): BelongsToMany {
-        return $this->belongsToMany(Network::class, "fields_networks", "field_id", "network_id");
-    }
+	public function getPublicRelations(): array {
+		return [
+			"category" => Relation::make("category"),
+			"segments" => Relation::make("segments"),
+			"networks" => Relation::make("networks"),
+		];
+	}
 
-    public function getNetworkIdsAttribute() {
-        return $this->networks()->allRelatedIds();
-    }
+	public function networks(): BelongsToMany {
+		return $this->belongsToMany(PropertyNetwork::class, "fields_networks", "field_id", "network_id");
+	}
 
-    public function segments(): HasMany {
-        return $this->hasMany(FieldSegment::class, "field_id", "id")->orderBy("order");
-    }
+	public function getNetworkIdsAttribute() {
+		return $this->networks()->allRelatedIds();
+	}
 
-    public function category(): BelongsTo {
-        return $this->belongsTo(FieldsCategory::class, "category_id", "id");
-    }
+	public function segments(): HasMany {
+		return $this->hasMany(FieldSegment::class, "field_id", "id")->orderBy("order");
+	}
+
+	public function category(): BelongsTo {
+		return $this->belongsTo(FieldsCategory::class, "category_id", "id");
+	}
 }

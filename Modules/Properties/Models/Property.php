@@ -152,7 +152,7 @@ class Property extends SecuredModel {
 	public function getPublicRelations(): array {
 		return [
 			"actor"                     => "load:actor",
-			"address"                   => Relation::make(load: "address"),
+			"address"                   => Relation::make(load: "address.city"),
 			"contacts"                  => "load:contacts",
 			"cover_picture"             => Relation::make(
 				load: "cover_picture",

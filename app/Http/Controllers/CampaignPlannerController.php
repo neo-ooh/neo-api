@@ -20,7 +20,11 @@ use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerDemographicValuesRequest
 use Neo\Http\Requests\CampaignPlanner\GetCampaignPlannerTrafficRequest;
 use Neo\Http\Requests\CampaignPlanner\ShowProductRequest;
 use Neo\Http\Requests\CampaignPlanner\ShowPropertyRequest;
+use Neo\Http\Resources\Planner\ProductResource;
+use Neo\Http\Resources\Planner\PropertyResource;
 use Neo\Models\CampaignPlannerSave;
+use Neo\Models\City;
+use Neo\Models\Tag;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Properties\Models\Brand;
 use Neo\Modules\Properties\Models\DemographicValue;
@@ -38,7 +42,8 @@ use Neo\Modules\Properties\Models\ScreenType;
 
 class CampaignPlannerController {
 	protected function getPropertiesQuery() {
-		return Property::query()->where("is_sellable", "=", true)
+		return Property::withoutEagerLoads()
+		               ->where("is_sellable", "=", true)
 		               ->whereHas("address", function (Builder $query) {
 			               $query->whereNotNull("geolocation");
 		               });
@@ -48,40 +53,57 @@ class CampaignPlannerController {
 		set_time_limit(120);
 
 		/** @var Collection<Property> $properties */
-		$properties = $this->getPropertiesQuery()->get();
+		$properties = $this->getPropertiesQuery()
+		                   ->select([
+			                            "actor_id",
+			                            "address_id",
+			                            "mobile_impressions_per_week",
+			                            "network_id",
+			                            "pricelist_id",
+			                            "website",
+			                            "has_tenants",
+			                            "cover_picture_id",
+			                            "type_id",
+		                            ])
+		                   ->get();
 
 		$properties->loadMissing([
-			                         "actor.tags",
+			                         "actor" => function ($relation) {
+				                         $relation->setEagerLoads([]);
+			                         },
+			                         "actor.tags:id",
 			                         "translations",
 			                         "address",
-			                         "opening_hours",
 		                         ]);
 
-		$dataArray = $properties->map(fn(Property $property) => [
-			"id"                          => $property->actor_id,
-			"is_sellable"                 => $property->is_sellable,
-			"name"                        => $property->actor->name,
-			"address"                     => $property->address->makeHidden(["created_at", "updated_at"]),
-			"mobile_impressions_per_week" => $property->mobile_impressions_per_week,
-			"network_id"                  => $property->network_id,
-			"pricelist_id"                => $property->pricelist_id,
-			"translations"                => $property->translations->makeHidden(["created_at", "updated_at"]),
-			"website"                     => $property->website,
-			"opening_hours"               => $property->opening_hours->makeHidden(["created_at", "updated_at"]),
-			"has_tenants"                 => $property->has_tenants,
-			"tags"                        => $property->actor->tags->makeHidden(["created_at", "updated_at"]),
-			"cover_picture_id"            => $property->cover_picture_id,
-			"type_id"                     => $property->type_id,
-		])->all();
+//		$propertiesObj = $properties->map(function (Property $property) {
+//			return [
+//				"id"                          => $property->actor_id,
+//				"is_sellable"                 => true,
+//				"name"                        => $property->actor->name,
+//				"address"                     => $property->address->makeHidden(["created_at", "updated_at"]),
+//				"mobile_impressions_per_week" => $property->mobile_impressions_per_week,
+//				"network_id"                  => $property->network_id,
+//				"pricelist_id"                => $property->pricelist_id,
+//				"translations"                => $property->translations->makeHidden(["created_at", "updated_at"]),
+//				"website"                     => $property->website,
+//				"has_tenants"                 => $property->has_tenants,
+//				"tags"                        => $property->actor->tags,
+//				"cover_picture_id"            => $property->cover_picture_id,
+//				"type_id"                     => $property->type_id,
+//			];
+//		});
 
 		return new Response([
-			                    "properties" => $dataArray,
+			                    "properties" => PropertyResource::collection($properties),
 		                    ]);
 	}
 
 	public function dataChunk_2(GetCampaignPlannerDataRequest $request) {
 		/** @var Collection<Property> $properties */
-		$properties = $this->getPropertiesQuery()->get();
+		$properties = $this->getPropertiesQuery()
+		                   ->select(["actor_id", "address_id"])
+		                   ->get();
 
 		$properties->load([
 			                  "fields_values" => fn($q) => $q->select(["property_id", "fields_segment_id", "value", "reference_value", "index"])
@@ -89,18 +111,27 @@ class CampaignPlannerController {
 			                  "tenants"       => fn($q) => $q->select(["id"]),
 		                  ]);
 
+		$openingHours = DB::table("opening_hours")
+		                  ->select("property_id", "weekday", "is_closed", "open_at", "close_at")
+		                  ->get()
+		                  ->groupBy("property_id")
+		                  ->keyBy("0.property_id");
+
 		return [
 			"properties" => $properties->map(fn(Property $property) => [
 				"id"            => $property->actor_id,
 				"fields_values" => $property->fields_values,
 				"tenants"       => $property->tenants->pluck('id'),
+				"opening_hours" => $openingHours[$property->getKey()] ?? [],
 			]),
 		];
 	}
 
 	public function dataChunk_3(GetCampaignPlannerDataRequest $request) {
 		/** @var Collection<Property> $properties */
-		$properties = $this->getPropertiesQuery()->get();
+		$properties = $this->getPropertiesQuery()
+		                   ->select(["actor_id"])
+		                   ->get();
 
 		$properties->load([
 			                  "products",
@@ -110,7 +141,7 @@ class CampaignPlannerController {
 		return [
 			"properties" => $properties->map(fn(Property $property) => [
 				"id"                      => $property->actor_id,
-				"products"                => $property->products,
+				"products"                => ProductResource::collection($property->products),
 				"products_ids"            => $property->products->pluck("id"),
 				"products_categories_ids" => $property->products->groupBy("category_id")
 				                                                ->map(static fn($products) => $products->pluck('id')),
@@ -121,23 +152,49 @@ class CampaignPlannerController {
 	public function dataChunk_4(GetCampaignPlannerDataRequest $request) {
 		$properties = $this->getPropertiesQuery()->get(["actor_id", "pricelist_id"]);
 
-		$categories           = ProductCategory::with(["impressions_models", "attachments"])->get();
-		$fieldCategories      = FieldsCategory::query()->get();
-		$fields               = Field::query()
-		                             ->with(["segments.stats"])
-		                             ->get()
-		                             ->append("network_ids");
-		$demographicVariables = DemographicVariable::query()->get();
-		$networks             = PropertyNetwork::query()->get();
-		$brands               = Brand::query()->with("child_brands:id,parent_id")->get();
-		$pricelists           = Pricelist::query()->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull()->unique())
+		$categories           = ProductCategory::query()
+		                                       ->select(["id", "inventory_resource_id", "name_en", "name_fr", "type", "format_id", "allowed_media_types", "allows_audio", "allows_motion", "production_cost", "programmatic_price", "screen_size_in", "screen_type_id"])
+		                                       ->with(["impressions_models", "attachments"])->get();
+		$fieldCategories      = FieldsCategory::query()->select([
+			                                                        "id",
+			                                                        "name_en",
+			                                                        "name_fr",
+		                                                        ])->get();
+		$fields               = Field::query()->select([
+			                                               "id", "category_id", "order", "name_en", "name_fr", "type", "unit", "is_filter",
+			                                               "demographic_filled", "visualization",
+		                                               ])
+		                             ->with(["segments.stats", "networks:id"])
+		                             ->get();
+		$demographicVariables = DemographicVariable::query()
+		                                           ->select(["id", "label", "provider"])
+		                                           ->get();
+		$networks             = PropertyNetwork::query()
+		                                       ->select(["id", "name", "slug", "color", "ooh_sales", "mobile_sales"])
+		                                       ->get();
+		$brands               = Brand::query()
+		                             ->select(["id", "name_en", "name_fr", "parent_id"])
+		                             ->with("child_brands:id,parent_id")->get();
+		$pricelists           = Pricelist::query()
+		                                 ->select(["id", "name", "description"])
+		                                 ->whereIn("id", $properties->pluck("pricelist_id")->whereNotNull()->unique())
 		                                 ->with(["categories_pricings", "products_pricings"])
 		                                 ->get();
 		$formats              = Format::query()
+		                              ->select(["id", "slug", "network_id", "name", "content_length", "main_layout_id"])
 		                              ->with("loop_configurations")
 		                              ->get();
-		$propertyTypes        = PropertyType::query()->get();
-		$screenTypes          = ScreenType::query()->get();
+		$propertyTypes        = PropertyType::query()
+		                                    ->select(["id", "name_en", "name_fr"])
+		                                    ->get();
+		$screenTypes          = ScreenType::query()
+		                                  ->select(["id", "name_en", "name_fr"])
+		                                  ->get();
+
+		$cities = City::query()
+		              ->get();
+
+		$tags = Tag::query()->select(["id", "name", "color"])->get();
 
 		return [
 			"categories"            => $categories,
@@ -150,6 +207,8 @@ class CampaignPlannerController {
 			"formats"               => $formats,
 			"property_types"        => $propertyTypes,
 			"screen_types"          => $screenTypes,
+			"cities"                => $cities,
+			"tags"                  => $tags,
 		];
 	}
 

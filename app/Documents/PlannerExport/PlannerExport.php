@@ -535,9 +535,9 @@ class PlannerExport extends XLSXDocument {
 	 * @throws Exception
 	 */
 	public function printOOHFlight(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight, int $flightIndex): void {
-		$this->worksheet = new Worksheet(null, $flight->name);
+		$this->worksheet = new Worksheet(null, substr(trim($flight->name), 0, 31));
 		$this->spreadsheet->addSheet($this->worksheet);
-		$this->spreadsheet->setActiveSheetIndexByName($flight->name);
+		$this->spreadsheet->setActiveSheetIndexByName(substr(trim($flight->name), 0, 31));
 
 		$this->printHeader(12);
 		$this->printFlightHeader($flight, $flightIndex, width: 12);
@@ -836,9 +836,9 @@ class PlannerExport extends XLSXDocument {
 	 * @throws Exception
 	 */
 	public function printMobileFlight(CPCompiledFlight $flight, CPCompiledMobileFlight $mobileFlight, int $flightIndex): void {
-		$this->worksheet = new Worksheet(null, $flight->name);
+		$this->worksheet = new Worksheet(null, substr(trim($flight->name), 0, 31));
 		$this->spreadsheet->addSheet($this->worksheet);
-		$this->spreadsheet->setActiveSheetIndexByName($flight->name);
+		$this->spreadsheet->setActiveSheetIndexByName(substr(trim($flight->name), 0, 31));
 
 		$this->printHeader(8);
 		$this->printFlightHeader($flight, $flightIndex, width: 8);

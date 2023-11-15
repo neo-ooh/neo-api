@@ -14,7 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
-use Neo\Resources\CampaignPlannerPlan\CampaignPlannerPlan;
+use Neo\Resources\CampaignPlannerPlan\CPPlan;
 use Vinkla\Hashids\Facades\Hashids;
 
 /**
@@ -76,10 +76,10 @@ class CampaignPlannerSave extends Model {
 	}
 
 	/**
-	 * @param CampaignPlannerPlan $plan
+	 * @param CPPlan $plan
 	 * @return void
 	 */
-	public function storePlan(CampaignPlannerPlan $plan): void {
+	public function storePlan(CPPlan $plan): void {
 		clock()->event("Storing plan")->color("purple")->begin();
 		Storage::disk("public")->put($this->plan_path, $plan->toJson(), ['maxage']);
 		clock()->event("Storing plan")->end();
@@ -88,10 +88,10 @@ class CampaignPlannerSave extends Model {
 	/**
 	 * Get the plan data
 	 *
-	 * @return CampaignPlannerPlan
+	 * @return CPPlan
 	 */
 	public function getPlan() {
 		$rawPlan = Storage::disk("public")->get($this->plan_path);
-		return CampaignPlannerPlan::fromRaw($rawPlan);
+		return CPPlan::fromRaw($rawPlan);
 	}
 }

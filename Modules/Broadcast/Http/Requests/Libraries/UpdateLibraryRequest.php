@@ -14,39 +14,39 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Models\Advertiser;
+use Neo\Modules\Properties\Models\Advertiser;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Library;
 use Neo\Rules\AccessibleActor;
 use Neo\Rules\PublicRelations;
 
 class UpdateLibraryRequest extends FormRequest {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
-    public function authorize(): bool {
-        return Gate::allows(Capability::libraries_edit->value);
-    }
+	/**
+	 * Determine if the user is authorized to make this request.
+	 *
+	 * @return bool
+	 */
+	public function authorize(): bool {
+		return Gate::allows(Capability::libraries_edit->value);
+	}
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
-    public function rules(): array {
-        return [
-            "name"          => ["required", "string", "min:3"],
-            "owner_id"      => ["required", "integer", new AccessibleActor()],
-            "advertiser_id" => ["integer", "nullable", new Exists(Advertiser::class, "id")],
+	/**
+	 * Get the validation rules that apply to the request.
+	 *
+	 * @return array
+	 */
+	public function rules(): array {
+		return [
+			"name"          => ["required", "string", "min:3"],
+			"owner_id"      => ["required", "integer", new AccessibleActor()],
+			"advertiser_id" => ["integer", "nullable", new Exists(Advertiser::class, "id")],
 
-            "content_limit" => ["required", "integer", "min:0"],
+			"content_limit" => ["required", "integer", "min:0"],
 
-            "formats"   => ["array"],
-            "formats.*" => ["integer", new Exists(Format::class, 'id')],
+			"formats"   => ["array"],
+			"formats.*" => ["integer", new Exists(Format::class, 'id')],
 
-            "with" => ["array", new PublicRelations(Library::class)],
-        ];
-    }
+			"with" => ["array", new PublicRelations(Library::class)],
+		];
+	}
 }

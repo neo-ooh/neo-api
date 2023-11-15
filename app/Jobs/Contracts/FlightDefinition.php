@@ -11,29 +11,38 @@
 namespace Neo\Jobs\Contracts;
 
 use Illuminate\Support\Collection;
-use Neo\Resources\Contracts\CPCompiledProduct;
-use Neo\Resources\Contracts\FlightType;
+use Neo\Modules\Properties\Models\StructuredColumns\ContractFlightParameters;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\Mobile\CPCompiledMobileProperty;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHProduct;
+use Neo\Resources\FlightType;
 
 class FlightDefinition {
+	public ContractFlightParameters $parameters;
+
 	/**
-	 * @param string                        $name
-	 * @param string                        $uid
-	 * @param FlightType                    $type
-	 * @param string                        $startDate
-	 * @param string                        $endDate
-	 * @param Collection<CPCompiledProduct> $planLines
+	 * @param string                                                    $name
+	 * @param string                                                    $uid
+	 * @param FlightType                                                $type
+	 * @param string                                                    $start_date
+	 * @param string                                                    $end_date
+	 * @param Collection<CPCompiledOOHProduct|CPCompiledMobileProperty> $plan_lines
+	 * @param Collection                                                $product_ids
+	 * @param Collection                                                $lines
+	 * @param bool                                                      $additionalLinesAdded
+	 * @param bool                                                      $missingReferencedLine
 	 */
 	public function __construct(
 		public string     $name,
 		public string     $uid,
 		public FlightType $type,
-		public string     $startDate,
-		public string     $endDate,
-		public Collection $planLines = new Collection(),
-		public Collection $productIds = new Collection(),
+		public string     $start_date,
+		public string     $end_date,
+		public Collection $plan_lines = new Collection(),
+		public Collection $product_ids = new Collection(),
 		public Collection $lines = new Collection(),
 		public bool       $additionalLinesAdded = false,
 		public bool       $missingReferencedLine = false,
 	) {
+		$this->parameters = ContractFlightParameters::from([]);
 	}
 }

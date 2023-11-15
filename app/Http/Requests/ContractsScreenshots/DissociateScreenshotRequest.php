@@ -14,16 +14,16 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Models\ContractFlight;
+use Neo\Modules\Properties\Models\ContractFlight;
 
 class DissociateScreenshotRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "flight_id" => ["required", "integer", new Exists(ContractFlight::class, "id")],
-        ];
-    }
+	public function rules(): array {
+		return [
+			"flight_id" => ["required", "integer", new Exists(ContractFlight::class, "id")],
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::contracts_edit->value) || Gate::allows(Capability::contracts_manage->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::contracts_edit->value) || Gate::allows(Capability::contracts_manage->value);
+	}
 }

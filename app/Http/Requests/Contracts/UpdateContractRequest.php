@@ -16,7 +16,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
 use Neo\Models\Actor;
-use Neo\Models\Contract;
+use Neo\Modules\Properties\Models\Contract;
 use Neo\Rules\PublicRelations;
 
 class UpdateContractRequest extends FormRequest {

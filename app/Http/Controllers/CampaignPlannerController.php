@@ -31,6 +31,7 @@ use Neo\Modules\Properties\Models\DemographicValue;
 use Neo\Modules\Properties\Models\DemographicVariable;
 use Neo\Modules\Properties\Models\Field;
 use Neo\Modules\Properties\Models\FieldsCategory;
+use Neo\Modules\Properties\Models\MobileProduct;
 use Neo\Modules\Properties\Models\Pricelist;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
@@ -44,6 +45,10 @@ class CampaignPlannerController {
 	protected function getPropertiesQuery() {
 		return Property::withoutEagerLoads()
 		               ->where("is_sellable", "=", true)
+		               ->whereHas("network", function (Builder $query) {
+			               $query->where("ooh_sales", "=", true)
+			                     ->orWhere("mobile_sales", "=", true);
+		               })
 		               ->whereHas("address", function (Builder $query) {
 			               $query->whereNotNull("geolocation");
 		               });
@@ -191,6 +196,14 @@ class CampaignPlannerController {
 		                                  ->select(["id", "name_en", "name_fr"])
 		                                  ->get();
 
+		$mobileProducts = MobileProduct::query()
+		                               ->select(["id", "name_en", "name_fr"])
+		                               ->with([
+			                                      "brackets" => fn($q) => $q->select(["id", "mobile_product_id", "budget_min", "budget_max", "cpm"]),
+		                                      ])
+		                               ->get();
+
+
 		$cities = City::query()
 		              ->get();
 
@@ -203,6 +216,7 @@ class CampaignPlannerController {
 			"fields"                => $fields,
 			"demographic_variables" => $demographicVariables,
 			"brands"                => $brands,
+			"mobile_products"       => $mobileProducts,
 			"pricelists"            => $pricelists,
 			"formats"               => $formats,
 			"property_types"        => $propertyTypes,

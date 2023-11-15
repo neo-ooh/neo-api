@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -18,68 +18,75 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Auth;
 use Neo\Models\Actor;
-use Neo\Models\Contract;
-use Neo\Services\Odoo\OdooConfig;
+use Neo\Modules\Properties\Models\Advertiser;
+use Neo\Modules\Properties\Models\Client;
+use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Services\Resources\ContractResource;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 class ImportContractJob implements ShouldQueue, ShouldBeUnique {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function uniqueId(): string {
-        return $this->contract_name;
-    }
+	protected int|null $contract_id = null;
 
-    public function __construct(protected string $contract_name, protected \Neo\Services\Odoo\Models\Contract|null $odooContract) {
-    }
+	public function uniqueId(): string {
+		return $this->contract_name;
+	}
 
-    public function handle() {
-        if (Contract::query()->where("contract_id", "=", $this->contract_name)->exists()) {
-            // A contract with this name already exist, ignore
-            (new ConsoleOutput())->writeln($this->odooContract->name . ": Already in Connect.");
-            return;
-        }
+	public function __construct(protected string $contract_name, protected ContractResource $contract) {
+	}
 
-        $odooClient = OdooConfig::fromConfig()->getClient();
+	public function getImportedContractId() {
+		return $this->contract_id;
+	}
 
-        if (!$this->odooContract) {
-            // Pull the contract from Odoo
-            $this->odooContract = \Neo\Services\Odoo\Models\Contract::findByName($odooClient, $this->contract_name);
-        }
+	public function handle() {
+		if (Contract::query()->where("contract_id", "=", $this->contract_name)->exists()) {
+			// A contract with this name already exist, ignore
+			(new ConsoleOutput())->writeln($this->contract_name . ": Already in Connect.");
+			return;
+		}
 
-        if (!$this->odooContract) {
-            // Could not found contract, ignore
-            return;
-        }
+		$salesperson = Actor::query()
+		                    ->where("is_group", "=", false)
+		                    ->where("name", "=", $this->contract->salesperson->name)
+		                    ->first();
 
-        if (!$this->odooContract->isConfirmed()) {
-            // Contract is not in a confirmed state
-            (new ConsoleOutput())->writeln($this->odooContract->name . ": Not in a confirmed state.");
-            return;
-        }
+		if (!$salesperson) {
+			(new ConsoleOutput())->writeln($this->contract_name . ": No user found with name {$this->contract->salesperson->name}");
 
-        $salesperson = Actor::query()
-                            ->where("is_group", "=", false)
-                            ->where("name", "=", $this->odooContract->user_id[1])
-                            ->first();
-        if (!$salesperson) {
-            (new ConsoleOutput())->writeln($this->odooContract->name . ": No use found with name {$this->odooContract->user_id[1]}");
+			$currentUser = Auth::user();
+			if (!$currentUser) {
+				return;
+			}
 
-            $currentUser = Auth::user();
-            if (!$currentUser) {
-                return;
-            }
+			$salesperson = $currentUser;
+		}
 
-            $salesperson = $currentUser;
-        }
+		if ($this->contract->advertiser) {
+			$advertiser = Advertiser::query()->where("odoo_id", "=", $this->contract->advertiser->external_id)->first();
+		} else {
+			$advertiser = null;
+		}
 
-        $contract = new Contract([
-            "contract_id"    => $this->odooContract->name,
-            "salesperson_id" => $salesperson->getKey(),
-        ]);
+		if ($this->contract->client) {
+			$client = Client::query()->where("odoo_id", "=", $this->contract->client->external_id)->first();
+		} else {
+			$client = null;
+		}
 
-        $contract->save();
+		$contract                 = new Contract();
+		$contract->contract_id    = $this->contract_name;
+		$contract->inventory_id   = $this->contract->contract_id->inventory_id;
+		$contract->external_id    = $this->contract->contract_id->external_id;
+		$contract->salesperson_id = $salesperson->getKey();
+		$contract->advertiser_id  = $advertiser?->getKey();
+		$contract->client_id      = $client?->getKey();
+		$contract->save();
 
-        ImportContractDataJob::dispatchSync($contract->getKey(), $this->odooContract);
-        ImportContractReservations::dispatchSync($contract->getKey());
-    }
+		$this->contract_id = $contract->getKey();
+
+		ImportContractDataJob::dispatchSync($contract->getKey());
+		ImportContractReservations::dispatchSync($contract->getKey());
+	}
 }

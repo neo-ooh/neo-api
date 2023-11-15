@@ -10,7 +10,6 @@
 
 namespace Neo\Jobs\Odoo;
 
-use Carbon\Carbon;
 use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,263 +20,303 @@ use Illuminate\Queue\SerializesModels;
 use JsonException;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Models\MobileProduct;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
+use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
-use Neo\Modules\Properties\Services\Odoo\Models\Campaign;
-use Neo\Modules\Properties\Services\Odoo\Models\Contract;
-use Neo\Modules\Properties\Services\Odoo\Models\OrderLine;
-use Neo\Modules\Properties\Services\Odoo\Models\Product as OdooProduct;
 use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
-use Neo\Resources\Contracts\CPCompiledCategory;
-use Neo\Resources\Contracts\CPCompiledFlight;
-use Neo\Resources\Contracts\CPCompiledProduct;
-use Neo\Resources\Contracts\CPCompiledProperty;
+use Neo\Modules\Properties\Services\Resources\ContractLineResource;
+use Neo\Modules\Properties\Services\Resources\ContractResource;
+use Neo\Modules\Properties\Services\Resources\Enums\ContractLineType;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
+use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledFlight;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\Mobile\CPCompiledMobileFlight;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHCategory;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHFlight;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHProduct;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHProperty;
 use Spatie\LaravelData\Optional;
 
 class SendContractFlightJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    readonly private int $odooInventoryId;
+	public int $tries = 1;
+	public int $timeout = 300;
 
-    public int $tries = 1;
-    public int $timeout = 300;
+	/**
+	 * @var Collection List of all Connect's products included in this flight
+	 */
+	protected Collection $products;
 
-    /**
-     * @var Collection List of all Connect's products included in this flight
-     */
-    protected Collection $products;
+	/**
+	 * @var Collection List of all Connect's properties included in this flight
+	 */
+	protected Collection $properties;
 
-    /**
-     * @var Collection List of all Connect's properties included in this flight
-     */
-    protected Collection $properties;
+	public function __construct(protected ContractResource $contract, protected CPCompiledFlight $flight, protected int $flightIndex) {
+	}
 
-    public function __construct(protected Contract $contract, protected CPCompiledFlight $flight, protected int $flightIndex) {
-        $this->odooInventoryId = 1;
-    }
+	/**
+	 * @throws OdooException
+	 * @throws JsonException
+	 */
+	public function handle(): array {
+		$messages = [];
 
-    /**
-     * @throws OdooException
-     * @throws JsonException
-     */
-    public function handle(): array {
-        $messages = [];
+		$provider = InventoryProvider::find($this->contract->contract_id->inventory_id);
+		/** @var OdooAdapter $odoo */
+		$inventory = InventoryAdapterFactory::make($provider);
 
-        $inventory = InventoryProvider::find($this->odooInventoryId);
-        /** @var OdooAdapter $odoo */
-        $odoo   = InventoryAdapterFactory::make($inventory);
-        $client = $odoo->getConfig()->getClient();
+		$lines = collect();
+		if ($this->flight->isOOHFlight()) {
+			$lines = $this->prepareOOHLines($this->flight->getAsOOHFlight(), $this->flight, $inventory);
+		} else if ($this->flight->isMobileFlight()) {
+			$lines = $this->prepareMobileLines($this->flight->getAsMobileFlight(), $this->flight, $inventory);
+		}
 
-        // We need to extract all the products included in this flight.
-        // This way, we only make one request to the db for the correct Odoo ids
-        $compiledProducts = $this->flight
-            ->properties->toCollection()
-                        ->flatMap(
-                            fn(CPCompiledProperty $property) => $property
-                                ->categories->toCollection()
-                                            ->flatMap(
-                                                fn(CPCompiledCategory $category) => $category->products->toCollection()
-                                            )
-                        );
+		if ($lines->count() === 0) {
+			// No lines, nothing to do
+			return ["Empty flight"];
+		}
 
-        $this->products         = new Collection();
-        $compiledProductsChunks = $compiledProducts->chunk(500);
+		// Insert the lines in the contract
+		$inventory->fillContractLines(
+			contract: $this->contract->contract_id,
+			lines   : $lines,
+		);
 
-        // Eloquent `whereIn` fails silently for references above ~1000 reference values
-        foreach ($compiledProductsChunks as $chunk) {
-            $this->products = $this->products->merge(Product::query()
-                                                            ->whereIn("id", $chunk->pluck("id")->toArray())
-                                                            ->with("external_representations")
-                                                            ->get());
-        }
+		// And we are done.
+		return $messages;
+	}
 
-        // Load linked products id as well
-        $linkedProductsIds       = $this->products->pluck("linked_product_id")->filter()->unique();
-        $loadedProductsIds       = $this->products->pluck("id");
-        $linkedProductsIds       = $linkedProductsIds->whereNotIn(null, $loadedProductsIds);
-        $linkedProductsIdsChunks = $linkedProductsIds->chunk(500);
+	protected function prepareOOHLines(CPCompiledOOHFlight $flight, CPCompiledFlight $baseFlight, InventoryAdapter $inventory) {
+		// First, we extract all the products from the flight
+		$compiledProducts = $flight->properties
+			->toCollection()
+			->flatMap(fn(CPCompiledOOHProperty $property) => $property->categories
+				->toCollection()
+				->flatMap(fn(CPCompiledOOHCategory $category) => $category->products->toCollection())
+			);
 
-        foreach ($linkedProductsIdsChunks as $chunk) {
-            $this->products = $this->products->merge(Product::query()
-                                                            ->whereIn("id", $chunk)
-                                                            ->get());
-        }
+		// Now we need to load the products from Connect
+		$this->products         = new Collection();
+		$compiledProductsChunks = $compiledProducts->chunk(500);
 
-        // Register the flight campaign in the contract
-        Campaign::create($client, [
-            "order_id"   => $this->contract->id,
-            "state"      => "draft",
-            "date_start" => $this->flight->start_date,
-            "date_end"   => $this->flight->end_date,
-        ], pullRecord:   false);
+		// Eloquent `whereIn` fails silently for references above ~1000 reference values
+		foreach ($compiledProductsChunks as $chunk) {
+			$this->products = $this->products->merge(Product::query()
+			                                                ->whereIn("id", $chunk->pluck("id")->toArray())
+			                                                ->with("external_representations")
+			                                                ->get());
+		}
 
-        // This will hold the sum of production costs for each product category
-        /** @var array<int, array<int, float>> $productionCosts Production cost accumulation cost
-         * First index: Category ID; Second index: Cost; Value: Count
-         */
-        $productionCosts = [];
+		// Load linked products id as well
+		$linkedProductsIds       = $this->products->pluck("linked_product_id")->filter()->unique();
+		$loadedProductsIds       = $this->products->pluck("id");
+		$linkedProductsIds       = $linkedProductsIds->whereNotIn(null, $loadedProductsIds);
+		$linkedProductsIdsChunks = $linkedProductsIds->chunk(500);
 
-        // Now, we loop over each compiled product, and build its orderLines
-        $orderLinesToAdd = collect();
+		foreach ($linkedProductsIdsChunks as $chunk) {
+			$this->products = $this->products->merge(Product::query()
+			                                                ->whereIn("id", $chunk)
+			                                                ->get());
+		}
 
-        /** @var CPCompiledProduct $compiledProduct */
-        foreach ($compiledProducts as $compiledProduct) {
-            $dbProduct = $this->products->firstWhere("id", "=", $compiledProduct->id);
+		// This will hold the sum of production costs for each product category
+		/** @var array<int, array<int, float>> $productionCosts Production cost accumulation cost
+		 * First index: Category ID; Second index: Cost; Value: Count
+		 */
+		$productionCosts = [];
 
-            if (!$dbProduct) {
-                clock("Unknown product " . $compiledProduct->id);
-                $messages[] = "Unknown product " . $compiledProduct->id;
-                continue;
-            }
+		$orderLines = collect();
 
-            $orderLinesToAdd->push(...$this->buildLines($dbProduct, $compiledProduct));
+		// Now, we loop over each compiled product, and build its orderLines
+		/** @var CPCompiledOOHProduct $compiledProduct */
+		foreach ($compiledProducts as $compiledProduct) {
+			/** @var Product|null $product */
+			$product = $this->products->firstWhere("id", "=", $compiledProduct->id);
 
-            // Register production costs
-            if ($compiledProduct->production_cost_value > 0) {
-                if (isset($productionCosts[$compiledProduct->category_id])) {
-                    if (isset($productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value])) {
-                        $productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value] += 1;
-                    } else {
-                        $productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value] = 1;
-                    }
-                } else {
-                    $productionCosts[$compiledProduct->category_id] = [$compiledProduct->production_cost_value => 1];
-                }
-            }
-        }
+			if (!$product) {
+				$messages[] = "Unknown product " . $compiledProduct->id;
+				continue;
+			}
 
-        $linesBatch = $orderLinesToAdd->chunk(100);
-        // Creates all the lines
-        foreach ($linesBatch as $batch) {
-            OrderLine::createMany($client, $batch->toArray());
-            clock($batch->count());
-        }
+//			$orderLinesToAdd->push(...$this->buildLines($dbProduct, $compiledProduct, $inventory));
 
-        // Add the production costs
-        // Load all the products categories
-        $productCategories     = ProductCategory::query()->with("external_representations")
-                                                ->findMany(array_keys($productionCosts));
-        $productionLines       = [];
-        $flightStartPlusOneDay = Carbon::createFromFormat("Y-m-d", $this->flight->start_date)->addDay()->toDateString();
+			/** @var ExternalInventoryResource|null $externalRepresentation */
+			$externalRepresentation = $product->external_representations
+				->firstWhere("inventory_id", "=", $inventory->getInventoryID());
 
-        // Build the productions costs' lines
-        foreach ($productCategories as $productCategory) {
-            /** @var int|Optional $productionProductId */
-            $productionProductId = $productCategory->external_representations
-                ->firstWhere("inventory_id", "=", $this->odooInventoryId)?->context?->production_product_id;
+			// Cannot send product without a representation
+			if (!$externalRepresentation) {
+				// TODO: provide some feedback for this situation; let the user know which products where skipped
+				$messages[] = "Not representation on inventory #" . $inventory->getInventoryID() . "(" . $inventory->getInventoryType()->value . ") for product #" . $product->getKey() . " (" . $product->name_en . ")";
+				return collect();
+			}
 
-            if (!$productionProductId || $productionProductId instanceof Optional) {
-                clock("Missing production product Id for category #{$productCategory->getKey()}");
-                $messages[] = "Missing production product Id for category #{$productCategory->getKey()} ({$productCategory->name_en})";
-                continue;
-            }
+			$orderLines->push(new ContractLineResource(
+				                  line_id                 : null,
+				                  product_id              : $externalRepresentation->toInventoryResourceId(),
+				                  order                   : $this->flightIndex * 500 + $orderLines->count(),
+				                  name                    : $product->name_en,
+				                  start_date              : $flight->start_date,
+				                  end_date                : $flight->end_date,
+				                  type                    : ContractLineType::from($flight->type->value),
+				                  is_linked               : false,
+				                  faces_count             : $compiledProduct->quantity,
+				                  spots_count             : $compiledProduct->spots,
+				                  traffic                 : $compiledProduct->traffic,
+				                  impressions             : $compiledProduct->impressions,
+				                  unit_price              : $compiledProduct->unit_price,
+				                  media_value             : $compiledProduct->media_value,
+				                  discount_amount_relative: $compiledProduct->discount_amount,
+				                  discount_amount         : $compiledProduct->media_value * ($compiledProduct->discount_amount / 100),
+				                  price                   : $compiledProduct->price - $compiledProduct->production_cost_value,
+				                  cpm                     : $compiledProduct->cpm,
+			                  ));
 
-            // Load the product from id to get the variant id
-            $productionProduct = OdooProduct::get($client, $productionProductId);
+			// If the product has a linked product, we create a line for it too
+			if ($product->linked_product_id) {
+				/** @var Product|null $linkedProduct */
+				$linkedProduct = $this->products->firstWhere("id", "=", $product->linked_product_id);
 
-            if (!$productionProduct) {
-                // Could not find production product, stop here
-                $messages[] = "Could not find Odoo product with ID #{$productionProductId}";
-                continue;
-            }
+				if (!$linkedProduct) {
+					return $orderLines;
+				}
 
-            foreach ($productionCosts[$productCategory->getKey()] as $amount => $quantity) {
-                $productionLines[] = [
-                    "order_id"           => $this->contract->id,
-                    "name"               => $productionProduct->display_name,
-                    "price_unit"         => $amount,
-                    "product_uom_qty"    => $quantity,
-                    "customer_lead"      => 0.0,
-                    "nb_screen"          => 1,
-                    "product_id"         => $productionProduct->product_variant_id[0],
-                    "rental_start"       => $this->flight->start_date,
-                    "rental_end"         => $flightStartPlusOneDay,
-                    "is_rental_line"     => 1,
-                    "is_linked_line"     => 0,
-                    "discount"           => 0,
-                    "sequence"           => $this->flightIndex * 10,
-                    "connect_impression" => 0,
-                ];
-            }
-        }
+				/** @var ExternalInventoryResource|null $externalRepresentation */
+				$linkedProductExternalRepresentation = $linkedProduct->external_representations->firstWhere("inventory_id", "=", 1);
 
-        // Insert the production costs lines
-        OrderLine::createMany($client, $productionLines);
+				// Cannot send product without a representation
+				if (!$linkedProductExternalRepresentation) {
+					return $orderLines;
+				}
 
-        // And we are done.
-        return $messages;
-    }
+				$orderLines->push(new ContractLineResource(
+					                  line_id                 : null,
+					                  product_id              : $externalRepresentation->toInventoryResourceId(),
+					                  order                   : $this->flightIndex * 500 + $orderLines->count(),
+					                  name                    : $product->name_en,
+					                  start_date              : $flight->start_date,
+					                  end_date                : $flight->end_date,
+					                  type                    : ContractLineType::from($flight->type->value),
+					                  is_linked               : true,
+					                  faces_count             : $compiledProduct->quantity,
+					                  spots_count             : $compiledProduct->spots,
+					                  traffic                 : 0,
+					                  impressions             : 0,
+					                  unit_price              : 0,
+					                  media_value             : 0,
+					                  discount_amount_relative: 0,
+					                  discount_amount         : 0,
+					                  price                   : 0,
+					                  cpm                     : $compiledProduct->cpm,
+				                  ));
+			}
 
-    protected function buildLines(Product $product, CPCompiledProduct $compiledProduct): \Illuminate\Support\Collection {
-        $orderLines = collect();
+			// Register production costs
+			if ($compiledProduct->production_cost_value > 0) {
+				if (isset($productionCosts[$compiledProduct->category_id])) {
+					if (isset($productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value])) {
+						$productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value] += 1;
+					} else {
+						$productionCosts[$compiledProduct->category_id][$compiledProduct->production_cost_value] = 1;
+					}
+				} else {
+					$productionCosts[$compiledProduct->category_id] = [$compiledProduct->production_cost_value => 1];
+				}
+			}
+		}
 
-        /** @var ExternalInventoryResource|null $externalRepresentation */
-        $externalRepresentation = $product->external_representations->firstWhere("inventory_id", "=", 1);
+		// Now the production costs
+		// Load all the products categories
+		$productCategories     = ProductCategory::query()->with("external_representations")
+		                                        ->findMany(array_keys($productionCosts));
+		$flightStartPlusOneDay = $this->flight->start_date->addDay()->toDateString();
 
-        // Cannot send product without a representation
-        if (!$externalRepresentation) {
-            // TODO: provide some feedback for this situation; let the user know which products where skipped
-            return collect();
-        }
+		// Build the productions costs' lines
+		foreach ($productCategories as $productCategory) {
+			/** @var int|Optional $productionProductId */
+			$productionProductId = $productCategory->external_representations
+				->firstWhere("inventory_id", "=", $inventory->getInventoryID())?->context?->production_product_id;
 
-        if (!$externalRepresentation->context->variant_id) {
-            // Product has no variant id, we cannot send it to Odoo
-            return collect();
-        }
+			if (!$productionProductId || $productionProductId instanceof Optional) {
+				clock("Missing production product Id for category #{$productCategory->getKey()}");
+				$messages[] = "Missing production product Id for category #{$productCategory->getKey()} ({$productCategory->name_en})";
+				continue;
+			}
 
-        $orderLines->push([
-                              "order_id"           => $this->contract->id,
-                              "name"               => $product->name_en,
-                              "price_unit"         => $compiledProduct->unit_price,
-                              "product_uom_qty"    => $compiledProduct->spots,
-                              "customer_lead"      => 0.0,
-                              "nb_screen"          => $compiledProduct->quantity,
-                              "product_id"         => $externalRepresentation->context->variant_id,
-                              "rental_start"       => $this->flight->start_date,
-                              "rental_end"         => $this->flight->end_date,
-                              "is_rental_line"     => 1,
-                              "is_linked_line"     => 0,
-                              "discount"           => -$compiledProduct->discount_amount,
-                              "sequence"           => $this->flightIndex * 10,
-                              "connect_impression" => $compiledProduct->impressions,
-                          ]);
+			// Load the product from id to get the variant id
+			$productionProduct = $inventory->getProduct(new InventoryResourceId(
+				                                            inventory_id: $inventory->getInventoryID(),
+				                                            type        : InventoryResourceType::Product,
+				                                            external_id : $productionProductId,
+			                                            ));
 
-        if (!$product->linked_product_id) {
-            return $orderLines;
-        }
+			if (!$productionProduct) {
+				// Could not find production product, stop here
+				$messages[] = "Could not find Odoo product with ID #{$productionProductId}";
+				continue;
+			}
 
-        /** @var Product|null $linkedProduct */
-        $linkedProduct = $this->products->firstWhere("id", "=", $product->linked_product_id);
+			foreach ($productionCosts[$productCategory->getKey()] as $amount => $quantity) {
+				$orderLines->push(new ContractLineResource(
+					                  line_id                 : null,
+					                  product_id              : $productionProduct->resourceId,
+					                  order                   : $this->flightIndex * 500 + $orderLines->count(),
+					                  name                    : $productionProduct->product->name[0]->value,
+					                  start_date              : $flight->start_date,
+					                  end_date                : $flightStartPlusOneDay,
+					                  type                    : ContractLineType::ProductionCost,
+					                  is_linked               : false,
+					                  faces_count             : 1,
+					                  spots_count             : $quantity,
+					                  traffic                 : 0,
+					                  impressions             : 0,
+					                  unit_price              : $amount,
+					                  media_value             : 0,
+					                  discount_amount_relative: 0,
+					                  discount_amount         : 0,
+					                  price                   : $amount,
+					                  cpm                     : 0,
+				                  ));
+			}
+		}
 
-        if (!$linkedProduct) {
-            return $orderLines;
-        }
+		return $orderLines;
+	}
 
-        /** @var ExternalInventoryResource|null $externalRepresentation */
-        $linkedProductExternalRepresentation = $linkedProduct->external_representations->firstWhere("inventory_id", "=", 1);
-
-        // Cannot send product without a representation
-        if (!$linkedProductExternalRepresentation) {
-            return $orderLines;
-        }
-
-        $orderLines->push([
-                              "order_id"        => $this->contract->id,
-                              "name"            => $linkedProduct->name_en,
-                              "price_unit"      => 0,
-                              "product_uom_qty" => $compiledProduct->spots,
-                              "customer_lead"   => 0.0,
-                              "nb_screen"       => $linkedProduct->quantity,
-                              "product_id"      => $linkedProductExternalRepresentation->context->variant_id,
-                              "rental_start"    => $this->flight->start_date,
-                              "rental_end"      => $this->flight->end_date,
-                              "is_rental_line"  => 1,
-                              "is_linked_line"  => 1,
-                              "discount"        => 0,
-                              "sequence"        => $this->flightIndex * 10,
-                          ]);
-
-        return $orderLines;
-    }
+	public function prepareMobileLines(CPCompiledMobileFlight $flight, CPCompiledFlight $baseFlight, InventoryAdapter $inventory) {
+		$product = MobileProduct::query()->find($flight->product_id);
+		
+		return collect([new ContractLineResource(
+			                line_id                 : null,
+			                product_id              : new InventoryResourceId(
+				                                          inventory_id: $inventory->getInventoryID(),
+				                                          type        : InventoryResourceType::Product,
+				                                          external_id : 0,
+			                                          ),
+			                order                   : $this->flightIndex * 500,
+			                name                    : "Audience extension",
+			                start_date              : $flight->start_date,
+			                end_date                : $flight->end_date,
+			                type                    : ContractLineType::Mobile,
+			                is_linked               : false,
+			                faces_count             : 1,
+			                spots_count             : 1,
+			                traffic                 : 0,
+			                impressions             : $flight->impressions,
+			                unit_price              : $flight->media_value / $baseFlight->getWeekLength(),
+			                media_value             : $flight->media_value,
+			                discount_amount_relative: 0,
+			                discount_amount         : 0,
+			                price                   : $flight->price,
+			                cpm                     : $flight->cpm,
+			                description             : $flight->properties->count() . " Properties.\n" . ($flight->audience_targeting ?? ""),
+			                targeting               : $flight->additional_targeting ?? "",
+			                mobile_type             : $product?->name_en,
+		                )]);
+	}
 }

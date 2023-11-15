@@ -41,62 +41,70 @@ use Neo\Modules\Properties\Services\Resources\BroadcastPlayer;
  * @mixin Builder
  */
 class Player extends Model {
-    use SoftDeletes;
+	use SoftDeletes;
 
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'players';
+	/**
+	 * The table associated with the model.
+	 *
+	 * @var string
+	 */
+	protected $table = 'players';
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<string>
-     */
-    protected $fillable = [
-        "network_id",
-        "external_id",
-        "location_id",
-        "name",
-        "screen_count",
-    ];
+	/**
+	 * The attributes that are mass assignable.
+	 *
+	 * @var array<string>
+	 */
+	protected $fillable = [
+		"network_id",
+		"external_id",
+		"location_id",
+		"name",
+		"screen_count",
+	];
 
-    protected $touches = ["location"];
+	protected $touches = ["location"];
 
-    /*
-    |--------------------------------------------------------------------------
-    | Relations
-    |--------------------------------------------------------------------------
-    */
+	public static function boot() {
+		parent::boot();
 
-    public function network(): BelongsTo {
-        return $this->belongsTo(Network::class, "network_id");
-    }
+		static::deleted(function (Player $player) {
+			$player->location->touch();
+		});
+	}
 
-    public function location(): BelongsTo {
-        return $this->belongsTo(Location::class, "location_id");
-    }
+	/*
+	|--------------------------------------------------------------------------
+	| Relations
+	|--------------------------------------------------------------------------
+	*/
+
+	public function network(): BelongsTo {
+		return $this->belongsTo(Network::class, "network_id");
+	}
+
+	public function location(): BelongsTo {
+		return $this->belongsTo(Location::class, "location_id");
+	}
 
 
-    /**
-     * @return ExternalBroadcasterResourceId
-     */
-    public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
-        return new ExternalBroadcasterResourceId(
-            broadcaster_id: $this->network->connection_id,
-            external_id   : $this->external_id,
-            type          : ExternalResourceType::Player,
-        );
-    }
+	/**
+	 * @return ExternalBroadcasterResourceId
+	 */
+	public function toExternalBroadcastIdResource(): ExternalBroadcasterResourceId {
+		return new ExternalBroadcasterResourceId(
+			broadcaster_id: $this->network->connection_id,
+			external_id   : $this->external_id,
+			type          : ExternalResourceType::Player,
+		);
+	}
 
-    public function toInventoryResource(): BroadcastPlayer {
-        return new BroadcastPlayer(
-            id          : $this->getKey(),
-            external_id : $this->toExternalBroadcastIdResource(),
-            name        : $this->name,
-            screen_count: $this->screen_count,
-        );
-    }
+	public function toInventoryResource(): BroadcastPlayer {
+		return new BroadcastPlayer(
+			id          : $this->getKey(),
+			external_id : $this->toExternalBroadcastIdResource(),
+			name        : $this->name,
+			screen_count: $this->screen_count,
+		);
+	}
 }

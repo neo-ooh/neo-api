@@ -25,11 +25,27 @@ use Neo\Modules\Properties\Jobs\PushFullInventoryJob;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\StructuredColumns\InventoryProviderSettings;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
+use Neo\Modules\Properties\Services\InventoryAdapterFactory;
+use Neo\Modules\Properties\Services\InventoryCapability;
 use Neo\Modules\Properties\Services\InventoryType;
 
 class InventoryProvidersController extends Controller {
 	public function index(ListInventoriesRequest $request) {
-		return new Response(InventoryProvider::all()->loadPublicRelations());
+		$inventories = InventoryProvider::all();
+
+		if ($request->has("capabilities")) {
+			$capabilities       = $request->input("capabilities", []);
+			$capabilities_count = count($capabilities);
+
+			$inventories = $inventories->filter(function (InventoryProvider $provider) use ($capabilities, $capabilities_count) {
+				$inventory = InventoryAdapterFactory::make($provider);
+				return collect($inventory->getCapabilities())
+						->map(fn(InventoryCapability $c) => $c->value) // array_intersect only accept stringable values. BackedEnums are not stringable by default
+						->intersect($capabilities)->count() === $capabilities_count;
+			});
+		}
+
+		return new Response($inventories->loadPublicRelations());
 	}
 
 	public function store(StoreInventoryRequest $request) {

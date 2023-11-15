@@ -16,111 +16,68 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 use JsonException;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
-use Neo\Modules\Properties\Services\Odoo\API\OdooClient;
-use Neo\Modules\Properties\Services\Odoo\Models\Campaign;
-use Neo\Modules\Properties\Services\Odoo\Models\Contract;
-use Neo\Modules\Properties\Services\Odoo\Models\Message;
-use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
-use Neo\Resources\Contracts\CPCompiledFlight;
-use Neo\Resources\Contracts\CPCompiledPlan;
+use Neo\Modules\Properties\Services\Resources\ContractResource;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledFlight;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledPlan;
 
 class SendContractJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected Contract $contract, protected CPCompiledPlan $plan, protected bool $clearOnSend) {
-    }
+	public function __construct(protected ContractResource $contract, protected CPCompiledPlan $plan, protected bool $clear) {
+	}
 
-    /**
-     * @throws InvalidInventoryAdapterException
-     * @throws OdooException
-     * @throws JsonException
-     */
-    public function handle(): array {
-        $messages  = [];
-        $inventory = InventoryProvider::query()->find(1);
-        /** @var OdooAdapter $odoo */
-        $odoo = InventoryAdapterFactory::make($inventory);
+	/**
+	 * @throws InvalidInventoryAdapterException
+	 * @throws OdooException
+	 * @throws JsonException
+	 */
+	public function handle(): array {
+		$messages  = [];
+		$provider  = InventoryProvider::query()->find(1);
+		$inventory = InventoryAdapterFactory::make($provider);
 
-        $client = $odoo->getConfig()->getClient();
+		if ($this->clear) {
+			$inventory->clearContract($this->contract->contract_id);
+		}
 
-        // Clean up contract before insert if requested
-        if ($this->clearOnSend) {
-            $cleanupMessages = $this->cleanupContract($client, $this->contract);
+//		$flightsDescriptions = [];
 
-            if (count($cleanupMessages) > 0) {
-                $messages["_General_"] = $cleanupMessages;
-            }
-        }
+		// We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required order lines
+		/** @var CPCompiledFlight $flight */
+		foreach ($this->plan->flights as $flightIndex => $flight) {
+			$flightMessages = (new SendContractFlightJob($this->contract, $flight, $flightIndex))->handle();
 
-        $flightsDescriptions = [];
+			if (count($flightMessages) > 0) {
+				$messages[$flight->name] = $flightMessages;
+			}
 
-        // We parse each flight of the contract, if it should be sent, we create a campaign in odoo for it, and add all the required order lines
-        /** @var CPCompiledFlight $flight */
-        foreach ($this->plan->flights as $flightIndex => $flight) {
-            $flightMessages = (new SendContractFlightJob($this->contract, $flight, $flightIndex))->handle();
+//			$flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
+		}
 
-            if (count($flightMessages) > 0) {
-                $messages[$flight->getFlightName($flightIndex)] = $flightMessages;
-            }
+		$inventory->setContractAttachedPlan($this->contract->contract_id, $this->plan->toJson());
 
-            $flightsDescriptions[] = $this->getFlightDescription($flight, $flightIndex);
-        }
+		// Log import in odoo
+//		Message::create($client, [
+//			"subject"      => false,
+//			"body"         => implode("<br />", [
+//				$this->clear ? "Clear and Import" : "Import",
+//				...$flightsDescriptions,
+//			]),
+//			"model"        => Contract::$slug,
+//			"res_id"       => $this->contract->id,
+//			"message_type" => "notification",
+//			"subtype_id"   => 2,
+//		], pullRecord:  false);
 
-        $this->attachPlan($client);
+		return $messages;
+	}
 
-        // Log import in odoo
-        Message::create($client, [
-            "subject"      => false,
-            "body"         => implode("<br />", [
-                $this->clearOnSend ? "Clear and Import" : "Import",
-                ...$flightsDescriptions,
-            ]),
-            "model"        => Contract::$slug,
-            "res_id"       => $this->contract->id,
-            "message_type" => "notification",
-            "subtype_id"   => 2,
-        ], pullRecord:  false);
-
-        return $messages;
-    }
-
-    protected function cleanupContract(OdooClient $client, Contract $contract): array {
-        $messages = [];
-
-        // Remove all order lines from the contract
-        $contract->clearLines();
-
-        // Remove all flights from the contract
-        $response = Campaign::delete($client, [
-            ["order_id", "=", $this->contract->getKey()],
-        ]);
-
-        if ($response !== true) {
-            Log::debug("Error when deleting flight lines on contract " . $this->contract->name, [$response]);
-            $messages[] = "Error when deleting flight lines on contract " . $this->contract->name . ": " . json_encode($response);
-        }
-
-        return $messages;
-    }
-
-    /**
-     * @param OdooClient $client
-     * @throws JsonException
-     */
-    protected function attachPlan(OdooClient $client): void {
-        $planFileName = $this->plan->contract . ".ccp";
-
-        $this->contract->removeAttachment($planFileName);
-        $this->contract->storeAttachment($planFileName, base64_encode(gzencode(json_encode($this->plan, JSON_THROW_ON_ERROR))));
-    }
-
-    protected function getFlightDescription(CPCompiledFlight $flight, int $flightIndex): string {
-        $type = $flight->type->name;
-        return "Flight #" . ($flightIndex + 1) . " ($type) [$flight->start_date -> $flight->end_date]";
-    }
+	protected function getFlightDescription(CPCompiledFlight $flight, int $flightIndex): string {
+		$type = $flight->type->name;
+		return "Flight #" . ($flightIndex + 1) . " ($type) [$flight->start_date -> $flight->end_date]";
+	}
 }

@@ -18,50 +18,50 @@ use Neo\Enums\Capability;
 use Neo\Http\Requests\ContractsFlights\ListFlightsRequest;
 use Neo\Http\Requests\ContractsFlights\ShowFlightRequest;
 use Neo\Models\Actor;
-use Neo\Models\ContractFlight;
+use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Properties\Models\Product;
 
 class ContractFlightsController extends Controller {
-    public function index(ListFlightsRequest $request) {
-        $query = ContractFlight::query();
+	public function index(ListFlightsRequest $request) {
+		$query = ContractFlight::query();
 
-        if (!Gate::allows(Capability::contracts_manage->value)) {
-            $query->whereHas("contract", function (Builder $query) {
-                $query->where("salesperson_id", "=", Actor::id());
-            });
-        }
+		if (!Gate::allows(Capability::contracts_manage->value)) {
+			$query->whereHas("contract", function (Builder $query) {
+				$query->where("salesperson_id", "=", Actor::id());
+			});
+		}
 
-        if ($request->has("property_id")) {
-            $products = Product::query()->where("property_id", "=", $request->input("property_id"));
+		if ($request->has("property_id")) {
+			$products = Product::query()->where("property_id", "=", $request->input("property_id"));
 
-            $query->whereHas("lines", function (Builder $query) use ($products) {
-                $query->whereIn("product_id", $products->pluck("id"));
-            });
-        }
+			$query->whereHas("lines", function (Builder $query) use ($products) {
+				$query->whereIn("product_id", $products->pluck("id"));
+			});
+		}
 
-        if ($request->has("product_id")) {
-            $query->whereHas("lines", function (Builder $query) use ($request) {
-                $query->where("product_id", "=", $request->input("product_id"));
-            });
-        }
+		if ($request->has("product_id")) {
+			$query->whereHas("lines", function (Builder $query) use ($request) {
+				$query->where("product_id", "=", $request->input("product_id"));
+			});
+		}
 
-        if ($request->input("current", false)) {
-            $query->where("start_date", "<=", Carbon::now())
-                  ->where("end_date", ">=", Carbon::now());
-        }
+		if ($request->input("current", false)) {
+			$query->where("start_date", "<=", Carbon::now())
+			      ->where("end_date", ">=", Carbon::now());
+		}
 
-        if ($request->input("past", false)) {
-            $query->where("end_date", "<", Carbon::now());
-        }
+		if ($request->input("past", false)) {
+			$query->where("end_date", "<", Carbon::now());
+		}
 
-        if ($request->input("future", false)) {
-            $query->where("start_date", ">", Carbon::now());
-        }
+		if ($request->input("future", false)) {
+			$query->where("start_date", ">", Carbon::now());
+		}
 
-        return new Response($query->distinct()->get()->loadPublicRelations());
-    }
+		return new Response($query->distinct()->get()->loadPublicRelations());
+	}
 
-    public function show(ShowFlightRequest $request, ContractFlight $flight) {
-        return new Response($flight->loadPublicRelations());
-    }
+	public function show(ShowFlightRequest $request, ContractFlight $flight) {
+		return new Response($flight->loadPublicRelations());
+	}
 }

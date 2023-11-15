@@ -15,26 +15,26 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\ContractsScreenshots\AssociateScreenshotRequest;
 use Neo\Http\Requests\ContractsScreenshots\DissociateScreenshotRequest;
-use Neo\Models\Contract;
-use Neo\Models\Screenshot;
+use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Models\Screenshot;
 
 class ContractsScreenshotsController extends Controller {
-    public function associate(AssociateScreenshotRequest $request, Contract $contract, Screenshot $screenshot) {
-        $contract->screenshots()->attach($screenshot, ["flight_id" => $request->input("flight_id")]);
+	public function associate(AssociateScreenshotRequest $request, Contract $contract, Screenshot $screenshot) {
+		$contract->screenshots()->attach($screenshot, ["flight_id" => $request->input("flight_id")]);
 
-        return new Response($contract->screenshots);
-    }
+		return new Response($contract->screenshots);
+	}
 
-    public function dissociate(DissociateScreenshotRequest $request, Contract $contract, Screenshot $screenshot) {
-        DB::table("contracts_screenshots")
-          ->where("contract_id", "=", $contract->getKey())
-          ->where("screenshot_id", "=", $screenshot->getKey())
-          ->where(function (Builder $query) use ($request) {
-              $query->where("flight_id", "=", $request->input("flight_id"))
-                    ->orWhereNull("flight_id");
-          })
-          ->delete();
+	public function dissociate(DissociateScreenshotRequest $request, Contract $contract, Screenshot $screenshot) {
+		DB::table("contracts_screenshots")
+		  ->where("contract_id", "=", $contract->getKey())
+		  ->where("screenshot_id", "=", $screenshot->getKey())
+		  ->where(function (Builder $query) use ($request) {
+			  $query->where("flight_id", "=", $request->input("flight_id"))
+			        ->orWhereNull("flight_id");
+		  })
+		  ->delete();
 
-        return new Response($contract->screenshots);
-    }
+		return new Response($contract->screenshots);
+	}
 }

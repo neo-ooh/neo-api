@@ -13,7 +13,7 @@ namespace Neo\Http\Requests\Contracts;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Models\Contract;
+use Neo\Modules\Properties\Models\Contract;
 use Neo\Rules\PublicRelations;
 
 class ListContractsRequest extends FormRequest {

@@ -19,9 +19,9 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Screenshots\DestroyScreenshotsRequest;
 use Neo\Http\Requests\Screenshots\ListScreenshotsRequest;
-use Neo\Models\ContractFlight;
-use Neo\Models\Screenshot;
-use Neo\Models\ScreenshotRequest;
+use Neo\Modules\Properties\Models\ContractFlight;
+use Neo\Modules\Properties\Models\Screenshot;
+use Neo\Modules\Properties\Models\ScreenshotRequest;
 
 class ScreenshotsController extends Controller {
 	public function index(ListScreenshotsRequest $request) {

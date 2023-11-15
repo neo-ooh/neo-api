@@ -11,17 +11,17 @@
 namespace Neo\Http\Requests\ContractsFlights;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Neo\Models\ContractFlight;
+use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Rules\PublicRelations;
 
 class ShowFlightRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "with" => ["array", new PublicRelations(ContractFlight::class)],
-        ];
-    }
+	public function rules(): array {
+		return [
+			"with" => ["array", new PublicRelations(ContractFlight::class)],
+		];
+	}
 
-    public function authorize(): bool {
-        return true;
-    }
+	public function authorize(): bool {
+		return true;
+	}
 }

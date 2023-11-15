@@ -19,9 +19,9 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Neo\Models\Contract;
-use Neo\Models\ContractFlight;
-use Neo\Resources\Contracts\FlightType;
+use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Models\ContractFlight;
+use Neo\Resources\FlightType;
 
 class RefreshContractsPerformancesJob implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

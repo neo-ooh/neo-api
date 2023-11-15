@@ -13,17 +13,17 @@ namespace Neo\Http\Requests\Advertisers;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Models\Advertiser;
+use Neo\Modules\Properties\Models\Advertiser;
 use Neo\Rules\PublicRelations;
 
 class ListAdvertisersRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "with" => ["array", new PublicRelations(Advertiser::class)],
-        ];
-    }
+	public function rules(): array {
+		return [
+			"with" => ["array", new PublicRelations(Advertiser::class)],
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::advertiser_edit->value) || Gate::allows(Capability::contracts_edit->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::advertiser_edit->value) || Gate::allows(Capability::contracts_edit->value);
+	}
 }

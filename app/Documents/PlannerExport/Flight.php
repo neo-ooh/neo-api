@@ -14,10 +14,11 @@ use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class Flight {
-	public string|null $name;
+	public string $id;
+	public string $name;
+	public string $type;
 	public Carbon $start;
 	public Carbon $end;
-	public string $type;
 
 	/**
 	 * @var Collection<Group>

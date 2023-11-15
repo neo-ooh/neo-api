@@ -19,7 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Neo\Models\Actor;
-use Neo\Models\ScreenshotRequest;
+use Neo\Modules\Properties\Models\ScreenshotRequest;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Enums\ExternalResourceType;
@@ -122,6 +122,14 @@ class Location extends SecuredModel {
 	];
 
 	protected $touches = ["products"];
+
+	public static function boot() {
+		parent::boot();
+
+		static::deleted(function (Location $location) {
+			$location->products->each(fn(Product $product) => $product->touch());
+		});
+	}
 
 
 	/*

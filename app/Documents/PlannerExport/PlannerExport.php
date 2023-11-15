@@ -13,11 +13,20 @@ namespace Neo\Documents\PlannerExport;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Lang;
-use JetBrains\PhpStorm\ArrayShape;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
-use Neo\Modules\Broadcast\Models\Network;
+use Neo\Modules\Properties\Models\MobileProduct;
+use Neo\Modules\Properties\Models\ProductCategory;
+use Neo\Modules\Properties\Models\PropertyNetwork;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledFlight;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledGroup;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\Mobile\CPCompiledMobileFlight;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\Mobile\CPCompiledMobileProperty;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHCategory;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHFlight;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHProduct;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHProperty;
 use PhpOffice\PhpSpreadsheet\Exception;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -27,6 +36,10 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 class PlannerExport extends XLSXDocument {
 	protected string $contractReference;
 	protected array|null $odoo;
+
+	/**
+	 * @var Collection<CPCompiledFlight>
+	 */
 	protected Collection $flights;
 	protected array $columns;
 
@@ -37,7 +50,7 @@ class PlannerExport extends XLSXDocument {
 	protected function ingest($data): bool {
 		$this->contractReference = $data["odoo"]["contract"] ?? "";
 		$this->odoo              = $data["odoo"] ?? null;
-		$this->flights           = collect($data["flights"])->map(fn($record) => new Flight($record));
+		$this->flights           = collect($data["flights"])->map(fn($record) => new CPCompiledFlight($record));
 		$this->columns           = $data["columns"];
 
 		return true;
@@ -61,7 +74,11 @@ class PlannerExport extends XLSXDocument {
 
 		// Print each flight's details page
 		foreach ($this->flights as $flightIndex => $flight) {
-			$this->printFlight($flight, $flightIndex);
+			if ($flight->isOOHFlight()) {
+				$this->printOOHFlight($flight, $flight->getAsOOHFlight(), $flightIndex);
+			} else if ($flight->isMobileFlight()) {
+				$this->printMobileFlight($flight, $flight->getAsMobileFlight(), $flightIndex);
+			}
 		}
 
 		$this->spreadsheet->setActiveSheetIndexByName($firstSheetName);
@@ -183,8 +200,7 @@ class PlannerExport extends XLSXDocument {
 	/**
 	 * @throws Exception
 	 */
-	#[ArrayShape(["propertiesCount" => "int", "faces" => "int|mixed", "traffic" => "int|mixed", "impressions" => "int|mixed", "mediaValue" => "int|mixed", "mediaInvestment" => "int|mixed", "productionCost" => "int|mixed", "price" => "int|mixed", "cpmPrice" => "int|mixed"])]
-	protected function printFlightSummary(Flight $flight, $flightIndex): array {
+	protected function printFlightSummary(CPCompiledFlight $flight, $flightIndex): array {
 		$this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::flightRow());
 
 		$this->ws->pushPosition();
@@ -193,10 +209,10 @@ class PlannerExport extends XLSXDocument {
 
 		$this->ws->printRow([
 			                    $flight->name ?? "Flight #" . $flightIndex + 1,
-			                    $flight->start->toDateString(),
+			                    $flight->start_date->toDateString(),
 			                    '→',
-			                    $flight->end->toDateString(),
-			                    Lang::get("common.order-type-" . $flight->type),
+			                    $flight->end_date->toDateString(),
+			                    Lang::get("common.order-type-" . $flight->type->value),
 		                    ]);
 
 		$this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
@@ -209,72 +225,138 @@ class PlannerExport extends XLSXDocument {
 			                                                                        ],
 		                                                                        ]);
 
-		$this->ws->printRow([
-			                    Lang::get("contract.table-networks"),
-			                    Lang::get("contract.table-properties"),
-			                    in_array("faces", $this->columns, true) ? Lang::get("contract.table-faces") : "",
-			                    in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
-			                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
-			                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
-			                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
-			                    in_array("production-cost", $this->columns, true) ? Lang::get("contract.table-production-cost") : "",
-			                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
-			                    in_array("cpm", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
-			                    in_array("weeks", $this->columns, true) ? Lang::get("contract.table-weeks") : "",
-		                    ]);
+		if ($flight->isOOHFlight()) {
+			$oohFlight = $flight->getAsOOHFlight();
 
-		if ($flight->groups->count() === 1 && $flight->groups[0]->group === null) {
-			$this->printFlightSummaryByNetwork($flight);
-		} else {
-			$this->printFlightSummaryByGroup($flight);
+			$this->ws->printRow([
+				                    Lang::get("contract.table-networks"),
+				                    Lang::get("contract.table-properties"),
+				                    in_array("faces", $this->columns, true) ? Lang::get("contract.table-faces") : "",
+				                    in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
+				                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
+				                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
+				                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
+				                    in_array("production-cost", $this->columns, true) ? Lang::get("contract.table-production-cost") : "",
+				                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
+				                    in_array("cpm", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
+				                    in_array("weeks", $this->columns, true) ? Lang::get("contract.table-weeks") : "",
+			                    ]);
+
+			if ($oohFlight->groups->count() === 1 && $oohFlight->groups[0]->name === null) {
+				$this->printOOHFlightSummaryByNetwork($flight, $oohFlight);
+			} else {
+				$this->printOOHFlightSummaryByGroup($flight, $oohFlight);
+			}
+
+			$this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::simpleTableTotals());
+
+			$flightValues = [
+				"propertiesCount" => $oohFlight->properties->count(),
+				"faces"           => $oohFlight->faces_count,
+				"traffic"         => $oohFlight->traffic,
+				"impressions"     => $oohFlight->impressions,
+				"mediaValue"      => $oohFlight->media_value,
+				"mediaInvestment" => $oohFlight->discounted_media_value,
+				"productionCost"  => $oohFlight->production_cost_value,
+				"price"           => $oohFlight->price,
+				"cpmPrice"        => $oohFlight->cpmPrice,
+			];
+
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
+
+			$this->ws->printRow([
+				                    "Total",
+				                    $flightValues["propertiesCount"],
+				                    in_array("faces", $this->columns, true) ? $flightValues["faces"] : "",
+				                    in_array("traffic", $this->columns, true) ? $flightValues["traffic"] : "",
+				                    in_array("impressions", $this->columns, true) ? $flightValues["impressions"] : "",
+				                    in_array("media-value", $this->columns, true) ? $flightValues["mediaValue"] : "",
+				                    in_array("media-investment", $this->columns, true) ? $flightValues["mediaInvestment"] : "",
+				                    in_array("production-cost", $this->columns, true) ? $flightValues["productionCost"] : "",
+				                    in_array("price", $this->columns, true) ? $flightValues["price"] : "",
+				                    in_array("cpm", $this->columns, true) ? $oohFlight->cpm : "",
+				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
+			                    ]);
+		} else if ($flight->isMobileFlight()) {
+			$mobileFlight = $flight->getAsMobileFlight();
+
+			$this->ws->printRow([
+				                    Lang::get("contract.table-networks"),
+				                    Lang::get("contract.table-properties"),
+				                    "",
+				                    "",
+				                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
+				                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
+				                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
+				                    "",
+				                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
+				                    in_array("cpm", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
+				                    in_array("weeks", $this->columns, true) ? Lang::get("contract.table-weeks") : "",
+			                    ]);
+
+			if ($mobileFlight->groups->count() > 1 || $mobileFlight->groups[0]->name !== null) {
+				$this->printMobileFlightSummaryByGroup($flight, $mobileFlight);
+			}
+
+			$this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::simpleTableTotals());
+
+			$flightValues = [
+				"propertiesCount" => $mobileFlight->properties->count(),
+				"faces"           => 0,
+				"traffic"         => 0,
+				"impressions"     => $mobileFlight->impressions,
+				"mediaValue"      => $mobileFlight->media_value,
+				"mediaInvestment" => $mobileFlight->media_value,
+				"productionCost"  => 0,
+				"price"           => $mobileFlight->price,
+				"cpmPrice"        => $mobileFlight->price,
+			];
+
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
+
+			$this->ws->printRow([
+				                    "Total",
+				                    $flightValues["propertiesCount"],
+				                    in_array("faces", $this->columns, true) ? $flightValues["faces"] : "",
+				                    in_array("traffic", $this->columns, true) ? $flightValues["traffic"] : "",
+				                    in_array("impressions", $this->columns, true) ? $flightValues["impressions"] : "",
+				                    in_array("media-value", $this->columns, true) ? $flightValues["mediaValue"] : "",
+				                    in_array("media-investment", $this->columns, true) ? $flightValues["mediaInvestment"] : "",
+				                    in_array("production-cost", $this->columns, true) ? $flightValues["productionCost"] : "",
+				                    in_array("price", $this->columns, true) ? $flightValues["price"] : "",
+				                    in_array("cpm", $this->columns, true) ? $mobileFlight->cpm : "",
+				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
+			                    ]);
 		}
-
-		$this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::simpleTableTotals());
-
-		$flightValues = [
-			"propertiesCount" => $flight->groups->sum("properties_count"),
-			"faces"           => $flight->faces,
-			"traffic"         => $flight->traffic,
-			"impressions"     => $flight->impressions,
-			"mediaValue"      => $flight->mediaValue,
-			"mediaInvestment" => $flight->mediaInvestment,
-			"productionCost"  => $flight->productionCost,
-			"price"           => $flight->price,
-			"cpmPrice"        => $flight->cpmPrice,
-		];
-
-		$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
-		$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
-		$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 7);
-		$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
-		$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
-
-		$this->ws->printRow([
-			                    "Total",
-			                    $flightValues["propertiesCount"],
-			                    in_array("faces", $this->columns, true) ? $flightValues["faces"] : "",
-			                    in_array("traffic", $this->columns, true) ? $flightValues["traffic"] : "",
-			                    in_array("impressions", $this->columns, true) ? $flightValues["impressions"] : "",
-			                    in_array("media-value", $this->columns, true) ? $flightValues["mediaValue"] : "",
-			                    in_array("media-investment", $this->columns, true) ? $flightValues["mediaInvestment"] : "",
-			                    in_array("production-cost", $this->columns, true) ? $flightValues["productionCost"] : "",
-			                    in_array("price", $this->columns, true) ? $flightValues["price"] : "",
-			                    in_array("cpm", $this->columns, true) ? $flight->cpm : "",
-			                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
-		                    ]);
 
 		$this->ws->moveCursor(0, 2);
 
 		return $flightValues;
 	}
 
-	public function printFlightSummaryByNetwork(Flight $flight) {
-		$networksIds = $flight->groups[0]->properties->pluck("property.network_id")->unique();
-		$networks    = Network::query()->whereIn("id", $networksIds)->orderBy("id")->get();
+	public function printOOHFlightSummaryByNetwork(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight) {
+		$properties = \Neo\Modules\Properties\Models\Property::query()
+		                                                     ->withoutEagerLoads()
+		                                                     ->select(["actor_id", "network_id"])
+		                                                     ->findMany($oohFlight->properties->toCollection()
+		                                                                                      ->map(fn(CPCompiledOOHProperty $p) => $p->id));
 
-		/** @var Network $network */
+		$networksIds = $properties->pluck("network_id")->unique();
+		$networks    = PropertyNetwork::query()->whereIn("id", $networksIds)->orderBy("id")->get();
+
+		/** @var PropertyNetwork $network */
 		foreach ($networks as $network) {
-			$properties = $flight->groups[0]->properties->where("property.network_id", "=", $network->getKey());
+			$networkProperties  = $properties->where("network_id", "=", $network->getKey());
+			$compiledProperties = $networkProperties->map(fn(\Neo\Modules\Properties\Models\Property $p) => $oohFlight->properties->toCollection()
+			                                                                                                                      ->firstWhere("id", "=", $p->getKey()));
 
 			$this->ws->setRelativeCellFormat("#,##0_-", 1);
 			$this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
@@ -293,34 +375,37 @@ class PlannerExport extends XLSXDocument {
 			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
 			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
 
-			$impressions = $properties->sum("impressions");
-			$cpmPrice    = $properties->sum("cpmPrice");
+			$impressions = $compiledProperties->sum("impressions");
+			$cpmPrice    = $compiledProperties->sum("cpmPrice");
 			$cpm         = $impressions > 0 ? $cpmPrice / $impressions * 1000 : 0;
 
 			$this->ws->printRow([
 				                    $network?->name ?? "-",
 				                    $properties->count(),
-				                    in_array("faces", $this->columns, true) ? $properties->sum("faces") : "",
-				                    in_array("traffic", $this->columns, true) ? $properties->sum("traffic") : "",
+				                    in_array("faces", $this->columns, true) ? $compiledProperties->sum("faces") : "",
+				                    in_array("traffic", $this->columns, true) ? $compiledProperties->sum("traffic") : "",
 				                    in_array("impressions", $this->columns, true) ? $impressions : "",
-				                    in_array("media-value", $this->columns, true) ? $properties->sum("mediaValue") : "",
-				                    in_array("media-investment", $this->columns, true) ? $properties->sum("mediaInvestment") : "",
-				                    in_array("production-cost", $this->columns, true) ? $properties->sum("productionCost") : "",
-				                    in_array("price", $this->columns, true) ? $properties->sum("price") : "",
+				                    in_array("media-value", $this->columns, true) ? $compiledProperties->sum("media_value") : "",
+				                    in_array("media-investment", $this->columns, true) ? $compiledProperties->sum("discounted_media_value") : "",
+				                    in_array("production-cost", $this->columns, true) ? $compiledProperties->sum("production_cost") : "",
+				                    in_array("price", $this->columns, true) ? $compiledProperties->sum("price") : "",
 				                    in_array("cpm", $this->columns, true) ? $cpm : "",
 				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
 			                    ]);
 		}
 	}
 
-	public function printFlightSummaryByGroup(Flight $flight) {
-		/** @var Group $group */
-		foreach ($flight->groups as $group) {
+	public function printOOHFlightSummaryByGroup(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight) {
+		/** @var CPCompiledGroup $group */
+		foreach ($oohFlight->groups as $group) {
+			$compiledProperties = $oohFlight->properties->toCollection()
+			                                            ->filter(fn(CPCompiledOOHProperty $p) => in_array($p->id, $group->properties));
+
 			$this->ws->setRelativeCellFormat("#,##0_-", 1);
 			$this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
 				                                                                    "font" => [
 					                                                                    "color" => [
-						                                                                    "argb" => "FF" . $group->group?->color ?? "000000",
+						                                                                    "argb" => "FF" . $group->color ?? "000000",
 					                                                                    ],
 				                                                                    ],
 			                                                                    ]);
@@ -333,17 +418,62 @@ class PlannerExport extends XLSXDocument {
 			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
 			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
 
+			$impressions = $compiledProperties->sum("impressions");
+			$cpmPrice    = $compiledProperties->sum("cpm");
+			$cpm         = $impressions > 0 ? $cpmPrice / $impressions : 0;
+
 			$this->ws->printRow([
-				                    $group->group?->name ?? Lang::get("contract.group-remaining-properties"),
-				                    $group->properties_count,
-				                    in_array("faces", $this->columns, true) ? $group->faces : "",
-				                    in_array("traffic", $this->columns, true) ? $group->traffic : "",
-				                    in_array("impressions", $this->columns, true) ? $group->impressions : "",
-				                    in_array("media-value", $this->columns, true) ? $group->mediaValue : "",
-				                    in_array("media-investment", $this->columns, true) ? $group->mediaInvestment : "",
-				                    in_array("production-cost", $this->columns, true) ? $group->productionCost : "",
-				                    in_array("price", $this->columns, true) ? $group->price : "",
-				                    in_array("cpm", $this->columns, true) ? $group->cpm : "",
+				                    $group->name ?? Lang::get("contract.group-remaining-properties"),
+				                    $compiledProperties->count(),
+				                    in_array("faces", $this->columns, true) ? $compiledProperties->sum("faces_count") : "",
+				                    in_array("traffic", $this->columns, true) ? $compiledProperties->sum("traffic") : "",
+				                    in_array("impressions", $this->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->columns, true) ? $compiledProperties->sum("media_value") : "",
+				                    in_array("media-investment", $this->columns, true) ? $compiledProperties->sum("discounted_media_value") : "",
+				                    in_array("production-cost", $this->columns, true) ? $compiledProperties->sum("production_cost") : "",
+				                    in_array("price", $this->columns, true) ? $compiledProperties->sum("price") : "",
+				                    in_array("cpm", $this->columns, true) ? $cpm : "",
+				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
+			                    ]);
+		}
+	}
+
+	public function printMobileFlightSummaryByGroup(CPCompiledFlight $flight, CPCompiledMobileFlight $mobileFlight) {
+		/** @var CPCompiledGroup $group */
+		foreach ($mobileFlight->groups as $group) {
+			$compiledProperties = $mobileFlight->properties->toCollection()
+			                                               ->filter(fn(CPCompiledMobileProperty $p) => in_array($p->id, $group->properties));
+
+			$this->ws->setRelativeCellFormat("#,##0_-", 1);
+			$this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
+				                                                                    "font" => [
+					                                                                    "color" => [
+						                                                                    "argb" => "FF" . $group->color ?? "000000",
+					                                                                    ],
+				                                                                    ],
+			                                                                    ]);
+			$this->ws->setRelativeCellFormat("#,##0_-", 2);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 8);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 9);
+
+			$media_value = $compiledProperties->sum("media_value");
+			$impressions = $compiledProperties->sum("impressions");
+			$price       = $compiledProperties->sum("price");
+			$cpm         = $impressions > 0 ? $price / $impressions * 1000 : 0;
+
+			$this->ws->printRow([
+				                    $group->name ?? Lang::get("contract.group-remaining-properties"),
+				                    $compiledProperties->count(),
+				                    "",
+				                    "",
+				                    in_array("impressions", $this->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->columns, true) ? $media_value : "",
+				                    in_array("media-investment", $this->columns, true) ? $media_value : "",
+				                    "",
+				                    in_array("price", $this->columns, true) ? $price : "",
+				                    in_array("cpm", $this->columns, true) ? $cpm : "",
 				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
 			                    ]);
 		}
@@ -352,46 +482,90 @@ class PlannerExport extends XLSXDocument {
 	/**
 	 * @throws Exception
 	 */
-	public function printFlightHeader(Flight $flight, int $flightIndex, int $width = 8): void {
+	public function printFlightHeader(CPCompiledFlight $flight, int $flightIndex, int $width = 8): void {
 		$this->ws->getStyle($this->ws->getRelativeRange($width))->applyFromArray(XLSXStyleFactory::flightRow());
 
 		$this->ws->pushPosition();
 		$this->ws->moveCursor(5, 0)->mergeCellsRelative(2);
 		$this->ws->popPosition();
 
+		$product = "";
+
+		if ($flight->isMobileFlight()) {
+			$mobileProduct = MobileProduct::query()->find($flight->getAsMobileFlight()->product_id);
+			if ($mobileProduct) {
+				$product = $mobileProduct["name_" . Lang::locale()];
+			}
+		}
+
 		$this->ws->printRow([
 			                    $flight->name ?? "Flight #" . $flightIndex + 1,
-			                    $flight->start->toDateString(),
+			                    $flight->start_date->toDateString(),
 			                    '→',
-			                    $flight->end->toDateString(),
-			                    Lang::get("common.order-type-" . $flight->type),
+			                    $flight->end_date->toDateString(),
+			                    Lang::get("common.order-type-" . $flight->type->value),
+			                    $product,
 		                    ]);
 	}
 
 	/**
 	 * @throws Exception
 	 */
-	public function printFlight(Flight $flight, int $flightIndex): void {
-		$flightLabel     = "Flight #" . $flightIndex + 1;
-		$this->worksheet = new Worksheet(null, $flightLabel);
+	public function printOOHFlight(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight, int $flightIndex): void {
+		$this->worksheet = new Worksheet(null, $flight->name);
 		$this->spreadsheet->addSheet($this->worksheet);
-		$this->spreadsheet->setActiveSheetIndexByName($flightLabel);
+		$this->spreadsheet->setActiveSheetIndexByName($flight->name);
 
 		$this->printHeader(12);
 		$this->printFlightHeader($flight, $flightIndex, width: 12);
 
-		/** @var Group $group */
-		foreach ($flight->groups as $group) {
-			$groupsCount = $flight->groups->count();
+		$groups      = $oohFlight->groups;
+		$groupsCount = $groups->count();
 
-			if ($groupsCount !== 1 || ($groupsCount === 1 && $group->group !== null && $group->group !== "remaining")) {
+		/** @var \Illuminate\Database\Eloquent\Collection<ProductCategory> $allCategories */
+		$allCategories = ProductCategory::query()
+		                                ->findMany($oohFlight->properties
+			                                           ->toCollection()
+			                                           ->flatMap(fn(CPCompiledOOHProperty $p) => $p->categories->toCollection()
+			                                                                                                   ->map(fn(CPCompiledOOHCategory $c) => $c->id))
+			                                           ->unique()
+		                                );
+
+		/** @var \Illuminate\Database\Eloquent\Collection<\Neo\Modules\Properties\Models\Product> $allProducts */
+		$allProducts = \Neo\Modules\Properties\Models\Product::query()
+		                                                     ->findMany($oohFlight->properties
+			                                                                ->toCollection()
+			                                                                ->flatMap(
+				                                                                fn(CPCompiledOOHProperty $p) => $p->categories->toCollection()
+				                                                                                                              ->flatMap(fn(CPCompiledOOHCategory $c) => $c->products->toCollection()
+				                                                                                                                                                                    ->map(fn(CPCompiledOOHProduct $p) => $p->id)
+				                                                                                                              ))
+			                                                                ->unique()
+		                                                     );
+
+		/** @var CPCompiledGroup $group */
+		foreach ($groups as $group) {
+			// Load all properties in group
+			$groupProperties = \Neo\Modules\Properties\Models\Property::query()
+			                                                          ->with(["address.city"])
+			                                                          ->findMany($group->properties);
+
+			$groupCompiledProperties = $oohFlight->properties->toCollection()
+			                                                 ->filter(fn(CPCompiledOOHProperty $p) => in_array($p->id, $group->properties));
+
+			$networks = PropertyNetwork::query()
+			                           ->whereIn("id", $groupProperties->pluck("network_id")->unique())
+			                           ->orderBy("id")
+			                           ->get();
+
+			if ($groupsCount !== 1 || ($groupsCount === 1 && $group->name !== null && $group->name !== "remaining")) {
 				// Group header
 				$this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
 				$this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
 					                                                                     "font" => [
 						                                                                     'size'  => "14",
 						                                                                     "color" => [
-							                                                                     "argb" => "FF" . $group->group?->color ?? "000000",
+							                                                                     "argb" => "FF" . $group->color ?? "000000",
 						                                                                     ],
 					                                                                     ],
 					                                                                     "fill" => [
@@ -403,19 +577,12 @@ class PlannerExport extends XLSXDocument {
 				                                                                     ]);
 
 				$this->ws->printRow([
-					                    $group->group?->name ?? Lang::get("contract.group-remaining-properties"),
+					                    $group->name === 'remaining' ? Lang::get("contract.group-remaining-properties") : $group->name ?? "",
 				                    ]);
 			}
 
-			$networks = Network::query()
-			                   ->whereIn("id", $group->properties->pluck("property.network_id")->unique())
-			                   ->orderBy("id")
-			                   ->get();
-
-			/** @var Network $network */
+			/** @var PropertyNetwork $network */
 			foreach ($networks as $network) {
-				$properties = $group->properties->where("property.network_id", "=", $network->getKey());
-
 				// Network header
 				$this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
 				$this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
@@ -448,8 +615,22 @@ class PlannerExport extends XLSXDocument {
 					                    in_array("cpm-lines", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
 				                    ]);
 
-				/** @var Property $property */
+
+				$networkProperties = $groupProperties->where("network_id", "=", $network->getKey());
+				$propertiesIds     = $networkProperties->pluck("actor_id");
+
+				$compiledProperties = $oohFlight->properties->toCollection()
+				                                            ->filter(fn(CPCompiledOOHProperty $p) => $propertiesIds->contains($p->id));
+				$properties         = $compiledProperties->map(fn(CPCompiledOOHProperty $p) => $groupProperties->find($p->id))
+				                                         ->whereNotNull()
+				                                         ->sortBy("name");
+
+				/** @var \Neo\Modules\Properties\Models\Property $property */
 				foreach ($properties as $property) {
+					/** @var CPCompiledOOHProperty $compiledProperty */
+					$compiledProperty = $compiledProperties->firstWhere("id", "=", $property->getKey());
+
+
 					$this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
 						                                                                     "font" => [
 							                                                                     "size" => 12,
@@ -474,28 +655,40 @@ class PlannerExport extends XLSXDocument {
 					$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 11);
 
 					$this->ws->printRow([
-						                    $property->property->actor->name,
-						                    in_array("zipcode", $this->columns, true) ? substr($property->property->address->zipcode, 0, 3) . " " . substr($property->property->address->zipcode, 3) : "",
-						                    in_array("location", $this->columns, true) ? $property->property->address->city->name : "",
-						                    in_array("faces", $this->columns, true) ? $property->faces : "",
+						                    $property->actor->name,
+						                    in_array("zipcode", $this->columns, true) ? substr($property->address->zipcode, 0, 3) . " " . substr($property->address->zipcode, 3) : "",
+						                    in_array("location", $this->columns, true) ? $property->address->city->name : "",
+						                    in_array("faces", $this->columns, true) ? $compiledProperty->faces_count : "",
 						                    "",
-						                    in_array("traffic", $this->columns, true) ? $property->traffic : "",
-						                    in_array("impressions", $this->columns, true) ? $property->impressions : "",
-						                    in_array("media-value", $this->columns, true) ? $property->mediaValue : "",
-						                    in_array("media-investment", $this->columns, true) ? $property->mediaInvestment : "",
-						                    in_array("production-cost", $this->columns, true) ? $property->productionCost : "",
-						                    in_array("price", $this->columns, true) ? $property->price : "",
-						                    in_array("cpm-lines", $this->columns, true) ? $property->cpm : "",
+						                    in_array("traffic", $this->columns, true) ? $compiledProperty->traffic : "",
+						                    in_array("impressions", $this->columns, true) ? $compiledProperty->impressions : "",
+						                    in_array("media-value", $this->columns, true) ? $compiledProperty->media_value : "",
+						                    in_array("media-investment", $this->columns, true) ? $compiledProperty->discounted_media_value : "",
+						                    in_array("production-cost", $this->columns, true) ? $compiledProperty->production_cost_value : "",
+						                    in_array("price", $this->columns, true) ? $compiledProperty->price : "",
+						                    in_array("cpm-lines", $this->columns, true) ? $compiledProperty->cpm : "",
 					                    ]);
 
-					$categories = collect($property->categories)->sortBy("category.name_" . Lang::locale());
+					$compiledCategories = $compiledProperty->categories->toCollection();
+					$productCategories  = $compiledCategories->map(fn(CPCompiledOOHCategory $c) => $allCategories->find($c->id))
+					                                         ->whereNotNull()
+					                                         ->sortBy("name_" . Lang::locale());
 
-					/** @var Category $category */
-					foreach ($categories as $category) {
-						$products = collect($category->products)->sortBy("product.name_" . Lang::locale());
+					/** @var ProductCategory $category */
+					foreach ($productCategories as $category) {
+						/** @var CPCompiledOOHCategory $compiledCategory */
+						$compiledCategory = $compiledCategories->firstWhere("id", "=", $category->getKey());
 
-						/** @var Product $product */
+						$compiledProducts = $compiledCategory->products->toCollection();
+						$products         = $compiledProducts->map(fn(CPCompiledOOHProduct $p) => $allProducts->find($p->id))
+						                                     ->whereNotNull()
+						                                     ->sortBy("product.name_" . Lang::locale());
+
+						/** @var \Neo\Modules\Properties\Models\Product $product */
 						foreach ($products as $product) {
+							/** @var CPCompiledOOHProduct $compiledProduct */
+							$compiledProduct = $compiledProducts->firstWhere("id", "=", $product->getKey());
+
 							$this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
 								                                                                     "font" => [
 									                                                                     "size" => 10,
@@ -525,18 +718,18 @@ class PlannerExport extends XLSXDocument {
 							$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 11);
 
 							$this->ws->printRow([
-								                    $product->product["name_" . Lang::locale()],
+								                    $product["name_" . Lang::locale()],
 								                    "",
 								                    "",
-								                    in_array("faces", $this->columns, true) ? $product->faces : "",
-								                    in_array("spots", $this->columns, true) ? $product->spots : "",
+								                    in_array("faces", $this->columns, true) ? $compiledProduct->quantity : "",
+								                    in_array("spots", $this->columns, true) ? $compiledProduct->spots : "",
 								                    "",
-								                    in_array("impressions", $this->columns, true) ? $product->impressions : "",
-								                    in_array("media-value", $this->columns, true) ? $product->mediaValue : "",
-								                    in_array("media-investment", $this->columns, true) ? $product->mediaInvestment : "",
-								                    in_array("production-cost", $this->columns, true) ? $product->productionCost : "",
-								                    in_array("price", $this->columns, true) ? $product->price : "",
-								                    in_array("cpm-lines", $this->columns, true) ? $product->cpm : "",
+								                    in_array("impressions", $this->columns, true) ? $compiledProduct->impressions : "",
+								                    in_array("media-value", $this->columns, true) ? $compiledProduct->media_value : "",
+								                    in_array("media-investment", $this->columns, true) ? $compiledProduct->discounted_media_value : "",
+								                    in_array("production-cost", $this->columns, true) ? $compiledProduct->production_cost_value : "",
+								                    in_array("price", $this->columns, true) ? $compiledProduct->price : "",
+								                    in_array("cpm-lines", $this->columns, true) ? $compiledProduct->cpm : "",
 							                    ]);
 						}
 					}
@@ -565,19 +758,29 @@ class PlannerExport extends XLSXDocument {
 			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 10);
 			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 11);
 
+			$faces                  = $groupCompiledProperties->sum("faces");
+			$traffic                = $groupCompiledProperties->sum("traffic");
+			$impressions            = $groupCompiledProperties->sum("impressions");
+			$media_value            = $groupCompiledProperties->sum("media_value");
+			$disocunted_media_value = $groupCompiledProperties->sum("discounted_media_value");
+			$production_cost        = $groupCompiledProperties->sum("production_cost");
+			$price                  = $groupCompiledProperties->sum("price");
+			$cpmPrice               = $groupCompiledProperties->sum("cpmPrice");
+			$cpm                    = $impressions > 0 ? $cpmPrice / $impressions * 1000 : 0;
+
 			$this->ws->printRow([
 				                    "Total",
 				                    "",
 				                    "",
-				                    in_array("faces", $this->columns, true) ? $group->faces : "",
+				                    in_array("faces", $this->columns, true) ? $faces : "",
 				                    "",
-				                    in_array("impressions", $this->columns, true) ? $group->traffic : "",
-				                    in_array("impressions", $this->columns, true) ? $group->impressions : "",
-				                    in_array("media-value", $this->columns, true) ? $group->mediaValue : "",
-				                    in_array("media-investment", $this->columns, true) ? $group->mediaInvestment : "",
-				                    in_array("production-cost", $this->columns, true) ? $group->productionCost : "",
-				                    in_array("price", $this->columns, true) ? $group->price : "",
-				                    in_array("cpm", $this->columns, true) ? $group->cpm : "",
+				                    in_array("impressions", $this->columns, true) ? $traffic : "",
+				                    in_array("impressions", $this->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->columns, true) ? $media_value : "",
+				                    in_array("media-investment", $this->columns, true) ? $disocunted_media_value : "",
+				                    in_array("production-cost", $this->columns, true) ? $production_cost : "",
+				                    in_array("price", $this->columns, true) ? $price : "",
+				                    in_array("cpm", $this->columns, true) ? $cpm : "",
 			                    ]);
 
 			$this->ws->getStyle($this->ws->getRelativeRange(12, 2))->applyFromArray([
@@ -588,6 +791,165 @@ class PlannerExport extends XLSXDocument {
 					                                                                        ],
 				                                                                        ],
 			                                                                        ]);
+
+			$this->ws->moveCursor(0, 2);
+		}
+
+		$this->ws->getColumnDimension("A")->setAutoSize(true);
+		$this->ws->getColumnDimension("B")->setAutoSize(true);
+		$this->ws->getColumnDimension("C")->setAutoSize(true);
+		$this->ws->getColumnDimension("D")->setAutoSize(true);
+		$this->ws->getColumnDimension("E")->setAutoSize(true);
+		$this->ws->getColumnDimension("F")->setAutoSize(true);
+		$this->ws->getColumnDimension("G")->setAutoSize(true);
+		$this->ws->getColumnDimension("H")->setAutoSize(true);
+		$this->ws->getColumnDimension("I")->setAutoSize(true);
+		$this->ws->getColumnDimension("J")->setAutoSize(true);
+		$this->ws->getColumnDimension("K")->setAutoSize(true);
+	}
+
+
+	/**
+	 * @throws Exception
+	 */
+	public function printMobileFlight(CPCompiledFlight $flight, CPCompiledMobileFlight $oohFlight, int $flightIndex): void {
+		$this->worksheet = new Worksheet(null, $flight->name);
+		$this->spreadsheet->addSheet($this->worksheet);
+		$this->spreadsheet->setActiveSheetIndexByName($flight->name);
+
+		$this->printHeader(8);
+		$this->printFlightHeader($flight, $flightIndex, width: 8);
+
+		$groups      = $oohFlight->groups;
+		$groupsCount = $groups->count();
+
+		/** @var CPCompiledGroup $group */
+		foreach ($groups as $group) {
+			// Load all properties in group
+			$groupProperties = \Neo\Modules\Properties\Models\Property::query()
+			                                                          ->with(["address.city"])
+			                                                          ->findMany($group->properties);
+
+			$groupCompiledProperties = $oohFlight->properties->toCollection()
+			                                                 ->filter(fn(CPCompiledMobileProperty $p) => in_array($p->id, $group->properties));
+
+			$networks = PropertyNetwork::query()
+			                           ->whereIn("id", $groupProperties->pluck("network_id")->unique())
+			                           ->orderBy("id")
+			                           ->get();
+
+			if ($groupsCount !== 1 || ($groupsCount === 1 && $group->name !== null && $group->name !== "remaining")) {
+				// Group header
+				$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+				$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray([
+					                                                                    "font" => [
+						                                                                    'size'  => "14",
+						                                                                    "color" => [
+							                                                                    "argb" => "FF" . $group->color ?? "000000",
+						                                                                    ],
+					                                                                    ],
+					                                                                    "fill" => [
+						                                                                    'fillType'   => Fill::FILL_SOLID,
+						                                                                    'startColor' => [
+							                                                                    'argb' => "FFFFFFFF",
+						                                                                    ],
+					                                                                    ],
+				                                                                    ]);
+
+				$this->ws->printRow([
+					                    $group->name === 'remaining' ? Lang::get("contract.group-remaining-properties") : $group->name ?? "",
+					                    in_array("zipcode", $this->columns, true) ? Lang::get("contract.table-zipcode") : "",
+					                    in_array("location", $this->columns, true) ? Lang::get("contract.table-location") : "",
+					                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
+					                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
+					                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
+					                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
+					                    in_array("cpm-lines", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
+				                    ]);
+			}
+
+			/** @var \Neo\Modules\Properties\Models\Property $property */
+			foreach ($groupProperties as $property) {
+				/** @var CPCompiledMobileProperty $compiledProperty */
+				$compiledProperty = $groupCompiledProperties->firstWhere("id", "=", $property->getKey());
+
+
+				$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray([
+					                                                                    "font" => [
+						                                                                    "size" => 12,
+						                                                                    'bold' => true,
+					                                                                    ],
+					                                                                    "fill" => [
+						                                                                    'fillType'   => Fill::FILL_SOLID,
+						                                                                    'startColor' => [
+							                                                                    'argb' => "FFFFFFFF",
+						                                                                    ],
+					                                                                    ],
+				                                                                    ]);
+
+				$this->ws->setRelativeCellFormat("#,##0_-", 3);
+				$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4);
+				$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
+				$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
+				$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 7);
+
+				$this->ws->printRow([
+					                    $property->actor->name,
+					                    in_array("zipcode", $this->columns, true) ? substr($property->address->zipcode, 0, 3) . " " . substr($property->address->zipcode, 3) : "",
+					                    in_array("location", $this->columns, true) ? $property->address->city->name : "",
+					                    in_array("impressions", $this->columns, true) ? $compiledProperty->impressions : "",
+					                    in_array("media-value", $this->columns, true) ? $compiledProperty->media_value : "",
+					                    in_array("media-investment", $this->columns, true) ? $compiledProperty->media_value : "",
+					                    in_array("price", $this->columns, true) ? $compiledProperty->price : "",
+					                    in_array("cpm-lines", $this->columns, true) ? $compiledProperty->cpm : "",
+				                    ]);
+			}
+
+			$this->ws->getStyle($this->ws->getRelativeRange(8, 1))->applyFromArray([
+				                                                                       "fill" => [
+					                                                                       'fillType'   => Fill::FILL_SOLID,
+					                                                                       'startColor' => [
+						                                                                       'argb' => "FFFFFFFF",
+					                                                                       ],
+				                                                                       ],
+			                                                                       ]);
+
+			$this->ws->moveCursor(0, 1);
+
+
+			// Group footer
+			$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray(XLSXStyleFactory::totals());
+			$this->ws->setRelativeCellFormat("#,##0_-", 3);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 4);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 6);
+			$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD_INTEGER, 7);
+
+			$impressions = $groupCompiledProperties->sum("impressions");
+			$media_value = $groupCompiledProperties->sum("media_value");
+			$price       = $groupCompiledProperties->sum("price");
+			$cpmPrice    = $groupCompiledProperties->sum("price");
+			$cpm         = $impressions > 0 ? $cpmPrice / $impressions * 1000 : 0;
+
+			$this->ws->printRow([
+				                    "Total",
+				                    "",
+				                    "",
+				                    in_array("impressions", $this->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->columns, true) ? $media_value : "",
+				                    in_array("media-investment", $this->columns, true) ? $media_value : "",
+				                    in_array("price", $this->columns, true) ? $price : "",
+				                    in_array("cpm", $this->columns, true) ? $cpm : "",
+			                    ]);
+
+			$this->ws->getStyle($this->ws->getRelativeRange(8, 2))->applyFromArray([
+				                                                                       "fill" => [
+					                                                                       'fillType'   => Fill::FILL_SOLID,
+					                                                                       'startColor' => [
+						                                                                       'argb' => "FFFFFFFF",
+					                                                                       ],
+				                                                                       ],
+			                                                                       ]);
 
 			$this->ws->moveCursor(0, 2);
 		}

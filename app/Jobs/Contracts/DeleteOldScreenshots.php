@@ -12,8 +12,8 @@ namespace Neo\Jobs\Contracts;
 
 use Carbon\Carbon;
 use Illuminate\Console\Command;
-use Neo\Models\Screenshot;
-use Neo\Models\ScreenshotRequest;
+use Neo\Modules\Properties\Models\Screenshot;
+use Neo\Modules\Properties\Models\ScreenshotRequest;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 

@@ -13,7 +13,7 @@ namespace Neo\Utils;
 use Illuminate\Database\Eloquent\Builder;
 use Imagick;
 use ImagickException;
-use Neo\Models\Screenshot;
+use Neo\Modules\Properties\Models\Screenshot;
 use Neo\Modules\Broadcast\Models\DisplayTypeFrame;
 use Neo\Modules\Broadcast\Models\FormatCropFrame;
 use Neo\Modules\Properties\Models\Enums\InventoryPictureType;

@@ -34,41 +34,41 @@ use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
  * @property int|null                       $deleted_by
  */
 class ExternalInventoryResource extends Model {
-    use SoftDeletes;
-    use HasCreatedByUpdatedBy;
+	use SoftDeletes;
+	use HasCreatedByUpdatedBy;
 
-    protected $table = "external_inventories_resources";
+	protected $table = "external_inventories_resources";
 
-    protected $primaryKey = "id";
+	protected $primaryKey = "id";
 
-    protected $fillable = [
-        "resource_id",
-        "inventory_id",
-        "type",
-        "external_id",
-        "context",
-    ];
+	protected $fillable = [
+		"resource_id",
+		"inventory_id",
+		"type",
+		"external_id",
+		"context",
+	];
 
-    protected $casts = [
-        "context" => InventoryRepresentationContext::class,
-        "type"    => InventoryResourceType::class,
-    ];
+	protected $casts = [
+		"context" => InventoryRepresentationContext::class,
+		"type"    => InventoryResourceType::class,
+	];
 
-    public function toInventoryResourceId() {
-        return new InventoryResourceId(
-            inventory_id: $this->inventory_id,
-            external_id : $this->external_id,
-            type        : $this->type,
-            context     : $this->context->toArray(),
-        );
-    }
+	public function toInventoryResourceId() {
+		return new InventoryResourceId(
+			inventory_id: $this->inventory_id,
+			external_id : $this->external_id,
+			type        : $this->type,
+			context     : $this->context->toArray(),
+		);
+	}
 
-    public static function fromInventoryResource(InventoryResourceId $resource) {
-        return new static([
-                              "inventory_id" => $resource->inventory_id,
-                              "type"         => $resource->type,
-                              "external_id"  => $resource->external_id,
-                              "context"      => $resource->context,
-                          ]);
-    }
+	public static function fromInventoryResource(InventoryResourceId $resource) {
+		return new static([
+			                  "inventory_id" => $resource->inventory_id,
+			                  "type"         => $resource->type,
+			                  "external_id"  => $resource->external_id,
+			                  "context"      => $resource->context,
+		                  ]);
+	}
 }

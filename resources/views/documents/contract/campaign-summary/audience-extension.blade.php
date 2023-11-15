@@ -10,14 +10,14 @@
             <td class="periods-col">
                 @foreach($lines->pluck("rangeLengthString")->unique() as $rangeString)
                     @if($loop->index % 2 !== 0)
-                        <br />
+                        <br/>
                     @endif
                     {{ $rangeString }}
                     @if($loop->index % 2 !== 0 && $loop->remaining > 0)
             </td>
             <td class="periods-col">
                 @endif
-            @endforeach
+                @endforeach
             </td>
         </tr>
     </table>
@@ -43,10 +43,10 @@
                 {{ __("common.network-mobile") }}
             </td>
         </tr>
-            @foreach($lines as $line)
+        @foreach($lines as $line)
             <tr class="strategy-row">
-                <td>{{$line->market_name}}</td>
-                <td>{{$line->audience_segment}}</td>
+                <td>{{nl2br($line->market_name)}}</td>
+                <td>{{nl2br($line->audience_segment)}}</td>
                 <td>{{$line->impression_format}}</td>
                 <td>{{format($line->impressions)}}</td>
                 <td>{{formatCurrency($line->unit_price * $line->nb_weeks)}}</td>

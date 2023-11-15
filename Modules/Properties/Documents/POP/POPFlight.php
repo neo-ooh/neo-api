@@ -10,8 +10,8 @@
 
 namespace Neo\Modules\Properties\Documents\POP;
 
-use Neo\Models\ContractLine;
-use Neo\Resources\Contracts\FlightType;
+use Neo\Modules\Properties\Models\ContractLine;
+use Neo\Resources\FlightType;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Data;
 use Spatie\LaravelData\DataCollection;

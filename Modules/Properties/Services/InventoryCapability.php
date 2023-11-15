@@ -11,22 +11,26 @@
 namespace Neo\Modules\Properties\Services;
 
 enum InventoryCapability: string {
-    // Products
-    case ProductsRead = "products.read";
-    case ProductsWrite = "products.write";
+	// Products
+	case ProductsRead = "products.read";
+	case ProductsWrite = "products.write";
 
-    case ProductsQuantity = "products.quantity";
-    case ProductsMediaTypes = "products.media-types";
-    case ProductsAudioSupport = "products.audio-support";
-    case ProductsMotionSupport = "products.motion-support";
-    case ProductsScreenType = "products.screen-type";
-    case ProductsScreenSize = "products.screen-size";
+	case ProductsQuantity = "products.quantity";
+	case ProductsMediaTypes = "products.media-types";
+	case ProductsAudioSupport = "products.audio-support";
+	case ProductsMotionSupport = "products.motion-support";
+	case ProductsScreenType = "products.screen-type";
+	case ProductsScreenSize = "products.screen-size";
 
-    // Product Categories
-    case ProductCategoriesRead = "product-categories.read";
+	// Product Categories
+	case ProductCategoriesRead = "product-categories.read";
 
-    // Properties
-    case PropertiesRead = "properties.read";
-    case PropertiesProducts = "properties.products";
-    case PropertiesType = "properties.type";
+	// Properties
+	case PropertiesRead = "properties.read";
+	case PropertiesProducts = "properties.products";
+	case PropertiesType = "properties.type";
+
+	// Contracts
+	case ContractsRead = "contracts.read";
+	case ContractsWrite = "contracts.write";
 }

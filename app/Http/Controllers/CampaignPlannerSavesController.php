@@ -19,7 +19,7 @@ use Neo\Http\Requests\CampaignPlannerSaves\StoreSaveRequest;
 use Neo\Http\Requests\CampaignPlannerSaves\UpdateSaveRequest;
 use Neo\Models\Actor;
 use Neo\Models\CampaignPlannerSave;
-use Neo\Resources\CampaignPlannerPlan\CampaignPlannerPlan;
+use Neo\Resources\CampaignPlannerPlan\CPPlan;
 
 class CampaignPlannerSavesController {
 	public function index(ListSavesRequest $request, Actor $actor) {
@@ -47,17 +47,17 @@ class CampaignPlannerSavesController {
 	}
 
 	public function store(StoreSaveRequest $request) {
-		$plan = CampaignPlannerPlan::fromRaw($request->input("plan"));
+		$plan = CPPlan::fromRaw($request->input("plan"));
 
 		$save           = new CampaignPlannerSave();
 		$save->actor_id = Auth::id();
 		$save->name     = $request->input("name");
 		$save->version  = $request->input("version");
 
-		$save->contract        = $plan->getPlan()->odoo?->contract;
-		$save->client_name     = $plan->getPlan()->odoo?->partnerName[1];
-		$save->advertiser_name = $plan->getPlan()->odoo?->analyticAccountName !== null
-			? $plan->getPlan()->odoo?->analyticAccountName[1]
+		$save->contract        = $plan->getPlan()->contract?->contract;
+		$save->client_name     = $plan->getPlan()->contract?->partnerName[1];
+		$save->advertiser_name = $plan->getPlan()->contract?->analyticAccountName !== null
+			? $plan->getPlan()->contract?->analyticAccountName[1]
 			: null;
 
 		$save->save();
@@ -80,13 +80,11 @@ class CampaignPlannerSavesController {
 		$campaignPlannerSave->version = $request->input("version");
 
 		$rawPlan = $request->input("plan");
-		$plan    = CampaignPlannerPlan::fromRaw($rawPlan);
+		$plan    = CPPlan::fromRaw($rawPlan);
 
-		$campaignPlannerSave->contract        = $plan->getPlan()->odoo?->contract;
-		$campaignPlannerSave->client_name     = $plan->getPlan()->odoo?->partnerName[1];
-		$campaignPlannerSave->advertiser_name = $plan->getPlan()->odoo?->analyticAccountName !== null
-			? $plan->getPlan()->odoo?->analyticAccountName[1]
-			: null;
+		$campaignPlannerSave->contract        = $plan->getPlan()->contract?->contract_id;
+		$campaignPlannerSave->client_name     = $plan->getPlan()->contract?->client_name;
+		$campaignPlannerSave->advertiser_name = $plan->getPlan()->contract?->advertiser_name !== null ? $plan->getPlan()->contract->advertiser_name[1] : null;
 
 		$campaignPlannerSave->save();
 

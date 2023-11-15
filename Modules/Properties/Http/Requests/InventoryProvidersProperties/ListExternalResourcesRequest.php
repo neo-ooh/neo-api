@@ -15,15 +15,16 @@ use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
 
 class ListExternalResourcesRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "type"                => ["required", "string", "in:property,product"],
-            "only_not_associated" => ["boolean"],
-            "property_id"         => ["required_if:type,product"],
-        ];
-    }
+	public function rules(): array {
+		return [
+			"type"                => ["required", "string", "in:property,product,contract"],
+			"only_not_associated" => ["sometimes", "boolean"],
+			"property_id"         => ["required_if:type,product"],
+			"contract_id"         => ["required_if:type,contract"],
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::properties_inventories_edit->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::properties_inventories_edit->value);
+	}
 }

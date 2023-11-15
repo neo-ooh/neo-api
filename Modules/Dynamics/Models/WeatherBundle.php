@@ -18,13 +18,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Helpers\Relation;
-use Neo\Models\ContractFlight;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Dynamics\Models\Enums\WeatherBundleBackgroundSelection;
 use Neo\Modules\Dynamics\Models\Enums\WeatherBundleLayout;
 use Neo\Modules\Dynamics\Models\Structs\WeatherBundleTargeting;
+use Neo\Modules\Properties\Models\ContractFlight;
 
 /**
  * @property int                                 $id

@@ -14,7 +14,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\View\Component;
 use Neo\Modules\Properties\Documents\POP\POPFlight;
 use Neo\Modules\Properties\Documents\POP\POPRequest;
-use Neo\Resources\Contracts\FlightType;
+use Neo\Resources\FlightType;
 
 class POPPReface extends Component {
 	public function __construct(protected POPRequest $request) {

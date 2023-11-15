@@ -20,12 +20,13 @@ use Neo\Http\Controllers\ContractsFlightsReservationsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Http\Controllers\ScreenshotsController;
 use Neo\Http\Controllers\ScreenshotsRequestsController;
-use Neo\Models\Advertiser;
-use Neo\Models\Client;
-use Neo\Models\Contract;
-use Neo\Models\ContractFlight;
-use Neo\Models\Screenshot;
-use Neo\Models\ScreenshotRequest;
+use Neo\Modules\Properties\Models\Advertiser;
+use Neo\Modules\Properties\Models\Client;
+use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Models\ContractFlight;
+use Neo\Modules\Properties\Models\Screenshot;
+use Neo\Modules\Properties\Models\ScreenshotRequest;
+use Neo\Modules\Properties\Http\Controllers\ExternalContractsController;
 use Neo\Modules\Properties\Http\Controllers\ProofOfPerformancesController;
 
 Route::group([
@@ -72,12 +73,17 @@ Route::group([
 	Route::model("contract", Contract::class);
 
 	Route::   get("contracts", ContractsController::class . "@index");
-	Route::  post("contracts", ContractsController::class . "@store");
+//	Route::  post("contracts", ContractsController::class . "@store");
 	Route::   get("contracts/_recent", ContractsController::class . "@recent");
 	Route::   get("contracts/{contract}", ContractsController::class . "@show");
 	Route::   put("contracts/{contract}", ContractsController::class . "@update");
 	Route::delete("contracts/{contract}", ContractsController::class . "@destroy");
 	Route::  post("contracts/{contract}/_refresh", ContractsController::class . "@refresh");
+
+
+	Route::  post("external-contracts/_import", [ExternalContractsController::class, "import"]);
+	Route::  post("external-contracts/_export", [ExternalContractsController::class, "export"]);
+	Route::   get("external-contracts/{contract_id}", [ExternalContractsController::class, "show"]);
 
 	/*
 	|----------------------------------------------------------------------

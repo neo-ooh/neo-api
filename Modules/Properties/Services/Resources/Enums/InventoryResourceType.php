@@ -11,10 +11,17 @@
 namespace Neo\Modules\Properties\Services\Resources\Enums;
 
 enum InventoryResourceType: string {
-    case ProductCategory = "product-category";
-    case Product = "product";
-    case Property = "property";
+	case ProductCategory = "product-category";
+	case Product = "product";
+	case Property = "property";
 
-    case PropertyType = "property-type";
-    case ScreenType = "screen-type";
+	case PropertyType = "property-type";
+	case ScreenType = "screen-type";
+
+	case Contract = "contract";
+	case Salesperson = "salesperson";
+	case Advertiser = "advertiser";
+	case Client = "client";
+
+	case ContractLine = "contract-line";
 }

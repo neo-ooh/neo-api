@@ -12,8 +12,8 @@ namespace Neo\Modules\Properties\Documents\POP\components;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
-use Neo\Models\ContractLine;
-use Neo\Models\Screenshot;
+use Neo\Modules\Properties\Models\ContractLine;
+use Neo\Modules\Properties\Models\Screenshot;
 use Neo\Modules\Properties\Documents\POP\PDFPOP;
 use Neo\Modules\Properties\Documents\POP\POPFlight;
 use Neo\Modules\Properties\Documents\POP\POPFlightGroup;

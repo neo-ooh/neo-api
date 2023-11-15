@@ -22,11 +22,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Resources\SearchResult;
 use Neo\Models\Actor;
-use Neo\Models\Advertiser;
 use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Jobs\Libraries\RemoveLibraryCreativesJob;
 use Neo\Modules\Broadcast\Rules\AccessibleLibrary;
+use Neo\Modules\Properties\Models\Advertiser;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 

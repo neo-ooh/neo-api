@@ -12,17 +12,20 @@ namespace Neo\Modules\Properties\Http\Requests\InventoryProviders;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
+use Neo\Modules\Properties\Services\InventoryCapability;
 
 class ListInventoriesRequest extends FormRequest {
-    public function rules(): array {
-        return [
+	public function rules(): array {
+		return [
+			"capabilities"   => ["sometimes", "array"],
+			"capabilities.*" => [new Enum(InventoryCapability::class)],
+		];
+	}
 
-        ];
-    }
-
-    public function authorize(): bool {
-        return Gate::allows(Capability::inventories_edit->value)
-            || Gate::allows(Capability::properties_inventories_view->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::inventories_edit->value)
+			|| Gate::allows(Capability::properties_inventories_view->value);
+	}
 }

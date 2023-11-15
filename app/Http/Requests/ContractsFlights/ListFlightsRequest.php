@@ -13,26 +13,26 @@ namespace Neo\Http\Requests\ContractsFlights;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Models\ContractFlight;
+use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Properties\Rules\AccessibleProduct;
 use Neo\Modules\Properties\Rules\AccessibleProperty;
 use Neo\Rules\PublicRelations;
 
 class ListFlightsRequest extends FormRequest {
-    public function rules(): array {
-        return [
-            "property_id" => ["sometimes", "integer", new AccessibleProperty()],
-            "product_id"  => ["sometimes", "integer", new AccessibleProduct()],
+	public function rules(): array {
+		return [
+			"property_id" => ["sometimes", "integer", new AccessibleProperty()],
+			"product_id"  => ["sometimes", "integer", new AccessibleProduct()],
 
-            "current" => ["sometimes", "boolean"],
-            "past"    => ["sometimes", "boolean"],
-            "future"  => ["sometimes", "boolean"],
+			"current" => ["sometimes", "boolean"],
+			"past"    => ["sometimes", "boolean"],
+			"future"  => ["sometimes", "boolean"],
 
-            "with" => ["array", new PublicRelations(ContractFlight::class)],
-        ];
-    }
+			"with" => ["array", new PublicRelations(ContractFlight::class)],
+		];
+	}
 
-    public function authorize(): bool {
-        return Gate::allows(Capability::odoo_contracts->value);
-    }
+	public function authorize(): bool {
+		return Gate::allows(Capability::odoo_contracts->value);
+	}
 }

@@ -10,20 +10,20 @@
 
 use Illuminate\Support\Facades\Route;
 use Neo\Http\Controllers\ScreenshotsController;
-use Neo\Models\ScreenshotRequest;
+use Neo\Modules\Properties\Models\ScreenshotRequest;
 
 
 Route::group([
-                 "middleware" => "third-party",
-                 "prefix"     => "v1/third-parties",
+	             "middleware" => "third-party",
+	             "prefix"     => "v1/third-parties",
              ], function () {
-    /*
-    |--------------------------------------------------------------------------
-    | Bursts
-    |--------------------------------------------------------------------------
-    */
+	/*
+	|--------------------------------------------------------------------------
+	| Bursts
+	|--------------------------------------------------------------------------
+	*/
 
-    Route::model("screenshotRequest", ScreenshotRequest::class);
+	Route::model("screenshotRequest", ScreenshotRequest::class);
 
-    Route::post("screenshots-requests/{screenshotRequest}/_receive", [ScreenshotsController::class, "receive"]);
+	Route::post("screenshots-requests/{screenshotRequest}/_receive", [ScreenshotsController::class, "receive"]);
 });

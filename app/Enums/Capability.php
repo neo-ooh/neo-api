@@ -398,6 +398,11 @@ enum Capability: string {
 	 */
 	case products_locations_edit = "products.locations.edit";
 
+	/**
+	 * Allows editing mobile products
+	 */
+	case mobile_products_edit = "mobile.products.edit";
+
 
 	/*
 	|----------------------------------------------------------------------

@@ -32,7 +32,7 @@ use Neo\Jobs\Contracts\ImportContractDataJob;
 use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\Contracts\ImportContractReservations;
 use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
-use Neo\Models\Contract;
+use Neo\Modules\Properties\Models\Contract;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Services\Odoo\OdooConfig;

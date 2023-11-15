@@ -14,8 +14,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Models\ContractFlight;
-use Neo\Models\Screenshot;
+use Neo\Modules\Properties\Models\ContractFlight;
+use Neo\Modules\Properties\Models\Screenshot;
 use Neo\Rules\PublicRelations;
 
 class ListScreenshotsRequest extends FormRequest {

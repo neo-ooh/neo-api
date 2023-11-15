@@ -110,7 +110,7 @@ au contrat dès que l’un ou l’autre ou les deux l’auront signé.",
 	"table-start-date"                  => "Date Début",
 	"table-weeks"                       => "Semaines",
 	"table-zipcode"                     => "Code postale",
-	"table-location"                    => "Code location",
+	"table-location"                    => "Ville",
 
 	"summary-notice-0" => 'Les impressions comptabilisées dans le rapport de performance seront plafonnées à 150% des impressions contractées.',
 	"summary-notice-1" => '<span class="emphase">Position garantie:</span> 25% supplémentaires',

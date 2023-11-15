@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Models\ContractFlight;
+use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Dynamics\Models\Enums\WeatherBundleBackgroundSelection;
 use Neo\Modules\Dynamics\Models\Enums\WeatherBundleLayout;

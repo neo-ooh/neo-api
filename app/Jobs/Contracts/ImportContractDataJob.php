@@ -10,7 +10,6 @@
 
 namespace Neo\Jobs\Contracts;
 
-use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,22 +18,26 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 use JsonException;
-use Neo\Models\Advertiser;
-use Neo\Models\Client;
-use Neo\Models\Contract;
-use Neo\Models\ContractFlight;
-use Neo\Models\ContractLine;
+use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Models\ContractFlight;
+use Neo\Modules\Properties\Models\ContractLine;
+use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\Product;
-use Neo\Resources\Contracts\CPCompiledCategory;
-use Neo\Resources\Contracts\CPCompiledFlight;
-use Neo\Resources\Contracts\CPCompiledProduct;
-use Neo\Resources\Contracts\CPCompiledProperty;
-use Neo\Resources\Contracts\FlightType;
-use Neo\Services\Odoo\Models\Contract as OdooContract;
-use Neo\Services\Odoo\Models\OrderLine;
-use Neo\Services\Odoo\OdooClient;
-use Neo\Services\Odoo\OdooConfig;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
+use Neo\Modules\Properties\Services\Exceptions\InventoryResourceNotFound;
+use Neo\Modules\Properties\Services\InventoryAdapterFactory;
+use Neo\Modules\Properties\Services\Resources\ContractLineResource;
+use Neo\Modules\Properties\Services\Resources\Enums\ContractLineType;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
+use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledFlight;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\Mobile\CPCompiledMobileProperty;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHCategory;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHProduct;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHProperty;
+use Neo\Resources\FlightType;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use function Ramsey\Uuid\v4;
 
@@ -44,14 +47,13 @@ class ImportContractDataJob implements ShouldQueue {
 	public int $timeout = 300;
 
 	public function __construct(
-		protected int               $contractId,
-		protected OdooContract|null $odooContract = null
+		protected int $contractId,
 	) {
 	}
 
 	/**
-	 * @throws OdooException
 	 * @throws JsonException
+	 * @throws InvalidInventoryAdapterException
 	 */
 	public function handle(): void {
 		$output = new ConsoleOutput();
@@ -64,69 +66,32 @@ class ImportContractDataJob implements ShouldQueue {
 			return;
 		}
 
-		$odooClient = OdooConfig::fromConfig()->getClient();
+		$provider  = InventoryProvider::query()->find($contract->inventory_id);
+		$inventory = InventoryAdapterFactory::make($provider);
 
-		// Check if the contract is present in ODOO
-		if ($this->odooContract === null) {
-			$this->odooContract = OdooContract::findByName($odooClient, $contract->contract_id);
+		try {
+			$externalContract = $inventory->getContract(new InventoryResourceId(
+				                                            inventory_id: $inventory->getInventoryID(),
+				                                            external_id : $contract->external_id,
+				                                            type        : InventoryResourceType::Contract,
+			                                            ));
+		} catch (InventoryResourceNotFound) {
+			// Contract not found, stop here.
+			return;
 		}
-
-		// Get contract client
-		/** @var Client $client */
-		$client = Client::query()->firstOrCreate([
-			                                         "odoo_id" => $this->odooContract->partner_id[0],
-		                                         ], [
-			                                         "name" => $this->odooContract->partner_id[1],
-		                                         ]);
-
-		$output->writeln($contract->contract_id . ": Set client to $client->name (#$client->id))");
-
-		// Get contract advertiser
-		$advertiser = null;
-
-		if ($this->odooContract->analytic_account_id) {
-			/** @var Advertiser $advertiser */
-			$advertiser = Advertiser::query()->firstOrCreate([
-				                                                 "odoo_id" => $this->odooContract->analytic_account_id[0],
-			                                                 ], [
-				                                                 "name" => $this->odooContract->analytic_account_id[1],
-			                                                 ]);
-
-			$output->writeln($contract->contract_id . ": Set advertiser to $advertiser->name (#$advertiser->id))");
-		}
-
-		$contract->external_id   = $this->odooContract->id;
-		$contract->advertiser_id = $advertiser?->getKey();
-		$contract->client_id     = $client->getKey();
-		$contract->save();
 
 		// Check if the contract has a compiled plan attached to it
-		$contractAttachment = $this->odooContract->getAttachment($contract->getAttachedPlanName());
+		$attachedPlanData = $inventory->getContractAttachedPlan($externalContract->contract_id);
 
-		$hasPlan = $contractAttachment !== null;
-
-		if ($hasPlan) {
+		if ($hasPlan = $attachedPlanData !== null) {
 			// A contract attachment is available.
 			// We import it, and store it
-			$contract->storePlan($contractAttachment->datas);
+			$contract->storePlan($attachedPlanData);
 			$contract->has_plan = true;
 			$contract->save();
 
 			$output->writeln($contract->contract_id . ": Attached Campaign Planner Plan.");
 		}
-
-		// Load all the lines from the contract from Odoo, and remove linked ones
-		$orderLines = $this->getLinesFromOdoo($odooClient, $contract, $output)
-		                   ->filter(fn(OrderLine $orderLine) => !$orderLine->is_linked_line);
-
-		// List all the products in connect matching the ones in the order lines
-		$products = Product::query()
-		                   ->whereHas("external_representations", function (Builder $query) use ($orderLines) {
-			                   $query->whereIn(DB::raw("JSON_VALUE(context, '$.variant_id')"), $orderLines->pluck("product_id.0")
-			                                                                                              ->unique());
-		                   })
-		                   ->with(["category", "external_representations"])
-		                   ->get();
 
 		// Load flights from the plan, if available
 		/** @var Collection<FlightDefinition> $flights */
@@ -137,91 +102,118 @@ class ImportContractDataJob implements ShouldQueue {
 		foreach ($contract->flights as $i => $contractFlight) {
 			if ($planFlights->doesntContain($contractFlight->uid)) {
 				$flights->push(new FlightDefinition(
-					               name     : $contractFlight->name ?? "Flight #$i",
-					               uid      : $contractFlight->uid,
-					               type     : $contractFlight->type,
-					               startDate: $contractFlight->start_date->toDateString(),
-					               endDate  : $contractFlight->end_date->toDateString()
+					               name      : $contractFlight->name ?? "Flight #$i",
+					               uid       : $contractFlight->uid,
+					               type      : $contractFlight->type,
+					               start_date: $contractFlight->start_date->toDateString(),
+					               end_date  : $contractFlight->end_date->toDateString()
 				               ));
 			}
 		}
 
-		// Now we parse all the order lines in the contract, and match them to their respective flights
-		/** @var OrderLine $orderLine */
-		foreach ($orderLines as $orderLine) {
-			// Find the counterpart product in connect for this line
-			/** @var Product|null $product */
-			$product = $products->firstWhere(fn(Product $product) => $product->external_representations->where("context.variant_id", "=", $orderLine->product_id[0])
-			                                                                                           ->isNotEmpty()
-			);
+		// To preserve memory but still retain some performances, we'll parse the lines by chunk of 250
+		$linesChunks = LazyCollection::make($externalContract->lines)
+		                             ->chunk(250);
 
-			if ($product === null) {
-				// Unknown product, ignore
-				continue;
-			}
+		$lineIsOOH    = fn(ContractLineResource $line) => in_array($line->type, [ContractLineType::Guaranteed, ContractLineType::Bonus, ContractLineType::BUA]);
+		$lineIsMobile = fn(ContractLineResource $line) => $line->type == ContractLineType::Mobile;
 
-			// Parse known flights and find one with the same sale type, dates, and who has a reference to this product
-			// Infer the sale type of the line
-			$saleType = FlightType::Guaranteed;
-			if ($product->is_bonus) {
-				$saleType = FlightType::BUA;
-			} else if ($orderLine->discount > 99.9) {
-				$saleType = FlightType::Bonus;
-			}
+		/** @var LazyCollection<ContractLineResource> $lines */
+		foreach ($linesChunks as $lines) {
+			// Filter our linked lines and production costs
+			$lines = $lines->filter(fn(ContractLineResource $line) => !$line->is_linked && $line->type !== ContractLineType::ProductionCost);
 
-			// Start by matching flights by specs
-			$matchingFlights = $flights->filter(fn(FlightDefinition $flight) => $flight->type === $saleType
-				&& $flight->startDate === $orderLine->rental_start
-				&& $flight->endDate === $orderLine->rental_end
-			);
+			$oohLines = $lines->filter($lineIsOOH);
 
-			// Now perform a second filter, to see if one of the matching flights reference the line
-			/** @var FlightDefinition|null $matchingFlight */
-			$matchingFlight = null;
-			/** @var CPCompiledProduct|null $planLine */
-			$planLine = null;
+			// List all the products in connect matching the ones in the order lines
+			$products = Product::query()
+			                   ->whereHas("external_representations", function (Builder $query) use ($oohLines) {
+				                   $query->whereIn(DB::raw("JSON_VALUE(context, '$.variant_id')"), $oohLines->pluck("product_id.external_id")
+				                                                                                            ->unique());
+			                   })
+			                   ->with(["category", "external_representations"])
+			                   ->get();
 
-			foreach ($matchingFlights as $flight) {
-				$planLine = $flight->planLines->firstWhere("id", "=", $product->getKey());
-				if ($planLine !== null) {
-					$matchingFlight = $flight;
-					break;
-				}
-			}
+			// Now we parse all the order lines in the contract, and match them to their respective flights
+			/** @var ContractLineResource $orderLine */
+			foreach ($lines as $orderLine) {
+				// Parse known flights and find one with the same sale type, dates, and who has a reference to this product
+				$lineFlightType = FlightType::from($orderLine->type->value);
 
-			if (!$matchingFlight) {
-				// No flight reference this specific line. Did some flights matched by specs at least ?
-				if ($matchingFlights->count() > 0) {
-					// Yes, use the first one as a fallback
-					/** @var FlightDefinition $matchingFlight */
-					$matchingFlight                       = $matchingFlights->first();
-					$matchingFlight->additionalLinesAdded = true;
-				} else {
-					// No, create a new definition matching this one, and add it to the list
-					$matchingFlight = new FlightDefinition(
-						name     : "Flight #" . count($flights) + 1,
-						uid      : v4(),
-						type     : $saleType,
-						startDate: $orderLine->rental_start,
-						endDate  : $orderLine->rental_end
+				// Start by matching flights by specs
+				$matchingFlights = $flights->filter(fn(FlightDefinition $flight) => $flight->type === $lineFlightType
+					&& $flight->start_date === $orderLine->start_date
+					&& $flight->end_date === $orderLine->end_date
+				);
+
+				// Now if it is an OOH product, perform a second filter
+				// to see if one of the matching flights references the line
+				/** @var FlightDefinition|null $matchingFlight */
+				$matchingFlight = null;
+
+				$product = null;
+
+				if ($lineIsOOH($orderLine)) {
+					// Find the counterpart product in connect for this line
+					/** @var Product|null $product */
+					$product = $products->firstWhere(fn(Product $product) => $product->external_representations->where("context.variant_id", "=", $orderLine->product_id->external_id)
+					                                                                                           ->isNotEmpty()
 					);
-					$flights->push($matchingFlight);
-					$contract->additional_flights_imported = true;
+
+					if ($product === null) {
+						// Unknown product, ignore
+						continue;
+					}
+
+					/** @var CPCompiledOOHProduct|CPCompiledMobileProperty|null $planLine */
+					$planLine = null;
+
+					foreach ($matchingFlights as $flight) {
+						$planLine = $flight->plan_lines->firstWhere("id", "=", $product->getKey());
+						if ($planLine !== null) {
+							$matchingFlight = $flight;
+							break;
+						}
+					}
+				}
+
+				if (!$matchingFlight) {
+					// No flight reference this specific line. Did some flights matched by specs at least ?
+					if ($matchingFlights->count() > 0) {
+						// Yes, use the first one as a fallback
+						/** @var FlightDefinition $matchingFlight */
+						$matchingFlight                       = $matchingFlights->first();
+						$matchingFlight->additionalLinesAdded = true;
+					} else {
+						// No, create a new definition matching this one, and add it to the list
+						$matchingFlight = new FlightDefinition(
+							name      : "Flight #" . (count($flights) + 1),
+							uid       : v4(),
+							type      : $lineFlightType,
+							start_date: $orderLine->start_date,
+							end_date  : $orderLine->end_date
+						);
+
+						$flights->push($matchingFlight);
+						$contract->additional_flights_imported = true;
+					}
+				}
+
+				if ($lineIsOOH($orderLine)) {
+					// Add the order line
+					$matchingFlight->lines->push(new LineDefinition(
+						                             productId    : $product->getKey(),
+						                             lineId       : $orderLine->line_id->external_id,
+						                             spots        : $orderLine->spots_count,
+						                             media_value  : $orderLine->media_value,
+						                             discount     : $orderLine->discount_amount_relative,
+						                             discount_type: "relative",
+						                             price        : $orderLine->price,
+						                             traffic      : $planLine->traffic ?? 0,
+						                             impressions  : $planLine->impressions ?? $orderLine->impressions,
+					                             ));
 				}
 			}
-
-			// Add the order line
-			$matchingFlight->lines->push(new LineDefinition(
-				                             productId    : $product->getKey(),
-				                             lineId       : $orderLine->getKey(),
-				                             spots        : $orderLine->product_uom_qty,
-				                             media_value  : $orderLine->price_unit * $orderLine->nb_weeks * $orderLine->nb_screen * $orderLine->product_uom_qty,
-				                             discount     : $orderLine->discount,
-				                             discount_type: "relative",
-				                             price        : $orderLine->price_subtotal,
-				                             traffic      : $planLine?->traffic ?? 0,
-				                             impressions  : $planLine?->impressions ?? $orderLine->connect_impression ?: $orderLine->impression
-			                             ));
 		}
 
 		// Lines have now been mapped to flights, we can insert everything.
@@ -230,26 +222,28 @@ class ImportContractDataJob implements ShouldQueue {
 
 		$storedFlights = collect();
 
-		/** @var FlightDefinition $flight */
+		/** @var FlightDefinition $flightDefinition */
 		foreach ($flights as $flightDefinition) {
 			// Did all the products defined in the flight have a counterpart line ?
-			foreach ($flightDefinition->productIds as $productId) {
+			foreach ($flightDefinition->product_ids as $productId) {
 				if (!$flightDefinition->lines->contains("productId", "=", $productId)) {
 					$flightDefinition->missingReferencedLine = true;
 				}
 			}
 
-			$flight = ContractFlight::updateOrCreate([
-				                                         "contract_id" => $contract->getKey(),
-				                                         "uid"         => $flightDefinition->uid,
-			                                         ], [
-				                                         "name"                      => $flightDefinition->name,
-				                                         "start_date"                => $flightDefinition->startDate,
-				                                         "end_date"                  => $flightDefinition->endDate,
-				                                         "type"                      => $flightDefinition->type,
-				                                         "additional_lines_imported" => $flightDefinition->additionalLinesAdded,
-				                                         "missing_lines_on_import"   => $flightDefinition->missingReferencedLine,
-			                                         ]);
+			/** @var ContractFlight $flight */
+			$flight = ContractFlight::query()->updateOrCreate([
+				                                                  "contract_id" => $contract->getKey(),
+				                                                  "uid"         => $flightDefinition->uid,
+			                                                  ], [
+				                                                  "name"                      => $flightDefinition->name,
+				                                                  "start_date"                => $flightDefinition->start_date,
+				                                                  "end_date"                  => $flightDefinition->end_date,
+				                                                  "type"                      => $flightDefinition->type,
+				                                                  "additional_lines_imported" => $flightDefinition->additionalLinesAdded,
+				                                                  "missing_lines_on_import"   => $flightDefinition->missingReferencedLine,
+				                                                  "parameters"                => $flightDefinition->parameters,
+			                                                  ]);
 
 			$storedFlights->push($flight);
 
@@ -260,15 +254,15 @@ class ImportContractDataJob implements ShouldQueue {
 			foreach ($flightDefinition->lines as $line) {
 				ContractLine::query()->upsert([
 					                              "flight_id" => $flight->getKey(),
-					                                                                                                                                                                                                                                                                                                                                                               "product_id" => $line->productId,
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                           "external_id" => $line->lineId,
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           "spots" => $line->spots,
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           "media_value" => $line->media_value,
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "discount" => $line->discount,
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "discount_type" => $line->discount_type,
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "price" => $line->price,
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "traffic" => $line->traffic,
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       "impressions" => $line->impressions,
+					                                                                                                                                                                                                                                                                                                                                             "product_id" => $line->productId,
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                   "external_id" => $line->lineId,
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "spots" => $line->spots,
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          "media_value" => $line->media_value,
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               "discount" => $line->discount,
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               "discount_type" => $line->discount_type,
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "price" => $line->price,
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "traffic" => $line->traffic,
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 "impressions" => $line->impressions,
 				                              ], [
 					                              "flight_id", "product_id",
 				                              ]);
@@ -279,7 +273,8 @@ class ImportContractDataJob implements ShouldQueue {
 		// Remove any flights attached with the contract that are not part of the ones just created
 		$contract->flights()->whereNotIn("id", $storedFlights->pluck("id"))->delete();
 		// And remove any flight that have no lines in them
-		$contract->flights()->whereDoesntHave("lines")->delete();
+		$contract->flights()->where("type", "<>", FlightType::Mobile)
+		         ->whereDoesntHave("lines")->delete();
 
 		$output->writeln($contract->contract_id . ": " . $storedFlights->count() . " Flights attached.");
 
@@ -321,54 +316,52 @@ class ImportContractDataJob implements ShouldQueue {
 
 		/** @var CPCompiledFlight $flight */
 		foreach ($plan->flights as $i => $flight) {
-			// List all the compiled products in the flight
-			/** @var Collection<CPCompiledProduct> $products */
-			$products = $flight->properties->toCollection()->flatMap(
-				fn(CPCompiledProperty $property) => $property->categories->toCollection()->flatMap(
-					fn(CPCompiledCategory $category) => $category->products->toCollection()
-				)
+			$flightDefinition = new FlightDefinition(
+				name      : $flight->name ?? "Flight #" . ($i + 1),
+				uid       : $flight->id,
+				type      : $flight->type,
+				start_date: $flight->start_date,
+				end_date  : $flight->end_date,
 			);
 
-			$flights->push(new FlightDefinition(
-				               name      : $flight->name ?? "Flight #" . ($i + 1),
-				               uid       : $flight->id,
-				               type      : $flight->type,
-				               startDate : $flight->start_date,
-				               endDate   : $flight->end_date,
-				               planLines : $products,
-				               productIds: $products->pluck("id")
-			               ));
+			switch ($flight->type) {
+				case FlightType::Guaranteed:
+				case FlightType::Bonus:
+				case FlightType::BUA:
+					// OOH Flight
+					// List all the compiled products in the flight
+					/** @var Collection<CPCompiledOOHProduct> $products */
+					$products = $flight->getAsOOHFlight()->properties->toCollection()->flatMap(
+						fn(CPCompiledOOHProperty $property) => $property->categories->toCollection()->flatMap(
+							fn(CPCompiledOOHCategory $category) => $category->products->toCollection()
+						)
+					);
+
+					$flightDefinition->plan_lines  = $products;
+					$flightDefinition->product_ids = $products->pluck("id");
+					break;
+				case FlightType::Mobile:
+					// Mobile Flight
+					$mobileFlight = $flight->getAsMobileFlight();
+
+					$flightDefinition->parameters->mobile_properties                   = $mobileFlight->properties->toCollection()
+					                                                                                              ->map(fn(CPCompiledMobileProperty $p) => [
+						                                                                                              "property_id" => $p->id,
+						                                                                                              "impressions" => $p->impressions,
+					                                                                                              ])
+					                                                                                              ->all();
+					$flightDefinition->parameters->mobile_product                      = $mobileFlight->product_id;
+					$flightDefinition->parameters->mobile_additional_targeting         = $mobileFlight->additional_targeting ?? "";
+					$flightDefinition->parameters->mobile_audience_targeting           = $mobileFlight->audience_targeting ?? "";
+					$flightDefinition->parameters->mobile_website_retargeting          = $mobileFlight->website_retargeting;
+					$flightDefinition->parameters->mobile_online_conversion_monitoring = $mobileFlight->online_conversion_monitoring;
+					$flightDefinition->parameters->mobile_retail_conversion_monitoring = $mobileFlight->retail_conversion_monitoring;
+					break;
+			}
+
+			$flights->push($flightDefinition);
 		}
 
 		return $flights;
-	}
-
-	/**
-	 * @throws OdooException
-	 * @throws JsonException
-	 */
-	public function getLinesFromOdoo(OdooClient $client, Contract $contract, ConsoleOutput $output): Collection {
-		$lines     = collect();
-		$chunkSize = 50;
-
-		$output->writeln($contract->contract_id . ": Loading contract lines from Odoo...");
-
-		do {
-			$hasMore = false;
-
-			$receivedLines = OrderLine::all($client, [
-				["order_id", '=', $this->odooContract->id],
-				["is_linked_line", '!=', 1],
-			],                              $chunkSize, $lines->count());
-
-			if ($receivedLines->count() === $chunkSize) {
-				$hasMore = true;
-			}
-
-			$lines = $lines->merge($receivedLines);
-			$output->writeln($contract->contract_id . ": Collected {$lines->count()} lines...");
-		} while ($hasMore);
-
-		return $lines;
 	}
 }

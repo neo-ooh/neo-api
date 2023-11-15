@@ -12,18 +12,18 @@ namespace Neo\Http\Controllers;
 
 use Illuminate\Http\Response;
 use Neo\Http\Requests\ContractsFlights\SyncContractFlightReservationsRequest;
-use Neo\Models\ContractFlight;
-use Neo\Models\ContractReservation;
+use Neo\Modules\Properties\Models\ContractFlight;
+use Neo\Modules\Properties\Models\ContractReservation;
 
 class ContractsFlightsReservationsController {
-    public function sync(SyncContractFlightReservationsRequest $request, ContractFlight $flight) {
-        $flight->reservations()
-               ->whereNotIn("id", $request->input("reservations", []))
-               ->update(["flight_id" => null]);
-        ContractReservation::query()
-                           ->whereIn("id", $request->input("reservations", []))
-                           ->update(["flight_id" => $flight->getKey()]);
+	public function sync(SyncContractFlightReservationsRequest $request, ContractFlight $flight) {
+		$flight->reservations()
+		       ->whereNotIn("id", $request->input("reservations", []))
+		       ->update(["flight_id" => null]);
+		ContractReservation::query()
+		                   ->whereIn("id", $request->input("reservations", []))
+		                   ->update(["flight_id" => $flight->getKey()]);
 
-        return new Response($flight->reservations);
-    }
+		return new Response($flight->reservations);
+	}
 }

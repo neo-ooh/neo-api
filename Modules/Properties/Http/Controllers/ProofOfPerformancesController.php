@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Neo\Http\Controllers\Controller;
-use Neo\Models\Contract;
-use Neo\Models\ContractFlight;
+use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Properties\Documents\POP\PDFPOP;
 use Neo\Modules\Properties\Documents\POP\POPFlight;
 use Neo\Modules\Properties\Documents\POP\POPFlightGroup;
@@ -25,7 +25,7 @@ use Neo\Modules\Properties\Documents\POP\POPScreenshot;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Http\Requests\ProofOfPerformances\BuildPOPRequest;
 use Neo\Modules\Properties\Http\Requests\ProofOfPerformances\GetPOPBaseRequest;
-use Neo\Resources\Contracts\FlightType;
+use Neo\Resources\FlightType;
 
 class ProofOfPerformancesController extends Controller {
 	public function getBase(GetPOPBaseRequest $request, Contract $contract) {

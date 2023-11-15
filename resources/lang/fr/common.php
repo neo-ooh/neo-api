@@ -63,4 +63,7 @@ return [
 	"month-october"   => "Octobre",
 	"month-november"  => "Novembre",
 	"month-december"  => "Décembre",
+
+	"yes" => "Oui",
+	"no"  => "No",
 ];

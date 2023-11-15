@@ -140,4 +140,11 @@ return [
 	"payable-contact-header" => "Accounts payable contact (to be filled out by the client, in block letters)",
 
 	"group-remaining-properties" => "Remaining properties",
+
+	"mobile-audience-targeting"   => "Audience Targeting",
+	"mobile-additional-targeting" => "Additional Audience Targeting",
+
+	"mobile-website-retargeting"          => "Client website retargeting",
+	"mobile-online-conversion-monitoring" => "Online conversion monitoring",
+	"mobile-retail-conversion-monitoring" => "Retail conversion monitoring",
 ];

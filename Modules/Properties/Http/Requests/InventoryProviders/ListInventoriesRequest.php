@@ -26,6 +26,7 @@ class ListInventoriesRequest extends FormRequest {
 
 	public function authorize(): bool {
 		return Gate::allows(Capability::inventories_edit->value)
-			|| Gate::allows(Capability::properties_inventories_view->value);
+			|| Gate::allows(Capability::properties_inventories_view->value)
+			|| Gate::allows(Capability::contracts_edit->value);
 	}
 }

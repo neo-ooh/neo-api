@@ -10,7 +10,7 @@
 
 namespace Neo\Documents\PlannerExport;
 
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Lang;
 use Neo\Documents\XLSX\Worksheet;
@@ -21,6 +21,7 @@ use Neo\Modules\Properties\Models\ProductCategory;
 use Neo\Modules\Properties\Models\PropertyNetwork;
 use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledFlight;
 use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledGroup;
+use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledPlan;
 use Neo\Resources\CampaignPlannerPlan\CompiledPlan\Mobile\CPCompiledMobileFlight;
 use Neo\Resources\CampaignPlannerPlan\CompiledPlan\Mobile\CPCompiledMobileProperty;
 use Neo\Resources\CampaignPlannerPlan\CompiledPlan\OOH\CPCompiledOOHCategory;
@@ -34,25 +35,14 @@ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 
 class PlannerExport extends XLSXDocument {
-	protected string $contractReference;
-	protected array|null $odoo;
-
-	/**
-	 * @var Collection<CPCompiledFlight>
-	 */
-	protected Collection $flights;
-	protected array $columns;
+	protected CPCompiledPlan $plan;
 
 	/**
 	 * @param $data
 	 * @return bool
 	 */
 	protected function ingest($data): bool {
-		$this->contractReference = $data["odoo"]["contract"] ?? "";
-		$this->odoo              = $data["odoo"] ?? null;
-		$this->flights           = collect($data["flights"])->map(fn($record) => new CPCompiledFlight($record));
-		$this->columns           = $data["columns"];
-
+		$this->plan = CPCompiledPlan::from($data);
 		return true;
 	}
 
@@ -73,7 +63,8 @@ class PlannerExport extends XLSXDocument {
 		$this->printSummary();
 
 		// Print each flight's details page
-		foreach ($this->flights as $flightIndex => $flight) {
+		/** @var CPCompiledFlight $flight */
+		foreach ($this->plan->flights as $flightIndex => $flight) {
 			if ($flight->isOOHFlight()) {
 				$this->printOOHFlight($flight, $flight->getAsOOHFlight(), $flightIndex);
 			} else if ($flight->isMobileFlight()) {
@@ -85,7 +76,12 @@ class PlannerExport extends XLSXDocument {
 		return true;
 	}
 
-	protected function printHeader(int $width) {
+	/**
+	 * @param int $width
+	 * @return void
+	 * @throws Exception
+	 */
+	protected function printHeader(int $width): void {
 		$this->ws->pushPosition();
 
 		// Set the header style
@@ -121,10 +117,10 @@ class PlannerExport extends XLSXDocument {
 
 		// Date
 		$this->ws->printRow(["Date", Date::now()->toFormattedDateString()]);
-		if ($this->odoo !== null) {
-			$this->ws->printRow([Lang::get("common.header-contract"), $this->contractReference]);
-			$this->ws->printRow([Lang::get("contract.header-advertiser"), $this->odoo["analyticAccountName"][1]]);
-			$this->ws->printRow([Lang::get("contract.header-customer"), $this->odoo["partnerName"][1]]);
+		if ($this->plan->contract !== null) {
+			$this->ws->printRow([Lang::get("common.header-contract"), $this->plan->contract->contract_id]);
+			$this->ws->printRow([Lang::get("contract.header-advertiser"), $this->plan->contract->advertiser_name]);
+			$this->ws->printRow([Lang::get("contract.header-customer"), $this->plan->contract->client_name]);
 		}
 
 		$this->ws->popPosition();
@@ -140,7 +136,7 @@ class PlannerExport extends XLSXDocument {
 		$flightsValues = collect();
 
 		// Flights
-		foreach ($this->flights as $flightIndex => $flight) {
+		foreach ($this->plan->flights as $flightIndex => $flight) {
 			$flightsValues->push($this->printFlightSummary($flight, $flightIndex));
 		}
 
@@ -151,14 +147,14 @@ class PlannerExport extends XLSXDocument {
 		$this->ws->printRow([
 			                    'Total',
 			                    Lang::get("contract.table-properties"),
-			                    in_array("faces", $this->columns, true) ? Lang::get("contract.table-faces") : "",
-			                    in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
-			                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
-			                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
-			                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
-			                    in_array("production-cost", $this->columns, true) ? Lang::get("contract.table-production-cost") : "",
-			                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
-			                    in_array("cpm", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
+			                    in_array("faces", $this->plan->columns, true) ? Lang::get("contract.table-faces") : "",
+			                    in_array("traffic", $this->plan->columns, true) ? Lang::get("contract.table-traffic") : "",
+			                    in_array("impressions", $this->plan->columns, true) ? Lang::get("contract.table-impressions") : "",
+			                    in_array("media-value", $this->plan->columns, true) ? Lang::get("contract.table-media-value") : "",
+			                    in_array("media-investment", $this->plan->columns, true) ? Lang::get("contract.table-media-investment") : "",
+			                    in_array("production-cost", $this->plan->columns, true) ? Lang::get("contract.table-production-cost") : "",
+			                    in_array("price", $this->plan->columns, true) ? Lang::get("contract.table-net-investment") : "",
+			                    in_array("cpm", $this->plan->columns, true) ? Lang::get("contract.table-cpm") : "",
 		                    ]);
 
 		$this->ws->setRelativeCellFormat(NumberFormat::FORMAT_CURRENCY_USD, 5);
@@ -174,14 +170,14 @@ class PlannerExport extends XLSXDocument {
 		$this->ws->printRow([
 			                    '',
 			                    $flightsValues->sum("propertiesCount"),
-			                    in_array("faces", $this->columns, true) ? $flightsValues->sum("faces") : "",
-			                    in_array("traffic", $this->columns, true) ? $flightsValues->sum("traffic") : "",
-			                    in_array("impressions", $this->columns, true) ? $flightsValues->sum("impressions") : "",
-			                    in_array("media-value", $this->columns, true) ? $flightsValues->sum("mediaValue") : "",
-			                    in_array("media-investment", $this->columns, true) ? $flightsValues->sum("mediaInvestment") : "",
-			                    in_array("production-cost", $this->columns, true) ? $flightsValues->sum("productionCost") : "",
-			                    in_array("price", $this->columns, true) ? $flightsValues->sum("price") : "",
-			                    in_array("cpm", $this->columns, true) ? $cpm : "",
+			                    in_array("faces", $this->plan->columns, true) ? $flightsValues->sum("faces") : "",
+			                    in_array("traffic", $this->plan->columns, true) ? $flightsValues->sum("traffic") : "",
+			                    in_array("impressions", $this->plan->columns, true) ? $flightsValues->sum("impressions") : "",
+			                    in_array("media-value", $this->plan->columns, true) ? $flightsValues->sum("mediaValue") : "",
+			                    in_array("media-investment", $this->plan->columns, true) ? $flightsValues->sum("mediaInvestment") : "",
+			                    in_array("production-cost", $this->plan->columns, true) ? $flightsValues->sum("productionCost") : "",
+			                    in_array("price", $this->plan->columns, true) ? $flightsValues->sum("price") : "",
+			                    in_array("cpm", $this->plan->columns, true) ? $cpm : "",
 		                    ]);
 
 		// Autosize columns
@@ -200,7 +196,7 @@ class PlannerExport extends XLSXDocument {
 	/**
 	 * @throws Exception
 	 */
-	protected function printFlightSummary(CPCompiledFlight $flight, $flightIndex): array {
+	protected function printFlightSummary(CPCompiledFlight $flight, int $flightIndex): array {
 		$this->ws->getStyle($this->ws->getRelativeRange(11))->applyFromArray(XLSXStyleFactory::flightRow());
 
 		$this->ws->pushPosition();
@@ -208,7 +204,7 @@ class PlannerExport extends XLSXDocument {
 		$this->ws->popPosition();
 
 		$this->ws->printRow([
-			                    $flight->name ?? "Flight #" . $flightIndex + 1,
+			                    $flight->name ?? ("Flight #" . ($flightIndex + 1)),
 			                    $flight->start_date->toDateString(),
 			                    '→',
 			                    $flight->end_date->toDateString(),
@@ -225,21 +221,33 @@ class PlannerExport extends XLSXDocument {
 			                                                                        ],
 		                                                                        ]);
 
+		$flightValues = [
+			"propertiesCount" => 0,
+			"faces"           => 0,
+			"traffic"         => 0,
+			"impressions"     => 0,
+			"mediaValue"      => 0,
+			"mediaInvestment" => 0,
+			"productionCost"  => 0,
+			"price"           => 0,
+			"cpmPrice"        => 0,
+		];
+
 		if ($flight->isOOHFlight()) {
 			$oohFlight = $flight->getAsOOHFlight();
 
 			$this->ws->printRow([
 				                    Lang::get("contract.table-networks"),
 				                    Lang::get("contract.table-properties"),
-				                    in_array("faces", $this->columns, true) ? Lang::get("contract.table-faces") : "",
-				                    in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
-				                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
-				                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
-				                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
-				                    in_array("production-cost", $this->columns, true) ? Lang::get("contract.table-production-cost") : "",
-				                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
-				                    in_array("cpm", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
-				                    in_array("weeks", $this->columns, true) ? Lang::get("contract.table-weeks") : "",
+				                    in_array("faces", $this->plan->columns, true) ? Lang::get("contract.table-faces") : "",
+				                    in_array("traffic", $this->plan->columns, true) ? Lang::get("contract.table-traffic") : "",
+				                    in_array("impressions", $this->plan->columns, true) ? Lang::get("contract.table-impressions") : "",
+				                    in_array("media-value", $this->plan->columns, true) ? Lang::get("contract.table-media-value") : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? Lang::get("contract.table-media-investment") : "",
+				                    in_array("production-cost", $this->plan->columns, true) ? Lang::get("contract.table-production-cost") : "",
+				                    in_array("price", $this->plan->columns, true) ? Lang::get("contract.table-net-investment") : "",
+				                    in_array("cpm", $this->plan->columns, true) ? Lang::get("contract.table-cpm") : "",
+				                    in_array("weeks", $this->plan->columns, true) ? Lang::get("contract.table-weeks") : "",
 			                    ]);
 
 			if ($oohFlight->groups->count() === 1 && $oohFlight->groups[0]->name === null) {
@@ -271,15 +279,15 @@ class PlannerExport extends XLSXDocument {
 			$this->ws->printRow([
 				                    "Total",
 				                    $flightValues["propertiesCount"],
-				                    in_array("faces", $this->columns, true) ? $flightValues["faces"] : "",
-				                    in_array("traffic", $this->columns, true) ? $flightValues["traffic"] : "",
-				                    in_array("impressions", $this->columns, true) ? $flightValues["impressions"] : "",
-				                    in_array("media-value", $this->columns, true) ? $flightValues["mediaValue"] : "",
-				                    in_array("media-investment", $this->columns, true) ? $flightValues["mediaInvestment"] : "",
-				                    in_array("production-cost", $this->columns, true) ? $flightValues["productionCost"] : "",
-				                    in_array("price", $this->columns, true) ? $flightValues["price"] : "",
-				                    in_array("cpm", $this->columns, true) ? $oohFlight->cpm : "",
-				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
+				                    in_array("faces", $this->plan->columns, true) ? $flightValues["faces"] : "",
+				                    in_array("traffic", $this->plan->columns, true) ? $flightValues["traffic"] : "",
+				                    in_array("impressions", $this->plan->columns, true) ? $flightValues["impressions"] : "",
+				                    in_array("media-value", $this->plan->columns, true) ? $flightValues["mediaValue"] : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? $flightValues["mediaInvestment"] : "",
+				                    in_array("production-cost", $this->plan->columns, true) ? $flightValues["productionCost"] : "",
+				                    in_array("price", $this->plan->columns, true) ? $flightValues["price"] : "",
+				                    in_array("cpm", $this->plan->columns, true) ? $oohFlight->cpm : "",
+				                    in_array("weeks", $this->plan->columns, true) ? $flight->getWeekLength() : "",
 			                    ]);
 		} else if ($flight->isMobileFlight()) {
 			$mobileFlight = $flight->getAsMobileFlight();
@@ -289,13 +297,13 @@ class PlannerExport extends XLSXDocument {
 				                    Lang::get("contract.table-properties"),
 				                    "",
 				                    "",
-				                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
-				                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
-				                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
+				                    in_array("impressions", $this->plan->columns, true) ? Lang::get("contract.table-impressions") : "",
+				                    in_array("media-value", $this->plan->columns, true) ? Lang::get("contract.table-media-value") : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? Lang::get("contract.table-media-investment") : "",
 				                    "",
-				                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
-				                    in_array("cpm", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
-				                    in_array("weeks", $this->columns, true) ? Lang::get("contract.table-weeks") : "",
+				                    in_array("price", $this->plan->columns, true) ? Lang::get("contract.table-net-investment") : "",
+				                    in_array("cpm", $this->plan->columns, true) ? Lang::get("contract.table-cpm") : "",
+				                    in_array("weeks", $this->plan->columns, true) ? Lang::get("contract.table-weeks") : "",
 			                    ]);
 
 			if ($mobileFlight->groups->count() > 1 || $mobileFlight->groups[0]->name !== null) {
@@ -325,15 +333,15 @@ class PlannerExport extends XLSXDocument {
 			$this->ws->printRow([
 				                    "Total",
 				                    $flightValues["propertiesCount"],
-				                    in_array("faces", $this->columns, true) ? $flightValues["faces"] : "",
-				                    in_array("traffic", $this->columns, true) ? $flightValues["traffic"] : "",
-				                    in_array("impressions", $this->columns, true) ? $flightValues["impressions"] : "",
-				                    in_array("media-value", $this->columns, true) ? $flightValues["mediaValue"] : "",
-				                    in_array("media-investment", $this->columns, true) ? $flightValues["mediaInvestment"] : "",
-				                    in_array("production-cost", $this->columns, true) ? $flightValues["productionCost"] : "",
-				                    in_array("price", $this->columns, true) ? $flightValues["price"] : "",
-				                    in_array("cpm", $this->columns, true) ? $mobileFlight->cpm : "",
-				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
+				                    in_array("faces", $this->plan->columns, true) ? $flightValues["faces"] : "",
+				                    in_array("traffic", $this->plan->columns, true) ? $flightValues["traffic"] : "",
+				                    in_array("impressions", $this->plan->columns, true) ? $flightValues["impressions"] : "",
+				                    in_array("media-value", $this->plan->columns, true) ? $flightValues["mediaValue"] : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? $flightValues["mediaInvestment"] : "",
+				                    in_array("production-cost", $this->plan->columns, true) ? $flightValues["productionCost"] : "",
+				                    in_array("price", $this->plan->columns, true) ? $flightValues["price"] : "",
+				                    in_array("cpm", $this->plan->columns, true) ? $mobileFlight->cpm : "",
+				                    in_array("weeks", $this->plan->columns, true) ? $flight->getWeekLength() : "",
 			                    ]);
 		}
 
@@ -342,7 +350,13 @@ class PlannerExport extends XLSXDocument {
 		return $flightValues;
 	}
 
-	public function printOOHFlightSummaryByNetwork(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight) {
+	/**
+	 * @param CPCompiledFlight    $flight
+	 * @param CPCompiledOOHFlight $oohFlight
+	 * @return void
+	 * @throws Exception
+	 */
+	public function printOOHFlightSummaryByNetwork(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight): void {
 		$properties = \Neo\Modules\Properties\Models\Property::query()
 		                                                     ->withoutEagerLoads()
 		                                                     ->select(["actor_id", "network_id"])
@@ -380,22 +394,28 @@ class PlannerExport extends XLSXDocument {
 			$cpm         = $impressions > 0 ? $cpmPrice / $impressions * 1000 : 0;
 
 			$this->ws->printRow([
-				                    $network?->name ?? "-",
+				                    $network->name,
 				                    $properties->count(),
-				                    in_array("faces", $this->columns, true) ? $compiledProperties->sum("faces") : "",
-				                    in_array("traffic", $this->columns, true) ? $compiledProperties->sum("traffic") : "",
-				                    in_array("impressions", $this->columns, true) ? $impressions : "",
-				                    in_array("media-value", $this->columns, true) ? $compiledProperties->sum("media_value") : "",
-				                    in_array("media-investment", $this->columns, true) ? $compiledProperties->sum("discounted_media_value") : "",
-				                    in_array("production-cost", $this->columns, true) ? $compiledProperties->sum("production_cost") : "",
-				                    in_array("price", $this->columns, true) ? $compiledProperties->sum("price") : "",
-				                    in_array("cpm", $this->columns, true) ? $cpm : "",
-				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
+				                    in_array("faces", $this->plan->columns, true) ? $compiledProperties->sum("faces") : "",
+				                    in_array("traffic", $this->plan->columns, true) ? $compiledProperties->sum("traffic") : "",
+				                    in_array("impressions", $this->plan->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->plan->columns, true) ? $compiledProperties->sum("media_value") : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? $compiledProperties->sum("discounted_media_value") : "",
+				                    in_array("production-cost", $this->plan->columns, true) ? $compiledProperties->sum("production_cost") : "",
+				                    in_array("price", $this->plan->columns, true) ? $compiledProperties->sum("price") : "",
+				                    in_array("cpm", $this->plan->columns, true) ? $cpm : "",
+				                    in_array("weeks", $this->plan->columns, true) ? $flight->getWeekLength() : "",
 			                    ]);
 		}
 	}
 
-	public function printOOHFlightSummaryByGroup(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight) {
+	/**
+	 * @param CPCompiledFlight    $flight
+	 * @param CPCompiledOOHFlight $oohFlight
+	 * @return void
+	 * @throws Exception
+	 */
+	public function printOOHFlightSummaryByGroup(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight): void {
 		/** @var CPCompiledGroup $group */
 		foreach ($oohFlight->groups as $group) {
 			$compiledProperties = $oohFlight->properties->toCollection()
@@ -405,7 +425,7 @@ class PlannerExport extends XLSXDocument {
 			$this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
 				                                                                    "font" => [
 					                                                                    "color" => [
-						                                                                    "argb" => "FF" . $group->color ?? "000000",
+						                                                                    "argb" => "FF" . ($group->color ?? "000000"),
 					                                                                    ],
 				                                                                    ],
 			                                                                    ]);
@@ -425,20 +445,23 @@ class PlannerExport extends XLSXDocument {
 			$this->ws->printRow([
 				                    $group->name ?? Lang::get("contract.group-remaining-properties"),
 				                    $compiledProperties->count(),
-				                    in_array("faces", $this->columns, true) ? $compiledProperties->sum("faces_count") : "",
-				                    in_array("traffic", $this->columns, true) ? $compiledProperties->sum("traffic") : "",
-				                    in_array("impressions", $this->columns, true) ? $impressions : "",
-				                    in_array("media-value", $this->columns, true) ? $compiledProperties->sum("media_value") : "",
-				                    in_array("media-investment", $this->columns, true) ? $compiledProperties->sum("discounted_media_value") : "",
-				                    in_array("production-cost", $this->columns, true) ? $compiledProperties->sum("production_cost") : "",
-				                    in_array("price", $this->columns, true) ? $compiledProperties->sum("price") : "",
-				                    in_array("cpm", $this->columns, true) ? $cpm : "",
-				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
+				                    in_array("faces", $this->plan->columns, true) ? $compiledProperties->sum("faces_count") : "",
+				                    in_array("traffic", $this->plan->columns, true) ? $compiledProperties->sum("traffic") : "",
+				                    in_array("impressions", $this->plan->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->plan->columns, true) ? $compiledProperties->sum("media_value") : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? $compiledProperties->sum("discounted_media_value") : "",
+				                    in_array("production-cost", $this->plan->columns, true) ? $compiledProperties->sum("production_cost") : "",
+				                    in_array("price", $this->plan->columns, true) ? $compiledProperties->sum("price") : "",
+				                    in_array("cpm", $this->plan->columns, true) ? $cpm : "",
+				                    in_array("weeks", $this->plan->columns, true) ? $flight->getWeekLength() : "",
 			                    ]);
 		}
 	}
 
-	public function printMobileFlightSummaryByGroup(CPCompiledFlight $flight, CPCompiledMobileFlight $mobileFlight) {
+	/**
+	 * @throws Exception
+	 */
+	public function printMobileFlightSummaryByGroup(CPCompiledFlight $flight, CPCompiledMobileFlight $mobileFlight): void {
 		/** @var CPCompiledGroup $group */
 		foreach ($mobileFlight->groups as $group) {
 			$compiledProperties = $mobileFlight->properties->toCollection()
@@ -448,7 +471,7 @@ class PlannerExport extends XLSXDocument {
 			$this->ws->getStyle($this->ws->getRelativeRange(1))->applyFromArray([
 				                                                                    "font" => [
 					                                                                    "color" => [
-						                                                                    "argb" => "FF" . $group->color ?? "000000",
+						                                                                    "argb" => "FF" . ($group->color ?? "000000"),
 					                                                                    ],
 				                                                                    ],
 			                                                                    ]);
@@ -468,13 +491,13 @@ class PlannerExport extends XLSXDocument {
 				                    $compiledProperties->count(),
 				                    "",
 				                    "",
-				                    in_array("impressions", $this->columns, true) ? $impressions : "",
-				                    in_array("media-value", $this->columns, true) ? $media_value : "",
-				                    in_array("media-investment", $this->columns, true) ? $media_value : "",
+				                    in_array("impressions", $this->plan->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->plan->columns, true) ? $media_value : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? $media_value : "",
 				                    "",
-				                    in_array("price", $this->columns, true) ? $price : "",
-				                    in_array("cpm", $this->columns, true) ? $cpm : "",
-				                    in_array("weeks", $this->columns, true) ? $flight->getWeekLength() : "",
+				                    in_array("price", $this->plan->columns, true) ? $price : "",
+				                    in_array("cpm", $this->plan->columns, true) ? $cpm : "",
+				                    in_array("weeks", $this->plan->columns, true) ? $flight->getWeekLength() : "",
 			                    ]);
 		}
 	}
@@ -499,7 +522,7 @@ class PlannerExport extends XLSXDocument {
 		}
 
 		$this->ws->printRow([
-			                    $flight->name ?? "Flight #" . $flightIndex + 1,
+			                    $flight->name ?? ("Flight #" . ($flightIndex + 1)),
 			                    $flight->start_date->toDateString(),
 			                    '→',
 			                    $flight->end_date->toDateString(),
@@ -522,7 +545,7 @@ class PlannerExport extends XLSXDocument {
 		$groups      = $oohFlight->groups;
 		$groupsCount = $groups->count();
 
-		/** @var \Illuminate\Database\Eloquent\Collection<ProductCategory> $allCategories */
+		/** @var Collection<ProductCategory> $allCategories */
 		$allCategories = ProductCategory::query()
 		                                ->findMany($oohFlight->properties
 			                                           ->toCollection()
@@ -531,7 +554,7 @@ class PlannerExport extends XLSXDocument {
 			                                           ->unique()
 		                                );
 
-		/** @var \Illuminate\Database\Eloquent\Collection<\Neo\Modules\Properties\Models\Product> $allProducts */
+		/** @var Collection<\Neo\Modules\Properties\Models\Product> $allProducts */
 		$allProducts = \Neo\Modules\Properties\Models\Product::query()
 		                                                     ->findMany($oohFlight->properties
 			                                                                ->toCollection()
@@ -558,14 +581,14 @@ class PlannerExport extends XLSXDocument {
 			                           ->orderBy("id")
 			                           ->get();
 
-			if ($groupsCount !== 1 || ($groupsCount === 1 && $group->name !== null && $group->name !== "remaining")) {
+			if ($groupsCount !== 1 || ($group->name !== null && $group->name !== "remaining")) {
 				// Group header
 				$this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
 				$this->ws->getStyle($this->ws->getRelativeRange(12))->applyFromArray([
 					                                                                     "font" => [
 						                                                                     'size'  => "14",
 						                                                                     "color" => [
-							                                                                     "argb" => "FF" . $group->color ?? "000000",
+							                                                                     "argb" => "FF" . ($group->color ?? "000000"),
 						                                                                     ],
 					                                                                     ],
 					                                                                     "fill" => [
@@ -602,17 +625,17 @@ class PlannerExport extends XLSXDocument {
 
 				$this->ws->printRow([
 					                    $network->name,
-					                    in_array("zipcode", $this->columns, true) ? Lang::get("contract.table-zipcode") : "",
-					                    in_array("location", $this->columns, true) ? Lang::get("contract.table-location") : "",
-					                    in_array("faces", $this->columns, true) ? Lang::get("contract.table-faces") : "",
-					                    in_array("spots", $this->columns, true) ? Lang::get("contract.table-spots") : "",
-					                    in_array("traffic", $this->columns, true) ? Lang::get("contract.table-traffic") : "",
-					                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
-					                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
-					                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
-					                    in_array("production-cost", $this->columns, true) ? Lang::get("contract.table-production-cost") : "",
-					                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
-					                    in_array("cpm-lines", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
+					                    in_array("zipcode", $this->plan->columns, true) ? Lang::get("contract.table-zipcode") : "",
+					                    in_array("location", $this->plan->columns, true) ? Lang::get("contract.table-location") : "",
+					                    in_array("faces", $this->plan->columns, true) ? Lang::get("contract.table-faces") : "",
+					                    in_array("spots", $this->plan->columns, true) ? Lang::get("contract.table-spots") : "",
+					                    in_array("traffic", $this->plan->columns, true) ? Lang::get("contract.table-traffic") : "",
+					                    in_array("impressions", $this->plan->columns, true) ? Lang::get("contract.table-impressions") : "",
+					                    in_array("media-value", $this->plan->columns, true) ? Lang::get("contract.table-media-value") : "",
+					                    in_array("media-investment", $this->plan->columns, true) ? Lang::get("contract.table-media-investment") : "",
+					                    in_array("production-cost", $this->plan->columns, true) ? Lang::get("contract.table-production-cost") : "",
+					                    in_array("price", $this->plan->columns, true) ? Lang::get("contract.table-net-investment") : "",
+					                    in_array("cpm-lines", $this->plan->columns, true) ? Lang::get("contract.table-cpm") : "",
 				                    ]);
 
 
@@ -656,17 +679,17 @@ class PlannerExport extends XLSXDocument {
 
 					$this->ws->printRow([
 						                    $property->actor->name,
-						                    in_array("zipcode", $this->columns, true) ? substr($property->address->zipcode, 0, 3) . " " . substr($property->address->zipcode, 3) : "",
-						                    in_array("location", $this->columns, true) ? $property->address->city->name : "",
-						                    in_array("faces", $this->columns, true) ? $compiledProperty->faces_count : "",
+						                    in_array("zipcode", $this->plan->columns, true) ? substr($property->address->zipcode, 0, 3) . " " . substr($property->address->zipcode, 3) : "",
+						                    in_array("location", $this->plan->columns, true) ? $property->address->city->name : "",
+						                    in_array("faces", $this->plan->columns, true) ? $compiledProperty->faces_count : "",
 						                    "",
-						                    in_array("traffic", $this->columns, true) ? $compiledProperty->traffic : "",
-						                    in_array("impressions", $this->columns, true) ? $compiledProperty->impressions : "",
-						                    in_array("media-value", $this->columns, true) ? $compiledProperty->media_value : "",
-						                    in_array("media-investment", $this->columns, true) ? $compiledProperty->discounted_media_value : "",
-						                    in_array("production-cost", $this->columns, true) ? $compiledProperty->production_cost_value : "",
-						                    in_array("price", $this->columns, true) ? $compiledProperty->price : "",
-						                    in_array("cpm-lines", $this->columns, true) ? $compiledProperty->cpm : "",
+						                    in_array("traffic", $this->plan->columns, true) ? $compiledProperty->traffic : "",
+						                    in_array("impressions", $this->plan->columns, true) ? $compiledProperty->impressions : "",
+						                    in_array("media-value", $this->plan->columns, true) ? $compiledProperty->media_value : "",
+						                    in_array("media-investment", $this->plan->columns, true) ? $compiledProperty->discounted_media_value : "",
+						                    in_array("production-cost", $this->plan->columns, true) ? $compiledProperty->production_cost_value : "",
+						                    in_array("price", $this->plan->columns, true) ? $compiledProperty->price : "",
+						                    in_array("cpm-lines", $this->plan->columns, true) ? $compiledProperty->cpm : "",
 					                    ]);
 
 					$compiledCategories = $compiledProperty->categories->toCollection();
@@ -721,15 +744,15 @@ class PlannerExport extends XLSXDocument {
 								                    $product["name_" . Lang::locale()],
 								                    "",
 								                    "",
-								                    in_array("faces", $this->columns, true) ? $compiledProduct->quantity : "",
-								                    in_array("spots", $this->columns, true) ? $compiledProduct->spots : "",
+								                    in_array("faces", $this->plan->columns, true) ? $compiledProduct->quantity : "",
+								                    in_array("spots", $this->plan->columns, true) ? $compiledProduct->spots : "",
 								                    "",
-								                    in_array("impressions", $this->columns, true) ? $compiledProduct->impressions : "",
-								                    in_array("media-value", $this->columns, true) ? $compiledProduct->media_value : "",
-								                    in_array("media-investment", $this->columns, true) ? $compiledProduct->discounted_media_value : "",
-								                    in_array("production-cost", $this->columns, true) ? $compiledProduct->production_cost_value : "",
-								                    in_array("price", $this->columns, true) ? $compiledProduct->price : "",
-								                    in_array("cpm-lines", $this->columns, true) ? $compiledProduct->cpm : "",
+								                    in_array("impressions", $this->plan->columns, true) ? $compiledProduct->impressions : "",
+								                    in_array("media-value", $this->plan->columns, true) ? $compiledProduct->media_value : "",
+								                    in_array("media-investment", $this->plan->columns, true) ? $compiledProduct->discounted_media_value : "",
+								                    in_array("production-cost", $this->plan->columns, true) ? $compiledProduct->production_cost_value : "",
+								                    in_array("price", $this->plan->columns, true) ? $compiledProduct->price : "",
+								                    in_array("cpm-lines", $this->plan->columns, true) ? $compiledProduct->cpm : "",
 							                    ]);
 						}
 					}
@@ -772,15 +795,15 @@ class PlannerExport extends XLSXDocument {
 				                    "Total",
 				                    "",
 				                    "",
-				                    in_array("faces", $this->columns, true) ? $faces : "",
+				                    in_array("faces", $this->plan->columns, true) ? $faces : "",
 				                    "",
-				                    in_array("impressions", $this->columns, true) ? $traffic : "",
-				                    in_array("impressions", $this->columns, true) ? $impressions : "",
-				                    in_array("media-value", $this->columns, true) ? $media_value : "",
-				                    in_array("media-investment", $this->columns, true) ? $disocunted_media_value : "",
-				                    in_array("production-cost", $this->columns, true) ? $production_cost : "",
-				                    in_array("price", $this->columns, true) ? $price : "",
-				                    in_array("cpm", $this->columns, true) ? $cpm : "",
+				                    in_array("impressions", $this->plan->columns, true) ? $traffic : "",
+				                    in_array("impressions", $this->plan->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->plan->columns, true) ? $media_value : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? $disocunted_media_value : "",
+				                    in_array("production-cost", $this->plan->columns, true) ? $production_cost : "",
+				                    in_array("price", $this->plan->columns, true) ? $price : "",
+				                    in_array("cpm", $this->plan->columns, true) ? $cpm : "",
 			                    ]);
 
 			$this->ws->getStyle($this->ws->getRelativeRange(12, 2))->applyFromArray([
@@ -812,7 +835,7 @@ class PlannerExport extends XLSXDocument {
 	/**
 	 * @throws Exception
 	 */
-	public function printMobileFlight(CPCompiledFlight $flight, CPCompiledMobileFlight $oohFlight, int $flightIndex): void {
+	public function printMobileFlight(CPCompiledFlight $flight, CPCompiledMobileFlight $mobileFlight, int $flightIndex): void {
 		$this->worksheet = new Worksheet(null, $flight->name);
 		$this->spreadsheet->addSheet($this->worksheet);
 		$this->spreadsheet->setActiveSheetIndexByName($flight->name);
@@ -820,7 +843,41 @@ class PlannerExport extends XLSXDocument {
 		$this->printHeader(8);
 		$this->printFlightHeader($flight, $flightIndex, width: 8);
 
-		$groups      = $oohFlight->groups;
+		// Print mobile flight parameters
+		$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+		$this->ws->printRow([
+			                    Lang::get("contract.mobile-audience-targeting"),
+			                    "",
+			                    Lang::get("contract.mobile-additional-targeting"),
+		                    ]);
+		$this->ws->printRow([
+			                    $mobileFlight->audience_targeting,
+			                    "",
+			                    $mobileFlight->additional_targeting,
+		                    ]);
+
+		$this->ws->printRow([]);
+
+		$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
+		$this->ws->printRow([
+			                    $mobileFlight->website_retargeting ? Lang::get("contract.mobile-website-retargeting") : "",
+			                    "",
+			                    $mobileFlight->online_conversion_monitoring ? Lang::get("contract.mobile-online-conversion-monitoring") : "",
+			                    "",
+			                    $mobileFlight->retail_conversion_monitoring ? Lang::get("contract.mobile-retail-conversion-monitoring") : "",
+		                    ]);
+		$this->ws->printRow([
+			                    $mobileFlight->website_retargeting ? Lang::get("common.yes") : "",
+			                    "",
+			                    $mobileFlight->online_conversion_monitoring ? Lang::get("common.yes") : "",
+			                    "",
+			                    $mobileFlight->retail_conversion_monitoring ? Lang::get("common.yes") : "",
+		                    ]);
+
+		$this->ws->moveCursor(0, 2);
+
+		// Print the flight content
+		$groups      = $mobileFlight->groups;
 		$groupsCount = $groups->count();
 
 		/** @var CPCompiledGroup $group */
@@ -830,22 +887,17 @@ class PlannerExport extends XLSXDocument {
 			                                                          ->with(["address.city"])
 			                                                          ->findMany($group->properties);
 
-			$groupCompiledProperties = $oohFlight->properties->toCollection()
-			                                                 ->filter(fn(CPCompiledMobileProperty $p) => in_array($p->id, $group->properties));
+			$groupCompiledProperties = $mobileFlight->properties->toCollection()
+			                                                    ->filter(fn(CPCompiledMobileProperty $p) => in_array($p->id, $group->properties));
 
-			$networks = PropertyNetwork::query()
-			                           ->whereIn("id", $groupProperties->pluck("network_id")->unique())
-			                           ->orderBy("id")
-			                           ->get();
-
-			if ($groupsCount !== 1 || ($groupsCount === 1 && $group->name !== null && $group->name !== "remaining")) {
+			if ($groupsCount !== 1 || ($group->name !== null && $group->name !== "remaining")) {
 				// Group header
 				$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
 				$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray([
 					                                                                    "font" => [
 						                                                                    'size'  => "14",
 						                                                                    "color" => [
-							                                                                    "argb" => "FF" . $group->color ?? "000000",
+							                                                                    "argb" => "FF" . ($group->color ?? "000000"),
 						                                                                    ],
 					                                                                    ],
 					                                                                    "fill" => [
@@ -858,13 +910,13 @@ class PlannerExport extends XLSXDocument {
 
 				$this->ws->printRow([
 					                    $group->name === 'remaining' ? Lang::get("contract.group-remaining-properties") : $group->name ?? "",
-					                    in_array("zipcode", $this->columns, true) ? Lang::get("contract.table-zipcode") : "",
-					                    in_array("location", $this->columns, true) ? Lang::get("contract.table-location") : "",
-					                    in_array("impressions", $this->columns, true) ? Lang::get("contract.table-impressions") : "",
-					                    in_array("media-value", $this->columns, true) ? Lang::get("contract.table-media-value") : "",
-					                    in_array("media-investment", $this->columns, true) ? Lang::get("contract.table-media-investment") : "",
-					                    in_array("price", $this->columns, true) ? Lang::get("contract.table-net-investment") : "",
-					                    in_array("cpm-lines", $this->columns, true) ? Lang::get("contract.table-cpm") : "",
+					                    in_array("zipcode", $this->plan->columns, true) ? Lang::get("contract.table-zipcode") : "",
+					                    in_array("location", $this->plan->columns, true) ? Lang::get("contract.table-location") : "",
+					                    in_array("impressions", $this->plan->columns, true) ? Lang::get("contract.table-impressions") : "",
+					                    in_array("media-value", $this->plan->columns, true) ? Lang::get("contract.table-media-value") : "",
+					                    in_array("media-investment", $this->plan->columns, true) ? Lang::get("contract.table-media-investment") : "",
+					                    in_array("price", $this->plan->columns, true) ? Lang::get("contract.table-net-investment") : "",
+					                    in_array("cpm-lines", $this->plan->columns, true) ? Lang::get("contract.table-cpm") : "",
 				                    ]);
 			}
 
@@ -895,13 +947,13 @@ class PlannerExport extends XLSXDocument {
 
 				$this->ws->printRow([
 					                    $property->actor->name,
-					                    in_array("zipcode", $this->columns, true) ? substr($property->address->zipcode, 0, 3) . " " . substr($property->address->zipcode, 3) : "",
-					                    in_array("location", $this->columns, true) ? $property->address->city->name : "",
-					                    in_array("impressions", $this->columns, true) ? $compiledProperty->impressions : "",
-					                    in_array("media-value", $this->columns, true) ? $compiledProperty->media_value : "",
-					                    in_array("media-investment", $this->columns, true) ? $compiledProperty->media_value : "",
-					                    in_array("price", $this->columns, true) ? $compiledProperty->price : "",
-					                    in_array("cpm-lines", $this->columns, true) ? $compiledProperty->cpm : "",
+					                    in_array("zipcode", $this->plan->columns, true) ? substr($property->address->zipcode, 0, 3) . " " . substr($property->address->zipcode, 3) : "",
+					                    in_array("location", $this->plan->columns, true) ? $property->address->city->name : "",
+					                    in_array("impressions", $this->plan->columns, true) ? $compiledProperty->impressions : "",
+					                    in_array("media-value", $this->plan->columns, true) ? $compiledProperty->media_value : "",
+					                    in_array("media-investment", $this->plan->columns, true) ? $compiledProperty->media_value : "",
+					                    in_array("price", $this->plan->columns, true) ? $compiledProperty->price : "",
+					                    in_array("cpm-lines", $this->plan->columns, true) ? $compiledProperty->cpm : "",
 				                    ]);
 			}
 
@@ -935,11 +987,11 @@ class PlannerExport extends XLSXDocument {
 				                    "Total",
 				                    "",
 				                    "",
-				                    in_array("impressions", $this->columns, true) ? $impressions : "",
-				                    in_array("media-value", $this->columns, true) ? $media_value : "",
-				                    in_array("media-investment", $this->columns, true) ? $media_value : "",
-				                    in_array("price", $this->columns, true) ? $price : "",
-				                    in_array("cpm", $this->columns, true) ? $cpm : "",
+				                    in_array("impressions", $this->plan->columns, true) ? $impressions : "",
+				                    in_array("media-value", $this->plan->columns, true) ? $media_value : "",
+				                    in_array("media-investment", $this->plan->columns, true) ? $media_value : "",
+				                    in_array("price", $this->plan->columns, true) ? $price : "",
+				                    in_array("cpm", $this->plan->columns, true) ? $cpm : "",
 			                    ]);
 
 			$this->ws->getStyle($this->ws->getRelativeRange(8, 2))->applyFromArray([

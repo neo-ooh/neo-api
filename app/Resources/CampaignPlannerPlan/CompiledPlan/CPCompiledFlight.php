@@ -26,7 +26,7 @@ class CPCompiledFlight extends Data {
 		public Carbon     $end_date,
 
 		public int        $order,
-		public bool       $send,
+		public bool       $send = true,
 		public bool       $is_compiled,
 
 		public Carbon     $updated_at,

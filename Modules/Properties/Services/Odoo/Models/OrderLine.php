@@ -60,7 +60,7 @@ class OrderLine extends OdooModel {
 			$type = ContractLineType::Mobile;
 		} else if ($this->discount > 99.9) {
 			$type = ContractLineType::Bonus;
-		} else if ($this->price_subtotal < PHP_FLOAT_EPSILON && $this->discount === 0) {
+		} else if ($this->price_subtotal < PHP_FLOAT_EPSILON && $this->discount < PHP_FLOAT_EPSILON) {
 			$type = ContractLineType::BUA;
 		}
 

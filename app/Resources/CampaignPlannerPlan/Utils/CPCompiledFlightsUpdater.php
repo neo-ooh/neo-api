@@ -35,6 +35,7 @@ class CPCompiledFlightsUpdater implements Cast {
 
 		return CPCompiledFlight::from([
 			                              ...$flight,
+			                              "name"       => $flight["name"] ?? "Flight",
 			                              "start_date" => Carbon::parse($flight["start_date"]),
 			                              "end_date"   => Carbon::parse($flight["end_date"]),
 			                              "updated_at" => Carbon::parse($flight["end_date"]),

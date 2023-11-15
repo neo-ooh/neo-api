@@ -448,6 +448,9 @@ class OdooAdapter extends InventoryAdapter {
 			];
 		}
 
+		// Insert the campaigns
+		Campaign::createMany($client, $rawCampaigns->toArray());
+
 		// Now, we insert the lines by batches
 		$linesBatch = $rawLines->chunk(100);
 		// Creates all the lines

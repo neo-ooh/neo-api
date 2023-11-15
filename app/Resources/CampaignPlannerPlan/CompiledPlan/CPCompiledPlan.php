@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Neo\Resources\CampaignPlannerPlan\CPPlanContract;
 use Neo\Resources\CampaignPlannerPlan\Utils\CPCompiledFlightsTransformer;
 use Neo\Resources\CampaignPlannerPlan\Utils\CPCompiledFlightsUpdater;
+use Neo\Resources\CampaignPlannerPlan\Utils\CPContractUpdater;
 use Spatie\LaravelData\Attributes\WithCast;
 use Spatie\LaravelData\Attributes\WithTransformer;
 use Spatie\LaravelData\Data;
@@ -26,13 +27,15 @@ class CPCompiledPlan extends Data {
 		#[WithTransformer(CPCompiledFlightsTransformer::class)]
 		#[WithCast(CPCompiledFlightsUpdater::class)]
 		public Collection          $flights,
-		public array               $columns,
 
+		#[WithCast(CPContractUpdater::class)]
 		public CPPlanContract|null $contract,
 
 		public string|null         $save_uid,
 		public int|null            $owner_id,
 		public string              $compiled_at,
+
+		public array               $columns = [],
 	) {
 	}
 }

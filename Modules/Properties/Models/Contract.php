@@ -204,7 +204,7 @@ class Contract extends Model {
 		if (!$encodedPlan) {
 			return null;
 		}
-		
+
 		// Decode and return the plan
 		return CPCompiledPlan::from(json_decode(gzdecode(base64_decode($encodedPlan)), true, 512, JSON_THROW_ON_ERROR));
 	}

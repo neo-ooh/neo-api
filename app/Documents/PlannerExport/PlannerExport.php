@@ -847,9 +847,9 @@ class PlannerExport extends XLSXDocument {
 		$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray(XLSXStyleFactory::simpleTableHeader());
 		$this->ws->printRow([
 			                    Lang::get("contract.mobile-audience-targeting"),
-			                    "",
+			                    "",c
 			                    Lang::get("contract.mobile-additional-targeting"),
-		                    ]);
+		                    ])
 		$this->ws->printRow([
 			                    $mobileFlight->audience_targeting,
 			                    "",

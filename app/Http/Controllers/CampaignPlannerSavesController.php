@@ -54,11 +54,9 @@ class CampaignPlannerSavesController {
 		$save->name     = $request->input("name");
 		$save->version  = $request->input("version");
 
-		$save->contract        = $plan->getPlan()->contract?->contract;
-		$save->client_name     = $plan->getPlan()->contract?->partnerName[1];
-		$save->advertiser_name = $plan->getPlan()->contract?->analyticAccountName !== null
-			? $plan->getPlan()->contract?->analyticAccountName[1]
-			: null;
+		$save->contract        = $plan->getPlan()->contract?->contract_id;
+		$save->client_name     = $plan->getPlan()->contract?->client_name;
+		$save->advertiser_name = $plan->getPlan()->contract?->advertiser_name !== null ? $plan->getPlan()->contract->advertiser_name[1] : null;
 
 		$save->save();
 

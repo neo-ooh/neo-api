@@ -54,6 +54,11 @@ enum Capability: string {
 	case contents_tags = "contents.tags";
 
 	/**
+	 * Allow creating bundles tags to contents
+	 */
+	case schedules_bundles = "schedules.bundles";
+
+	/**
 	 * Allow assigning tags to contents
 	 */
 	case schedules_tags = "schedules.tags";

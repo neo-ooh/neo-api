@@ -141,10 +141,14 @@ return [
 
 	"group-remaining-properties" => "Remaining properties",
 
-	"mobile-audience-targeting"   => "Audience Targeting",
-	"mobile-additional-targeting" => "Additional Audience Targeting",
-
+	"mobile-audience-targeting"           => "Audience Targeting",
+	"mobile-additional-targeting"         => "Additional Audience Targeting",
 	"mobile-website-retargeting"          => "Client website retargeting",
 	"mobile-online-conversion-monitoring" => "Online conversion monitoring",
 	"mobile-retail-conversion-monitoring" => "Retail conversion monitoring",
+	"mobile-properties"                   => "Properties",
+	"mobile-product"                      => "Product",
+	"mobile-cpm"                          => "CPM",
+	"mobile-price"                        => "Price",
+	"mobile-impressions"                  => "Impressions",
 ];

@@ -10,7 +10,6 @@
 
 namespace Neo\Http\Controllers;
 
-use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -18,10 +17,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Gate;
 use Neo\Enums\Capability;
-use Neo\Exceptions\Odoo\ContractAlreadyExistException;
-use Neo\Exceptions\Odoo\ContractIsCancelledException;
-use Neo\Exceptions\Odoo\ContractIsDraftException;
-use Neo\Exceptions\Odoo\ContractNotFoundException;
 use Neo\Http\Requests\Contracts\DestroyContractRequest;
 use Neo\Http\Requests\Contracts\ListContractsRequest;
 use Neo\Http\Requests\Contracts\RefreshContractRequest;
@@ -29,14 +24,11 @@ use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
 use Neo\Http\Requests\Contracts\UpdateContractRequest;
 use Neo\Jobs\Contracts\ImportContractDataJob;
-use Neo\Jobs\Contracts\ImportContractJob;
 use Neo\Jobs\Contracts\ImportContractReservations;
 use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
-use Neo\Modules\Properties\Models\Contract;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use Neo\Modules\Broadcast\Models\Campaign;
-use Neo\Services\Odoo\OdooConfig;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Neo\Modules\Properties\Models\Contract;
 
 class ContractsController extends Controller {
 	public function index(ListContractsRequest $request): Response {
@@ -65,46 +57,6 @@ class ContractsController extends Controller {
 		                     ->sortBy("end_date", 0, "asc")->values();
 
 		return new Response($contracts);
-	}
-
-	/**
-	 * @throws OdooException
-	 */
-	public function store(StoreContractRequest $request): Response {
-		// The contract ID is a sensitive value, as it is the one that will be used to match additional campaigns with the contract.
-		// Now, for some f***ing reason, hyphens are not made equal, and contract name are not standardized. So we want to make sure all stored contract name uses hyphen-minus, which is the default hyphen on a keyboard (looking at you Word).
-		$contractId = strtoupper(str_replace(mb_chr(8208, 'UTF-8'), '-', $request->input("contract_id")));
-
-		//First, we check if the contract is already present in the db, we don't want any duplicates
-		if (Contract::query()->where("contract_id", "=", $contractId)->exists()) {
-			throw new ContractAlreadyExistException();
-		}
-
-		// We want to pull the contract from Odoo and check its status. Only contracts that are either sent or done are accepted. Otherwise, the contract is still a proposal and we don't want that.
-		$odooClient   = OdooConfig::fromConfig()->getClient();
-		$odooContract = \Neo\Services\Odoo\Models\Contract::findByName($odooClient, $contractId);
-
-		if (!$odooContract) {
-			throw new ContractNotFoundException($contractId);
-		}
-
-		if ($odooContract->isDraft()) {
-			throw new ContractIsDraftException($contractId);
-		}
-
-		if ($odooContract->isCancelled()) {
-			throw new ContractIsCancelledException($contractId);
-		}
-
-		ImportContractJob::dispatchSync($contractId, $odooContract);
-
-		$contract = Contract::query()->where("contract_id", "=", $odooContract->name)->first();
-
-		if (!$contract) {
-			throw new HttpException(400, "Could not import contract.");
-		}
-
-		return new Response($contract, 201);
 	}
 
 	public function show(ShowContractRequest $request, Contract $contract): Response {

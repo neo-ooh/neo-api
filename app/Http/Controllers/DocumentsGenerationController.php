@@ -21,6 +21,7 @@ use League\Csv\UnableToProcessCsv;
 use Neo\Documents\Contract\PDFContract;
 use Neo\Documents\Contract\XLSXProposal;
 use Neo\Documents\Exceptions\UnknownGenerationException;
+use Neo\Documents\MobileCampaign\MobileCampaign;
 use Neo\Documents\PlannerExport\PlannerExport;
 use Neo\Documents\Traffic\Traffic;
 use Neo\Exceptions\UnknownDocumentException;
@@ -91,6 +92,13 @@ class DocumentsGenerationController extends Controller {
 				}
 
 				$document = PlannerExport::make($data);
+				break;
+			case "mobile-campaign":
+				if ($data === null) {
+					return new Response(["error" => "Missing data"], 400);
+				}
+
+				$document = MobileCampaign::make($data);
 				break;
 			default:
 				throw new UnknownDocumentException();

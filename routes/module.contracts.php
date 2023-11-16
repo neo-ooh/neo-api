@@ -20,14 +20,14 @@ use Neo\Http\Controllers\ContractsFlightsReservationsController;
 use Neo\Http\Controllers\ContractsScreenshotsController;
 use Neo\Http\Controllers\ScreenshotsController;
 use Neo\Http\Controllers\ScreenshotsRequestsController;
+use Neo\Modules\Properties\Http\Controllers\ExternalContractsController;
+use Neo\Modules\Properties\Http\Controllers\ProofOfPerformancesController;
 use Neo\Modules\Properties\Models\Advertiser;
 use Neo\Modules\Properties\Models\Client;
 use Neo\Modules\Properties\Models\Contract;
 use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Properties\Models\Screenshot;
 use Neo\Modules\Properties\Models\ScreenshotRequest;
-use Neo\Modules\Properties\Http\Controllers\ExternalContractsController;
-use Neo\Modules\Properties\Http\Controllers\ProofOfPerformancesController;
 
 Route::group([
 	             "middleware" => "default",
@@ -73,7 +73,6 @@ Route::group([
 	Route::model("contract", Contract::class);
 
 	Route::   get("contracts", ContractsController::class . "@index");
-//	Route::  post("contracts", ContractsController::class . "@store");
 	Route::   get("contracts/_recent", ContractsController::class . "@recent");
 	Route::   get("contracts/{contract}", ContractsController::class . "@show");
 	Route::   put("contracts/{contract}", ContractsController::class . "@update");

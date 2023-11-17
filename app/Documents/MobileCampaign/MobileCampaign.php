@@ -188,18 +188,14 @@ class MobileCampaign extends XLSXDocument {
 		                                                                    ]);
 
 		$this->ws->printRow([
-			                    $mobileFlight->website_retargeting ? Lang::get("contract.mobile-website-retargeting") : "",
-			                    "",
-			                    $mobileFlight->online_conversion_monitoring ? Lang::get("contract.mobile-online-conversion-monitoring") : "",
-			                    "",
-			                    $mobileFlight->retail_conversion_monitoring ? Lang::get("contract.mobile-retail-conversion-monitoring") : "",
+			                    Lang::get("contract.mobile-website-retargeting"),
+			                    Lang::get("contract.mobile-online-conversion-monitoring"),
+			                    Lang::get("contract.mobile-retail-conversion-monitoring"),
 		                    ]);
 		$this->ws->printRow([
-			                    $mobileFlight->website_retargeting ? Lang::get("common.yes") : "",
-			                    "",
-			                    $mobileFlight->online_conversion_monitoring ? Lang::get("common.yes") : "",
-			                    "",
-			                    $mobileFlight->retail_conversion_monitoring ? Lang::get("common.yes") : "",
+			                    $mobileFlight->website_retargeting ? Lang::get("common.yes") : Lang::get("common.no"),
+			                    $mobileFlight->online_conversion_monitoring ? Lang::get("common.yes") : Lang::get("common.no"),
+			                    $mobileFlight->retail_conversion_monitoring ? Lang::get("common.yes") : Lang::get("common.no"),
 		                    ]);
 
 		$this->ws->moveCursor(0, 2);
@@ -237,6 +233,42 @@ class MobileCampaign extends XLSXDocument {
 				                    $property->address->city->name,
 				                    $property->address->city->province->slug,
 			                    ]);
+		}
+
+		if ($mobileFlight->retail_conversion_monitoring) {
+			$this->ws->moveCursor(0, 2);
+			
+			// Print list of retail locations
+			$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray([
+				                                                                    'font'         => [
+					                                                                    'bold'  => true,
+					                                                                    'color' => [
+						                                                                    'argb' => "FF000000",
+					                                                                    ],
+					                                                                    'size'  => "13",
+					                                                                    "name"  => "Calibri",
+				                                                                    ],
+				                                                                    "numberFormat" => [
+					                                                                    "formatCode" => '#,##0_-',
+				                                                                    ],
+				                                                                    'alignment'    => [
+					                                                                    'vertical' => Alignment::VERTICAL_CENTER,
+				                                                                    ],
+			                                                                    ]);
+			$this->ws->printRow([
+				                    Lang::get("contract.mobile-retail-locations"),
+			                    ]);
+
+			/** @var Property $property */
+			foreach ($mobileFlight->retail_locations_list as $retailLocation) {
+				$this->ws->moveCursor(1, 0);
+				$this->ws->mergeCellsRelative(4);
+				$this->ws->moveCursor(-1, 0);
+				$this->ws->printRow([
+					                    $retailLocation->name,
+					                    $retailLocation->address,
+				                    ]);
+			}
 		}
 
 

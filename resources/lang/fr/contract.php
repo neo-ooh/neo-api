@@ -142,10 +142,10 @@ Passé ce délai, Neo ne pourra pas garantir l’intégralité de l’inventaire
 
 	"group-remaining-properties" => "Properiétés restantes",
 
-	"mobile-audience-targeting"   => "Ciblage d'audience",
-	"mobile-additional-targeting" => "Ciblage supplémentaire",
-
+	"mobile-audience-targeting"           => "Ciblage d'audience",
+	"mobile-additional-targeting"         => "Ciblage supplémentaire",
 	"mobile-website-retargeting"          => "Reciblage du site web client",
 	"mobile-online-conversion-monitoring" => "Mesure de la conversion en ligne",
 	"mobile-retail-conversion-monitoring" => "Mesure de la conversion en boutique",
+	"mobile-retail-locations"             => "Boutiques",
 ];

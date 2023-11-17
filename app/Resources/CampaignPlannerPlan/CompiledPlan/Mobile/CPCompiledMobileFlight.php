@@ -46,6 +46,9 @@ class CPCompiledMobileFlight extends Data {
 
 		#[DataCollectionOf(CPCompiledGroup::class)]
 		public DataCollection $groups,
+
+		#[DataCollectionOf(CPMobileRetailLocation::class)]
+		public DataCollection $retail_locations_list,
 	) {
 	}
 }

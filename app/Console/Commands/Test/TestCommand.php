@@ -11,9 +11,9 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Neo\Jobs\MatchCityWithMarketJob;
-use Neo\Jobs\PullCityGeolocationJob;
-use Neo\Models\City;
+use Illuminate\Database\Eloquent\Builder;
+use Neo\Jobs\Contracts\ImportContractDataJob;
+use Neo\Modules\Properties\Models\Contract;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -44,21 +44,31 @@ class TestCommand extends Command {
 //			  ->update(["mobile_impressions_per_week" => round($impressions / 4)]);
 //		}
 
+//
+//		$cities = City::query()->whereNull("market_id")->get();
+//		dump($cities->count());
+//
+//		/** @var City $city */
+//		foreach ($cities as $city) {
+//			dump($city->name);
+//			if ($city->geolocation === null) {
+//				PullCityGeolocationJob::dispatch($city->getKey())
+//				                      ->chain([new MatchCityWithMarketJob($city->getKey())]);
+//
+//				continue;
+//			}
+//
+//			MatchCityWithMarketJob::dispatch($city->getKey());
+//		}
 
-		$cities = City::query()->whereNull("market_id")->get();
-		dump($cities->count());
+		$contracts = Contract::query()->whereHas("flights", function (Builder $query) {
+			$query->whereRaw("`start_date` > `end_date`");
+		})->get();
 
-		/** @var City $city */
-		foreach ($cities as $city) {
-			dump($city->name);
-			if ($city->geolocation === null) {
-				PullCityGeolocationJob::dispatch($city->getKey())
-				                      ->chain([new MatchCityWithMarketJob($city->getKey())]);
-
-				continue;
-			}
-
-			MatchCityWithMarketJob::dispatch($city->getKey());
+		foreach ($contracts as $contract) {
+			dump($contract->contract_id);
+			$j = new ImportContractDataJob($contract->getKey());
+			$j->handle();
 		}
 
 

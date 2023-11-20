@@ -312,6 +312,42 @@ class OdooAdapter extends InventoryAdapter {
 	|--------------------------------------------------------------------------
 	*/
 
+	/**
+	 * @param Carbon|null $ifModifiedSince
+	 * @return Traversable
+	 * @throws OdooException
+	 */
+	public function listContracts(?Carbon $ifModifiedSince = null): Traversable {
+		$client = $this->getConfig()->getClient();
+
+		return LazyCollection::make(function () use ($client, $ifModifiedSince) {
+			$filters = [];
+
+			if ($ifModifiedSince !== null) {
+				$filters[] = ["write_date", ">", $ifModifiedSince->toDateString()];
+			}
+
+			$pageSize = 25;
+			$cursor   = 0;
+
+			do {
+				$contracts = Contract::all(
+					client : $client,
+					filters: $filters,
+					limit  : $pageSize,
+					offset : $cursor,
+				);
+
+				/** @var Contract $contract */
+				foreach ($contracts as $contract) {
+					yield $contract->toResource($this->getInventoryID());
+				}
+
+				$cursor += $pageSize;
+			} while ($contracts->count() === $pageSize);
+		});
+	}
+
 	public function findContract(string $contractId): ContractResource|null {
 		$client = $this->getConfig()->getClient();
 

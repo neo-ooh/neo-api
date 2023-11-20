@@ -233,6 +233,16 @@ abstract class InventoryAdapter {
 	*/
 
 	/**
+	 * List contracts present in the inventory
+	 *
+	 * @param Carbon|null $ifModifiedSince
+	 * @return Traversable
+	 */
+	public function listContracts(Carbon|null $ifModifiedSince = null): Traversable {
+		throw new InventoryMethodNotSupportedException($this->getInventoryID(), $this->getInventoryType(), "findContract");
+	}
+
+	/**
 	 * Search for a contract on the inventory using its ID. Returns a contract information without its lines
 	 *
 	 * @param string $contractId

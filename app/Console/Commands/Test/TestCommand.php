@@ -11,9 +11,11 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\Builder;
-use Neo\Jobs\Contracts\ImportContractDataJob;
-use Neo\Modules\Properties\Models\Contract;
+use Illuminate\Support\LazyCollection;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\Hivestack\HivestackAdapter;
+use Neo\Modules\Properties\Services\Hivestack\Models\Unit;
+use Neo\Modules\Properties\Services\InventoryAdapterFactory;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -61,15 +63,15 @@ class TestCommand extends Command {
 //			MatchCityWithMarketJob::dispatch($city->getKey());
 //		}
 
-		$contracts = Contract::query()->whereHas("flights", function (Builder $query) {
-			$query->whereRaw("`start_date` > `end_date`");
-		})->get();
-
-		foreach ($contracts as $contract) {
-			dump($contract->contract_id);
-			$j = new ImportContractDataJob($contract->getKey());
-			$j->handle();
-		}
+//		$contracts = Contract::query()->whereHas("flights", function (Builder $query) {
+//			$query->whereRaw("`start_date` > `end_date`");
+//		})->get();
+//
+//		foreach ($contracts as $contract) {
+//			dump($contract->contract_id);
+//			$j = new ImportContractDataJob($contract->getKey());
+//			$j->handle();
+//		}
 
 
 //
@@ -86,5 +88,37 @@ class TestCommand extends Command {
 
 //		$plan = CampaignPlannerSave::query()->find(4020);
 //		dump($plan->getPlan()->getPlan());
+
+		/** @var HivestackAdapter $hivestack */
+		$hivestack       = InventoryAdapterFactory::make(InventoryProvider::query()->find(4));
+		$hivestackClient = $hivestack->getConfig()->getClient();
+
+		$hivestackProducts = LazyCollection::make(function () use ($hivestackClient) {
+			$pageSize = 100;
+			$cursor   = 0;
+
+			do {
+				$units = Unit::all(
+					client: $hivestackClient,
+					limit : $pageSize,
+					offset: $cursor,
+				);
+
+				foreach ($units as $unit) {
+					yield $unit;
+				}
+
+				$cursor += $pageSize;
+			} while ($units->count() === $pageSize);
+		});
+
+		/** @var Unit $product */
+		foreach ($hivestackProducts as $k => $product) {
+			dump($product->name, $product->external_id);
+			if ($product->external_id === "827997778") {
+				dump($product);
+				break;
+			}
+		}
 	}
 }

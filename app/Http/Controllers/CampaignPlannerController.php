@@ -44,7 +44,6 @@ use Neo\Modules\Properties\Models\ScreenType;
 class CampaignPlannerController {
 	protected function getPropertiesQuery() {
 		return Property::withoutEagerLoads()
-		               ->where("is_sellable", "=", true)
 		               ->whereHas("network", function (Builder $query) {
 			               $query->where("ooh_sales", "=", true)
 			                     ->orWhere("mobile_sales", "=", true);

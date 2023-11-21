@@ -19,16 +19,16 @@ use Neo\Console\Commands\Data\PopulateCensusForwardSortationAreasCommand;
 use Neo\Console\Commands\Data\PopulateCensusSubdivisionsCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Console\Commands\Test\TestCommand;
-use Neo\Jobs\Contracts\DeleteOldScreenshots;
-use Neo\Jobs\Contracts\RefreshContracts;
-use Neo\Jobs\SendScreenshotRequests;
-use Neo\Jobs\Traffic\FillMissingTrafficValueJob;
-use Neo\Jobs\Traffic\PullLatestTrafficData;
-use Neo\Jobs\Traffic\TrafficRequiredReminder;
 use Neo\Modules\Broadcast\Console\Commands\FetchCampaignsPerformancesCommand;
 use Neo\Modules\Broadcast\Console\Commands\SynchronizeNetworkCommand;
 use Neo\Modules\Properties\Console\Commands\ImportMobilePropertiesCommand;
+use Neo\Modules\Properties\Jobs\Contracts\RefreshContracts;
+use Neo\Modules\Properties\Jobs\Contracts\Screenshots\DeleteOldScreenshots;
+use Neo\Modules\Properties\Jobs\Contracts\Screenshots\SendScreenshotRequests;
 use Neo\Modules\Properties\Jobs\CreateTrafficSnapshotJob;
+use Neo\Modules\Properties\Jobs\Traffic\FillMissingTrafficValueJob;
+use Neo\Modules\Properties\Jobs\Traffic\PullLatestTrafficData;
+use Neo\Modules\Properties\Jobs\Traffic\TrafficRequiredReminder;
 
 class Kernel extends ConsoleKernel {
 	/**
@@ -50,12 +50,13 @@ class Kernel extends ConsoleKernel {
 
 		// Broadcast -------------------
 
-		// network:sync
+		// network:sync {network}
 		SynchronizeNetworkCommand::class,
+
+		// campaigns:fetch-performances {--network=null} {--lookback=3}
 		FetchCampaignsPerformancesCommand::class,
 
 		// Data -------------------
-
 		PopulateCensusDivisionsCommand::class,
 		PopulateCensusSubdivisionsCommand::class,
 		PopulateCensusFederalElectoralDistrictsCommand::class,

@@ -20,7 +20,6 @@ use Neo\Documents\Exceptions\UnknownGenerationException;
 use Neo\Documents\PropertiesExport\PropertiesExport;
 use Neo\Enums\Capability;
 use Neo\Http\Controllers\Controller;
-use Neo\Jobs\Properties\PullOpeningHoursJob;
 use Neo\Models\Actor;
 use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Broadcast\Models\Network;
@@ -35,6 +34,7 @@ use Neo\Modules\Properties\Http\Requests\Properties\MarkPropertyReviewedRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\ShowPropertyRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\StorePropertyRequest;
 use Neo\Modules\Properties\Http\Requests\Properties\UpdatePropertyRequest;
+use Neo\Modules\Properties\Jobs\Properties\PullOpeningHoursJob;
 use Neo\Modules\Properties\Models\Property;
 
 class PropertiesController extends Controller {

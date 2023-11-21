@@ -11,10 +11,10 @@
 namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Neo\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Modules\Properties\Http\Requests\Fields\DestroyFieldSegmentRequest;
 use Neo\Modules\Properties\Http\Requests\Fields\StoreFieldSegmentRequest;
 use Neo\Modules\Properties\Http\Requests\Fields\UpdateFieldSegmentRequest;
+use Neo\Modules\Properties\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Modules\Properties\Models\Field;
 use Neo\Modules\Properties\Models\FieldSegment;
 

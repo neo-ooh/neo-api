@@ -19,26 +19,29 @@ use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Properties\Models\Property;
 use Neo\Modules\Properties\Models\PropertyTrafficSnapshot;
 
+/**
+ * Computes the rolling weekly traffic for all properties, and stores it in the DB
+ */
 class CreateTrafficSnapshotJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct() {
-    }
+	public function __construct() {
+	}
 
-    public function handle() {
-        $properties = Property::query()->with(["traffic", "traffic.weekly_data"])->lazy(100);
-        $now        = Carbon::now()->toDateString();
+	public function handle() {
+		$properties = Property::query()->with(["traffic", "traffic.weekly_data"])->lazy(100);
+		$now        = Carbon::now()->toDateString();
 
-        /** @var Property $property */
-        foreach ($properties as $property) {
-            dump($property->actor->name);
-            $traffic = $property->traffic->getRollingWeeklyTraffic();
-            PropertyTrafficSnapshot::query()->updateOrInsert([
-                                                                 "property_id" => $property->getKey(),
-                                                                 "date"        => $now,
-                                                             ], [
-                                                                 "traffic" => json_encode($traffic, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
-                                                             ]);
-        }
-    }
+		/** @var Property $property */
+		foreach ($properties as $property) {
+			dump($property->actor->name);
+			$traffic = $property->traffic->getRollingWeeklyTraffic();
+			PropertyTrafficSnapshot::query()->updateOrInsert([
+				                                                 "property_id" => $property->getKey(),
+				                                                 "date"        => $now,
+			                                                 ], [
+				                                                 "traffic" => json_encode($traffic, JSON_THROW_ON_ERROR | JSON_FORCE_OBJECT),
+			                                                 ]);
+		}
+	}
 }

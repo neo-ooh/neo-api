@@ -28,7 +28,7 @@ use Neo\Http\Requests\Actors\RequestActorTokenRequest;
 use Neo\Http\Requests\Actors\ShowActorSecurityStatusRequest;
 use Neo\Http\Requests\Actors\StoreActorRequest;
 use Neo\Http\Requests\Actors\UpdateActorRequest;
-use Neo\Jobs\CreateSignupToken;
+use Neo\Jobs\Actors\CreateSignupToken;
 use Neo\Mails\ActorWelcomeEmail;
 use Neo\Models\Actor;
 use Neo\Models\Utils\ActorsGetter;

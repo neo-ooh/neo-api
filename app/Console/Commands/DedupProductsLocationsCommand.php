@@ -14,37 +14,37 @@ use Illuminate\Console\Command;
 use Neo\Modules\Properties\Models\Product;
 
 class DedupProductsLocationsCommand extends Command {
-    protected $signature = 'products:dedup-locations';
+	protected $signature = 'products:dedup-locations';
 
-    protected $description = 'Command description';
+	protected $description = 'Remove duplicate association of locations to products';
 
-    public function handle() {
-        $products = Product::query()->with(["property", "property.actor"])->whereHas("locations", null, ">", 1)->get();
-        $warn     = $this->getOutput()->getOutput()->section();
-        $info     = $this->getOutput()->getOutput()->section();
+	public function handle() {
+		$products = Product::query()->with(["property", "property.actor"])->whereHas("locations", null, ">", 1)->get();
+		$warn     = $this->getOutput()->getOutput()->section();
+		$info     = $this->getOutput()->getOutput()->section();
 
-        $i = 0;
+		$i = 0;
 
-        foreach ($products as $product) {
-            if ($i % 10 === 0) {
-                $info->clear();
-            }
+		foreach ($products as $product) {
+			if ($i % 10 === 0) {
+				$info->clear();
+			}
 
-            $allLocationsIds = $product->locations()->allRelatedIds();
-            $locationsIds    = $allLocationsIds->unique();
+			$allLocationsIds = $product->locations()->allRelatedIds();
+			$locationsIds    = $allLocationsIds->unique();
 
-            $info->write("<info>$product->name_en@{$product->property->actor->name}: OK</info>");
+			$info->write("<info>$product->name_en@{$product->property->actor->name}: OK</info>");
 
-            if ($allLocationsIds->count() !== $locationsIds->count()) {
-                $info->clear();
-                $warn->writeln("<comment>$product->name_en@{$product->property->actor->name}: {$allLocationsIds->join(", ")} => {$locationsIds->join(", ")}</comment>");
+			if ($allLocationsIds->count() !== $locationsIds->count()) {
+				$info->clear();
+				$warn->writeln("<comment>$product->name_en@{$product->property->actor->name}: {$allLocationsIds->join(", ")} => {$locationsIds->join(", ")}</comment>");
 
-                $product->locations()->sync([]);
-                $product->locations()->sync($locationsIds);
-            }
+				$product->locations()->sync([]);
+				$product->locations()->sync($locationsIds);
+			}
 
-            ++$i;
-        }
+			++$i;
+		}
 
-    }
+	}
 }

@@ -23,11 +23,11 @@ use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\StoreContractRequest;
 use Neo\Http\Requests\Contracts\UpdateContractRequest;
-use Neo\Jobs\Contracts\ImportContractDataJob;
-use Neo\Jobs\Contracts\ImportContractReservations;
-use Neo\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use Neo\Modules\Broadcast\Models\Campaign;
+use Neo\Modules\Properties\Jobs\Contracts\ImportContractDataJob;
+use Neo\Modules\Properties\Jobs\Contracts\ImportContractReservations;
+use Neo\Modules\Properties\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Modules\Properties\Models\Contract;
 
 class ContractsController extends Controller {

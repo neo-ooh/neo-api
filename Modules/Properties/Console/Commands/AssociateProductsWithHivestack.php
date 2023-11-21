@@ -128,7 +128,7 @@ class AssociateProductsWithHivestack extends Job {
 			                                                     ->where("inventory_id", "=", $this->inventoryId)
 			                                                     ->firstOrCreate([
 				                                                                     "resource_id" => $product->property->inventory_resource_id,
-				                                                                                                                                                                                                                                                                                                                                                    "inventory_id" => $inventoryId,
+				                                                                                                                                                                                                                                                                                                                                                    "inventory_id" => $this->inventoryId,
 			                                                                     ], [
 				                                                                     "is_enabled"   => true,
 				                                                                     "push_enabled" => true,

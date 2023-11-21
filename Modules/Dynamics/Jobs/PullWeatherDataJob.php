@@ -35,7 +35,8 @@ class PullWeatherDataJob implements ShouldQueue, ShouldBeUnique {
 		$reportKey = "weather-city-{$this->city->getKey()}";
 
 		$weatherReport = $weatherAdapter->getWeather($this->city->geolocation->getCoordinates()[0],
-		                                             $this->city->geolocation->getCoordinates()[1], $this->city->province->slug === 'QC' ? 'fr' : 'en');
+		                                             $this->city->geolocation->getCoordinates()[1],
+		                                             $this->city->province->slug === 'QC' ? 'fr' : 'en');
 		$cache->forever($reportKey, $weatherReport);
 	}
 }

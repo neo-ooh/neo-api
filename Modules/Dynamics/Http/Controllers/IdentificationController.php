@@ -39,6 +39,7 @@ class IdentificationController extends Controller {
 			                $query->where("id", "=", $player->location->display_type_id);
 		                })
 		                ->whereHas("layouts", function (Builder $query) use ($request) {
+			                $query->whereHas("frames", null, "=", 1);
 			                $query->whereHas("frames", function (Builder $query) use ($request) {
 				                $query->whereRaw("FLOOR((`frames`.`width` / `frames`.`height`) * 100) = FLOOR((? / ?) * 100)", [
 					                $request->input("width"),
@@ -67,13 +68,18 @@ class IdentificationController extends Controller {
 										  ->where("format_id", "=", $format?->getKey())
 										  ->first();*/
 
+//		$format->layouts->first(fn(Layout $layout) => $layout->frames->count() === 1 && $layout->frames[0]->width === )
+
 		return new Response([
 			                    "player"      => $player,
-			                    "format"      => $format,
+			                    "format"      => $format ? [
+				                    ...$format->toArray(),
+				                    "frame" => $format->layouts()->whereHas("frames", null, "=", 1)->first()->frames()->first(),
+			                    ] : null,
 			                    "property_id" => $property?->getKey(),
 			                    //			                    "product"  => $product,
 			                    //			                    "property" => $property,
-			                    "address"     => $property?->address()->first(),
+			                    "address"     => $property?->address()->first()->load("city"),
 		                    ]);
 	}
 }

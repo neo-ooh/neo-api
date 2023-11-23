@@ -53,7 +53,7 @@ class ImportMissingContractsJob implements ShouldQueue {
 
 				// Try to import the contract in Connect.
 				(new ConsoleOutput())->writeln("Importing contract $contract->name...");
-				ImportContractJob::dispatch($contract->name);
+				ImportContractJob::dispatch($contract->name, $contract);
 			}
 		}
 	}

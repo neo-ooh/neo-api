@@ -10,49 +10,58 @@
 
 namespace Neo\Http\Controllers;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Response;
 use Neo\Http\Requests\Cities\DestroyCityRequest;
+use Neo\Http\Requests\Cities\ListCitiesByIdsRequest;
 use Neo\Http\Requests\Cities\ListCitiesRequest;
 use Neo\Http\Requests\Cities\StoreCityRequest;
 use Neo\Http\Requests\Cities\UpdateCityRequest;
 use Neo\Jobs\PullCityGeolocationJob;
 use Neo\Models\City;
-use Neo\Models\Country;
-use Neo\Models\Province;
 
 class CitiesController extends Controller {
-    public function store(StoreCityRequest $request, Country $country, Province $province): Response {
-        $city              = new City();
-        $city->province_id = $province->id;
-        $city->market_id   = $request->input("market_id", null);
-        $city->name        = $request->input("name");
-        $city->save();
+	public function index(ListCitiesRequest $request): Response {
+		return new Response(City::query()
+		                        ->when($request->has("province_id"), function (Builder $query) use ($request) {
+			                        $query->where("province_id", "=", $request->input("province_id"));
+		                        })
+		                        ->when($request->has("market_id"), function (Builder $query) use ($request) {
+			                        $query->where("market_id", "=", $request->input("market_id"));
+		                        })
+		                        ->orderBy("name")
+		                        ->get());
+	}
 
-        PullCityGeolocationJob::dispatch($city->getKey());
+	public function byIds(ListCitiesByIdsRequest $request) {
+		return new Response(City::query()->findMany($request->input("ids")));
+	}
 
-        return new Response($city);
-    }
+	public function store(StoreCityRequest $request): Response {
+		$city              = new City();
+		$city->province_id = $request->input("province_id");
+		$city->market_id   = $request->input("market_id", null);
+		$city->name        = $request->input("name");
+		$city->save();
 
-    public function index(ListCitiesRequest $request, Country $country, Province $province): Response {
-        return new Response(City::query()
-                                ->where("province_id", "=", $province->id)
-                                ->orderBy("name")
-                                ->get());
-    }
+		PullCityGeolocationJob::dispatch($city->getKey());
 
-    public function update(UpdateCityRequest $request, Country $country, Province $province, City $city): Response {
-        $city->market_id = $request->input("market_id", null);
-        $city->name      = $request->input("name");
-        $city->save();
+		return new Response($city);
+	}
 
-        PullCityGeolocationJob::dispatch($city->getKey());
+	public function update(UpdateCityRequest $request, City $city): Response {
+		$city->market_id = $request->input("market_id", null);
+		$city->name      = $request->input("name");
+		$city->save();
 
-        return new Response($city);
-    }
+		PullCityGeolocationJob::dispatch($city->getKey());
 
-    public function destroy(DestroyCityRequest $request, Country $country, Province $province, City $city): Response {
-        $city->delete();
+		return new Response($city);
+	}
 
-        return new Response();
-    }
+	public function destroy(DestroyCityRequest $request, City $city): Response {
+		$city->delete();
+
+		return new Response();
+	}
 }

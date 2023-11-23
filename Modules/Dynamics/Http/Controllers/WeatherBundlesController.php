@@ -24,6 +24,7 @@ use Neo\Modules\Dynamics\Http\Requests\WeatherBundles\UpdateWeatherBundleRequest
 use Neo\Modules\Dynamics\Http\Resources\WeatherBundleResource;
 use Neo\Modules\Dynamics\Models\Structs\WeatherBundleTargeting;
 use Neo\Modules\Dynamics\Models\WeatherBundle;
+use Neo\Modules\Properties\Models\Property;
 
 class WeatherBundlesController extends Controller {
 	public function index(ListWeatherBundlesRequest $request) {
@@ -44,7 +45,7 @@ class WeatherBundlesController extends Controller {
 		$weatherBundle->ignore_years         = $request->input("ignore_years");
 		$weatherBundle->priority             = $request->input("priority");
 		$weatherBundle->layout               = $request->input("layout");
-		$weatherBundle->targeting            = $rawTargeting ? WeatherBundleTargeting::from($rawTargeting) : null;
+		$weatherBundle->targeting            = WeatherBundleTargeting::from([]);
 		$weatherBundle->background_selection = $request->input("background_selection");
 		$weatherBundle->save();
 
@@ -87,6 +88,8 @@ class WeatherBundlesController extends Controller {
 		$now      = Carbon::now()->toDateString();
 		$formatId = (int)$request->input("format_id");
 
+		$property = Property::query()->with(["address.city"])->find($request->input("property_id"));
+
 		/** @var WeatherBundle|null $bundle */
 		$bundle = WeatherBundle::query()
 		                       ->where(function (Builder $query) use ($now) {
@@ -105,8 +108,27 @@ class WeatherBundlesController extends Controller {
 		                       ->whereHas("formats", function (Builder $query) use ($formatId) {
 			                       $query->where("id", "=", $formatId);
 		                       })
-			// TODO: Where Targeting
-			                   ->orderByDesc("priority")
+		                       ->where(function (Builder $query) use ($property) {
+			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.provinces') = 0")
+			                             ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.provinces')", $property->address->city->province_id);
+		                       })
+		                       ->where(function (Builder $query) use ($property) {
+			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.markets') = 0")
+			                             ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.markets')", $property->address->city->market_id);
+		                       })
+		                       ->where(function (Builder $query) use ($property) {
+			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.cities') = 0")
+			                             ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.cities')", $property->address->city_id);
+		                       })
+		                       ->where(function (Builder $query) use ($property) {
+			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.properties') = 0")
+			                             ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.properties')", $property->getKey());
+		                       })
+		                       ->where(function (Builder $query) use ($property) {
+			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.properties') = 0")
+			                             ->orWhereRaw("NOT JSON_CONTAINS(`targeting`, ?, '$.properties')", $property->getKey());
+		                       })
+		                       ->orderByDesc("priority")
 		                       ->first();
 
 		if ($bundle) {
@@ -114,6 +136,8 @@ class WeatherBundlesController extends Controller {
 			$bundle->backgrounds = $bundle->backgrounds->where("format_id", "===", $formatId);
 		}
 
-		return new Response($bundle ? new WeatherBundleResource($bundle) : null);
+		$hasBundle = !!$bundle;
+
+		return new Response($hasBundle ? new WeatherBundleResource($bundle) : null, $hasBundle ? 200 : 204);
 	}
 }

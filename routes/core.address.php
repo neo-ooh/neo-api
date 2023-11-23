@@ -15,31 +15,33 @@ use Neo\Http\Controllers\MarketsController;
 use Neo\Http\Controllers\ProvincesController;
 
 Route::group([
-                 "middleware" => "default",
-                 "prefix"     => "v1",
+	             "middleware" => "default",
+	             "prefix"     => "v1",
              ],
-    static function () {
-        /*
-        |----------------------------------------------------------------------
-        | Addresses
-        |----------------------------------------------------------------------
-        */
+	static function () {
+		/*
+		|----------------------------------------------------------------------
+		| Addresses
+		|----------------------------------------------------------------------
+		*/
 
-        Route::   get("countries", CountriesController::class . "@index");
-        Route::   get("countries/{country}", CountriesController::class . "@show");
+		Route::   get("countries", CountriesController::class . "@index");
+		Route::   get("countries/{country}", CountriesController::class . "@show");
 
-        // Provinces
-        Route::   get("countries/{country}/provinces", ProvincesController::class . "@index");
-        Route::   get("countries/{country}/provinces/{province}", ProvincesController::class . "@show");
+		// Provinces
+		Route::   get("countries/{country}/provinces", ProvincesController::class . "@index");
+		Route::   get("countries/{country}/provinces/{province}", ProvincesController::class . "@show");
 
-        // Markets
-        Route::  post("markets", MarketsController::class . "@store");
-        Route::   put("markets/{market}", MarketsController::class . "@update");
-        Route::delete("markets/{market}", MarketsController::class . "@destroy");
+		// Markets
+		Route::  post("markets", [MarketsController::class, "store"]);
+		Route::   get("markets/_by_id", [MarketsController::class, "byIds"]);
+		Route::   put("markets/{market}", [MarketsController::class, "update"]);
+		Route::delete("markets/{market}", [MarketsController::class, "destroy"]);
 
-        // Cities
-        Route::   get("countries/{country}/provinces/{province}/cities", CitiesController::class . "@index");
-        Route::  post("countries/{country}/provinces/{province}/cities", CitiesController::class . "@store");
-        Route::   put("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@update");
-        Route::delete("countries/{country}/provinces/{province}/cities/{city}", CitiesController::class . "@destroy");
-    });
+		// Cities
+		Route::   get("cities", [CitiesController::class, "index"]);
+		Route::  post("cities", [CitiesController::class, "store"]);
+		Route::  get("cities/_by_id", [CitiesController::class, "byIds"]);
+		Route::   put("cities/{city}", [CitiesController::class, "update"]);
+		Route::delete("cities/{city}", [CitiesController::class, "destroy"]);
+	});

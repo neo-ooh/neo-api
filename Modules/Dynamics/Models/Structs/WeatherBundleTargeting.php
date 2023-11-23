@@ -14,12 +14,12 @@ use Spatie\LaravelData\Data;
 
 class WeatherBundleTargeting extends Data {
 	public function __construct(
-		public array $provinces,
-		public array $markets,
-		public array $cities,
-		public array $properties,
+		public array $provinces = [],
+		public array $markets = [],
+		public array $cities = [],
+		public array $properties = [],
 
-		public array $excluded_properties,
+		public array $excluded_properties = [],
 	) {
 	}
 }

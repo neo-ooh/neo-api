@@ -15,10 +15,10 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Enum;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Dynamics\Models\Enums\WeatherBundleBackgroundSelection;
 use Neo\Modules\Dynamics\Models\Enums\WeatherBundleLayout;
+use Neo\Modules\Properties\Models\ContractFlight;
 
 class StoreWeatherBundleRequest extends FormRequest {
 	public function rules(): array {
@@ -37,7 +37,6 @@ class StoreWeatherBundleRequest extends FormRequest {
 
 			"format_ids"   => ["nullable", "array"],
 			"format_ids.*" => ["integer", new Exists(Format::class, "id")],
-			"targeting"    => ["nullable", "array"],
 		];
 	}
 

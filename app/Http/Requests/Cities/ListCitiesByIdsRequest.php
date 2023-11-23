@@ -5,25 +5,21 @@
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - StoreCityRequest.php
+ * @neo/api - ListCitiesByIdsRequest.php
  */
 
 namespace Neo\Http\Requests\Cities;
 
-use Gate;
 use Illuminate\Foundation\Http\FormRequest;
-use Neo\Enums\Capability;
 
-class StoreCityRequest extends FormRequest {
+class ListCitiesByIdsRequest extends FormRequest {
 	public function authorize() {
-		return Gate::allows(Capability::properties_edit->value);
+		return true;
 	}
 
 	public function rules() {
 		return [
-			"name"        => ["required", "string"],
-			"market_id"   => ["nullable", "integer", "exists:markets,id"],
-			"province_id" => ["nullable", "integer", "exists:provinces,id"],
+			//
 		];
 	}
 }

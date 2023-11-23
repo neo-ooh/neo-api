@@ -35,7 +35,7 @@ use Neo\Modules\Properties\Models\ContractFlight;
  * @property boolean                             $ignore_years
  * @property int                                 $priority
  * @property WeatherBundleLayout                 $layout
- * @property WeatherBundleTargeting|null         $targeting
+ * @property WeatherBundleTargeting              $targeting
  * @property WeatherBundleBackgroundSelection    $background_selection
  *
  * @property Carbon                              $created_at

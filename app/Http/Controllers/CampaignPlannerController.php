@@ -255,7 +255,7 @@ class CampaignPlannerController {
 		$property = Property::query()
 		                    ->find($request->input("property_id"))
 		                    ->load([
-			                           "address",
+			                           "address.city",
 			                           "fields_values",
 			                           "network.properties_fields",
 			                           "opening_hours",

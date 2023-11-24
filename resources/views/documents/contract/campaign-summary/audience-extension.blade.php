@@ -45,8 +45,8 @@
         </tr>
         @foreach($lines as $line)
             <tr class="strategy-row">
-                <td>{{nl2br($line->market_name)}}</td>
-                <td>{{nl2br($line->audience_segment)}}</td>
+                <td>{{$line->market_name}}</td>
+                <td>{{$line->audience_segment}}</td>
                 <td>{{$line->impression_format}}</td>
                 <td>{{format($line->impressions)}}</td>
                 <td>{{formatCurrency($line->unit_price * $line->nb_weeks)}}</td>

@@ -10,6 +10,7 @@
 
 namespace Neo\Documents\MobileCampaign;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Lang;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
@@ -101,6 +102,29 @@ class MobileCampaign extends XLSXDocument {
 			                    $flight->end_date->toDateString(),
 			                    Lang::get("common.order-type-" . $flight->type->value),
 			                    $productName,
+		                    ]);
+
+
+		// Print contact infos
+		$this->ws->getStyle($this->ws->getRelativeRange(2, 4))->applyFromArray([
+			                                                                       'font' => [
+				                                                                       'bold'  => true,
+				                                                                       'color' => [
+					                                                                       'argb' => "FF000000",
+				                                                                       ],
+				                                                                       'size'  => "13",
+				                                                                       "name"  => "Calibri",
+			                                                                       ],
+		                                                                       ]);
+		$this->ws->printRow([
+			                    Auth::user()->name,
+			                    Auth::user()->email,
+		                    ]);
+
+		$this->ws->moveCursor(0, 1);
+
+		$this->ws->printRow([
+			                    $this->plan->contract?->client_name,
 		                    ]);
 
 		$this->ws->moveCursor(0, 1);
@@ -237,7 +261,7 @@ class MobileCampaign extends XLSXDocument {
 
 		if ($mobileFlight->retail_conversion_monitoring) {
 			$this->ws->moveCursor(0, 2);
-			
+
 			// Print list of retail locations
 			$this->ws->getStyle($this->ws->getRelativeRange(8))->applyFromArray([
 				                                                                    'font'         => [

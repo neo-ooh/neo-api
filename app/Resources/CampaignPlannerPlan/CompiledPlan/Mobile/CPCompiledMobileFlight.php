@@ -33,6 +33,9 @@ class CPCompiledMobileFlight extends Data {
 		public float          $price,
 		public float          $cpm,
 
+		public float|null     $net_investment_cap,
+		public float          $investment_adjustment_factor,
+
 		public string|null    $audience_targeting,
 		public string|null    $additional_targeting,
 		public string         $website_retargeting,

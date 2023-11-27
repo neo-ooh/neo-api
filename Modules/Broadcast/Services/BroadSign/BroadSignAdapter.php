@@ -588,6 +588,14 @@ class BroadSignAdapter extends BroadcasterOperator implements
 
 		$bsBundle->create();
 
+		// List and apply conditions on the bundle
+		$conditionTags = array_filter($tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Condition);
+
+		/** @var Tag $condition */
+		foreach ($conditionTags as $condition) {
+			$bsBundle->addCriteria($condition->external_id, 1);
+		}
+
 		return [
 			new ExternalBroadcasterResourceId(
 				broadcaster_id: $this->getBroadcasterId(),
@@ -664,6 +672,31 @@ class BroadSignAdapter extends BroadcasterOperator implements
 			$bsBundle->secondary_sep_category_ids = $secondarySeparationTags;
 			$bsBundle->position                   = $schedule->order;
 			$bsBundle->save();
+		}
+
+		// Validate the correct conditions have been applied to the schedule
+		$bundleConditions   = array_filter($tags, static fn(Tag $tag) => $tag->tag_type === BroadcastTagType::Condition);
+		$bundleConditionIds = array_map(static fn(Tag $tag) => $tag->external_id, $bundleConditions);
+
+		$bundleCriteria = ResourceCriteria::for($this->getAPIClient(), $bsBundle->getKey());
+
+		/** @var ResourceCriteria $criterion */
+		foreach ($bundleCriteria as $criterion) {
+			// Is this criterion in our requirements ?
+			if (in_array($criterion->id, $bundleConditionIds, true)) {
+				// Yes, remove it from our requirements
+				$bundleConditionIds = array_filter($bundleConditionIds, static fn(int $tagId) => $tagId !== $criterion->id);
+				continue;
+			}
+
+			// No, remove it from the server
+			$criterion->active = false;
+			$criterion->save();
+		}
+
+		// We are now left only with the criteria that needs to be added to the campaign.
+		foreach ($bundleConditionIds as $conditionId) {
+			$bsBundle->addCriteria($conditionId, 1);
 		}
 
 		return [

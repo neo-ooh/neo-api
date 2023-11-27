@@ -230,8 +230,9 @@ class PromoteScheduleJob extends BroadcastJobBase {
 			// Layout tags
 			$tags->collect($schedule->contents->pluck("layout.broadcast_tags")
 			                                  ->flatten(), [BroadcastTagType::Category, BroadcastTagType::Trigger]);
-			// Content tags
-			$tags->collect($schedule->contents->pluck("broadcast_tags")->flatten(), [BroadcastTagType::Category]);
+			// Content tags and conditions
+			$tags->collect($schedule->contents->pluck("broadcast_tags")
+			                                  ->flatten(), [BroadcastTagType::Category, BroadcastTagType::Condition]);
 
 			$scheduleTags = $tags->get($broadcaster->getBroadcasterId());
 			if (count($externalResources) === 0) {

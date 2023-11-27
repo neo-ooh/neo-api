@@ -12,14 +12,12 @@ namespace Neo\Modules\Dynamics\Http\Requests\Identify;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Validation\Rules\Enum;
 use Neo\Enums\Capability;
-use Neo\Modules\Broadcast\Services\BroadcasterType;
 
 class IdentifyPlayerRequest extends FormRequest {
 	public function rules(): array {
 		return [
-			"player_type" => ["required", new Enum(BroadcasterType::class)],
+			"player_type" => ["required", "string"],
 			"player_id"   => ["required", "string"],
 
 			"width"  => ["required", "integer"],

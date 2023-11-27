@@ -24,7 +24,13 @@ class IdentificationController extends Controller {
 		$player = Player::query()->where("external_id", "=", $request->input("player_id"))
 		                ->whereHas("network", function (Builder $query) use ($request) {
 			                $query->whereHas("broadcaster_connection", function (Builder $query) use ($request) {
-				                $query->where("broadcaster", "=", $request->input("player_type"));
+				                // TODO: Remove temp.
+				                $playerType = $request->input("player_type");
+				                if ($playerType === 'browser') {
+					                $playerType = 'broadsign';
+				                }
+
+				                $query->where("broadcaster", "=", $playerType);
 			                });
 		                })->with(["location"])
 		                ->first();

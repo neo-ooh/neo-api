@@ -62,6 +62,7 @@ class CampaignPlannerController {
 			                            "actor_id",
 			                            "address_id",
 			                            "mobile_impressions_per_week",
+			                            "is_sellable",
 			                            "network_id",
 			                            "pricelist_id",
 			                            "website",

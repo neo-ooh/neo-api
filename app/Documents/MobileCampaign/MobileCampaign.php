@@ -122,9 +122,28 @@ class MobileCampaign extends XLSXDocument {
 		                    ]);
 
 		$this->ws->moveCursor(0, 1);
+		$this->ws->getStyle($this->ws->getRelativeRange(3))->applyFromArray([
+			                                                                    'font'         => [
+				                                                                    'bold'  => true,
+				                                                                    'color' => [
+					                                                                    'argb' => "FF000000",
+				                                                                    ],
+				                                                                    'size'  => "13",
+				                                                                    "name"  => "Calibri",
+			                                                                    ],
+			                                                                    "numberFormat" => [
+				                                                                    "formatCode" => '#,##0_-',
+			                                                                    ],
+			                                                                    'alignment'    => [
+				                                                                    'vertical' => Alignment::VERTICAL_CENTER,
+			                                                                    ],
+		                                                                    ]);
 
 		$this->ws->printRow([
 			                    $this->plan->contract?->client_name,
+			                    "",
+			                    Lang::get("contracts.mobile-landing-page"),
+			                    $mobileFlight->landing_page,
 		                    ]);
 
 		$this->ws->moveCursor(0, 1);

@@ -148,4 +148,5 @@ Passé ce délai, Neo ne pourra pas garantir l’intégralité de l’inventaire
 	"mobile-online-conversion-monitoring" => "Mesure de la conversion en ligne",
 	"mobile-retail-conversion-monitoring" => "Mesure de la conversion en boutique",
 	"mobile-retail-locations"             => "Boutiques",
+	"mobile-landing-page"                 => "Page web lors d'un clique sur la bannière/vidéo",
 ];

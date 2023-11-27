@@ -49,6 +49,8 @@ class CPCompiledMobileFlight extends Data {
 
 		#[DataCollectionOf(CPMobileRetailLocation::class)]
 		public DataCollection $retail_locations_list,
+
+		public string|null    $landing_page,
 	) {
 	}
 }

@@ -152,4 +152,5 @@ return [
 	"mobile-price"                        => "Price",
 	"mobile-impressions"                  => "Impressions",
 	"mobile-retail-locations"             => "Retail locations",
+	"mobile-landing-page"                 => "Landing page on ad click",
 ];

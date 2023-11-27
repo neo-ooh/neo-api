@@ -25,8 +25,8 @@ use Neo\Modules\Properties\Models\ScreenshotRequest;
 
 class ScreenshotsController extends Controller {
 	public function index(ListScreenshotsRequest $request) {
+		/** @var ContractFlight $flight */
 		$flight = ContractFlight::query()->find($request->input("flight_id"));
-
 
 		$allScreenshots = DB::select(<<<EOL
             WITH `flight_players` AS (
@@ -45,7 +45,7 @@ class ScreenshotsController extends Controller {
             AND `screenshots`.`received_at` BETWEEN ? AND ?
             ORDER BY `received_at` DESC
             EOL,
-			[$flight->getKey(), $flight->start_date, $flight->end_date]);
+			[$flight->getKey(), $flight->start_date, $flight->end_date->addDay()]);
 
 		$totalCount = count($allScreenshots);
 

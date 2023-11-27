@@ -22,6 +22,7 @@ use Neo\Modules\Properties\Models\ScreenshotRequest;
 
 class ScreenshotsRequestsController extends Controller {
 	public function index(ListScreenshotRequestRequest $request) {
+		/** @var ContractFlight $flight */
 		$flight = ContractFlight::query()->find($request->input("flight_id"));
 
 		$requests = ScreenshotRequest::query()->fromQuery(<<<EOL
@@ -41,7 +42,7 @@ class ScreenshotsRequestsController extends Controller {
             AND `screenshots_requests`.`send_at` BETWEEN ? AND ?
             ORDER BY `screenshots_requests`.`send_at` DESC
             EOL,
-			[$flight->getKey(), $flight->start_date, $flight->end_date]);
+			[$flight->getKey(), $flight->start_date, $flight->end_date->addDay()]);
 
 		return new Response($requests->loadPublicRelations());
 	}

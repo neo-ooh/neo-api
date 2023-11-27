@@ -222,7 +222,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
 			// Collect all tags for the schedule
 			$tags = new BroadcastTagsCollector();
 			// Schedule tags
-			$tags->collect($schedule->broadcast_tags, [BroadcastTagType::Category]);
+			$tags->collect($schedule->broadcast_tags, [BroadcastTagType::Category, BroadcastTagType::Condition]);
 			// Campaign tags
 			$tags->collect($schedule->campaign->broadcast_tags, [BroadcastTagType::Category]);
 			// Format tags

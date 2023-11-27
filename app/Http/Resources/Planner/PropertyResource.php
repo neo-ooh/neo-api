@@ -19,7 +19,7 @@ class PropertyResource extends JsonResource {
 	public function toArray(Request $request): array {
 		return [
 			"id"                          => $this->actor_id,
-			"is_sellable"                 => true,
+			"is_sellable"                 => $this->is_sellable,
 			"name"                        => $this->actor->name,
 			"address"                     => $this->address->makeHidden(["created_at", "updated_at"]),
 			"mobile_impressions_per_week" => $this->mobile_impressions_per_week,

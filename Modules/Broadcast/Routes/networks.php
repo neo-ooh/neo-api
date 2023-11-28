@@ -33,7 +33,7 @@ use Neo\Modules\Broadcast\Models\DisplayType;
 use Neo\Modules\Broadcast\Models\DisplayTypeFrame;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Network;
-use Neo\Modules\Broadcast\Services\Resources\Player;
+use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Properties\Http\Controllers\PropertiesController;
 
 Route::group([
@@ -117,9 +117,6 @@ Route::group([
 	Route::get("locations/{location}", [LocationsController::class, "show"]);
 	Route::put("locations/{location}", [LocationsController::class, "update"]);
 
-	Route::get("locations/{location}/players", [LocationsPlayersController::class, "index"]);
-
-
 	/*
 	|----------------------------------------------------------------------
 	| Player
@@ -128,6 +125,7 @@ Route::group([
 
 	Route::model("player", Player::class);
 
+	Route::get("players", [PlayersController::class, "index"]);
 	Route::get("players/{player}", [PlayersController::class, "show"]);
 	Route::put("players/{player}", [PlayersController::class, "update"]);
 });

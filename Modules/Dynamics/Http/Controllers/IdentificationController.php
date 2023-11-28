@@ -17,11 +17,13 @@ use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Player;
 use Neo\Modules\Dynamics\Http\Requests\Identify\IdentifyPlayerRequest;
 use Neo\Modules\Properties\Models\Property;
+use Neo\Modules\Properties\Models\ResolvedProduct;
 
 class IdentificationController extends Controller {
 	public function identify(IdentifyPlayerRequest $request) {
 		// Start by finding the player using the given id and broadcaster type
-		$player = Player::query()->where("external_id", "=", $request->input("player_id"))
+		$player = Player::query()
+		                ->where("external_id", "=", $request->input("player_id"))
 		                ->whereHas("network", function (Builder $query) use ($request) {
 			                $query->whereHas("broadcaster_connection", function (Builder $query) use ($request) {
 				                // TODO: Remove temp.
@@ -39,21 +41,33 @@ class IdentificationController extends Controller {
 			return new Response([], 404);
 		}
 
-		// We know the player, now find the format and product associated
-		$format = Format::query()
-		                ->whereHas("display_types", function (Builder $query) use ($player) {
-			                $query->where("id", "=", $player->location->display_type_id);
-		                })
-		                ->whereHas("layouts", function (Builder $query) use ($request) {
-			                $query->whereHas("frames", null, "=", 1);
-			                $query->whereHas("frames", function (Builder $query) use ($request) {
-				                $query->whereRaw("FLOOR((`frames`.`width` / `frames`.`height`) * 100) = FLOOR((? / ?) * 100)", [
-					                $request->input("width"),
-					                $request->input("height"),
-				                ]);
-			                });
-		                })
-		                ->first();
+		// We know the player, now list all formats that match the player and the given resolution
+		$formats = Format::query()
+		                 ->whereHas("display_types", function (Builder $query) use ($player) {
+			                 $query->where("id", "=", $player->location->display_type_id);
+		                 })
+		                 ->whereHas("layouts", function (Builder $query) use ($request) {
+			                 $query->whereHas("frames", null, "=", 1);
+			                 $query->whereHas("frames", function (Builder $query) use ($request) {
+				                 $query->whereRaw("FLOOR((`frames`.`width` / `frames`.`height`) * 100) = FLOOR((? / ?) * 100)", [
+					                 $request->input("width"),
+					                 $request->input("height"),
+				                 ]);
+			                 });
+		                 })
+		                 ->first();
+
+		$product = ResolvedProduct::query()
+		                          ->where("is_bonus", "=", false)
+		                          ->whereHas("locations", function (Builder $query) use ($player) {
+			                          $query->whereHas("players", function (Builder $query) use ($player) {
+				                          $query->where("id", "=", $player->getKey());
+			                          });
+		                          })
+		                          ->whereIn("format_id", $formats->pluck("id"))
+		                          ->first();
+
+		$format = $product ? $product->format : $formats->first();
 
 		/** @var Property|null $property */
 		$property = Property::query()

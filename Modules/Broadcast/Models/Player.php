@@ -10,7 +10,6 @@
 
 namespace Neo\Modules\Broadcast\Models;
 
-
 use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +30,7 @@ use Neo\Modules\Properties\Services\Resources\BroadcastPlayer;
  * @property int       $location_id
  * @property string    $name
  * @property int       $screen_count
+ * @property bool      $dynamics_debug
  * @property Date      $created_at
  * @property Date      $updated_at
  * @property Date|null $deleted_at
@@ -63,6 +63,10 @@ class Player extends Model {
 		"screen_count",
 	];
 
+	protected $casts = [
+		"dynamics_debug" => "bool",
+	];
+
 	protected $touches = ["location"];
 
 	public static function boot() {
@@ -86,7 +90,6 @@ class Player extends Model {
 	public function location(): BelongsTo {
 		return $this->belongsTo(Location::class, "location_id");
 	}
-
 
 	/**
 	 * @return ExternalBroadcasterResourceId

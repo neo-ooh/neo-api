@@ -22,6 +22,7 @@ use Neo\Modules\Broadcast\Services\Resources\Creative as CreativeResource;
 use Neo\Modules\Broadcast\Services\Resources\CreativeStorageType;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 use RuntimeException;
+use Vinkla\Hashids\Facades\Hashids;
 
 /**
  * Remove all quotation marks (simple and double) from a string
@@ -138,7 +139,7 @@ class Creative extends BroadSignModel {
 			$attributes["source_expiry"]              = "0";                                     // Not sure
 			$attributes["source_refresh"]             = $creative->refresh_rate_minutes;         // URL refresh interval (minutes)*/
 			$attributes["direct_url"]      = $creative->url;
-			$attributes["show_scrollbars"] = false;
+			$attributes["show_scrollbars"] = "false";
 		}
 
 		if ($creative->type === CreativeType::Static) {
@@ -214,11 +215,20 @@ class Creative extends BroadSignModel {
 	 * @throws JsonException
 	 */
 	protected static function importAsWebRedirect(BroadSignClient $client, CreativeResource $creative): int {
+		$redirectPage = <<<EOF
+		<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+		<html>
+			<frameset cols="*" frameborder="0" border="0" framespacing="0">
+				<frame src="$creative->url" name="main" noresize scrolling="no">
+			</frameset>
+		</html>
+		EOF;
+
 		// Prepare the creative metadata for BroadSign
 		$metadata = [
 			"name"             => stripQuotes($creative->name),
-			"originalfilename" => stripQuotes($creative->fileName),
-			"size"             => "-1",
+			"originalfilename" => Hashids::encode($creative->name) . ".html",
+			"size"             => strlen($redirectPage),
 			"mime"             => "html",
 			"attributes"       => static::getAttributesForCreative($creative, CreativeStorageType::Link),
 		];
@@ -226,9 +236,10 @@ class Creative extends BroadSignModel {
 		clock($metadata);
 
 		$response = static::executeRequest(
-			client  : $client,
-			creative: $creative,
-			payload : $metadata
+			client     : $client,
+			creative   : $creative,
+			payload    : $metadata,
+			fileContent: $redirectPage
 		);
 
 		return $response["id"];
@@ -238,7 +249,7 @@ class Creative extends BroadSignModel {
 	/**
 	 * @throws JsonException
 	 */
-	protected static function executeRequest(BroadSignClient $client, CreativeResource $creative, array $payload, $file = null): array {
+	protected static function executeRequest(BroadSignClient $client, CreativeResource $creative, array $payload, $file = null, $fileContent = null): array {
 		// Complete the payload
 		$payload["domain_id"] = $client->getConfig()->domainId;
 
@@ -264,10 +275,10 @@ class Creative extends BroadSignModel {
 		$req[] = "-w '\n%{http_code}'";                                                                                           // display http status code on 2nd line
 		$req[] = $endpoint->getUrl();                                                                                             // POST method + URL
 		$req[] = "-E" . $client->getConfig()
-		                       ->getCertPath();                                                                                                                             // BroadSign cert auth
-		$req[] = "-H 'Content-Type: multipart/mixed'";                                                                                                                      // Request Content Type
-		$req[] = "-F 'metadata=$metadata;type=application/json'";                                                                                                           // Request metadata
-		$req[] = $file ? "-F 'file=@$file'" : "-F 'file=@/home/ooh-apis/webapps/dummy.txt'";                                                                                // Request file
+		                       ->getCertPath();                                                                                                                                                                         // BroadSign cert auth
+		$req[] = "-H 'Content-Type: multipart/mixed'";                                                                                                                                                                  // Request Content Type
+		$req[] = "-F 'metadata=$metadata;type=application/json'";                                                                                                                                                       // Request metadata
+		$req[] = $file ? "-F 'file=@$file'" : ($fileContent ? "-F 'file=$fileContent'" : "-F 'file=@/home/ooh-apis/webapps/dummy.txt'");                                                                                // Request file
 
 		$curl_command = implode(" ", $req);
 		$curl_command .= " 2>&1"; // Redirect error output to standard output

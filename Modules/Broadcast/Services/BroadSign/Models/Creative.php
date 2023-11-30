@@ -224,11 +224,16 @@ class Creative extends BroadSignModel {
 		</html>
 		EOF;
 
+		$tempFile = tmpfile();
+		fwrite($tempFile, $redirectPage);
+		fseek($tempFile, 0);
+		$filePath = stream_get_meta_data($tempFile)['uri'];
+
 		// Prepare the creative metadata for BroadSign
 		$metadata = [
 			"name"             => stripQuotes($creative->name),
 			"originalfilename" => Hashids::encode($creative->name) . ".html",
-			"size"             => strlen($redirectPage),
+			"size"             => filesize($tempFile),
 			"mime"             => "html",
 			"attributes"       => static::getAttributesForCreative($creative, CreativeStorageType::Link),
 		];
@@ -236,11 +241,13 @@ class Creative extends BroadSignModel {
 		clock($metadata);
 
 		$response = static::executeRequest(
-			client     : $client,
-			creative   : $creative,
-			payload    : $metadata,
-			fileContent: $redirectPage
+			client  : $client,
+			creative: $creative,
+			payload : $metadata,
+			file    : $filePath
 		);
+
+		fclose($tempFile);
 
 		return $response["id"];
 

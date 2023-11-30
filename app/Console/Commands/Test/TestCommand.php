@@ -11,6 +11,8 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Neo\Modules\Dynamics\Models\NewsRecord;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -41,6 +43,6 @@ class TestCommand extends Command {
 //			  ->update(["mobile_impressions_per_week" => round($impressions / 4)]);
 //		}
 
-
+		dump(DB::query()->from((new NewsRecord())->getTable())->select(["category"])->distinct()->orderBy("category")->get());
 	}
 }

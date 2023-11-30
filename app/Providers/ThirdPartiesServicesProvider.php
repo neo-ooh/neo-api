@@ -11,8 +11,8 @@
 namespace Neo\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use Neo\Services\News\CanadianPressInterface;
-use Neo\Services\News\NewsService;
+use Neo\Modules\Dynamics\Services\News\CanadianPressClient;
+use Neo\Modules\Dynamics\Services\News\NewsAdapter;
 
 class ThirdPartiesServicesProvider extends ServiceProvider {
 	/**
@@ -22,6 +22,6 @@ class ThirdPartiesServicesProvider extends ServiceProvider {
 	 */
 	public function register() {
 		// Bind the Canadian Press interface to the News service
-		$this->app->bind(NewsService::class, CanadianPressInterface::class);
+		$this->app->bind(NewsAdapter::class, CanadianPressClient::class);
 	}
 }

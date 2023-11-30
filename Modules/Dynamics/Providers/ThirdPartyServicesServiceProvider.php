@@ -11,12 +11,18 @@
 namespace Neo\Modules\Dynamics\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Neo\Modules\Dynamics\Services\News\CanadianPressClient;
+use Neo\Modules\Dynamics\Services\News\NewsAdapter;
 use Neo\Modules\Dynamics\Services\Weather\WeatherAdapter;
 use Neo\Modules\Dynamics\Services\Weather\WeatherSourceClient;
 
 class ThirdPartyServicesServiceProvider extends ServiceProvider {
 	public function register(): void {
+		// Weather
 		$this->app->bind(WeatherAdapter::class, WeatherSourceClient::class);
+
+		// News
+		$this->app->bind(NewsAdapter::class, CanadianPressClient::class);
 	}
 
 	public function boot(): void {

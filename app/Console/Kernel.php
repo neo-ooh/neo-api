@@ -21,6 +21,7 @@ use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Console\Commands\Test\TestCommand;
 use Neo\Modules\Broadcast\Console\Commands\FetchCampaignsPerformancesCommand;
 use Neo\Modules\Broadcast\Console\Commands\SynchronizeNetworkCommand;
+use Neo\Modules\Dynamics\Console\Commands\SynchronizeNewsRecordsCommand;
 use Neo\Modules\Properties\Console\Commands\ImportMobilePropertiesCommand;
 use Neo\Modules\Properties\Jobs\Contracts\RefreshContracts;
 use Neo\Modules\Properties\Jobs\Contracts\Screenshots\DeleteOldScreenshots;
@@ -62,6 +63,7 @@ class Kernel extends ConsoleKernel {
 		PopulateCensusFederalElectoralDistrictsCommand::class,
 		PopulateCensusForwardSortationAreasCommand::class,
 		ImportMobilePropertiesCommand::class,
+		SynchronizeNewsRecordsCommand::class,
 	];
 
 	/**
@@ -85,19 +87,14 @@ class Kernel extends ConsoleKernel {
 
 
 		/* -----------------
-		 * "More often that hourly but not every minute"
-		 */
-		/*        $schedule->call(function (NewsService $news) {
-					$news->updateRecords();
-				})->everyFifteenMinutes();*/
-
-
-		/* -----------------
 		 * Hourly tasks
 		 */
 
 		// Refresh Contracts performances
 		$schedule->command("contracts:update")->everyThreeHours();
+
+		// Refresh news records
+		$schedule->command("news:synchronize-records")->everyThreeHours();
 
 
 		/* -----------------

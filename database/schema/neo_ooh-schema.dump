@@ -1482,7 +1482,7 @@ CREATE TABLE `news_records`
 (
   `id`           int(10) UNSIGNED                          NOT NULL,
   `cp_id`        varchar(64) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
-  `subject`      varchar(32) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
+  `category`     varchar(32) COLLATE `utf8mb4_unicode_ci`  NOT NULL,
   `locale`       varchar(5) COLLATE `utf8mb4_unicode_ci`   NOT NULL,
   `headline`     varchar(255) COLLATE `utf8mb4_unicode_ci` NOT NULL,
   `date`         datetime                                  NOT NULL,
@@ -2941,8 +2941,8 @@ ALTER TABLE `news_backgrounds`
 --
 ALTER TABLE `news_records`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `news_records_cp_id_subject_unique` (`cp_id`, `subject`),
-  ADD KEY `fk_record_subject` (`subject`);
+  ADD UNIQUE KEY `news_records_cp_id_subject_unique` (`cp_id`, `category`),
+  ADD KEY `fk_record_category` (`category`);
 
 --
 -- Indexes for table `odoo_properties`
@@ -4219,12 +4219,12 @@ ALTER TABLE `static_creatives`
   ADD CONSTRAINT `static_creatives_creative_id_foreign` FOREIGN KEY (`creative_id`) REFERENCES `creatives` (`id`) ON DELETE CASCADE;
 
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
  *
- * @neo/api - neo_ooh_dev.sql
+ * @neo/api - neo_ooh-schema.dump
  */
 
 --

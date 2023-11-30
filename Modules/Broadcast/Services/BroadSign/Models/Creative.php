@@ -233,7 +233,7 @@ class Creative extends BroadSignModel {
 		$metadata = [
 			"name"             => stripQuotes($creative->name),
 			"originalfilename" => Hashids::encode($creative->name) . ".html",
-			"size"             => filesize($tempFile),
+			"size"             => filesize($filePath),
 			"mime"             => "html",
 			"attributes"       => static::getAttributesForCreative($creative, CreativeStorageType::Link),
 		];

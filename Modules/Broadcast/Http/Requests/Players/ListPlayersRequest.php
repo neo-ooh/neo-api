@@ -14,12 +14,12 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rules\Exists;
 use Neo\Enums\Capability;
-use Neo\Modules\Broadcast\Models\Player;
+use Neo\Modules\Broadcast\Models\Location;
 
 class ListPlayersRequest extends FormRequest {
 	public function rules(): array {
 		return [
-			"location_id" => ["sometimes", "integer", new Exists(Player::class, "id")],
+			"location_id" => ["sometimes", "integer", new Exists(Location::class, "id")],
 		];
 	}
 

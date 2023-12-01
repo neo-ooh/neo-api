@@ -42,32 +42,32 @@ class IdentificationController extends Controller {
 		}
 
 		// We know the player, now list all formats that match the player and the given resolution
-		$formats = Format::query()
-		                 ->whereHas("display_types", function (Builder $query) use ($player) {
-			                 $query->where("id", "=", $player->location->display_type_id);
-		                 })
-		                 ->whereHas("layouts", function (Builder $query) use ($request) {
-			                 $query->whereHas("frames", null, "=", 1);
-			                 $query->whereHas("frames", function (Builder $query) use ($request) {
-				                 $query->whereRaw("FLOOR((`frames`.`width` / `frames`.`height`) * 100) = FLOOR((? / ?) * 100)", [
-					                 $request->input("width"),
-					                 $request->input("height"),
-				                 ]);
-			                 });
-		                 })
-		                 ->first();
+		$playerFormat = Format::query()
+		                      ->whereHas("display_types", function (Builder $query) use ($player) {
+			                      $query->where("id", "=", $player->location->display_type_id);
+		                      })
+		                      ->whereHas("layouts", function (Builder $query) use ($request) {
+			                      $query->whereHas("frames", null, "=", 1);
+			                      $query->whereHas("frames", function (Builder $query) use ($request) {
+				                      $query->whereRaw("FLOOR((`frames`.`width` / `frames`.`height`) * 100) = FLOOR((? / ?) * 100)", [
+					                      $request->input("width"),
+					                      $request->input("height"),
+				                      ]);
+			                      });
+		                      })
+		                      ->first();
 
-		$product = ResolvedProduct::query()
-		                          ->where("is_bonus", "=", false)
-		                          ->whereHas("locations", function (Builder $query) use ($player) {
-			                          $query->whereHas("players", function (Builder $query) use ($player) {
-				                          $query->where("id", "=", $player->getKey());
-			                          });
-		                          })
-		                          ->whereIn("format_id", $formats->pluck("id"))
-		                          ->first();
+		$product = $playerFormat ? ResolvedProduct::query()
+		                                          ->where("is_bonus", "=", false)
+		                                          ->whereHas("locations", function (Builder $query) use ($player) {
+			                                          $query->whereHas("players", function (Builder $query) use ($player) {
+				                                          $query->where("id", "=", $player->getKey());
+			                                          });
+		                                          })
+		                                          ->whereIn("format_id", $playerFormat->pluck("id"))
+		                                          ->first() : null;
 
-		$format = $product ? $product->format : $formats->first();
+		$format = $product ? $product->format : $playerFormat;
 
 		/** @var Property|null $property */
 		$property = Property::query()

@@ -13,6 +13,7 @@ namespace Neo\Modules\Properties\Jobs;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -29,7 +30,11 @@ class CreateTrafficSnapshotJob implements ShouldQueue {
 	}
 
 	public function handle() {
-		$properties = Property::query()->with(["traffic", "traffic.weekly_data"])->lazy(100);
+		$properties = Property::query()
+		                      ->whereHas("network", function (Builder $query) {
+			                      $query->where("ooh_sales", "=", true);
+		                      })
+		                      ->with(["traffic", "traffic.weekly_data"])->lazy(100);
 		$now        = Carbon::now()->toDateString();
 
 		/** @var Property $property */

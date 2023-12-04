@@ -19,7 +19,7 @@ class BatchRequest extends FormRequest {
 			"requests"           => ["required", "array"],
 			"requests.*.id"      => ["required"],
 			"requests.*.uri"     => ["required", "string"],
-			"requests.*.method"  => ["required", Rule::in(["get", "post", "put", "patch", "delete"])],
+			"requests.*.method"  => ["required", Rule::in(["get", "GET", "post", "POST", "put", "PUT", "patch", "PATCH", "delete", "DELETE"])],
 			"requests.*.payload" => ["sometimes"],
 		];
 	}

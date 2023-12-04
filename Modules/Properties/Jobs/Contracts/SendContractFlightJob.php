@@ -291,6 +291,14 @@ class SendContractFlightJob implements ShouldQueue {
 	public function prepareMobileLines(CPCompiledMobileFlight $flight, CPCompiledFlight $baseFlight, InventoryAdapter $inventory) {
 		$product = MobileProduct::query()->find($flight->product_id);
 
+		$description     = "";
+		$propertiesCount = $flight->properties->count();
+		if ($propertiesCount > 0) {
+			$description = $flight->properties->count() . " Properties.\n ";
+		}
+
+		$description .= $flight->audience_targeting ?? "";
+
 		return collect([new ContractLineResource(
 			                line_id                 : null,
 			                product_id              : new InventoryResourceId(
@@ -314,7 +322,7 @@ class SendContractFlightJob implements ShouldQueue {
 			                discount_amount         : 0,
 			                price                   : $flight->price,
 			                cpm                     : $flight->cpm,
-			                description             : $flight->properties->count() . " Properties.\n" . ($flight->audience_targeting ?? ""),
+			                description             : $description,
 			                targeting               : $flight->additional_targeting ?? "",
 			                mobile_type             : $product?->name_en,
 		                )]);

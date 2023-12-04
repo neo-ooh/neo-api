@@ -28,7 +28,7 @@ use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 
 class ImportMobilePropertiesCommand extends Command {
-	protected $signature = 'mobile:import-properties {--network=} {--parent=} {--inventory=} {file}';
+	protected $signature = 'mobile:import-properties {--network=} {--parent=} {--inventory=} {--property-type} {file}';
 
 	protected $description = 'Import mobile properties';
 
@@ -72,6 +72,7 @@ class ImportMobilePropertiesCommand extends Command {
 			$property                 = new Property();
 			$property->network_id     = $networkId;
 			$property->last_review_at = Date::now();
+			$property->type_id        = $this->option("property-type");
 
 			$address              = new Address();
 			$address->geolocation = new Point(0, 0);

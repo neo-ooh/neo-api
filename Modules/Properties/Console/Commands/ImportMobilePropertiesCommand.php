@@ -28,7 +28,7 @@ use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use PhpOffice\PhpSpreadsheet\Reader\Csv;
 
 class ImportMobilePropertiesCommand extends Command {
-	protected $signature = 'mobile:import-properties {--network=} {--parent=} {--inventory=} {--property-type} {file}';
+	protected $signature = 'mobile:import-properties {--network=} {--parent=} {--inventory=} {--property-type=} {file}';
 
 	protected $description = 'Import mobile properties';
 

@@ -14,13 +14,13 @@ use Spatie\LaravelData\Data;
 
 class PlayRecordStruct extends Data {
 	public function __construct(
-		public string $dynamic_name,
-		public string $dynamic_version,
-		public array  $dynamic_params,
-		public array  $logs,
-		public string $loaded_at,
-		public string $played_at,
-		public string $ended_at,
+		public string      $dynamic_name,
+		public string      $dynamic_version,
+		public array       $dynamic_params,
+		public array       $logs,
+		public string      $loaded_at,
+		public string|null $played_at,
+		public string|null $ended_at,
 	) {
 	}
 }

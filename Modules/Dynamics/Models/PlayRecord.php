@@ -14,16 +14,16 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @property int    $id
- * @property int    $player_id
- * @property Carbon $loaded_at
- * @property Carbon $played_at
- * @property Carbon $ended_at
- * @property Carbon $received_at
- * @property string $dynamic
- * @property string $version
- * @property array  $params
- * @property array  $logs
+ * @property int         $id
+ * @property int         $player_id
+ * @property Carbon      $loaded_at
+ * @property Carbon|null $played_at
+ * @property Carbon|null $ended_at
+ * @property Carbon      $received_at
+ * @property string      $dynamic
+ * @property string      $version
+ * @property array       $params
+ * @property array       $logs
  */
 class PlayRecord extends Model {
 	protected $table = "dynamics_play_records";

@@ -18,8 +18,8 @@ return new class extends Migration {
 			$table->id();
 			$table->foreignId("player_id")->constrained("players", "id")->cascadeOnUpdate()->cascadeOnDelete();
 			$table->timestamp("loaded_at");
-			$table->timestamp("played_at");
-			$table->timestamp("ended_at");
+			$table->timestamp("played_at")->nullable();
+			$table->timestamp("ended_at")->nullable();
 			$table->timestamp("received_at");
 			$table->string("dynamic", 32)->index();
 			$table->string("version", 16)->index();

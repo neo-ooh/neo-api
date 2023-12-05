@@ -40,7 +40,7 @@ class UpdateCreativeJob extends BroadcastJobBase {
 		/** @var Creative $creative */
 		$creative = Creative::withTrashed()->find($this->resourceId);
 
-		if ($creative) {
+		if (!$creative) {
 			return [
 				"error"   => true,
 				"message" => "Could not find creative",

@@ -420,6 +420,14 @@ class BroadSignAdapter extends BroadcasterOperator implements
 			$bsCampaign->save();
 		}
 
+		// Update the campaign priority, using the loop slots
+		$loopSlots = LoopSlot::forCampaign($this->getAPIClient(), $externalCampaign->external_id);
+		/** @var LoopSlot $loopSlot */
+		foreach ($loopSlots as $loopSlot) {
+			$loopSlot->priority = $campaign->priority;
+			$loopSlot->save();
+		}
+
 		return new ExternalBroadcasterResourceId(
 			broadcaster_id: $this->getBroadcasterId(),
 			external_id   : $bsCampaign->getKey(),

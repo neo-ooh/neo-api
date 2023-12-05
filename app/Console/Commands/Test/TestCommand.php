@@ -11,8 +11,7 @@
 namespace Neo\Console\Commands\Test;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\DB;
-use Neo\Modules\Dynamics\Models\NewsRecord;
+use Neo\Modules\Properties\Models\Property;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -43,6 +42,18 @@ class TestCommand extends Command {
 //			  ->update(["mobile_impressions_per_week" => round($impressions / 4)]);
 //		}
 
-		dump(DB::query()->from((new NewsRecord())->getTable())->select(["category"])->distinct()->orderBy("category")->get());
+		$properties = Property::query()->join("actors_details", "actors_details.id", "=", "properties_view.actor_id")
+		                      ->where("actors_details.parent_id", "=", 4211)->get();
+		$properties->load("address");
+
+		foreach ($properties as $property) {
+			$addr = $property->address;
+			$lng  = $addr->geolocation->latitude;
+			$lat  = $addr->geolocation->longitude;
+
+			$addr->geolocation->longitude = $lng;
+			$addr->geolocation->latitude  = $lat;
+			$addr->save();
+		}
 	}
 }

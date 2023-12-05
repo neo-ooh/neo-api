@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Services\BroadSign\Models;
 use Carbon\Traits\Date;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 
 /**
@@ -35,22 +36,32 @@ use Neo\Services\API\Parsers\MultipleResourcesParser;
  */
 class LoopSlot extends BroadSignModel {
 
-    protected static string $unwrapKey = "loop_slot";
+	protected static string $unwrapKey = "loop_slot";
 
-    protected static function actions(): array {
-        return [
-            "getByReservable" => Endpoint::get("/loop_slot/v10/by_reservable")
-                                         ->unwrap(static::$unwrapKey)
-                                         ->parser(new MultipleResourcesParser(static::class)),
-        ];
-    }
+	protected static array $updatable = [
+		"id",
+		"inventory_category_id",
+		"priority",
+	];
 
-    /**
-     * @param BroadSignClient $client
-     * @param int             $campaignId
-     * @return array<LoopSlot>
-     */
-    public static function forCampaign(BroadSignClient $client, int $campaignId): array {
-        return [...(new static($client))->callAction("getByReservable", ["reservable_id" => $campaignId])];
-    }
+	protected static function actions(): array {
+		return [
+			"getByReservable" => Endpoint::get("/loop_slot/v10/by_reservable")
+			                             ->unwrap(static::$unwrapKey)
+			                             ->parser(new MultipleResourcesParser(static::class)),
+			"update"          => Endpoint::put("/loop_slot/v10")
+			                             ->domain(false)
+			                             ->unwrap(static::$unwrapKey)
+			                             ->parser(new ResourceIDParser()),
+		];
+	}
+
+	/**
+	 * @param BroadSignClient $client
+	 * @param int             $campaignId
+	 * @return array<LoopSlot>
+	 */
+	public static function forCampaign(BroadSignClient $client, int $campaignId): array {
+		return [...(new static($client))->callAction("getByReservable", ["reservable_id" => $campaignId])];
+	}
 }

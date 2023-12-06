@@ -12,6 +12,7 @@ namespace Neo\Modules\Dynamics\Services\Weather;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Neo\Modules\Dynamics\Exceptions\CouldNotFetchThirdPartyDataException;
 
 class WeatherSourceClient implements WeatherAdapter {
@@ -32,17 +33,22 @@ class WeatherSourceClient implements WeatherAdapter {
 //		                           ])->wait();
 
 		// Current weather
-		$rawReport = $client->get("https://appwx.weathersourceapis.com/v2/points/$geoValues", [
-			"headers" => [
-				"X-API-KEY" => config('dynamics.weather.api-key'),
-			],
-			"query"   => [
-				"services"  => "all",
-				"fields"    => implode(",", $this->fields),
-				"unitScale" => "METRIC",
-				"language"  => $locale === 'fr' ? "FRENCH" : "ENGLISH",
-			],
-		]);
+		try {
+			$rawReport = $client->get("https://appwx.weathersourceapis.com/v2/points/$geoValues", [
+				"headers" => [
+					"X-API-KEY" => config('dynamics.weather.api-key'),
+				],
+				"query"   => [
+					"services"  => "all",
+					"fields"    => implode(",", $this->fields),
+					"unitScale" => "METRIC",
+					"language"  => $locale === 'fr' ? "FRENCH" : "ENGLISH",
+				],
+			]);
+		} catch (RequestException $e) {
+			throw new CouldNotFetchThirdPartyDataException($e->getResponse());
+		}
+
 		if ($rawReport->getStatusCode() !== 200) {
 			throw new CouldNotFetchThirdPartyDataException($rawReport);
 		}

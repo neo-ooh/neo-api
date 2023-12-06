@@ -60,7 +60,7 @@ class CurrentWeatherDatum extends Data {
 		public bool             $is_snowing,
 		public float            $snow_intensity_percent,
 
-		public string           $wind_direction_cardinal,
+		public string|null      $wind_direction_cardinal,
 
 		/**
 		 * @var float km/h / miles/h

@@ -14,7 +14,6 @@ use Carbon\Traits\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Neo\Modules\Properties\Models\Contract;
 
 /**
  * Class Client

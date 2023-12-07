@@ -21,14 +21,17 @@ use Neo\Http\Requests\Contracts\DestroyContractRequest;
 use Neo\Http\Requests\Contracts\ListContractsRequest;
 use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
-use Neo\Http\Requests\Contracts\StoreContractRequest;
 use Neo\Http\Requests\Contracts\UpdateContractRequest;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use Neo\Modules\Broadcast\Models\Campaign;
-use Neo\Modules\Properties\Jobs\Contracts\ImportContractDataJob;
+use Neo\Modules\Properties\Jobs\Contracts\ImportContractJob;
 use Neo\Modules\Properties\Jobs\Contracts\ImportContractReservations;
 use Neo\Modules\Properties\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\InventoryAdapterFactory;
+use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
+use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
 
 class ContractsController extends Controller {
 	public function index(ListContractsRequest $request): Response {
@@ -85,17 +88,22 @@ class ContractsController extends Controller {
 			->map(fn(Campaign $campaign) => new FetchCampaignsPerformancesJob(campaignId: $campaign->getKey()));
 
 		if ($request->input("reimport", false)) {
-			if (config("app.env") === "development") {
-				(new ImportContractDataJob($contract->id))->handle();
-				(new ImportContractReservations($contract->id))->handle();
+			$inventory        = InventoryAdapterFactory::make(InventoryProvider::query()->find($contract->inventory_id));
+			$contractResource = $inventory->getContract(new InventoryResourceId(
+				                                            inventory_id: $contract->inventory_id,
+				                                            external_id : $contract->external_id,
+				                                            type        : InventoryResourceType::Contract));
+
+			if (config("app.env") !== "production") {
+				(new ImportContractJob($contract->contract_id, $contractResource))->handle();
 				(new RefreshContractsPerformancesJob($contract->id))->handle();
 			} else {
-				ImportContractDataJob::dispatch($contract->id)
-				                     ->chain([
-					                             new ImportContractReservations($contract->id),
-					                             new RefreshContractsPerformancesJob($contract->id),
-					                             ...$refreshCampaignsJobs,
-				                             ]);
+				ImportContractJob::dispatch($contract->contract_id, $contractResource)
+				                 ->chain([
+					                         new ImportContractReservations($contract->id),
+					                         new RefreshContractsPerformancesJob($contract->id),
+					                         ...$refreshCampaignsJobs,
+				                         ]);
 				// We don't fall through here because we want to importReservations and refresh performances to always be run after the importData job.
 			}
 		} else {

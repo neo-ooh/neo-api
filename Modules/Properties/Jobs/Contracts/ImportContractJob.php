@@ -44,12 +44,6 @@ class ImportContractJob implements ShouldQueue, ShouldBeUnique {
 	}
 
 	public function handle() {
-		if (Contract::query()->where("contract_id", "=", $this->contract_name)->exists()) {
-			// A contract with this name already exist, ignore
-			(new ConsoleOutput())->writeln($this->contract_name . ": Already in Connect.");
-			return;
-		}
-
 		$salesperson = Actor::query()
 		                    ->where("is_group", "=", false)
 		                    ->where("name", "=", $this->contract->salesperson->name)
@@ -67,19 +61,32 @@ class ImportContractJob implements ShouldQueue, ShouldBeUnique {
 		}
 
 		if ($this->contract->advertiser) {
-			$advertiser = Advertiser::query()->where("odoo_id", "=", $this->contract->advertiser->external_id)->first();
+			$advertiser = Advertiser::query()->firstOrCreate([
+				                                                 "odoo_id" => $this->contract->advertiser->external_id,
+			                                                 ], [
+				                                                 "name" => $this->contract->advertiser->name,
+			                                                 ]);
 		} else {
 			$advertiser = null;
 		}
 
 		if ($this->contract->client) {
-			$client = Client::query()->where("odoo_id", "=", $this->contract->client->external_id)->first();
+			$client = Client::query()->firstOrCreate([
+				                                         "odoo_id" => $this->contract->advertiser->external_id,
+			                                         ], [
+				                                         "name" => $this->contract->advertiser->name,
+			                                         ]);
 		} else {
 			$client = null;
 		}
 
-		$contract                 = new Contract();
-		$contract->contract_id    = $this->contract_name;
+		$contract = Contract::query()->where("contract_id", "=", $this->contract_name)->first();
+
+		if (!$contract) {
+			$contract              = new Contract();
+			$contract->contract_id = $this->contract_name;
+		}
+
 		$contract->inventory_id   = $this->contract->contract_id->inventory_id;
 		$contract->external_id    = $this->contract->contract_id->external_id;
 		$contract->salesperson_id = $salesperson->getKey();

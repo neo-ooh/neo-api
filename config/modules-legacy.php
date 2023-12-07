@@ -68,22 +68,8 @@ return [
 		"enabled" => env('MODULE_ACCESS_TOKENS_ENABLED', true),
 	],
 
-	"documents"        => [
+	"documents" => [
 		"enabled" => env('MODULE_DOCUMENTS_ENABLED', true),
-	],
-
-
-	/*
-	|--------------------------------------------------------------------------
-	| Dynamics Module
-	|--------------------------------------------------------------------------
-	|
-	| Provide the Weather and News Dynamics, with external data-fetching and
-	| customization interface
-	|
-	*/
-	"dynamics"         => [
-		"enabled" => env('MODULE_DYNAMICS_ENABLED', true),
 	],
 
 	/*
@@ -95,9 +81,10 @@ return [
 	| but have no impact on the rest of the platform.
 	|
 	*/
-	"headlines"        => [
+	"headlines" => [
 		"enabled" => env('MODULE_HEADLINES_ENABLED', true),
 	],
+
 	"review-templates" => [
 		"enabled" => env('MODULE_REVIEW_TEMPLATES_ENABLED', true),
 	],
@@ -115,7 +102,8 @@ return [
 	"contracts"        => [
 		"enabled" => env('MODULE_CONTRACTS_ENABLED', true),
 	],
-	"properties"       => [
+
+	"properties" => [
 		"enabled" => env('MODULE_PROPERTIES_ENABLED', true),
 
 		"linkett" => [
@@ -145,18 +133,8 @@ return [
 		],
 	],
 
-	"impressions" => [
+	"impressions"  => [
 		"enabled" => env('MODULE_IMPRESSIONS_ENABLED', true),
-	],
-
-	"odoo"         => [
-		"enabled" => env('MODULE_ODOO_ENABLED', true),
-
-		"server-url" => env('MODULE_ODOO_SERVER_URL'),
-		"username"   => env('MODULE_ODOO_USERNAME'),
-		"password"   => env('MODULE_ODOO_PASSWORD'),
-
-		"database" => env('MODULE_ODOO_DATABASE'),
 	],
 	"planner"      => [
 		"enabled" => env('MODULE_PLANNER_ENABLED', true),

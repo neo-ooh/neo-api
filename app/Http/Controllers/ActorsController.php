@@ -34,6 +34,7 @@ use Neo\Models\Actor;
 use Neo\Models\Utils\ActorsGetter;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Broadcast\Models\Library;
+use Neo\Modules\Properties\Models\Contract;
 use Symfony\Component\Mailer\Exception\TransportException;
 
 /**
@@ -207,7 +208,7 @@ class ActorsController extends Controller {
 		if (count($request->all()) === 0) {
 			return new Response([
 				                    "code" => "empty-request",
-				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    "message" => "You must pass at lease 1 parameter when calling this route",
+				                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   "message" => "You must pass at lease 1 parameter when calling this route",
 			                    ], 422);
 		}
 
@@ -241,7 +242,7 @@ class ActorsController extends Controller {
 			if ($parent->id === $actor->id || $actor->isParentOf($parent)) {
 				return new Response([
 					                    'code' => 'actor.hierarchy-loop',
-					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    'message' => 'Parent assignment would result in incoherent actors hierarchy',
+					                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   'message' => 'Parent assignment would result in incoherent actors hierarchy',
 					                    'data' => $actor,
 				                    ], 403);
 			}
@@ -267,6 +268,10 @@ class ActorsController extends Controller {
 		});
 
 		$actor->phone?->delete();
+
+		// Detach any contract associated with this
+		Contract::query()->where("group_id", "=", $actor->getKey())
+		        ->update(["group_id" => null]);
 
 		$actor->delete();
 

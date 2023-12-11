@@ -20,6 +20,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Models\BroadcasterConnection;
+use Neo\Modules\Broadcast\Models\ExternalResource;
 use Neo\Modules\Broadcast\Services\BroadcasterAdapterFactory;
 use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
@@ -73,17 +74,28 @@ class ImportContractReservations implements ShouldQueue {
 		/** @var BroadcasterConnection $broadcastersConnection */
 		foreach ($broadcastersConnections as $broadcastersConnection) {
 			/** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-			$broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($broadcastersConnection->getKey());
+			$broadcaster   = BroadcasterAdapterFactory::makeForBroadcaster($broadcastersConnection->getKey());
+			$searchResults = collect();
 
-			$identifier        = strtoupper($contract->contract_id);
-			$externalCampaigns = $externalCampaigns->merge($broadcaster->findCampaigns($identifier));
+			$identifier    = strtoupper($contract->contract_id);
+			$searchResults = $searchResults->merge($broadcaster->findCampaigns($identifier));
 
-			$identifier        = strtoupper(str_replace('-', '_', $contract->contract_id));
-			$externalCampaigns = $externalCampaigns->merge($broadcaster->findCampaigns($identifier));
+			$identifier    = strtoupper(str_replace('-', '_', $contract->contract_id));
+			$searchResults = $searchResults->merge($broadcaster->findCampaigns($identifier));
+
+			// From all the listed external campaigns, we want to filter out the one that have been created by Connect itself. Otherwise we may end up with a campaign performances being counted twice.
+			$searchResults = $searchResults->filter(function (CampaignSearchResult $result) use ($broadcaster) {
+				return ExternalResource::query()->where("broadcaster_id", "=", $broadcaster->getBroadcasterId())
+				                       ->orWhereRaw("JSON_CONTAINS(`data`, ?, '$.external_id')", $result->id->external_id)
+				                       ->doesntExist();
+			});
+
+			$externalCampaigns = $externalCampaigns->merge($searchResults);
 		}
 
 		$externalCampaigns = $externalCampaigns->unique(fn(CampaignSearchResult $searchResult) => "{$searchResult->id->broadcaster_id}-{$searchResult->id->external_id}")
 		                                       ->filter(fn(CampaignSearchResult $searchResult) => $searchResult->enabled === true);
+
 
 		$storedReservationsId = [];
 

@@ -22,6 +22,7 @@ use Neo\Http\Requests\Contracts\ListContractsRequest;
 use Neo\Http\Requests\Contracts\RefreshContractRequest;
 use Neo\Http\Requests\Contracts\ShowContractRequest;
 use Neo\Http\Requests\Contracts\UpdateContractRequest;
+use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
 use Neo\Modules\Broadcast\Jobs\Performances\FetchCampaignsPerformancesJob;
 use Neo\Modules\Broadcast\Models\Campaign;
 use Neo\Modules\Properties\Jobs\Contracts\ImportContractJob;
@@ -29,6 +30,7 @@ use Neo\Modules\Properties\Jobs\Contracts\ImportContractReservations;
 use Neo\Modules\Properties\Jobs\Contracts\RefreshContractsPerformancesJob;
 use Neo\Modules\Properties\Models\Contract;
 use Neo\Modules\Properties\Models\InventoryProvider;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
 use Neo\Modules\Properties\Services\Resources\InventoryResourceId;
@@ -75,6 +77,10 @@ class ContractsController extends Controller {
 		return new Response($contract->loadPublicRelations());
 	}
 
+	/**
+	 * @throws InvalidInventoryAdapterException
+	 * @throws InvalidBroadcasterAdapterException
+	 */
 	public function refresh(RefreshContractRequest $request, Contract $contract): Response {
 		set_time_limit(120);
 		// Clear the contract's cache
@@ -94,18 +100,18 @@ class ContractsController extends Controller {
 				                                            external_id : $contract->external_id,
 				                                            type        : InventoryResourceType::Contract));
 
-			if (config("app.env") !== "production") {
-				(new ImportContractJob($contract->contract_id, $contractResource))->handle();
-				(new RefreshContractsPerformancesJob($contract->id))->handle();
-			} else {
-				ImportContractJob::dispatch($contract->contract_id, $contractResource)
-				                 ->chain([
-					                         new ImportContractReservations($contract->id),
-					                         new RefreshContractsPerformancesJob($contract->id),
-					                         ...$refreshCampaignsJobs,
-				                         ]);
-				// We don't fall through here because we want to importReservations and refresh performances to always be run after the importData job.
-			}
+//			if (config("app.env") !== "production") {
+			(new ImportContractJob($contract->contract_id, $contractResource))->handle();
+			(new ImportContractReservations($contract->id))->handle();
+			(new RefreshContractsPerformancesJob($contract->id))->handle();
+//			} else {
+//				ImportContractJob::dispatch($contract->contract_id, $contractResource)
+//				                 ->chain([
+//					                         new ImportContractReservations($contract->id),
+//					                         new RefreshContractsPerformancesJob($contract->id),
+//					                         ...$refreshCampaignsJobs,
+//				                         ]);
+//			}
 		} else {
 			ImportContractReservations::dispatch($contract->id)
 			                          ->chain([

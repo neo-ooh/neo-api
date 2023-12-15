@@ -14,6 +14,7 @@ use Illuminate\Support\Collection;
 use Neo\Modules\Broadcast\Enums\BroadcastJobType;
 use Neo\Modules\Broadcast\Enums\BroadcastParameters;
 use Neo\Modules\Broadcast\Enums\BroadcastTagType;
+use Neo\Modules\Broadcast\Enums\ScheduleStatus;
 use Neo\Modules\Broadcast\Exceptions\CouldNotPromoteResourceException;
 use Neo\Modules\Broadcast\Exceptions\ExternalBroadcastResourceNotFoundException;
 use Neo\Modules\Broadcast\Exceptions\InvalidBroadcasterAdapterException;
@@ -40,6 +41,9 @@ use Neo\Modules\Broadcast\Services\Resources\Tag;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
 
 /**
+ * This job ensures actual symmetry between a schedule in a campaign in Connect and its representation in a third-party
+ * broadcaster. This includes creating the schedule.s, updating them, re-creating them if needed, etc.
+ *
  * @extends BroadcastJobBase<array{representation: ExternalCampaignDefinition|null}>
  */
 class PromoteScheduleJob extends BroadcastJobBase {
@@ -78,7 +82,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
 		// A layout can be present in multiple formats
 		// We list all the formats the schedule's contents' layouts fit in,
 		// and only keep the campaign representation that match with this list
-		/** @var Schedule $schedule */
+		/** @var Schedule|null $schedule */
 		$schedule = Schedule::withTrashed()->find($this->resourceId);
 
 		if (!$schedule) {
@@ -92,6 +96,17 @@ class PromoteScheduleJob extends BroadcastJobBase {
 			return [
 				"error"   => true,
 				"message" => "Schedule is trashed",
+			];
+		}
+
+		if ($schedule->status === ScheduleStatus::Expired || $schedule->status === ScheduleStatus::Rejected) {
+			// Schedule cannot be played, make sure it is cleaned up nicely.
+			$deleteJob = new DeleteScheduleJob($this->resourceId);
+			$deleteJob->handle();
+
+			return [
+				"error"   => true,
+				"message" => "Schedule cannot be replicated as it is not playable (expired/rejected)",
 			];
 		}
 

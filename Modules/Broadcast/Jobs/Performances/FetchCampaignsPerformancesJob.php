@@ -38,7 +38,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\ConsoleOutput;
 
 /**
- * This job update all the
+ * This job update all the performances of all the campaigns currently running
  */
 class FetchCampaignsPerformancesJob implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

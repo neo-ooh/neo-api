@@ -21,43 +21,45 @@ use Neo\Modules\Broadcast\Services\BroadcasterOperator;
 use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 
 /**
+ * This job delete a creative from a third-party provider
+ *
  * @extends BroadcastJobBase<array{resource_id: int|null}>
  */
 class DeleteCreativeJob extends BroadcastJobBase {
-    public function __construct(int $creativeId, int|null $resourceId = null, BroadcastJob|null $broadcastJob = null) {
-        parent::__construct(BroadcastJobType::DeleteCreative, $creativeId, ["resource_id" => $resourceId], $broadcastJob);
-    }
+	public function __construct(int $creativeId, int|null $resourceId = null, BroadcastJob|null $broadcastJob = null) {
+		parent::__construct(BroadcastJobType::DeleteCreative, $creativeId, ["resource_id" => $resourceId], $broadcastJob);
+	}
 
-    /**
-     * @inheritDoc
-     * @return array|null
-     * @throws InvalidBroadcasterAdapterException
-     */
-    protected function run(): array|null {
-        /** @var Creative|null $creative */
-        $creative = Creative::withTrashed()->find($this->resourceId);
+	/**
+	 * @inheritDoc
+	 * @return array|null
+	 * @throws InvalidBroadcasterAdapterException
+	 */
+	protected function run(): array|null {
+		/** @var Creative|null $creative */
+		$creative = Creative::withTrashed()->find($this->resourceId);
 
-        if (!$creative) {
-            return null;
-        }
+		if (!$creative) {
+			return null;
+		}
 
-        if (is_array($this->payload) && $this->payload["resource_id"]) {
-            $externalResource  = ExternalResource::query()->find($this->payload["resource_id"]);
-            $externalResources = $externalResource !== null ? [$externalResource] : [];
-        } else {
-            $externalResources = $creative->external_representations->whereNull("deleted_at");
-        }
+		if (is_array($this->payload) && $this->payload["resource_id"]) {
+			$externalResource  = ExternalResource::query()->find($this->payload["resource_id"]);
+			$externalResources = $externalResource !== null ? [$externalResource] : [];
+		} else {
+			$externalResources = $creative->external_representations->whereNull("deleted_at");
+		}
 
-        /** @var ExternalResource $externalCreative */
-        foreach ($externalResources as $externalCreative) {
-            /** @var BroadcasterOperator&BroadcasterScheduling $broadcaster */
-            $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($externalCreative->broadcaster_id);
+		/** @var ExternalResource $externalCreative */
+		foreach ($externalResources as $externalCreative) {
+			/** @var BroadcasterOperator&BroadcasterScheduling $broadcaster */
+			$broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($externalCreative->broadcaster_id);
 
-            $broadcaster->deleteCreative($externalCreative->toResource());
+			$broadcaster->deleteCreative($externalCreative->toResource());
 
-            $externalCreative->delete();
-        }
+			$externalCreative->delete();
+		}
 
-        return null;
-    }
+		return null;
+	}
 }

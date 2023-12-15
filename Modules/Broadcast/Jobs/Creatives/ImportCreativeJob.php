@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2020 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -29,96 +29,98 @@ use Neo\Modules\Broadcast\Services\Resources\ExternalBroadcasterResourceId;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
 
 /**
+ * This job imports a creative from Connect to a third-party broadcaster.
+ *
  * @extends BroadcastJobBase<array{broadcasterId: int}>
  */
 class ImportCreativeJob extends BroadcastJobBase {
-    public function __construct(int $creativeId, int $broadcasterId, BroadcastJob|null $broadcastJob = null) {
-        parent::__construct(BroadcastJobType::ImportCreative, $creativeId, ["broadcasterId" => $broadcasterId], $broadcastJob);
-    }
+	public function __construct(int $creativeId, int $broadcasterId, BroadcastJob|null $broadcastJob = null) {
+		parent::__construct(BroadcastJobType::ImportCreative, $creativeId, ["broadcasterId" => $broadcasterId], $broadcastJob);
+	}
 
-    /**
-     * @return ExternalBroadcasterResourceId|null
-     */
-    public function getLastAttemptResult(): ExternalBroadcasterResourceId|null {
-        $results = $this->broadcastJob->last_attempt_result;
+	/**
+	 * @return ExternalBroadcasterResourceId|null
+	 */
+	public function getLastAttemptResult(): ExternalBroadcasterResourceId|null {
+		$results = $this->broadcastJob->last_attempt_result;
 
-        if (count($results) > 1) {
-            return null;
-        }
+		if (count($results) > 1) {
+			return null;
+		}
 
-        $result = $results[0];
+		$result = $results[0];
 
-        if (isset($result["type"], $result["external_id"])) {
-            return new ExternalBroadcasterResourceId(
-                broadcaster_id: $this->broadcastJob->payload["broadcasterId"],
-                external_id   : $result["external_id"],
-                type          : ExternalResourceType::from($result["type"])
-            );
-        }
+		if (isset($result["type"], $result["external_id"])) {
+			return new ExternalBroadcasterResourceId(
+				broadcaster_id: $this->broadcastJob->payload["broadcasterId"],
+				external_id   : $result["external_id"],
+				type          : ExternalResourceType::from($result["type"])
+			);
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * @inheritDoc
-     * @return array|null
-     * @throws InvalidBroadcasterAdapterException
-     */
-    protected function run(): array|null {
-        /** @var Creative $creative */
-        $creative = Creative::withTrashed()->find($this->resourceId);
+	/**
+	 * @inheritDoc
+	 * @return array|null
+	 * @throws InvalidBroadcasterAdapterException
+	 */
+	protected function run(): array|null {
+		/** @var Creative $creative */
+		$creative = Creative::withTrashed()->find($this->resourceId);
 
-        if ($creative->trashed()) {
-            return [
-                "error"   => true,
-                "message" => "Creative is trashed",
-            ];
-        }
+		if ($creative->trashed()) {
+			return [
+				"error"   => true,
+				"message" => "Creative is trashed",
+			];
+		}
 
-        /** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
-        $broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($this->payload["broadcasterId"]);
+		/** @var BroadcasterOperator & BroadcasterScheduling $broadcaster */
+		$broadcaster = BroadcasterAdapterFactory::makeForBroadcaster($this->payload["broadcasterId"]);
 
-        if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
-            // Broadcaster does not support scheduling, do nothing
-            return [
-                "error"   => false,
-                "message" => "Broadcaster does not support scheduling",
-            ];
-        }
+		if (!$broadcaster->hasCapability(BroadcasterCapability::Scheduling)) {
+			// Broadcaster does not support scheduling, do nothing
+			return [
+				"error"   => false,
+				"message" => "Broadcaster does not support scheduling",
+			];
+		}
 
-        // Check if the creative already has an external ID for this broadcaster
-        $externalRepresentation = $creative->getExternalRepresentation($broadcaster->getBroadcasterId());
+		// Check if the creative already has an external ID for this broadcaster
+		$externalRepresentation = $creative->getExternalRepresentation($broadcaster->getBroadcasterId());
 
-        if ($externalRepresentation !== null) {
-            return [
-                "error"   => false,
-                "message" => "Creative is already represented in this broadcaster",
-            ];
-        }
+		if ($externalRepresentation !== null) {
+			return [
+				"error"   => false,
+				"message" => "Creative is already represented in this broadcaster",
+			];
+		}
 
-        $importType = $creative->type === CreativeType::Url ? CreativeStorageType::Link : CreativeStorageType::File;
+		$importType = $creative->type === CreativeType::Url ? CreativeStorageType::Link : CreativeStorageType::File;
 
-        // Collect all tags applying to creative
-        $tags = new BroadcastTagsCollector();
-        $tags->collect($creative->content->broadcast_tags, [BroadcastTagType::Targeting]);
-        $tags->collect($creative->frame->broadcast_tags, [BroadcastTagType::Targeting]);
-        $tags->collect($creative->broadcast_tags, [BroadcastTagType::Targeting]);
+		// Collect all tags applying to creative
+		$tags = new BroadcastTagsCollector();
+		$tags->collect($creative->content->broadcast_tags, [BroadcastTagType::Targeting]);
+		$tags->collect($creative->frame->broadcast_tags, [BroadcastTagType::Targeting]);
+		$tags->collect($creative->broadcast_tags, [BroadcastTagType::Targeting]);
 
-        $creativeTags = $tags->get($broadcaster->getBroadcasterId());
+		$creativeTags = $tags->get($broadcaster->getBroadcasterId());
 
-        // Perform the creation
-        $creativeExternalId = $broadcaster->importCreative($creative->toResource($broadcaster->getBroadcasterId()), $importType, $creativeTags);
+		// Perform the creation
+		$creativeExternalId = $broadcaster->importCreative($creative->toResource($broadcaster->getBroadcasterId()), $importType, $creativeTags);
 
-        $externalResource = new ExternalResource([
-                                                     "resource_id"    => $creative->getKey(),
-                                                     "broadcaster_id" => $broadcaster->getBroadcasterId(),
-                                                     "type"           => ExternalResourceType::Creative,
-                                                     "data"           => new ExternalResourceData(
-                                                         external_id: $creativeExternalId->external_id,
-                                                     ),
-                                                 ]);
-        $externalResource->save();
+		$externalResource = new ExternalResource([
+			                                         "resource_id"    => $creative->getKey(),
+			                                         "broadcaster_id" => $broadcaster->getBroadcasterId(),
+			                                         "type"           => ExternalResourceType::Creative,
+			                                         "data"           => new ExternalResourceData(
+				                                         external_id: $creativeExternalId->external_id,
+			                                         ),
+		                                         ]);
+		$externalResource->save();
 
-        return [$creativeExternalId];
-    }
+		return [$creativeExternalId];
+	}
 }

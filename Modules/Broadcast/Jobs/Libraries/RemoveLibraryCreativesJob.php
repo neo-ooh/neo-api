@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2022 (c) Neo-OOH - All Rights Reserved
+ * Copyright 2023 (c) Neo-OOH - All Rights Reserved
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * Proprietary and confidential
  * Written by Valentin Dufois <vdufois@neo-ooh.com>
@@ -18,19 +18,22 @@ use Illuminate\Queue\SerializesModels;
 use Neo\Modules\Broadcast\Models\Content;
 use Neo\Modules\Broadcast\Models\Library;
 
+/**
+ * This job is dispatched when a library is deleted and deletes every piece of content from it.
+ */
 class RemoveLibraryCreativesJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(protected int $libraryId) {
-    }
+	public function __construct(protected int $libraryId) {
+	}
 
-    public function handle() {
-        /** @var Library $library */
-        $library = Library::withTrashed()->findOrFail($this->libraryId);
+	public function handle() {
+		/** @var Library $library */
+		$library = Library::withTrashed()->findOrFail($this->libraryId);
 
-        /** @var Content $content */
-        foreach ($library->contents as $content) {
-            $content->delete();
-        }
-    }
+		/** @var Content $content */
+		foreach ($library->contents as $content) {
+			$content->delete();
+		}
+	}
 }

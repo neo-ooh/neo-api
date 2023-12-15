@@ -39,6 +39,9 @@ use Neo\Modules\Broadcast\Services\Resources\Tag;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
 
 /**
+ * This job ensures actual symmetry between a campaign in Connect and its representation in a third-party broadcaster.
+ * This includes creating the campaign.s, updating them, re-creating them if needed, etc.
+ *
  * @extends BroadcastJobBase<array>
  */
 class PromoteCampaignJob extends BroadcastJobBase {

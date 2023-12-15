@@ -10,8 +10,9 @@
 
 namespace Neo\Console\Commands\Test;
 
+use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Console\Command;
-use Neo\Modules\Properties\Models\Property;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -42,18 +43,27 @@ class TestCommand extends Command {
 //			  ->update(["mobile_impressions_per_week" => round($impressions / 4)]);
 //		}
 
-		$properties = Property::query()->join("actors_details", "actors_details.id", "=", "properties_view.actor_id")
-		                      ->where("actors_details.parent_id", "=", 4211)->get();
-		$properties->load("address");
+		/*		$properties = Property::query()->join("actors_details", "actors_details.id", "=", "properties_view.actor_id")
+									  ->where("actors_details.parent_id", "=", 4211)->get();
+				$properties->load("address");
 
-		foreach ($properties as $property) {
-			$addr = $property->address;
-			$lng  = $addr->geolocation->latitude;
-			$lat  = $addr->geolocation->longitude;
+				foreach ($properties as $property) {
+					$addr = $property->address;
+					$lng  = $addr->geolocation->latitude;
+					$lat  = $addr->geolocation->longitude;
 
-			$addr->geolocation->longitude = $lng;
-			$addr->geolocation->latitude  = $lat;
-			$addr->save();
-		}
+					$addr->geolocation->longitude = $lng;
+					$addr->geolocation->latitude  = $lat;
+					$addr->save();
+				}*/
+
+		$dates = collect(CarbonPeriod::create("2022-01-01", "2022-12-31")
+		                             ->toArray())->map(fn(Carbon $d) => "('" . $d->toDateString() . "')");
+
+		dump($dates->join(', '));
+
+		// Start by creating a temporary table, and fill it with our dates
+//		DB::statement("DROP TABLE IF EXISTS `stats_dates`", []);
+//		DB::statement("CREATE TEMPORARY TABLE `stats_dates` (`d` date)", []);
 	}
 }

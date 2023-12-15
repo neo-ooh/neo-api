@@ -21,24 +21,25 @@ use Neo\Modules\Broadcast\Enums\BroadcastJobStatus;
 use Neo\Modules\Broadcast\Models\BroadcastJob;
 
 /**
- * This jobs role is to handle execution of scheduled Broadcast Jobs.
+ * This job list all Broadcast jobs that are pending and whose scheduled datetime is passed, and sends them for immediate
+ * execution to the Laravel dispatcher.
  */
 class BroadcastJobsSchedulerJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function handle() {
-        // List jobs that have been scheduled for up to know, that are still marked as `Pending`
-        $jobs = BroadcastJob::query()->where(function (Builder $query) {
-            $query->where("status", "=", BroadcastJobStatus::Pending)
-                  ->orWhere("status", "=", BroadcastJobStatus::PendingRetry);
-        })->where("scheduled_at", "<=", Carbon::now())
-                            ->get();
+	public function handle() {
+		// List jobs that have been scheduled for up to know, that are still marked as `Pending`
+		$jobs = BroadcastJob::query()->where(function (Builder $query) {
+			$query->where("status", "=", BroadcastJobStatus::Pending)
+			      ->orWhere("status", "=", BroadcastJobStatus::PendingRetry);
+		})->where("scheduled_at", "<=", Carbon::now())
+		                    ->get();
 
-        /**
-         * @var BroadcastJob $job
-         */
-        foreach ($jobs as $job) {
-            $job->execute();
-        }
-    }
+		/**
+		 * @var BroadcastJob $job
+		 */
+		foreach ($jobs as $job) {
+			$job->execute();
+		}
+	}
 }

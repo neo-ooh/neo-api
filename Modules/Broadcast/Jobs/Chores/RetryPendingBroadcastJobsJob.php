@@ -21,20 +21,23 @@ use Neo\Modules\Broadcast\Models\BroadcastJob;
 /**
  * Sometimes, scheduled Broadcast Jobs are never executed. This job takes broadcast job that are more than half an hour old and
  * whose status is still pending, and retry them.
+ *
+ * It would be interesting to track how many jobs still needs to be forced this way, in order to assess if this job is still
+ * useful.
  */
 class RetryPendingBroadcastJobsJob implements ShouldQueue {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $backoffMinutes = 30;
+	protected $backoffMinutes = 30;
 
-    public function handle() {
-        $jobs = BroadcastJob::query()->where("created_at", "<", Carbon::now()->subMinutes(30))
-                            ->whereNull("last_attempt_at")
-                            ->get();
+	public function handle() {
+		$jobs = BroadcastJob::query()->where("created_at", "<", Carbon::now()->subMinutes(30))
+		                    ->whereNull("last_attempt_at")
+		                    ->get();
 
-        /** @var BroadcastJob $job */
-        foreach ($jobs as $job) {
-            $job->execute();
-        }
-    }
+		/** @var BroadcastJob $job */
+		foreach ($jobs as $job) {
+			$job->execute();
+		}
+	}
 }

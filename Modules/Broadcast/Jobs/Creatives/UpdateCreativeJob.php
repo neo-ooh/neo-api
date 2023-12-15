@@ -24,6 +24,8 @@ use Neo\Modules\Broadcast\Services\BroadcasterScheduling;
 use Neo\Modules\Broadcast\Utils\BroadcastTagsCollector;
 
 /**
+ * This job make sure a creative that already exists in a third-party provider is still correctly configured
+ *
  * @extends BroadcastJobBase<array{broadcasterId: int}>
  */
 class UpdateCreativeJob extends BroadcastJobBase {

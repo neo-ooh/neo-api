@@ -19,6 +19,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
 use Neo\Models\City;
 use Neo\Modules\Dynamics\Services\Weather\WeatherAdapter;
+use RuntimeException;
 
 class PullWeatherDataJob implements ShouldQueue, ShouldBeUnique {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -33,6 +34,10 @@ class PullWeatherDataJob implements ShouldQueue, ShouldBeUnique {
 	public function handle(WeatherAdapter $weatherAdapter): void {
 		$cache     = Cache::store("dynamics")->tags(["weather"]);
 		$reportKey = "weather-city-{$this->city->getKey()}";
+
+        if($this->city->geolocation === null) {
+            throw new RuntimeException("Missing coordinates for {$this->city->name}(#{$this->city->id})");
+        }
 
 		$weatherReport = $weatherAdapter->getWeather($this->city->geolocation->getCoordinates()[0],
 		                                             $this->city->geolocation->getCoordinates()[1],

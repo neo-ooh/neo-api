@@ -177,8 +177,11 @@ class BroadSignAudienceFile extends XLSXDocument {
 
 		// For each week
 		do {
+            // Around the new year, week number calculation get funky.
+            // We make sure our week index is always between 1 and 53.
+            $weekIndex = max(1, $datePointer->weekOfYear - 1);
 			// Get the week traffic
-			$dailyTraffic = floor($this->property->rolling_weekly_traffic[$datePointer->weekOfYear - 1] / $openDaysPerWeek);
+			$dailyTraffic = floor($this->property->rolling_weekly_traffic[$weekIndex] / $openDaysPerWeek);
 
 			// For each day of the week
 			for ($i = 0; $i < 7; $i++) {

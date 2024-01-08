@@ -59,7 +59,7 @@ class Kernel extends HttpKernel {
 			'auth:neo-loa-4,access-tokens',
 			SubstituteBindings::class,
 			SimpleErrors::class,
-			'access.logs',
+//			'access.logs',
 			TrackUserActivityMiddleware::class,
 		],
 		'guests'      => [
@@ -80,7 +80,7 @@ class Kernel extends HttpKernel {
 		],
 		'third-party' => [
 			SubstituteBindings::class,
-			'access.logs',
+//			'access.logs',
 		],
 	];
 

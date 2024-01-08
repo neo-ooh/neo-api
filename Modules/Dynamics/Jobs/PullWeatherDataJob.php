@@ -17,6 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Cache;
+use Neo\Jobs\PullCityGeolocationJob;
 use Neo\Models\City;
 use Neo\Modules\Dynamics\Services\Weather\WeatherAdapter;
 use RuntimeException;
@@ -36,7 +37,14 @@ class PullWeatherDataJob implements ShouldQueue, ShouldBeUnique {
 		$reportKey = "weather-city-{$this->city->getKey()}";
 
         if($this->city->geolocation === null) {
-            throw new RuntimeException("Missing coordinates for {$this->city->name}(#{$this->city->id})");
+            $cityCoordinatesFetcher = new PullCityGeolocationJob($this->city->getKey());
+            $cityCoordinatesFetcher->handle();
+
+            $this->city->refresh();
+
+            if($this->city->geolocation === null) {
+                throw new RuntimeException("Missing coordinates for {$this->city->name}(#{$this->city->id})");
+            }
         }
 
 		$weatherReport = $weatherAdapter->getWeather($this->city->geolocation->getCoordinates()[0],

@@ -27,117 +27,128 @@ use Neo\Modules\Dynamics\Models\WeatherBundle;
 use Neo\Modules\Properties\Models\Property;
 
 class WeatherBundlesController extends Controller {
-	public function index(ListWeatherBundlesRequest $request) {
-		$bundles = WeatherBundle::query()->get();
+    public function index(ListWeatherBundlesRequest $request) {
+        $bundles = WeatherBundle::query()->get();
 
-		return new Response($bundles->loadPublicRelations());
-	}
+        return new Response($bundles->loadPublicRelations());
+    }
 
-	public function store(StoreWeatherBundleRequest $request) {
-		$rawTargeting = $request->input("targeting", null);
+    public function store(StoreWeatherBundleRequest $request) {
+        $rawTargeting = $request->input("targeting", null);
 
-		$weatherBundle                       = new WeatherBundle();
-		$weatherBundle->name                 = $request->input("name");
-		$weatherBundle->flight_id            = $request->input("flight_id");
-		$weatherBundle->priority             = $request->input("priority");
-		$weatherBundle->start_date           = $request->input("start_date");
-		$weatherBundle->end_date             = $request->input("end_date");
-		$weatherBundle->ignore_years         = $request->input("ignore_years");
-		$weatherBundle->priority             = $request->input("priority");
-		$weatherBundle->layout               = $request->input("layout");
-		$weatherBundle->targeting            = WeatherBundleTargeting::from([]);
-		$weatherBundle->background_selection = $request->input("background_selection");
-		$weatherBundle->save();
+        $weatherBundle                       = new WeatherBundle();
+        $weatherBundle->name                 = $request->input("name");
+        $weatherBundle->flight_id            = $request->input("flight_id");
+        $weatherBundle->priority             = $request->input("priority");
+        $weatherBundle->start_date           = $request->input("start_date");
+        $weatherBundle->end_date             = $request->input("end_date");
+        $weatherBundle->ignore_years         = $request->input("ignore_years");
+        $weatherBundle->priority             = $request->input("priority");
+        $weatherBundle->layout               = $request->input("layout");
+        $weatherBundle->targeting            = WeatherBundleTargeting::from([]);
+        $weatherBundle->background_selection = $request->input("background_selection");
+        $weatherBundle->save();
 
-		$weatherBundle->formats()->attach($request->input("format_ids"));
+        $weatherBundle->formats()->attach($request->input("format_ids"));
 
-		return new Response($weatherBundle, 201);
-	}
+        return new Response($weatherBundle, 201);
+    }
 
-	public function show(ShowWeatherBundleRequest $request, WeatherBundle $weatherBundle) {
-		return new Response($weatherBundle->loadPublicRelations());
-	}
+    public function show(ShowWeatherBundleRequest $request, WeatherBundle $weatherBundle) {
+        return new Response($weatherBundle->loadPublicRelations());
+    }
 
-	public function update(UpdateWeatherBundleRequest $request, WeatherBundle $weatherBundle) {
-		$rawTargeting = $request->input("targeting", null);
+    public function update(UpdateWeatherBundleRequest $request, WeatherBundle $weatherBundle) {
+        $rawTargeting = $request->input("targeting", null);
 
-		$weatherBundle->name                 = $request->input("name");
-		$weatherBundle->flight_id            = $request->input("flight_id");
-		$weatherBundle->priority             = $request->input("priority");
-		$weatherBundle->start_date           = $request->input("start_date");
-		$weatherBundle->end_date             = $request->input("end_date");
-		$weatherBundle->ignore_years         = $request->input("ignore_years");
-		$weatherBundle->priority             = $request->input("priority");
-		$weatherBundle->layout               = $request->input("layout");
-		$weatherBundle->targeting            = $rawTargeting ? WeatherBundleTargeting::from($rawTargeting) : null;
-		$weatherBundle->background_selection = $request->input("background_selection");
-		$weatherBundle->save();
+        $weatherBundle->name                 = $request->input("name");
+        $weatherBundle->flight_id            = $request->input("flight_id");
+        $weatherBundle->priority             = $request->input("priority");
+        $weatherBundle->start_date           = $request->input("start_date");
+        $weatherBundle->end_date             = $request->input("end_date");
+        $weatherBundle->ignore_years         = $request->input("ignore_years");
+        $weatherBundle->priority             = $request->input("priority");
+        $weatherBundle->layout               = $request->input("layout");
+        $weatherBundle->targeting            = $rawTargeting ? WeatherBundleTargeting::from($rawTargeting) : null;
+        $weatherBundle->background_selection = $request->input("background_selection");
+        $weatherBundle->save();
 
-		$weatherBundle->formats()->sync($request->input("format_ids"));
+        $weatherBundle->formats()->sync($request->input("format_ids"));
 
-		return new Response($weatherBundle->loadPublicRelations());
-	}
+        return new Response($weatherBundle->loadPublicRelations());
+    }
 
-	public function destroy(DestroyWeatherBundleRequest $request, WeatherBundle $weatherBundle) {
-		$weatherBundle->delete();
+    public function destroy(DestroyWeatherBundleRequest $request, WeatherBundle $weatherBundle) {
+        $weatherBundle->delete();
 
-		return new Response(["status" => "ok"]);
-	}
+        return new Response(["status" => "ok"]);
+    }
 
-	public function match(MatchWeatherBundleRequest $request) {
-		$now      = Carbon::now()->toDateString();
-		$formatId = (int)$request->input("format_id");
+    public function match(MatchWeatherBundleRequest $request) {
+        $now      = Carbon::now()->toDateString();
+        $formatId = (int)$request->input("format_id");
 
-		$property = Property::query()->with(["address.city"])->find($request->input("property_id"));
+        $property = Property::query()->with(["address.city"])->find($request->input("property_id"));
 
-		/** @var WeatherBundle|null $bundle */
-		$bundle = WeatherBundle::query()
-		                       ->where(function (Builder $query) use ($now) {
-			                       $query->where(function (Builder $query) use ($now) {
-				                       $query->where("ignore_years", "=", true)
-				                             ->whereBetween(DB::raw("DATE_FORMAT('$now', '%m-%d')"), [
-					                             DB::raw("DATE_FORMAT(`start_date`, '%m-%d')"),
-					                             DB::raw("DATE_FORMAT(`end_date`, '%m-%d')"),
-				                             ]);
-			                       })->orWhere(function (Builder $query) use ($now) {
-				                       $query->where("ignore_years", "=", false)
-				                             ->whereBetween(DB::raw($now), ['start_date', 'end_date']);
-			                       });
+        /** @var WeatherBundle|null $bundle */
+        $bundle = WeatherBundle::query()
+                               ->where(function (Builder $query) use ($now) {
+                                   $query->where(function (Builder $query) use ($now) {
+                                       $query->where("ignore_years", "=", true)
+                                             ->where(function (Builder $query) use ($now) {
+                                                 $query
+                                                     ->whereRaw("DATE_FORMAT(`start_date`, '%m-%d') < DATE_FORMAT(`end_date`, '%m-%d')")
+                                                     ->whereBetween(DB::raw("DATE_FORMAT('$now', '%m-%d')"), [
+                                                         DB::raw("DATE_FORMAT(`start_date`, '%m-%d')"),
+                                                         DB::raw("DATE_FORMAT(`end_date`, '%m-%d')"),
+                                                     ]);
+                                             })
+                                             ->orWhere(function (Builder $query) use ($now) {
+                                                 $query->whereRaw("DATE_FORMAT(`start_date`, '%m-%d') > DATE_FORMAT(`end_date`, '%m-%d')")
+                                                       ->whereNotBetween(DB::raw("DATE_FORMAT('$now', '%m-%d')"), [
+                                                           DB::raw("DATE_FORMAT(DATE_ADD(`end_date`, INTERVAL 1 DAY), '%m-%d')"),
+                                                           DB::raw("DATE_FORMAT(DATE_SUB(`start_date`, INTERVAL 1 DAY), '%m-%d')"),
+                                                       ]);
+                                             });
+                                   })->orWhere(function (Builder $query) use ($now) {
+                                       $query->where("ignore_years", "=", false)
+                                             ->whereBetween(DB::raw($now), [DB::raw('`start_date`'), DB::raw('`end_date`')]);
+                                   });
 
-		                       })
-		                       ->whereHas("formats", function (Builder $query) use ($formatId) {
-			                       $query->where("id", "=", $formatId);
-		                       })
-		                       ->where(function (Builder $query) use ($property) {
-			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.provinces') = 0")
-			                             ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.provinces')", $property->address->city->province_id);
-		                       })
-		                       ->where(function (Builder $query) use ($property) {
-			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.markets') = 0")
-			                             ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.markets')", $property->address->city->market_id);
-		                       })
-		                       ->where(function (Builder $query) use ($property) {
-			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.cities') = 0")
-			                             ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.cities')", $property->address->city_id);
-		                       })
-		                       ->where(function (Builder $query) use ($property) {
-			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.properties') = 0")
-			                             ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.properties')", $property->getKey());
-		                       })
-		                       ->where(function (Builder $query) use ($property) {
-			                       $query->whereRaw("JSON_LENGTH(`targeting`, '$.properties') = 0")
-			                             ->orWhereRaw("NOT JSON_CONTAINS(`targeting`, ?, '$.properties')", $property->getKey());
-		                       })
-		                       ->orderByDesc("priority")
-		                       ->first();
+                               })
+                               ->whereHas("formats", function (Builder $query) use ($formatId) {
+                                   $query->where("id", "=", $formatId);
+                               })
+                               ->where(function (Builder $query) use ($property) {
+                                   $query->whereRaw("JSON_LENGTH(`targeting`, '$.provinces') = 0")
+                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.provinces')", $property->address->city->province_id);
+                               })
+                               ->where(function (Builder $query) use ($property) {
+                                   $query->whereRaw("JSON_LENGTH(`targeting`, '$.markets') = 0")
+                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.markets')", $property->address->city->market_id);
+                               })
+                               ->where(function (Builder $query) use ($property) {
+                                   $query->whereRaw("JSON_LENGTH(`targeting`, '$.cities') = 0")
+                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.cities')", $property->address->city_id);
+                               })
+                               ->where(function (Builder $query) use ($property) {
+                                   $query->whereRaw("JSON_LENGTH(`targeting`, '$.properties') = 0")
+                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.properties')", $property->getKey());
+                               })
+                               ->where(function (Builder $query) use ($property) {
+                                   $query->whereRaw("JSON_LENGTH(`targeting`, '$.properties') = 0")
+                                         ->orWhereRaw("NOT JSON_CONTAINS(`targeting`, ?, '$.properties')", $property->getKey());
+                               })
+                               ->orderByDesc("priority")
+                               ->first();
 
-		if ($bundle) {
-			$bundle->load("backgrounds");
-			$bundle->backgrounds = $bundle->backgrounds->where("format_id", "===", $formatId);
-		}
+        if ($bundle) {
+            $bundle->load("backgrounds");
+            $bundle->backgrounds = $bundle->backgrounds->where("format_id", "===", $formatId);
+        }
 
-		$hasBundle = !!$bundle;
+        $hasBundle = !!$bundle;
 
-		return new Response($hasBundle ? new WeatherBundleResource($bundle) : null, $hasBundle ? 200 : 204);
-	}
+        return new Response($hasBundle ? new WeatherBundleResource($bundle) : null, $hasBundle ? 200 : 204);
+    }
 }

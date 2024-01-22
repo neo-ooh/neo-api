@@ -191,7 +191,7 @@ class PDFContract extends MPDFDocument {
 			])->render());
 		}
 
-		// Bonus summary
+		// Bua summary
 		$buaOrders = $this->order->getBuaOrders();
 
 		if ($buaOrders->isNotEmpty()) {

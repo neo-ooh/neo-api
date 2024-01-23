@@ -105,20 +105,4 @@ class Network extends Model {
 	public function formats() {
 		return $this->hasMany(Format::class, "network_id", "id");
 	}
-
-
-	/*
-	|--------------------------------------------------------------------------
-	| Attributes
-	|--------------------------------------------------------------------------
-	*/
-
-	public function getTonedDownColorAttribute() {
-		return match ($this->color) {
-			"0099F8" => "3E9CCA", // Shopping
-			"F8002B" => "D63641", // Fitness
-			"F38000" => "E5782C", // OTG
-			default  => $this->color,
-		};
-	}
 }

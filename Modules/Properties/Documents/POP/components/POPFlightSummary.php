@@ -14,6 +14,8 @@ use Illuminate\View\Component;
 use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Documents\POP\POPFlight;
 use Neo\Modules\Properties\Documents\POP\POPFlightNetwork;
+use Neo\Modules\Properties\Enums\ProductType;
+use Neo\Modules\Properties\Models\ContractLine;
 
 class POPFlightSummary extends Component {
 	public function __construct(protected POPFlight $flight) {
@@ -21,8 +23,16 @@ class POPFlightSummary extends Component {
 	}
 
 	public function render() {
-		$networkLines = collect($this->flight->lines)
-			->groupBy("product.property.network_id");
+        // Start by filtering out lines for non-digital products,
+        // Then group the lines by network
+        $lines = collect($this->flight->lines)
+            ->filter(fn(ContractLine $line) => $line->product->type === ProductType::Digital->value);
+
+        if($lines->isEmpty()) {
+            return "";
+        }
+
+		$networkLines = $lines->groupBy("product.property.network_id");
 
 		$networks = collect();
 

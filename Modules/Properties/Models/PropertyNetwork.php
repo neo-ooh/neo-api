@@ -78,4 +78,20 @@ class PropertyNetwork extends Model {
 		            ->withPivot(["order"])
 		            ->orderByPivot("order");
 	}
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Attributes
+    |--------------------------------------------------------------------------
+    */
+
+    public function getTonedDownColorAttribute() {
+        return match ($this->color) {
+            "0099F8" => "3E9CCA", // Shopping
+            "F8002B" => "D63641", // Fitness
+            "F38000" => "E5782C", // OTG
+            default  => $this->color,
+        };
+    }
 }

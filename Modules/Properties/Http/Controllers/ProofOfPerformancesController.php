@@ -45,6 +45,9 @@ class ProofOfPerformancesController extends Controller {
 			$flight->append("performances");
 
 			$flightLines = $flight->lines->where("product.category.type", "=", ProductType::Digital);
+            if($flightLines->isEmpty()) {
+                continue;
+            }
 
 			$flights[] = new POPFlight(
 				include    : true,

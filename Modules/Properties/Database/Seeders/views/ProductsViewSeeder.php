@@ -26,6 +26,7 @@ class ProductsViewSeeder extends Seeder {
 				`p`.`inventory_resource_id`,
 				`p`.`property_id`,
 				`p`.`category_id`,
+				`pr`.`network_id`,
 				`pc`.`type` as 'type',
 				`p`.`name_en`,
 				`p`.`name_fr`,

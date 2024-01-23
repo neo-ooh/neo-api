@@ -17,12 +17,14 @@ use Neo\Modules\Broadcast\Models\Format;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\LoopConfiguration;
 use Neo\Modules\Properties\Enums\MediaType;
+use Neo\Modules\Properties\Enums\ProductType;
 
 /**
  * @property int                           $id
  * @property int                           $inventory_resource_id
  * @property int                           $property_id
  * @property int|null                      $category_id
+ * @property string                   $type
  * @property string                        $name_en
  * @property string                        $name_fr
  * @property int|null                      $format_id

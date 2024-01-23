@@ -36,7 +36,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property int                                $impressions
  *
  * @property ContractFlight                     $flight
- * @property Product|null                       $product
+ * @property ResolvedProduct|null                       $product
  *
  * @property-read number|null                   $network_id
  * @property-read ProductType|null              $product_type

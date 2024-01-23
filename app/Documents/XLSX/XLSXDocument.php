@@ -100,4 +100,17 @@ abstract class XLSXDocument extends Document {
             $writer->save($path);
         }
     }
+
+    /**
+     * Excel has limitation on what you can put in the sheet name.
+     * This function returns a sanitized version of the input that has been adjusted to respect Excel conditions
+     *
+     * @see https://support.microsoft.com/en-us/office/rename-a-worksheet-3f1f7148-ee83-404d-8ef0-9ff99fbad1f9
+     *
+     * @param string $name
+     * @return string
+     */
+    protected function sanitizeSheetName(string $name) {
+        return substr(trim(str_replace(["/", "\\", "?", "*", ":", "[", "]"], "", $name)), 0, 31);
+    }
 }

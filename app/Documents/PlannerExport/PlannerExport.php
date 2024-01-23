@@ -51,7 +51,7 @@ class PlannerExport extends XLSXDocument {
 	 * @throws Exception
 	 */
 	public function build(): bool {
-		$firstSheetName  = Lang::get("contract.summary");
+		$firstSheetName  = $this->sanitizeSheetName(Lang::get("contract.summary"));
 		$this->worksheet = new Worksheet(null, $firstSheetName);
 		$this->spreadsheet->addSheet($this->worksheet);
 		$this->spreadsheet->setActiveSheetIndex(1);
@@ -535,9 +535,10 @@ class PlannerExport extends XLSXDocument {
 	 * @throws Exception
 	 */
 	public function printOOHFlight(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight, int $flightIndex): void {
-		$this->worksheet = new Worksheet(null, substr(trim($flight->name), 0, 31));
+        $sheetname =  $this->sanitizeSheetName($flight->name);
+		$this->worksheet = new Worksheet(null, $sheetname);
 		$this->spreadsheet->addSheet($this->worksheet);
-		$this->spreadsheet->setActiveSheetIndexByName(substr(trim($flight->name), 0, 31));
+		$this->spreadsheet->setActiveSheetIndexByName($sheetname);
 
 		$this->printHeader(12);
 		$this->printFlightHeader($flight, $flightIndex, width: 12);
@@ -836,9 +837,10 @@ class PlannerExport extends XLSXDocument {
 	 * @throws Exception
 	 */
 	public function printMobileFlight(CPCompiledFlight $flight, CPCompiledMobileFlight $mobileFlight, int $flightIndex): void {
-		$this->worksheet = new Worksheet(null, substr(trim($flight->name), 0, 31));
+        $sheetName = $this->sanitizeSheetName($flight->name);
+		$this->worksheet = new Worksheet(null, $sheetName);
 		$this->spreadsheet->addSheet($this->worksheet);
-		$this->spreadsheet->setActiveSheetIndexByName(substr(trim($flight->name), 0, 31));
+		$this->spreadsheet->setActiveSheetIndexByName($sheetName);
 
 		$this->printHeader(8);
 		$this->printFlightHeader($flight, $flightIndex, width: 8);

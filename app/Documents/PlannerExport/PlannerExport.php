@@ -17,6 +17,7 @@ use Neo\Documents\XLSX\Worksheet;
 use Neo\Documents\XLSX\XLSXDocument;
 use Neo\Documents\XLSX\XLSXStyleFactory;
 use Neo\Modules\Properties\Models\MobileProduct;
+use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
 use Neo\Modules\Properties\Models\PropertyNetwork;
 use Neo\Resources\CampaignPlannerPlan\CompiledPlan\CPCompiledFlight;
@@ -535,7 +536,7 @@ class PlannerExport extends XLSXDocument {
 	 * @throws Exception
 	 */
 	public function printOOHFlight(CPCompiledFlight $flight, CPCompiledOOHFlight $oohFlight, int $flightIndex): void {
-        $sheetname =  $this->sanitizeSheetName($flight->name);
+        $sheetname =  $this->sanitizeSheetName(($flightIndex + 1) . ". " . $flight->name);
 		$this->worksheet = new Worksheet(null, $sheetname);
 		$this->spreadsheet->addSheet($this->worksheet);
 		$this->spreadsheet->setActiveSheetIndexByName($sheetname);
@@ -555,8 +556,8 @@ class PlannerExport extends XLSXDocument {
 			                                           ->unique()
 		                                );
 
-		/** @var Collection<\Neo\Modules\Properties\Models\Product> $allProducts */
-		$allProducts = \Neo\Modules\Properties\Models\Product::query()
+		/** @var Collection<Product> $allProducts */
+		$allProducts = Product::query()
 		                                                     ->findMany($oohFlight->properties
 			                                                                ->toCollection()
 			                                                                ->flatMap(
@@ -708,7 +709,7 @@ class PlannerExport extends XLSXDocument {
 						                                     ->whereNotNull()
 						                                     ->sortBy("product.name_" . Lang::locale());
 
-						/** @var \Neo\Modules\Properties\Models\Product $product */
+						/** @var Product $product */
 						foreach ($products as $product) {
 							/** @var CPCompiledOOHProduct $compiledProduct */
 							$compiledProduct = $compiledProducts->firstWhere("id", "=", $product->getKey());
@@ -837,7 +838,7 @@ class PlannerExport extends XLSXDocument {
 	 * @throws Exception
 	 */
 	public function printMobileFlight(CPCompiledFlight $flight, CPCompiledMobileFlight $mobileFlight, int $flightIndex): void {
-        $sheetName = $this->sanitizeSheetName($flight->name);
+        $sheetName = $this->sanitizeSheetName(($flightIndex + 1) . ". " . $flight->name);
 		$this->worksheet = new Worksheet(null, $sheetName);
 		$this->spreadsheet->addSheet($this->worksheet);
 		$this->spreadsheet->setActiveSheetIndexByName($sheetName);

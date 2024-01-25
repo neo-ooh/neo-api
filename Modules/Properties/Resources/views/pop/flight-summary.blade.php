@@ -27,7 +27,7 @@
                 {{ __("pop.flight-counted-impressions")  }}
             </th>
             <th class="pop-flight-summary__header pop-flight-summary__header__media-value">
-                {{ __("pop.flight-media-value")  }}
+                {{ __("pop.flight-delivered-media-value")  }}
             </th>
             <th class="pop-flight-summary__header pop-flight-summary__header__net-investment">
                 {{ __("pop.flight-net-investment")  }}

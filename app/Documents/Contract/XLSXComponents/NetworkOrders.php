@@ -179,7 +179,7 @@ class NetworkOrders extends Component {
                     $campaignTraffic = $line->traffic;
 
                     // Is the last line for the same property ?
-                    if ($lastLine && $lastLine->property_street === $line->property_street) {
+                    if ($lastLine && $lastLine->property_name === $line->property_name) {
                         // Yes, make sure we will not print anything for the current row as we will use the first row values.
                         $city            = null;
                         $property        = null;

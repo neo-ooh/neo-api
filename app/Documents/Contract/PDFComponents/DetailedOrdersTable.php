@@ -108,7 +108,7 @@ class DetailedOrdersTable extends Component {
                 "subsection"  => $subsection,
                 "orders"      => $sectionPurchases
                     ->sortBy(['market_order', 'property_name'])
-                    ->groupBy(['market_order', 'property_street']),
+                    ->groupBy(['market_order', 'property_name']),
                 "order"       => $this->order,
             ]);
         }

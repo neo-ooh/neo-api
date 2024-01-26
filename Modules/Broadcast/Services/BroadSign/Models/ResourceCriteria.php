@@ -13,6 +13,7 @@ namespace Neo\Modules\Broadcast\Services\BroadSign\Models;
 use Illuminate\Support\Collection;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignClient;
 use Neo\Modules\Broadcast\Services\BroadSign\API\BroadSignEndpoint as Endpoint;
+use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\ResourceIDParser;
 use Neo\Modules\Broadcast\Services\BroadSign\API\Parsers\SingleResourcesParser;
 use Neo\Services\API\Parsers\MultipleResourcesParser;
 
@@ -45,6 +46,9 @@ class ResourceCriteria extends BroadSignModel {
      */
     protected static function actions(): array {
         return [
+            "create"      => Endpoint::post("/resource_criteria/v7/add")
+                                     ->unwrap(static::$unwrapKey)
+                                     ->parser(new ResourceIDParser()),
             "update"      => Endpoint::put("/resource_criteria/v7")
                                      ->unwrap(static::$unwrapKey)
                                      ->parser(new SingleResourcesParser(static::class)),

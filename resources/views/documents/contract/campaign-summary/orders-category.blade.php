@@ -37,7 +37,7 @@
         <tbody>
         @foreach(['shopping', 'otg', 'fitness'] as $network)
             @php
-                $networkOrders = $orders->filter(fn($order) => $order->isNetwork($network))
+                $networkOrders = $orders->filter(fn(\Neo\Documents\Contract\OrderLine $line) => $line->isNetwork($network))
             @endphp
             @if($networkOrders->count() === 0)
                 @continue
@@ -58,7 +58,7 @@
         <tfoot>
         <tr>
             <td></td>
-            <td>{{ $orders->groupBy('property_street')->count() }}</td>
+            <td>{{ $orders->groupBy('property_name')->count() }}</td>
             <td>-</td>
             <td>{{ format($orders->sum('nb_screens')) }}</td>
             <td>{{ format($orders->sum('impressions')) }}</td>

@@ -50,7 +50,7 @@ class POPBuyTypeSummary extends Component {
 					"contracted_impressions" => $flightNetwork->getContractedImpressions(),
 					"counted_impressions"    => $flightNetwork->getDeliveredImpressions(),
 					"media_value"            => $flightNetwork->getContractedMediaValue() * $flightNetwork->getDeliveredPercent(),
-					"net_investment"         => $flightNetwork->getContractedNetInvestment() * $flightNetwork->getDeliveredPercent(),
+					"net_investment"         => $flightNetwork->getContractedNetInvestment(),
 				];
 			}
 		}

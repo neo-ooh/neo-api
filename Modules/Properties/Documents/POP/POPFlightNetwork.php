@@ -24,6 +24,9 @@ class POPFlightNetwork extends Data {
 		public float $contracted_net_investment_factor,
 
 		public float $delivered_impressions,
+
+        public float $max_delivered_ratio,
+        public float $min_delivered_ratio,
 		public float $delivered_impressions_factor,
 	) {
 	}
@@ -41,7 +44,7 @@ class POPFlightNetwork extends Data {
 	}
 
 	public function getDeliveredImpressions() {
-		return $this->delivered_impressions * $this->delivered_impressions_factor;
+		return $this->delivered_impressions;
 	}
 
 	public function getDeliveredPercent() {

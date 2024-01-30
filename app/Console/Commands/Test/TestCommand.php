@@ -13,6 +13,12 @@ namespace Neo\Console\Commands\Test;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Console\Command;
+use MatanYadaev\EloquentSpatial\Objects\Point;
+use Neo\Models\City;
+use Neo\Modules\Properties\Enums\TrafficFormat;
+use Neo\Modules\Properties\Jobs\Traffic\EstimateWeeklyTrafficFromMonthJob;
+use Neo\Modules\Properties\Models\Property;
+use Neo\Modules\Properties\Models\PropertyTrafficSettings;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
@@ -57,13 +63,14 @@ class TestCommand extends Command {
 					$addr->save();
 				}*/
 
-		$dates = collect(CarbonPeriod::create("2022-01-01", "2022-12-31")
-		                             ->toArray())->map(fn(Carbon $d) => "('" . $d->toDateString() . "')");
+        $propertiesTraffic = PropertyTrafficSettings::query()->where("format", "=", TrafficFormat::MonthlyAdjusted->value)->get();
 
-		dump($dates->join(', '));
-
-		// Start by creating a temporary table, and fill it with our dates
-//		DB::statement("DROP TABLE IF EXISTS `stats_dates`", []);
-//		DB::statement("CREATE TEMPORARY TABLE `stats_dates` (`d` date)", []);
+        /** @var PropertyTrafficSettings $propertyTraffic */
+        foreach($propertiesTraffic as $propertyTraffic) {
+            (new EstimateWeeklyTrafficFromMonthJob($propertyTraffic->property_id, 2019, 1))->handle();
+            (new EstimateWeeklyTrafficFromMonthJob($propertyTraffic->property_id, 2021, 1))->handle();
+            (new EstimateWeeklyTrafficFromMonthJob($propertyTraffic->property_id, 2022, 1))->handle();
+            (new EstimateWeeklyTrafficFromMonthJob($propertyTraffic->property_id, 2023, 1))->handle();
+        }
 	}
 }

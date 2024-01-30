@@ -396,6 +396,10 @@ class ContractFlight extends Model {
 		            });
 	}
 
+    /**
+     * Add a `performances` property of type `FlightProductPerformanceDatum` to all lines of the flight.
+     * @return void
+     */
 	public function fillLinesPerformances() {
 		$productsPerformances = $this->products_performances->keyBy("product_id");
 

@@ -245,7 +245,7 @@ class POPFlightDetails {
 			};
 
 			$contractedImpressions = $linesGroup->sum("impressions");
-			$deliveredImpressions  = $linesGroup->sum("performances.impressions") * $network->delivered_impressions_factor;
+			$deliveredImpressions  = $linesGroup->sum("performances.impressions");// * $network->delivered_impressions_factor;
 			$deliveryProgress      = $contractedImpressions > 0 ? $deliveredImpressions / $contractedImpressions : 0;
 
 			$levelLine = [

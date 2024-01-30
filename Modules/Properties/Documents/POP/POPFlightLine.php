@@ -16,7 +16,6 @@ class POPFlightLine extends Data {
     public function __construct(
         public string $product_id,
 
-
         public float  $contracted_impressions,
         public float  $contracted_media_value,
         public float  $contracted_net_investment,

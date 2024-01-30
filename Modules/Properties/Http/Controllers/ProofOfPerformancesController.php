@@ -108,7 +108,8 @@ class ProofOfPerformancesController extends Controller {
 				continue;
 			}
 
-			$contractFlight = $contract
+            /** @var ContractFlight $contractFlight */
+            $contractFlight = $contract
 				->flights
 				->firstWhere("id", "=", $flight->flight_id);
 
@@ -125,6 +126,7 @@ class ProofOfPerformancesController extends Controller {
 
 			/** @var POPFlightNetwork $network */
 			$flight->lines = $flightLines->all();
+            $flight->applyDeliveryFactorToLines();
 		}
 
 		$pop = PDFPOP::make($popData);

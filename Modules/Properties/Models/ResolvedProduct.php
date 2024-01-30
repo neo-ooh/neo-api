@@ -24,7 +24,8 @@ use Neo\Modules\Properties\Enums\ProductType;
  * @property int                           $inventory_resource_id
  * @property int                           $property_id
  * @property int|null                      $category_id
- * @property string                   $type
+ * @property int|null                      $network_id
+ * @property string                        $type
  * @property string                        $name_en
  * @property string                        $name_fr
  * @property int|null                      $format_id
@@ -68,9 +69,9 @@ use Neo\Modules\Properties\Enums\ProductType;
  * @property InventoryPicture|null         $cover_picture
  */
 class ResolvedProduct extends Product {
-	use HasView;
-	
-	protected $table = "products_view";
+    use HasView;
 
-	protected $write_table = "products";
+    protected $table = "products_view";
+
+    protected $write_table = "products";
 }

@@ -17,6 +17,8 @@ use Neo\Console\Commands\Data\PopulateCensusDivisionsCommand;
 use Neo\Console\Commands\Data\PopulateCensusFederalElectoralDistrictsCommand;
 use Neo\Console\Commands\Data\PopulateCensusForwardSortationAreasCommand;
 use Neo\Console\Commands\Data\PopulateCensusSubdivisionsCommand;
+use Neo\Console\Commands\OneOff\SwitchCampaignTargetingToLocationsCommand;
+use Neo\Console\Commands\OneOff\UpdateOtgFramesCommand;
 use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Console\Commands\Test\TestCommand;
 use Neo\Modules\Broadcast\Console\Commands\FetchCampaignsPerformancesCommand;
@@ -38,33 +40,35 @@ class Kernel extends ConsoleKernel {
 	 * @var array
 	 */
 	protected $commands = [
-		TestCommand::class,
+        TestCommand::class,
 
-		// contracts:update
-		RefreshContracts::class,
+        // contracts:update
+        RefreshContracts::class,
 
-		// contracts:clear-screenshots
-		DeleteOldScreenshots::class,
+        // contracts:clear-screenshots
+        DeleteOldScreenshots::class,
 
-		// property:pull-traffic {property}
-		PullPropertyTraffic::class,
+        // property:pull-traffic {property}
+        PullPropertyTraffic::class,
 
-		// Broadcast -------------------
+        // Broadcast -------------------
 
-		// network:sync {network}
-		SynchronizeNetworkCommand::class,
+        // network:sync {network}
+        SynchronizeNetworkCommand::class,
 
-		// campaigns:fetch-performances {--network=null} {--lookback=3}
-		FetchCampaignsPerformancesCommand::class,
+        // campaigns:fetch-performances {--network=null} {--lookback=3}
+        FetchCampaignsPerformancesCommand::class,
 
-		// Data -------------------
-		PopulateCensusDivisionsCommand::class,
-		PopulateCensusSubdivisionsCommand::class,
-		PopulateCensusFederalElectoralDistrictsCommand::class,
-		PopulateCensusForwardSortationAreasCommand::class,
-		ImportMobilePropertiesCommand::class,
-		SynchronizeNewsRecordsCommand::class,
-	];
+        // Data -------------------
+        PopulateCensusDivisionsCommand::class,
+        PopulateCensusSubdivisionsCommand::class,
+        PopulateCensusFederalElectoralDistrictsCommand::class,
+        PopulateCensusForwardSortationAreasCommand::class,
+        ImportMobilePropertiesCommand::class,
+        SynchronizeNewsRecordsCommand::class,
+        UpdateOtgFramesCommand::class,
+        SwitchCampaignTargetingToLocationsCommand::class,
+    ];
 
 	/**
 	 * Define the application's command schedule.

@@ -145,8 +145,9 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 		);
 		$adUnit->auction          = new AdUnitAuction(
 			at         : 1,
-			bidfloor   : round($product->programmatic_price / $this->getConfig()->conversion_rate_usd_to_cad),
-			bidfloorcur: "USD",
+//			bidfloor   : round($product->programmatic_price / $this->getConfig()->conversion_rate_usd_to_cad),
+			bidfloor   : round($product->programmatic_price),
+			bidfloorcur: "CAD",
 		);
 		$adUnit->eids             = [
 			new AdUnitExternalId(source: "broadsign.com",
@@ -186,8 +187,9 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 		$adUnit->network_id      = $context["network_id"];
 		$adUnit->placements      = $adUnit->placements ?? [];
 		$adUnit->planning        = new AdUnitPlanning(
-			base_rate: round($product->programmatic_price / $this->getConfig()->conversion_rate_usd_to_cad),
-			rate_cur : "USD",
+//			base_rate: round($product->programmatic_price / $this->getConfig()->conversion_rate_usd_to_cad),
+			base_rate: round($product->programmatic_price),
+			rate_cur : "CAD",
 		);
 		$adUnit->private_auction = 0; // Not private
 		$adUnit->restrictions    = $adUnit->restrictions ?? new AdUnitRestrictions();

@@ -15,7 +15,7 @@ use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use FFMpeg\Media\Video;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Drivers\GD\Driver;
+use Intervention\Image\Drivers\Imagick\Driver;
 use Intervention\Image\ImageManager;
 use Neo\Modules\Broadcast\Exceptions\UnsupportedFileFormatException;
 use Symfony\Component\HttpFoundation\File\File;

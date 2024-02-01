@@ -27,23 +27,23 @@ Route::group([
 
 	Route::model("actor", Actor::class);
 
-	Route::   get("actors", ActorsController::class . "@index");
-	Route::  get("actors/_by_id", ActorsController::class . "@byId");
-	Route::  post("actors", ActorsController::class . "@store");
+	Route::   get("actors", [ActorsController::class, "index"]);
+	Route::  get("actors/_by_id", [ActorsController::class, "byId"]);
+	Route::  post("actors", [ActorsController::class, "store"]);
 
-	Route::   get("actors/{actor}", ActorsController::class . "@show");
-	Route::   get("actors/{actor}/hierarchy", ActorsController::class . "@getHierarchy");
-	Route::   put("actors/{actor}", ActorsController::class . "@update");
-	Route::delete("actors/{actor}", ActorsController::class . "@destroy");
+	Route::   get("actors/{actor}", [ActorsController::class, "show"]);
+	Route::   get("actors/{actor}/hierarchy", [ActorsController::class, "getHierarchy"]);
+	Route::   put("actors/{actor}", [ActorsController::class, "update"]);
+	Route::delete("actors/{actor}", [ActorsController::class, "destroy"]);
 
-	Route::  post("actors/{actor}/re-send-signup-email", ActorsController::class . "@resendWelcomeEmail");
+	Route::  post("actors/{actor}/re-send-signup-email", [ActorsController::class, "resendWelcomeEmail"]);
 
-	Route::   get("actors/{actor}/impersonate", ActorsController::class . "@impersonate");
+	Route::   get("actors/{actor}/impersonate", [ActorsController::class, "impersonate"]);
 
-	Route::   get("actors/{actor}/security", ActorsController::class . "@security");
+	Route::   get("actors/{actor}/security", [ActorsController::class, "security"]);
 
-	Route::  post("actors/{actor}/two-fa/validate", TwoFactorAuthController::class . "@forceValidateToken");
-	Route::  post("actors/{actor}/two-fa/recycle", TwoFactorAuthController::class . "@recycle");
+	Route::  post("actors/{actor}/two-fa/validate", [TwoFactorAuthController::class, "forceValidateToken"]);
+	Route::  post("actors/{actor}/two-fa/recycle", [TwoFactorAuthController::class, "recycle"]);
 
 
 	/*

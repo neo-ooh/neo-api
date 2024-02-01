@@ -15,7 +15,8 @@ use FFMpeg\FFMpeg;
 use FFMpeg\FFProbe;
 use FFMpeg\Media\Video;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Drivers\Imagick\Driver;
+use Intervention\Image\ImageManager;
 use Neo\Modules\Broadcast\Exceptions\UnsupportedFileFormatException;
 use Symfony\Component\HttpFoundation\File\File;
 
@@ -43,13 +44,11 @@ class ThumbnailCreator {
 	 * @return resource|null
 	 */
 	protected function makeThumbnailForImage(File $file, string $format) {
-		$img = Image::make($file);
-		$img->resize(1280, 1280, function ($constraint) {
-			$constraint->aspectRatio();
-			$constraint->upsize();
-		});
+        $manager = new ImageManager(new Driver());
+		$img = $manager->read($file);
+        $img->scaleDown(width: 1280, height: 1280);
 
-		return $img->stream($format, 75)->detach();
+		return $img->toPng()->toFilePointer();
 	}
 
 	/**

@@ -23,7 +23,7 @@ class Handler extends ExceptionHandler {
 	 */
 	public function register() {
 		$this->reportable(function (Throwable $e) {
-			if (app()->bound('sentry')) {
+			if (app()->bound('sentry') && app()->isProduction()) {
 				app('sentry')->captureException($e);
 			}
 		});

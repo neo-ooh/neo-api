@@ -16,8 +16,8 @@ use Neo\Modules\Properties\Jobs\CreateTrafficSnapshotJob;
 
 class TrafficSnapshotsController {
     public function refresh(RefreshSnapshotRequest $request) {
-        CreateTrafficSnapshotJob::dispatchSync();
+        CreateTrafficSnapshotJob::dispatch();
 
-        return new Response(["status" => "ok"], 200);
+        return new Response(["status" => "requested"], 200);
     }
 }

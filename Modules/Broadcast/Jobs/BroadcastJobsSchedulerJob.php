@@ -25,21 +25,24 @@ use Neo\Modules\Broadcast\Models\BroadcastJob;
  * execution to the Laravel dispatcher.
  */
 class BroadcastJobsSchedulerJob implements ShouldQueue {
-	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-	public function handle() {
-		// List jobs that have been scheduled for up to know, that are still marked as `Pending`
-		$jobs = BroadcastJob::query()->where(function (Builder $query) {
-			$query->where("status", "=", BroadcastJobStatus::Pending)
-			      ->orWhere("status", "=", BroadcastJobStatus::PendingRetry);
-		})->where("scheduled_at", "<=", Carbon::now())
-		                    ->get();
+    public function handle() {
+        // List jobs that have been scheduled for up to know, that are still marked as `Pending`
+        $jobs = BroadcastJob::query()
+                            ->where(function (Builder $query) {
+                                $query->where("status", "=", BroadcastJobStatus::Pending)
+                                      ->orWhere("status", "=", BroadcastJobStatus::PendingRetry);
+                            })
+                            ->where("scheduled_at", "<=", Carbon::now())
+                            ->orderBy('scheduled_at')
+                            ->get();
 
-		/**
-		 * @var BroadcastJob $job
-		 */
-		foreach ($jobs as $job) {
-			$job->execute();
-		}
-	}
+        /**
+         * @var BroadcastJob $job
+         */
+        foreach ($jobs as $job) {
+            $job->execute();
+        }
+    }
 }

@@ -13,6 +13,7 @@ namespace Neo\Modules\Properties\Services\PlaceExchange;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Client\Response;
 use Neo\Modules\Properties\Services\Exceptions\RequestException;
+use Neo\Modules\Properties\Services\Exceptions\RequestNotFoundException;
 use Neo\Services\API\APIAuthenticationError;
 use Neo\Services\API\APIClient;
 use Neo\Services\API\Endpoint;
@@ -77,6 +78,10 @@ class PlaceExchangeClient extends APIClient {
         ];
 
         $response = parent::call($endpoint, $payload, $requestHeaders);
+
+        if($response->notFound()) {
+            throw new RequestNotFoundException($endpoint->toRequest($payload, $headers), $response);
+        }
 
         if (!$response->successful()) {
             throw new RequestException($endpoint->toRequest($payload, $headers), $response);

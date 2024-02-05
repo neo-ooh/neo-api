@@ -20,6 +20,7 @@ use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Services\Exceptions\IncompatibleResourceAndInventoryException;
 use Neo\Modules\Properties\Services\Exceptions\IncompleteResourceException;
 use Neo\Modules\Properties\Services\Exceptions\RequestException;
+use Neo\Modules\Properties\Services\Exceptions\RequestNotFoundException;
 use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryCapability;
 use Neo\Modules\Properties\Services\InventoryConfig;
@@ -299,9 +300,14 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 		foreach ($product->broadcastLocations as $broadcastLocation) {
 			/** @var BroadcastPlayer $broadcastPlayer */
 			foreach ($broadcastLocation->players as $broadcastPlayer) {
+                if($screensCount === 0 || $broadcastPlayer->screen_count) {
+                    // No screen ? That's weird. Do not replicate a player that has no screen.
+                    continue;
+                }
+
 				$impressionsShare = $broadcastPlayer->screen_count / $screensCount;
 
-				if (!isset($productId->context["units"][$broadcastPlayer->id])) {
+				if (!isset($productId->context["units"][$broadcastPlayer->id])  ) {
 					// No ID for this location
 					$adUnit = new AdUnit($client);
 				} else {
@@ -362,10 +368,16 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 	 * @throws APIAuthenticationError
 	 */
 	public function deleteAdUnit(PlaceExchangeClient $client, string $adUnitId): void {
-		$adUnit         = AdUnit::find($client, $adUnitId);
-		$adUnitKey      = $adUnit->name;
-		$adUnit->name   .= "_disabled-" . time();
-		$adUnit->status = AdUnitStatus::Decommissioned;
-		$adUnit->save($adUnitKey);
+        try {
+            $adUnit         = AdUnit::find($client, $adUnitId);
+            $adUnitKey      = $adUnit->name;
+            $adUnit->name   .= "_disabled-" . time();
+            $adUnit->status = AdUnitStatus::Decommissioned;
+            $adUnit->save($adUnitKey);
+        } catch (RequestNotFoundException $exception) {
+            // AdUnit could not be found, has probably already been removed.
+            // Consider this as OK behaviour
+            return;
+        }
 	}
 }

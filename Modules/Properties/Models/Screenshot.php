@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use ImagickException;
 use Neo\Helpers\Relation;
@@ -37,6 +38,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property integer           $player_id
  * @property integer           $request_id
  * @property Carbon            $received_at
+ * @property Carbon|null            $deleted_at
  *
  * @property ScreenshotRequest $request
  * @property Product           $product
@@ -48,6 +50,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
  * @property string            $mockup_path
  */
 class Screenshot extends Model {
+    use SoftDeletes;
 	use HasPublicRelations;
 	use HasRelationships;
 

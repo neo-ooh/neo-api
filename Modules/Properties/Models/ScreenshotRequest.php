@@ -15,13 +15,12 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Neo\Helpers\Relation;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Player;
-use Neo\Modules\Properties\Models\Product;
-use Neo\Modules\Properties\Models\Screenshot;
 
 /**
  * Class ScreenshotRequest
@@ -41,6 +40,7 @@ use Neo\Modules\Properties\Models\Screenshot;
  * @property int|null               $created_by
  * @property Carbon                 $updated_at
  * @property int|null               $updated_by
+ * @property Carbon|null               $deleted_at
  *
  * @property integer                $expected_screenshots
  * @property integer                $screenshots_count
@@ -51,6 +51,7 @@ use Neo\Modules\Properties\Models\Screenshot;
  * @property Player|null            $player
  */
 class ScreenshotRequest extends Model {
+    use SoftDeletes;
 	use HasCreatedByUpdatedBy;
 	use HasPublicRelations;
 

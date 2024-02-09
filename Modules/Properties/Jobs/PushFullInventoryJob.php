@@ -32,7 +32,7 @@ class PushFullInventoryJob implements ShouldQueue {
 
 	protected Output|null $output = null;
 
-	public function __construct(protected int $inventoryId, protected bool $debug = false) {
+	public function __construct(protected int $inventoryId, protected bool $force = false, protected bool $debug = false) {
 		if (App::runningInConsole() && $this->debug) {
 			$this->output = new ConsoleOutput();
 		}
@@ -73,7 +73,7 @@ class PushFullInventoryJob implements ShouldQueue {
 					          $query->where("inventory_id", "=", $this->inventoryId)
 					                ->withoutTrashed();
 				          })
-				          ->when($provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
+				          ->when(!$this->force && $provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
 				          ->get()
 			);
 		}
@@ -93,7 +93,7 @@ class PushFullInventoryJob implements ShouldQueue {
 				          $query->where("inventory_id", "=", $this->inventoryId)
 				                ->withoutTrashed();
 			          })
-			          ->when($provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
+			          ->when(!$this->force && $provider->last_push_at !== null, fn(Builder $query) => $query->where("updated_at", ">", $provider->last_push_at))
 			          ->get()
 		);
 

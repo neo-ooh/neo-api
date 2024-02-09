@@ -172,10 +172,10 @@ class InventoryProvidersController extends Controller {
 	public function sync(SyncInventoryRequest $request, InventoryProvider $inventoryProvider) {
 		switch ($request->input("action")) {
 			case "push":
-				PushFullInventoryJob::dispatch($inventoryProvider->getKey());
+				PushFullInventoryJob::dispatch($inventoryProvider->getKey(), force: true);
 				break;
 			case "pull":
-				PullFullInventoryJob::dispatch($inventoryProvider->getKey());
+				PullFullInventoryJob::dispatch($inventoryProvider->getKey(), force: true,);
 				break;
 		}
 

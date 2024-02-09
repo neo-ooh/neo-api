@@ -182,7 +182,7 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 			duration     : $product->loop_configuration->spot_length_ms / 1_000, // ms to s
 			imp_four_week: round(max(1, $impressionsPerWeek * 4 * $impressionsShare)),
 			imp_x        : round(max(1, $impressionsPerPlay * $impressionsShare)),
-			provider     : "publisher",
+			provider     : "neo-mall-custom",
 		);
 		$adUnit->name            = $name;
 		$adUnit->network_id      = $context["network_id"];

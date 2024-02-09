@@ -240,6 +240,11 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 		foreach ($product->broadcastLocations as $broadcastLocation) {
 			/** @var BroadcastPlayer $broadcastPlayer */
 			foreach ($broadcastLocation->players as $broadcastPlayer) {
+                if($screensCount === 0 || $broadcastPlayer->screen_count === 0) {
+                    // No screen ? That's weird. Do not replicate a player that has no screen.
+                    continue;
+                }
+
 				$impressionsShare = $broadcastPlayer->screen_count / $screensCount;
 
 				$adUnit         = new AdUnit($client);
@@ -300,16 +305,18 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 		foreach ($product->broadcastLocations as $broadcastLocation) {
 			/** @var BroadcastPlayer $broadcastPlayer */
 			foreach ($broadcastLocation->players as $broadcastPlayer) {
-                if($screensCount === 0 || $broadcastPlayer->screen_count) {
+                if($screensCount === 0 || $broadcastPlayer->screen_count === 0) {
                     // No screen ? That's weird. Do not replicate a player that has no screen.
                     continue;
                 }
 
 				$impressionsShare = $broadcastPlayer->screen_count / $screensCount;
 
+                $isNew = false;
 				if (!isset($productId->context["units"][$broadcastPlayer->id])  ) {
 					// No ID for this location
 					$adUnit = new AdUnit($client);
+                    $isNew = true;
 				} else {
 					$adUnit = AdUnit::find($client, $productId->context["units"][$broadcastPlayer->id]["id"]);
 				}
@@ -317,8 +324,12 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 				$unitName = $adUnit->name;
 
 				$this->fillAdUnit($adUnit, $broadcastPlayer, $product, $productId->context, $impressionsShare);
-				
-				$adUnit->save($unitName);
+
+                if($isNew) {
+                    $adUnit->create();
+                } else {
+				    $adUnit->save($unitName);
+                }
 
 				$adUnitsIds[$broadcastPlayer->id] = ["id" => $adUnit->getKey(), "name" => $adUnit->name];
 			}

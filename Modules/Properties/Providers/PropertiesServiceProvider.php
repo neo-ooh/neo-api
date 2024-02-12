@@ -10,8 +10,11 @@
 
 namespace Neo\Modules\Properties\Providers;
 
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Neo\Modules\Properties\Jobs\InventoryJobBase;
 
 class PropertiesServiceProvider extends ServiceProvider {
     /**
@@ -76,6 +79,12 @@ class PropertiesServiceProvider extends ServiceProvider {
                          ], ['views', $this->moduleNameLower . '-module-views']);
 
         $this->loadViewsFrom(array_merge($this->getPublishableViewPaths(), [$sourcePath,]), $this->moduleNameLower);
+    }
+
+    public function registerRateLimiters() {
+        RateLimiter::for('inventory-exchange', function (InventoryJobBase $job) {
+            return Limit::perMinute(10)->by($job->getInventoryId());
+        });
     }
 
     /**

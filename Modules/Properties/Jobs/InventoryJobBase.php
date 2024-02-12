@@ -22,6 +22,19 @@ abstract class InventoryJobBase extends Job {
 
     public int|null $triggerer_id;
 
+    /**
+     * @var int Allow infinite retry. The `Neo\Jobs\Job` superclass ensure work execution will not result in an exception leaking
+     *          Infinire retry makes sure our rate limiter will not incur a loss of jobs
+     */
+    public int $tries = 0;
+
+    /**
+     * The maximum number of unhandled exceptions to allow before failing.
+     *
+     * @var int
+     */
+    public int $maxExceptions = 1;
+
     public function middleware() {
         return [
             (new WithoutOverlapping($this->inventoryId))->expireAfter(60),

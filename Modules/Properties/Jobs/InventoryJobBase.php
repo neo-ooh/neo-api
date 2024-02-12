@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Jobs;
 
 use Carbon\Carbon;
 use Illuminate\Queue\Middleware\RateLimited;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\Auth;
 use Neo\Jobs\Job;
 use Neo\Modules\Properties\Models\InventoryResourceEvent;
@@ -22,7 +23,10 @@ abstract class InventoryJobBase extends Job {
     public int|null $triggerer_id;
 
     public function middleware() {
-        return [new RateLimited('inventory-exchange')];
+        return [
+            (new WithoutOverlapping($this->inventoryId))->expireAfter(60),
+            (new RateLimited('inventory-exchange')),
+        ];
     }
 
     public function __construct(protected InventoryJobType $type, protected int $resourceId, protected int $inventoryId) {

@@ -41,7 +41,7 @@ abstract class Job implements ShouldQueue {
     use SerializesModels;
 
     final public function handle(): void {
-        $jobID = uniqid();
+        $jobID = uniqid('', true);
         clock()->event(get_class($this))
                ->color("orange")
                ->name($jobID)

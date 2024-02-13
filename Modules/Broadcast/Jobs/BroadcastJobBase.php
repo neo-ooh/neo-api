@@ -66,12 +66,6 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUniqueUntilProces
      */
     public int $tries = 1;
 
-    /**
-     * Broadcast job should wait a bit before being processed as we want to prevent too many interactions with external services
-     *
-     * @var int
-     */
-//    public $delay = 5;
 
     /**
      * Prevent having many job for the same resource queued at the same time
@@ -131,7 +125,6 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUniqueUntilProces
     }
 
     public function getLastAttemptResult(): mixed {
-        dump($this->broadcastJob->toArray());
         return $this->broadcastJob->last_attempt_result;
     }
 }

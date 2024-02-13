@@ -13,7 +13,7 @@ namespace Neo\Services\API;
 use Neo\Exceptions\BaseException;
 
 class APIAuthenticationError extends BaseException {
-    public function __construct() {
-        parent::__construct("Could not authenticate with API", "third-party.auth-error");
+    public function __construct(string $message = "") {
+        parent::__construct("Could not authenticate with API.\n\n$message", "third-party.auth-error");
     }
 }

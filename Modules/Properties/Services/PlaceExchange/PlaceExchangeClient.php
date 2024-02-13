@@ -12,6 +12,7 @@ namespace Neo\Modules\Properties\Services\PlaceExchange;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Cache;
 use Neo\Modules\Properties\Services\Exceptions\RequestException;
 use Neo\Modules\Properties\Services\Exceptions\RequestNotFoundException;
 use Neo\Services\API\APIAuthenticationError;
@@ -34,6 +35,17 @@ class PlaceExchangeClient extends APIClient {
      * @throws APIAuthenticationError
      */
     public function login(): bool {
+        // PX rate limit on the Auth endpoint is quite strict, so we cache our auth token to respect it.
+        // Try to get an access token from cache
+        $cacheKey = $this->config->inventoryUUID. "-access-token";
+        $accessToken = Cache::get($cacheKey, null);
+
+        if($accessToken !== null) {
+            $this->accessToken = $accessToken;
+            return true;
+        }
+
+        // Token is missing, retrieve it
         $authEndpoint       = Endpoint::post("/token");
         $authEndpoint->base = $this->config->api_url;
 
@@ -44,10 +56,18 @@ class PlaceExchangeClient extends APIClient {
 
 
         if ($response->failed()) {
-            throw new APIAuthenticationError();
+            throw new APIAuthenticationError($response->body());
         }
 
-        $this->accessToken = $response->json()["access_token"];
+        $responseJson = $response->json();
+        $accessToken = $responseJson["access_token"];
+
+        // Get the token lifespan, remove 2 minutes (120 seconds) from it to make sure we have enough validity left for the job
+        $tokenLifespanSec = max(0, (int)$responseJson["expires_in"] - 120);
+
+        Cache::put($cacheKey, $accessToken, $tokenLifespanSec);
+
+        $this->accessToken = $accessToken;
 
         return true;
     }

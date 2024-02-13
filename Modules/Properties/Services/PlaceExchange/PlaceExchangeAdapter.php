@@ -185,7 +185,10 @@ class PlaceExchangeAdapter extends InventoryAdapter {
 			provider     : "neo-mall-custom",
 		);
 		$adUnit->name            = $name;
-		$adUnit->network_id      = $context["network_id"];
+        if($adUnit->network_id !== $context["network_id"]) {
+            $adUnit->network_id   = $context["network_id"];
+            $adUnit->network_name = "";
+        }
 		$adUnit->placements      = $adUnit->placements ?? [];
 		$adUnit->planning        = new AdUnitPlanning(
 //			base_rate: round($product->programmatic_price / $this->getConfig()->conversion_rate_usd_to_cad),

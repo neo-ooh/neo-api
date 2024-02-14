@@ -24,7 +24,7 @@ abstract class InventoryJobBase extends Job {
 
     /**
      * @var int Allow infinite retry. The `Neo\Jobs\Job` superclass ensure work execution will not result in an exception leaking
-     *          Infinire retry makes sure our rate limiter will not incur a loss of jobs
+     *          Infinite retry makes sure our rate limiter will not incur a loss of jobs
      */
     public int $tries = 0;
 

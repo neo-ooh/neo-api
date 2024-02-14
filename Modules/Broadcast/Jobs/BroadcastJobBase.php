@@ -60,11 +60,17 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUniqueUntilProces
     */
 
     /**
-     * Broadcast jobs should not be retried on fail
+     * @var int Allow infinite retry. The `Neo\Jobs\Job` superclass ensure work execution will not result in an exception leaking
+     *          Infinite retry makes sure our rate limiter will not incur a loss of jobs
+     */
+    public int $tries = 0;
+
+    /**
+     * The maximum number of unhandled exceptions to allow before failing.
      *
      * @var int
      */
-    public int $tries = 1;
+    public int $maxExceptions = 1;
 
 
     /**
@@ -77,13 +83,14 @@ abstract class BroadcastJobBase extends Job implements ShouldBeUniqueUntilProces
     }
 
     /**
-     * Prevent multiple jobs for the same resource from executing at the same time
+     * Broadcast jobs middlewares
      *
      * @return array
      */
     public function middleware(): array {
         return [
-            new WithoutOverlapping($this->resourceId),
+            // Prevent multiple broadcast jobs from executing at the same time
+            (new WithoutOverlapping('broadcast-job'))->expireAfter(60),
         ];
     }
 

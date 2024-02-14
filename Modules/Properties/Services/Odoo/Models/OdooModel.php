@@ -10,10 +10,10 @@
 
 namespace Neo\Modules\Properties\Services\Odoo\Models;
 
-use Cache;
 use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use JsonException;
 use Neo\Modules\Properties\Services\Odoo\API\OdooClient;
 use Neo\Services\API\Traits\HasAttributes;

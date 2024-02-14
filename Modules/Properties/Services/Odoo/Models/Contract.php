@@ -135,7 +135,7 @@ class Contract extends OdooModel {
 
 	public function toResource(int $inventoryId): ContractResource {
 		return new ContractResource(
-			name       : $this->name,
+			name       : $this->name ?? $this->getKey(),
 			contract_id: new InventoryResourceId(
 				             inventory_id: $inventoryId,
 				             external_id : $this->getKey(),

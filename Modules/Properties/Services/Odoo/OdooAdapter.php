@@ -89,7 +89,7 @@ class OdooAdapter extends InventoryAdapter {
 	 * @throws JsonException
 	 * @throws OdooException
 	 */
-	protected function __listAllProducts(OdooClient $client, array $filters): Generator {
+	protected function fetchAllProducts(OdooClient $client, array $filters): Generator {
 		$pageSize = 500;
 		$cursor   = 0;
 
@@ -111,7 +111,7 @@ class OdooAdapter extends InventoryAdapter {
 	}
 
 	/**
-	 * When using the `$ifModifiedSince` parameter, some proudcts may be listed twice in the return values
+	 * When using the `$ifModifiedSince` parameter, some products may be listed twice in the return values
 	 *
 	 * @inheritDoc
 	 * @throws OdooException
@@ -132,7 +132,7 @@ class OdooAdapter extends InventoryAdapter {
 				];
 			}
 
-			yield from $this->__listAllProducts($client, $filters ?? $baseFilters);
+			yield from $this->fetchAllProducts($client, $filters ?? $baseFilters);
 
 			if ($ifModifiedSince) {
 				$filters = [
@@ -140,7 +140,7 @@ class OdooAdapter extends InventoryAdapter {
 					["shopping_center_id.write_date", ">=", $ifModifiedSince->toISOString()],
 				];
 
-				yield from $this->__listAllProducts($client, $filters);
+				yield from $this->fetchAllProducts($client, $filters);
 			}
 		});
 	}

@@ -54,11 +54,11 @@ class WeatherSourceClient implements WeatherAdapter {
                 ],
             ]);
         } catch (RequestException $e) {
-            throw new CouldNotFetchThirdPartyDataException($e->getResponse());
+            throw new CouldNotFetchThirdPartyDataException($e->getResponse(), $geoValues);
         }
 
         if ($rawReport->getStatusCode() !== 200) {
-            throw new CouldNotFetchThirdPartyDataException($rawReport);
+            throw new CouldNotFetchThirdPartyDataException($rawReport, $geoValues);
         }
 
         $rawReportBody = json_decode($rawReport->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);

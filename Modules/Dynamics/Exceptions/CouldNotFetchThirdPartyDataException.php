@@ -14,7 +14,7 @@ use Exception;
 use Psr\Http\Message\ResponseInterface;
 
 class CouldNotFetchThirdPartyDataException extends Exception {
-	public function __construct(ResponseInterface $response) {
-		parent::__construct($response->getBody(), $response->getStatusCode());
+	public function __construct(ResponseInterface $response, string $context = "") {
+		parent::__construct($response->getBody() . '\n\n' . $context, $response->getStatusCode());
 	}
 }

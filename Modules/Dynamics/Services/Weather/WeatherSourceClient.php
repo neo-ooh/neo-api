@@ -12,7 +12,9 @@ namespace Neo\Modules\Dynamics\Services\Weather;
 
 use Carbon\Carbon;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+use JsonException;
 use Neo\Modules\Dynamics\Exceptions\CouldNotFetchThirdPartyDataException;
 use RuntimeException;
 
@@ -23,6 +25,11 @@ class WeatherSourceClient implements WeatherAdapter {
         "allSummary",
     ];
 
+    /**
+     * @throws GuzzleException
+     * @throws JsonException
+     * @throws CouldNotFetchThirdPartyDataException
+     */
     public function getWeather(float $lng, float $lat, string $locale): WeatherReport {
         $geoValues = "$lat,$lng";
         $client    = new Client();
@@ -54,7 +61,11 @@ class WeatherSourceClient implements WeatherAdapter {
             throw new CouldNotFetchThirdPartyDataException($rawReport);
         }
 
-        $rawReportBody = json_decode($rawReport->getBody()->getContents(), associative: true);
+        $rawReportBody = json_decode($rawReport->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
+
+        if($rawReportBody["nowcast"]["temp"] === null) {
+            throw new RuntimeException("Invalid Weather Report format: ". json_encode($rawReportBody, JSON_THROW_ON_ERROR));
+        }
 
         // Build a weather report with the received responses
         return new WeatherReport(

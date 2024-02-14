@@ -143,7 +143,8 @@ class ActorsController extends Controller {
 		$hierarchyIds = $hierarchyIds->filter(fn($actorId) => in_array($actorId, $accessibleActors));
 
 		$actors    = Actor::query()->findMany($hierarchyIds);
-		$hierarchy = Collection::make($hierarchyIds->map(fn($actorId) => $actors->firstWhere("id", "=", $actorId)));
+		$hierarchy = Collection::make($hierarchyIds->map(fn($actorId) => $actors->firstWhere("id", "=", $actorId)))
+                               ->whereNotNull();
 
 		if ($request->input("compact")) {
 			$hierarchy = $this->compactActors($hierarchy);

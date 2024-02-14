@@ -48,6 +48,7 @@ class POPFlightNetwork extends Data {
 	}
 
 	public function getDeliveredPercent() {
-		return $this->getDeliveredImpressions() / $this->getContractedImpressions();
+        $contractedImpressions = $this->getContractedImpressions();
+		return $contractedImpressions > 0 ? $this->getDeliveredImpressions() / $this->getContractedImpressions() : 0;
 	}
 }

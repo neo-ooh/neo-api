@@ -63,8 +63,8 @@ class WeatherSourceClient implements WeatherAdapter {
 
         $rawReportBody = json_decode($rawReport->getBody()->getContents(), true, 512, JSON_THROW_ON_ERROR);
 
-        if($rawReportBody["nowcast"]["temp"] === null) {
-            throw new RuntimeException("Invalid Weather Report format: ". json_encode($rawReportBody, JSON_THROW_ON_ERROR));
+        if ($rawReportBody["nowcast"]["temp"] === null) {
+            throw new RuntimeException("Invalid Weather Report format: " . json_encode($rawReportBody, JSON_THROW_ON_ERROR));
         }
 
         // Build a weather report with the received responses
@@ -152,7 +152,7 @@ class WeatherSourceClient implements WeatherAdapter {
             "cloudy", "cloudy-gusts", "cloudy-high", "cloudy-windy", "sunny-overcast"                 => WeatherCondition::Cloudy,
             "fog", "haze"                                                                             => WeatherCondition::Fog,
             "showers", "hail"                                                                         => WeatherCondition::HeavyRain,
-            "partly-cloudy"                                                                           => WeatherCondition::MostlySunny,
+            "partly-cloudy", "strong-wind"                                                            => WeatherCondition::MostlySunny,
             "sprinkle"                                                                                => WeatherCondition::LightRain,
             "rain-mix"                                                                                => WeatherCondition::RainAndSun,
             "rain", "rain-wind", "sleet", "sleet-storm"                                               => WeatherCondition::Rain,

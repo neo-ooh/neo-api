@@ -72,9 +72,9 @@ class ImportContractJob implements ShouldQueue, ShouldBeUnique {
 
 		if ($this->contract->client) {
 			$client = Client::query()->firstOrCreate([
-				                                         "odoo_id" => $this->contract->advertiser->external_id,
+				                                         "odoo_id" => $this->contract->client->external_id,
 			                                         ], [
-				                                         "name" => $this->contract->advertiser->name,
+				                                         "name" => $this->contract->client->name,
 			                                         ]);
 		} else {
 			$client = null;

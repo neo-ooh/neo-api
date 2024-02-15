@@ -11,7 +11,6 @@
 namespace Neo\Modules\Properties\Http\Controllers;
 
 use Illuminate\Http\Response;
-use Neo\Modules\Broadcast\Models\Network;
 use Neo\Modules\Properties\Http\Requests\Fields\DestroyFieldRequest;
 use Neo\Modules\Properties\Http\Requests\Fields\ListFieldsRequest;
 use Neo\Modules\Properties\Http\Requests\Fields\StoreFieldRequest;
@@ -20,6 +19,7 @@ use Neo\Modules\Properties\Jobs\Properties\UpdateDemographicFieldsJob;
 use Neo\Modules\Properties\Models\Field;
 use Neo\Modules\Properties\Models\Property;
 use Neo\Modules\Properties\Models\PropertyFieldSegmentValue;
+use Neo\Modules\Properties\Models\PropertyNetwork;
 
 class FieldsController {
 	public function index(ListFieldsRequest $request): Response {
@@ -29,7 +29,7 @@ class FieldsController {
 	public function show(ListFieldsRequest $request, Field $field): Response {
 		$field->load(["category", "networks"]);
 
-		$field->network_ids = $field->networks->map(fn(Network $n) => $n->id);
+		$field->network_ids = $field->networks->map(fn(PropertyNetwork $n) => $n->id);
 
 		return new Response($field->loadPublicRelations());
 	}
@@ -97,7 +97,7 @@ class FieldsController {
 		}
 
 		$field->load(["category", "networks:id"]);
-		$field->network_ids = $field->networks->map(fn(Network $n) => $n->id);
+		$field->network_ids = $field->networks->map(fn(PropertyNetwork $n) => $n->id);
 		$field->makeHidden("networks");
 
 		return new Response($field);

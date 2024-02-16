@@ -282,6 +282,11 @@ class HivestackAdapter extends InventoryAdapter {
 				$unit = new Unit($client);
 			} else {
 				$unit = Unit::find($client, $productId->context["units"][$broadcastLocation->id]["id"]);
+
+                if($unit === null) {
+                    // Could not find unit on Hivestack, create a new one
+                    $unit = new Unit($client);
+                }
 			}
 
 			$this->fillUnit($unit, $broadcastLocation, $product, $productId->context);
@@ -293,7 +298,7 @@ class HivestackAdapter extends InventoryAdapter {
 			$unitIds[$broadcastLocation->id] = ["id" => $unit->getKey(), "name" => $unit->name];
 		}
 
-		// We now want to compare the list of units we just built against the one we were given.
+		// We now want to compare the list of units we just added/updated against the one we were given.
 		// Any unit listed in the latter but missing in the former will have to be removed
 		$unitsToRemove = array_diff(collect($productId->context["units"])
 			                            ->map(fn(array $unit) => $unit["id"])

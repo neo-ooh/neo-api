@@ -75,7 +75,6 @@ abstract class HivestackModel {
             $model->refresh();
             return $model;
         } catch (Throwable $e) {
-            clock($e);
             return null;
         }
     }

@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/demographics",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Neo\\Modules\\Demographics\\": "",
+            "Neo\\Modules\\Demographics\\App\\": "app/",
+            "Neo\\Modules\\Demographics\\Database\\Factories\\": "database/factories/",
+            "Neo\\Modules\\Demographics\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Neo\\Modules\\Demographics\\Tests\\": "tests/"
+        }
+    }
+}

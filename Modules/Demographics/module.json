@@ -1,0 +1,11 @@
+{
+    "name": "Demographics",
+    "alias": "demographics",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Neo\\Modules\\Demographics\\Providers\\DemographicsServiceProvider"
+    ],
+    "files": []
+}

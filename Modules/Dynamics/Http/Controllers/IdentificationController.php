@@ -78,6 +78,12 @@ class IdentificationController extends Controller {
 		                    })
 		                    ->first();
 
+        $address = $property?->address()->first()?->load("city");
+
+        if(!$address) {
+            return new Response([], 404);
+        }
+
 		/*		$product = ResolvedProduct::query()
 										  ->where("is_bonus", "=", false)
 										  ->whereHas("locations", function (Builder $query) use ($player) {

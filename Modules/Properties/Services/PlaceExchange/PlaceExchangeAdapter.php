@@ -325,7 +325,12 @@ class PlaceExchangeAdapter extends InventoryAdapter {
             if ($isNew) {
                 $adUnit->create();
             } else {
-                $adUnit->save($unitName);
+                try {
+                    $adUnit->save($unitName);
+                } catch (RequestNotFoundException $exception) {
+                    // Ad unit could not be found on save, create it then.
+                    $adUnit->create();
+                }
             }
 
             $adUnitsIds[$broadcastLocation->id] = ["id" => $adUnit->getKey(), "name" => $adUnit->name];

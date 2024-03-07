@@ -12,6 +12,7 @@ namespace Neo\Modules\Dynamics\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Controllers\Controller;
@@ -28,6 +29,7 @@ use Neo\Modules\Properties\Models\Property;
 
 class WeatherBundlesController extends Controller {
     public function index(ListWeatherBundlesRequest $request) {
+        /** @var Collection<WeatherBundle> $bundles */
         $bundles = WeatherBundle::query()->get();
 
         return new Response($bundles->loadPublicRelations());
@@ -90,6 +92,11 @@ class WeatherBundlesController extends Controller {
 
         $property = Property::query()->with(["address.city"])->find($request->input("property_id"));
 
+        // Shortcircuit if the property doesn't have an address
+        if ($property->address === null) {
+            new Response(null, 204);
+        }
+
         /** @var WeatherBundle|null $bundle */
         $bundle = WeatherBundle::query()
                                ->where(function (Builder $query) use ($now) {
@@ -121,23 +128,23 @@ class WeatherBundlesController extends Controller {
                                })
                                ->where(function (Builder $query) use ($property) {
                                    $query->whereRaw("JSON_LENGTH(`targeting`, '$.provinces') = 0")
-                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.provinces')", $property->address->city->province_id);
+                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.provinces')", [$property->address->city->province_id]);
                                })
                                ->where(function (Builder $query) use ($property) {
                                    $query->whereRaw("JSON_LENGTH(`targeting`, '$.markets') = 0")
-                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.markets')", $property->address->city->market_id);
+                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.markets')", [$property->address->city->market_id]);
                                })
                                ->where(function (Builder $query) use ($property) {
                                    $query->whereRaw("JSON_LENGTH(`targeting`, '$.cities') = 0")
-                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.cities')", $property->address->city_id);
+                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.cities')", [$property->address->city_id]);
                                })
                                ->where(function (Builder $query) use ($property) {
                                    $query->whereRaw("JSON_LENGTH(`targeting`, '$.properties') = 0")
-                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.properties')", $property->getKey());
+                                         ->orWhereRaw("JSON_CONTAINS(`targeting`, ?, '$.properties')", [$property->getKey()]);
                                })
                                ->where(function (Builder $query) use ($property) {
-                                   $query->whereRaw("JSON_LENGTH(`targeting`, '$.properties') = 0")
-                                         ->orWhereRaw("NOT JSON_CONTAINS(`targeting`, ?, '$.properties')", $property->getKey());
+                                   $query->whereRaw("JSON_LENGTH(`targeting`, '$.excluded_properties') = 0")
+                                         ->orWhereRaw("NOT JSON_CONTAINS(`targeting`, ?, '$.excluded_properties')", [$property->getKey()]);
                                })
                                ->orderByDesc("priority")
                                ->first();

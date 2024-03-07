@@ -146,7 +146,7 @@ class HivestackAdapter extends InventoryAdapter {
 		$site->description = trim($product->property_name);
 		$site->longitude   = $product->geolocation->longitude;
 		$site->latitude    = $product->geolocation->latitude;
-		$site->external_id = "connect:" . $product->property_connect_id . " - " . $product->property_name;
+		$site->external_id = substr("connect:" . $product->property_connect_id . " - " . $product->property_name, 0, 75);
 	}
 
 	protected function fillUnit(Unit $unit, BroadcastLocation $location, ProductResource $product, array $context): void {

@@ -24,6 +24,7 @@ class AppServiceProvider extends ServiceProvider {
 		"Helpers/aspectRatio.php",
 		"Helpers/param.php",
 		"Helpers/numbers.php",
+		"Helpers/debug.php",
 	];
 
 	/**

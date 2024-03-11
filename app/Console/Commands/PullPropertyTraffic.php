@@ -23,7 +23,7 @@ class PullPropertyTraffic extends Command {
      *
      * @var string
      */
-    protected $signature = 'property:pull-traffic {property}';
+    protected $signature = 'properties:pull-traffic {property}';
 
     /**
      * The console command description.

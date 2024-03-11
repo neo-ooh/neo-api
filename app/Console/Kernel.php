@@ -48,7 +48,7 @@ class Kernel extends ConsoleKernel {
         // contracts:clear-screenshots
         DeleteOldScreenshots::class,
 
-        // property:pull-traffic {property}
+        // properties:pull-traffic {property}
         PullPropertyTraffic::class,
 
         // Broadcast -------------------

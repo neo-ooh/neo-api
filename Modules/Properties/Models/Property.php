@@ -26,6 +26,7 @@ use Neo\Models\SecuredModel;
 use Neo\Models\Traits\HasCreatedByUpdatedBy;
 use Neo\Models\Traits\HasPublicRelations;
 use Neo\Models\Traits\HasView;
+use Neo\Modules\Demographics\Models\IndexSet;
 use Neo\Modules\Properties\Models\Traits\InventoryResourceModel;
 use Neo\Modules\Properties\Rules\AccessibleProperty;
 use Neo\Modules\Properties\Services\Resources\Enums\InventoryResourceType;
@@ -57,29 +58,30 @@ use Throwable;
  * @property Date|null                             $deleted_at
  * @property int|null                              $deleted_by
  *
- * @property Actor                                 $actor
- * @property Collection<PropertyTranslation>       $translations
- * @property PropertyWarnings                      $warnings
- * @property PropertyTrafficSettings               $traffic
- * @property PropertyType|null                     $type
- * @property Address|null                          $address
- * @property PropertyNetwork|null                  $network
- * @property Collection<InventoryPicture>          $pictures
- * @property Collection<PropertyFieldSegmentValue> $fields_values
- * @property Collection<OpeningHours>              $opening_hours
- * @property Collection<Brand>                     $tenants
- * @property Pricelist                             $pricelist
- * @property Collection<Actor>                     $contacts
- * @property Collection<Unavailability>            $unavailabilities
+ * @property-read Actor                                 $actor
+ * @property-read Collection<PropertyTranslation>       $translations
+ * @property-read PropertyWarnings                      $warnings
+ * @property-read PropertyTrafficSettings               $traffic
+ * @property-read PropertyType|null                     $type
+ * @property-read Address|null                          $address
+ * @property-read PropertyNetwork|null                  $network
+ * @property-read Collection<InventoryPicture>          $pictures
+ * @property-read Collection<PropertyFieldSegmentValue> $fields_values
+ * @property-read Collection<OpeningHours>              $opening_hours
+ * @property-read Collection<Brand>                     $tenants
+ * @property-read Pricelist                             $pricelist
+ * @property-read Collection<Actor>                     $contacts
+ * @property-read Collection<Unavailability>            $unavailabilities
+ * @property-read Collection<IndexSet>            $index_sets
  *
- * @property Collection<Product>                   $products
+ * @property-read Collection<Product>                   $products
  *
- * @property array                                 $rolling_weekly_traffic
+ * @property-read array                                 $rolling_weekly_traffic
  *
  * @property int|null                              $cover_picture_id
- * @property InventoryPicture|null                 $cover_picture
+ * @property-read InventoryPicture|null                 $cover_picture
  *
- * @property InventoryResource                     $inventoryResource
+ * @property-read InventoryResource                     $inventoryResource
  */
 class Property extends SecuredModel {
 	use HasPublicRelations;
@@ -332,6 +334,10 @@ class Property extends SecuredModel {
 	public function unavailabilities(): BelongsToMany {
 		return $this->belongsToMany(Unavailability::class, "properties_unavailabilities", "property_id", "unavailability_id");
 	}
+
+    public function index_sets() {
+        return $this->hasMany(IndexSet::class, "property_id", "actor_id");
+    }
 
 
 	/*

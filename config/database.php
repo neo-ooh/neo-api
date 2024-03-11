@@ -59,6 +59,19 @@ return [
 				                                                                 PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
 			                                                                 ]) : [],
 		],
+        'neo_demographics' => [
+            'driver' => 'pgsql',
+            'host'           => env('DB_DEMOGRAPHICS_HOST'),
+            'port'           => env('DB_DEMOGRAPHICS_PORT'),
+            'database'       => env('DB_DEMOGRAPHICS_DATABASE'),
+            'username'       => env('DB_DEMOGRAPHICS_USERNAME'),
+            'password'       => env('DB_DEMOGRAPHICS_PASSWORD'),
+            'prefix'         => '',
+            'prefix_indexes' => true,
+            'strict'         => false,
+            'engine'         => null,
+            'options'        => [],
+        ]
 	],
 
 	/*

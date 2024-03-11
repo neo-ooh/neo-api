@@ -55,7 +55,7 @@ class PropertiesTrafficController extends Controller {
         Cache::forget($trafficSettings->getRollingWeeklyTrafficCacheKey());
 
         if ($forcePull) {
-            Artisan::queue("property:pull-traffic $property->actor_id");
+            Artisan::queue("properties:pull-traffic $property->actor_id");
         }
 
         return new Response($trafficSettings->load(["source"]));

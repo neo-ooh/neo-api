@@ -23,6 +23,16 @@ use Neo\Console\Commands\PullPropertyTraffic;
 use Neo\Console\Commands\Test\TestCommand;
 use Neo\Modules\Broadcast\Console\Commands\FetchCampaignsPerformancesCommand;
 use Neo\Modules\Broadcast\Console\Commands\SynchronizeNetworkCommand;
+use Neo\Modules\Demographics\Console\Commands\Importers\ImportEnvironicsDatapointsCommand;
+use Neo\Modules\Demographics\Console\Commands\Importers\ImportEnvironicsDatasetCommand;
+use Neo\Modules\Demographics\Console\Commands\OneOff\IngestZipcodesCoordinatesCommand;
+use Neo\Modules\Demographics\Console\Commands\SynchronizePropertiesWithDemoDB;
+use Neo\Modules\Demographics\Jobs\Extracts\GenerateExtractsJob;
+use Neo\Modules\Demographics\Jobs\Extracts\ProcessExtractsJob;
+use Neo\Modules\Demographics\Jobs\GeographicReports\GenerateGeographicReportsJob;
+use Neo\Modules\Demographics\Jobs\IndexSets\GenerateIndexSetsJob;
+use Neo\Modules\Demographics\Jobs\IndexSets\ProcessIndexSetsJob;
+use Neo\Modules\Demographics\Jobs\ProcessGeographicReportsJob\ProcessGeographicReportsJob;
 use Neo\Modules\Dynamics\Console\Commands\SynchronizeNewsRecordsCommand;
 use Neo\Modules\Properties\Console\Commands\ImportMobilePropertiesCommand;
 use Neo\Modules\Properties\Jobs\Contracts\RefreshContracts;
@@ -68,6 +78,13 @@ class Kernel extends ConsoleKernel {
         SynchronizeNewsRecordsCommand::class,
         UpdateOtgFramesCommand::class,
         SwitchCampaignTargetingToLocationsCommand::class,
+
+
+        // Demographics -------------------
+        ImportEnvironicsDatasetCommand::class,
+        ImportEnvironicsDatapointsCommand::class,
+        IngestZipcodesCoordinatesCommand::class,
+        SynchronizePropertiesWithDemoDB::class,
     ];
 
 	/**
@@ -114,6 +131,19 @@ class Kernel extends ConsoleKernel {
 		/*$schedule->job(NotifyEndOfSchedules::class)->weekdays()
 				 ->timezone('America/Toronto')
 				 ->at("06:00");*/
+
+        // Demographics ------
+        // Geographic reports
+        $schedule->job(GenerateGeographicReportsJob::class)->dailyAt("01:00");
+        $schedule->job(ProcessGeographicReportsJob::class)->dailyAt("01:10");
+
+        // Extracts
+        $schedule->job(GenerateExtractsJob::class)->dailyAt("02:00");
+        $schedule->job(ProcessExtractsJob::class)->dailyAt("02:10");
+
+        // Index Sets
+        $schedule->job(GenerateIndexSetsJob::class)->dailyAt("04:00");
+        $schedule->job(ProcessIndexSetsJob::class)->dailyAt("04:10");
 
 
 		/* -----------------

@@ -1,6 +1,6 @@
 {
   "Broadcast": true,
-  "Properties": true,
+  "Demographics": true,
   "Dynamics": true,
-  "Demographics": true
+  "Properties": true
 }

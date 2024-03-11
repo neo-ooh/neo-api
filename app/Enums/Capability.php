@@ -476,4 +476,12 @@ enum Capability: string {
 	 * Allows creating and updating fields using demographic values
 	 */
 	case fields_demographics_edit = "fields.demographics.edit";
+
+    /*
+    |----------------------------------------------------------------------
+    | Demographics
+    |----------------------------------------------------------------------
+    */
+
+    case datasets_edit = "datasets.edit";
 }

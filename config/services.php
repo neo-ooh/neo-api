@@ -22,27 +22,21 @@ return [
     |
     */
 
-    'mailgun' => [
-        'domain'   => env('MAILGUN_DOMAIN'),
-        'secret'   => env('MAILGUN_SECRET'),
-        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
-    ],
-
-    'postmark' => [
-        'token' => env('POSTMARK_TOKEN'),
-    ],
-
-    'ses' => [
-        'key'    => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-    ],
-
-    "meteo-media" => [
-        "endpoint"        => env("METEO_MEDIA_ENDPOINT", "http://wx.api.pelmorex.com/weather"),
-        "key"             => env("METEO_MEDIA_API_KEY"),
-        "record-lifespan" => env("METEO_MEDIA_RECORD_LIFESPAN", 2700),
-    ],
+//    'mailgun' => [
+//        'domain'   => env('MAILGUN_DOMAIN'),
+//        'secret'   => env('MAILGUN_SECRET'),
+//        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+//    ],
+//
+//    'postmark' => [
+//        'token' => env('POSTMARK_TOKEN'),
+//    ],
+//
+//    'ses' => [
+//        'key'    => env('AWS_ACCESS_KEY_ID'),
+//        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+//        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+//    ],
 
     "canadian-press" => [
         "disk"    => "canadian-press",
@@ -61,4 +55,9 @@ return [
         "key" => env('FOURSQUARE_API_KEY'),
     ],
 
+
+    "traveltime" => [
+        "app-id" => env('TRAVELTIME_APP_ID'),
+        "app-key" => env('TRAVELTIME_APP_KEY'),
+    ]
 ];

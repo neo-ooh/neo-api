@@ -13,6 +13,8 @@ namespace Neo\Providers;
 use Illuminate\Support\ServiceProvider;
 use Neo\Modules\Dynamics\Services\News\CanadianPressClient;
 use Neo\Modules\Dynamics\Services\News\NewsAdapter;
+use Neo\Services\Isochrone\IsochroneAdapter;
+use Neo\Services\Isochrone\TravelTimeClient;
 
 class ThirdPartiesServicesProvider extends ServiceProvider {
 	/**
@@ -23,5 +25,12 @@ class ThirdPartiesServicesProvider extends ServiceProvider {
 	public function register() {
 		// Bind the Canadian Press interface to the News service
 		$this->app->bind(NewsAdapter::class, CanadianPressClient::class);
+
+        $this->app->bind(IsochroneAdapter::class, function () {
+            return new TravelTimeClient(
+                appID: config("services.traveltime.app-id"),
+                appKey: config("services.traveltime.app-key"),
+            );
+        });
 	}
 }

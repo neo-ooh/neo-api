@@ -16,7 +16,7 @@ abstract class Document {
     /**
      * @throws UnknownGenerationException
      */
-    public static function make($data): Document {
+    public static function make($data): static {
         $document = new static();
 
         if (!$document->ingest($data)) {

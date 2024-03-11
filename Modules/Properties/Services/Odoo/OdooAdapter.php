@@ -145,16 +145,23 @@ class OdooAdapter extends InventoryAdapter {
 		});
 	}
 
-	/**
-	 * @inheritDoc
-	 * @throws OdooException
-	 * @throws JsonException
-	 */
+    /**
+     * @inheritDoc
+     * @param InventoryResourceId $productId
+     * @return IdentifiableProduct
+     * @throws OdooException
+     */
 	public function getProduct(InventoryResourceId $productId): IdentifiableProduct {
 		$client = $this->getConfig()->getClient();
 
+        $product = Product::get($client, (int)$productId->external_id);
+
+        if(!$product) {
+            throw new InventoryResourceNotFound($productId);
+        }
+
 		return ResourceFactory::makeIdentifiableProduct(
-			product: Product::get($client, (int)$productId->external_id),
+			product: $product,
 			client : $client,
 			config : $this->getConfig(),
 		);

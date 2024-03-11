@@ -21,11 +21,11 @@ use Neo\Modules\Properties\Models\MobileProduct;
 use Neo\Modules\Properties\Models\MobileProductBracket;
 
 class MobileProductsBracketsController extends Controller {
-	public function index(ListMobileProductBracketsRequest $request, MobileProduct $mobileProduct) {
+	public function index(ListMobileProductBracketsRequest $request, MobileProduct $mobileProduct): Response {
 		return new Response($mobileProduct->brackets->loadPublicRelations());
 	}
 
-	public function store(StoreMobileProductBracketRequest $request, MobileProduct $mobileProduct) {
+	public function store(StoreMobileProductBracketRequest $request, MobileProduct $mobileProduct): Response {
 		$mobileProductBracket                    = new MobileProductBracket();
 		$mobileProductBracket->mobile_product_id = $mobileProduct->getKey();
 		$mobileProductBracket->cpm               = $request->input("cpm");
@@ -37,11 +37,11 @@ class MobileProductsBracketsController extends Controller {
 		return new Response($mobileProductBracket, 201);
 	}
 
-	public function show(ShowMobileProductBracketRequest $request, MobileProduct $mobileProduct, MobileProductBracket $mobileProductBracket) {
+	public function show(ShowMobileProductBracketRequest $request, MobileProduct $mobileProduct, MobileProductBracket $mobileProductBracket): Response {
 		return new Response($mobileProductBracket->loadPublicRelations());
 	}
 
-	public function update(UpdateMobileProductBracketRequest $request, MobileProduct $mobileProduct, MobileProductBracket $mobileProductBracket) {
+	public function update(UpdateMobileProductBracketRequest $request, MobileProduct $mobileProduct, MobileProductBracket $mobileProductBracket): Response {
 		$mobileProductBracket->cpm             = $request->input("cpm");
 		$mobileProductBracket->budget_min      = $request->input("budget_min");
 		$mobileProductBracket->budget_max      = $request->input("budget_max", null);
@@ -51,7 +51,7 @@ class MobileProductsBracketsController extends Controller {
 		return new Response($mobileProductBracket->loadPublicRelations());
 	}
 
-	public function delete(DestroyMobileProductBracketRequest $request, MobileProduct $mobileProduct, MobileProductBracket $mobileProductBracket) {
+	public function delete(DestroyMobileProductBracketRequest $request, MobileProduct $mobileProduct, MobileProductBracket $mobileProductBracket): Response {
 		$mobileProductBracket->delete();
 
 		return new Response(["status" => "ok"]);

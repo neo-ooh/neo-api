@@ -152,7 +152,6 @@ class PromoteScheduleJob extends BroadcastJobBase {
 
 		// This array will hold newly created resources, and errors
 		$results   = [];
-		$hasErrors = false;
 
 		// Iterate over all the selected representations
 		/** @var ExternalCampaignDefinition $representation */
@@ -348,7 +347,7 @@ class PromoteScheduleJob extends BroadcastJobBase {
 		// If we are working with all the representations, and no errors occured,
 		// we do a cleanup of the external resources attached to the schedule, removing
 		// all resources that are not present in the results list
-		if (!$useSpecificRepresentation && !$hasErrors) {
+		if (!$useSpecificRepresentation) {
 			$validRepresentationsIds = collect($results)->pluck("id");
 			$this->cleanUpExternalRepresentations($schedule, $validRepresentationsIds->all());
 		}

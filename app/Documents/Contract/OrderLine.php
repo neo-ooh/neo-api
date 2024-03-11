@@ -202,7 +202,7 @@ class OrderLine {
         }
     }
 
-    protected function inferOrderType() {
+    protected function inferOrderType(): void {
         if ($this->isMobileProduct) {
             $this->type = static::TYPE_EXTENSION_STRATEGY;
             return;
@@ -232,7 +232,7 @@ class OrderLine {
      * @param string $network
      * @return bool
      */
-    public function isNetwork(string $network) {
+    public function isNetwork(string $network): bool {
         return match ($network) {
             Network::NEO_SHOPPING => strtolower($this->property_type) === 'shopping',
             Network::NEO_OTG      => strtolower($this->property_type) === 'service station' ||
@@ -250,7 +250,7 @@ class OrderLine {
      *
      * @return bool
      */
-    public function isIndoor() {
+    public function isIndoor(): bool {
         if (!$this->isNetwork(Network::NEO_OTG)) {
             return false;
         }
@@ -264,7 +264,7 @@ class OrderLine {
      *
      * @return bool
      */
-    public function isOutdoor() {
+    public function isOutdoor(): bool {
         if (!$this->isNetwork(Network::NEO_OTG)) {
             return false;
         }
@@ -278,7 +278,7 @@ class OrderLine {
      *
      * @return bool
      */
-    public function isAdapt() {
+    public function isAdapt(): bool {
         if (!$this->isNetwork(Network::NEO_OTG)) {
             return false;
         }
@@ -286,27 +286,27 @@ class OrderLine {
         return !$this->isOutdoor() && !$this->isIndoor();
     }
 
-    public function isGuaranteed(): int {
+    public function isGuaranteed(): bool {
         return $this->isGuaranteedPurchase() || $this->isGuaranteedBonus();
     }
 
-    public function isGuaranteedPurchase(): int {
+    public function isGuaranteedPurchase(): bool {
         return $this->type === static::TYPE_GUARANTEED_PURCHASE;
     }
 
-    public function isGuaranteedBonus(): int {
+    public function isGuaranteedBonus(): bool {
         return $this->type === static::TYPE_GUARANTEED_BONUS;
     }
 
-    public function isBonusUponAvailability(): int {
+    public function isBonusUponAvailability(): bool {
         return $this->type === static::TYPE_BONUS_UPON_AVAIL;
     }
 
-    public function isExtensionStrategy(): int {
+    public function isExtensionStrategy(): bool {
         return $this->type === static::TYPE_EXTENSION_STRATEGY;
     }
 
-    public function isAdServerProduct(): int {
+    public function isAdServerProduct(): bool {
         return $this->type === static::TYPE_ADSERVER_PRODUCT;
     }
 
@@ -318,7 +318,7 @@ class OrderLine {
         return $this->product;
     }
 
-    protected function getPeriodString() {
+    protected function getPeriodString(): string {
         $format = App::currentLocale() === "fr" ? static::PERIOD_FORMAT_FR : static::PERIOD_FORMAT_EN;
 
         $startDateObj = Carbon::make($this->date_start);

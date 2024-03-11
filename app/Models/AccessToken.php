@@ -16,6 +16,7 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\Access\Authorizable;
 use Neo\Models\Traits\HasCapabilities;
 use Ramsey\Uuid\Uuid;
@@ -84,7 +85,10 @@ class AccessToken extends Model implements AuthenticatableContract, Authorizable
     |--------------------------------------------------------------------------
     */
 
-    public function capabilities() {
+    /**
+     * @return BelongsToMany<Capability>
+     */
+    public function capabilities(): BelongsToMany {
         return $this->belongsToMany(Capability::class, "access_tokens_capabilities", "access_token_id", "capability_id");
     }
 }

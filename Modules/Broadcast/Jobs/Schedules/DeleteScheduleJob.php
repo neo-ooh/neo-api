@@ -56,7 +56,7 @@ class DeleteScheduleJob extends BroadcastJobBase {
 	 */
 	protected function run(): array|null {
 		// Load the schedule
-		/** @var Schedule $schedule */
+		/** @var Schedule|null $schedule */
 		$schedule = Schedule::withTrashed()->find($this->resourceId);
 
 		if (!$schedule) {

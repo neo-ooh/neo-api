@@ -21,7 +21,7 @@ use Neo\Models\Traits\HasPublicRelations;
  * @property string       $name_en
  * @property string       $name_fr
  *
- * @property Collection<> $brackets
+ * @property-read Collection<MobileProductBracket> $brackets
  *
  * @property Carbon       $created_at
  * @property Carbon       $updated_at

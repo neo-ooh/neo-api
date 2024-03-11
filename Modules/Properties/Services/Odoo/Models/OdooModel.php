@@ -179,14 +179,13 @@ abstract class OdooModel implements Arrayable {
 		return $models->mapWithKeys(fn($record) => [$record[static::$key] => new static($client, $record)]);
 	}
 
-	/**
-	 * Pull a specific record using its id
-	 *
-	 * @param OdooClient $client
-	 * @param mixed      $id Unique ID of the record
-	 * @return static|null
-	 * @throws JsonException
-	 */
+    /**
+     * Pull a specific record using its id
+     *
+     * @param OdooClient $client
+     * @param mixed      $id Unique ID of the record
+     * @return static|null
+     */
 	public static function get(OdooClient $client, mixed $id): static|null {
 		$response = Cache::tags(["odoo-data", "odoo-" . static::$slug])
 		                 ->remember(static::makeCacheKey($id), 3600 * 6, function () use ($id, $client) {

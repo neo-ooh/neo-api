@@ -15,10 +15,10 @@ use Illuminate\Support\Collection;
 use Neo\Documents\XLSX\Worksheet;
 use Neo\Http\Requests\ContractsFlights\GetExportRequest;
 use Neo\Http\Requests\ContractsFlights\ListExportsRequest;
-use Neo\Modules\Properties\Models\ContractFlight;
-use Neo\Modules\Properties\Models\ContractLine;
 use Neo\Modules\Broadcast\Models\Location;
 use Neo\Modules\Broadcast\Models\Network;
+use Neo\Modules\Properties\Models\ContractFlight;
+use Neo\Modules\Properties\Models\ContractLine;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Csv;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -74,7 +74,7 @@ class ContractsFlightsExportController {
 		$builtLines = $lines->flatMap(function (ContractLine $line) use ($serviceType, $serviceId) {
 			return match ($serviceType) {
 				"broadcaster" => $line->product->locations->map(fn(Location $location) => [$location->external_id, $location->name, $line->spots]),
-				"inventory"   => [[$line->product->external_representations->firstWhere("inventory_id", "=", $serviceId)?->external_id ?? "-", $line->product->name_en, $line->spots]],
+				"inventory"   => [[$line->product->external_representations->firstWhere("inventory_id", "=", $serviceId)->external_id ?? "-", $line->product->name_en, $line->spots]],
 			};
 		});
 

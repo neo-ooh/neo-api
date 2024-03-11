@@ -259,71 +259,122 @@ class Property extends SecuredModel {
 	|--------------------------------------------------------------------------
 	*/
 
+    /**
+     * @return BelongsTo<Actor>
+     */
 	public function actor(): BelongsTo {
 		return $this->belongsTo(Actor::class, "actor_id");
 	}
 
+    /**
+     * @return BelongsTo<PropertyNetwork>
+     */
 	public function network(): BelongsTo {
 		return $this->belongsTo(PropertyNetwork::class, "network_id");
 	}
 
+    /**
+     * @return HasOne<PropertyWarnings>
+     */
 	public function warnings(): HasOne {
 		return $this->hasOne(PropertyWarnings::class, "property_id", "actor_id");
 	}
 
+    /**
+     * @return HasMany<PropertyTranslation>
+     */
 	public function translations(): HasMany {
 		return $this->hasMany(PropertyTranslation::class, "property_id", "actor_id");
 	}
 
+    /**
+     * @return HasOne<PropertyTrafficSettings>
+     */
 	public function traffic(): HasOne {
 		return $this->hasOne(PropertyTrafficSettings::class, "property_id", "actor_id");
 	}
 
+    /**
+     * @return BelongsTo<PropertyType>
+     */
 	public function type(): BelongsTo {
 		return $this->belongsTo(PropertyType::class, "type_id", "id");
 	}
 
+    /**
+     * @return BelongsTo<Address>
+     */
 	public function address(): BelongsTo {
 		return $this->belongsTo(Address::class, "address_id", "id");
 	}
 
+    /**
+     * @return HasMany<InventoryPicture>
+     */
 	public function pictures(): HasMany {
 		return $this->hasMany(InventoryPicture::class, "property_id", "actor_id")->orderBy("order");
 	}
 
+    /**
+     * @return BelongsTo<InventoryPicture>
+     */
 	public function cover_picture(): BelongsTo {
 		return $this->belongsTo(InventoryPicture::class, "cover_picture_id", "id");
 	}
 
+    /**
+     * @return HasMany<PropertyFieldSegmentValue>
+     */
 	public function fields_values(): HasMany {
 		return $this->hasMany(PropertyFieldSegmentValue::class, "property_id", "actor_id");
 	}
 
+    /**
+     * @return HasMany<Product>
+     */
 	public function products(): HasMany {
 		return $this->hasMany(Product::class, "property_id", "actor_id");
 	}
 
+    /**
+     * @return BelongsToMany<ProductCategory>
+     */
 	public function products_categories(): BelongsToMany {
 		return $this->belongsToMany(ProductCategory::class, "products", "property_id", "category_id")
 		            ->distinct();
 	}
 
+    /**
+     * @return HasMany<OpeningHours>
+     */
 	public function opening_hours(): HasMany {
 		return $this->hasMany(OpeningHours::class, "property_id")->orderBy("weekday");
 	}
 
+    /**
+     * @return BelongsToMany<Brand>
+     */
 	public function tenants(): BelongsToMany {
 		return $this->belongsToMany(Brand::class, "properties_tenants", "property_id", "brand_id");
 	}
 
+    /**
+     * @return HasMany<DemographicValue>
+     */
 	public function demographicValues(): HasMany {
 		return $this->hasMany(DemographicValue::class, "property_id", "actor_id");
 	}
 
+    /**
+     * @return BelongsTo<Pricelist>
+     */
 	public function pricelist(): BelongsTo {
 		return $this->belongsTo(Pricelist::class, "pricelist_id", "id");
 	}
 
+    /**
+     * @return BelongsToMany<Actor>
+     */
 	public function contacts(): BelongsToMany {
 		return $this->belongsToMany(Actor::class, "properties_contacts", "property_id", "actor_id")
 		            ->with(["phone"])
@@ -331,11 +382,17 @@ class Property extends SecuredModel {
 		            ->as("contact");
 	}
 
+    /**
+     * @return BelongsToMany<Unavailability>
+     */
 	public function unavailabilities(): BelongsToMany {
 		return $this->belongsToMany(Unavailability::class, "properties_unavailabilities", "property_id", "unavailability_id");
 	}
 
-    public function index_sets() {
+    /**
+     * @return HasMany<IndexSet>
+     */
+    public function index_sets(): HasMany {
         return $this->hasMany(IndexSet::class, "property_id", "actor_id");
     }
 

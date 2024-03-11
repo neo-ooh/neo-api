@@ -10,9 +10,11 @@
 
 namespace Neo\Modules\Demographics\Jobs\GeographicReports\Processors;
 
+use GeoJson\GeoJson;
 use Neo\Modules\Demographics\Exceptions\InvalidFileFormatException;
 use Neo\Modules\Demographics\Jobs\GeographicReports\GeographicDataReader;
 use Neo\Modules\Demographics\Structures\GeographicDataEntry;
+use Override;
 
 class EnvironicsCustomerFileProcessor implements GeographicDataReader {
     public function __construct(protected string $filePath) {
@@ -57,5 +59,9 @@ class EnvironicsCustomerFileProcessor implements GeographicDataReader {
                 metadata: array_combine($headers, $values)
             );
         }
+    }
+
+    #[Override] public function getGeometry(): ?GeoJson {
+        return null;
     }
 }

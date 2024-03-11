@@ -10,22 +10,21 @@
 
 namespace Neo\Modules\Properties\Jobs\Contracts;
 
-use Edujugon\Laradoo\Exceptions\OdooException;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use JsonException;
 use Neo\Modules\Properties\Models\ExternalInventoryResource;
 use Neo\Modules\Properties\Models\InventoryProvider;
 use Neo\Modules\Properties\Models\MobileProduct;
 use Neo\Modules\Properties\Models\Product;
 use Neo\Modules\Properties\Models\ProductCategory;
+use Neo\Modules\Properties\Services\Exceptions\InvalidInventoryAdapterException;
+use Neo\Modules\Properties\Services\Exceptions\InventoryResourceNotFound;
 use Neo\Modules\Properties\Services\InventoryAdapter;
 use Neo\Modules\Properties\Services\InventoryAdapterFactory;
-use Neo\Modules\Properties\Services\Odoo\OdooAdapter;
 use Neo\Modules\Properties\Services\Resources\ContractLineResource;
 use Neo\Modules\Properties\Services\Resources\ContractResource;
 use Neo\Modules\Properties\Services\Resources\Enums\ContractLineType;
@@ -58,15 +57,15 @@ class SendContractFlightJob implements ShouldQueue {
 	public function __construct(protected ContractResource $contract, protected CPCompiledFlight $flight, protected int $flightIndex) {
 	}
 
-	/**
-	 * @throws OdooException
-	 * @throws JsonException
-	 */
+    /**
+     * @return array
+     * @throws InvalidInventoryAdapterException
+     */
 	public function handle(): array {
 		$messages = [];
 
 		$provider = InventoryProvider::find($this->contract->contract_id->inventory_id);
-		/** @var OdooAdapter $odoo */
+		/** @var InventoryAdapter $inventory */
 		$inventory = InventoryAdapterFactory::make($provider);
 
 		$lines = collect();
@@ -186,7 +185,7 @@ class SendContractFlightJob implements ShouldQueue {
 					return $orderLines;
 				}
 
-				/** @var ExternalInventoryResource|null $externalRepresentation */
+				/** @var ExternalInventoryResource|null $linkedProductExternalRepresentation */
 				$linkedProductExternalRepresentation = $linkedProduct->external_representations->firstWhere("inventory_id", "=", 1);
 
 				// Cannot send product without a representation
@@ -249,13 +248,13 @@ class SendContractFlightJob implements ShouldQueue {
 			}
 
 			// Load the product from id to get the variant id
-			$productionProduct = $inventory->getProduct(new InventoryResourceId(
-				                                            inventory_id: $inventory->getInventoryID(),
-				                                            type        : InventoryResourceType::Product,
-				                                            external_id : $productionProductId,
-			                                            ));
-
-			if (!$productionProduct) {
+            try {
+                $productionProduct = $inventory->getProduct(new InventoryResourceId(
+                                                                inventory_id: $inventory->getInventoryID(),
+                                                                external_id : $productionProductId,
+                                                                type        : InventoryResourceType::Product,
+                                                            ));
+            } catch (InventoryResourceNotFound) {
 				// Could not find production product, stop here
 				$messages[] = "Could not find Odoo product with ID #{$productionProductId}";
 				continue;

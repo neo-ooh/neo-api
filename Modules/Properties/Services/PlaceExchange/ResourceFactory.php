@@ -62,7 +62,7 @@ class ResourceFactory {
                             allows_motion            : true,
                             property_id              : null,
                             property_name            : $adUnit->venue->name,
-                            property_type            : $adUnit->venue?->openooh_category ? new InventoryResourceId(
+                            property_type            : $adUnit->venue->openooh_category ? new InventoryResourceId(
                                                            inventory_id: $config->inventoryID,
                                                            external_id : $adUnit->venue->openooh_category,
                                                            type        : InventoryResourceType::PropertyType,

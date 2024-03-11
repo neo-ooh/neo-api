@@ -90,7 +90,7 @@ class ImportEnvironicsDatasetCommand extends Command {
 
         $this->info("Parsing areas and values...");
 
-        $start = $this->option("skip");
+        $start = (int)$this->option("skip");
         $l = 0;
         
         // Now we parse all the other lines and store their data

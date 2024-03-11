@@ -82,7 +82,7 @@ class StatsController extends Controller {
 			                   })
 			                   ->where("is_bonus", "=", false)
 			                   ->where("is_sellable", "=", true)
-			                   ->whereHas("property", function (Builder $query) use ($request) {
+			                   ->whereHas("property", function (Builder $query) {
 				                   $query->where("is_sellable", "=", true);
 				                   $query->whereHas("address", function (Builder $query) {
 					                   $query->whereNotNull("geolocation");

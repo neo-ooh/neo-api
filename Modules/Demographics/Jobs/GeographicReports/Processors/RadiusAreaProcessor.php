@@ -10,11 +10,13 @@
 
 namespace Neo\Modules\Demographics\Jobs\GeographicReports\Processors;
 
+use GeoJson\GeoJson;
 use Illuminate\Database\Eloquent\Builder;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use Neo\Modules\Demographics\Jobs\GeographicReports\GeographicDataReader;
 use Neo\Modules\Demographics\Models\Area;
 use Neo\Modules\Demographics\Structures\GeographicDataEntry;
+use Override;
 
 /**
  * This reader takes a point, a radius, and returns a list of all areas of the desired type inside the radius.
@@ -43,5 +45,9 @@ class RadiusAreaProcessor implements GeographicDataReader {
                 metadata: []
             );
         }
+    }
+
+    #[Override] public function getGeometry(): ?GeoJson {
+        return null;
     }
 }

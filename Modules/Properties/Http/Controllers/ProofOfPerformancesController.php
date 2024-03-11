@@ -13,9 +13,9 @@ namespace Neo\Modules\Properties\Http\Controllers;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
+use Mpdf\MpdfException;
+use Neo\Documents\Exceptions\UnknownGenerationException;
 use Neo\Http\Controllers\Controller;
-use Neo\Modules\Properties\Models\Contract;
-use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Properties\Documents\POP\PDFPOP;
 use Neo\Modules\Properties\Documents\POP\POPFlight;
 use Neo\Modules\Properties\Documents\POP\POPFlightGroup;
@@ -25,6 +25,8 @@ use Neo\Modules\Properties\Documents\POP\POPScreenshot;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Http\Requests\ProofOfPerformances\BuildPOPRequest;
 use Neo\Modules\Properties\Http\Requests\ProofOfPerformances\GetPOPBaseRequest;
+use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Properties\Models\ContractLine;
 use Neo\Resources\FlightType;
 
@@ -63,7 +65,9 @@ class ProofOfPerformancesController extends Controller {
                                                                        * @param Collection $lines
                                                                        * @return POPFlightNetwork
                                                                        */ function (Collection $lines) use ($flight) {
-                                                                          $networkId      = $lines[0]->product->property->network_id;
+                                                                          /** @var ContractLine $line */
+                                                                          $line           = $lines[0];
+                                                                          $networkId      = $line->product->property->network_id;
                                                                           $deliveryRatios = $lines->map(fn(ContractLine $line) => $line->impressions > 0 ? ($line->performances->impressions ?? 0) / $line->impressions : 0);
 
                                                                           return new POPFlightNetwork(
@@ -101,6 +105,10 @@ class ProofOfPerformancesController extends Controller {
                             ));
     }
 
+    /**
+     * @throws UnknownGenerationException
+     * @throws MpdfException
+     */
     public function build(BuildPOPRequest $request, Contract $contract) {
         $popData = POPRequest::from($request->input("pop"));
 

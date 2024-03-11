@@ -72,7 +72,7 @@ use Neo\Services\API\Endpoint;
  * @property int|null                           $females_45
  * @property int|null                           $females_65
  *
- * @property Collection<NamedIdentityAttribute> $tags
+ * @property Collection<NamedIdentityAttribute>|null $tags
  *
  * @property string                             $transact_status
  * @property bool                               $ox_enabled

@@ -43,7 +43,6 @@ class ProcessExtractJob extends DemographicJobBase {
     }
 
     protected function onFailure(Throwable $exception): void {
-        dump($exception);
         parent::onFailure($exception);
 
         // Store the error in the report metadata
@@ -109,7 +108,7 @@ class ProcessExtractJob extends DemographicJobBase {
 
         // Get the execution time
         $duration                                 = microtime(true) - $startTime;
-        $this->extract->metadata->executionTimeMs = round($duration * 1_000); // seconds to ms
+        $this->extract->metadata->executionTimeMs = (int)round($duration * 1_000); // seconds to ms
 
         // Reset our sequential scans setting
         $demoDB->statement(/** @lang PostgreSQL */ "SET enable_seqscan = ON");

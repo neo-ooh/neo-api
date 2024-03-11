@@ -32,7 +32,8 @@ class DatasetsDatapointsController extends Controller {
     }
 
     public function update(UpdateDatapointRequest $request, DatasetDatapoint $datapoint) {
-        $datapoint->label = $request->input("label");
+        $datapoint->label_en = $request->input("label_en");
+        $datapoint->label_fr = $request->input("label_fr");
         $datapoint->save();
 
         return new Response($datapoint->loadPublicRelations());

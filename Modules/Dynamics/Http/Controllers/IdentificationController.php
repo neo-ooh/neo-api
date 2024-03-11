@@ -76,7 +76,7 @@ class IdentificationController extends Controller {
 				                    $query->where("id", "=", $player->location_id);
 			                    });
 		                    })
-		                    ->first();
+		                    ->firstOrFail();
 
         $address = $property?->address()->first()?->load("city");
 
@@ -102,10 +102,10 @@ class IdentificationController extends Controller {
 				                    ...$format->toArray(),
 				                    "frame" => $format->layouts()->whereHas("frames", null, "=", 1)->first()->frames()->first(),
 			                    ] : null,
-			                    "property_id" => $property?->getKey(),
+			                    "property_id" => $property->getKey(),
 			                    //			                    "product"  => $product,
 			                    //			                    "property" => $property,
-			                    "address"     => $property?->address()->first()->load("city"),
+			                    "address"     => $address->load("city"),
 		                    ]);
 	}
 }

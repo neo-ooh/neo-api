@@ -114,7 +114,8 @@ class PropertiesExport extends XLSXDocument {
 
 	/**
 	 * @inheritDoc
-	 */
+     * @noinspection NestedTernaryOperatorInspection
+     */
 	public function build(): bool {
 		// | Property
 		// | - Product
@@ -134,12 +135,13 @@ class PropertiesExport extends XLSXDocument {
 				"Province"     => $property->address?->city->province->slug,
 				"Country"      => $property->address?->city->province->country->slug,
 				"Postal Code"  => implode(" ", str_split($property->address?->zipcode, 3)),
-				"Full Address" => $property->address?->string_representation ?? "",
-				"Longitude"    => $property->address?->geolocation?->getCoordinates()[0] ?? "",
-				"Latitude"     => $property->address?->geolocation?->getCoordinates()[1] ?? "",
+				"Full Address" => $property->address->string_representation ?? "",
+				"Longitude"    => $property->address->geolocation->getCoordinates()[0] ?? "",
+				"Latitude"     => $property->address->geolocation->getCoordinates()[1] ?? "",
 			];
 
-			$openingHours = $property->opening_hours->keyBy("weekday");
+            /** @var Collection<int, OpeningHours> $openingHours */
+            $openingHours = $property->opening_hours->keyBy("weekday");
 
 			$operatingHoursComponents = [
 				"Monday Open"     => $openingHours->has(1) ? ($openingHours[1]->is_closed ? "-" : $openingHours[1]->open_at->toTimeString('minutes')) : "00:00",

@@ -1,0 +1,26 @@
+# SELECT
+#   *
+# FROM `properties_view`
+# WHERE `deleted_at` IS NULL
+# AND `is_sellable` IS TRUE
+#
+# LIMIT 100;
+
+SELECT
+  pv.`actor_id` as 'Connect ID',
+  pv.name as 'Name',
+  COALESCE(pt.`name_en`, 'Other') as 'Type',
+  '001Hu000038Y4TkIAK' as 'Parent Account',
+  addr.`line_1` as 'Street',
+  `cities`.`name` as 'City',
+  `addr`.`zipcode` as 'Zip/Postal Code',
+  `provinces`.`slug` as 'State/Province',
+  'CA' as `Country`
+FROM `properties_view` `pv`
+JOIN `actors_details` `ad` ON ad.`id` = `pv`.`actor_id`
+LEFT JOIN `property_types` `pt` ON pt.`id` = pv.`type_id`
+LEFT JOIN `addresses` `addr` ON `pv`.`address_id` = `addr`.`id`
+LEFT JOIN `cities` ON `addr`.`city_id` = `cities`.`id`
+LEFT JOIN `provinces` ON `cities`.`province_id` = `provinces`.`id`
+WHERE ad.`parent_id` = 542
+AND pv.`deleted_at` IS NULL

@@ -10,67 +10,82 @@
 
 namespace Neo\Console\Commands\Test;
 
-use Carbon\Carbon;
-use Carbon\CarbonPeriod;
+use GeoJson\Geometry\MultiPolygon;
 use Illuminate\Console\Command;
-use MatanYadaev\EloquentSpatial\Objects\Point;
-use Neo\Models\City;
-use Neo\Modules\Properties\Enums\TrafficFormat;
-use Neo\Modules\Properties\Jobs\Traffic\EstimateWeeklyTrafficFromMonthJob;
+use Neo\Modules\Demographics\Jobs\GeographicReports\Processors\IsochroneAreaProcessor;
 use Neo\Modules\Properties\Models\Property;
-use Neo\Modules\Properties\Models\PropertyTrafficSettings;
+use Neo\Services\Isochrone\IsochroneAdapter;
 use PhpOffice\PhpSpreadsheet\Reader\Exception;
 
 class TestCommand extends Command {
-	protected $signature = 'test:test';
+    protected $signature = 'test:test {--start=} {--step=}';
 
-	protected $description = 'Internal tests';
+    protected $description = 'Internal tests';
 
-	/**
-	 * @return void
-	 * @throws Exception
-	 */
-	public function handle() {
-		// DO NOT DELETE - DRAKO IMPRESSIONS IMPORTER
-//		$reader    = new Csv();
-//		$xlsx      = $reader->load("/Users/vdufois/Documents/Mobile/Drako/NeoFitnessDrakoImpressions.csv");
-//		$worksheet = $xlsx->getActiveSheet();
-//		$worksheet->toArray();
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function handle() {
+//        $template = GeographicReportTemplate::query()->find(5);
+//        $j = new GenerateGeographicReportsJob($template);
+//        $j->handle();
+
+//        $report = GeographicReport::find(13);
+//        $report->status = ReportStatus::Pending;
+//        $j = new ProcessGeographicReportJob($report);
+//        $j->handle();
+
+//        $extract         = Extract::query()->find(6);
+//        $extract->status = ReportStatus::Pending;
+//        $j               = new ProcessExtractJob($extract);
+//        $j->handle();
+
+//        $set         = IndexSet::query()->find(2);
+//        $set->status = ReportStatus::Pending;
+//        $j               = new ProcessIndexSetJob($set);
+//        $j->handle();
+
+//        $j = new GenerateExtractsJob();
+//        $j->handle();
+
+//        $j = new GenerateIndexSetsJob();
+//        $j->handle();
+
 //
-//		$data = $worksheet->toArray();
-//		array_shift($data);
+//        $step = $this->option("step");
 //
-//		foreach ($data as $k => $row) {
-//			$propertyId  = (int)$row[0];
-//			$impressions = (int)$row[10];
-//			dump($k . "- (" . $propertyId . ") " . $impressions);
-//			DB::table("properties")
-//			  ->where("actor_id", "=", $propertyId)
-//			  ->update(["mobile_impressions_per_week" => round($impressions / 4)]);
-//		}
+//        for ($i = $this->option("start"); $i < 1_114_000; $i += $step) {
+//            $this->info("$i -> " . $i + $step . "...");
+//
+//            DB::connection("neo_demographics")
+//              ->update(<<<EOF
+//                UPDATE "datasets_values"
+//                SET "reference_value" = "refs"."value"
+//                FROM (
+//                    SELECT dp.id AS datapoint_id, dv.area_id AS area_id, drv.value AS "value"
+//                    FROM datasets_values dv
+//                    JOIN datasets_datapoints dp ON dp.id = dv.datapoint_id
+//                    LEFT JOIN datasets_values drv ON drv.datapoint_id = dp.reference_datapoint_id AND dv.area_id = drv.area_id
+//                ) AS refs
+//                WHERE datasets_values.datapoint_id = refs.datapoint_id AND datasets_values.area_id = refs.area_id
+//                AND datasets_values.area_id BETWEEN ? AND ?
+//            EOF
+//                  , [$i, $i + $step]);
 
-		/*		$properties = Property::query()->join("actors_details", "actors_details.id", "=", "properties_view.actor_id")
-									  ->where("actors_details.parent_id", "=", 4211)->get();
-				$properties->load("address");
+        $tt = app()->make(IsochroneAdapter::class);
+        $p  = Property::query()->find(31);
 
-				foreach ($properties as $property) {
-					$addr = $property->address;
-					$lng  = $addr->geolocation->latitude;
-					$lat  = $addr->geolocation->longitude;
+        /** @var MultiPolygon $isochrone */
+//        $isochrone = $tt->getIsochrone(
+//            lng: $p->address->geolocation->longitude,
+//            lat: $p->address->geolocation->latitude,
+//            durationMin: 90,
+//            travelMethod: 'driving'
+//        );
 
-					$addr->geolocation->longitude = $lng;
-					$addr->geolocation->latitude  = $lat;
-					$addr->save();
-				}*/
+        $processor = new IsochroneAreaProcessor($p->address->geolocation, 90, 'driving');
 
-        $propertiesTraffic = PropertyTrafficSettings::query()->where("format", "=", TrafficFormat::MonthlyAdjusted->value)->get();
-
-        /** @var PropertyTrafficSettings $propertyTraffic */
-        foreach($propertiesTraffic as $propertyTraffic) {
-            (new EstimateWeeklyTrafficFromMonthJob($propertyTraffic->property_id, 2019, 1))->handle();
-            (new EstimateWeeklyTrafficFromMonthJob($propertyTraffic->property_id, 2021, 1))->handle();
-            (new EstimateWeeklyTrafficFromMonthJob($propertyTraffic->property_id, 2022, 1))->handle();
-            (new EstimateWeeklyTrafficFromMonthJob($propertyTraffic->property_id, 2023, 1))->handle();
-        }
-	}
+//        dump(count($processor->getEntries();
+    }
 }

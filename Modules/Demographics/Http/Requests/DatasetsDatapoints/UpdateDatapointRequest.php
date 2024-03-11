@@ -19,7 +19,8 @@ use Neo\Rules\PublicRelations;
 class UpdateDatapointRequest extends FormRequest {
     public function rules(): array {
         return [
-            "label" => ["required", "string"],
+            "label_en" => ["required", "string"],
+            "label_fr" => ["required", "string"],
 
             "with" => ["array", new PublicRelations(DatasetDatapoint::class)],
         ];

@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Response;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Neo\Http\Requests\Availabilities\ListAvailabilitiesRequest;
@@ -111,15 +110,13 @@ class AvailabilitiesController {
 			               ->remember(
 				               key     : "availabilities-" . $productId . "-" . $year,
 				               ttl     : $cacheEnd,
-				               callback: function () use ($year, $loadDates, &$datesLoaded, $productId) {
+				               callback: function () use ($loadDates, &$datesLoaded, $productId) {
 					               if (!$datesLoaded) {
 						               $loadDates();
 						               $datesLoaded = true;
 					               }
 
-					               if (App::runningInConsole()) {
-						               dump($productId);
-					               }
+                                   console_log($productId);
 
 					               $availabilities = DB::select(<<<EOS
 									SELECT `p`.`id`                                                              AS `product_id`,

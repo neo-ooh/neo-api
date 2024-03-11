@@ -12,14 +12,15 @@ namespace Neo\Modules\Demographics\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @property-read int $id
- * @property-read boolean $is_archived
- * @property-read string $name
+ * @property-read int                          $id
+ * @property-read boolean                      $is_archived
+ * @property-read string                       $name
  *
  * @property-read Collection<GeographicReport> $geographic_reports
- * @property-read Collection<Extract> $extracts
+ * @property-read Collection<Extract>          $extracts
  */
 class DemographicProperty extends Model {
 
@@ -53,7 +54,7 @@ class DemographicProperty extends Model {
      * @var array<string, string>
      */
     public $casts = [
-        "is_archived" => "boolean"
+        "is_archived" => "boolean",
     ];
 
     /*
@@ -62,11 +63,17 @@ class DemographicProperty extends Model {
     |--------------------------------------------------------------------------
     */
 
-    public function geographic_reports() {
+    /**
+     * @return HasMany<GeographicReport>
+     */
+    public function geographic_reports(): HasMany {
         return $this->hasMany(GeographicReport::class, "property_id", "id");
     }
 
-    public function extracts() {
+    /**
+     * @return HasMany<Extract>
+     */
+    public function extracts(): HasMany {
         return $this->hasMany(Extract::class, "property_id", "id");
     }
 }

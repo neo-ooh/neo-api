@@ -22,7 +22,7 @@ use Neo\Modules\Broadcast\Models\DisplayTypeFrame;
 
 class DisplayTypeFramesController extends Controller {
     public function index(ListDisplayTypeFramesRequest $request, DisplayType $displayType) {
-        return new Response($displayType->crop_frames);
+        return new Response($displayType->frames);
     }
 
     public function store(StoreDisplayTypeFrameRequest $request, DisplayType $displayType) {

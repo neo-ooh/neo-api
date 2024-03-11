@@ -175,7 +175,7 @@ class InventoryProvidersController extends Controller {
 				PushFullInventoryJob::dispatch($inventoryProvider->getKey(), force: true);
 				break;
 			case "pull":
-				PullFullInventoryJob::dispatch($inventoryProvider->getKey(), force: true,);
+				PullFullInventoryJob::dispatch($inventoryProvider->getKey());
 				break;
 		}
 

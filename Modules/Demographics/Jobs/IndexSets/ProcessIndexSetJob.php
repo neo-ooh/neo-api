@@ -39,7 +39,6 @@ class ProcessIndexSetJob extends DemographicJobBase {
     }
 
     protected function onFailure(Throwable $exception): void {
-        dump($exception);
         parent::onFailure($exception);
 
         // Store the error in the report metadata
@@ -84,7 +83,7 @@ class ProcessIndexSetJob extends DemographicJobBase {
         $offset = 0;
 
         do {
-            console_log("Processing values " . $offset . " to " . $offset+$batchSize . "...");
+            console_log("Processing values " . $offset . " to " . ($offset+$batchSize) . "...");
             $values = DB::connection("neo_demographics")
                 ->select(<<<EOF
                     SELECT

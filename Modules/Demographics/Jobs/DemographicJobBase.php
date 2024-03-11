@@ -11,7 +11,6 @@
 namespace Neo\Modules\Demographics\Jobs;
 
 use Neo\Jobs\Job;
-use Throwable;
 
 abstract class DemographicJobBase extends Job {
     /**
@@ -29,9 +28,5 @@ abstract class DemographicJobBase extends Job {
 
     public function middleware() {
         return [];
-    }
-
-    protected function onFailure(Throwable $exception): void {
-      dump($exception);
     }
 }

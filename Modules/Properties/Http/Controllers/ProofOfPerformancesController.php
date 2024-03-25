@@ -14,8 +14,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Neo\Http\Controllers\Controller;
-use Neo\Modules\Properties\Models\Contract;
-use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Properties\Documents\POP\PDFPOP;
 use Neo\Modules\Properties\Documents\POP\POPFlight;
 use Neo\Modules\Properties\Documents\POP\POPFlightGroup;
@@ -25,6 +23,8 @@ use Neo\Modules\Properties\Documents\POP\POPScreenshot;
 use Neo\Modules\Properties\Enums\ProductType;
 use Neo\Modules\Properties\Http\Requests\ProofOfPerformances\BuildPOPRequest;
 use Neo\Modules\Properties\Http\Requests\ProofOfPerformances\GetPOPBaseRequest;
+use Neo\Modules\Properties\Models\Contract;
+use Neo\Modules\Properties\Models\ContractFlight;
 use Neo\Modules\Properties\Models\ContractLine;
 use Neo\Resources\FlightType;
 
@@ -34,17 +34,24 @@ class ProofOfPerformancesController extends Controller {
         $contract->load(["flights.lines.product.property", "flights.lines.product.category"]);
         $flights = POPFlight::collection([]);
 
-        $contractFlights = $contract->flights->sortBy(function (ContractFlight $flight) {
+        $contractFlights = $contract->flights
+            ->filter(function (ContractFlight $contractFlight) {
+                return $contractFlight->type !== FlightType::Mobile;
+            })
+            ->sortBy(function (ContractFlight $flight) {
             return [
                        FlightType::Guaranteed->value => 1,
                        FlightType::Bonus->value      => 2,
                        FlightType::BUA->value        => 3,
+                       FlightType::Mobile->value        => 4,
                    ][$flight->type->value];
         });
 
         foreach ($contractFlights as $flight) {
+
             $flight->append("performances");
             $flight->fillLinesPerformances();
+
 
             $flightLines = $flight->lines->where("product.category.type", "=", ProductType::Digital);
             if ($flightLines->isEmpty()) {
